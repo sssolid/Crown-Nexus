@@ -1,0 +1,50 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: detect-private-key
+
+-   repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.292'
+    hooks:
+    -   id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+-   repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+    -   id: black
+
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+    -   id: mypy
+        additional_dependencies:
+        -   types-redis
+        -   types-passlib
+        -   types-python-jose
+        -   pydantic
+        -   sqlalchemy
+
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.51.0
+    hooks:
+    -   id: eslint
+        files: \.(js|ts|vue)$
+        types: [file]
+        additional_dependencies:
+        -   eslint@8.51.0
+        -   eslint-plugin-vue@9.17.0
+        -   @typescript-eslint/eslint-plugin@6.7.3
+        -   @typescript-eslint/parser@6.7.3

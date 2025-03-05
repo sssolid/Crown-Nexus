@@ -1,43 +1,10 @@
 from __future__ import annotations
 
-import uuid
-from datetime import datetime
-from typing import Any, Dict, TypeVar
+# Import Base class
+from app.db.base_class import Base
 
-from sqlalchemy import Column, DateTime, func, inspect
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
-
-
-@as_declarative()
-class Base:
-    """
-    Base class for all database models.
-    
-    Attributes:
-        id: Primary key
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
-    """
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(
-        DateTime(timezone=True), 
-        server_default=func.now(), 
-        onupdate=func.now(), 
-        nullable=False
-    )
-    
-    # Generate __tablename__ automatically
-    @declared_attr
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
-
-    def dict(self) -> Dict[str, Any]:
-        """
-        Convert model instance to dictionary.
-        
-        Returns:
-            Dictionary representation of model
-        """
-        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
+# Import all models here for Alembic to detect them
+from app.models.associations import product_fitment_association, product_media_association  # noqa
+from app.models.product import Category, Fitment, Product  # noqa
+from app.models.user import Company, User  # noqa
+from app.models.media import Media, MediaType, MediaVisibility  # noqa

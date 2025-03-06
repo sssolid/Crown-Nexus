@@ -4,7 +4,7 @@ A dynamic deployment system for Crown Nexus that can adapt to any number of serv
 
 ## Overview
 
-This system integrates with the existing `server-analyzer.sh` script to:
+This system uses a Python-based server analyzer to:
 
 1. Analyze server hardware specifications
 2. Determine optimal role assignments based on hardware
@@ -66,7 +66,7 @@ crown_deploy/
 - Jinja2 for templating
 - Pydantic for data validation
 - Structlog for structured logging
-- Access to the `server-analyzer.sh` script
+- SSH access to the target servers
 
 ## Installation
 
@@ -98,7 +98,6 @@ server3,192.168.1.103,ubuntu,~/.ssh/id_rsa,Tertiary server
 
 ```bash
 python -m crown_deploy.main analyze \
-  --analyzer /path/to/server-analyzer.sh \
   --inventory /path/to/inventory.csv \
   --output analysis-results.txt
 ```
@@ -109,7 +108,6 @@ This will output recommended role assignments for your servers.
 
 ```bash
 python -m crown_deploy.main generate \
-  --analyzer /path/to/server-analyzer.sh \
   --inventory /path/to/inventory.csv \
   --templates /path/to/crown_deploy/templates \
   --output /path/to/deployment-scripts \

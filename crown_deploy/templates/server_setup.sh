@@ -1,0 +1,153 @@
+#!/bin/bash
+set -e
+
+# Load environment variables
+source ../common/env.sh
+
+echo "=== Setting up Server {{ server_index }}: {{ server.hostname }} ({{ server.assigned_roles|join(', ') }}) ==="
+
+# Update system
+echo "Updating system packages..."
+sudo apt update
+sudo apt upgrade -y
+
+# Install common packages
+echo "Installing common packages..."
+sudo apt install -y build-essential git curl wget unzip software-properties-common fail2ban ufw
+
+# Track installed packages for potential rollback
+mkdir -p /tmp/crown-nexus-installed
+echo "common: build-essential git curl wget unzip software-properties-common fail2ban ufw" >> /tmp/crown-nexus-installed/packages.txt
+
+# Setup firewall
+echo "Configuring firewall..."
+sudo ufw allow OpenSSH
+
+# Setup application user
+echo "Creating application user..."
+sudo useradd -m -s /bin/bash crown 2>/dev/null || true
+sudo usermod -aG sudo crown
+
+{% for role in server.assigned_roles %}
+# Role-specific setup: {{ role }}
+{{ role_templates[role].render(server=server, server_index=server_index, cluster=cluster) if role in role_templates else "# No template found for role: " + role }}
+
+{% endfor %}
+
+# Enable firewall
+sudo ufw --force enable
+
+# Create monitoring script
+cat > /home/crown/monitor.sh << 'EOF'
+#!/bin/bash
+
+echo "System monitoring report for $(hostname) - $(date)"
+echo "------------------------------------------------------"
+echo "Load average: $(cat /proc/loadavg)"
+echo "Memory usage:"
+free -h
+echo "------------------------------------------------------"
+echo "Disk usage:"
+df -h
+echo "------------------------------------------------------"
+
+{% if 'load_balancer' in server.assigned_roles or 'frontend' in server.assigned_roles %}
+echo "Nginx status:"
+systemctl status nginx | grep Active
+echo "------------------------------------------------------"
+echo "Recent errors in Nginx:"
+tail -n 50 /var/log/nginx/error.log | grep -i error
+echo "------------------------------------------------------"
+{% endif %}
+
+{% if 'backend' in server.assigned_roles %}
+echo "Crown Nexus service status:"
+systemctl status $CROWN_APP_NAME | grep Active
+echo "------------------------------------------------------"
+echo "Recent backend errors:"
+tail -n 50 /home/crown/$CROWN_APP_NAME/backend/logs/error.log | grep -i error
+echo "------------------------------------------------------"
+{% endif %}
+
+{% if 'database' in server.assigned_roles %}
+echo "PostgreSQL status:"
+systemctl status postgresql | grep Active
+echo "------------------------------------------------------"
+{% endif %}
+
+{% if 'elasticsearch' in server.assigned_roles %}
+echo "Elasticsearch status:"
+systemctl status elasticsearch | grep Active
+echo "------------------------------------------------------"
+{% endif %}
+
+{% if 'redis' in server.assigned_roles %}
+echo "Redis status:"
+systemctl status redis-server | grep Active
+echo "------------------------------------------------------"
+{% endif %}
+EOF
+
+chmod +x /home/crown/monitor.sh
+
+# Set up cron job for monitoring
+(crontab -l 2>/dev/null; echo "0 * * * * /home/crown/monitor.sh > /home/crown/monitoring_report.txt") | crontab -
+
+# Create uninstall script
+cat > /home/crown/uninstall_crown_nexus.sh << 'EOF'
+#!/bin/bash
+
+echo "=== Uninstalling Crown Nexus components ==="
+if [ ! -f /tmp/crown-nexus-installed/packages.txt ]; then
+    echo "No installation records found. Cannot safely uninstall."
+    exit 1
+fi
+
+# Stop services
+{% if 'backend' in server.assigned_roles %}
+systemctl stop $CROWN_APP_NAME 2>/dev/null || true
+systemctl disable $CROWN_APP_NAME 2>/dev/null || true
+{% endif %}
+
+{% if 'load_balancer' in server.assigned_roles or 'frontend' in server.assigned_roles %}
+systemctl stop nginx 2>/dev/null || true
+{% endif %}
+
+{% if 'database' in server.assigned_roles %}
+systemctl stop postgresql 2>/dev/null || true
+{% endif %}
+
+{% if 'elasticsearch' in server.assigned_roles %}
+systemctl stop elasticsearch 2>/dev/null || true
+{% endif %}
+
+{% if 'redis' in server.assigned_roles %}
+systemctl stop redis-server 2>/dev/null || true
+{% endif %}
+
+# Remove application files
+rm -rf /home/crown/$CROWN_APP_NAME 2>/dev/null || true
+rm -rf /opt/$CROWN_APP_NAME 2>/dev/null || true
+
+# Remove configuration files
+{% if 'load_balancer' in server.assigned_roles or 'frontend' in server.assigned_roles %}
+rm -f /etc/nginx/sites-available/$CROWN_APP_NAME 2>/dev/null || true
+rm -f /etc/nginx/sites-enabled/$CROWN_APP_NAME 2>/dev/null || true
+{% endif %}
+
+{% if 'backend' in server.assigned_roles %}
+rm -f /etc/systemd/system/$CROWN_APP_NAME.service 2>/dev/null || true
+systemctl daemon-reload 2>/dev/null || true
+{% endif %}
+
+# Remove monitoring script
+rm -f /home/crown/monitor.sh 2>/dev/null || true
+(crontab -l 2>/dev/null | grep -v "monitor.sh") | crontab - 2>/dev/null || true
+
+# Note: We're not removing installed packages to avoid affecting other applications
+echo "Uninstallation completed. Some system packages were not removed to avoid affecting other applications."
+EOF
+
+chmod +x /home/crown/uninstall_crown_nexus.sh
+
+echo "=== Server {{ server_index }} setup completed successfully ==="

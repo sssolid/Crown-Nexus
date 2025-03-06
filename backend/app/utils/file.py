@@ -1,3 +1,17 @@
+# backend/app/utils/file.py
+"""
+File handling utilities.
+
+This module provides functions for handling files within the application:
+- File validation
+- File uploads and storage
+- Path resolution
+- Thumbnail generation
+
+These utilities ensure consistent and secure handling of user-uploaded
+files across the application.
+"""
+
 from __future__ import annotations
 
 import os
@@ -5,7 +19,7 @@ import secrets
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import BinaryIO, List, Optional, Set, Tuple, Union
+from typing import BinaryIO, Dict, List, Optional, Set, Tuple, Union
 
 from fastapi import HTTPException, UploadFile, status
 from PIL import Image, UnidentifiedImageError
@@ -15,7 +29,7 @@ from app.models.media import MediaType
 
 
 # Allowed MIME types by media type
-ALLOWED_MIME_TYPES = {
+ALLOWED_MIME_TYPES: Dict[MediaType, Set[str]] = {
     MediaType.IMAGE: {
         "image/jpeg",
         "image/png",
@@ -48,7 +62,7 @@ ALLOWED_MIME_TYPES = {
 }
 
 # File size limits (in bytes)
-MAX_FILE_SIZES = {
+MAX_FILE_SIZES: Dict[MediaType, int] = {
     MediaType.IMAGE: 5 * 1024 * 1024,  # 5MB
     MediaType.DOCUMENT: 20 * 1024 * 1024,  # 20MB
     MediaType.VIDEO: 100 * 1024 * 1024,  # 100MB
@@ -56,7 +70,7 @@ MAX_FILE_SIZES = {
 }
 
 # Image dimensions for thumbnails
-THUMBNAIL_SIZE = (300, 300)
+THUMBNAIL_SIZE: Tuple[int, int] = (300, 300)
 
 
 def get_media_type_from_mime(mime_type: str) -> MediaType:
@@ -82,6 +96,12 @@ def validate_file(
     """
     Validate a file for upload.
 
+    Performs various validations on the uploaded file:
+    - Filename presence
+    - File size within limits
+    - MIME type allowed for the media type
+    - Image validity for image files
+
     Args:
         file: Uploaded file
         allowed_types: Set of allowed media types (if None, all types are allowed)
@@ -99,7 +119,8 @@ def validate_file(
         )
 
     # Check file size (first byte read won't change file position)
-    file_size = len(file.file.read())
+    file.file.seek(0, os.SEEK_END)
+    file_size = file.file.tell()
     file.file.seek(0)  # Reset file position
 
     # Get MIME type and media type
@@ -132,6 +153,7 @@ def validate_file(
     is_image = media_type == MediaType.IMAGE
     if is_image:
         try:
+            file.file.seek(0)  # Reset file position before reading
             img = Image.open(file.file)
             img.verify()
             file.file.seek(0)  # Reset file position after reading
@@ -158,6 +180,9 @@ def save_upload_file(
     """
     Save an uploaded file to disk.
 
+    Handles saving the file to the appropriate directory and creating
+    thumbnails for images.
+
     Args:
         file: Uploaded file
         media_id: ID of the media record
@@ -166,6 +191,9 @@ def save_upload_file(
 
     Returns:
         Tuple[str, int, str]: File path, file size, and media hash
+
+    Raises:
+        IOError: If file saving fails
     """
     # Create directory structure if it doesn't exist
     upload_dir = Path(settings.MEDIA_ROOT) / str(media_type.value) / datetime.now().strftime("%Y/%m/%d")
@@ -177,12 +205,20 @@ def save_upload_file(
 
     # Save the file
     file_path = upload_dir / secure_filename
-    with open(file_path, "wb") as f:
-        file_content = file.file.read()
-        f.write(file_content)
-        file_size = len(file_content)
+    file.file.seek(0)  # Ensure we're at the start of the file
 
-    # Generate media hash
+    try:
+        with open(file_path, "wb") as f:
+            file_content = file.file.read()
+            f.write(file_content)
+            file_size = len(file_content)
+    except IOError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error saving file: {str(e)}",
+        )
+
+    # Generate media hash for integrity checking
     media_hash = secrets.token_hex(16)
 
     # Create thumbnail for images
@@ -192,11 +228,20 @@ def save_upload_file(
 
         try:
             with Image.open(file_path) as img:
+                # Convert to RGB if necessary (e.g., for PNG with alpha channel)
+                if img.mode in ['RGBA', 'LA']:
+                    rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                    rgb_img.paste(img, mask=img.split()[3] if img.mode == 'RGBA' else img.split()[1])
+                    img = rgb_img
+                elif img.mode != 'RGB':
+                    img = img.convert('RGB')
+
+                # Create thumbnail
                 img.thumbnail(THUMBNAIL_SIZE)
                 thumbnail_path = thumbnail_dir / secure_filename
-                img.save(thumbnail_path)
+                img.save(thumbnail_path, quality=85, optimize=True)
         except Exception as e:
-            # If thumbnail creation fails, log but continue
+            # Log but don't fail if thumbnail creation fails
             print(f"Error creating thumbnail: {str(e)}")
 
     # Return relative path for storage in database
@@ -235,3 +280,76 @@ def get_thumbnail_path(file_path: str) -> Optional[Path]:
             return thumbnail_path
 
     return None
+
+
+def get_file_extension(filename: str) -> str:
+    """
+    Get the file extension from a filename.
+
+    Args:
+        filename: Filename to extract extension from
+
+    Returns:
+        str: File extension (lowercase, without leading period)
+    """
+    if not filename or '.' not in filename:
+        return ""
+
+    return filename.rsplit('.', 1)[1].lower()
+
+
+def is_safe_filename(filename: str) -> bool:
+    """
+    Check if a filename is safe to use.
+
+    Validates that the filename doesn't contain any potentially
+    dangerous characters or path traversal attempts.
+
+    Args:
+        filename: Filename to check
+
+    Returns:
+        bool: True if filename is safe, False otherwise
+    """
+    # Basic check for path traversal
+    if '..' in filename or '/' in filename or '\\' in filename:
+        return False
+
+    # Check for starting with a period (hidden file)
+    if filename.startswith('.'):
+        return False
+
+    # Check length
+    if len(filename) > 255:
+        return False
+
+    # Add more checks as needed
+
+    return True
+
+
+def sanitize_filename(filename: str) -> str:
+    """
+    Sanitize a filename to be safe for storage.
+
+    Args:
+        filename: Original filename
+
+    Returns:
+        str: Sanitized filename
+    """
+    # Replace potentially problematic characters
+    safe_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."
+
+    # Extract extension
+    name, ext = os.path.splitext(filename)
+
+    # Sanitize the name part
+    safe_name = ''.join(c for c in name if c in safe_chars)
+
+    # If the name becomes empty, use a default
+    if not safe_name:
+        safe_name = "file"
+
+    # Return the sanitized name with the original extension
+    return safe_name + ext.lower()

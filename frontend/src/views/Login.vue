@@ -1,50 +1,99 @@
+<!-- frontend/src/views/Login.vue -->
 <template>
-  <v-container class="fill-height" fluid>
+  <v-container fluid class="fill-height">
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="4">
-        <v-card class="elevation-12">
-          <v-card-title>Login</v-card-title>
-          <v-card-text>
-            <v-form @submit.prevent="login">
+      <v-col cols="12" sm="8" md="4" lg="4">
+        <v-card class="elevation-12 rounded-lg">
+          <!-- Card Header -->
+          <v-card-item class="bg-primary">
+            <v-card-title class="text-h5 text-white text-center py-4">
+              <v-icon icon="mdi-car-cog" size="x-large" class="mb-2"></v-icon>
+              <div>Crown Nexus Login</div>
+            </v-card-title>
+          </v-card-item>
+
+          <!-- Login Form -->
+          <v-card-text class="pa-6">
+            <v-form @submit.prevent="login" ref="loginForm">
+              <!-- Username Field -->
               <v-text-field
                 v-model="username"
-                label="Username"
+                label="Email"
                 name="username"
-                prepend-icon="mdi-account"
-                type="text"
-                required
+                type="email"
+                prepend-inner-icon="mdi-account"
+                :rules="[rules.required, rules.email]"
+                autocomplete="username"
+                variant="outlined"
+                color="primary"
+                class="mb-3"
               ></v-text-field>
 
+              <!-- Password Field -->
               <v-text-field
                 v-model="password"
                 label="Password"
                 name="password"
-                prepend-icon="mdi-lock"
-                type="password"
-                required
+                prepend-inner-icon="mdi-lock"
+                :type="showPassword ? 'text' : 'password'"
+                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append-inner="showPassword = !showPassword"
+                :rules="[rules.required]"
+                autocomplete="current-password"
+                variant="outlined"
+                color="primary"
               ></v-text-field>
-              
+
+              <!-- Remember Me Checkbox -->
+              <v-checkbox
+                v-model="rememberMe"
+                label="Remember me"
+                color="primary"
+                hide-details
+                class="my-2"
+              ></v-checkbox>
+
+              <!-- Error Alert -->
               <v-alert
-                v-if="error"
+                v-if="authStore.error"
                 type="error"
-                dismissible
-                class="mt-3"
+                variant="tonal"
+                closable
+                class="mt-4"
               >
-                {{ error }}
+                {{ authStore.error }}
               </v-alert>
             </v-form>
           </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn 
-              color="primary" 
+
+          <!-- Card Actions -->
+          <v-card-actions class="px-6 pb-6">
+            <v-btn
+              color="primary"
               @click="login"
-              :loading="loading"
+              :loading="authStore.loading"
+              block
+              size="large"
+              variant="elevated"
             >
               Login
+              <v-icon icon="mdi-login" end></v-icon>
             </v-btn>
           </v-card-actions>
+
+          <!-- Forgot Password Link -->
+          <v-card-text class="text-center pt-0">
+            <a href="#" class="text-decoration-none text-caption">
+              Forgot your password?
+            </a>
+          </v-card-text>
         </v-card>
+
+        <!-- Help Text -->
+        <div class="text-center mt-6 text-caption text-medium-emphasis">
+          <p>For assistance, please contact your system administrator</p>
+          <p class="mt-2">&copy; {{ new Date().getFullYear() }} Crown Nexus</p>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -57,37 +106,59 @@ import { useAuthStore } from '@/stores/auth';
 
 export default defineComponent({
   name: 'Login',
+
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
-    
+    const loginForm = ref<any>(null);
+
+    // Form fields
     const username = ref('');
     const password = ref('');
+    const rememberMe = ref(true);
+    const showPassword = ref(false);
+
+    // Form validation rules
+    const rules = {
+      required: (v: string) => !!v || 'This field is required',
+      email: (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    };
+
+    // Loading state from store
     const loading = computed(() => authStore.loading);
-    const error = computed(() => authStore.error);
-    
+
+    // Login function
     const login = async () => {
-      if (!username.value || !password.value) {
+      // Validate form
+      const valid = await loginForm.value?.validate();
+
+      if (!valid.valid) {
         return;
       }
-      
+
       try {
         await authStore.login({
           username: username.value,
           password: password.value,
+          rememberMe: rememberMe.value,
         });
-        
-        router.push('/');
+
+        // Router will be handled by the auth store
       } catch (err) {
         // Error already handled in store
+        console.error('Login error:', err);
       }
     };
-    
+
     return {
+      authStore,
+      loginForm,
       username,
       password,
+      rememberMe,
+      showPassword,
+      rules,
       loading,
-      error,
       login,
     };
   },

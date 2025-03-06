@@ -1,3 +1,16 @@
+# backend/app/api/v1/endpoints/auth.py
+"""
+Authentication API endpoints.
+
+This module provides endpoints for user authentication and token management:
+- Login endpoint for retrieving JWT tokens
+- Token validation endpoint
+- Current user information endpoint
+
+The endpoints implement OAuth2 password flow for compatibility with
+standard authentication libraries and tools.
+"""
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -10,7 +23,7 @@ from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_current_active_user, get_db
 from app.core.config import settings
 from app.models.user import User, UserRole, create_access_token, verify_password
 from app.schemas.user import Token, TokenPayload, User as UserSchema
@@ -20,114 +33,30 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
 
 
-async def get_current_user(
-    db: Annotated[AsyncSession, Depends(get_db)],
-    token: Annotated[str, Depends(oauth2_scheme)],
-) -> User:
-    """
-    Get the current authenticated user.
-
-    Args:
-        db: Database session
-        token: JWT token
-
-    Returns:
-        User: Authenticated user
-
-    Raises:
-        HTTPException: If authentication fails
-    """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=["HS256"]
-        )
-        token_data = TokenPayload(**payload)
-
-        if token_data.exp < int(datetime.utcnow().timestamp()):
-            raise credentials_exception
-    except (JWTError, ValidationError):
-        raise credentials_exception
-
-    stmt = select(User).where(User.id == token_data.sub)
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
-
-    if user is None or not user.is_active:
-        raise credentials_exception
-
-    return user
-
-
-def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)],
-) -> User:
-    """
-    Get the current active user.
-
-    Args:
-        current_user: Current authenticated user
-
-    Returns:
-        User: Current active user
-
-    Raises:
-        HTTPException: If user is inactive
-    """
-    if not current_user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
-        )
-    return current_user
-
-
-def get_admin_user(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-) -> User:
-    """
-    Get the current active admin user.
-
-    Args:
-        current_user: Current authenticated user
-
-    Returns:
-        User: Current active admin user
-
-    Raises:
-        HTTPException: If user is not an admin
-    """
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The user doesn't have enough privileges"
-        )
-    return current_user
-
-
 @router.post("/login", response_model=Token)
 async def login_for_access_token(
     db: Annotated[AsyncSession, Depends(get_db)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Any:
     """
-    OAuth2 compatible token login, get an access token for future requests.
+    OAuth2 compatible token login endpoint.
+
+    This endpoint authenticates a user and provides a JWT access token
+    for use in subsequent requests. It conforms to the OAuth2 password
+    flow specification.
 
     Args:
         db: Database session
         form_data: Form data with username (email) and password
 
     Returns:
-        dict: JWT access token
+        Dict: JWT access token and type
 
     Raises:
-        HTTPException: If authentication fails
+        HTTPException: If authentication fails due to invalid credentials
+            or inactive user account
     """
-    # Get user by email
+    # Get user by email (username in OAuth2 form)
     stmt = select(User).where(User.email == form_data.username)
     result = await db.execute(stmt)
     user = result.scalar_one_or_none()
@@ -140,15 +69,19 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    # Check if user is active
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Inactive user account"
         )
 
     # Create access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        subject=str(user.id), role=user.role, expires_delta=access_token_expires
+        subject=str(user.id),
+        role=user.role,
+        expires_delta=access_token_expires
     )
 
     # Return the token
@@ -158,6 +91,26 @@ async def login_for_access_token(
     }
 
 
+@router.get("/validate-token")
+async def validate_token(
+    token: Annotated[TokenPayload, Depends(get_current_active_user)],
+) -> dict:
+    """
+    Validate a JWT token.
+
+    This endpoint verifies if a token is valid and active.
+    It's useful for client applications to check token validity
+    without making a full API request.
+
+    Args:
+        token: Decoded token payload (via dependency)
+
+    Returns:
+        dict: Token validation status
+    """
+    return {"valid": True}
+
+
 @router.get("/me", response_model=UserSchema)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -165,8 +118,11 @@ async def read_users_me(
     """
     Get current user information.
 
+    This endpoint returns information about the currently
+    authenticated user based on their JWT token.
+
     Args:
-        current_user: Current authenticated user
+        current_user: Current authenticated user (via dependency)
 
     Returns:
         User: Current user information

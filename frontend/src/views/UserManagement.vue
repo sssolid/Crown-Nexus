@@ -1,21 +1,20 @@
-<!-- frontend/src/views/ProductCatalog.vue -->
+<!-- frontend/src/views/UserManagement.vue -->
 <template>
   <div>
     <v-container fluid>
       <!-- Page Header -->
       <v-row class="mb-6">
         <v-col cols="12" md="8">
-          <h1 class="text-h3 font-weight-bold">Product Catalog</h1>
-          <p class="text-subtitle-1">Browse and manage products</p>
+          <h1 class="text-h3 font-weight-bold">User Management</h1>
+          <p class="text-subtitle-1">Manage system users and permissions</p>
         </v-col>
         <v-col cols="12" md="4" class="d-flex justify-end align-center">
           <v-btn
             color="primary"
-            prepend-icon="mdi-plus"
-            :to="{ name: 'ProductCreate' }"
-            v-if="isAdmin"
+            prepend-icon="mdi-account-plus"
+            :to="{ name: 'UserCreate' }"
           >
-            Add Product
+            Add User
           </v-btn>
         </v-col>
       </v-row>
@@ -28,33 +27,30 @@
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="search"
-                label="Search Products"
+                label="Search Users"
                 variant="outlined"
                 density="comfortable"
                 append-inner-icon="mdi-magnify"
                 hide-details
-                @keyup.enter="fetchProducts"
-                @click:append-inner="fetchProducts"
+                @keyup.enter="fetchUsers"
+                @click:append-inner="fetchUsers"
               ></v-text-field>
             </v-col>
 
-            <!-- Category Filter -->
+            <!-- Role Filter -->
             <v-col cols="12" md="3">
               <v-select
-                v-model="filters.category_id"
-                label="Category"
-                :items="categories"
-                item-title="name"
-                item-value="id"
+                v-model="filters.role"
+                label="Role"
+                :items="roleOptions"
                 variant="outlined"
                 density="comfortable"
                 clearable
                 hide-details
-                return-object
               ></v-select>
             </v-col>
 
-            <!-- Active Filter -->
+            <!-- Status Filter -->
             <v-col cols="12" md="3">
               <v-select
                 v-model="filters.is_active"
@@ -68,83 +64,27 @@
             </v-col>
           </v-row>
 
-          <!-- Advanced Filters Button -->
+          <!-- Filter Actions -->
           <v-row class="mt-2">
             <v-col cols="12" class="d-flex justify-end">
               <v-btn
                 variant="text"
-                color="primary"
-                @click="showAdvancedFilters = !showAdvancedFilters"
-              >
-                <v-icon :icon="showAdvancedFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'" class="mr-1"></v-icon>
-                Advanced Filters
-              </v-btn>
-              <v-btn
-                variant="text"
                 color="secondary"
-                class="ml-2"
+                class="mx-2"
                 @click="resetFilters"
               >
                 Reset Filters
               </v-btn>
+              <v-btn
+                color="primary"
+                variant="tonal"
+                @click="fetchUsers"
+              >
+                Apply Filters
+              </v-btn>
             </v-col>
           </v-row>
-
-          <!-- Advanced Filters -->
-          <v-expand-transition>
-            <div v-if="showAdvancedFilters">
-              <v-divider class="mt-2 mb-4"></v-divider>
-              <v-row>
-                <!-- Part Number -->
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="filters.part_number"
-                    label="Part Number"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <!-- SKU -->
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="filters.sku"
-                    label="SKU"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-
-                <!-- Attribute Filter (example) -->
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="attributeFilter"
-                    label="Attribute Filter"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    placeholder="material:steel"
-                    hint="Format: key:value"
-                    persistent-hint
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </div>
-          </v-expand-transition>
         </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            variant="tonal"
-            @click="fetchProducts"
-          >
-            Apply Filters
-          </v-btn>
-        </v-card-actions>
       </v-card>
 
       <!-- Loading State -->
@@ -156,55 +96,41 @@
         ></v-progress-circular>
       </div>
 
-      <!-- Products Data Table -->
+      <!-- Users Data Table -->
       <v-card v-else>
         <v-data-table
           v-model:items-per-page="itemsPerPage"
           :headers="headers"
-          :items="products"
+          :items="users"
           :loading="loading"
           class="elevation-1"
-          loading-text="Loading products..."
-          no-data-text="No products found"
+          loading-text="Loading users..."
+          no-data-text="No users found"
         >
-          <!-- SKU Column -->
-          <template v-slot:item.sku="{ item }">
-            <div class="font-weight-medium">{{ item.raw.sku }}</div>
-          </template>
-
-          <!-- Name Column -->
-          <template v-slot:item.name="{ item }">
+          <!-- Email/Name Column -->
+          <template v-slot:item.userInfo="{ item }">
             <div>
               <router-link
-                :to="{ name: 'ProductDetail', params: { id: item.raw.id }}"
+                :to="{ name: 'UserDetail', params: { id: item.raw.id }}"
                 class="text-decoration-none text-primary font-weight-medium"
               >
-                {{ item.raw.name }}
+                {{ item.raw.full_name }}
               </router-link>
               <div class="text-caption text-medium-emphasis">
-                {{ item.raw.part_number }}
+                {{ item.raw.email }}
               </div>
             </div>
           </template>
 
-          <!-- Description Column -->
-          <template v-slot:item.description="{ item }">
-            <div class="text-truncate" style="max-width: 250px">
-              {{ item.raw.description || 'No description' }}
-            </div>
-          </template>
-
-          <!-- Category Column -->
-          <template v-slot:item.category="{ item }">
+          <!-- Role Column -->
+          <template v-slot:item.role="{ item }">
             <v-chip
-              v-if="item.raw.category"
+              :color="getRoleColor(item.raw.role)"
               size="small"
-              color="primary"
               variant="tonal"
             >
-              {{ item.raw.category.name }}
+              {{ item.raw.role }}
             </v-chip>
-            <span v-else class="text-medium-emphasis">None</span>
           </template>
 
           <!-- Status Column -->
@@ -218,6 +144,22 @@
             </v-chip>
           </template>
 
+          <!-- Company Column -->
+          <template v-slot:item.company="{ item }">
+            <div v-if="item.raw.company">
+              {{ item.raw.company.name }}
+              <div class="text-caption text-medium-emphasis">
+                {{ item.raw.company.account_type }}
+              </div>
+            </div>
+            <span v-else class="text-medium-emphasis">None</span>
+          </template>
+
+          <!-- Created At Column -->
+          <template v-slot:item.created_at="{ item }">
+            <div>{{ formatDate(item.raw.created_at) }}</div>
+          </template>
+
           <!-- Actions Column -->
           <template v-slot:item.actions="{ item }">
             <div class="d-flex">
@@ -227,21 +169,21 @@
                     icon
                     size="small"
                     v-bind="props"
-                    :to="{ name: 'ProductDetail', params: { id: item.raw.id }}"
+                    :to="{ name: 'UserDetail', params: { id: item.raw.id }}"
                   >
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
                 </template>
               </v-tooltip>
 
-              <v-tooltip text="Edit Product" v-if="isAdmin">
+              <v-tooltip text="Edit User">
                 <template v-slot:activator="{ props }">
                   <v-btn
                     icon
                     size="small"
                     color="primary"
                     v-bind="props"
-                    :to="{ name: 'ProductEdit', params: { id: item.raw.id }}"
+                    :to="{ name: 'UserEdit', params: { id: item.raw.id }}"
                     class="mx-1"
                   >
                     <v-icon>mdi-pencil</v-icon>
@@ -249,7 +191,7 @@
                 </template>
               </v-tooltip>
 
-              <v-tooltip text="Delete Product" v-if="isAdmin">
+              <v-tooltip text="Delete User">
                 <template v-slot:activator="{ props }">
                   <v-btn
                     icon
@@ -257,6 +199,7 @@
                     color="error"
                     v-bind="props"
                     @click="confirmDelete(item.raw)"
+                    :disabled="item.raw.id === currentUserId"
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -272,7 +215,7 @@
           <v-pagination
             v-model="page"
             :length="totalPages"
-            @update:modelValue="fetchProducts"
+            @update:modelValue="fetchUsers"
             rounded="circle"
           ></v-pagination>
           <v-spacer></v-spacer>
@@ -286,7 +229,7 @@
             Confirm Delete
           </v-card-title>
           <v-card-text class="pa-4 pt-6">
-            <p>Are you sure you want to delete the product <strong>{{ productToDelete?.name }}</strong>?</p>
+            <p>Are you sure you want to delete the user <strong>{{ userToDelete?.full_name }}</strong>?</p>
             <p class="text-medium-emphasis mt-2">This action cannot be undone.</p>
           </v-card-text>
           <v-card-actions class="pa-4">
@@ -300,7 +243,7 @@
             </v-btn>
             <v-btn
               color="error"
-              @click="deleteProduct"
+              @click="deleteUser"
               :loading="deleteLoading"
             >
               Delete
@@ -316,24 +259,32 @@
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import productService from '@/services/product';
-import { Product, ProductFilters } from '@/types/product';
-import { Category } from '@/types/category';
+import { formatDate } from '@/utils/formatters';
+import { notificationService } from '@/utils/notification';
+import { User, UserRole } from '@/types/user';
+
+// User filter interface
+interface UserFilters {
+  search?: string;
+  role?: UserRole;
+  is_active?: boolean;
+  page?: number;
+  page_size?: number;
+}
 
 export default defineComponent({
-  name: 'ProductCatalog',
+  name: 'UserManagement',
 
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
 
-    // User permissions
-    const isAdmin = computed(() => authStore.isAdmin);
+    // Current user ID (for preventing self-deletion)
+    const currentUserId = computed(() => authStore.user?.id);
 
     // Data loading state
     const loading = ref(false);
-    const products = ref<Product[]>([]);
-    const categories = ref<Category[]>([]);
+    const users = ref<User[]>([]);
 
     // Pagination
     const page = ref(1);
@@ -343,32 +294,39 @@ export default defineComponent({
 
     // Filters
     const search = ref('');
-    const attributeFilter = ref('');
-    const showAdvancedFilters = ref(false);
-    const filters = ref<ProductFilters>({
+    const filters = ref<UserFilters>({
       page: 1,
       page_size: 10,
     });
 
-    // Delete functionality
-    const deleteDialog = ref(false);
-    const deleteLoading = ref(false);
-    const productToDelete = ref<Product | null>(null);
-
-    // Table headers
-    const headers = [
-      { title: 'SKU', key: 'sku', sortable: true },
-      { title: 'Name', key: 'name', sortable: true },
-      { title: 'Description', key: 'description', sortable: false },
-      { title: 'Category', key: 'category', sortable: false },
-      { title: 'Status', key: 'is_active', sortable: true },
-      { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+    // Role options
+    const roleOptions = [
+      { title: 'Admin', value: UserRole.ADMIN },
+      { title: 'Manager', value: UserRole.MANAGER },
+      { title: 'Client', value: UserRole.CLIENT },
+      { title: 'Distributor', value: UserRole.DISTRIBUTOR },
+      { title: 'Read Only', value: UserRole.READ_ONLY },
     ];
 
-    // Status filter options
+    // Status options
     const statusOptions = [
       { title: 'Active', value: true },
       { title: 'Inactive', value: false },
+    ];
+
+    // Delete functionality
+    const deleteDialog = ref(false);
+    const deleteLoading = ref(false);
+    const userToDelete = ref<User | null>(null);
+
+    // Table headers
+    const headers = [
+      { title: 'User', key: 'userInfo', sortable: false },
+      { title: 'Role', key: 'role', sortable: true },
+      { title: 'Status', key: 'is_active', sortable: true },
+      { title: 'Company', key: 'company', sortable: false },
+      { title: 'Created', key: 'created_at', sortable: true },
+      { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
     ];
 
     // Update filters when search changes
@@ -389,82 +347,133 @@ export default defineComponent({
       filters.value.page = 1;
     });
 
-    // Process attribute filter
-    watch(attributeFilter, (newValue) => {
-      if (newValue && newValue.includes(':')) {
-        const [key, value] = newValue.split(':');
-        if (key && value) {
-          filters.value.attributes = filters.value.attributes || {};
-          filters.value.attributes[key.trim()] = value.trim();
-        }
-      } else {
-        filters.value.attributes = undefined;
-      }
-    });
-
-    // Fetch products with current filters
-    const fetchProducts = async () => {
-      loading.value = true;
-
-      try {
-        const response = await productService.getProducts({
-          ...filters.value,
-          page: page.value,
-          page_size: itemsPerPage.value,
-        });
-
-        products.value = response.items;
-        totalItems.value = response.total;
-        totalPages.value = response.pages;
-        page.value = response.page;
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        loading.value = false;
+    // Get color for role chip
+    const getRoleColor = (role: UserRole): string => {
+      switch (role) {
+        case UserRole.ADMIN:
+          return 'error';
+        case UserRole.MANAGER:
+          return 'warning';
+        case UserRole.CLIENT:
+          return 'primary';
+        case UserRole.DISTRIBUTOR:
+          return 'success';
+        case UserRole.READ_ONLY:
+          return 'grey';
+        default:
+          return 'grey';
       }
     };
 
-    // Fetch categories for filter dropdown
-    const fetchCategories = async () => {
+    // Fetch users with current filters
+    const fetchUsers = async () => {
+      loading.value = true;
+
       try {
-        categories.value = await productService.getCategories();
+        // In a real implementation, this would call a userService
+        // For now, we'll use mock data
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Mock response data
+        const mockUsers: User[] = [];
+        for (let i = 0; i < 15; i++) {
+          const roleIndex = i % roleOptions.length;
+          mockUsers.push({
+            id: `user-${i}`,
+            email: `user${i}@example.com`,
+            full_name: `Test User ${i}`,
+            role: roleOptions[roleIndex].value as UserRole,
+            is_active: i % 5 !== 0,
+            created_at: new Date(Date.now() - i * 86400000).toISOString(),
+            company: i % 3 === 0 ? {
+              id: `company-${i}`,
+              name: `Company ${i}`,
+              account_number: `ACC-${i}`,
+              account_type: 'Client',
+              is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            } : undefined
+          });
+        }
+
+        // Filter by search term
+        let filteredUsers = [...mockUsers];
+        if (filters.value.search) {
+          const searchTerm = filters.value.search.toLowerCase();
+          filteredUsers = filteredUsers.filter(user =>
+            user.email.toLowerCase().includes(searchTerm) ||
+            user.full_name.toLowerCase().includes(searchTerm)
+          );
+        }
+
+        // Filter by role
+        if (filters.value.role) {
+          filteredUsers = filteredUsers.filter(user => user.role === filters.value.role);
+        }
+
+        // Filter by status
+        if (filters.value.is_active !== undefined) {
+          filteredUsers = filteredUsers.filter(user => user.is_active === filters.value.is_active);
+        }
+
+        // Apply pagination
+        const startIndex = (page.value - 1) * itemsPerPage.value;
+        const endIndex = startIndex + itemsPerPage.value;
+        users.value = filteredUsers.slice(startIndex, endIndex);
+
+        totalItems.value = filteredUsers.length;
+        totalPages.value = Math.ceil(totalItems.value / itemsPerPage.value);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching users:', error);
+        notificationService.error('Failed to load users.');
+      } finally {
+        loading.value = false;
       }
     };
 
     // Reset all filters
     const resetFilters = () => {
       search.value = '';
-      attributeFilter.value = '';
       filters.value = {
         page: 1,
         page_size: itemsPerPage.value,
       };
       page.value = 1;
-      fetchProducts();
+      fetchUsers();
     };
 
     // Delete confirmation dialog
-    const confirmDelete = (product: Product) => {
-      productToDelete.value = product;
+    const confirmDelete = (user: User) => {
+      // Prevent deleting self
+      if (user.id === currentUserId.value) {
+        notificationService.error('You cannot delete your own account.');
+        return;
+      }
+
+      userToDelete.value = user;
       deleteDialog.value = true;
     };
 
-    // Delete product
-    const deleteProduct = async () => {
-      if (!productToDelete.value) return;
+    // Delete user
+    const deleteUser = async () => {
+      if (!userToDelete.value) return;
 
       deleteLoading.value = true;
 
       try {
-        await productService.deleteProduct(productToDelete.value.id);
+        // In a real implementation, this would call a userService
+        await new Promise(resolve => setTimeout(resolve, 500));
+
         deleteDialog.value = false;
 
+        notificationService.success(`User ${userToDelete.value.full_name} deleted successfully.`);
+
         // Remove from local list or refetch
-        fetchProducts();
+        fetchUsers();
       } catch (error) {
-        console.error('Error deleting product:', error);
+        console.error('Error deleting user:', error);
+        notificationService.error('Failed to delete user.');
       } finally {
         deleteLoading.value = false;
       }
@@ -472,33 +481,31 @@ export default defineComponent({
 
     // Initialize component
     onMounted(() => {
-      fetchProducts();
-      fetchCategories();
+      fetchUsers();
     });
 
     return {
-      authStore,
-      isAdmin,
+      currentUserId,
       loading,
-      products,
-      categories,
+      users,
       page,
       itemsPerPage,
       totalItems,
       totalPages,
       search,
-      attributeFilter,
-      showAdvancedFilters,
       filters,
-      headers,
+      roleOptions,
       statusOptions,
+      headers,
       deleteDialog,
       deleteLoading,
-      productToDelete,
-      fetchProducts,
+      userToDelete,
+      formatDate,
+      getRoleColor,
+      fetchUsers,
       resetFilters,
       confirmDelete,
-      deleteProduct,
+      deleteUser,
     };
   }
 });

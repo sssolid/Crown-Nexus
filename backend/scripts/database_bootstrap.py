@@ -1,56 +1,82 @@
+# backend/scripts/database_bootstrap.py
 #!/usr/bin/env python
 """
-Bootstrap database script.
-This script will create all tables directly using SQLAlchemy and create an admin user.
+Database bootstrap script.
+
+This script sets up the database with all necessary tables and creates
+an initial admin user. It should be run after the database has been
+created but before starting the application for the first time.
+
+The script:
+1. Creates all tables using SQLAlchemy models
+2. Creates an admin user with provided credentials
+3. Sets up required directories
+4. Verifies database connectivity
+
+Usage:
+    python scripts/database_bootstrap.py [email] [password] [full_name]
+
+    If credentials are not provided, defaults to:
+    - Email: admin@example.com
+    - Password: securepassword
+    - Full name: Admin User
 """
+
+from __future__ import annotations
 
 import asyncio
 import os
 import sys
+import uuid
+from datetime import datetime
 from pathlib import Path
+from typing import Optional, Tuple
 
 # Add parent directory to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import uuid
-from datetime import datetime
-
+from asyncpg.exceptions import PostgresError
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.core.config import settings
 from app.db.base import Base
+from app.db.session import get_db_context
 from app.models.user import User, UserRole, get_password_hash
 
 
-async def create_database():
-    """Create the database if it doesn't exist."""
-    # Connect to default postgres database
-    engine = create_async_engine(
-        f"postgresql+asyncpg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"
-        f"@{settings.POSTGRES_SERVER}/postgres"
-    )
+async def check_connection() -> bool:
+    """
+    Verify database connection.
+
+    Returns:
+        bool: True if connection succeeded, False otherwise
+    """
+    print("Testing database connection...")
 
     try:
-        async with engine.begin() as conn:
-            # Check if database exists
-            result = await conn.execute(
-                text(f"SELECT 1 FROM pg_database WHERE datname = '{settings.POSTGRES_DB}'")
-            )
-            exists = result.scalar() is not None
-
-            if not exists:
-                print(f"Creating database '{settings.POSTGRES_DB}'...")
-                await conn.execute(text(f'CREATE DATABASE "{settings.POSTGRES_DB}"'))
-                print(f"Database '{settings.POSTGRES_DB}' created.")
-            else:
-                print(f"Database '{settings.POSTGRES_DB}' already exists.")
+        engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI))
+        async with engine.connect() as conn:
+            result = await conn.execute(text("SELECT 1"))
+            await result.fetchone()
+            print("✅ Database connection successful!")
+            return True
+    except SQLAlchemyError as e:
+        print(f"❌ Database connection failed: {e}")
+        return False
     finally:
-        await engine.dispose()
+        if 'engine' in locals():
+            await engine.dispose()
 
 
-async def create_tables():
-    """Create all tables using SQLAlchemy."""
+async def create_tables() -> bool:
+    """
+    Create all database tables using SQLAlchemy models.
+
+    Returns:
+        bool: True if tables were created successfully, False otherwise
+    """
     print("Creating tables directly with SQLAlchemy...")
 
     # Create engine connecting to the app database
@@ -79,20 +105,33 @@ async def create_tables():
             print("\nCreated the following tables:")
             for table in tables:
                 print(f"  - {table[0]}")
+
+        return True
+    except SQLAlchemyError as e:
+        print(f"❌ Table creation failed: {e}")
+        return False
     finally:
         await engine.dispose()
 
 
-async def create_admin_user(email, password, full_name):
-    """Create an admin user."""
+async def create_admin_user(email: str, password: str, full_name: str) -> Tuple[bool, Optional[str]]:
+    """
+    Create an admin user.
+
+    Args:
+        email: User email
+        password: User password
+        full_name: User full name
+
+    Returns:
+        Tuple[bool, Optional[str]]: Success status and user ID if created
+    """
     print(f"Creating admin user '{email}'...")
 
-    engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI))
-
     try:
-        async with engine.begin() as conn:
+        async with get_db_context() as db:
             # Check if user already exists
-            result = await conn.execute(
+            result = await db.execute(
                 text("SELECT 1 FROM \"user\" WHERE email = :email"),
                 {"email": email}
             )
@@ -100,7 +139,7 @@ async def create_admin_user(email, password, full_name):
 
             if exists:
                 print(f"User with email '{email}' already exists.")
-                return
+                return True, None
 
             # Hash the password
             hashed_password = get_password_hash(password)
@@ -108,7 +147,7 @@ async def create_admin_user(email, password, full_name):
             now = datetime.now().isoformat()
 
             # Insert user
-            await conn.execute(
+            await db.execute(
                 text(
                     'INSERT INTO "user" (id, email, hashed_password, full_name, role, is_active, created_at, updated_at) '
                     'VALUES (:id, :email, :hashed_password, :full_name, :role, :is_active, :created_at, :updated_at)'
@@ -126,54 +165,67 @@ async def create_admin_user(email, password, full_name):
             )
 
             print(f"✅ Admin user '{email}' created successfully with ID: {user_id}")
-    finally:
-        await engine.dispose()
+            return True, user_id
+    except SQLAlchemyError as e:
+        print(f"❌ Admin user creation failed: {e}")
+        return False, None
 
 
-async def check_connection():
-    """Verify database connection."""
-    print("Testing database connection...")
-
-    engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI))
-
-    try:
-        async with engine.connect() as conn:
-            result = await conn.execute(text("SELECT 1"))
-            print("✅ Database connection successful!")
-    except Exception as e:
-        print(f"❌ Database connection failed: {e}")
-        raise
-    finally:
-        await engine.dispose()
-
-
-async def main():
-    """Main function."""
+async def create_media_directories() -> None:
+    """
+    Create necessary media directories.
+    """
+    print("Creating media directories...")
     os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
 
-    # Create media directories
+    # Create media subdirectories
     for media_type in ["image", "document", "video", "other", "thumbnails"]:
-        os.makedirs(os.path.join(settings.MEDIA_ROOT, media_type), exist_ok=True)
+        dir_path = os.path.join(settings.MEDIA_ROOT, media_type)
+        os.makedirs(dir_path, exist_ok=True)
+        print(f"  - Created {dir_path}")
 
-    # Create database if it doesn't exist
-    await create_database()
 
-    # Test connection
-    await check_connection()
+async def main() -> bool:
+    """
+    Main bootstrap function.
+
+    Returns:
+        bool: True if bootstrap succeeded, False otherwise
+    """
+    # Create media directories
+    create_media_directories()
+
+    # Test database connection
+    if not await check_connection():
+        print("Database connection failed. Cannot continue with bootstrap.")
+        return False
 
     # Create tables
-    await create_tables()
+    if not await create_tables():
+        print("Table creation failed. Cannot continue with bootstrap.")
+        return False
 
-    # Create admin user if specified
+    # Create admin user
     if len(sys.argv) >= 4:
         email = sys.argv[1]
         password = sys.argv[2]
         full_name = sys.argv[3]
-        await create_admin_user(email, password, full_name)
     else:
         # Default admin user
-        await create_admin_user("admin@example.com", "securepassword", "Admin User")
+        email = "admin@example.com"
+        password = "securepassword"
+        full_name = "Admin User"
+        print("Using default admin credentials. Change these in production!")
+
+    user_created, _ = await create_admin_user(email, password, full_name)
+
+    if not user_created:
+        print("Warning: Failed to create admin user.")
+
+    print("\n✅ Database bootstrap completed successfully!")
+    return True
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    success = asyncio.run(main())
+    sys.exit(0 if success else 1)

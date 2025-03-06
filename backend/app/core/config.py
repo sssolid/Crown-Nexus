@@ -1,3 +1,25 @@
+# backend/app/core/config.py
+"""
+Application configuration module.
+
+This module defines the application settings using Pydantic's BaseSettings
+for environment variable validation and loading. It provides a centralized
+configuration system with type validation and default values.
+
+Environment variables can override these settings by using the same name
+as the class attributes. The module uses dotenv for local development
+to read values from a .env file.
+
+Examples:
+    To access configuration values:
+
+    ```python
+    from app.core.config import settings
+
+    db_name = settings.POSTGRES_DB
+    ```
+"""
+
 from __future__ import annotations
 
 import os
@@ -50,7 +72,10 @@ class Settings(BaseSettings):
             v: CORS origins as string or list
 
         Returns:
-            Parsed CORS origins
+            Union[List[str], str]: Parsed CORS origins
+
+        Raises:
+            ValueError: If the value cannot be parsed as a list of origins
         """
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
@@ -63,7 +88,7 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_DB: str = "crown_nexus"  # Database name without slash
-    SQLALCHEMY_DATABASE_URI: Optional[str] = None
+    SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
@@ -75,13 +100,23 @@ class Settings(BaseSettings):
             values: Settings values
 
         Returns:
-            Assembled database URI
+            Any: Assembled database URI
         """
         if isinstance(v, str):
             return v
 
-        # Directly construct the URL as a string to avoid issues with path formatting
-        return f"postgresql+asyncpg://{values.get('POSTGRES_USER')}:{values.get('POSTGRES_PASSWORD')}@{values.get('POSTGRES_SERVER')}/{values.get('POSTGRES_DB')}"
+        # Get required values, using empty string as fallback
+        user = values.get("POSTGRES_USER", "")
+        password = values.get("POSTGRES_PASSWORD", "")
+        server = values.get("POSTGRES_SERVER", "")
+        db = values.get("POSTGRES_DB", "")
+
+        # Ensure all required components are present
+        if not all([user, password, server, db]):
+            return None
+
+        # Build the connection string correctly
+        return f"postgresql+asyncpg://{user}:{password}@{server}/{db}"
 
     # Elasticsearch
     ELASTICSEARCH_HOST: str = "localhost"
@@ -104,7 +139,7 @@ class Settings(BaseSettings):
             v: Media root path
 
         Returns:
-            Media root path
+            str: Media root path
         """
         # Create main media directory
         os.makedirs(v, exist_ok=True)

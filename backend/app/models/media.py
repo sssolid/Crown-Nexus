@@ -1,212 +1,202 @@
-# backend/app/schemas/media.py
+# backend/app/models/media.py
 """
-Media asset schemas.
+Media asset models.
 
-This module provides Pydantic schemas for media-related data validation
-and serialization. The schemas support:
-- Request validation for media uploads and updates
-- Response serialization with proper URLs
-- File upload responses and errors
-- Pagination for media listings
+This module defines models for managing media assets such as images,
+documents, videos, and other files. It supports:
+- Different media types and visibility levels
+- User-based ownership and approval workflows
+- Association with products
+- Metadata storage for additional file information
 
-These schemas ensure consistent handling of media assets throughout
-the application.
+The models provide a comprehensive system for managing and controlling
+access to uploaded files within the application.
 """
 
 from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from enum import Enum
+from typing import Dict, List, Optional, TYPE_CHECKING
 
-from pydantic import BaseModel, ConfigDict, Field, validator
+from sqlalchemy import DateTime, Enum as SQLAEnum, ForeignKey, Integer, String, func, text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import expression
 
-from app.models.media import MediaType, MediaVisibility
+from app.db.base_class import Base
+from app.models.associations import product_media_association
+
+# For type hints only, not runtime imports
+if TYPE_CHECKING:
+    from app.models.product import Product
+    from app.models.user import User
 
 
-class MediaBase(BaseModel):
+class MediaType(str, Enum):
     """
-    Base schema for Media data.
+    Types of media files supported by the system.
 
-    Defines common fields used across media-related schemas.
+    Defines the different categories of files that can be uploaded
+    and helps determine appropriate handling and validation rules.
+    """
+    IMAGE = "image"
+    DOCUMENT = "document"
+    VIDEO = "video"
+    OTHER = "other"
+
+
+class MediaVisibility(str, Enum):
+    """
+    Visibility levels for media files.
+
+    Controls who can access the media files:
+    - PUBLIC: Accessible without authentication
+    - PRIVATE: Requires authentication
+    - RESTRICTED: Requires specific permissions
+    """
+    PUBLIC = "public"
+    PRIVATE = "private"
+    RESTRICTED = "restricted"
+
+
+class Media(Base):
+    """
+    Media model for storing file metadata.
+
+    This model tracks uploaded files and their metadata:
+    - Basic file information (name, path, size, type)
+    - Access control via visibility settings
+    - Ownership tracking
+    - Approval workflow status
+    - Product associations
 
     Attributes:
-        filename: Original file name
-        media_type: Type of media (image, document, video, other)
-        visibility: Visibility level
-        file_metadata: Additional file metadata
-    """
-    filename: str
-    media_type: MediaType = MediaType.IMAGE
-    visibility: MediaVisibility = MediaVisibility.PRIVATE
-    file_metadata: Dict[str, Any] = Field(default_factory=dict)
-
-
-class MediaCreate(BaseModel):
-    """
-    Schema for creating new Media (separate from file upload).
-
-    This schema is used for the form data part of media uploads,
-    separate from the actual file data.
-
-    Attributes:
-        media_type: Type of media
-        visibility: Visibility level
-        file_metadata: Additional file metadata
-    """
-    media_type: MediaType = MediaType.IMAGE
-    visibility: MediaVisibility = MediaVisibility.PRIVATE
-    file_metadata: Dict[str, Any] = Field(default_factory=dict)
-
-
-class MediaUpdate(BaseModel):
-    """
-    Schema for updating existing Media.
-
-    Defines fields that can be updated on a media asset, with all
-    fields being optional to allow partial updates.
-
-    Attributes:
-        filename: Original file name (optional)
-        media_type: Type of media (optional)
-        visibility: Visibility level (optional)
-        file_metadata: Additional file metadata (optional)
-        is_approved: Whether the media is approved (optional)
-    """
-    filename: Optional[str] = None
-    media_type: Optional[MediaType] = None
-    visibility: Optional[MediaVisibility] = None
-    file_metadata: Optional[Dict[str, Any]] = None
-    is_approved: Optional[bool] = None
-
-
-class MediaInDB(MediaBase):
-    """
-    Schema for Media as stored in the database.
-
-    Extends the base media schema with database-specific fields.
-
-    Attributes:
-        id: Media UUID
+        id: Primary key UUID
+        filename: Original filename
         file_path: Path to the stored file
         file_size: Size of the file in bytes
+        media_type: Type of media (image, document, video, other)
         mime_type: MIME type of the file
-        uploaded_by_id: Reference to user who uploaded the file
-        is_approved: Whether the media is approved
-        approved_by_id: Reference to user who approved the media (optional)
-        approved_at: Approval timestamp (optional)
+        visibility: Visibility level
+        file_metadata: Additional metadata as JSON
+        uploaded_by_id: Reference to the user who uploaded the file
+        is_approved: Whether the file has been approved for use
+        approved_by_id: Reference to the user who approved the file
+        approved_at: When the file was approved
+        products: Associated products
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
-    id: uuid.UUID
-    file_path: str
-    file_size: int
-    mime_type: str
-    uploaded_by_id: uuid.UUID
-    is_approved: bool
-    approved_by_id: Optional[uuid.UUID] = None
-    approved_at: Optional[datetime] = None
-    created_at: datetime
-    updated_at: datetime
+    __tablename__ = "media"
 
-    model_config = ConfigDict(from_attributes=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    filename: Mapped[str] = mapped_column(
+        String(255), nullable=False
+    )
+    file_path: Mapped[str] = mapped_column(
+        String(512), nullable=False, unique=True
+    )
+    file_size: Mapped[int] = mapped_column(
+        Integer, nullable=False
+    )
+    media_type: Mapped[MediaType] = mapped_column(
+        SQLAEnum(MediaType), default=MediaType.IMAGE, nullable=False
+    )
+    mime_type: Mapped[str] = mapped_column(
+        String(127), nullable=False
+    )
+    visibility: Mapped[MediaVisibility] = mapped_column(
+        SQLAEnum(MediaVisibility), default=MediaVisibility.PRIVATE, nullable=False
+    )
+    # Renamed from 'metadata' to 'file_metadata' to avoid conflict with SQLAlchemy's reserved attribute
+    file_metadata: Mapped[Dict] = mapped_column(
+        JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb")
+    )
 
+    # Upload and approval tracking
+    uploaded_by_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("user.id"), nullable=False
+    )
+    is_approved: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=expression.false(), nullable=False
+    )
+    approved_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+    )
+    approved_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
-class Media(MediaInDB):
-    """
-    Schema for Media responses.
+    # Relationships
+    products: Mapped[List["Product"]] = relationship(
+        "app.models.product.Product",
+        secondary=product_media_association,
+        back_populates="media"
+    )
+    uploaded_by: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[uploaded_by_id],
+        backref="uploaded_media"
+    )
+    approved_by: Mapped[Optional["User"]] = relationship(
+        "User",
+        foreign_keys=[approved_by_id],
+        backref="approved_media"
+    )
 
-    This schema is used for API responses returning media data.
-    It extends the database schema with URLs for frontend use.
+    # Audit timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
 
-    Attributes:
-        url: URL to access the file
-        thumbnail_url: URL to access the thumbnail (optional)
-    """
-    url: str
-    thumbnail_url: Optional[str] = None
-
-    @validator("url", "thumbnail_url", pre=True, always=True)
-    def set_urls(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
+    def __repr__(self) -> str:
         """
-        Set URLs based on file_path for frontend consumption.
-
-        Args:
-            v: Current value (should be None since this is a computed field)
-            values: Values of other fields
+        String representation of the media.
 
         Returns:
-            Optional[str]: URL to the file or thumbnail
+            str: Media representation with filename and type
         """
-        if v is not None:  # If value already set somehow
-            return v
+        return f"<Media {self.filename} ({self.media_type})>"
 
-        # Only continue if we have file_path and id
-        if "file_path" not in values or "id" not in values:
-            return None
+    @property
+    def extension(self) -> str:
+        """
+        Get the file extension from the filename.
 
-        # For thumbnail, check if we're processing thumbnail_url and it's an image
-        is_thumbnail = False
-        if values.get("id") and values.get("media_type") == MediaType.IMAGE:
-            try:
-                # Determine which field we're validating by looking at which one is missing
-                current_field = next(iter(set(cls.__fields__.keys()) - set(values.keys())))
-                is_thumbnail = current_field == "thumbnail_url"
-            except (StopIteration, KeyError):
-                pass
+        Returns:
+            str: File extension (lowercase, without leading period)
+        """
+        if not self.filename or '.' not in self.filename:
+            return ""
 
-        # Base URL for media files
-        base_url = "/api/v1/media"
+        return self.filename.rsplit('.', 1)[1].lower()
 
-        if is_thumbnail:
-            return f"{base_url}/thumbnail/{values.get('id')}"
-        else:
-            return f"{base_url}/file/{values.get('id')}"
+    @property
+    def is_image(self) -> bool:
+        """
+        Check if the media is an image.
 
+        Returns:
+            bool: True if media_type is IMAGE
+        """
+        return self.media_type == MediaType.IMAGE
 
-class MediaListResponse(BaseModel):
-    """
-    Paginated response for media listings.
+    @property
+    def has_thumbnail(self) -> bool:
+        """
+        Check if the media should have a thumbnail.
 
-    This schema provides a structure for paginated media list responses.
-
-    Attributes:
-        items: List of media items
-        total: Total number of items
-        page: Current page number
-        page_size: Number of items per page
-        pages: Total number of pages
-    """
-    items: List[Media]
-    total: int
-    page: int
-    page_size: int
-    pages: int
-
-
-class FileUploadResponse(BaseModel):
-    """
-    Response after file upload.
-
-    This schema defines the structure of responses to file uploads.
-
-    Attributes:
-        media: Media information
-        message: Success message
-    """
-    media: Media
-    message: str = "File uploaded successfully"
-
-
-class FileUploadError(BaseModel):
-    """
-    Error response for file upload.
-
-    This schema defines the structure of error responses for file uploads.
-
-    Attributes:
-        error: Error type
-        detail: Detailed error information (optional)
-    """
-    error: str
-    detail: Optional[str] = None
+        Returns:
+            bool: True if media is an image and should have a thumbnail
+        """
+        return self.is_image

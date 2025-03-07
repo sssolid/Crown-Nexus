@@ -30,8 +30,7 @@ sudo usermod -aG sudo crown
 
 {% for role in server.assigned_roles %}
 # Role-specific setup: {{ role }}
-{{ role_templates[role].render(server=server, server_index=server_index, cluster=cluster) if role in role_templates else "# No template found for role: " + role }}
-
+{{ role_templates[role].render(server=server, server_index=server_index, cluster=cluster, ServerRole=ServerRole) if role in role_templates else "# No template found for role: " + role }}
 {% endfor %}
 
 # Enable firewall

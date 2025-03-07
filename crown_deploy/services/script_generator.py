@@ -38,6 +38,9 @@ class ScriptGenerator:
             lstrip_blocks=True,
         )
 
+        # Add ServerRole to global Jinja environment so it's available in all templates
+        self.jinja_env.globals['ServerRole'] = ServerRole
+
     def generate_all_scripts(self, cluster: ClusterConfig) -> None:
         """Generate all deployment scripts for the cluster."""
         logger.info("Generating deployment scripts")
@@ -168,11 +171,12 @@ class ScriptGenerator:
             "server_index": server_index,
             "cluster": cluster,
             "role_templates": role_templates,
+            "ServerRole": ServerRole,  # Also add to context for backwards compatibility
         }
 
         # Create output file
         setup_file = self.output_dir / f"server{server_index}" / "setup.sh"
-        setup_file.write_text(template.render(**context))
+        setup_file.write_text(template.render(**context), encoding='utf-8')
 
         logger.info("Generated server setup script",
                     server=server.hostname,
@@ -190,7 +194,7 @@ class ScriptGenerator:
 
         # Create output file
         deploy_file = self.output_dir / "deploy.sh"
-        deploy_file.write_text(template.render(**context))
+        deploy_file.write_text(template.render(**context), encoding='utf-8')
 
         logger.info("Generated main deployment script", file=str(deploy_file))
 
@@ -207,7 +211,7 @@ class ScriptGenerator:
 
         # Create output file
         rollback_file = self.output_dir / "rollback.sh"
-        rollback_file.write_text(template.render(**context))
+        rollback_file.write_text(template.render(**context), encoding='utf-8')
 
         # Generate individual server rollback scripts
         for i, server in enumerate(cluster.servers, 1):

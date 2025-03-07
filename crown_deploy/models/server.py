@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Literal, Optional, Set, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
+from crown_deploy.utils.path import normalize_path, validate_key_path
 
 
 class ServerRole(str, Enum):
@@ -53,6 +54,22 @@ class ServerConnection(BaseModel):
 
     class Config:
         extra = "forbid"
+
+    @validator('key_path')
+    def validate_key_path(cls, v: str) -> str:
+        """Validate and normalize the SSH key path."""
+        normalized_path = normalize_path(v)
+
+        # Only validate if we're not in test mode
+        # This allows tests to run without actual SSH key files
+        import os
+        if os.environ.get('CROWN_TESTING') != 'true':
+            validated_path = validate_key_path(normalized_path)
+            if validated_path is None:
+                raise ValueError(f"Invalid SSH key path: {normalized_path}")
+            return validated_path
+
+        return normalized_path
 
 
 class Server(BaseModel):

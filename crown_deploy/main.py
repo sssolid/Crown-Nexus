@@ -25,6 +25,7 @@ from crown_deploy.services.analyzer import PythonServerAnalyzer
 from crown_deploy.services.script_generator import ScriptGenerator
 from crown_deploy.utils.security import generate_deployment_credentials
 from crown_deploy.utils.errors import DeploymentError
+from crown_deploy.utils.path import normalize_path
 
 # Configure structured logging
 logging.basicConfig(level=logging.INFO)
@@ -60,27 +61,40 @@ async def analyze_server_cluster(inventory_file: str) -> ClusterConfig:
 
 
 def read_server_inventory(inventory_file: str) -> List[ServerConnection]:
-    """Read server inventory from CSV file."""
+    """
+    Read server inventory from CSV file.
+
+    Args:
+        inventory_file: Path to the CSV inventory file
+
+    Returns:
+        List of ServerConnection objects
+
+    Raises:
+        DeploymentError: If reading the inventory file fails
+    """
     import csv
-    import platform
 
     servers = []
     try:
         with open(inventory_file, 'r') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                # Expand user home directory and normalize path
-                key_path = os.path.expanduser(row['key_path'])
+                # Normalize the key path during inventory reading
+                normalized_key_path = normalize_path(row['key_path'])
+                logger.debug("Normalized SSH key path",
+                             original=row['key_path'],
+                             normalized=normalized_key_path)
 
                 servers.append(ServerConnection(
                     hostname=row['hostname'],
                     ip=row['ip'],
                     username=row['username'],
-                    key_path=key_path,
+                    key_path=normalized_key_path,
                     description=row.get('description', '')
                 ))
     except Exception as e:
-        logger.error(f"Error reading inventory file: {e}")
+        logger.error("Error reading inventory file", error=str(e))
         raise DeploymentError(f"Failed to read inventory file: {e}")
 
     return servers

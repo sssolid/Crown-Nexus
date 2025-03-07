@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from crown_deploy.models.server import ServerConnection
 from crown_deploy.models.config import DeploymentConfig
-from crown_deploy.services.python_analyzer import PythonServerAnalyzer
+from crown_deploy.services.analyzer import PythonServerAnalyzer
 from crown_deploy.services.script_generator import ScriptGenerator
 from crown_deploy.utils.security import generate_deployment_credentials
 

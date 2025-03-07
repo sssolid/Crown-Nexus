@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from crown_deploy.models.server import ServerConnection
-from crown_deploy.services.python_analyzer import PythonServerAnalyzer
+from crown_deploy.services.analyzer import PythonServerAnalyzer
 
 
 async def main():
@@ -33,13 +33,13 @@ async def main():
         ),
         # Add more servers as needed
     ]
-    
+
     # Create the analyzer
     analyzer = PythonServerAnalyzer()
-    
+
     # Analyze all servers and create a cluster configuration
     cluster = await analyzer.analyze_and_create_cluster(servers)
-    
+
     # Print the results
     print("\n=== Server Analysis Results ===")
     for i, server in enumerate(cluster.servers, 1):
@@ -52,7 +52,7 @@ async def main():
             print(f"  - OS: {server.specs.os_info}")
         print(f"  - Recommended roles: {roles_str}")
         print()
-    
+
     # Check for any role assignment issues
     errors = cluster.validate_roles()
     if errors:

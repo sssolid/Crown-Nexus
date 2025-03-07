@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from crown_deploy.models.server import Server, ServerConnection, ServerRole, ServerSpecs
 from crown_deploy.models.config import ClusterConfig
 from crown_deploy.utils.errors import AnalyzerError, ServerConnectionError
+from crown_deploy.utils.path import normalize_path, get_ssh_key_path
 
 # Initialize logger
 logger = structlog.get_logger()
@@ -96,26 +97,15 @@ class PythonServerAnalyzer:
         hw_info: Dict[str, str] = {}
 
         try:
-            # Handle path formatting for different platforms
-            import platform
-            import os
+            # Normalize SSH key path for cross-platform compatibility
+            normalized_key_path = get_ssh_key_path(connection.key_path)
+            logger.debug("Using SSH key", hostname=connection.hostname, key_path=normalized_key_path)
 
-            # Normalize SSH key path for the current OS
-            ssh_key_path = connection.key_path
-            if platform.system() == "Windows":
-                # Convert windows path to proper format if needed
-                ssh_key_path = ssh_key_path.replace('\\', '/')
-                # If path starts with drive letter, reformat properly
-                if ':' in ssh_key_path:
-                    # Convert C:\path\to\key to /c/path/to/key format
-                    drive, path = os.path.splitdrive(ssh_key_path)
-                    ssh_key_path = f"/{drive[0].lower()}{path}"
-
-            # Set up SSH connection
+            # Set up SSH connection with normalized path
             async with asyncssh.connect(
                 connection.ip,
                 username=connection.username,
-                client_keys=[ssh_key_path],
+                client_keys=[normalized_key_path],
                 known_hosts=None  # In production, you'd want to use known_hosts
             ) as ssh:
                 logger.debug("SSH connection established", hostname=connection.hostname)

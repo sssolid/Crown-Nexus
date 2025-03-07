@@ -106,6 +106,8 @@ This will output recommended role assignments for your servers.
 
 ### 3. Generate Deployment Scripts
 
+#### Traditional Deployment
+
 ```bash
 python -m crown_deploy.main generate \
   --inventory /path/to/inventory.csv \
@@ -115,6 +117,37 @@ python -m crown_deploy.main generate \
   --repo https://github.com/your-org/crown-nexus.git \
   --branch main \
   --admin-email admin@example.com
+  --strategy traditional
+```
+
+#### Docker Deployment
+
+```bash
+python -m crown_deploy.main generate \
+  --inventory inventory.csv \
+  --templates ./templates \
+  --output ./deployment \
+  --domain example.com \
+  --repo https://github.com/your-org/crown-nexus.git \
+  --admin-email admin@example.com \
+  --strategy docker \
+  --docker-registry registry.example.com
+```
+
+#### Kubernetes Deployment
+
+```bash
+python -m crown_deploy.main generate \
+  --inventory inventory.csv \
+  --templates ./templates \
+  --output ./deployment \
+  --domain example.com \
+  --repo https://github.com/your-org/crown-nexus.git \
+  --admin-email admin@example.com \
+  --strategy kubernetes \
+  --docker-registry registry.example.com \
+  --k8s-namespace crown-nexus-prod \
+  --storage-class fast-ssd
 ```
 
 ### 4. Deploy Crown Nexus

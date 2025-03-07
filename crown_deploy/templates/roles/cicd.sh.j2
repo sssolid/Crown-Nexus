@@ -1,0 +1,241 @@
+## CI/CD Role Configuration
+echo "Setting up CI/CD role on {{ server.hostname }}..."
+
+# Install required packages
+sudo apt install -y docker.io docker-compose git nginx certbot python3-certbot-nginx
+echo "cicd: docker.io docker-compose git nginx certbot python3-certbot-nginx" >> /tmp/crown-nexus-installed/packages.txt
+
+# Open necessary ports
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 8080/tcp  # Jenkins
+
+# Configure Docker
+echo "Configuring Docker..."
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker crown
+
+# Create directory for CI/CD services
+sudo mkdir -p /opt/crown-nexus/ci
+
+# Setup Jenkins with Docker Compose
+echo "Setting up Jenkins..."
+cat > /tmp/docker-compose.yml << 'EOF'
+version: '3'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+    environment:
+      - JENKINS_OPTS="--prefix=/jenkins"
+
+  registry:
+    image: registry:2
+    container_name: docker-registry
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./registry:/var/lib/registry
+    environment:
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
+
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./sonarqube/data:/opt/sonarqube/data
+      - ./sonarqube/extensions:/opt/sonarqube/extensions
+      - ./sonarqube/logs:/opt/sonarqube/logs
+    environment:
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_JDBC_URL=jdbc:h2:tcp://localhost/sonar
+EOF
+
+sudo cp /tmp/docker-compose.yml /opt/crown-nexus/ci/
+cd /opt/crown-nexus/ci
+
+# Setup NGINX for CI/CD services
+echo "Configuring Nginx for CI/CD services..."
+cat > /tmp/nginx-cicd.conf << 'EOF'
+server {
+    listen 80;
+    server_name ci.$CROWN_DOMAIN;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name registry.$CROWN_DOMAIN;
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Docker registry requires these settings
+        client_max_body_size 0;
+        chunked_transfer_encoding on;
+    }
+}
+
+server {
+    listen 80;
+    server_name sonar.$CROWN_DOMAIN;
+
+    location / {
+        proxy_pass http://localhost:9000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+
+envsubst < /tmp/nginx-cicd.conf > /etc/nginx/sites-available/cicd
+sudo ln -s /etc/nginx/sites-available/cicd /etc/nginx/sites-enabled/ 2>/dev/null || true
+sudo nginx -t
+sudo systemctl restart nginx
+
+# Setup SSL with Let's Encrypt
+echo "Setting up SSL for CI/CD services..."
+sudo certbot --nginx -d ci.$CROWN_DOMAIN -d registry.$CROWN_DOMAIN -d sonar.$CROWN_DOMAIN --non-interactive --agree-tos --email $ADMIN_EMAIL
+
+# Start the CI/CD stack
+echo "Starting CI/CD services..."
+cd /opt/crown-nexus/ci
+sudo docker-compose up -d
+
+# Create Jenkinsfile for Crown Nexus
+echo "Creating Jenkinsfile template..."
+cat > /tmp/Jenkinsfile << 'EOF'
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = "registry.$CROWN_DOMAIN"
+        DOCKER_IMAGE = "$DOCKER_REGISTRY/crown-nexus"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Backend Tests') {
+            steps {
+                dir('backend') {
+                    sh 'pip install -r requirements.txt'
+                    sh 'pip install pytest pytest-cov'
+                    sh 'pytest --cov=app tests/'
+                }
+            }
+        }
+
+        stage('Frontend Tests') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'sonar-scanner -Dsonar.projectKey=crown-nexus -Dsonar.sources=.'
+                }
+            }
+        }
+
+        stage('Build Backend Image') {
+            steps {
+                dir('backend') {
+                    sh "docker build -t $DOCKER_IMAGE:backend-$DOCKER_TAG ."
+                    sh "docker tag $DOCKER_IMAGE:backend-$DOCKER_TAG $DOCKER_IMAGE:backend-latest"
+                }
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                dir('frontend') {
+                    sh "docker build -t $DOCKER_IMAGE:frontend-$DOCKER_TAG ."
+                    sh "docker tag $DOCKER_IMAGE:frontend-$DOCKER_TAG $DOCKER_IMAGE:frontend-latest"
+                }
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh "docker push $DOCKER_IMAGE:backend-$DOCKER_TAG"
+                sh "docker push $DOCKER_IMAGE:frontend-$DOCKER_TAG"
+                sh "docker push $DOCKER_IMAGE:backend-latest"
+                sh "docker push $DOCKER_IMAGE:frontend-latest"
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Build successful!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
+EOF
+
+sudo mkdir -p /opt/crown-nexus/ci/templates
+sudo cp /tmp/Jenkinsfile /opt/crown-nexus/ci/templates/
+sudo chown -R crown:crown /opt/crown-nexus/ci
+
+# Create script to retrieve Jenkins initial admin password
+echo "Creating script to get Jenkins admin password..."
+cat > /tmp/get-jenkins-password.sh << 'EOF'
+#!/bin/bash
+echo "Waiting for Jenkins to start..."
+while [ ! -f /opt/crown-nexus/ci/jenkins_home/secrets/initialAdminPassword ]; do
+    sleep 5
+done
+echo "Jenkins initial admin password:"
+cat /opt/crown-nexus/ci/jenkins_home/secrets/initialAdminPassword
+EOF
+
+chmod +x /tmp/get-jenkins-password.sh
+sudo mv /tmp/get-jenkins-password.sh /opt/crown-nexus/ci/
+
+echo "CI/CD setup completed on {{ server.hostname }}"
+echo "Access Jenkins at: https://ci.$CROWN_DOMAIN"
+echo "Access Docker Registry at: https://registry.$CROWN_DOMAIN"
+echo "Access SonarQube at: https://sonar.$CROWN_DOMAIN"
+echo "Run /opt/crown-nexus/ci/get-jenkins-password.sh to get the initial Jenkins admin password"

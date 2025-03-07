@@ -1,0 +1,183 @@
+## Backend Role Configuration
+echo "Setting up Backend role on {{ server.hostname }}..."
+
+# Install required packages
+sudo apt install -y python3-dev python3-pip python3-venv
+echo "backend: python3-dev python3-pip python3-venv" >> /tmp/crown-nexus-installed/packages.txt
+
+# Open backend port to load balancer and frontend servers
+{% for lb_server in cluster.get_servers_by_role(ServerRole.LOAD_BALANCER) %}
+sudo ufw allow from {{ lb_server.ip }} to any port 8000 proto tcp
+{% endfor %}
+{% for frontend_server in cluster.get_servers_by_role(ServerRole.FRONTEND) %}
+sudo ufw allow from {{ frontend_server.ip }} to any port 8000 proto tcp
+{% endfor %}
+
+# Clone repository
+echo "Cloning application repository..."
+sudo -u crown git clone $CROWN_REPO_URL -b $CROWN_BRANCH /home/crown/$CROWN_APP_NAME 2>/dev/null || (
+    cd /home/crown/$CROWN_APP_NAME && sudo -u crown git fetch && sudo -u crown git checkout $CROWN_BRANCH && sudo -u crown git pull
+)
+
+# Setup Python environment for backend
+echo "Setting up Python environment..."
+cd /home/crown/$CROWN_APP_NAME/backend
+sudo -u crown python3 -m venv venv
+sudo -u crown /home/crown/$CROWN_APP_NAME/backend/venv/bin/pip install --upgrade pip
+sudo -u crown /home/crown/$CROWN_APP_NAME/backend/venv/bin/pip install -r requirements.txt
+sudo -u crown /home/crown/$CROWN_APP_NAME/backend/venv/bin/pip install gunicorn uvloop httptools
+
+# Determine database server IP
+DB_SERVER_IP=""
+{% for db_server in cluster.get_servers_by_role(ServerRole.DATABASE) %}
+  {% if loop.first %}
+DB_SERVER_IP="{{ db_server.ip }}"
+  {% endif %}
+{% endfor %}
+
+# Determine Redis server IP
+REDIS_SERVER_IP=""
+{% for redis_server in cluster.get_servers_by_role(ServerRole.REDIS) %}
+  {% if loop.first %}
+REDIS_SERVER_IP="{{ redis_server.ip }}"
+  {% endif %}
+{% endfor %}
+# If no dedicated Redis server, check if Redis is on this server
+{% if not REDIS_SERVER_IP and ServerRole.REDIS in server.assigned_roles %}
+REDIS_SERVER_IP="127.0.0.1"
+{% endif %}
+
+# Determine Elasticsearch server IP
+ES_SERVER_IP=""
+{% for es_server in cluster.get_servers_by_role(ServerRole.ELASTICSEARCH) %}
+  {% if loop.first %}
+ES_SERVER_IP="{{ es_server.ip }}"
+  {% endif %}
+{% endfor %}
+# If no dedicated Elasticsearch server, check if Elasticsearch is on this server
+{% if not ES_SERVER_IP and ServerRole.ELASTICSEARCH in server.assigned_roles %}
+ES_SERVER_IP="127.0.0.1"
+{% endif %}
+
+# Create environment configuration
+echo "Creating environment configuration..."
+cat > /tmp/.env << 'EOF'
+PROJECT_NAME="Crown Nexus"
+API_V1_STR="/api/v1"
+SECRET_KEY="$SECRET_KEY"
+BACKEND_CORS_ORIGINS=["https://$CROWN_DOMAIN", "https://www.$CROWN_DOMAIN"]
+POSTGRES_SERVER=$DB_SERVER_IP
+POSTGRES_USER=$DB_USER
+POSTGRES_PASSWORD=$DB_PASSWORD
+POSTGRES_DB=$DB_NAME
+ELASTICSEARCH_HOST=$ES_SERVER_IP
+ELASTICSEARCH_PORT=9200
+REDIS_HOST=$REDIS_SERVER_IP
+REDIS_PORT=6379
+REDIS_PASSWORD=$REDIS_PASSWORD
+EOF
+
+envsubst < /tmp/.env | sudo tee /home/crown/$CROWN_APP_NAME/backend/.env > /dev/null
+sudo chown crown:crown /home/crown/$CROWN_APP_NAME/backend/.env
+
+# Create logs directory
+echo "Creating logs directory..."
+sudo -u crown mkdir -p /home/crown/$CROWN_APP_NAME/backend/logs
+
+# Create media directories
+echo "Creating media directories..."
+sudo -u crown mkdir -p /home/crown/$CROWN_APP_NAME/backend/media/{image,document,video,other,thumbnails}
+
+# Create gunicorn configuration
+echo "Creating Gunicorn configuration..."
+sudo -u crown mkdir -p /home/crown/$CROWN_APP_NAME/backend/gunicorn
+cat > /tmp/gunicorn_conf.py << 'EOF'
+import multiprocessing
+
+workers_per_core_str = "1"
+web_concurrency_str = "2"
+host = "0.0.0.0"
+port = "8000"
+bind_env = f"{host}:{port}"
+use_loglevel = "info"
+workers_per_core = int(workers_per_core_str)
+cores = multiprocessing.cpu_count()
+workers = max(int(web_concurrency_str), workers_per_core * cores)
+accesslog = "/home/crown/$CROWN_APP_NAME/backend/logs/access.log"
+errorlog = "/home/crown/$CROWN_APP_NAME/backend/logs/error.log"
+
+# Gunicorn config
+bind = bind_env
+workers = workers
+worker_class = "uvicorn.workers.UvicornWorker"
+loglevel = use_loglevel
+EOF
+
+envsubst < /tmp/gunicorn_conf.py | sudo tee /home/crown/$CROWN_APP_NAME/backend/gunicorn/gunicorn_conf.py > /dev/null
+sudo chown crown:crown /home/crown/$CROWN_APP_NAME/backend/gunicorn/gunicorn_conf.py
+
+# Create systemd service
+echo "Creating systemd service..."
+cat > /tmp/crown-nexus.service << 'EOF'
+[Unit]
+Description=Crown Nexus API service
+After=network.target postgresql.service elasticsearch.service redis-server.service
+
+[Service]
+User=crown
+Group=crown
+WorkingDirectory=/home/crown/$CROWN_APP_NAME/backend
+Environment="PATH=/home/crown/$CROWN_APP_NAME/backend/venv/bin"
+ExecStart=/home/crown/$CROWN_APP_NAME/backend/venv/bin/gunicorn -c gunicorn/gunicorn_conf.py app.main:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+envsubst < /tmp/crown-nexus.service | sudo tee /etc/systemd/system/$CROWN_APP_NAME.service > /dev/null
+
+# Initialize database and run migrations (only if database is ready)
+echo "Initializing database..."
+cd /home/crown/$CROWN_APP_NAME/backend
+# Try to connect to database first
+export PGPASSWORD=$DB_PASSWORD
+if psql -h $DB_SERVER_IP -U $DB_USER -d $DB_NAME -c 'SELECT 1' &>/dev/null; then
+    sudo -u crown /home/crown/$CROWN_APP_NAME/backend/venv/bin/python scripts/init_db.py
+    sudo -u crown /home/crown/$CROWN_APP_NAME/backend/venv/bin/alembic upgrade head
+
+    # Create admin user
+    echo "Creating admin user..."
+    sudo -u crown /home/crown/$CROWN_APP_NAME/backend/venv/bin/python scripts/create_admin.py "$ADMIN_EMAIL" "$ADMIN_PASSWORD" "$ADMIN_NAME"
+else
+    echo "Warning: Could not connect to database. Skipping database initialization."
+fi
+unset PGPASSWORD
+
+# Enable and start the service
+sudo systemctl daemon-reload
+sudo systemctl enable $CROWN_APP_NAME
+sudo systemctl start $CROWN_APP_NAME
+
+# Configure log rotation
+echo "Configuring log rotation..."
+cat > /tmp/logrotate-config << 'EOF'
+/home/crown/$CROWN_APP_NAME/backend/logs/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 crown crown
+    sharedscripts
+    postrotate
+        systemctl reload $CROWN_APP_NAME
+    endscript
+}
+EOF
+
+envsubst < /tmp/logrotate-config | sudo tee /etc/logrotate.d/$CROWN_APP_NAME > /dev/null
+
+echo "Backend setup completed on {{ server.hostname }}"

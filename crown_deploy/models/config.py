@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field, validator
 
 from crown_deploy.models.server import Server, ServerRole
+from crown_deploy.models.deployment_strategy import DeploymentStrategy
 
 
 class DeploymentConfig(BaseModel):
@@ -28,6 +29,9 @@ class DeploymentConfig(BaseModel):
     admin_password: str = ""
     redis_password: str = ""
     secret_key: str = ""
+
+    # Deployment strategy
+    strategy: DeploymentStrategy = Field(default_factory=DeploymentStrategy)
 
     # Generated during deployment
     deployment_id: str = Field(default_factory=lambda: str(uuid.uuid4()))

@@ -1,0 +1,45 @@
+FROM {{ cluster.deployment_config.strategy.base_images.backend }}
+
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONPATH=/app \
+PYTHONDONTWRITEBYTECODE=1 \
+PYTHONUNBUFFERED=1 \
+PIP_NO_CACHE_DIR=off \
+PIP_DISABLE_PIP_VERSION_CHECK=on
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+build-essential \
+libpq-dev \
+&& rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+pip install -r requirements.txt && \
+pip install gunicorn uvicorn[standard] alembic
+
+# Create necessary directories
+RUN mkdir -p /app/media /app/logs
+
+# Copy code
+COPY . .
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+python -m alembic upgrade head\n\
+exec gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000\
+' > /app/start.sh && \
+chmod +x /app/start.sh
+
+# Make media directory writable
+RUN chmod -R 777 /app/media /app/logs
+
+# Command to run on container start
+CMD ["/app/start.sh"]
+
+# Health check to ensure the application is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+CMD curl -f http://localhost:8000/api/v1/health || exit 1

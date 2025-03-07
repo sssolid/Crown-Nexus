@@ -1,0 +1,217 @@
+version: '{{ cluster.deployment_config.strategy.docker.compose_version }}'
+
+services:
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: {% if cluster.deployment_config.strategy.docker.registry %}{{ cluster.deployment_config.strategy.docker.registry }}/{% endif %}crown-nexus-frontend:latest
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx_config:/etc/nginx/conf.d
+      - nginx_certs:/etc/letsencrypt
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - frontend_build:/app/dist
+      {% endif %}
+    depends_on:
+      - backend
+    networks:
+      - crown-nexus-network
+    environment:
+      - CROWN_DOMAIN={{ cluster.deployment_config.domain }}
+      - BACKEND_URL=http://backend:8000
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: {{ cluster.deployment_config.strategy.docker.replicas.frontend }}
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    {% endif %}
+
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: {% if cluster.deployment_config.strategy.docker.registry %}{{ cluster.deployment_config.strategy.docker.registry }}/{% endif %}crown-nexus-backend:latest
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    depends_on:
+      - database
+      - redis
+      {% if any(server for server in cluster.servers if ServerRole.ELASTICSEARCH in server.assigned_roles) %}
+      - elasticsearch
+      {% endif %}
+    volumes:
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - backend_media:/app/media
+      - backend_logs:/app/logs
+      {% endif %}
+    networks:
+      - crown-nexus-network
+    environment:
+      - PROJECT_NAME=Crown Nexus
+      - API_V1_STR=/api/v1
+      - SECRET_KEY={{ cluster.deployment_config.secret_key }}
+      - BACKEND_CORS_ORIGINS=["https://{{ cluster.deployment_config.domain }}", "https://www.{{ cluster.deployment_config.domain }}"]
+      - POSTGRES_SERVER=database
+      - POSTGRES_USER={{ cluster.deployment_config.db_user }}
+      - POSTGRES_PASSWORD={{ cluster.deployment_config.db_password }}
+      - POSTGRES_DB={{ cluster.deployment_config.db_name }}
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD={{ cluster.deployment_config.redis_password }}
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: {{ cluster.deployment_config.strategy.docker.replicas.backend }}
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    {% endif %}
+
+  # Database service
+  database:
+    image: {{ cluster.deployment_config.strategy.base_images.database }}
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    volumes:
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - postgres_data:/var/lib/postgresql/data
+      {% endif %}
+    networks:
+      - crown-nexus-network
+    environment:
+      - POSTGRES_USER={{ cluster.deployment_config.db_user }}
+      - POSTGRES_PASSWORD={{ cluster.deployment_config.db_password }}
+      - POSTGRES_DB={{ cluster.deployment_config.db_name }}
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: {{ cluster.deployment_config.strategy.docker.replicas.database }}
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    {% endif %}
+
+  # Redis service
+  redis:
+    image: {{ cluster.deployment_config.strategy.base_images.redis }}
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    command: redis-server --requirepass {{ cluster.deployment_config.redis_password }}
+    volumes:
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - redis_data:/data
+      {% endif %}
+    networks:
+      - crown-nexus-network
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: {{ cluster.deployment_config.strategy.docker.replicas.redis }}
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    {% endif %}
+
+{% if any(server for server in cluster.servers if ServerRole.ELASTICSEARCH in server.assigned_roles) %}
+  # Elasticsearch service
+  elasticsearch:
+    image: {{ cluster.deployment_config.strategy.base_images.elasticsearch }}
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - elastic_data:/usr/share/elasticsearch/data
+      {% endif %}
+    networks:
+      - crown-nexus-network
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: {{ cluster.deployment_config.strategy.docker.replicas.elasticsearch }}
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    {% endif %}
+{% endif %}
+
+{% if any(server for server in cluster.servers if ServerRole.MONITORING in server.assigned_roles) %}
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - prometheus_data:/prometheus
+      {% endif %}
+    networks:
+      - crown-nexus-network
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    {% endif %}
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    restart: {{ cluster.deployment_config.strategy.docker.restart_policy }}
+    depends_on:
+      - prometheus
+    volumes:
+      {% if cluster.deployment_config.strategy.docker.use_volumes %}
+      - grafana_data:/var/lib/grafana
+      {% endif %}
+    networks:
+      - crown-nexus-network
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD={{ cluster.deployment_config.admin_password }}
+    {% if cluster.deployment_config.strategy.docker.use_swarm %}
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    {% endif %}
+{% endif %}
+
+networks:
+  crown-nexus-network:
+    driver: bridge
+
+{% if cluster.deployment_config.strategy.docker.use_volumes %}
+volumes:
+  nginx_config:
+  nginx_certs:
+  frontend_build:
+  backend_media:
+  backend_logs:
+  postgres_data:
+  redis_data:
+  {% if any(server for server in cluster.servers if ServerRole.ELASTICSEARCH in server.assigned_roles) %}
+  elastic_data:
+  {% endif %}
+  {% if any(server for server in cluster.servers if ServerRole.MONITORING in server.assigned_roles) %}
+  prometheus_data:
+  grafana_data:
+  {% endif %}
+{% endif %}

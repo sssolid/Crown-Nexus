@@ -1,0 +1,335 @@
+## Monitoring Role Configuration
+echo "Setting up Monitoring role on {{ server.hostname }}..."
+
+# Install monitoring packages
+sudo apt install -y prometheus prometheus-node-exporter nginx certbot python3-certbot-nginx
+echo "monitoring: prometheus prometheus-node-exporter nginx certbot python3-certbot-nginx" >> /tmp/crown-nexus-installed/packages.txt
+
+# Open necessary ports
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 9090/tcp  # Prometheus
+sudo ufw allow 9100/tcp  # Node Exporter
+sudo ufw allow 3000/tcp  # Grafana
+
+# Configure Prometheus
+echo "Configuring Prometheus..."
+cat > /tmp/prometheus.yml << 'EOF'
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "node"
+    static_configs:
+      - targets: ["localhost:9100"]
+{% for server in cluster.servers %}
+      - targets: ["{{ server.ip }}:9100"]  # {{ server.hostname }}
+{% endfor %}
+
+  - job_name: "crown_nexus_backend"
+    metrics_path: /api/v1/metrics
+    static_configs:
+{% for backend_server in cluster.get_servers_by_role(ServerRole.BACKEND) %}
+      - targets: ["{{ backend_server.ip }}:8000"]  # {{ backend_server.hostname }}
+{% endfor %}
+
+  - job_name: "nginx"
+    static_configs:
+{% for server in cluster.servers if ServerRole.LOAD_BALANCER in server.assigned_roles or ServerRole.FRONTEND in server.assigned_roles %}
+      - targets: ["{{ server.ip }}:9113"]  # {{ server.hostname }}
+{% endfor %}
+
+  - job_name: "elasticsearch"
+    metrics_path: /_prometheus/metrics
+    static_configs:
+{% for es_server in cluster.get_servers_by_role(ServerRole.ELASTICSEARCH) %}
+      - targets: ["{{ es_server.ip }}:9200"]  # {{ es_server.hostname }}
+{% endfor %}
+
+  - job_name: "redis"
+    static_configs:
+{% for redis_server in cluster.get_servers_by_role(ServerRole.REDIS) %}
+      - targets: ["{{ redis_server.ip }}:9121"]  # {{ redis_server.hostname }}
+{% endfor %}
+EOF
+
+sudo cp /tmp/prometheus.yml /etc/prometheus/prometheus.yml
+sudo systemctl restart prometheus
+sudo systemctl enable prometheus
+
+# Install and configure Grafana
+echo "Installing and configuring Grafana..."
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+sudo apt update
+sudo apt install -y grafana
+echo "grafana: grafana" >> /tmp/crown-nexus-installed/packages.txt
+
+sudo systemctl enable grafana-server
+sudo systemctl start grafana-server
+
+# Install Redis exporter for monitoring Redis
+echo "Installing Redis exporter..."
+if [ "$(lsb_release -cs)" == "focal" ] || [ "$(lsb_release -cs)" == "jammy" ]; then
+    wget https://github.com/oliver006/redis_exporter/releases/download/v1.44.0/redis_exporter-v1.44.0.linux-amd64.tar.gz
+    tar xzf redis_exporter-v1.44.0.linux-amd64.tar.gz
+    sudo cp redis_exporter-v1.44.0.linux-amd64/redis_exporter /usr/local/bin/
+    rm -rf redis_exporter-v1.44.0.linux-amd64 redis_exporter-v1.44.0.linux-amd64.tar.gz
+
+    # Create systemd service for Redis exporter
+    cat > /tmp/redis-exporter.service << 'EOF'
+[Unit]
+Description=Redis Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/redis_exporter \
+{% for redis_server in cluster.get_servers_by_role(ServerRole.REDIS) %}
+    --redis.addr={{ redis_server.ip }}:6379 \
+    --redis.password=$REDIS_PASSWORD
+{% endfor %}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo cp /tmp/redis-exporter.service /etc/systemd/system/redis-exporter.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable redis-exporter
+    sudo systemctl start redis-exporter
+fi
+
+# Install Nginx exporter for Nginx monitoring
+echo "Installing Nginx exporter..."
+if ! dpkg -l | grep -q nginx-prometheus-exporter; then
+    sudo apt install -y libnginx-mod-http-auth-pam
+
+    # Create Nginx exporter config
+    cat > /tmp/nginx-prometheus.conf << 'EOF'
+server {
+    listen 9113;
+    server_name localhost;
+
+    location /metrics {
+        stub_status on;
+    }
+}
+EOF
+
+    sudo cp /tmp/nginx-prometheus.conf /etc/nginx/conf.d/
+    sudo systemctl restart nginx
+fi
+
+# Configure Nginx as reverse proxy for monitoring tools
+echo "Configuring Nginx reverse proxy for monitoring..."
+cat > /tmp/nginx-monitoring.conf << 'EOF'
+server {
+    listen 80;
+    server_name monitor.$CROWN_DOMAIN;
+
+    location / {
+        proxy_pass http://localhost:3000;  # Grafana
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /prometheus/ {
+        proxy_pass http://localhost:9090/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+
+envsubst < /tmp/nginx-monitoring.conf > /etc/nginx/sites-available/monitoring
+sudo ln -s /etc/nginx/sites-available/monitoring /etc/nginx/sites-enabled/ 2>/dev/null || true
+sudo nginx -t
+sudo systemctl restart nginx
+
+# Set up SSL for monitoring
+echo "Setting up SSL for monitoring..."
+sudo certbot --nginx -d monitor.$CROWN_DOMAIN --non-interactive --agree-tos --email $ADMIN_EMAIL
+
+# Create a monitoring dashboard setup script for Grafana
+echo "Creating monitoring dashboard setup script..."
+cat > /tmp/setup-grafana.sh << 'EOF'
+#!/bin/bash
+
+# Wait for Grafana to start
+sleep 10
+
+# Set Grafana admin password
+grafana-cli admin reset-admin-password "$ADMIN_PASSWORD"
+
+# Add Prometheus data source
+curl -X POST -H "Content-Type: application/json" -d '{
+    "name":"Prometheus",
+    "type":"prometheus",
+    "url":"http://localhost:9090",
+    "access":"proxy",
+    "isDefault":true
+}' http://admin:$ADMIN_PASSWORD@localhost:3000/api/datasources
+
+# Import dashboards (would normally import from a JSON file)
+# In a real implementation, you would have pre-built dashboard JSON files
+
+echo "Grafana setup completed. Access at https://monitor.$CROWN_DOMAIN"
+echo "Username: admin"
+echo "Password: $ADMIN_PASSWORD"
+EOF
+
+chmod +x /tmp/setup-grafana.sh
+sudo mv /tmp/setup-grafana.sh /opt/setup-grafana.sh
+
+# Run Grafana setup script
+echo "Running Grafana setup script..."
+(crontab -l 2>/dev/null; echo "@reboot /opt/setup-grafana.sh > /var/log/grafana/setup.log 2>&1") | crontab -
+
+# Create system-wide monitoring script
+echo "Creating system-wide monitoring script..."
+cat > /tmp/crown-monitoring.sh << 'EOF'
+#!/bin/bash
+
+# Crown Nexus Monitoring Script
+REPORT_FILE="/var/log/crown-monitoring.log"
+
+echo "=== Crown Nexus System Monitoring Report - $(date) ===" > $REPORT_FILE
+echo "" >> $REPORT_FILE
+
+# Check each server in the cluster
+{% for i, server in enumerate(cluster.servers, 1) %}
+echo "Server {{ i }}: {{ server.hostname }} ({{ server.ip }})" >> $REPORT_FILE
+ping -c 1 {{ server.ip }} > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "  - Network: ONLINE" >> $REPORT_FILE
+else
+    echo "  - Network: OFFLINE" >> $REPORT_FILE
+fi
+
+# Try to get basic server info via SSH
+ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=accept-new {{ server.connection.username }}@{{ server.ip }} "uptime" > /tmp/server{{ i }}_uptime 2>/dev/null
+if [ $? -eq 0 ]; then
+    echo "  - SSH: ACCESSIBLE" >> $REPORT_FILE
+    echo "  - Uptime: $(cat /tmp/server{{ i }}_uptime)" >> $REPORT_FILE
+else
+    echo "  - SSH: INACCESSIBLE" >> $REPORT_FILE
+fi
+
+# For each role, check status
+{% if ServerRole.LOAD_BALANCER in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active nginx" > /tmp/server{{ i }}_nginx 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_nginx)" == "active" ]; then
+    echo "  - Load Balancer: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Load Balancer: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+{% if ServerRole.FRONTEND in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active nginx" > /tmp/server{{ i }}_nginx 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_nginx)" == "active" ]; then
+    echo "  - Frontend: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Frontend: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+{% if ServerRole.BACKEND in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active $CROWN_APP_NAME" > /tmp/server{{ i }}_backend 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_backend)" == "active" ]; then
+    echo "  - Backend: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Backend: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+{% if ServerRole.DATABASE in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active postgresql" > /tmp/server{{ i }}_db 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_db)" == "active" ]; then
+    echo "  - Database: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Database: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+{% if ServerRole.ELASTICSEARCH in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active elasticsearch" > /tmp/server{{ i }}_es 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_es)" == "active" ]; then
+    echo "  - Elasticsearch: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Elasticsearch: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+{% if ServerRole.REDIS in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active redis-server" > /tmp/server{{ i }}_redis 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_redis)" == "active" ]; then
+    echo "  - Redis: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Redis: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+{% if ServerRole.MONITORING in server.assigned_roles %}
+ssh -o ConnectTimeout=5 -o BatchMode=yes {{ server.connection.username }}@{{ server.ip }} "systemctl is-active prometheus" > /tmp/server{{ i }}_prometheus 2>/dev/null
+if [ $? -eq 0 ] && [ "$(cat /tmp/server{{ i }}_prometheus)" == "active" ]; then
+    echo "  - Monitoring: RUNNING" >> $REPORT_FILE
+else
+    echo "  - Monitoring: NOT RUNNING" >> $REPORT_FILE
+fi
+{% endif %}
+
+echo "" >> $REPORT_FILE
+{% endfor %}
+
+# Test the application endpoint
+curl -s -I "https://$CROWN_DOMAIN" > /tmp/crown_http_status 2>/dev/null
+if [ $? -eq 0 ]; then
+    HTTP_STATUS=$(head -n 1 /tmp/crown_http_status | cut -d ' ' -f2)
+    if [ "$HTTP_STATUS" == "200" ] || [ "$HTTP_STATUS" == "302" ]; then
+        echo "Application Status: ONLINE (HTTP $HTTP_STATUS)" >> $REPORT_FILE
+    else
+        echo "Application Status: ERROR (HTTP $HTTP_STATUS)" >> $REPORT_FILE
+    fi
+else
+    echo "Application Status: UNREACHABLE" >> $REPORT_FILE
+fi
+
+# Clean up temp files
+rm -f /tmp/server*_* /tmp/crown_http_status
+
+# Optional: Send report by email
+# mail -s "Crown Nexus Monitoring Report" $ADMIN_EMAIL < $REPORT_FILE
+EOF
+
+chmod +x /tmp/crown-monitoring.sh
+sudo mv /tmp/crown-monitoring.sh /opt/crown-monitoring.sh
+
+# Schedule the monitoring script
+(crontab -l 2>/dev/null; echo "*/5 * * * * /opt/crown-monitoring.sh") | crontab -
+
+echo "Monitoring setup completed on {{ server.hostname }}"

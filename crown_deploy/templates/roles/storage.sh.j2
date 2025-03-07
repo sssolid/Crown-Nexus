@@ -1,0 +1,135 @@
+## Storage Role Configuration
+echo "Setting up Storage role on {{ server.hostname }}..."
+
+# Install storage tools
+sudo apt install -y nfs-kernel-server
+echo "storage: nfs-kernel-server" >> /tmp/crown-nexus-installed/packages.txt
+
+# Create storage directories
+echo "Creating storage directories..."
+sudo mkdir -p /opt/crown-nexus/storage/{backup,media,log}
+sudo chown -R crown:crown /opt/crown-nexus/storage
+sudo chmod -R 755 /opt/crown-nexus/storage
+
+# Configure NFS exports
+echo "Configuring NFS exports..."
+cat > /tmp/exports << 'EOF'
+# Export storage directories to specific servers
+{% for backend_server in cluster.get_servers_by_role(ServerRole.BACKEND) %}
+/opt/crown-nexus/storage/media {{ backend_server.ip }}(rw,sync,no_subtree_check)
+/opt/crown-nexus/storage/log {{ backend_server.ip }}(rw,sync,no_subtree_check)
+{% endfor %}
+
+{% for db_server in cluster.get_servers_by_role(ServerRole.DATABASE) %}
+/opt/crown-nexus/storage/backup {{ db_server.ip }}(rw,sync,no_subtree_check)
+{% endfor %}
+EOF
+
+sudo cp /tmp/exports /etc/exports
+sudo exportfs -ra
+
+# Open NFS ports
+echo "Opening NFS ports..."
+sudo ufw allow 2049/tcp  # NFS
+sudo ufw allow 111/tcp   # portmapper
+sudo ufw allow 111/udp
+sudo ufw allow 20048/tcp # mountd
+sudo ufw allow 20048/udp
+
+# Set up automatic backups and rotations
+echo "Setting up backup rotation..."
+cat > /tmp/backup-rotation.sh << 'EOF'
+#!/bin/bash
+
+# Backup rotation script for Crown Nexus storage
+
+# Define backup directories
+BACKUP_DIR="/opt/crown-nexus/storage/backup"
+MEDIA_DIR="/opt/crown-nexus/storage/media"
+LOG_DIR="/opt/crown-nexus/storage/log"
+
+# Rotate database backups
+echo "Rotating database backups..."
+# Keep daily backups for 30 days
+find $BACKUP_DIR -name "*.sql.gz" -type f -mtime +30 -delete
+
+# Archive media files (optional)
+# This creates a weekly snapshot of the media directory
+if [ $(date +%u) -eq 7 ]; then  # Sunday
+    echo "Creating weekly media snapshot..."
+    TIMESTAMP=$(date +"%Y%m%d")
+    tar -czf $BACKUP_DIR/media_$TIMESTAMP.tar.gz -C $(dirname $MEDIA_DIR) $(basename $MEDIA_DIR)
+
+    # Keep weekly snapshots for 3 months
+    find $BACKUP_DIR -name "media_*.tar.gz" -type f -mtime +90 -delete
+fi
+
+# Rotate logs
+echo "Rotating logs..."
+find $LOG_DIR -name "*.log" -type f -mtime +60 -delete
+find $LOG_DIR -name "*.gz" -type f -mtime +90 -delete
+
+echo "Backup rotation completed at $(date)"
+EOF
+
+chmod +x /tmp/backup-rotation.sh
+sudo mv /tmp/backup-rotation.sh /opt/crown-nexus/storage/backup-rotation.sh
+sudo chown crown:crown /opt/crown-nexus/storage/backup-rotation.sh
+
+# Set up cron job for backup rotation
+(sudo crontab -u crown -l 2>/dev/null; echo "0 3 * * * /opt/crown-nexus/storage/backup-rotation.sh > /opt/crown-nexus/storage/log/backup-rotation.log 2>&1") | sudo crontab -u crown -
+
+# Create monitoring script
+echo "Creating storage monitoring script..."
+cat > /tmp/storage-monitor.sh << 'EOF'
+#!/bin/bash
+
+# Storage monitoring script for Crown Nexus
+
+# Define log file
+LOG_FILE="/opt/crown-nexus/storage/log/storage-monitor.log"
+
+# Get disk usage
+DISK_USAGE=$(df -h /opt/crown-nexus/storage | tail -n 1)
+DISK_USED_PCT=$(echo "$DISK_USAGE" | awk '{print $5}' | tr -d '%')
+
+echo "=== Storage Monitoring Report - $(date) ===" > $LOG_FILE
+echo "" >> $LOG_FILE
+echo "Disk Usage:" >> $LOG_FILE
+echo "$DISK_USAGE" >> $LOG_FILE
+echo "" >> $LOG_FILE
+
+# Check directories sizes
+echo "Directory Sizes:" >> $LOG_FILE
+du -sh /opt/crown-nexus/storage/* | sort -hr >> $LOG_FILE
+echo "" >> $LOG_FILE
+
+# Check if disk usage is above threshold
+if [ "$DISK_USED_PCT" -gt 85 ]; then
+    echo "WARNING: Disk usage is above 85%" >> $LOG_FILE
+
+    # Send alert email if configured
+    if [ -n "$ADMIN_EMAIL" ]; then
+        echo "Disk usage on {{ server.hostname }} is at ${DISK_USED_PCT}%" | \
+        mail -s "ALERT: High Disk Usage on Crown Nexus Storage" $ADMIN_EMAIL
+    fi
+fi
+
+# Check NFS status
+echo "NFS Server Status:" >> $LOG_FILE
+systemctl status nfs-kernel-server | grep Active >> $LOG_FILE
+echo "" >> $LOG_FILE
+
+# Check NFS exports
+echo "NFS Exports:" >> $LOG_FILE
+exportfs -v >> $LOG_FILE
+EOF
+
+chmod +x /tmp/storage-monitor.sh
+sudo mv /tmp/storage-monitor.sh /opt/crown-nexus/storage/storage-monitor.sh
+sudo chown crown:crown /opt/crown-nexus/storage/storage-monitor.sh
+
+# Set up cron job for storage monitoring
+(sudo crontab -u crown -l 2>/dev/null; echo "0 * * * * /opt/crown-nexus/storage/storage-monitor.sh") | sudo crontab -u crown -
+
+echo "Storage role setup completed on {{ server.hostname }}"

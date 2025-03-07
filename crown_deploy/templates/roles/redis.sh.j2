@@ -1,0 +1,90 @@
+## Redis Role Configuration
+echo "Setting up Redis role on {{ server.hostname }}..."
+
+# Install Redis
+sudo apt install -y redis-server
+echo "redis: redis-server" >> /tmp/crown-nexus-installed/packages.txt
+
+# Open Redis port to backend servers
+{% for backend_server in cluster.get_servers_by_role(ServerRole.BACKEND) %}
+sudo ufw allow from {{ backend_server.ip }} to any port 6379 proto tcp
+{% endfor %}
+
+# Configure Redis
+echo "Configuring Redis..."
+cat > /tmp/redis.conf << 'EOF'
+# Redis configuration for Crown Nexus
+port 6379
+tcp-backlog 511
+timeout 0
+tcp-keepalive 300
+daemonize yes
+supervised systemd
+pidfile /var/run/redis/redis-server.pid
+loglevel notice
+logfile /var/log/redis/redis-server.log
+databases 16
+
+# Persistence
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir /var/lib/redis
+
+# Security
+requirepass $REDIS_PASSWORD
+
+# Memory management
+maxmemory 512mb
+maxmemory-policy allkeys-lru
+maxmemory-samples 5
+
+# Networking
+{% for backend_server in cluster.get_servers_by_role(ServerRole.BACKEND) %}
+bind 127.0.0.1 {{ server.ip }}
+{% endfor %}
+protected-mode yes
+EOF
+
+# Apply Redis configuration
+envsubst < /tmp/redis.conf | sudo tee /etc/redis/redis.conf > /dev/null
+sudo systemctl restart redis-server
+sudo systemctl enable redis-server
+
+# Setup Redis monitoring
+echo "Setting up Redis monitoring..."
+cat > /tmp/redis-monitoring.sh << 'EOF'
+#!/bin/bash
+# Redis Monitoring Script
+
+REDIS_CLI="/usr/bin/redis-cli"
+REDIS_PASSWORD="$REDIS_PASSWORD"
+
+# Run Redis info command
+$REDIS_CLI -a "$REDIS_PASSWORD" info > /tmp/redis-info.txt
+
+# Extract key metrics
+USED_MEMORY=$($REDIS_CLI -a "$REDIS_PASSWORD" info memory | grep used_memory_human | cut -d ":" -f2 | tr -d '[:space:]')
+CLIENTS=$($REDIS_CLI -a "$REDIS_PASSWORD" info clients | grep connected_clients | cut -d ":" -f2 | tr -d '[:space:]')
+UPTIME=$($REDIS_CLI -a "$REDIS_PASSWORD" info server | grep uptime_in_days | cut -d ":" -f2 | tr -d '[:space:]')
+CMD_SEC=$($REDIS_CLI -a "$REDIS_PASSWORD" info stats | grep instantaneous_ops_per_sec | cut -d ":" -f2 | tr -d '[:space:]')
+
+echo "=== Redis Monitoring Report ($(date)) ==="
+echo "Memory Usage: $USED_MEMORY"
+echo "Connected Clients: $CLIENTS"
+echo "Uptime: $UPTIME days"
+echo "Commands/sec: $CMD_SEC"
+echo "=======================================")
+EOF
+
+sudo chmod +x /tmp/redis-monitoring.sh
+sudo mv /tmp/redis-monitoring.sh /opt/redis-monitoring.sh
+
+# Add to crontab
+(crontab -l 2>/dev/null; echo "0 * * * * /opt/redis-monitoring.sh > /var/log/redis/monitoring.log 2>&1") | crontab -
+
+echo "Redis setup completed on {{ server.hostname }}"

@@ -1,0 +1,171 @@
+## Elasticsearch Role Configuration
+echo "Setting up Elasticsearch role on {{ server.hostname }}..."
+
+# Install Elasticsearch
+echo "Installing Elasticsearch..."
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" > /etc/apt/sources.list.d/elastic-8.x.list'
+sudo apt update
+sudo apt install -y elasticsearch
+echo "elasticsearch: elasticsearch" >> /tmp/crown-nexus-installed/packages.txt
+
+# Open Elasticsearch port to backend servers
+{% for backend_server in cluster.get_servers_by_role(ServerRole.BACKEND) %}
+sudo ufw allow from {{ backend_server.ip }} to any port 9200 proto tcp
+{% endfor %}
+
+# Configure Elasticsearch
+echo "Configuring Elasticsearch..."
+cat > /tmp/elasticsearch.yml << 'EOF'
+# Elasticsearch configuration for Crown Nexus
+cluster.name: crown-nexus
+node.name: {{ server.hostname }}
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+
+# Network settings
+network.host: [localhost, {{ server.ip }}]
+http.port: 9200
+
+# Discovery settings
+discovery.type: single-node
+
+# Security settings (disable X-Pack security for simplicity)
+xpack.security.enabled: false
+
+# Memory settings (set to half of system RAM, max 32GB)
+# This is best set in jvm.options file
+
+# Performance settings
+bootstrap.memory_lock: true
+thread_pool.search.queue_size: 1000
+thread_pool.write.queue_size: 1000
+indices.memory.index_buffer_size: 30%
+indices.fielddata.cache.size: 30%
+indices.breaker.fielddata.limit: 60%
+indices.breaker.request.limit: 40%
+indices.breaker.total.limit: 70%
+EOF
+
+sudo mv /tmp/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+
+# Configure JVM heap size (50% of system RAM up to 32GB)
+SYSTEM_RAM_GB={{ server.specs.memory_gb if server.specs else 8 }}
+ES_HEAP_SIZE=$(($SYSTEM_RAM_GB / 2))
+# Ensure heap size is not too small or too large
+if [ $ES_HEAP_SIZE -lt 2 ]; then
+    ES_HEAP_SIZE=2
+elif [ $ES_HEAP_SIZE -gt 32 ]; then
+    ES_HEAP_SIZE=32
+fi
+
+cat > /tmp/jvm.options << EOF
+-Xms${ES_HEAP_SIZE}g
+-Xmx${ES_HEAP_SIZE}g
+-XX:+UseG1GC
+-XX:G1HeapRegionSize=4m
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/var/lib/elasticsearch
+-XX:+IgnoreUnrecognizedVMOptions
+-XX:+DisableExplicitGC
+-XX:+AlwaysPreTouch
+-XX:+UseCompressedOops
+EOF
+
+sudo mv /tmp/jvm.options /etc/elasticsearch/jvm.options.d/heap.options
+
+# Set permissions
+sudo chown -R elasticsearch:elasticsearch /etc/elasticsearch
+
+# Allow Elasticsearch to lock memory
+cat > /tmp/elasticsearch-memory.conf << 'EOF'
+elasticsearch soft memlock unlimited
+elasticsearch hard memlock unlimited
+EOF
+sudo mv /tmp/elasticsearch-memory.conf /etc/security/limits.d/elasticsearch.conf
+
+# Allow memory locking in systemd service
+sudo systemctl edit elasticsearch --full --force << 'EOF'
+[Unit]
+Description=Elasticsearch
+Documentation=https://www.elastic.co
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+RuntimeDirectory=elasticsearch
+PrivateTmp=true
+Environment=ES_HOME=/usr/share/elasticsearch
+Environment=ES_PATH_CONF=/etc/elasticsearch
+Environment=PID_DIR=/var/run/elasticsearch
+Environment=ES_SD_NOTIFY=true
+EnvironmentFile=-/etc/default/elasticsearch
+
+WorkingDirectory=/usr/share/elasticsearch
+
+User=elasticsearch
+Group=elasticsearch
+
+ExecStart=/usr/share/elasticsearch/bin/elasticsearch
+
+# Elasticsearch can lock memory with mlockall (needs memlock unlimited in limits.conf)
+LimitMEMLOCK=infinity
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=4096
+
+# Timeout behavior
+TimeoutStopSec=75
+
+RestartSec=3
+Restart=always
+
+# Specify the kind of startup notification systemd expects
+NotifyAccess=main
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable and start Elasticsearch
+sudo systemctl daemon-reload
+sudo systemctl enable elasticsearch
+sudo systemctl start elasticsearch
+
+# Create Elasticsearch monitoring script
+echo "Setting up Elasticsearch monitoring..."
+cat > /tmp/es-monitoring.sh << 'EOF'
+#!/bin/bash
+# Elasticsearch Monitoring Script
+
+ES_HOST="{{ server.ip }}"
+ES_PORT=9200
+
+# Check Elasticsearch health
+HEALTH=$(curl -s "http://$ES_HOST:$ES_PORT/_cluster/health" | jq -r '.status')
+NODES=$(curl -s "http://$ES_HOST:$ES_PORT/_cluster/health" | jq -r '.number_of_nodes')
+DOCS=$(curl -s "http://$ES_HOST:$ES_PORT/_stats" | jq -r '._all.total.docs.count')
+STORE_SIZE=$(curl -s "http://$ES_HOST:$ES_PORT/_stats" | jq -r '._all.total.store.size_in_bytes' | numfmt --to=iec)
+
+# Get JVM heap usage
+HEAP_USED=$(curl -s "http://$ES_HOST:$ES_PORT/_nodes/stats" | jq -r '.nodes | to_entries[0].value.jvm.mem.heap_used_percent')
+
+echo "=== Elasticsearch Monitoring Report ($(date)) ==="
+echo "Cluster Health: $HEALTH"
+echo "Number of Nodes: $NODES"
+echo "Total Documents: $DOCS"
+echo "Storage Size: $STORE_SIZE"
+echo "JVM Heap Used: $HEAP_USED%"
+echo "=======================================")
+EOF
+
+sudo apt install -y jq
+sudo chmod +x /tmp/es-monitoring.sh
+sudo mv /tmp/es-monitoring.sh /opt/es-monitoring.sh
+
+# Add to crontab
+(crontab -l 2>/dev/null; echo "0 * * * * /opt/es-monitoring.sh > /var/log/elasticsearch/monitoring.log 2>&1") | crontab -
+
+echo "Elasticsearch setup completed on {{ server.hostname }}"

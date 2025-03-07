@@ -1,0 +1,547 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+
+---
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  replicas: {{ cluster.deployment_config.strategy.kubernetes.replicas.frontend }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: {% if cluster.deployment_config.strategy.docker.registry %}{{ cluster.deployment_config.strategy.docker.registry }}/{% endif %}crown-nexus-frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.frontend.requests.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.frontend.requests.memory }}
+            limits:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.frontend.limits.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.frontend.limits.memory }}
+          env:
+            - name: CROWN_DOMAIN
+              value: "{{ cluster.deployment_config.domain }}"
+            - name: BACKEND_URL
+              value: "http://backend:8000"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+---
+# Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+{% if cluster.deployment_config.strategy.kubernetes.use_stateful_sets %}
+---
+# Database StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  serviceName: database
+  replicas: {{ cluster.deployment_config.strategy.kubernetes.replicas.database }}
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: {{ cluster.deployment_config.strategy.base_images.database }}
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.database.requests.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.database.requests.memory }}
+            limits:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.database.limits.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.database.limits.memory }}
+          env:
+            - name: POSTGRES_USER
+              value: "{{ cluster.deployment_config.db_user }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crown-nexus-secrets
+                  key: db-password
+            - name: POSTGRES_DB
+              value: "{{ cluster.deployment_config.db_name }}"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ cluster.deployment_config.strategy.kubernetes.storage_class }}
+        resources:
+          requests:
+            storage: 10Gi
+{% else %}
+---
+# Database Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: {{ cluster.deployment_config.strategy.base_images.database }}
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.database.requests.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.database.requests.memory }}
+            limits:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.database.limits.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.database.limits.memory }}
+          env:
+            - name: POSTGRES_USER
+              value: "{{ cluster.deployment_config.db_user }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crown-nexus-secrets
+                  key: db-password
+            - name: POSTGRES_DB
+              value: "{{ cluster.deployment_config.db_name }}"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+{% endif %}
+
+---
+# Database Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  selector:
+    app: database
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+  clusterIP: None
+
+---
+# Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  replicas: {{ cluster.deployment_config.strategy.kubernetes.replicas.backend }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: {% if cluster.deployment_config.strategy.docker.registry %}{{ cluster.deployment_config.strategy.docker.registry }}/{% endif %}crown-nexus-backend:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.backend.requests.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.backend.requests.memory }}
+            limits:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.backend.limits.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.backend.limits.memory }}
+          env:
+            - name: PROJECT_NAME
+              value: "Crown Nexus"
+            - name: API_V1_STR
+              value: "/api/v1"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: crown-nexus-secrets
+                  key: secret-key
+            - name: BACKEND_CORS_ORIGINS
+              value: '["https://{{ cluster.deployment_config.domain }}", "https://www.{{ cluster.deployment_config.domain }}"]'
+            - name: POSTGRES_SERVER
+              value: "database"
+            - name: POSTGRES_USER
+              value: "{{ cluster.deployment_config.db_user }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crown-nexus-secrets
+                  key: db-password
+            - name: POSTGRES_DB
+              value: "{{ cluster.deployment_config.db_name }}"
+            - name: ELASTICSEARCH_HOST
+              value: "elasticsearch"
+            - name: ELASTICSEARCH_PORT
+              value: "9200"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crown-nexus-secrets
+                  key: redis-password
+          volumeMounts:
+            - name: backend-media
+              mountPath: /app/media
+            - name: backend-logs
+              mountPath: /app/logs
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: backend-media
+          persistentVolumeClaim:
+            claimName: backend-media-pvc
+        - name: backend-logs
+          persistentVolumeClaim:
+            claimName: backend-logs-pvc
+
+---
+# Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+---
+# Redis Deployment (or StatefulSet if appropriate)
+{% if cluster.deployment_config.strategy.kubernetes.use_stateful_sets %}
+apiVersion: apps/v1
+kind: StatefulSet
+{% else %}
+apiVersion: apps/v1
+kind: Deployment
+{% endif %}
+metadata:
+  name: redis
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+{% if cluster.deployment_config.strategy.kubernetes.use_stateful_sets %}
+  serviceName: redis
+{% endif %}
+  replicas: {{ cluster.deployment_config.strategy.kubernetes.replicas.redis }}
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ cluster.deployment_config.strategy.base_images.redis }}
+          args: ["--requirepass", "$(REDIS_PASSWORD)"]
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.redis.requests.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.redis.requests.memory }}
+            limits:
+              cpu: {{ cluster.deployment_config.strategy.kubernetes.resources.redis.limits.cpu }}
+              memory: {{ cluster.deployment_config.strategy.kubernetes.resources.redis.limits.memory }}
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crown-nexus-secrets
+                  key: redis-password
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+{% if cluster.deployment_config.strategy.kubernetes.use_stateful_sets %}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ cluster.deployment_config.strategy.kubernetes.storage_class }}
+        resources:
+          requests:
+            storage: 5Gi
+{% else %}
+        volumes:
+          - name: redis-data
+            persistentVolumeClaim:
+              claimName: redis-pvc
+{% endif %}
+
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+  clusterIP: None
+
+---
+# Secret containing sensitive information
+apiVersion: v1
+kind: Secret
+metadata:
+  name: crown-nexus-secrets
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+type: Opaque
+data:
+  db-password: {{ cluster.deployment_config.db_password | b64encode }}
+  admin-password: {{ cluster.deployment_config.admin_password | b64encode }}
+  redis-password: {{ cluster.deployment_config.redis_password | b64encode }}
+  secret-key: {{ cluster.deployment_config.secret_key | b64encode }}
+
+---
+# Persistent Volume Claims
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-media-pvc
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ cluster.deployment_config.strategy.kubernetes.storage_class }}
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-logs-pvc
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ cluster.deployment_config.strategy.kubernetes.storage_class }}
+  resources:
+    requests:
+      storage: 5Gi
+
+{% if not cluster.deployment_config.strategy.kubernetes.use_stateful_sets %}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ cluster.deployment_config.strategy.kubernetes.storage_class }}
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ cluster.deployment_config.strategy.kubernetes.storage_class }}
+  resources:
+    requests:
+      storage: 5Gi
+{% endif %}
+
+{% if cluster.deployment_config.strategy.kubernetes.use_cert_manager %}
+---
+# Ingress with cert-manager annotations for automatic SSL
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: crown-nexus-ingress
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: {{ cluster.deployment_config.strategy.kubernetes.ingress_class }}
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+    - hosts:
+        - {{ cluster.deployment_config.domain }}
+        - www.{{ cluster.deployment_config.domain }}
+      secretName: crown-nexus-tls
+  rules:
+    - host: {{ cluster.deployment_config.domain }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+    - host: www.{{ cluster.deployment_config.domain }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+{% else %}
+---
+# Ingress without cert-manager
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: crown-nexus-ingress
+  namespace: {{ cluster.deployment_config.strategy.kubernetes.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: {{ cluster.deployment_config.strategy.kubernetes.ingress_class }}
+spec:
+  rules:
+    - host: {{ cluster.deployment_config.domain }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+    - host: www.{{ cluster.deployment_config.domain }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+{% endif %}

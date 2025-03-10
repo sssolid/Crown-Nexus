@@ -1,17 +1,17 @@
-# File: crown_deploy/docker-compose.enhanced.yml
+version: '3.8'
 
 services:
-  # Enhanced base server image
+  # Server base image build (not directly used as a service)
   server-base:
     build:
       context: ./tests/docker
-      dockerfile: enhanced-server.Dockerfile
-    image: crown-enhanced-server:latest
-    privileged: true  # Required for systemd
+      dockerfile: server.Dockerfile
+    image: crown-test-server:latest
+    profiles: ["build"]
 
-  # Server 1
+  # Server 1 (Database role)
   server1:
-    image: crown-enhanced-server:latest
+    image: crown-test-server:latest
     hostname: server1
     container_name: crown-test-server1
     privileged: true
@@ -20,8 +20,11 @@ services:
         ipv4_address: 172.28.1.10
     ports:
       - "2201:22"
+      - "5432:5432"  # PostgreSQL
+    environment:
+      - SERVER_ROLE=database
     healthcheck:
-      test: [ "CMD", "systemctl", "is-system-running" ]
+      test: ["CMD", "systemctl", "is-system-running"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,9 +32,9 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-  # Server 2
+  # Server 2 (Backend role)
   server2:
-    image: crown-enhanced-server:latest
+    image: crown-test-server:latest
     hostname: server2
     container_name: crown-test-server2
     privileged: true
@@ -40,8 +43,11 @@ services:
         ipv4_address: 172.28.1.11
     ports:
       - "2202:22"
+      - "8000:8000"  # Backend API
+    environment:
+      - SERVER_ROLE=backend
     healthcheck:
-      test: [ "CMD", "systemctl", "is-system-running" ]
+      test: ["CMD", "systemctl", "is-system-running"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -49,9 +55,9 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-  # Server 3
+  # Server 3 (Frontend role)
   server3:
-    image: crown-enhanced-server:latest
+    image: crown-test-server:latest
     hostname: server3
     container_name: crown-test-server3
     privileged: true
@@ -60,8 +66,11 @@ services:
         ipv4_address: 172.28.1.12
     ports:
       - "2203:22"
+      - "80:80"      # Nginx
+    environment:
+      - SERVER_ROLE=frontend
     healthcheck:
-      test: [ "CMD", "systemctl", "is-system-running" ]
+      test: ["CMD", "systemctl", "is-system-running"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -73,12 +82,11 @@ services:
   test-runner:
     build:
       context: .
-      dockerfile: tests/docker/TestRunner.Dockerfile
+      dockerfile: tests/docker/test_runner.Dockerfile
     container_name: crown-test-runner
     volumes:
-      - .:/app/crown_deploy
+      - .:/app
       - test-deployment-volume:/app/test-deployment
-      - ./tests/docker/enhanced-test-runner.sh:/test-runner.sh
       - /var/run/docker.sock:/var/run/docker.sock
       - ./test-output:/test-output
     working_dir: /app
@@ -98,8 +106,7 @@ services:
       - SSH_USER=crown_test
       - TEST_MODE=true
       - PYTHONPATH=/app
-      - EXTRACT_SCRIPTS=true
-    command: bash /test-runner.sh
+    command: bash /app/tests/docker/test_runner.sh
 
 networks:
   crown-test-network:

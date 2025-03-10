@@ -5,6 +5,13 @@
 
 set -e  # Exit on any error
 
+# Check if running in test mode (non-interactive)
+if [ -n "$TEST_MODE" ]; then
+    # Auto-answer yes to all prompts in test mode
+    AUTO_YES=true
+    echo "Running in TEST_MODE - all prompts will be auto-answered"
+fi
+
 echo "=== Crown Nexus Deployment ==="
 echo "Started at: $(date)"
 echo ""
@@ -23,7 +30,11 @@ if [ ! -f ~/.ssh/id_rsa ]; then
         echo "Run: ssh-copy-id $SSH_USER@${!var_name}"
     done
 
-    read -p "Press Enter once SSH keys are set up..."
+    if [ -z "$AUTO_YES" ]; then
+        read -p "Press Enter once SSH keys are set up..."
+    else
+        echo "Auto-continuing with deployment in TEST_MODE"
+    fi
 fi
 
 # Display deployment summary
@@ -45,11 +56,15 @@ echo ""
 echo "Credentials have been saved to: crown-credentials.txt"
 echo ""
 
-read -p "Continue with deployment? [y/N] " -n 1 -r
-echo ""
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Deployment aborted."
-    exit 1
+if [ -z "$AUTO_YES" ]; then
+    read -p "Continue with deployment? [y/N] " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Deployment aborted."
+        exit 1
+    fi
+else
+    echo "Auto-answering: y (continuing deployment)"
 fi
 
 # Prepare servers - copy setup scripts to servers

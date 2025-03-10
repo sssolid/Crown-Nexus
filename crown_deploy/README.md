@@ -215,7 +215,7 @@ docker-compose -f docker-compose.test.yml build
 2. Run the full test (generate scripts and deploy):
 
 ```bash
-docker-compose -f docker-compose.test.yml up test-runner
+docker-compose -f docker-compose.test.yml run -e TEST_MODE=true test-runner
 ```
 
 3. Run test to only generate scripts without deploying:

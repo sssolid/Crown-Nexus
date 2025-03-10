@@ -1,0 +1,40 @@
+# File: crown_deploy/tests/docker/Dockerfile.frontend
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install SSH and nginx
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    nginx \
+    python3 \
+    nodejs \
+    npm \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up SSH
+RUN mkdir /var/run/sshd
+RUN echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
+RUN echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
+
+# Create test user
+RUN useradd -m -s /bin/bash crown_test && \
+    echo "crown_test ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/crown_test && \
+    mkdir -p /home/crown_test/.ssh && \
+    chmod 700 /home/crown_test/.ssh && \
+    chown -R crown_test:crown_test /home/crown_test/.ssh
+
+# Create crown user for testing
+RUN useradd -m -s /bin/bash crown && \
+    echo "crown ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/crown && \
+    mkdir -p /home/crown/crown-nexus && \
+    chown -R crown:crown /home/crown
+
+# Set up entrypoint script
+COPY docker-entrypoint-frontend.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 22 80
+ENTRYPOINT ["/entrypoint.sh"]

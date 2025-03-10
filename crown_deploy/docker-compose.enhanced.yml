@@ -1,5 +1,4 @@
 # File: crown_deploy/docker-compose.enhanced.yml
-version: '3.8'
 
 services:
   # Enhanced base server image
@@ -21,6 +20,12 @@ services:
         ipv4_address: 172.28.1.10
     ports:
       - "2201:22"
+    healthcheck:
+      test: [ "CMD", "systemctl", "is-system-running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
@@ -35,6 +40,12 @@ services:
         ipv4_address: 172.28.1.11
     ports:
       - "2202:22"
+    healthcheck:
+      test: [ "CMD", "systemctl", "is-system-running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
@@ -49,6 +60,12 @@ services:
         ipv4_address: 172.28.1.12
     ports:
       - "2203:22"
+    healthcheck:
+      test: [ "CMD", "systemctl", "is-system-running" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
@@ -68,9 +85,12 @@ services:
     networks:
       - crown-test-network
     depends_on:
-      - server1
-      - server2
-      - server3
+      server1:
+        condition: service_healthy
+      server2:
+        condition: service_healthy
+      server3:
+        condition: service_healthy
     environment:
       - SERVER1_IP=172.28.1.10
       - SERVER2_IP=172.28.1.11

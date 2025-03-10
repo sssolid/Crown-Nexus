@@ -1,0 +1,39 @@
+# File: crown_deploy/tests/docker/Dockerfile.backend
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install SSH and Python
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    python3 \
+    python3-pip \
+    python3-venv \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up SSH
+RUN mkdir /var/run/sshd
+RUN echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
+RUN echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
+
+# Create test user
+RUN useradd -m -s /bin/bash crown_test && \
+    echo "crown_test ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/crown_test && \
+    mkdir -p /home/crown_test/.ssh && \
+    chmod 700 /home/crown_test/.ssh && \
+    chown -R crown_test:crown_test /home/crown_test/.ssh
+
+# Create crown user for testing
+RUN useradd -m -s /bin/bash crown && \
+    echo "crown ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/crown && \
+    mkdir -p /home/crown/crown-nexus && \
+    chown -R crown:crown /home/crown
+
+# Set up entrypoint script
+COPY docker-entrypoint-backend.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 22 8000
+ENTRYPOINT ["/entrypoint.sh"]

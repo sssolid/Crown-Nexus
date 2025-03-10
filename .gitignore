@@ -1,4 +1,5 @@
 *.iso
+crown_deploy/test-output
 
 # Python
 __pycache__/

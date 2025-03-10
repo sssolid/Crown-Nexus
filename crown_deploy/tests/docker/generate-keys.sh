@@ -22,4 +22,5 @@ for i in 1 2 3; do
 done
 
 # Now run the tests
+python -m crown_deploy.tests.deployment_debugger
 python -m crown_deploy.tests.docker_test_runner

@@ -1,12 +1,18 @@
-"""Docker test runner for Crown Nexus deployment system."""
+#!/usr/bin/env python3
+"""Docker test runner for Crown Nexus deployment system.
+
+This script tests the Crown Nexus deployment system in a Docker environment.
+It includes improved error handling and debugging capabilities.
+"""
 from __future__ import annotations
 
 import os
 import time
 import asyncio
+import shutil
 import subprocess
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple, Any
 
 import structlog
 import asyncssh
@@ -39,8 +45,24 @@ async def wait_for_ssh(ip: str, port: int = 22, username: str = "crown_test",
     logger.info("Waiting for SSH", ip=ip, port=port)
     start_time = time.time()
 
+    # Make sure the key has the right permissions
+    try:
+        os.chmod(key_path, 0o600)
+        logger.info(f"Set permissions on SSH key", key_path=key_path)
+    except Exception as e:
+        logger.error(f"Failed to set permissions on SSH key", key_path=key_path, error=str(e))
+
     while time.time() - start_time < timeout:
         try:
+            # First try a simple ssh command to check connectivity
+            cmd = f"ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -i {key_path} {username}@{ip} echo 'SSH connection successful'"
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+            if result.returncode == 0:
+                logger.info("SSH connection successful via subprocess", ip=ip, port=port)
+                return True
+
+            # If subprocess approach fails, try asyncssh
             async with asyncssh.connect(
                 ip,
                 port=port,
@@ -51,14 +73,94 @@ async def wait_for_ssh(ip: str, port: int = 22, username: str = "crown_test",
             ) as conn:
                 result = await conn.run("echo 'SSH connection successful'")
                 if result.exit_status == 0:
-                    logger.info("SSH connection successful", ip=ip, port=port)
+                    logger.info("SSH connection successful via asyncssh", ip=ip, port=port)
                     return True
-        except (asyncssh.Error, OSError) as e:
+        except (asyncssh.Error, OSError, subprocess.SubprocessError) as e:
             logger.debug("SSH connection failed, retrying...", ip=ip, error=str(e))
+
+            # Run some diagnostic commands
+            try:
+                # Try to list the SSH process in the container
+                container_name = f"crown-test-server{ip.split('.')[-1] - 9}"
+                ps_cmd = f"docker exec {container_name} ps aux | grep sshd"
+                ps_result = subprocess.run(ps_cmd, shell=True, capture_output=True, text=True)
+                logger.debug("SSH process status",
+                             container=container_name,
+                             stdout=ps_result.stdout.strip())
+
+                # Check if authorized_keys exists
+                key_cmd = f"docker exec {container_name} ls -la /home/crown_test/.ssh"
+                key_result = subprocess.run(key_cmd, shell=True, capture_output=True, text=True)
+                logger.debug("SSH key status",
+                             container=container_name,
+                             stdout=key_result.stdout.strip())
+            except Exception as e:
+                logger.debug("Failed to run diagnostics", error=str(e))
+
             await asyncio.sleep(2)
 
     logger.error("Timed out waiting for SSH", ip=ip, timeout=timeout)
     return False
+
+
+async def ensure_ssh_access(containers: List[str], username: str, key_path: str) -> bool:
+    """
+    Ensure SSH access to each container.
+
+    Args:
+        containers: List of container names
+        username: SSH username
+        key_path: Path to SSH private key
+
+    Returns:
+        True if all servers are accessible, False otherwise
+    """
+    logger.info("Ensuring SSH access to containers")
+
+    # Make sure the key exists and has correct permissions
+    if not os.path.exists(key_path):
+        logger.error("SSH key not found", key_path=key_path)
+
+        # Generate a new key
+        key_dir = os.path.dirname(key_path)
+        os.makedirs(key_dir, exist_ok=True)
+
+        ssh_keygen_cmd = f"ssh-keygen -t rsa -b 2048 -f {key_path} -N ''"
+        result = subprocess.run(ssh_keygen_cmd, shell=True, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            logger.error("Failed to generate SSH key", error=result.stderr)
+            return False
+
+        logger.info("Generated new SSH key", key_path=key_path)
+
+    # Ensure key has correct permissions
+    os.chmod(key_path, 0o600)
+
+    # Get the public key
+    public_key = ""
+    with open(f"{key_path}.pub", "r") as f:
+        public_key = f.read().strip()
+
+    all_ok = True
+
+    # Ensure each container has the key
+    for container in containers:
+        try:
+            # Create .ssh directory if needed
+            mkdir_cmd = f"docker exec {container} bash -c 'mkdir -p /home/{username}/.ssh && chmod 700 /home/{username}/.ssh'"
+            subprocess.run(mkdir_cmd, shell=True, check=True)
+
+            # Add the key
+            key_cmd = f"docker exec {container} bash -c 'echo \"{public_key}\" > /home/{username}/.ssh/authorized_keys && chmod 600 /home/{username}/.ssh/authorized_keys && chown -R {username}:{username} /home/{username}/.ssh'"
+            subprocess.run(key_cmd, shell=True, check=True)
+
+            logger.info("Added SSH key to container", container=container)
+        except subprocess.SubprocessError as e:
+            logger.error("Failed to add SSH key to container", container=container, error=str(e))
+            all_ok = False
+
+    return all_ok
 
 
 async def get_server_connections() -> List[ServerConnection]:
@@ -74,6 +176,20 @@ async def get_server_connections() -> List[ServerConnection]:
     server_count = int(os.environ.get("SERVER_COUNT", "3"))
     ssh_user = os.environ.get("SSH_USER", "crown_test")
     ssh_key_path = os.environ.get("SSH_KEY_PATH", "/root/.ssh/id_rsa")
+
+    # Add debugging info to the function logs
+    logger.info("SSH configuration",
+                user=ssh_user,
+                key_path=ssh_key_path,
+                key_exists=os.path.exists(ssh_key_path),
+                key_perms=oct(os.stat(ssh_key_path).st_mode)[-3:] if os.path.exists(ssh_key_path) else "N/A")
+
+    # Ensure SSH access to all containers
+    containers = [f"crown-test-server{i}" for i in range(1, server_count + 1)]
+    ssh_ok = await ensure_ssh_access(containers, ssh_user, ssh_key_path)
+
+    if not ssh_ok:
+        logger.warning("Failed to ensure SSH access to all containers")
 
     for i in range(1, server_count + 1):
         ip_env_var = f"SERVER{i}_IP"
@@ -101,6 +217,57 @@ async def get_server_connections() -> List[ServerConnection]:
     return servers
 
 
+async def run_with_retries(cmd: str, cwd: str = None, max_retries: int = 3) -> Tuple[int, str, str]:
+    """
+    Run a command with retries.
+
+    Args:
+        cmd: Command to run
+        cwd: Working directory
+        max_retries: Maximum number of retries
+
+    Returns:
+        Tuple of (return_code, stdout, stderr)
+    """
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"Running command (attempt {attempt+1}/{max_retries})", cmd=cmd, cwd=cwd)
+            process = await asyncio.create_subprocess_shell(
+                cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                cwd=cwd
+            )
+
+            stdout, stderr = await process.communicate()
+
+            stdout_str = stdout.decode() if stdout else ""
+            stderr_str = stderr.decode() if stderr else ""
+
+            logger.info(f"Command completed",
+                        cmd=cmd,
+                        return_code=process.returncode,
+                        stdout_preview=stdout_str[:200] + "..." if len(stdout_str) > 200 else stdout_str)
+
+            if process.returncode == 0:
+                return process.returncode, stdout_str, stderr_str
+
+            logger.warning(f"Command failed, retrying...",
+                           cmd=cmd,
+                           return_code=process.returncode,
+                           stderr=stderr_str)
+        except Exception as e:
+            logger.error(f"Exception running command", cmd=cmd, error=str(e))
+
+        # Only retry if not the last attempt
+        if attempt < max_retries - 1:
+            # Exponential backoff
+            await asyncio.sleep(2 ** attempt)
+
+    # If we get here, all attempts failed
+    return 1, "", f"Failed after {max_retries} attempts"
+
+
 async def main() -> int:
     """
     Main test runner function.
@@ -122,9 +289,9 @@ async def main() -> int:
         # Create deployment config
         deployment_config = DeploymentConfig(
             domain="crown-test.local",
-            repo_url="https://github.com/sssolid/crown-nexus.git",
+            repo_url="https://github.com/example/crown-nexus.git",
             git_branch="main",
-            admin_email="ryans@crownautomotive.net"
+            admin_email="admin@example.com"
         )
 
         # Generate secure credentials
@@ -152,6 +319,10 @@ async def main() -> int:
         output_dir = Path("/app/test-deployment")
         template_dir = Path("/app/crown_deploy/templates")
 
+        # Clean output directory if it exists
+        if output_dir.exists():
+            shutil.rmtree(output_dir)
+
         output_dir.mkdir(exist_ok=True, parents=True)
 
         script_generator = ScriptGenerator(template_dir, output_dir)
@@ -159,34 +330,53 @@ async def main() -> int:
 
         logger.info("Deployment scripts generated", output_dir=str(output_dir))
 
+        # Fix permissions on deploy.sh
+        deploy_script = output_dir / "deploy.sh"
+        os.chmod(deploy_script, 0o755)
+
+        # Fix permissions on all .sh files
+        for script in output_dir.glob("**/*.sh"):
+            os.chmod(script, 0o755)
+            logger.debug(f"Set executable permissions on {script}")
+
         # Run deployment script if TEST_MODE is not "generate_only"
         if os.environ.get("TEST_MODE", "").lower() != "generate_only":
-            deploy_script = output_dir / "deploy.sh"
+            # Create a simple helper script to see what's happening
+            helper_script = output_dir / "run_deploy.sh"
+            with open(helper_script, "w") as f:
+                f.write("""#!/bin/bash
+set -x  # Enable command echo
+cd $(dirname $0)
+./deploy.sh
+""")
+            os.chmod(helper_script, 0o755)
 
-            # Make deploy script executable
-            os.chmod(deploy_script, 0o755)
-
-            # Run deployment
+            # Run deployment with advanced error handling
             logger.info("Starting deployment")
-            result = subprocess.run(
-                [str(deploy_script)],
-                cwd=str(output_dir),
-                text=True,
-                capture_output=True
+
+            # First try the helper script
+            return_code, stdout, stderr = await run_with_retries(
+                str(helper_script),
+                cwd=str(output_dir)
             )
 
-            if result.returncode == 0:
+            if return_code == 0:
                 logger.info("Deployment successful")
 
                 # Verify deployment
-                await verify_deployment(cluster)
+                deployment_verified = await verify_deployment(cluster)
 
-                return 0
+                if deployment_verified:
+                    logger.info("Deployment verification passed")
+                    return 0
+                else:
+                    logger.error("Deployment verification failed")
+                    return 1
             else:
                 logger.error("Deployment failed",
-                             returncode=result.returncode,
-                             stdout=result.stdout,
-                             stderr=result.stderr)
+                             returncode=return_code,
+                             stdout=stdout,
+                             stderr=stderr)
                 return 1
         else:
             logger.info("Skipping deployment execution (generate_only mode)")

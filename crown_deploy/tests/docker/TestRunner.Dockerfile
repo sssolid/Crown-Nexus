@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies including build tools
+# Install system dependencies including build tools and Docker CLI
 RUN apt-get update && apt-get install -y \
     openssh-client \
     git \
@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     build-essential \
     libpq-dev \
+    docker.io \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
@@ -22,11 +23,10 @@ RUN pip install --no-cache-dir -r test-requirements.txt
 
 # Set up SSH directory
 RUN mkdir -p /root/.ssh && \
-    chmod 700 /root/.ssh && \
-    echo "StrictHostKeyChecking no" > /root/.ssh/config
+    chmod 700 /root/.ssh
 
 # Copy source code
 COPY . .
 
-# Run tests
-CMD ["python", "-m", "tests.docker_test_runner"]
+# Command will be provided by docker-compose
+CMD ["bash"]

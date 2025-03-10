@@ -122,9 +122,9 @@ async def main() -> int:
         # Create deployment config
         deployment_config = DeploymentConfig(
             domain="crown-test.local",
-            repo_url="https://github.com/example/crown-nexus.git",
+            repo_url="https://github.com/sssolid/crown-nexus.git",
             git_branch="main",
-            admin_email="admin@example.com"
+            admin_email="ryans@crownautomotive.net"
         )
 
         # Generate secure credentials

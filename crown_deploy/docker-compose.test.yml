@@ -16,10 +16,9 @@ services:
     networks:
       crown-test-network:
         ipv4_address: 172.28.1.10
-    volumes:
-      - ./test-ssh-keys/id_rsa.pub:/home/crown_test/.ssh/authorized_keys:ro
     ports:
       - "2201:22"  # Map a different port for SSH
+    command: /usr/sbin/sshd -D
 
   # Server 2 - Secondary server
   server2:
@@ -29,10 +28,9 @@ services:
     networks:
       crown-test-network:
         ipv4_address: 172.28.1.11
-    volumes:
-      - ./test-ssh-keys/id_rsa.pub:/home/crown_test/.ssh/authorized_keys:ro
     ports:
       - "2202:22"  # Map a different port for SSH
+    command: /usr/sbin/sshd -D
 
   # Server 3 - Tertiary server
   server3:
@@ -42,10 +40,9 @@ services:
     networks:
       crown-test-network:
         ipv4_address: 172.28.1.12
-    volumes:
-      - ./test-ssh-keys/id_rsa.pub:/home/crown_test/.ssh/authorized_keys:ro
     ports:
       - "2203:22"  # Map a different port for SSH
+    command: /usr/sbin/sshd -D
 
   # Test runner service
   test-runner:
@@ -54,8 +51,10 @@ services:
       dockerfile: tests/docker/TestRunner.Dockerfile
     container_name: crown-test-runner
     volumes:
-      - .:/app  # Mount the whole project
-      - ./test-ssh-keys:/root/.ssh:ro  # Mount SSH keys
+      - .:/app/crown_deploy
+      - ./tests/docker/generate-keys.sh:/generate-keys.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /app
     networks:
       - crown-test-network
     depends_on:
@@ -68,7 +67,8 @@ services:
       - SERVER3_IP=172.28.1.12
       - SSH_USER=crown_test
       - TEST_MODE=true
-    command: python -m tests.docker_test_runner
+      - PYTHONPATH=/app
+    command: bash /generate-keys.sh
 
 networks:
   crown-test-network:

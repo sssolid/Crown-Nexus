@@ -29,10 +29,12 @@ RUN echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
 RUN useradd -m -s /bin/bash crown_test && \
     echo "crown_test ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/crown_test
 
-# Setup SSH keys directory
-RUN mkdir -p /home/crown_test/.ssh
-RUN chown -R crown_test:crown_test /home/crown_test/.ssh && \
-    chmod 700 /home/crown_test/.ssh
+## Setup SSH keys directory
+#RUN mkdir -p /home/crown_test/.ssh
+#RUN chown -R crown_test:crown_test /home/crown_test/.ssh && \
+#    chmod 700 /home/crown_test/.ssh \
+## This line is critical - SSH is very strict about permissions
+#RUN chmod 600 /home/crown_test/.ssh/authorized_keys || true
 
 # Start SSH server
 CMD ["/usr/sbin/sshd", "-D"]

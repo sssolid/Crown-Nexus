@@ -27,7 +27,7 @@ A B2B platform for the automotive aftermarket industry, providing a centralized 
 
 ```bash
 cd infrastructure/docker
-docker-compose up -d
+docker compose up -d
 ```
 
 Alternatively, you can run the backend and frontend separately:

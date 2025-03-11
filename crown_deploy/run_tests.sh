@@ -61,7 +61,7 @@ done
 # Clean up if requested
 if $CLEAN; then
     echo "=== Cleaning up existing containers ==="
-    docker-compose down -v
+    docker compose down -v
 fi
 
 # Create output directory
@@ -83,10 +83,10 @@ fi
 if $FULL_DEPLOYMENT; then
     ENV_VARS="$ENV_VARS -e FULL_DEPLOYMENT=true"
     echo "=== Running with FULL DEPLOYMENT testing ==="
-    
+
     # Create minimal directory structure for mounting
     mkdir -p backend frontend
-    
+
     if [ ! -f "backend/main.py" ]; then
         echo "Creating minimal backend structure..."
         mkdir -p backend
@@ -94,7 +94,7 @@ if $FULL_DEPLOYMENT; then
         touch backend/main.py
         touch backend/requirements.txt
     fi
-    
+
     if [ ! -f "frontend/package.json" ]; then
         echo "Creating minimal frontend structure..."
         mkdir -p frontend
@@ -106,14 +106,14 @@ fi
 
 # Build the server base image first
 echo "=== Building server base image ==="
-docker-compose build server-base
+docker compose build server-base
 
 # Then build and run other containers
 echo "=== Building remaining containers ==="
-docker-compose build
+docker compose build
 
 echo "=== Running tests ==="
-docker-compose run $ENV_VARS test-runner
+docker compose run $ENV_VARS test-runner
 
 # Check result
 RESULT=$?
@@ -129,7 +129,7 @@ fi
 if [ -d "test-output" ] && [ "$(ls -A test-output)" ]; then
     echo "=== Generated files ==="
     find test-output -type f -name "*.sh" | sort
-    
+
     if [ -f "test-output/deployment-report.md" ]; then
         echo ""
         echo "=== Deployment Report ==="

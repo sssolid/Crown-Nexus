@@ -217,16 +217,16 @@ The Docker testing framework allows you to test your deployment scripts in Docke
 
 ```bash
 # Build the test environment
-docker-compose build
+docker compose build
 
 # Run tests with script generation only
-docker-compose run -e GENERATE_ONLY=true test-runner
+docker compose run -e GENERATE_ONLY=true test-runner
 
 # Run full tests with deployment
-docker-compose run test-runner
+docker compose run test-runner
 
 # Clean up after testing
-docker-compose down -v
+docker compose down -v
 ```
 
 ### Docker Test Process

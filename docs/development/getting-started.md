@@ -32,7 +32,7 @@ pre-commit install
 
 ```bash
 cd infrastructure/docker
-docker-compose up -d
+docker compose up -d
 ```
 
 This will start the PostgreSQL, Elasticsearch, and Redis services.

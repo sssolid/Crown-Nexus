@@ -125,7 +125,7 @@ sudo certbot --nginx -d ci.$CROWN_DOMAIN -d registry.$CROWN_DOMAIN -d sonar.$CRO
 # Start the CI/CD stack
 echo "Starting CI/CD services..."
 cd /opt/crown-nexus/ci
-sudo docker-compose up -d
+sudo docker compose up -d
 
 # Create Jenkinsfile for Crown Nexus
 echo "Creating Jenkinsfile template..."

@@ -363,7 +363,7 @@ docker push {registry}/crown-nexus-backend:latest
         deploy_script += """
 # Start the application
 echo "Starting Crown Nexus with Docker Compose..."
-docker-compose up -d
+docker compose up -d
 
 echo ""
 echo "=== Deployment completed successfully ==="
@@ -371,8 +371,8 @@ echo "Crown Nexus should now be available at:"
 echo "  Frontend: http://localhost (configure Nginx or DNS as needed)"
 echo "  Backend API: http://localhost:8000/api/v1"
 echo ""
-echo "To check logs, run: docker-compose logs -f"
-echo "To stop the application, run: docker-compose down"
+echo "To check logs, run: docker compose logs -f"
+echo "To stop the application, run: docker compose down"
 """
 
         # Write the script
@@ -403,14 +403,14 @@ fi
 # Stop and remove containers
 cd {docker_dir.relative_to(self.output_dir)}
 echo "Stopping and removing containers..."
-docker-compose down
+docker compose down
 
 # Remove volumes if requested
 read -p "Do you want to remove persistent volumes (data will be lost)? [y/N] " -n 1 -r
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Removing volumes..."
-    docker-compose down -v
+    docker compose down -v
 fi
 
 # Remove images

@@ -1,0 +1,100 @@
+# File: crown_deploy/run-tests.sh
+#!/bin/bash
+# Crown Nexus Deployment System - Test Runner
+# Run deployment tests in Docker containers
+
+# Function to display help
+show_help() {
+    echo "Crown Nexus Deployment System - Test Runner"
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help          Show this help message"
+    echo "  -g, --generate-only Generate scripts without running deployment"
+    echo "  -d, --debug         Enable debug mode for verbose output"
+    echo "  -c, --clean         Clean existing containers before running"
+    echo ""
+    echo "Examples:"
+    echo "  $0                  Run full tests with deployment"
+    echo "  $0 -g               Generate scripts only"
+    echo "  $0 -c               Clean up before running full tests"
+    echo ""
+}
+
+# Parse command line options
+GENERATE_ONLY=false
+DEBUG=false
+CLEAN=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -g|--generate-only)
+            GENERATE_ONLY=true
+            shift
+            ;;
+        -d|--debug)
+            DEBUG=true
+            shift
+            ;;
+        -c|--clean)
+            CLEAN=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+done
+
+# Clean up if requested
+if $CLEAN; then
+    echo "=== Cleaning up existing containers ==="
+    docker-compose down -v
+fi
+
+# Create output directory
+mkdir -p test-output
+
+# Set environment variables
+ENV_VARS="-e SERVER_COUNT=3"
+
+if $GENERATE_ONLY; then
+    ENV_VARS="$ENV_VARS -e GENERATE_ONLY=true"
+    echo "=== Running in GENERATE_ONLY mode ==="
+fi
+
+if $DEBUG; then
+    ENV_VARS="$ENV_VARS -e DEBUG=true"
+    echo "=== Debug mode enabled ==="
+fi
+
+# Build and run Docker containers
+echo "=== Building Docker containers ==="
+docker-compose build
+
+echo "=== Running tests ==="
+docker-compose run $ENV_VARS test-runner
+
+# Check result
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "=== Tests completed successfully ==="
+    echo "Deployment scripts available in ./test-output/"
+else
+    echo "=== Tests failed with code $RESULT ==="
+    echo "Check logs for details"
+fi
+
+# Show output files
+if [ -d "test-output" ] && [ "$(ls -A test-output)" ]; then
+    echo "=== Generated files ==="
+    find test-output -type f -name "*.sh" | sort
+fi
+
+exit $RESULT

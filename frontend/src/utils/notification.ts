@@ -7,7 +7,7 @@
  * to show different types of messages.
  */
 
-import { ref, reactive } from 'vue';
+import { reactive } from 'vue';
 
 // Notification types
 export enum NotificationType {

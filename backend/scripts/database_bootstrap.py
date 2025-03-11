@@ -59,7 +59,7 @@ async def check_connection() -> bool:
         engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI))
         async with engine.connect() as conn:
             result = await conn.execute(text("SELECT 1"))
-            await result.fetchone()
+            result.fetchone()
             print("✅ Database connection successful!")
             return True
     except SQLAlchemyError as e:
@@ -144,7 +144,7 @@ async def create_admin_user(email: str, password: str, full_name: str) -> Tuple[
             # Hash the password
             hashed_password = get_password_hash(password)
             user_id = str(uuid.uuid4())
-            now = datetime.now().isoformat()
+            now = datetime.now()
 
             # Insert user
             await db.execute(
@@ -193,7 +193,7 @@ async def main() -> bool:
         bool: True if bootstrap succeeded, False otherwise
     """
     # Create media directories
-    create_media_directories()
+    await create_media_directories()
 
     # Test database connection
     if not await check_connection():

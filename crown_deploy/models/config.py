@@ -6,8 +6,8 @@ from typing import List, Set, Optional, Dict
 from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field, validator
 
-from crown_deploy.models.server import Server, ServerRole
-from crown_deploy.models.deployment_strategy import DeploymentStrategy
+from models.server import Server, ServerRole
+from models.deployment_strategy import DeploymentStrategy
 
 
 class DeploymentConfig(BaseModel):

@@ -4,7 +4,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Literal, Optional, Set, List
 from pydantic import BaseModel, Field, validator
-from crown_deploy.utils.path import normalize_path, validate_key_path
+from utils.path import normalize_path, validate_key_path
 
 
 class ServerRole(str, Enum):

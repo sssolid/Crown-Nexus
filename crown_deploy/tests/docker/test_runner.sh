@@ -248,10 +248,10 @@ fi
 # Run the test based on mode
 if [ "$GENERATE_ONLY" = "true" ]; then
   echo "=== Running in GENERATE_ONLY mode ==="
-  TEST_MODE=generate_only python -m crown_deploy.tests.docker_test_runner
+  TEST_MODE=generate_only python -m tests.docker_test_runner
 else
   echo "=== Running with full deployment test ==="
-  python -m crown_deploy.tests.docker_test_runner
+  python -m tests.docker_test_runner
 fi
 TEST_RESULT=$?
 

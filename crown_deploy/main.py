@@ -17,15 +17,15 @@ from typing import List, Optional
 
 import structlog
 
-from crown_deploy.models.server import ServerConnection
-from crown_deploy.models.config import DeploymentConfig, ClusterConfig
-from crown_deploy.models.deployment import DeploymentState
-from crown_deploy.models.deployment_strategy import DeploymentStrategy, DeploymentStrategyType
-from crown_deploy.services.analyzer import PythonServerAnalyzer
-from crown_deploy.services.script_generator import ScriptGenerator
-from crown_deploy.utils.security import generate_deployment_credentials
-from crown_deploy.utils.errors import DeploymentError
-from crown_deploy.utils.path import normalize_path
+from models.server import ServerConnection
+from models.config import DeploymentConfig, ClusterConfig
+from models.deployment import DeploymentState
+from models.deployment_strategy import DeploymentStrategy, DeploymentStrategyType
+from services.analyzer import PythonServerAnalyzer
+from services.script_generator import ScriptGenerator
+from utils.security import generate_deployment_credentials
+from utils.errors import DeploymentError
+from utils.path import normalize_path
 
 # Configure structured logging
 logging.basicConfig(level=logging.INFO)

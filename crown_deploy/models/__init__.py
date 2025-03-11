@@ -1,6 +1,6 @@
 """Data models for the Crown Nexus deployment system."""
 
-from crown_deploy.models.server import (
+from models.server import (
     Server,
     ServerConnection,
     ServerRole,
@@ -8,8 +8,8 @@ from crown_deploy.models.server import (
     get_role_dependencies,
     get_incompatible_roles
 )
-from crown_deploy.models.config import DeploymentConfig, ClusterConfig
-from crown_deploy.models.deployment import DeploymentState, ServerDeploymentStatus
+from models.config import DeploymentConfig, ClusterConfig
+from models.deployment import DeploymentState, ServerDeploymentStatus
 
 __all__ = [
     "Server",

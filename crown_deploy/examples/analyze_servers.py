@@ -9,8 +9,8 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the crown_deploy package
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from crown_deploy.models.server import ServerConnection
-from crown_deploy.services.analyzer import PythonServerAnalyzer
+from models.server import ServerConnection
+from services.analyzer import PythonServerAnalyzer
 
 
 async def main():

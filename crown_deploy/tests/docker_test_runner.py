@@ -17,11 +17,11 @@ from typing import List, Dict, Optional, Tuple, Any
 import structlog
 import asyncssh
 
-from crown_deploy.models.server import ServerConnection
-from crown_deploy.models.config import DeploymentConfig
-from crown_deploy.services.analyzer import PythonServerAnalyzer
-from crown_deploy.services.script_generator import ScriptGenerator
-from crown_deploy.utils.security import generate_deployment_credentials
+from models.server import ServerConnection
+from models.config import DeploymentConfig
+from services.analyzer import PythonServerAnalyzer
+from services.script_generator import ScriptGenerator
+from utils.security import generate_deployment_credentials
 
 # Initialize logger
 logger = structlog.get_logger()

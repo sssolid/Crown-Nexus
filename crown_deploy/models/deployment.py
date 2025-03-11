@@ -7,7 +7,7 @@ from typing import Dict, List, Literal, Optional, Any
 from pathlib import Path
 from pydantic import BaseModel, Field
 
-from crown_deploy.models.config import ClusterConfig
+from models.config import ClusterConfig
 
 
 class ServerDeploymentStatus(BaseModel):

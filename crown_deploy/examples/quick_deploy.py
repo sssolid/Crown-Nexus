@@ -13,11 +13,11 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the crown_deploy package
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from crown_deploy.models.server import ServerConnection
-from crown_deploy.models.config import DeploymentConfig
-from crown_deploy.services.analyzer import PythonServerAnalyzer
-from crown_deploy.services.script_generator import ScriptGenerator
-from crown_deploy.utils.security import generate_deployment_credentials
+from models.server import ServerConnection
+from models.config import DeploymentConfig
+from services.analyzer import PythonServerAnalyzer
+from services.script_generator import ScriptGenerator
+from utils.security import generate_deployment_credentials
 
 
 async def main():
@@ -104,7 +104,7 @@ async def main():
 
     # Generate deployment scripts
     output_dir = input("\nEnter path for deployment scripts [./deployment]: ") or "./deployment"
-    template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "crown_deploy/templates")
+    template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
 
     print(f"\nGenerating deployment scripts in {output_dir}...")
     script_generator = ScriptGenerator(Path(template_dir), Path(output_dir))

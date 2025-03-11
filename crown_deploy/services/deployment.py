@@ -14,11 +14,11 @@ import structlog
 import asyncssh
 from pydantic import BaseModel
 
-from crown_deploy.models.server import Server, ServerConnection, ServerRole
-from crown_deploy.models.config import ClusterConfig
-from crown_deploy.models.deployment import DeploymentState, ServerDeploymentStatus
-from crown_deploy.utils.errors import DeploymentError, RollbackError
-from crown_deploy.utils.path import normalize_path, get_ssh_key_path
+from models.server import Server, ServerConnection, ServerRole
+from models.config import ClusterConfig
+from models.deployment import DeploymentState, ServerDeploymentStatus
+from utils.errors import DeploymentError, RollbackError
+from utils.path import normalize_path, get_ssh_key_path
 
 # Initialize logger
 logger = structlog.get_logger()

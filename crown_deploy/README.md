@@ -124,7 +124,7 @@ server3,192.168.1.103,ubuntu,~/.ssh/id_rsa,Tertiary server
 ### 2. Analyze Servers
 
 ```bash
-python -m crown_deploy.main analyze \
+python -m main analyze \
   --inventory /path/to/inventory.csv \
   --output analysis-results.txt
 ```
@@ -136,7 +136,7 @@ This will output recommended role assignments for your servers.
 #### Traditional Deployment
 
 ```bash
-python -m crown_deploy.main generate \
+python -m main generate \
   --inventory /path/to/inventory.csv \
   --templates ./crown_deploy/templates \
   --output /path/to/deployment-scripts \
@@ -150,7 +150,7 @@ python -m crown_deploy.main generate \
 #### Docker Deployment
 
 ```bash
-python -m crown_deploy.main generate \
+python -m main generate \
   --inventory inventory.csv \
   --templates ./crown_deploy/templates \
   --output ./deployment \
@@ -164,7 +164,7 @@ python -m crown_deploy.main generate \
 #### Kubernetes Deployment
 
 ```bash
-python -m crown_deploy.main generate \
+python -m main generate \
   --inventory inventory.csv \
   --templates ./crown_deploy/templates \
   --output ./deployment \
@@ -254,7 +254,7 @@ If you're using Windows and see path-related errors, ensure you're using the cor
 
 ```python
 # In your code
-from crown_deploy.utils.path import normalize_path
+from utils.path import normalize_path
 
 # Use the normalize_path function for all paths
 normalized_path = normalize_path(path)

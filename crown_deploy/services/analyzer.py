@@ -13,10 +13,10 @@ import asyncssh
 import structlog
 from pydantic import BaseModel
 
-from crown_deploy.models.server import Server, ServerConnection, ServerRole, ServerSpecs
-from crown_deploy.models.config import ClusterConfig
-from crown_deploy.utils.errors import AnalyzerError, ServerConnectionError
-from crown_deploy.utils.path import normalize_path, get_ssh_key_path
+from models.server import Server, ServerConnection, ServerRole, ServerSpecs
+from models.config import ClusterConfig
+from utils.errors import AnalyzerError, ServerConnectionError
+from utils.path import normalize_path, get_ssh_key_path
 
 # Initialize logger
 logger = structlog.get_logger()

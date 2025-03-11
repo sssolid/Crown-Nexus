@@ -20,7 +20,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum as SQLAEnum, ForeignKey, Integer, String, func, text
+from sqlalchemy import DateTime, Enum as SQLAEnum, ForeignKey, Integer, String, func, text, Boolean
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression

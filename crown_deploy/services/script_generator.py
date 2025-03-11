@@ -8,10 +8,10 @@ from typing import Dict, Any, List, Set
 
 import structlog
 
-from crown_deploy.models.server import Server, ServerRole
-from crown_deploy.models.config import ClusterConfig
-from crown_deploy.models.deployment_strategy import DeploymentStrategyType
-from crown_deploy.utils.errors import ScriptGenerationError
+from models.server import Server, ServerRole
+from models.config import ClusterConfig
+from models.deployment_strategy import DeploymentStrategyType
+from utils.errors import ScriptGenerationError
 
 # Initialize logger
 logger = structlog.get_logger()

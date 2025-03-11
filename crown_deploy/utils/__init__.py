@@ -1,6 +1,6 @@
 """Utility modules for the Crown Nexus deployment system."""
 
-from crown_deploy.utils.errors import (
+from utils.errors import (
     DeploymentError,
     ServerConnectionError,
     RoleConfigurationError,
@@ -9,7 +9,7 @@ from crown_deploy.utils.errors import (
     AnalyzerError,
     ScriptGenerationError
 )
-from crown_deploy.utils.security import (
+from utils.security import (
     generate_secure_password,
     generate_deployment_credentials,
     mask_sensitive_value

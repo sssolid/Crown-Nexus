@@ -17,8 +17,8 @@ RUN apt-get update && apt-get install -y \
     # Backend role packages
     build-essential \
     python3-dev \
-    # Frontend role packages
-    nginx nodejs npm \
+    # Frontend role packages (minus nodejs for now)
+    nginx \
     # Common services
     redis-server \
     # Monitoring tools
@@ -26,6 +26,17 @@ RUN apt-get update && apt-get install -y \
     # Dependencies for Elasticsearch
     openjdk-17-jdk \
     && rm -rf /var/lib/apt/lists/*
+
+# Remove existing Node.js packages to avoid conflicts
+RUN apt-get update && apt-get remove -y nodejs nodejs-doc libnode-dev libnode72 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 18 properly
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get update && \
+    apt-get install -y nodejs && \
+    npm install -g yarn && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Elasticsearch
 RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg \
@@ -38,11 +49,6 @@ RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmo
 RUN mkdir -p /etc/elasticsearch && echo "xpack.security.enabled: false" >> /etc/elasticsearch/elasticsearch.yml \
     && echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml \
     && echo "discovery.type: single-node" >> /etc/elasticsearch/elasticsearch.yml
-
-# Install Node.js 16 or higher for Vue 3
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g yarn
 
 # Configure systemd
 RUN cd /lib/systemd/system/sysinit.target.wants/ && \

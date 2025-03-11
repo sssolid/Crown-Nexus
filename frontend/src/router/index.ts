@@ -27,6 +27,16 @@ declare module 'vue-router' {
 const routes: RouteRecordRaw[] = [
   // Public routes
   {
+    path: '/landing',
+    name: 'Landing',
+    component: () => import('@/views/LandingPage.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Landing',
+      layout: 'blank'
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

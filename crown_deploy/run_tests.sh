@@ -104,8 +104,12 @@ if $FULL_DEPLOYMENT; then
     fi
 fi
 
-# Build and run Docker containers
-echo "=== Building Docker containers ==="
+# Build the server base image first
+echo "=== Building server base image ==="
+docker-compose build server-base
+
+# Then build and run other containers
+echo "=== Building remaining containers ==="
 docker-compose build
 
 echo "=== Running tests ==="

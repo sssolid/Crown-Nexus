@@ -1,4 +1,3 @@
-# File: crown_deploy/tests/docker/server.Dockerfile
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,13 +16,33 @@ RUN apt-get update && apt-get install -y \
     postgresql postgresql-contrib \
     # Backend role packages
     build-essential \
+    python3-dev \
     # Frontend role packages
     nginx nodejs npm \
     # Common services
     redis-server \
     # Monitoring tools
     prometheus-node-exporter \
+    # Dependencies for Elasticsearch
+    openjdk-17-jdk \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Elasticsearch
+RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-8.x.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends elasticsearch \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure Elasticsearch
+RUN mkdir -p /etc/elasticsearch && echo "xpack.security.enabled: false" >> /etc/elasticsearch/elasticsearch.yml \
+    && echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml \
+    && echo "discovery.type: single-node" >> /etc/elasticsearch/elasticsearch.yml
+
+# Install Node.js 16 or higher for Vue 3
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g yarn
 
 # Configure systemd
 RUN cd /lib/systemd/system/sysinit.target.wants/ && \
@@ -56,21 +75,30 @@ RUN useradd -m -s /bin/bash crown && \
     mkdir -p /home/crown/crown-nexus && \
     chown -R crown:crown /home/crown
 
+# Create application directories
+RUN mkdir -p /app/backend /app/frontend && \
+    chown -R crown:crown /app
+
 # Configure PostgreSQL to listen on all interfaces for testing
 RUN echo "listen_addresses = '*'" >> /etc/postgresql/14/main/postgresql.conf && \
     echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/14/main/pg_hba.conf
 
+# Configure Redis to accept remote connections
+RUN sed -i 's/bind 127.0.0.1 ::1/bind 0.0.0.0/g' /etc/redis/redis.conf && \
+    sed -i 's/protected-mode yes/protected-mode no/g' /etc/redis/redis.conf
+
 # Enable services based on server role
 RUN systemctl enable postgresql && \
     systemctl enable redis-server && \
-    systemctl enable nginx
+    systemctl enable nginx && \
+    systemctl enable elasticsearch
 
 # Create Docker entrypoint script to start services based on role
 COPY docker_entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Expose common ports
-EXPOSE 22 80 8000 5432 6379
+EXPOSE 22 80 8000 5432 6379 9200 9300
 
 # Use systemd as the entrypoint
 ENTRYPOINT ["/lib/systemd/systemd"]

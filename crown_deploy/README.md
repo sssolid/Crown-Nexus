@@ -82,37 +82,28 @@ crown_deploy/
 │   │   ├── frontend.sh.j2
 │   │   ├── backend.sh.j2
 │   │   ├── database.sh.j2
-│   │   ├── redis.sh.j2
-│   │   ├── elasticsearch.sh.j2
-│   │   ├── monitoring.sh.j2
-│   │   ├── cicd.sh.j2
-│   │   └── storage.sh.j2
+│   │   └── ...
 │   ├── docker/                # Docker templates
-│   │   ├── docker-compose.yml.j2
-│   │   ├── frontend/
-│   │   │   └── Dockerfile.j2
-│   │   └── backend/
-│   │       └── Dockerfile.j2
 │   ├── kubernetes/            # Kubernetes templates
-│   │   └── deployment.yaml.j2
 │   ├── server_setup.sh.j2     # Server-specific setup
 │   ├── deploy.sh.j2           # Main deployment script
 │   └── rollback.sh.j2         # Rollback script
 ├── tests/                     # Test code
 │   ├── __init__.py
-│   ├── docker_environment.py  # Docker test environment
-│   └── docker_test_runner.py  # Docker test runner
+│   ├── docker/                # Docker testing utilities
+│   │   ├── server.Dockerfile  # Test server Dockerfile
+│   │   ├── test_runner.Dockerfile # Test runner Dockerfile
+│   │   ├── docker_entrypoint.sh # Container entrypoint script
+│   │   └── test_runner.sh     # Main test script
+│   └── docker_test_runner.py  # Python test runner
 ├── utils/                     # Utility functions
 │   ├── __init__.py
 │   ├── errors.py              # Custom exceptions
 │   ├── logging.py             # Logging configuration
 │   ├── path.py                # Path utilities
 │   └── security.py            # Password generation, etc.
-├── docker/                    # Docker test files
-│   └── test/
-│       ├── Dockerfile         # Test server Dockerfile
-│       └── TestRunner.Dockerfile  # Test runner Dockerfile
-├── docker-compose.test.yml    # Docker Compose for testing
+├── docker-compose.yml         # Docker Compose for testing
+├── run-tests.sh               # Helper script for running tests
 ├── requirements.txt           # Project dependencies
 └── test-requirements.txt      # Test dependencies
 ```
@@ -147,12 +138,12 @@ This will output recommended role assignments for your servers.
 ```bash
 python -m crown_deploy.main generate \
   --inventory /path/to/inventory.csv \
-  --templates /path/to/crown_deploy/templates \
+  --templates ./crown_deploy/templates \
   --output /path/to/deployment-scripts \
   --domain example.com \
   --repo https://github.com/your-org/crown-nexus.git \
   --branch main \
-  --admin-email admin@example.com
+  --admin-email admin@example.com \
   --strategy traditional
 ```
 
@@ -161,7 +152,7 @@ python -m crown_deploy.main generate \
 ```bash
 python -m crown_deploy.main generate \
   --inventory inventory.csv \
-  --templates ./templates \
+  --templates ./crown_deploy/templates \
   --output ./deployment \
   --domain example.com \
   --repo https://github.com/your-org/crown-nexus.git \
@@ -175,7 +166,7 @@ python -m crown_deploy.main generate \
 ```bash
 python -m crown_deploy.main generate \
   --inventory inventory.csv \
-  --templates ./templates \
+  --templates ./crown_deploy/templates \
   --output ./deployment \
   --domain example.com \
   --repo https://github.com/your-org/crown-nexus.git \
@@ -206,63 +197,52 @@ The Docker testing framework allows you to test your deployment scripts in Docke
 
 ### Running Docker Tests
 
-1. Build the Docker test environment:
+1. Use the included script to run tests:
 
 ```bash
-docker-compose -f docker-compose.test.yml build
+# Run full tests with deployment
+./run-tests.sh
+
+# Generate scripts only
+./run-tests.sh --generate-only
+
+# Clean up before running
+./run-tests.sh --clean
+
+# Enable debug mode
+./run-tests.sh --debug
 ```
 
-2. Run the full test (generate scripts and deploy):
+2. Alternatively, use Docker Compose directly:
 
 ```bash
-docker-compose -f docker-compose.test.yml run -e TEST_MODE=true test-runner
-```
+# Build the test environment
+docker-compose build
 
-3. Run test to only generate scripts without deploying:
+# Run tests with script generation only
+docker-compose run -e GENERATE_ONLY=true test-runner
 
-```bash
-docker-compose -f docker-compose.test.yml run -e TEST_MODE=generate_only test-runner
-```
+# Run full tests with deployment
+docker-compose run test-runner
 
-4. Clean up Docker test environment:
-
-```bash
-docker-compose -f docker-compose.test.yml down -v
+# Clean up after testing
+docker-compose down -v
 ```
 
 ### Docker Test Process
 
-1. **Set up containers**: Creates Docker containers that simulate your servers
-2. **Server analysis**: Runs your analyzer to evaluate container specs and assign roles
+1. **Set up containers**: Creates 3 Docker containers that simulate your servers
+2. **Server analysis**: Runs the analyzer to evaluate container specs and assign roles
 3. **Script generation**: Generates deployment scripts
-4. **Test deployment**: Executes the deployment against the containers
+4. **Test deployment**: Executes the deployment against the containers (unless in generate-only mode)
 5. **Verification**: Verifies the deployment succeeded
 
-### Files for Docker Testing Framework
+### Test Output
 
-#### 1. Docker Environment Class (`tests/docker_environment.py`)
-
-Manages Docker containers that simulate servers.
-
-#### 2. Docker Compose File (`docker-compose.test.yml`)
-
-Defines the Docker services needed for testing.
-
-#### 3. Test Server Dockerfile (`docker/test/Dockerfile`)
-
-Defines the Docker image for test servers.
-
-#### 4. Test Runner Dockerfile (`docker/test/TestRunner.Dockerfile`)
-
-Defines the Docker image for the test runner.
-
-#### 5. Docker Test Runner Script (`tests/docker_test_runner.py`)
-
-Runs the tests against the Docker containers.
-
-#### 6. Test Requirements File (`test-requirements.txt`)
-
-Lists the Python dependencies needed for testing.
+The testing framework creates a `test-output` directory containing:
+- Generated deployment scripts
+- A README with test results
+- Role assignments for each server
 
 ## Troubleshooting
 
@@ -280,19 +260,16 @@ from crown_deploy.utils.path import normalize_path
 normalized_path = normalize_path(path)
 ```
 
-#### 2. Docker Build Errors
+#### 2. SSH Connection Issues
 
-If you encounter errors building the Docker images:
+If you encounter SSH connection issues during testing:
 
 ```bash
-# Make sure you have the necessary build dependencies
-apt-get install -y \
-    openssh-client \
-    git \
-    gcc \
-    python3-dev \
-    build-essential \
-    libpq-dev
+# Run tests in debug mode
+./run-tests.sh --debug
+
+# Check Docker logs for SSH service
+docker logs crown-test-server1
 ```
 
 #### 3. Template Syntax Errors
@@ -303,13 +280,16 @@ If you see Jinja2 template syntax errors:
 - Use Jinja2 filters (e.g., `{{ items|join(',') }}`) instead of Python methods
 - Make sure `ServerRole` is passed to all templates
 
-#### 4. Unicode Encoding Errors
+#### 4. Docker Test Failures
 
-If you see Unicode encoding errors when writing files:
+If the Docker tests fail:
 
-```python
-# Always specify UTF-8 encoding when writing files
-file_path.write_text(content, encoding='utf-8')
+```bash
+# Clean up existing containers and volumes
+./run-tests.sh --clean
+
+# Check if Docker containers are running
+docker ps | grep crown-test
 ```
 
 ## Development Workflow
@@ -337,7 +317,7 @@ pip install -r test-requirements.txt
 pytest
 
 # Test with Docker
-docker-compose -f docker-compose.test.yml up test-runner
+./run-tests.sh
 ```
 
 ### 4. Commit Changes

@@ -103,7 +103,7 @@ crown_deploy/
 │   ├── path.py                # Path utilities
 │   └── security.py            # Password generation, etc.
 ├── docker-compose.yml         # Docker Compose for testing
-├── run-tests.sh               # Helper script for running tests
+├── run_tests.sh               # Helper script for running tests
 ├── requirements.txt           # Project dependencies
 └── test-requirements.txt      # Test dependencies
 ```
@@ -201,16 +201,16 @@ The Docker testing framework allows you to test your deployment scripts in Docke
 
 ```bash
 # Run full tests with deployment
-./run-tests.sh
+./run_tests.sh
 
 # Generate scripts only
-./run-tests.sh --generate-only
+./run_tests.sh --generate-only
 
 # Clean up before running
-./run-tests.sh --clean
+./run_tests.sh --clean
 
 # Enable debug mode
-./run-tests.sh --debug
+./run_tests.sh --debug
 ```
 
 2. Alternatively, use Docker Compose directly:
@@ -266,7 +266,7 @@ If you encounter SSH connection issues during testing:
 
 ```bash
 # Run tests in debug mode
-./run-tests.sh --debug
+./run_tests.sh --debug
 
 # Check Docker logs for SSH service
 docker logs crown-test-server1
@@ -286,7 +286,7 @@ If the Docker tests fail:
 
 ```bash
 # Clean up existing containers and volumes
-./run-tests.sh --clean
+./run_tests.sh --clean
 
 # Check if Docker containers are running
 docker ps | grep crown-test
@@ -317,7 +317,7 @@ pip install -r test-requirements.txt
 pytest
 
 # Test with Docker
-./run-tests.sh
+./run_tests.sh
 ```
 
 ### 4. Commit Changes

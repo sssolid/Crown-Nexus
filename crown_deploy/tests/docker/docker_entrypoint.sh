@@ -1,3 +1,4 @@
+# File: crown_deploy/tests/docker/docker_entrypoint.sh
 #!/bin/bash
 set -e
 

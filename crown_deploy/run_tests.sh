@@ -1,4 +1,3 @@
-# File: crown_deploy/run-tests.sh
 #!/bin/bash
 # Crown Nexus Deployment System - Test Runner
 # Run deployment tests in Docker containers
@@ -13,11 +12,13 @@ show_help() {
     echo "  -g, --generate-only Generate scripts without running deployment"
     echo "  -d, --debug         Enable debug mode for verbose output"
     echo "  -c, --clean         Clean existing containers before running"
+    echo "  -f, --full          Enable full deployment testing with all services"
     echo ""
     echo "Examples:"
-    echo "  $0                  Run full tests with deployment"
+    echo "  $0                  Run standard tests with deployment"
+    echo "  $0 -f               Run full deployment with all services"
     echo "  $0 -g               Generate scripts only"
-    echo "  $0 -c               Clean up before running full tests"
+    echo "  $0 -c -f            Clean up and run full deployment tests"
     echo ""
 }
 
@@ -25,6 +26,7 @@ show_help() {
 GENERATE_ONLY=false
 DEBUG=false
 CLEAN=false
+FULL_DEPLOYMENT=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -42,6 +44,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -c|--clean)
             CLEAN=true
+            shift
+            ;;
+        -f|--full)
+            FULL_DEPLOYMENT=true
             shift
             ;;
         *)
@@ -74,6 +80,30 @@ if $DEBUG; then
     echo "=== Debug mode enabled ==="
 fi
 
+if $FULL_DEPLOYMENT; then
+    ENV_VARS="$ENV_VARS -e FULL_DEPLOYMENT=true"
+    echo "=== Running with FULL DEPLOYMENT testing ==="
+    
+    # Create minimal directory structure for mounting
+    mkdir -p backend frontend
+    
+    if [ ! -f "backend/main.py" ]; then
+        echo "Creating minimal backend structure..."
+        mkdir -p backend
+        # Create empty files that will be populated in the container
+        touch backend/main.py
+        touch backend/requirements.txt
+    fi
+    
+    if [ ! -f "frontend/package.json" ]; then
+        echo "Creating minimal frontend structure..."
+        mkdir -p frontend
+        # Create empty files that will be populated in the container
+        touch frontend/package.json
+        touch frontend/index.html
+    fi
+fi
+
 # Build and run Docker containers
 echo "=== Building Docker containers ==="
 docker-compose build
@@ -95,6 +125,12 @@ fi
 if [ -d "test-output" ] && [ "$(ls -A test-output)" ]; then
     echo "=== Generated files ==="
     find test-output -type f -name "*.sh" | sort
+    
+    if [ -f "test-output/deployment-report.md" ]; then
+        echo ""
+        echo "=== Deployment Report ==="
+        cat test-output/deployment-report.md
+    fi
 fi
 
 exit $RESULT

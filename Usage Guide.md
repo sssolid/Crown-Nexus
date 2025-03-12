@@ -13,7 +13,7 @@ This document provides instructions on how to use the tools for preparing Python
 ### Prerequisites
 
 - Python 3.6 or higher
-- For standard UML diagrams: 
+- For standard UML diagrams:
   - Graphviz (`apt-get install graphviz` on Debian/Ubuntu)
   - pylint (`pip install pylint`)
 
@@ -107,11 +107,11 @@ Options:
 
 Example:
 ```bash
-./prepare-code.sh --project-dir qorzen --output-dir nexus_for_sharing
+./prepare-code.sh --project-dir backend --output-dir nexus_for_sharing
 ```
 
 This will:
-1. Strip all docstrings and comments from Python files in `qorzen`
+1. Strip all docstrings and comments from Python files in `backend`
 2. Generate both standard UML and Mermaid diagrams
 3. Save everything to the `nexus_for_sharing` directory
 4. Create a README.md with usage instructions

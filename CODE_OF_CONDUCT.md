@@ -1,4 +1,4 @@
-# Qorzen Code of Conduct
+# Crown Nexus Code of Conduct
 
 ## Our Pledge
 

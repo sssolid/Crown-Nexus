@@ -1,6 +1,6 @@
-# Contributing to Qorzen
+# Contributing to Crown Nexus
 
-Thank you for considering contributing to Qorzen! This document outlines the process for contributing to the project.
+Thank you for considering contributing to Crown Nexus! This document outlines the process for contributing to the project.
 
 ## Code of Conduct
 

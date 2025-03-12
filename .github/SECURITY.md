@@ -11,7 +11,7 @@ Currently supported versions for security updates:
 ## Reporting a Vulnerability
 
 To report a security vulnerability, please do not open a public issue.
-Instead, please email security@qorzen.com with details about the vulnerability.
+Instead, please email security@TODO.com with details about the vulnerability.
 
 We will acknowledge receipt of your vulnerability report and send you regular updates about our progress.
 If the vulnerability is confirmed, we will release a patch as soon as possible.

@@ -126,6 +126,18 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 
+    # Redis
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+
+    # Fitment module settings
+    VCDB_PATH: str = "data/vcdb.accdb"
+    PCDB_PATH: str = "data/pcdb.accdb"
+    MODEL_MAPPINGS_PATH: Optional[str] = None
+    FITMENT_DB_URL: Optional[str] = None
+    FITMENT_LOG_LEVEL: str = "INFO"
+    FITMENT_CACHE_SIZE: int = 100
+
     # Media settings
     MEDIA_ROOT: DirectoryPath = "media"
     MEDIA_URL: str = "/media/"

@@ -109,6 +109,35 @@ class PartApplication(BaseModel):
         return self
 
 
+class ModelMapping(BaseModel):
+    """Database model mapping rule."""
+    id: Optional[int] = None
+    pattern: str
+    mapping: str
+    priority: int = 0
+    active: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    @property
+    def make(self) -> str:
+        """Extract make from mapping string."""
+        parts = self.mapping.split('|')
+        return parts[0] if len(parts) > 0 else ""
+
+    @property
+    def vehicle_code(self) -> str:
+        """Extract vehicle code from mapping string."""
+        parts = self.mapping.split('|')
+        return parts[1] if len(parts) > 1 else ""
+
+    @property
+    def model(self) -> str:
+        """Extract model from mapping string."""
+        parts = self.mapping.split('|')
+        return parts[2] if len(parts) > 2 else ""
+
+
 class MappingRule(BaseModel):
     """Rule for mapping vehicle model text to structured data."""
     pattern: str

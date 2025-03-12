@@ -14,6 +14,9 @@ from fastapi import APIRouter, Body, Depends, File, HTTPException, Path, Query, 
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from app.schemas.model_mapping import ModelMapping as ModelMappingSchema
+from app.schemas.model_mapping import ModelMappingCreate, ModelMappingList, ModelMappingUpdate
+
 from .exceptions import (
     ConfigurationError,
     DatabaseError,
@@ -64,6 +67,34 @@ class UploadModelMappingsResponse(BaseModel):
 
     message: str
     mapping_count: int
+
+
+class ModelMappingRequest(BaseModel):
+    """Request for creating or updating a model mapping."""
+
+    pattern: str
+    mapping: str
+    priority: int = 0
+    active: bool = True
+
+
+class ModelMappingResponse(BaseModel):
+    """Response for a model mapping."""
+
+    id: int
+    pattern: str
+    mapping: str
+    priority: int
+    active: bool
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class ModelMappingsListResponse(BaseModel):
+    """Response for listing model mappings."""
+
+    items: List[ModelMappingResponse]
+    total: int
 
 
 # Dependency for getting the mapping engine
@@ -165,10 +196,10 @@ async def upload_model_mappings(
     mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
 ):
     """
-    Upload model mappings Excel file.
+    Upload model mappings JSON file.
 
     Args:
-        file: Excel file with model mappings
+        file: JSON file with model mappings
         mapping_engine: Mapping engine instance
 
     Returns:
@@ -179,39 +210,314 @@ async def upload_model_mappings(
     """
     try:
         # Verify file type
-        if not file.filename or not (
-            file.filename.endswith(".xlsx") or
-            file.filename.endswith(".xls")
-        ):
+        if not file.filename or not file.filename.endswith(".json"):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid file format. Please upload an Excel file (.xlsx or .xls)"
+                detail="Invalid file format. Please upload a JSON file (.json)"
             )
 
-        # Save file temporarily
-        import tempfile
-        import os
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
-            content = await file.read()
-            temp_file.write(content)
-            temp_file_path = temp_file.name
+        # Read the file content
+        content = await file.read()
 
         try:
-            # Configure mapping engine with new mappings
-            mapping_engine.configure(temp_file_path)
+            # Parse JSON
+            json_data = json.loads(content.decode('utf-8'))
 
-            # Count mappings
-            mapping_count = sum(len(mappings) for mappings in mapping_engine.model_mappings.values())
+            # Import mappings to database
+            mapping_count = await mapping_engine.db_service.import_mappings_from_json(json_data)
+
+            # Refresh mappings in the engine
+            await mapping_engine.refresh_mappings()
 
             return {
                 "message": "Model mappings uploaded and configured successfully",
                 "mapping_count": mapping_count
             }
-        finally:
-            # Clean up temp file
-            os.unlink(temp_file_path)
+        except json.JSONDecodeError as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid JSON format: {str(e)}"
+            )
 
+    except FitmentError as e:
+        logger.error(f"Fitment error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": str(e), "details": e.details}
+        ) from e
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        ) from e
+
+
+@router.get("/model-mappings", response_model=ModelMappingList)
+async def list_model_mappings(
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
+    skip: int = 0,
+    limit: int = 100,
+    pattern: Optional[str] = None
+):
+    """
+    List model mappings from database.
+
+    Args:
+        mapping_engine: Mapping engine instance
+        skip: Number of items to skip
+        limit: Maximum number of items to return
+        pattern: Optional pattern to filter by
+
+    Returns:
+        List of model mappings
+
+    Raises:
+        HTTPException: If retrieval fails
+    """
+    try:
+        async with mapping_engine.db_service.get_session() as session:
+            from app.models.model_mapping import ModelMapping
+            from sqlalchemy import or_, select, func
+
+            # Build query
+            query = select(ModelMapping)
+
+            # Add pattern filter if provided
+            if pattern:
+                query = query.where(ModelMapping.pattern.ilike(f"%{pattern}%"))
+
+            # Count total
+            count_query = select(func.count()).select_from(query.subquery())
+            total = await session.scalar(count_query) or 0
+
+            # Add pagination
+            query = query.order_by(ModelMapping.pattern, ModelMapping.priority.desc())
+            query = query.offset(skip).limit(limit)
+
+            # Execute query
+            result = await session.execute(query)
+            items = result.scalars().all()
+
+            return {
+                "items": items,
+                "total": total
+            }
+    except FitmentError as e:
+        logger.error(f"Fitment error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": str(e), "details": e.details}
+        ) from e
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        ) from e
+
+
+@router.post("/model-mappings", response_model=ModelMappingSchema, status_code=status.HTTP_201_CREATED)
+async def create_model_mapping(
+    mapping_data: ModelMappingCreate,
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+):
+    """
+    Create a new model mapping.
+
+    Args:
+        mapping_data: Mapping data
+        mapping_engine: Mapping engine instance
+
+    Returns:
+        Created mapping
+
+    Raises:
+        HTTPException: If creation fails
+    """
+    try:
+        # Create mapping in database
+        mapping_id = await mapping_engine.db_service.add_model_mapping(
+            mapping_data.pattern,
+            mapping_data.mapping,
+            mapping_data.priority
+        )
+
+        # Refresh mappings in the engine
+        await mapping_engine.refresh_mappings()
+
+        # Return the created mapping
+        async with mapping_engine.db_service.get_session() as session:
+            from app.models.model_mapping import ModelMapping
+
+            mapping = await session.get(ModelMapping, mapping_id)
+            if not mapping:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Mapping not found after creation"
+                )
+
+            return mapping
+    except HTTPException:
+        raise
+    except FitmentError as e:
+        logger.error(f"Fitment error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": str(e), "details": e.details}
+        ) from e
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        ) from e
+
+
+@router.put("/model-mappings/{mapping_id}", response_model=ModelMappingSchema)
+async def update_model_mapping(
+    mapping_id: int,
+    mapping_data: ModelMappingUpdate,
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+):
+    """
+    Update an existing model mapping.
+
+    Args:
+        mapping_id: ID of the mapping to update
+        mapping_data: Updated mapping data
+        mapping_engine: Mapping engine instance
+
+    Returns:
+        Updated mapping
+
+    Raises:
+        HTTPException: If update fails
+    """
+    try:
+        # Update fields that are not None
+        update_data = mapping_data.model_dump(exclude_unset=True)
+
+        if not update_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No fields to update"
+            )
+
+        # Update mapping in database
+        success = await mapping_engine.db_service.update_model_mapping(
+            mapping_id,
+            **update_data
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Mapping not found"
+            )
+
+        # Refresh mappings in the engine
+        await mapping_engine.refresh_mappings()
+
+        # Return the updated mapping
+        async with mapping_engine.db_service.get_session() as session:
+            from app.models.model_mapping import ModelMapping
+
+            mapping = await session.get(ModelMapping, mapping_id)
+            if not mapping:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Mapping not found after update"
+                )
+
+            return mapping
+    except HTTPException:
+        raise
+    except FitmentError as e:
+        logger.error(f"Fitment error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": str(e), "details": e.details}
+        ) from e
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        ) from e
+
+
+@router.delete("/model-mappings/{mapping_id}", status_code=status.HTTP_200_OK)
+async def delete_model_mapping(
+    mapping_id: int,
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+):
+    """
+    Delete a model mapping.
+
+    Args:
+        mapping_id: ID of the mapping to delete
+        mapping_engine: Mapping engine instance
+
+    Returns:
+        Success message
+
+    Raises:
+        HTTPException: If deletion fails
+    """
+    try:
+        # Delete mapping from database
+        success = await mapping_engine.db_service.delete_model_mapping(mapping_id)
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Mapping not found"
+            )
+
+        # Refresh mappings in the engine
+        await mapping_engine.refresh_mappings()
+
+        return {"message": "Mapping deleted successfully"}
+    except HTTPException:
+        raise
+    except FitmentError as e:
+        logger.error(f"Fitment error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": str(e), "details": e.details}
+        ) from e
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        ) from e
+
+
+@router.post("/refresh-mappings", status_code=status.HTTP_200_OK)
+async def refresh_mappings(
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+):
+    """
+    Refresh model mappings from the database.
+
+    This allows for updating mappings without restarting the server.
+
+    Args:
+        mapping_engine: Mapping engine instance
+
+    Returns:
+        Success message
+
+    Raises:
+        HTTPException: If refresh fails
+    """
+    try:
+        # Refresh mappings in the engine
+        await mapping_engine.refresh_mappings()
+
+        return {"message": "Mappings refreshed successfully"}
     except FitmentError as e:
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(

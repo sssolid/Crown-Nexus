@@ -309,3 +309,30 @@ class FitmentMappingEngine:
         except Exception as e:
             logger.error(f"Error saving mapping results: {str(e)}")
             raise MappingError(f"Failed to save mapping results: {str(e)}") from e
+
+    def configure_from_file(self, model_mappings_path: str) -> None:
+        """
+        Configure the mapping engine with model mappings from a file.
+
+        Args:
+            model_mappings_path: Path to the model mappings JSON file
+        """
+        self.model_mappings = self.db_service.load_model_mappings_from_json(model_mappings_path)
+        self.parser = FitmentParser(self.model_mappings)
+
+    async def configure_from_database(self) -> None:
+        """
+        Configure the mapping engine with model mappings from the database.
+
+        This allows for dynamic updates to mappings without server restarts.
+        """
+        self.model_mappings = await self.db_service.get_model_mappings()
+        self.parser = FitmentParser(self.model_mappings)
+
+    async def refresh_mappings(self) -> None:
+        """
+        Refresh model mappings from the database.
+
+        This allows for reloading mappings without restarting the server.
+        """
+        await self.configure_from_database()

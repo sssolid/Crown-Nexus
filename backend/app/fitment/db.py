@@ -316,12 +316,12 @@ class FitmentDBService:
             logger.error(f"Error getting PCDB positions: {str(e)}")
             raise DatabaseError(f"Failed to get PCDB positions: {str(e)}") from e
 
-    def load_model_mappings_from_excel(self, excel_path: str) -> Dict[str, List[str]]:
+    def load_model_mappings_from_json(self, json_path: str) -> Dict[str, List[str]]:
         """
-        Load model mappings from an Excel file.
+        Load model mappings from a JSON file.
 
         Args:
-            excel_path: Path to the Excel file
+            json_path: Path to the JSON file
 
         Returns:
             Dictionary of model mappings
@@ -330,24 +330,226 @@ class FitmentDBService:
             DatabaseError: If loading fails
         """
         try:
-            # Read the Excel file
-            df = pd.read_excel(excel_path)
-
-            # Convert to dictionary of lists
-            mappings = {}
-            for _, row in df.iterrows():
-                pattern = row["Pattern"]
-                mapping = row["Mapping"]
-
-                if pattern not in mappings:
-                    mappings[pattern] = []
-
-                mappings[pattern].append(mapping)
+            # Read the JSON file
+            with open(json_path, 'r') as f:
+                mappings = json.load(f)
 
             return mappings
         except Exception as e:
-            logger.error(f"Error loading model mappings from Excel: {str(e)}")
+            logger.error(f"Error loading model mappings from JSON: {str(e)}")
             raise DatabaseError(f"Failed to load model mappings: {str(e)}") from e
+
+    async def get_model_mappings(self) -> Dict[str, List[str]]:
+        """
+        Get model mappings from the database.
+
+        Returns:
+            Dictionary of model mappings where keys are patterns and values are lists of mapping strings
+
+        Raises:
+            DatabaseError: If query fails
+        """
+        if not self.engine:
+            raise DatabaseError("Async database not configured")
+
+        async with self.get_session() as session:
+            try:
+                from app.models.model_mapping import ModelMapping
+
+                # Get all active mappings ordered by priority
+                query = select(ModelMapping).where(
+                    ModelMapping.active == True
+                ).order_by(
+                    ModelMapping.priority.desc(),
+                    ModelMapping.pattern
+                )
+
+                result = await session.execute(query)
+                mappings_db = result.scalars().all()
+
+                # Group mappings by pattern
+                mappings: Dict[str, List[str]] = {}
+                for mapping in mappings_db:
+                    if mapping.pattern not in mappings:
+                        mappings[mapping.pattern] = []
+
+                    mappings[mapping.pattern].append(mapping.mapping)
+
+                return mappings
+            except Exception as e:
+                logger.error(f"Error getting model mappings: {str(e)}")
+                raise DatabaseError(f"Failed to get model mappings: {str(e)}") from e
+
+    async def add_model_mapping(self, pattern: str, mapping: str, priority: int = 0) -> int:
+        """
+        Add a new model mapping to the database.
+
+        Args:
+            pattern: Pattern to match in vehicle text
+            mapping: Mapping string in format "Make|VehicleCode|Model"
+            priority: Optional priority for matching (higher values are processed first)
+
+        Returns:
+            ID of the new mapping
+
+        Raises:
+            DatabaseError: If insert fails
+        """
+        if not self.engine:
+            raise DatabaseError("Async database not configured")
+
+        async with self.get_session() as session:
+            try:
+                from app.models.model_mapping import ModelMapping
+
+                # Create new mapping
+                mapping_obj = ModelMapping(
+                    pattern=pattern,
+                    mapping=mapping,
+                    priority=priority
+                )
+
+                session.add(mapping_obj)
+                await session.commit()
+                await session.refresh(mapping_obj)
+
+                return mapping_obj.id
+            except Exception as e:
+                await session.rollback()
+                logger.error(f"Error adding model mapping: {str(e)}")
+                raise DatabaseError(f"Failed to add model mapping: {str(e)}") from e
+
+    async def update_model_mapping(self, mapping_id: int, **kwargs) -> bool:
+        """
+        Update an existing model mapping.
+
+        Args:
+            mapping_id: ID of the mapping to update
+            **kwargs: Fields to update (pattern, mapping, priority, active)
+
+        Returns:
+            True if successful
+
+        Raises:
+            DatabaseError: If update fails
+        """
+        if not self.engine:
+            raise DatabaseError("Async database not configured")
+
+        # Validate fields to update
+        valid_fields = {"pattern", "mapping", "priority", "active"}
+        update_fields = {k: v for k, v in kwargs.items() if k in valid_fields}
+
+        if not update_fields:
+            return True  # Nothing to update
+
+        async with self.get_session() as session:
+            try:
+                from app.models.model_mapping import ModelMapping
+
+                # Get mapping
+                mapping_obj = await session.get(ModelMapping, mapping_id)
+                if not mapping_obj:
+                    return False
+
+                # Update fields
+                for field, value in update_fields.items():
+                    setattr(mapping_obj, field, value)
+
+                await session.commit()
+                return True
+            except Exception as e:
+                await session.rollback()
+                logger.error(f"Error updating model mapping: {str(e)}")
+                raise DatabaseError(f"Failed to update model mapping: {str(e)}") from e
+
+    async def delete_model_mapping(self, mapping_id: int) -> bool:
+        """
+        Delete a model mapping.
+
+        Args:
+            mapping_id: ID of the mapping to delete
+
+        Returns:
+            True if successful
+
+        Raises:
+            DatabaseError: If delete fails
+        """
+        if not self.engine:
+            raise DatabaseError("Async database not configured")
+
+        async with self.get_session() as session:
+            try:
+                from app.models.model_mapping import ModelMapping
+
+                # Get mapping
+                mapping_obj = await session.get(ModelMapping, mapping_id)
+                if not mapping_obj:
+                    return False
+
+                # Delete mapping
+                await session.delete(mapping_obj)
+                await session.commit()
+                return True
+            except Exception as e:
+                await session.rollback()
+                logger.error(f"Error deleting model mapping: {str(e)}")
+                raise DatabaseError(f"Failed to delete model mapping: {str(e)}") from e
+
+    async def import_mappings_from_json(self, json_data: Dict[str, List[str]]) -> int:
+        """
+        Import mappings from a JSON dictionary.
+
+        Args:
+            json_data: Dictionary where keys are patterns and values are lists of mappings
+
+        Returns:
+            Number of mappings imported
+
+        Raises:
+            DatabaseError: If import fails
+        """
+        if not self.engine:
+            raise DatabaseError("Async database not configured")
+
+        count = 0
+
+        async with self.get_session() as session:
+            try:
+                from app.models.model_mapping import ModelMapping
+                from sqlalchemy.exc import IntegrityError
+
+                # Process each pattern and its mappings
+                for pattern, mappings in json_data.items():
+                    for mapping in mappings:
+                        try:
+                            # Check if mapping already exists
+                            query = select(ModelMapping).where(
+                                ModelMapping.pattern == pattern,
+                                ModelMapping.mapping == mapping
+                            )
+                            result = await session.execute(query)
+                            existing = result.scalar_one_or_none()
+
+                            if not existing:
+                                # Create new mapping
+                                mapping_obj = ModelMapping(
+                                    pattern=pattern,
+                                    mapping=mapping
+                                )
+
+                                session.add(mapping_obj)
+                                count += 1
+                        except Exception as e:
+                            logger.warning(f"Error importing mapping {pattern}:{mapping}: {str(e)}")
+
+                await session.commit()
+                return count
+            except Exception as e:
+                await session.rollback()
+                logger.error(f"Error importing mappings: {str(e)}")
+                raise DatabaseError(f"Failed to import mappings: {str(e)}") from e
 
     async def save_fitment_results(
         self,

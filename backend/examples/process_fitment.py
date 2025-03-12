@@ -26,8 +26,8 @@ async def main():
     configure_logging()
 
     # Set up environment variables for the example
-    os.environ["FITMENT_VCDB_PATH"] = "path/to/vcdb.mdb"
-    os.environ["FITMENT_PCDB_PATH"] = "path/to/pcdb.mdb"
+    os.environ["FITMENT_VCDB_PATH"] = "data/vcdb.mdb"
+    os.environ["FITMENT_PCDB_PATH"] = "data/pcdb.mdb"
     os.environ["FITMENT_MODEL_MAPPINGS_PATH"] = "path/to/mappings.xlsx"
 
     # Create settings

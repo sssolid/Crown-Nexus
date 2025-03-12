@@ -21,5 +21,6 @@ from app.models.user import Company, User  # noqa
 from app.models.associations import product_fitment_association, product_media_association  # noqa
 from app.models.product import Category, Fitment, Product  # noqa
 from app.models.media import Media, MediaType, MediaVisibility  # noqa
+from app.models.model_mapping import ModelMapping  # noqa
 
 # Import any future models here to ensure Alembic detects them

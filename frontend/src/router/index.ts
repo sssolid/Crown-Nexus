@@ -378,6 +378,18 @@ const routes: RouteRecordRaw[] = [
     }
   },
 
+  // Fitment Management
+  {
+    path: '/fitment/model-mappings',
+    name: 'ModelMappingsManager',
+    component: () => import('@/views/ModelMappingsManager.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Model Mappings Manager'
+    }
+  },
+
   // Error pages
   {
     path: '/unauthorized',

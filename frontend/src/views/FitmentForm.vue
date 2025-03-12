@@ -189,6 +189,147 @@
                   </v-row>
                 </v-card-text>
               </v-card>
+
+              !-- Part Application Processing -->
+              <v-card class="mb-6">
+                <v-card-title class="d-flex align-center">
+                  Process Part Application
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="primary"
+                    size="small"
+                    variant="tonal"
+                    @click="showProcessingInfo = !showProcessingInfo"
+                  >
+                    {{ showProcessingInfo ? 'Hide Info' : 'Show Info' }}
+                  </v-btn>
+                </v-card-title>
+                <v-divider></v-divider>
+
+                <v-expand-transition>
+                  <div v-if="showProcessingInfo">
+                    <v-card-text class="bg-grey-lighten-4">
+                      <h3 class="text-subtitle-1 font-weight-bold mb-2">Part Application Format</h3>
+                      <p class="mb-2">Enter part applications in the format: <code>YYYY-YYYY Vehicle Model (Position);</code></p>
+                      <v-alert type="info" variant="tonal" density="compact">
+                        Example: <code>2005-2010 WK Grand Cherokee (Left or Right Front Upper Ball Joint);</code>
+                      </v-alert>
+                      <p class="mt-4 mb-2">Each application should be on a new line. The system will process each line and create the appropriate fitments.</p>
+                    </v-card-text>
+                  </div>
+                </v-expand-transition>
+
+                <v-card-text>
+                  <v-textarea
+                    v-model="partApplications"
+                    label="Part Applications"
+                    placeholder="Enter part applications, one per line"
+                    variant="outlined"
+                    rows="5"
+                    counter
+                    :disabled="loading || processingApplications"
+                  ></v-textarea>
+
+                  <v-text-field
+                    v-model.number="partTerminologyId"
+                    label="Part Terminology ID"
+                    type="number"
+                    variant="outlined"
+                    placeholder="Enter PCDB Part Terminology ID"
+                    :disabled="loading || processingApplications"
+                    class="mt-2"
+                  ></v-text-field>
+
+                  <v-text-field
+                    v-model="productId"
+                    label="Product ID (Optional)"
+                    variant="outlined"
+                    placeholder="Enter Product ID to associate with fitments"
+                    :disabled="loading || processingApplications"
+                    class="mt-2"
+                    hint="If provided, successful fitments will be associated with this product"
+                    persistent-hint
+                  ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="primary"
+                    :loading="processingApplications"
+                    :disabled="!partApplications || !partTerminologyId || loading"
+                    @click="processPartApplications"
+                  >
+                    Process Applications
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+
+              <!-- Processing Results -->
+              <v-card v-if="processingResults" class="mb-6">
+                <v-card-title>Processing Results</v-card-title>
+                <v-divider></v-divider>
+                <v-card-text>
+                  <v-alert type="success" variant="tonal" class="mb-4">
+                    <div class="d-flex justify-space-between">
+                      <span>Successfully processed {{ processingResults.valid_count + processingResults.warning_count }} out of {{ processingResults.valid_count + processingResults.warning_count + processingResults.error_count }} applications</span>
+                      <div>
+                        <v-chip color="success" size="small" class="ml-2">{{ processingResults.valid_count }} Valid</v-chip>
+                        <v-chip color="warning" size="small" class="ml-2">{{ processingResults.warning_count }} Warnings</v-chip>
+                        <v-chip color="error" size="small" class="ml-2">{{ processingResults.error_count }} Errors</v-chip>
+                      </div>
+                    </div>
+                  </v-alert>
+
+                  <v-expansion-panels variant="accordion">
+                    <v-expansion-panel
+                      v-for="(results, appText) in processingResults.results"
+                      :key="appText"
+                    >
+                      <v-expansion-panel-title>
+                        <div class="d-flex align-center">
+                          <v-icon
+                            :color="getApplicationResultColor(results)"
+                            :icon="getApplicationResultIcon(results)"
+                            class="mr-2"
+                          ></v-icon>
+                          <div>{{ appText }}</div>
+                        </div>
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>
+                        <v-list>
+                          <v-list-item
+                            v-for="(result, index) in results"
+                            :key="index"
+                            :title="result.message"
+                            :subtitle="result.original_text"
+                            :prepend-icon="getResultStatusIcon(result.status)"
+                            :color="getResultStatusColor(result.status)"
+                            class="mb-2"
+                          >
+                            <template v-if="result.fitment" v-slot:append>
+                              <v-chip
+                                v-if="result.fitment.vcdb_vehicle_id"
+                                size="small"
+                                color="info"
+                                class="mr-1"
+                              >
+                                VCDB ID: {{ result.fitment.vcdb_vehicle_id }}
+                              </v-chip>
+                              <v-chip
+                                v-if="result.fitment.pcdb_position_ids && result.fitment.pcdb_position_ids.length"
+                                size="small"
+                                color="success"
+                              >
+                                PCDB Positions: {{ result.fitment.pcdb_position_ids.length }}
+                              </v-chip>
+                            </template>
+                          </v-list-item>
+                        </v-list>
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </v-card-text>
+              </v-card>
             </v-col>
 
             <!-- Sidebar Column -->
@@ -318,6 +459,7 @@ import { defineComponent, ref, computed, onMounted, onBeforeUnmount, watch } fro
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import fitmentService from '@/services/fitment';
+import fitmentProcessingService, { ProcessFitmentResponse } from '@/services/fitmentProcessing';
 import { Fitment } from '@/types/fitment';
 import { notificationService } from '@/utils/notification';
 import { parseValidationErrors } from '@/utils/error-handler';
@@ -371,6 +513,14 @@ export default defineComponent({
     const formDirty = ref(false);
     const showUnsavedDialog = ref(false);
     const pendingNavigation = ref<any>(null);
+
+    // Part Application Processing
+    const showProcessingInfo = ref(false);
+    const partApplications = ref('');
+    const partTerminologyId = ref<number | null>(null);
+    const productId = ref('');
+    const processingApplications = ref(false);
+    const processingResults = ref<ProcessFitmentResponse | null>(null);
 
     // Fitment attributes
     const attributes = ref<AttributeItem[]>([]);
@@ -523,6 +673,104 @@ export default defineComponent({
       }
     };
 
+    // Process part applications
+    const processPartApplications = async () => {
+      if (!partApplications.value || !partTerminologyId.value) {
+        notificationService.error('Please enter part applications and a part terminology ID');
+        return;
+      }
+
+      processingApplications.value = true;
+
+      try {
+        // Split by lines and filter out empty lines
+        const applicationTexts = partApplications.value
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0);
+
+        if (applicationTexts.length === 0) {
+          notificationService.error('Please enter at least one part application');
+          processingApplications.value = false;
+          return;
+        }
+
+        // Process applications
+        const results = await fitmentProcessingService.processApplications(
+          applicationTexts,
+          partTerminologyId.value,
+          productId.value || undefined
+        );
+
+        // Store results
+        processingResults.value = results;
+
+        // Show notification
+        const successCount = results.valid_count + results.warning_count;
+        const totalCount = successCount + results.error_count;
+
+        if (successCount === totalCount) {
+          notificationService.success(`Successfully processed all ${totalCount} part applications`);
+        } else if (successCount > 0) {
+          notificationService.warning(`Processed ${successCount} out of ${totalCount} part applications with some issues`);
+        } else {
+          notificationService.error(`Failed to process ${totalCount} part applications`);
+        }
+      } catch (error) {
+        console.error('Error processing part applications:', error);
+        notificationService.error('Failed to process part applications');
+      } finally {
+        processingApplications.value = false;
+      }
+    };
+
+    // Helper methods for displaying processing results
+    const getApplicationResultColor = (results: any[]): string => {
+      if (results.every(r => r.status === 'VALID')) {
+        return 'success';
+      } else if (results.some(r => r.status === 'ERROR')) {
+        return 'error';
+      } else {
+        return 'warning';
+      }
+    };
+
+    const getApplicationResultIcon = (results: any[]): string => {
+      if (results.every(r => r.status === 'VALID')) {
+        return 'mdi-check-circle';
+      } else if (results.some(r => r.status === 'ERROR')) {
+        return 'mdi-alert-circle';
+      } else {
+        return 'mdi-alert';
+      }
+    };
+
+    const getResultStatusIcon = (status: string): string => {
+      switch (status) {
+        case 'VALID':
+          return 'mdi-check-circle';
+        case 'WARNING':
+          return 'mdi-alert';
+        case 'ERROR':
+          return 'mdi-alert-circle';
+        default:
+          return 'mdi-help-circle';
+      }
+    };
+
+    const getResultStatusColor = (status: string): string => {
+      switch (status) {
+        case 'VALID':
+          return 'success';
+        case 'WARNING':
+          return 'warning';
+        case 'ERROR':
+          return 'error';
+        default:
+          return '';
+      }
+    };
+
     // Submit the form
     const submitForm = async () => {
       // Validate form
@@ -619,11 +867,22 @@ export default defineComponent({
       pendingNavigation,
       isEditMode,
       rules,
+      showProcessingInfo,
+      partApplications,
+      partTerminologyId,
+      productId,
+      processingApplications,
+      processingResults,
       clearError,
       addAttribute,
       removeAttribute,
       submitForm,
-      discardChanges
+      discardChanges,
+      processPartApplications,
+      getApplicationResultColor,
+      getApplicationResultIcon,
+      getResultStatusIcon,
+      getResultStatusColor
     };
   }
 });

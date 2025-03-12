@@ -27,6 +27,8 @@ from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.fitment.api import router as fitment_router
+from app.fitment.dependencies import initialize_mapping_engine
 
 # Configure logging
 logging.basicConfig(
@@ -58,6 +60,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # - Initialize Redis connection
     # - Initialize Elasticsearch client
     # - Set up background tasks
+
+    await initialize_mapping_engine()
 
     # Allow FastAPI to continue startup
     yield
@@ -128,6 +132,7 @@ if settings.BACKEND_CORS_ORIGINS:
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(fitment_router)
 
 
 @app.get("/health")

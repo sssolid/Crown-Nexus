@@ -1,0 +1,577 @@
+<!-- frontend/src/views/Pricing.vue -->
+<template>
+  <div>
+    <v-container fluid>
+      <!-- Hero Section -->
+      <v-row class="mb-8">
+        <v-col cols="12" lg="8" class="mx-auto text-center">
+          <h1 class="text-h2 font-weight-bold mb-4">Programs & Pricing</h1>
+          <p class="text-subtitle-1 mb-6">
+            Flexible solutions tailored to your business needs in the automotive aftermarket
+          </p>
+          <v-btn-toggle
+            v-model="billingPeriod"
+            density="comfortable"
+            rounded="pill"
+            class="mb-6"
+            variant="elevated"
+          >
+            <v-btn value="monthly">Monthly</v-btn>
+            <v-btn value="annual">Annual (Save 15%)</v-btn>
+          </v-btn-toggle>
+        </v-col>
+      </v-row>
+
+      <!-- Pricing Tables -->
+      <v-row class="mb-12">
+        <v-col 
+          v-for="(plan, index) in plans" 
+          :key="plan.id" 
+          cols="12" 
+          md="4"
+          :class="{'mt-md-n6': plan.highlighted}"
+        >
+          <v-card
+            :elevation="plan.highlighted ? 12 : 2"
+            :color="plan.highlighted ? 'primary' : ''"
+            :class="[plan.highlighted && !isMobile ? 'py-6' : '']"
+            class="h-100 position-relative"
+          >
+            <div 
+              v-if="plan.highlighted" 
+              class="position-absolute bg-primary text-white px-4 py-1 text-center" 
+              style="top: -16px; left: 50%; transform: translateX(-50%); border-radius: 16px; width: 180px;"
+            >
+              MOST POPULAR
+            </div>
+            <v-card-item>
+              <v-card-title class="text-h4 mb-2">{{ plan.name }}</v-card-title>
+              <v-card-subtitle>{{ plan.subtitle }}</v-card-subtitle>
+            </v-card-item>
+            <v-card-text>
+              <div class="text-h3 font-weight-bold mb-1">
+                ${{ billingPeriod === 'annual' ? plan.annualPrice : plan.monthlyPrice }}
+                <span class="text-subtitle-1 font-weight-regular">/month</span>
+              </div>
+              <div class="text-caption mb-6" v-if="billingPeriod === 'annual'">
+                Billed annually at ${{ plan.annualPrice * 12 }}
+              </div>
+              
+              <v-divider class="mb-4"></v-divider>
+              
+              <div class="mb-6">
+                <div 
+                  v-for="(feature, i) in plan.features" 
+                  :key="i"
+                  class="d-flex align-center mb-3"
+                >
+                  <v-icon 
+                    :icon="feature.included ? 'mdi-check-circle' : 'mdi-minus-circle'"
+                    :color="feature.included ? 'success' : 'grey'"
+                    size="small"
+                    class="mr-2"
+                  ></v-icon>
+                  <span :class="{'text-medium-emphasis': !feature.included}">
+                    {{ feature.text }}
+                  </span>
+                </div>
+              </div>
+            </v-card-text>
+            <v-card-actions class="justify-center pa-6">
+              <v-btn
+                :color="plan.highlighted ? 'white' : 'primary'"
+                :variant="plan.highlighted ? 'elevated' : 'tonal'"
+                size="large"
+                block
+                :to="`/contact?plan=${plan.id}`"
+              >
+                {{ plan.buttonText }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- Distributor Programs Section -->
+      <v-row class="mb-8">
+        <v-col cols="12">
+          <h2 class="text-h3 font-weight-bold text-center mb-8">Distributor Programs</h2>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-card class="h-100">
+                <v-card-item>
+                  <template v-slot:prepend>
+                    <v-avatar color="primary" size="60">
+                      <v-icon size="36" icon="mdi-handshake" color="white"></v-icon>
+                    </v-avatar>
+                  </template>
+                  <v-card-title class="text-h5">Partner Distributor Program</v-card-title>
+                  <v-card-subtitle>For established distributors with significant market presence</v-card-subtitle>
+                </v-card-item>
+                <v-card-text>
+                  <p class="mb-4">Our Partner Distributor Program is designed for established businesses that distribute automotive parts to a substantial customer base. Join our network and gain access to exclusive benefits and resources.</p>
+                  <v-list density="comfortable">
+                    <v-list-subheader>Program Benefits</v-list-subheader>
+                    <v-list-item 
+                      v-for="(benefit, index) in partnerDistributorBenefits" 
+                      :key="index"
+                      :prepend-icon="benefit.icon"
+                    >
+                      <v-list-item-title>{{ benefit.title }}</v-list-item-title>
+                      <v-list-item-subtitle>{{ benefit.description }}</v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+                <v-card-actions class="pa-6">
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="primary"
+                    to="/distributor-program/partner"
+                  >
+                    Learn More
+                  </v-btn>
+                  <v-btn
+                    variant="tonal"
+                    color="primary"
+                    class="ml-2"
+                    to="/contact?inquiry=partner-distributor"
+                  >
+                    Apply Now
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-card class="h-100">
+                <v-card-item>
+                  <template v-slot:prepend>
+                    <v-avatar color="secondary" size="60">
+                      <v-icon size="36" icon="mdi-rocket-launch" color="white"></v-icon>
+                    </v-avatar>
+                  </template>
+                  <v-card-title class="text-h5">Growth Distributor Program</v-card-title>
+                  <v-card-subtitle>For growing distributors looking to expand their reach</v-card-subtitle>
+                </v-card-item>
+                <v-card-text>
+                  <p class="mb-4">Our Growth Distributor Program is tailored for emerging distributors who are looking to scale their operations and market reach with our technology and network.</p>
+                  <v-list density="comfortable">
+                    <v-list-subheader>Program Benefits</v-list-subheader>
+                    <v-list-item 
+                      v-for="(benefit, index) in growthDistributorBenefits" 
+                      :key="index"
+                      :prepend-icon="benefit.icon"
+                    >
+                      <v-list-item-title>{{ benefit.title }}</v-list-item-title>
+                      <v-list-item-subtitle>{{ benefit.description }}</v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+                <v-card-actions class="pa-6">
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="secondary"
+                    to="/distributor-program/growth"
+                  >
+                    Learn More
+                  </v-btn>
+                  <v-btn
+                    variant="tonal"
+                    color="secondary"
+                    class="ml-2"
+                    to="/contact?inquiry=growth-distributor"
+                  >
+                    Apply Now
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <!-- Volume Pricing Section -->
+      <v-row class="mb-12 bg-grey-lighten-4 rounded-lg pa-6">
+        <v-col cols="12" lg="8" class="mx-auto">
+          <h2 class="text-h4 font-weight-bold text-center mb-6">Volume Pricing</h2>
+          <p class="text-subtitle-1 text-center mb-8">
+            Our volume pricing model rewards businesses that process large quantities of transactions through our platform.
+          </p>
+          
+          <v-table>
+            <thead>
+              <tr>
+                <th class="text-left">Monthly Transaction Volume</th>
+                <th class="text-left">Standard Rate</th>
+                <th class="text-left">Discount</th>
+                <th class="text-left">Discounted Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(tier, index) in volumeTiers" :key="index">
+                <td>{{ tier.volume }}</td>
+                <td>{{ tier.standardRate }}</td>
+                <td>{{ tier.discount }}</td>
+                <td>
+                  <span class="font-weight-bold text-primary">{{ tier.discountedRate }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+          
+          <div class="text-center mt-6">
+            <v-btn
+              color="primary"
+              variant="tonal"
+              to="/contact?inquiry=volume-pricing"
+            >
+              Contact Sales for Custom Pricing
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Additional Services -->
+      <v-row class="mb-12">
+        <v-col cols="12">
+          <h2 class="text-h4 font-weight-bold text-center mb-8">Additional Services</h2>
+          <v-row>
+            <v-col 
+              v-for="(service, index) in additionalServices" 
+              :key="index"
+              cols="12" 
+              md="4"
+            >
+              <v-card class="h-100">
+                <v-img
+                  :src="service.image"
+                  height="200"
+                  cover
+                  class="bg-grey-lighten-2"
+                ></v-img>
+                <v-card-item>
+                  <v-card-title>{{ service.title }}</v-card-title>
+                </v-card-item>
+                <v-card-text>
+                  <p>{{ service.description }}</p>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn
+                    variant="text"
+                    color="primary"
+                    :to="service.link"
+                  >
+                    Learn More
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <!-- FAQ Section -->
+      <v-row class="mb-12">
+        <v-col cols="12" lg="8" class="mx-auto">
+          <h2 class="text-h4 font-weight-bold text-center mb-8">Frequently Asked Questions</h2>
+          <v-expansion-panels variant="accordion">
+            <v-expansion-panel
+              v-for="(faq, index) in faqs"
+              :key="index"
+              :title="faq.question"
+              :text="faq.answer"
+              class="mb-2"
+            ></v-expansion-panel>
+          </v-expansion-panels>
+          
+          <div class="text-center mt-6">
+            <v-btn
+              color="primary"
+              variant="text"
+              to="/faq"
+              size="large"
+            >
+              View All FAQs
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Contact Sales CTA -->
+      <v-row>
+        <v-col cols="12">
+          <v-card color="primary" class="text-center pa-8">
+            <v-card-title class="text-h4 text-white mb-4">Need a Custom Solution?</v-card-title>
+            <v-card-text class="text-white text-subtitle-1 mb-6">
+              Contact our sales team to discuss your specific requirements and get a tailored solution for your business.
+            </v-card-text>
+            <v-card-actions class="justify-center">
+              <v-btn
+                color="white"
+                variant="elevated"
+                size="large"
+                to="/contact?inquiry=custom-solution"
+              >
+                Contact Sales
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from 'vue';
+import { useDisplay } from 'vuetify';
+
+export default defineComponent({
+  name: 'Pricing',
+
+  setup() {
+    // Responsive display
+    const { mobile } = useDisplay();
+    const isMobile = computed(() => mobile.value);
+    
+    // Billing period toggle
+    const billingPeriod = ref('monthly');
+    
+    // Pricing plans
+    const plans = ref([
+      {
+        id: 'starter',
+        name: 'Starter',
+        subtitle: 'For small businesses and startups',
+        monthlyPrice: 249,
+        annualPrice: 212, // 15% discount
+        buttonText: 'Get Started',
+        highlighted: false,
+        features: [
+          { text: 'Up to 3 users', included: true },
+          { text: 'Product catalog management', included: true },
+          { text: 'Basic fitment data', included: true },
+          { text: '5,000 SKUs', included: true },
+          { text: 'Standard support', included: true },
+          { text: 'Inventory management', included: true },
+          { text: 'Order processing', included: true },
+          { text: 'Customer management', included: true },
+          { text: 'Advanced analytics', included: false },
+          { text: 'API access', included: false },
+          { text: 'Custom branding', included: false },
+          { text: 'Dedicated account manager', included: false }
+        ]
+      },
+      {
+        id: 'professional',
+        name: 'Professional',
+        subtitle: 'For growing businesses',
+        monthlyPrice: 499,
+        annualPrice: 424, // 15% discount
+        buttonText: 'Get Started',
+        highlighted: true,
+        features: [
+          { text: 'Up to 10 users', included: true },
+          { text: 'Product catalog management', included: true },
+          { text: 'Premium fitment data', included: true },
+          { text: '25,000 SKUs', included: true },
+          { text: 'Priority support', included: true },
+          { text: 'Inventory management', included: true },
+          { text: 'Order processing', included: true },
+          { text: 'Customer management', included: true },
+          { text: 'Advanced analytics', included: true },
+          { text: 'API access', included: true },
+          { text: 'Custom branding', included: true },
+          { text: 'Dedicated account manager', included: false }
+        ]
+      },
+      {
+        id: 'enterprise',
+        name: 'Enterprise',
+        subtitle: 'For large organizations',
+        monthlyPrice: 999,
+        annualPrice: 849, // 15% discount
+        buttonText: 'Contact Sales',
+        highlighted: false,
+        features: [
+          { text: 'Unlimited users', included: true },
+          { text: 'Product catalog management', included: true },
+          { text: 'Premium fitment data', included: true },
+          { text: 'Unlimited SKUs', included: true },
+          { text: '24/7 premium support', included: true },
+          { text: 'Inventory management', included: true },
+          { text: 'Order processing', included: true },
+          { text: 'Customer management', included: true },
+          { text: 'Advanced analytics', included: true },
+          { text: 'API access', included: true },
+          { text: 'Custom branding', included: true },
+          { text: 'Dedicated account manager', included: true }
+        ]
+      }
+    ]);
+    
+    // Partner Distributor Program benefits
+    const partnerDistributorBenefits = ref([
+      {
+        icon: 'mdi-cash-multiple',
+        title: 'Preferential Pricing',
+        description: 'Access to wholesale pricing with volume-based discounts'
+      },
+      {
+        icon: 'mdi-database',
+        title: 'Enhanced Product Data',
+        description: 'Premium access to comprehensive fitment data and rich product content'
+      },
+      {
+        icon: 'mdi-api',
+        title: 'Integration APIs',
+        description: 'Enterprise-level API access for seamless integration with your existing systems'
+      },
+      {
+        icon: 'mdi-account-tie',
+        title: 'Dedicated Account Manager',
+        description: 'Personal support from a dedicated account manager for your business'
+      },
+      {
+        icon: 'mdi-handshake',
+        title: 'Co-Marketing Opportunities',
+        description: 'Joint marketing initiatives and promotional opportunities'
+      }
+    ]);
+    
+    // Growth Distributor Program benefits
+    const growthDistributorBenefits = ref([
+      {
+        icon: 'mdi-chart-line',
+        title: 'Scalable Pricing',
+        description: 'Pricing that grows with your business with predictable costs'
+      },
+      {
+        icon: 'mdi-book-open-variant',
+        title: 'Training & Onboarding',
+        description: 'Comprehensive training program to get your team up to speed quickly'
+      },
+      {
+        icon: 'mdi-tools',
+        title: 'Business Development Tools',
+        description: 'Access to tools and resources designed to help you grow your customer base'
+      },
+      {
+        icon: 'mdi-account-group',
+        title: 'Community Access',
+        description: 'Join our distributor community for networking and knowledge sharing'
+      },
+      {
+        icon: 'mdi-star',
+        title: 'Pathway to Partner Program',
+        description: 'Clear criteria and support to advance to our Partner Distributor Program'
+      }
+    ]);
+    
+    // Volume pricing tiers
+    const volumeTiers = ref([
+      {
+        volume: '1-500 transactions/month',
+        standardRate: '$2.50 per transaction',
+        discount: '0%',
+        discountedRate: '$2.50 per transaction'
+      },
+      {
+        volume: '501-2,000 transactions/month',
+        standardRate: '$2.50 per transaction',
+        discount: '10%',
+        discountedRate: '$2.25 per transaction'
+      },
+      {
+        volume: '2,001-5,000 transactions/month',
+        standardRate: '$2.50 per transaction',
+        discount: '20%',
+        discountedRate: '$2.00 per transaction'
+      },
+      {
+        volume: '5,001-10,000 transactions/month',
+        standardRate: '$2.50 per transaction',
+        discount: '30%',
+        discountedRate: '$1.75 per transaction'
+      },
+      {
+        volume: '10,001+ transactions/month',
+        standardRate: '$2.50 per transaction',
+        discount: 'Custom',
+        discountedRate: 'Contact Sales'
+      }
+    ]);
+    
+    // Additional services
+    const additionalServices = ref([
+      {
+        title: 'Data Migration & Setup',
+        description: 'Our team will help migrate your existing product data, customer information, and historical orders into Crown Nexus to ensure a smooth transition.',
+        image: 'https://via.placeholder.com/600x400?text=Data+Migration',
+        link: '/services/data-migration'
+      },
+      {
+        title: 'Custom Integration Development',
+        description: 'Need to connect Crown Nexus with your ERP, CRM, or other business systems? Our developers can build custom integrations tailored to your specific requirements.',
+        image: 'https://via.placeholder.com/600x400?text=Custom+Integration',
+        link: '/services/custom-integration'
+      },
+      {
+        title: 'Training & Implementation',
+        description: 'Comprehensive training for your team to ensure everyone knows how to leverage Crown Nexus effectively. Includes personalized implementation support.',
+        image: 'https://via.placeholder.com/600x400?text=Training',
+        link: '/services/training'
+      }
+    ]);
+    
+    // FAQs
+    const faqs = ref([
+      {
+        question: 'Can I upgrade or downgrade my plan later?',
+        answer: 'Yes, you can upgrade your plan at any time, and the new pricing will be prorated for the remainder of your billing cycle. Downgrades take effect at the start of your next billing cycle.'
+      },
+      {
+        question: 'What happens if I exceed my plan limits?',
+        answer: 'If you exceed your plan limits (such as number of users or SKUs), you\'ll receive a notification. You can continue to use the system with some limitations until the end of your billing cycle, but we recommend upgrading to a plan that better fits your needs.'
+      },
+      {
+        question: 'Is there a setup fee?',
+        answer: 'No, there are no setup fees for our standard plans. However, if you require data migration, custom integrations, or specialized onboarding, additional service fees may apply.'
+      },
+      {
+        question: 'Do you offer refunds?',
+        answer: 'We offer a 30-day money-back guarantee for new customers. If you\'re not satisfied with our service within the first 30 days, you can request a full refund. After this period, refunds are issued on a case-by-case basis.'
+      },
+      {
+        question: 'What payment methods do you accept?',
+        answer: 'We accept major credit cards (Visa, Mastercard, American Express), ACH transfers, and wire transfers for annual plans. For Enterprise customers, we also offer invoicing with net-30 terms upon credit approval.'
+      }
+    ]);
+    
+    // Initialize component
+    onMounted(() => {
+      // Any initialization logic would go here
+    });
+    
+    return {
+      billingPeriod,
+      plans,
+      partnerDistributorBenefits,
+      growthDistributorBenefits,
+      volumeTiers,
+      additionalServices,
+      faqs,
+      isMobile
+    };
+  }
+});
+</script>
+
+<style scoped>
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+</style>

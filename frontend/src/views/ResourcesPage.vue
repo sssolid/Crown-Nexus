@@ -156,7 +156,7 @@
                 :key="i"
                 @click="currentCategory = category.id"
                 :active="currentCategory === category.id"
-                :active-color="category.color"
+                :color="category.color"
                 :prepend-icon="category.icon"
                 class="mb-2"
               >
@@ -170,7 +170,7 @@
             <!-- Filters -->
             <v-divider class="my-6"></v-divider>
             <h3 class="text-h6 font-weight-bold mb-4">Filter Resources</h3>
-            
+
             <v-select
               v-model="resourceTypeFilter"
               label="Resource Type"
@@ -181,7 +181,7 @@
               class="mb-4"
               clearable
             ></v-select>
-            
+
             <v-select
               v-model="dateFilter"
               label="Publication Date"
@@ -192,7 +192,7 @@
               class="mb-4"
               clearable
             ></v-select>
-            
+
             <div class="d-flex justify-end mt-6">
               <v-btn
                 variant="text"
@@ -235,12 +235,12 @@
                     <!-- Title Column -->
                     <template v-slot:item.title="{ item }">
                       <div class="d-flex align-center">
-                        <v-avatar :color="getResourceTypeColor(item.raw.type)" size="32" class="me-3">
-                          <v-icon size="16" :icon="getResourceTypeIcon(item.raw.type)" color="white"></v-icon>
+                        <v-avatar :color="getResourceTypeColor(item.type)" size="32" class="me-3">
+                          <v-icon size="16" :icon="getResourceTypeIcon(item.type)" color="white"></v-icon>
                         </v-avatar>
                         <div>
-                          <div class="font-weight-medium">{{ item.raw.title }}</div>
-                          <div class="text-caption text-grey">{{ item.raw.description.substring(0, 60) }}...</div>
+                          <div class="font-weight-medium">{{ item.title }}</div>
+                          <div class="text-caption text-grey">{{ item.description.substring(0, 60) }}...</div>
                         </div>
                       </div>
                     </template>
@@ -249,16 +249,16 @@
                     <template v-slot:item.type="{ item }">
                       <v-chip
                         size="small"
-                        :color="getResourceTypeColor(item.raw.type)"
+                        :color="getResourceTypeColor(item.type)"
                         variant="flat"
                       >
-                        {{ item.raw.type }}
+                        {{ item.type }}
                       </v-chip>
                     </template>
 
                     <!-- Date Column -->
                     <template v-slot:item.date="{ item }">
-                      <div class="text-caption">{{ item.raw.date }}</div>
+                      <div class="text-caption">{{ item.date }}</div>
                     </template>
 
                     <!-- Actions Column -->
@@ -268,7 +268,7 @@
                         variant="text"
                         color="primary"
                         size="small"
-                        :to="item.raw.link"
+                        :to="item.link"
                       >
                         <v-icon icon="mdi-open-in-new"></v-icon>
                       </v-btn>
@@ -347,7 +347,7 @@
           <v-col cols="12" md="8">
             <h2 class="text-h4 font-weight-bold mb-2">Technical Library</h2>
             <p class="text-body-1">
-              Access our comprehensive collection of technical documents, including installation guides, 
+              Access our comprehensive collection of technical documents, including installation guides,
               specification sheets, troubleshooting manuals, and more.
             </p>
           </v-col>
@@ -434,8 +434,8 @@
           <v-col cols="12" md="7" class="text-white">
             <h2 class="text-h4 font-weight-bold mb-4">Can't Find What You Need?</h2>
             <p class="text-body-1 mb-6">
-              If you're looking for specific information or resources that aren't available in our knowledge base, 
-              our technical team is ready to help. Submit a request and we'll create custom documentation or 
+              If you're looking for specific information or resources that aren't available in our knowledge base,
+              our technical team is ready to help. Submit a request and we'll create custom documentation or
               find the resources you need.
             </p>
             <v-btn
@@ -850,7 +850,7 @@ export default defineComponent({
         fileType: 'html',
         size: '2.8 MB'
       },
-      
+
       // Installation Guides
       {
         id: 'inst-001',
@@ -885,7 +885,7 @@ export default defineComponent({
         fileType: 'pdf',
         size: '2.9 MB'
       },
-      
+
       // Catalogs
       {
         id: 'cat-001',
@@ -909,7 +909,7 @@ export default defineComponent({
         fileType: 'pdf',
         size: '18.3 MB'
       },
-      
+
       // Training Materials
       {
         id: 'train-001',
@@ -933,7 +933,7 @@ export default defineComponent({
         fileType: 'mp4',
         size: '120.5 MB'
       },
-      
+
       // Marketing Materials
       {
         id: 'mkt-001',
@@ -962,17 +962,17 @@ export default defineComponent({
     // Filtered resources based on category and filters
     const filteredResources = computed(() => {
       let resources = [...allResources.value];
-      
+
       // Filter by category
       if (currentCategory.value !== 'all') {
         resources = resources.filter(resource => resource.category === currentCategory.value);
       }
-      
+
       // Filter by type
       if (resourceTypeFilter.value) {
         resources = resources.filter(resource => resource.type === resourceTypeFilter.value);
       }
-      
+
       // Filter by date
       if (dateFilter.value) {
         // This would be implemented with actual date logic in a real app
@@ -983,16 +983,16 @@ export default defineComponent({
           resources = resources.filter(resource => !resource.date.includes('Jan'));
         }
       }
-      
+
       // Filter by search query
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        resources = resources.filter(resource => 
+        resources = resources.filter(resource =>
           resource.title.toLowerCase().includes(query) ||
           resource.description.toLowerCase().includes(query)
         );
       }
-      
+
       return resources;
     });
 
@@ -1321,9 +1321,9 @@ export default defineComponent({
 
     const subscribeToResources = () => {
       if (!subscribeEmail.value) return;
-      
+
       subscribeLoading.value = true;
-      
+
       // Simulate API call
       setTimeout(() => {
         // Success handling
@@ -1343,7 +1343,7 @@ export default defineComponent({
       subscribeEmail,
       subscribeLoading,
       selectedInterests,
-      
+
       // Data
       quickAccessLinks,
       resourceCategories,
@@ -1358,14 +1358,14 @@ export default defineComponent({
       popularDownloads,
       popularRequests,
       trainingResources,
-      
+
       // Helper functions
       getResourceTypeColor,
       getResourceTypeIcon,
       getFileTypeColor,
       getFileTypeIcon,
       getTechLibDocs,
-      
+
       // Actions
       searchResources,
       resetFilters,

@@ -373,12 +373,12 @@
               Follow Crown Nexus on social media for industry news, product updates, and special offers.
             </p>
             <div class="d-flex justify-center justify-md-start">
-              <v-btn v-for="(social, i) in socialMedia" :key="i" 
-                variant="outlined" 
-                :icon="social.icon" 
-                color="white" 
-                class="mx-2" 
-                :href="social.link" 
+              <v-btn v-for="(social, i) in socialMedia" :key="i"
+                variant="outlined"
+                :icon="social.icon"
+                color="white"
+                class="mx-2"
+                :href="social.link"
                 target="_blank">
               </v-btn>
             </div>
@@ -578,7 +578,7 @@ export default defineComponent({
         title: 'Email Us',
         icon: 'mdi-email',
         color: 'info',
-        description: 'Send us an email and we'll respond within 24 hours:',
+        description: 'Send us an email and we\'ll respond within 24 hours:',
         value: 'contact@crownnexus.com',
         action: 'Send Email',
         actionIcon: 'mdi-email',
@@ -728,7 +728,7 @@ export default defineComponent({
     const faqs = ref<FAQ[]>([
       {
         question: 'How do I create a B2B account?',
-        answer: 'To create a B2B account, click on the "Sign Up" button in the top-right corner of our website. You'll need to provide your business details, including your company name, business type, and contact information. We'll verify your business credentials and activate your account within 1-2 business days.'
+        answer: 'To create a B2B account, click on the "Sign Up" button in the top-right corner of our website. You\'ll need to provide your business details, including your company name, business type, and contact information. We\'ll verify your business credentials and activate your account within 1-2 business days.'
       },
       {
         question: 'What are your shipping options and times?',
@@ -764,30 +764,30 @@ export default defineComponent({
     // Submit form function
     const submitForm = async () => {
       const valid = await contactForm.value?.validate();
-      
+
       if (!valid.valid) {
         return;
       }
-      
+
       formSubmitting.value = true;
-      
+
       try {
         // Here you would submit the form data to your API
         // For demonstration purposes, we'll simulate a successful submission
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
+
         // Generate a reference number
         referenceNumber.value = `CNX-${Math.floor(Date.now() / 1000)}-${Math.floor(Math.random() * 1000)}`;
-        
+
         // Show success dialog
         showSuccessDialog.value = true;
-        
+
         // Reset form
         contactForm.value?.reset();
         Object.keys(formData).forEach(key => {
           formData[key as keyof typeof formData] = '';
         });
-        
+
       } catch (error) {
         console.error('Error submitting form:', error);
         // Here you would handle submission errors
@@ -801,17 +801,17 @@ export default defineComponent({
       if (!newsletterEmail.value || !/.+@.+\..+/.test(newsletterEmail.value)) {
         return;
       }
-      
+
       newsletterSubmitting.value = true;
-      
+
       try {
         // Here you would submit the email to your newsletter API
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Show success message or handle as needed
         alert('Thank you for subscribing to our newsletter!');
         newsletterEmail.value = '';
-        
+
       } catch (error) {
         console.error('Error subscribing to newsletter:', error);
       } finally {
@@ -829,16 +829,16 @@ export default defineComponent({
       inquiryTypes,
       rules,
       submitForm,
-      
+
       // Newsletter
       newsletterEmail,
       newsletterSubmitting,
       subscribeNewsletter,
-      
+
       // Success dialog
       showSuccessDialog,
       referenceNumber,
-      
+
       // Data
       contactOptions,
       locations,

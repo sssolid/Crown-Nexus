@@ -111,13 +111,13 @@
           <template v-slot:item.userInfo="{ item }">
             <div>
               <router-link
-                :to="{ name: 'UserDetail', params: { id: item.raw.id }}"
+                :to="{ name: 'UserDetail', params: { id: item.id }}"
                 class="text-decoration-none text-primary font-weight-medium"
               >
-                {{ item.raw.full_name }}
+                {{ item.full_name }}
               </router-link>
               <div class="text-caption text-medium-emphasis">
-                {{ item.raw.email }}
+                {{ item.email }}
               </div>
             </div>
           </template>
@@ -125,31 +125,31 @@
           <!-- Role Column -->
           <template v-slot:item.role="{ item }">
             <v-chip
-              :color="getRoleColor(item.raw.role)"
+              :color="getRoleColor(item.role)"
               size="small"
               variant="tonal"
             >
-              {{ item.raw.role }}
+              {{ item.role }}
             </v-chip>
           </template>
 
           <!-- Status Column -->
           <template v-slot:item.is_active="{ item }">
             <v-chip
-              :color="item.raw.is_active ? 'success' : 'error'"
+              :color="item.is_active ? 'success' : 'error'"
               size="small"
               variant="tonal"
             >
-              {{ item.raw.is_active ? 'Active' : 'Inactive' }}
+              {{ item.is_active ? 'Active' : 'Inactive' }}
             </v-chip>
           </template>
 
           <!-- Company Column -->
           <template v-slot:item.company="{ item }">
-            <div v-if="item.raw.company">
-              {{ item.raw.company.name }}
+            <div v-if="item.company">
+              {{ item.company.name }}
               <div class="text-caption text-medium-emphasis">
-                {{ item.raw.company.account_type }}
+                {{ item.company.account_type }}
               </div>
             </div>
             <span v-else class="text-medium-emphasis">None</span>
@@ -157,7 +157,7 @@
 
           <!-- Created At Column -->
           <template v-slot:item.created_at="{ item }">
-            <div>{{ formatDate(item.raw.created_at) }}</div>
+            <div>{{ formatDate(item.created_at) }}</div>
           </template>
 
           <!-- Actions Column -->
@@ -169,7 +169,7 @@
                     icon
                     size="small"
                     v-bind="props"
-                    :to="{ name: 'UserDetail', params: { id: item.raw.id }}"
+                    :to="{ name: 'UserDetail', params: { id: item.id }}"
                   >
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
@@ -183,7 +183,7 @@
                     size="small"
                     color="primary"
                     v-bind="props"
-                    :to="{ name: 'UserEdit', params: { id: item.raw.id }}"
+                    :to="{ name: 'UserEdit', params: { id: item.id }}"
                     class="mx-1"
                   >
                     <v-icon>mdi-pencil</v-icon>
@@ -199,7 +199,7 @@
                     color="error"
                     v-bind="props"
                     @click="confirmDelete(item.raw)"
-                    :disabled="item.raw.id === currentUserId"
+                    :disabled="item.id === currentUserId"
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -379,11 +379,12 @@ export default defineComponent({
         for (let i = 0; i < 15; i++) {
           const roleIndex = i % roleOptions.length;
           mockUsers.push({
-            id: `user-${i}`,
+            id: `20cb8b54-5fb3-4e64-bd8d-6a37b959e68${i}`,
             email: `user${i}@example.com`,
             full_name: `Test User ${i}`,
             role: roleOptions[roleIndex].value as UserRole,
             is_active: i % 5 !== 0,
+            is_admin: false,
             created_at: new Date(Date.now() - i * 86400000).toISOString(),
             company: i % 3 === 0 ? {
               id: `company-${i}`,

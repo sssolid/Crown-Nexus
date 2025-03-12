@@ -12,7 +12,7 @@ export interface User {
   email: string;
   full_name: string;
   is_active: boolean;
-  is_superuser: boolean;
+  is_admin: boolean;
   role: UserRole;
   created_at: string;
   company?: {

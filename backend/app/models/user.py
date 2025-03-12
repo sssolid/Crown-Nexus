@@ -22,6 +22,7 @@ from typing import Any, Dict, Optional, Union
 
 from jose import jwt
 from passlib.context import CryptContext
+import sqlalchemy as sa
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -87,6 +88,7 @@ class User(Base):
         String(255), nullable=False
     )
     role: Mapped[UserRole] = mapped_column(
+        sa.Enum(UserRole, values_callable=lambda enum: [e.value for e in enum], name="userrole"),
         default=UserRole.CLIENT, nullable=False
     )
     is_active: Mapped[bool] = mapped_column(

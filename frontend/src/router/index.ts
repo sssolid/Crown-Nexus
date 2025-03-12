@@ -25,17 +25,137 @@ declare module 'vue-router' {
 
 // Define routes
 const routes: RouteRecordRaw[] = [
-  // Public routes
+  // Public routes - Marketing & Information
   {
-    path: '/landing',
+    path: '/',
     name: 'Landing',
     component: () => import('@/views/LandingPage.vue'),
     meta: {
       requiresAuth: false,
-      title: 'Landing',
-      layout: 'blank'
+      title: 'Welcome to Crown Nexus'
     }
   },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/AboutPage.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'About Us'
+    }
+  },
+  {
+    path: '/services',
+    name: 'Services',
+    component: () => import('@/views/ServicesPage.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Our Services'
+    }
+  },
+  {
+    path: '/resources',
+    name: 'Resources',
+    component: () => import('@/views/ResourcesPage.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Resources'
+    }
+  },
+  {
+    path: '/blog',
+    name: 'Blog',
+    component: () => import('@/views/Blog.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Blog'
+    }
+  },
+  {
+    path: '/careers',
+    name: 'Careers',
+    component: () => import('@/views/Careers.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Careers'
+    }
+  },
+  {
+    path: '/partners',
+    name: 'Partners',
+    component: () => import('@/views/Partners.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Partners'
+    }
+  },
+  {
+    path: '/testimonials',
+    name: 'Testimonials',
+    component: () => import('@/views/Testimonials.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Testimonials'
+    }
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('@/views/ContactPage.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Contact Us'
+    }
+  },
+  {
+    path: '/pricing',
+    name: 'Pricing',
+    component: () => import('@/views/Pricing.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Pricing'
+    }
+  },
+  {
+    path: '/faq',
+    name: 'FAQ',
+    component: () => import('@/views/FAQ.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Frequently Asked Questions'
+    }
+  },
+
+  // Legal pages
+  {
+    path: '/terms',
+    name: 'TermsOfService',
+    component: () => import('@/views/TermsOfService.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Terms of Service'
+    }
+  },
+  {
+    path: '/privacy',
+    name: 'PrivacyPolicy',
+    component: () => import('@/views/PrivacyPolicy.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Privacy Policy'
+    }
+  },
+  {
+    path: '/shipping-returns',
+    name: 'ShippingReturns',
+    component: () => import('@/views/ShippingReturns.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Shipping & Returns'
+    }
+  },
+
+  // Authentication
   {
     path: '/login',
     name: 'Login',
@@ -47,14 +167,41 @@ const routes: RouteRecordRaw[] = [
     }
   },
 
-  // Protected routes
+  // Protected routes - Customer Dashboard
   {
-    path: '/',
+    path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/Dashboard.vue'),
     meta: {
       requiresAuth: true,
       title: 'Dashboard'
+    }
+  },
+  {
+    path: '/account',
+    name: 'AccountDashboard',
+    component: () => import('@/views/AccountDashboard.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Account Dashboard'
+    }
+  },
+  {
+    path: '/orders',
+    name: 'OrderHistory',
+    component: () => import('@/views/OrderHistory.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Order History'
+    }
+  },
+  {
+    path: '/saved-lists',
+    name: 'SavedLists',
+    component: () => import('@/views/SavedLists.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Saved Lists'
     }
   },
 
@@ -211,7 +358,7 @@ const routes: RouteRecordRaw[] = [
     }
   },
 
-  // Settings
+  // Settings & Profile
   {
     path: '/settings',
     name: 'Settings',
@@ -221,8 +368,6 @@ const routes: RouteRecordRaw[] = [
       title: 'Settings'
     }
   },
-
-  // Profile
   {
     path: '/profile',
     name: 'UserProfile',
@@ -317,8 +462,13 @@ router.beforeEach(async (
 
   // Redirect to dashboard if authenticated user tries to access login page
   if (to.path === '/login' && authStore.isAuthenticated) {
-    return next('/');
+    return next('/dashboard');
   }
+
+  // Optional: Auto-redirect authenticated users from landing page to dashboard
+  // if (to.path === '/' && authStore.isAuthenticated) {
+  //   return next('/dashboard');
+  // }
 
   next();
 });

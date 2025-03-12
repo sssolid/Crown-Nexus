@@ -43,14 +43,14 @@
               <v-col cols="12" md="6">
                 <h2 class="text-h4 font-weight-bold mb-4">About Crown Nexus</h2>
                 <p class="text-subtitle-1 mb-4">
-                  Crown Nexus is a leading technology provider for the automotive aftermarket industry. 
-                  Our B2B platform connects parts manufacturers, distributors, retailers, and repair shops 
+                  Crown Nexus is a leading technology provider for the automotive aftermarket industry.
+                  Our B2B platform connects parts manufacturers, distributors, retailers, and repair shops
                   in a seamless digital ecosystem.
                 </p>
                 <p class="text-body-1 mb-6">
-                  Founded in 2018, we've grown to serve over 5,000 businesses across North America with our 
-                  innovative solutions for catalog management, inventory control, and supply chain optimization. 
-                  Our team is passionate about building technology that makes the automotive aftermarket more 
+                  Founded in 2018, we've grown to serve over 5,000 businesses across North America with our
+                  innovative solutions for catalog management, inventory control, and supply chain optimization.
+                  Our team is passionate about building technology that makes the automotive aftermarket more
                   efficient, profitable, and future-ready.
                 </p>
                 <v-btn
@@ -126,11 +126,11 @@
             Take a peek at life at Crown Nexus
           </p>
           <v-row>
-            <v-col 
-              v-for="(image, index) in cultureImages" 
-              :key="index" 
-              cols="12" 
-              sm="6" 
+            <v-col
+              v-for="(image, index) in cultureImages"
+              :key="index"
+              cols="12"
+              sm="6"
               md="4"
             >
               <v-card @click="openGallery(index)" class="culture-card hover-zoom">
@@ -171,7 +171,7 @@
               ></v-select>
             </v-card-title>
             <v-divider></v-divider>
-            
+
             <div v-if="loading" class="d-flex justify-center my-6">
               <v-progress-circular
                 indeterminate
@@ -179,19 +179,19 @@
                 size="64"
               ></v-progress-circular>
             </div>
-            
+
             <div v-else-if="filteredJobs.length === 0" class="text-center py-8">
               <v-icon icon="mdi-briefcase-off-outline" size="64" color="grey-lighten-1"></v-icon>
               <h3 class="text-h5 mt-4">No Open Positions</h3>
               <p class="text-body-1 mt-2">
-                {{ selectedDepartment 
+                {{ selectedDepartment
                   ? `There are currently no openings in the ${selectedDepartment} department.`
                   : 'There are currently no job openings available.'
                 }}
               </p>
-              <v-btn 
-                v-if="selectedDepartment" 
-                color="primary" 
+              <v-btn
+                v-if="selectedDepartment"
+                color="primary"
                 variant="text"
                 @click="selectedDepartment = null"
                 class="mt-4"
@@ -199,7 +199,7 @@
                 View All Departments
               </v-btn>
             </div>
-            
+
             <v-expansion-panels v-else>
               <v-expansion-panel
                 v-for="job in filteredJobs"
@@ -244,21 +244,21 @@
                           {{ responsibility }}
                         </li>
                       </ul>
-                      
+
                       <h4 class="text-subtitle-1 font-weight-bold mb-2">Requirements:</h4>
                       <ul class="mb-4">
                         <li v-for="(requirement, index) in job.requirements" :key="index" class="mb-1">
                           {{ requirement }}
                         </li>
                       </ul>
-                      
+
                       <h4 class="text-subtitle-1 font-weight-bold mb-2">Nice to Have:</h4>
                       <ul class="mb-6">
                         <li v-for="(nicety, index) in job.niceToHave" :key="index" class="mb-1">
                           {{ nicety }}
                         </li>
                       </ul>
-                      
+
                       <div class="d-flex justify-center">
                         <v-btn
                           color="primary"
@@ -321,7 +321,7 @@
             </v-card-title>
             <v-card-text>
               <p class="text-body-1 mb-6">
-                We're always looking for talented individuals to join our team. 
+                We're always looking for talented individuals to join our team.
                 Send us your resume and we'll keep it on file for future opportunities.
               </p>
               <v-btn
@@ -414,14 +414,14 @@ export default defineComponent({
     // Data loading state
     const loading = ref(true);
     const jobs = ref<JobPosting[]>([]);
-    
+
     // Filter
     const selectedDepartment = ref<string | null>(null);
-    
+
     // Gallery
     const galleryDialog = ref(false);
     const galleryIndex = ref(0);
-    
+
     // Company stats
     const companyStats = ref([
       { value: '5,000+', label: 'Business Customers' },
@@ -429,13 +429,13 @@ export default defineComponent({
       { value: '4', label: 'Office Locations' },
       { value: '25+', label: 'Countries Served' }
     ]);
-    
+
     // Company benefits
     const benefits = ref([
       {
         title: 'Innovate & Make an Impact',
         icon: 'lightbulb',
-        description: 'Work on cutting-edge technology that's transforming an entire industry. Your contributions will directly impact thousands of businesses and help shape the future of automotive commerce.'
+        description: 'Work on cutting-edge technology that\'s transforming an entire industry. Your contributions will directly impact thousands of businesses and help shape the future of automotive commerce.'
       },
       {
         title: 'Collaborative & Inclusive Culture',
@@ -445,7 +445,7 @@ export default defineComponent({
       {
         title: 'Grow Your Career',
         icon: 'chart-line',
-        description: 'We're committed to your professional development with clear career paths, mentorship programs, continuous learning opportunities, and regular feedback to help you reach your goals.'
+        description: 'We\'re committed to your professional development with clear career paths, mentorship programs, continuous learning opportunities, and regular feedback to help you reach your goals.'
       },
       {
         title: 'Work-Life Balance',
@@ -463,7 +463,7 @@ export default defineComponent({
         description: 'We offer competitive salaries, performance bonuses, equity options for eligible positions, and a comprehensive benefits package designed to support your health and financial wellbeing.'
       }
     ]);
-    
+
     // Company perks
     const perks = ref([
       { title: 'Health Insurance', icon: 'heart-pulse' },
@@ -479,7 +479,7 @@ export default defineComponent({
       { title: 'Stock Options', icon: 'chart-timeline-variant' },
       { title: 'Home Office Budget', icon: 'desk' }
     ]);
-    
+
     // Culture gallery images
     const cultureImages = ref<CultureImage[]>([
       { src: 'https://via.placeholder.com/800x600?text=Team+Meeting', caption: 'Weekly team collaboration session' },
@@ -489,38 +489,38 @@ export default defineComponent({
       { src: 'https://via.placeholder.com/800x600?text=Product+Launch', caption: 'Celebrating our latest product release' },
       { src: 'https://via.placeholder.com/800x600?text=Team+Lunch', caption: 'Weekly team lunch discussions' }
     ]);
-    
+
     // Employee testimonials
     const testimonials = ref<EmployeeTestimonial[]>([
       {
         name: 'Jennifer Thompson',
         position: 'Senior Product Manager',
         tenure: 'With Crown Nexus since 2020',
-        quote: 'What I love most about working at Crown Nexus is the autonomy and trust. I'm empowered to make decisions and drive my product initiatives forward, while having the support of an incredible team that's always willing to collaborate.',
+        quote: 'What I love most about working at Crown Nexus is the autonomy and trust. I\'m empowered to make decisions and drive my product initiatives forward, while having the support of an incredible team that\'s always willing to collaborate.',
         avatar: 'https://via.placeholder.com/100?text=JT'
       },
       {
         name: 'Marcus Rodriguez',
         position: 'Software Engineer',
         tenure: 'With Crown Nexus since 2021',
-        quote: 'The technical challenges we solve are fascinating. We're building systems that need to scale to millions of parts and thousands of customers, while maintaining accuracy down to the individual component level. It's complex work, but incredibly rewarding.',
+        quote: 'The technical challenges we solve are fascinating. We\'re building systems that need to scale to millions of parts and thousands of customers, while maintaining accuracy down to the individual component level. It\'s complex work, but incredibly rewarding.',
         avatar: 'https://via.placeholder.com/100?text=MR'
       },
       {
         name: 'Sarah Chen',
         position: 'Customer Success Manager',
         tenure: 'With Crown Nexus since 2019',
-        quote: 'I've worked at several companies throughout my career, but Crown Nexus stands out for its genuine commitment to both customers and employees. The leadership team truly listens and acts on feedback, creating a culture of continuous improvement.',
+        quote: 'I\'ve worked at several companies throughout my career, but Crown Nexus stands out for its genuine commitment to both customers and employees. The leadership team truly listens and acts on feedback, creating a culture of continuous improvement.',
         avatar: 'https://via.placeholder.com/100?text=SC'
       }
     ]);
-    
+
     // List of unique departments for filtering
     const departments = computed(() => {
       const depts = jobs.value.map(job => job.department);
       return [...new Set(depts)];
     });
-    
+
     // Filtered jobs based on selected department
     const filteredJobs = computed(() => {
       if (!selectedDepartment.value) {
@@ -528,23 +528,23 @@ export default defineComponent({
       }
       return jobs.value.filter(job => job.department === selectedDepartment.value);
     });
-    
+
     // Selected image in gallery
     const selectedImage = computed(() => {
       return cultureImages.value[galleryIndex.value];
     });
-    
+
     // Fetch job postings
     const fetchJobs = async () => {
       loading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const response = await api.get('/careers/jobs');
-        
+
         // Mock data for demonstration
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Sample job postings
         jobs.value = [
           {
@@ -553,7 +553,7 @@ export default defineComponent({
             department: 'Engineering',
             location: 'Chicago, IL',
             type: 'Full-time',
-            summary: 'We're looking for an experienced Full Stack Developer to join our engineering team and help build the next generation of our B2B automotive platform.',
+            summary: 'We\'re looking for an experienced Full Stack Developer to join our engineering team and help build the next generation of our B2B automotive platform.',
             description: 'Full description text...',
             responsibilities: [
               'Design, develop, and maintain features across the full stack of our platform',
@@ -569,7 +569,7 @@ export default defineComponent({
               'Experience with RESTful APIs and microservices architecture',
               'Strong understanding of database design and SQL',
               'Familiarity with cloud platforms (AWS, Azure, or GCP)',
-              'Bachelor's degree in Computer Science or equivalent experience'
+              'Bachelor\'s degree in Computer Science or equivalent experience'
             ],
             niceToHave: [
               'Experience in the automotive or e-commerce industries',
@@ -602,7 +602,7 @@ export default defineComponent({
               'Experience developing marketing strategies and messaging',
               'Strong project management and organizational skills',
               'Ability to translate technical concepts into compelling benefits',
-              'Bachelor's degree in Marketing, Business, or related field'
+              'Bachelor\'s degree in Marketing, Business, or related field'
             ],
             niceToHave: [
               'Experience in the automotive industry',
@@ -619,7 +619,7 @@ export default defineComponent({
             department: 'Design',
             location: 'Remote',
             type: 'Full-time',
-            summary: 'We're seeking a talented UX/UI Designer to create intuitive and engaging user experiences for our complex B2B platform.',
+            summary: 'We\'re seeking a talented UX/UI Designer to create intuitive and engaging user experiences for our complex B2B platform.',
             description: 'Full description text...',
             responsibilities: [
               'Design user-centered interfaces for web and mobile applications',
@@ -668,7 +668,7 @@ export default defineComponent({
               'Experience with Python or R for data analysis',
               'Strong analytical and problem-solving skills',
               'Ability to communicate complex findings to non-technical stakeholders',
-              'Bachelor's degree in Statistics, Mathematics, Computer Science, or related field'
+              'Bachelor\'s degree in Statistics, Mathematics, Computer Science, or related field'
             ],
             niceToHave: [
               'Experience with large product catalogs or e-commerce data',
@@ -685,7 +685,7 @@ export default defineComponent({
             department: 'Customer Success',
             location: 'Austin, TX',
             type: 'Full-time',
-            summary: 'We're looking for a Customer Success Manager to ensure our B2B clients achieve their business goals using our platform.',
+            summary: 'We\'re looking for a Customer Success Manager to ensure our B2B clients achieve their business goals using our platform.',
             description: 'Full description text...',
             responsibilities: [
               'Serve as the primary point of contact for a portfolio of key accounts',
@@ -701,7 +701,7 @@ export default defineComponent({
               'Experience with CRM systems and customer success tools',
               'Excellent problem-solving and communication abilities',
               'Ability to understand technical concepts and explain them to non-technical users',
-              'Bachelor's degree in Business, Marketing, or related field'
+              'Bachelor\'s degree in Business, Marketing, or related field'
             ],
             niceToHave: [
               'Experience in the automotive or parts distribution industry',
@@ -719,7 +719,7 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    
+
     // Scroll to job openings section
     const scrollToJobs = () => {
       const element = document.getElementById('openings');
@@ -727,32 +727,32 @@ export default defineComponent({
         element.scrollIntoView({ behavior: 'smooth' });
       }
     };
-    
+
     // Open image gallery
     const openGallery = (index: number) => {
       galleryIndex.value = index;
       galleryDialog.value = true;
     };
-    
+
     // Navigate to previous image
     const prevImage = () => {
       if (galleryIndex.value > 0) {
         galleryIndex.value--;
       }
     };
-    
+
     // Navigate to next image
     const nextImage = () => {
       if (galleryIndex.value < cultureImages.value.length - 1) {
         galleryIndex.value++;
       }
     };
-    
+
     // Initialize component
     onMounted(() => {
       fetchJobs();
     });
-    
+
     return {
       loading,
       jobs,

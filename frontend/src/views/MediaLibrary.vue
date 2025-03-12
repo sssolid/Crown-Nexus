@@ -1075,7 +1075,6 @@ export default defineComponent({
     const router = useRouter();
     const authStore = useAuthStore();
     const fileInput = ref<HTMLInputElement | null>(null);
-    const editForm = ref<HTMLFormElement | null>(null);
 
     // Loading states
     const loading = ref(true);

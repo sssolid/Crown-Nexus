@@ -169,20 +169,20 @@
         >
           <!-- SKU Column -->
           <template v-slot:item.sku="{ item }">
-            <div class="font-weight-medium">{{ item.raw.sku }}</div>
+            <div class="font-weight-medium">{{ item.sku }}</div>
           </template>
 
           <!-- Name Column -->
           <template v-slot:item.name="{ item }">
             <div>
               <router-link
-                :to="{ name: 'ProductDetail', params: { id: item.raw.id }}"
+                :to="{ name: 'ProductDetail', params: { id: item.id }}"
                 class="text-decoration-none text-primary font-weight-medium"
               >
-                {{ item.raw.name }}
+                {{ item.name }}
               </router-link>
               <div class="text-caption text-medium-emphasis">
-                {{ item.raw.part_number }}
+                {{ item.part_number }}
               </div>
             </div>
           </template>
@@ -190,19 +190,19 @@
           <!-- Description Column -->
           <template v-slot:item.description="{ item }">
             <div class="text-truncate" style="max-width: 250px">
-              {{ item.raw.description || 'No description' }}
+              {{ item.description || 'No description' }}
             </div>
           </template>
 
           <!-- Category Column -->
           <template v-slot:item.category="{ item }">
             <v-chip
-              v-if="item.raw.category"
+              v-if="item.category"
               size="small"
               color="primary"
               variant="tonal"
             >
-              {{ item.raw.category.name }}
+              {{ item.category.name }}
             </v-chip>
             <span v-else class="text-medium-emphasis">None</span>
           </template>
@@ -210,11 +210,11 @@
           <!-- Status Column -->
           <template v-slot:item.is_active="{ item }">
             <v-chip
-              :color="item.raw.is_active ? 'success' : 'error'"
+              :color="item.is_active ? 'success' : 'error'"
               size="small"
               variant="tonal"
             >
-              {{ item.raw.is_active ? 'Active' : 'Inactive' }}
+              {{ item.is_active ? 'Active' : 'Inactive' }}
             </v-chip>
           </template>
 
@@ -227,7 +227,7 @@
                     icon
                     size="small"
                     v-bind="props"
-                    :to="{ name: 'ProductDetail', params: { id: item.raw.id }}"
+                    :to="{ name: 'ProductDetail', params: { id: item.id }}"
                   >
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
@@ -241,7 +241,7 @@
                     size="small"
                     color="primary"
                     v-bind="props"
-                    :to="{ name: 'ProductEdit', params: { id: item.raw.id }}"
+                    :to="{ name: 'ProductEdit', params: { id: item.id }}"
                     class="mx-1"
                   >
                     <v-icon>mdi-pencil</v-icon>

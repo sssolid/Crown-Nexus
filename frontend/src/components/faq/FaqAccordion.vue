@@ -11,9 +11,9 @@
         class="mb-3"
         rounded="lg"
       >
-        <template v-slot:title="{ props }">
+        <template>
           <div class="d-flex align-center">
-            <div v-bind="props" class="text-subtitle-1 font-weight-medium">
+            <div class="text-subtitle-1 font-weight-medium">
               {{ faq.question }}
             </div>
             <v-spacer></v-spacer>
@@ -53,7 +53,7 @@
         <v-expansion-panel-text>
           <!-- Answer content with rich text formatting -->
           <div class="pt-2 pb-4" v-html="formatAnswer(faq.answer)"></div>
-          
+
           <!-- Feedback buttons -->
           <div class="d-flex align-center pt-3 mt-3 border-top">
             <span class="text-caption mr-4">Was this helpful?</span>
@@ -101,10 +101,10 @@
       <p class="text-body-1 mt-2">
         There are currently no FAQs available in this category.
       </p>
-      <v-btn 
-        v-if="isAdmin" 
-        color="primary" 
-        variant="elevated" 
+      <v-btn
+        v-if="isAdmin"
+        color="primary"
+        variant="elevated"
         prepend-icon="mdi-plus"
         class="mt-4"
         to="/faqs/new"
@@ -165,7 +165,7 @@ interface Faq {
 
 export default defineComponent({
   name: 'FaqAccordion',
-  
+
   props: {
     faqs: {
       type: Array as PropType<Faq[]>,
@@ -176,41 +176,41 @@ export default defineComponent({
       default: false
     }
   },
-  
+
   setup(props) {
     // Track expanded panels
     const expandedPanels = ref<number[]>([]);
-    
+
     // Feedback tracking
     const feedbackSubmitted = ref<Record<string, boolean>>({});
-    
+
     // Copy link status
     const copyStatus = ref<Record<string, boolean>>({});
-    
+
     // Delete functionality
     const deleteDialog = ref(false);
     const deleteLoading = ref(false);
     const faqToDelete = ref<Faq | null>(null);
-    
+
     // Format answer text with simple HTML support
     const formatAnswer = (answer: string) => {
       // In a real implementation, you might use a markdown renderer or sanitize HTML
       // For now, we'll just return the text as-is with paragraph breaks
       return answer.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
     };
-    
+
     // Submit feedback on FAQ helpfulness
     const submitFeedback = async (faqId: string, isHelpful: boolean) => {
       try {
         // In a real implementation, this would be an API call
         // await api.post('/faqs/feedback', { faq_id: faqId, is_helpful: isHelpful });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Mark feedback as submitted for this FAQ
         feedbackSubmitted.value[faqId] = true;
-        
+
         // Show success message
         // In a real implementation, you might use a notification service
         alert(`Thank you for your feedback! ${isHelpful ? '👍' : '👎'}`);
@@ -218,19 +218,19 @@ export default defineComponent({
         console.error('Error submitting feedback:', error);
       }
     };
-    
+
     // Copy direct link to FAQ
     const copyLink = async (faqId: string) => {
       try {
         // Generate a URL that will open the FAQ directly
         const url = `${window.location.origin}/faqs?id=${faqId}`;
-        
+
         // Copy to clipboard
         await navigator.clipboard.writeText(url);
-        
+
         // Update copy status
         copyStatus.value[faqId] = true;
-        
+
         // Reset after 2 seconds
         setTimeout(() => {
           copyStatus.value[faqId] = false;
@@ -240,32 +240,32 @@ export default defineComponent({
         alert('Failed to copy link. Please try again.');
       }
     };
-    
+
     // Confirm FAQ deletion
     const confirmDelete = (faq: Faq) => {
       faqToDelete.value = faq;
       deleteDialog.value = true;
     };
-    
+
     // Delete FAQ
     const deleteFaq = async () => {
       if (!faqToDelete.value) return;
-      
+
       deleteLoading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.delete(`/faqs/${faqToDelete.value.id}`);
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Close dialog
         deleteDialog.value = false;
-        
+
         // Show success message
         alert('FAQ deleted successfully');
-        
+
         // In a real implementation, you would emit an event to refresh the parent component
         // emit('faq-deleted', faqToDelete.value.id);
       } catch (error) {
@@ -274,7 +274,7 @@ export default defineComponent({
         deleteLoading.value = false;
       }
     };
-    
+
     return {
       expandedPanels,
       feedbackSubmitted,

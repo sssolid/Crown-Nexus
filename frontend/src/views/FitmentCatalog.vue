@@ -135,44 +135,44 @@
         >
           <!-- Year Column -->
           <template v-slot:item.year="{ item }">
-            <div class="font-weight-medium">{{ item.raw.year }}</div>
+            <div class="font-weight-medium">{{ item.year }}</div>
           </template>
 
           <!-- Make Column -->
           <template v-slot:item.make="{ item }">
             <div>
               <router-link
-                :to="{ name: 'FitmentDetail', params: { id: item.raw.id }}"
+                :to="{ name: 'FitmentDetail', params: { id: item.id }}"
                 class="text-decoration-none text-primary font-weight-medium"
               >
-                {{ item.raw.make }}
+                {{ item.make }}
               </router-link>
             </div>
           </template>
 
           <!-- Model Column -->
           <template v-slot:item.model="{ item }">
-            <div>{{ item.raw.model }}</div>
+            <div>{{ item.model }}</div>
           </template>
 
           <!-- Engine Column -->
           <template v-slot:item.engine="{ item }">
-            <div>{{ item.raw.engine || 'N/A' }}</div>
+            <div>{{ item.engine || 'N/A' }}</div>
           </template>
 
           <!-- Transmission Column -->
           <template v-slot:item.transmission="{ item }">
-            <div>{{ item.raw.transmission || 'N/A' }}</div>
+            <div>{{ item.transmission || 'N/A' }}</div>
           </template>
 
           <!-- Product Count Column -->
           <template v-slot:item.productCount="{ item }">
             <v-chip
               size="small"
-              :color="item.raw.products?.length ? 'primary' : 'grey'"
+              :color="item.products?.length ? 'primary' : 'grey'"
               variant="tonal"
             >
-              {{ item.raw.products?.length || 0 }}
+              {{ item.products?.length || 0 }}
             </v-chip>
           </template>
 
@@ -185,7 +185,7 @@
                     icon
                     size="small"
                     v-bind="props"
-                    :to="{ name: 'FitmentDetail', params: { id: item.raw.id }}"
+                    :to="{ name: 'FitmentDetail', params: { id: item.id }}"
                   >
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
@@ -199,7 +199,7 @@
                     size="small"
                     color="primary"
                     v-bind="props"
-                    :to="{ name: 'FitmentEdit', params: { id: item.raw.id }}"
+                    :to="{ name: 'FitmentEdit', params: { id: item.id }}"
                     class="mx-1"
                   >
                     <v-icon>mdi-pencil</v-icon>

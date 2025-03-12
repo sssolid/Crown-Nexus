@@ -27,17 +27,17 @@
             <h2 class="text-h4 font-weight-bold mb-8">Our Mission</h2>
             <v-card class="pa-6 bg-primary mb-6">
               <v-card-text class="text-h5 text-white font-italic">
-                "To provide quality aftermarket automotive parts through innovative technology and exceptional service, 
+                "To provide quality aftermarket automotive parts through innovative technology and exceptional service,
                 empowering businesses to exceed their customers' expectations."
               </v-card-text>
             </v-card>
             <p class="text-body-1 mb-4">
-              At Crown Nexus, we're dedicated to transforming how automotive parts are sourced and distributed. 
-              Our B2B platform connects manufacturers, distributors, and retailers in a seamless ecosystem 
+              At Crown Nexus, we're dedicated to transforming how automotive parts are sourced and distributed.
+              Our B2B platform connects manufacturers, distributors, and retailers in a seamless ecosystem
               that prioritizes quality, reliability, and efficiency.
             </p>
             <p class="text-body-1">
-              We leverage cutting-edge technology to streamline the supply chain, reduce costs, and 
+              We leverage cutting-edge technology to streamline the supply chain, reduce costs, and
               deliver an unparalleled selection of premium aftermarket parts to our partners.
             </p>
           </v-col>
@@ -167,19 +167,19 @@
           <v-col cols="12" md="6">
             <h2 class="text-h4 font-weight-bold mb-4">Our Facilities</h2>
             <p class="text-body-1 mb-4">
-              Crown Nexus operates state-of-the-art distribution centers strategically located 
+              Crown Nexus operates state-of-the-art distribution centers strategically located
               across North America to ensure fast, efficient delivery to our partners.
             </p>
             <p class="text-body-1 mb-4">
-              Our headquarters in Detroit, Michigan houses our corporate offices, technology center, 
-              and main distribution facility - a 250,000 square foot operation equipped with the latest 
+              Our headquarters in Detroit, Michigan houses our corporate offices, technology center,
+              and main distribution facility - a 250,000 square foot operation equipped with the latest
               in inventory management and logistics technology.
             </p>
             <p class="text-body-1 mb-6">
-              With additional distribution centers in Los Angeles, Dallas, and Atlanta, we provide 
+              With additional distribution centers in Los Angeles, Dallas, and Atlanta, we provide
               nationwide coverage with industry-leading shipping times and reliability.
             </p>
-            
+
             <v-list>
               <v-list-subheader class="text-h6 font-weight-bold">By the Numbers</v-list-subheader>
               <v-list-item v-for="(stat, i) in facilityStats" :key="i">
@@ -193,7 +193,7 @@
               </v-list-item>
             </v-list>
           </v-col>
-          
+
           <v-col cols="12" md="6">
             <v-card elevation="0" class="rounded-xl overflow-hidden">
               <v-carousel
@@ -447,7 +447,7 @@ export default defineComponent({
       {
         name: 'Sarah Chen',
         title: 'COO & Co-Founder',
-        bio: 'Sarah's background in supply chain optimization and logistics has been instrumental in building Crown Nexus's efficient distribution network. She holds an MBA from MIT and previously led operations at a Fortune 500 automotive company.',
+        bio: 'Sarah\'s background in supply chain optimization and logistics has been instrumental in building Crown Nexus\'s efficient distribution network. She holds an MBA from MIT and previously led operations at a Fortune 500 automotive company.',
         photo: 'https://randomuser.me/api/portraits/women/44.jpg',
         linkedin: '#',
         email: 'sarah.chen@crownnexus.com'
@@ -455,7 +455,7 @@ export default defineComponent({
       {
         name: 'David Miller',
         title: 'CTO',
-        bio: 'David leads our technology initiatives, including the development of our proprietary B2B platform. With a background in software engineering and 15 years in e-commerce, he's transforming how partners interact with our catalog.',
+        bio: 'David leads our technology initiatives, including the development of our proprietary B2B platform. With a background in software engineering and 15 years in e-commerce, he\'s transforming how partners interact with our catalog.',
         photo: 'https://randomuser.me/api/portraits/men/67.jpg',
         linkedin: '#',
         twitter: '#'

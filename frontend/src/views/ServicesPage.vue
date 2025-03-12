@@ -26,11 +26,11 @@
           <v-col cols="12" md="8" lg="7">
             <h2 class="text-h4 font-weight-bold mb-4">Elevate Your Business</h2>
             <p class="text-body-1 mb-4">
-              At Crown Nexus, we go beyond simply supplying aftermarket parts. Our comprehensive service offerings 
+              At Crown Nexus, we go beyond simply supplying aftermarket parts. Our comprehensive service offerings
               are designed to streamline your operations, boost sales, and enhance customer satisfaction.
             </p>
             <p class="text-body-1 mb-4">
-              From advanced inventory management to technical support and warranty programs, we provide the tools, 
+              From advanced inventory management to technical support and warranty programs, we provide the tools,
               resources, and expertise you need to thrive in today's competitive market.
             </p>
             <v-btn
@@ -175,7 +175,7 @@
           <v-col cols="12" md="6">
             <h3 class="text-h5 font-weight-bold mb-4">Digital Transformation for Aftermarket Businesses</h3>
             <p class="text-body-1 mb-4">
-              Our proprietary B2B platform is designed specifically for the automotive aftermarket industry, 
+              Our proprietary B2B platform is designed specifically for the automotive aftermarket industry,
               integrating seamlessly with your existing systems and workflows.
             </p>
             <v-list>
@@ -214,7 +214,7 @@
           <v-col cols="12" md="7" class="text-white">
             <h2 class="text-h4 font-weight-bold mb-4">Crown Nexus Warranty Program</h2>
             <p class="text-body-1 mb-4">
-              Our industry-leading warranty program provides peace of mind for you and your customers. 
+              Our industry-leading warranty program provides peace of mind for you and your customers.
               We stand behind the quality of our products with comprehensive coverage and hassle-free claims processing.
             </p>
             <v-row class="mt-6">
@@ -653,7 +653,7 @@ export default defineComponent({
       },
       {
         title: 'Product Training',
-        description: 'Enhance your team's product knowledge with comprehensive training programs delivered online or at your location.',
+        description: 'Enhance your team\'s product knowledge with comprehensive training programs delivered online or at your location.',
         icon: 'mdi-school',
         color: 'warning',
         link: '/services/training'

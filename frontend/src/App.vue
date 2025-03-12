@@ -1,57 +1,57 @@
+// frontend/src/App.vue
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <v-app-bar-title>
-        Crown Nexus
-      </v-app-bar-title>
-      <v-spacer></v-spacer>
-      <template v-if="isLoggedIn">
-        <v-btn to="/" text>Dashboard</v-btn>
-        <v-btn to="/products" text>Products</v-btn>
-        <v-btn to="/fitments" text>Fitments</v-btn>
-        <v-btn @click="logout" text>Logout</v-btn>
-      </template>
-      <template v-else>
-        <v-btn to="/login" text>Login</v-btn>
-      </template>
-    </v-app-bar>
-
-    <v-main>
-      <v-container fluid>
-        <router-view />
-      </v-container>
-    </v-main>
-
-    <v-footer app>
-      <span>&copy; {{ new Date().getFullYear() }} Crown Nexus</span>
-    </v-footer>
-  </v-app>
+  <component :is="layout">
+    <router-view />
+  </component>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue';
+import { defineComponent, computed, markRaw, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+
+// Import layouts
+import PublicLayout from '@/components/layout/PublicLayout.vue';
+import DashboardLayout from '@/components/layout/DashboardLayout.vue';
+import BlankLayout from '@/components/layout/BlankLayout.vue';
 
 export default defineComponent({
   name: 'App',
+  components: {
+    PublicLayout,
+    DashboardLayout,
+    BlankLayout
+  },
   setup() {
+    const route = useRoute();
     const authStore = useAuthStore();
-    const isLoggedIn = computed(() => authStore.isLoggedIn);
 
-    const logout = () => {
-      authStore.logout();
-    };
+    // Determine which layout to use based on route meta and auth state
+    const layout = computed(() => {
+      // If route specifies 'blank' layout
+      if (route.meta.layout === 'blank') {
+        return markRaw(BlankLayout);
+      }
 
+      // For authenticated routes, use dashboard layout
+      if (route.meta.requiresAuth && authStore.isLoggedIn) {
+        return markRaw(DashboardLayout);
+      }
+
+      // Default to public layout for non-authenticated routes
+      return markRaw(PublicLayout);
+    });
+
+    // Initialize user profile if token exists
     onMounted(() => {
-      if (isLoggedIn.value) {
+      if (authStore.isLoggedIn && !authStore.user) {
         authStore.fetchUserProfile();
       }
     });
 
     return {
-      isLoggedIn,
-      logout,
+      layout
     };
-  },
+  }
 });
 </script>

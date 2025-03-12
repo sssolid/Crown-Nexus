@@ -11,7 +11,7 @@ aiohttp==3.11.13
 aiosignal==1.3.2
     # via aiohttp
 alembic==1.12.1
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
@@ -21,7 +21,7 @@ anyio==3.7.1
     #   starlette
     #   watchfiles
 asyncpg==0.28.0
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 attrs==25.1.0
     # via
     #   aiohttp
@@ -46,12 +46,6 @@ click==8.1.8
     #   black
     #   pip-tools
     #   uvicorn
-colorama==0.4.6
-    # via
-    #   build
-    #   click
-    #   pytest
-    #   uvicorn
 coverage[toml]==7.6.12
     # via pytest-cov
 cryptography==44.0.2
@@ -68,11 +62,11 @@ ecdsa==0.19.0
 elastic-transport==8.17.0
     # via elasticsearch
 elasticsearch[async]==8.10.1
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 email-validator==2.2.0
     # via pydantic
 fastapi==0.104.1
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 filelock==3.17.0
     # via virtualenv
 frozenlist==1.5.0
@@ -91,8 +85,8 @@ httptools==0.6.4
     # via uvicorn
 httpx==0.25.2
     # via
-    #   -r D:\crown-nexus\requirements.in
     #   -r requirements-dev.in
+    #   -r requirements.in
 hypothesis==6.86.2
     # via -r requirements-dev.in
 identify==2.6.8
@@ -129,10 +123,10 @@ packaging==24.2
     #   build
     #   pytest
 passlib[bcrypt]==1.7.4
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 pathspec==0.12.1
     # via black
-pip-tools==7.3.0
+pip-tools==7.4.1
     # via -r requirements-dev.in
 platformdirs==4.3.6
     # via
@@ -154,15 +148,17 @@ pycparser==2.22
     # via cffi
 pydantic[email]==2.4.2
     # via
-    #   -r D:\crown-nexus\requirements.in
+    #   -r requirements.in
     #   fastapi
     #   pydantic-settings
 pydantic-core==2.10.1
     # via pydantic
 pydantic-settings==2.0.3
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 pyproject-hooks==1.2.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 pytest==7.4.4
     # via
     #   -r requirements-dev.in
@@ -177,15 +173,15 @@ python-dotenv==1.0.1
     #   pydantic-settings
     #   uvicorn
 python-jose[cryptography]==3.3.0
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 python-multipart==0.0.20
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 pyyaml==6.0.2
     # via
     #   pre-commit
     #   uvicorn
 redis==5.0.8
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 rsa==4.9
     # via python-jose
 ruff==0.0.292
@@ -200,24 +196,24 @@ sortedcontainers==2.4.0
     # via hypothesis
 sqlalchemy[asyncio]==2.0.38
     # via
-    #   -r D:\crown-nexus\requirements.in
+    #   -r requirements.in
     #   alembic
 starlette==0.27.0
     # via fastapi
 tenacity==8.2.3
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 types-cffi==1.16.0.20241221
     # via types-pyopenssl
 types-passlib==1.7.7.20241221
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 types-pyasn1==0.6.0.20250208
     # via types-python-jose
 types-pyopenssl==24.1.0.20240722
     # via types-redis
 types-python-jose==3.3.4.20240106
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 types-redis==4.6.0.20241004
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
 types-setuptools==75.8.2.20250305
     # via types-cffi
 typing-extensions==4.12.2
@@ -231,7 +227,9 @@ typing-extensions==4.12.2
 urllib3==2.3.0
     # via elastic-transport
 uvicorn[standard]==0.23.2
-    # via -r D:\crown-nexus\requirements.in
+    # via -r requirements.in
+uvloop==0.21.0
+    # via uvicorn
 virtualenv==20.29.2
     # via pre-commit
 watchfiles==1.0.4

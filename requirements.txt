@@ -35,10 +35,6 @@ cffi==1.17.1
     # via cryptography
 click==8.1.8
     # via uvicorn
-colorama==0.4.6
-    # via
-    #   click
-    #   uvicorn
 cryptography==44.0.2
     # via
     #   python-jose
@@ -98,12 +94,12 @@ pyasn1==0.6.1
     #   rsa
 pycparser==2.22
     # via cffi
-pydantic[email]==2.4.2
+pydantic[email]==2.10.6
     # via
     #   -r requirements.in
     #   fastapi
     #   pydantic-settings
-pydantic-core==2.10.1
+pydantic-core==2.27.2
     # via pydantic
 pydantic-settings==2.0.3
     # via -r requirements.in
@@ -160,6 +156,8 @@ urllib3==2.3.0
     # via elastic-transport
 uvicorn[standard]==0.23.2
     # via -r requirements.in
+uvloop==0.21.0
+    # via uvicorn
 watchfiles==1.0.4
     # via uvicorn
 websockets==15.0.1

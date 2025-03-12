@@ -149,8 +149,12 @@ class FitmentParser:
         Raises:
             ParsingError: If no mapping is found
         """
-        for pattern, mappings in self.model_mappings.items():
+        # Sort patterns by length (descending) to prioritize longer matches
+        patterns = sorted(self.model_mappings.keys(), key=len, reverse=True)
+
+        for pattern in patterns:
             if pattern in vehicle_text:
+                mappings = self.model_mappings[pattern]
                 return [{"make": mapping.split('|')[0],
                          "model": mapping.split('|')[2]}
                         for mapping in mappings]

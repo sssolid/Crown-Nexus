@@ -12,7 +12,6 @@
       <v-spacer></v-spacer>
       <v-btn to="/dashboard" text>Dashboard</v-btn>
       <v-btn to="/products" text>Products</v-btn>
-      <v-btn to="/fitment/model-mappings" text>Mapper</v-btn>
       <v-btn to="/fitments" text>Fitments</v-btn>
       <v-btn to="/media" text>Media</v-btn>
       <v-btn to="/settings" text>Settings</v-btn>

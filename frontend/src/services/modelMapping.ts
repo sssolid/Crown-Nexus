@@ -46,9 +46,20 @@ const modelMappingService = {
    * @returns Promise with model mapping list response
    */
   async getModelMappings(skip = 0, limit = 100, pattern?: string): Promise<ModelMappingListResponse> {
-    return api.get<ModelMappingListResponse>('/fitment/model-mappings', {
-      params: { skip, limit, pattern }
+    console.log(`API call with params: skip=${skip}, limit=${limit}, pattern=${pattern || 'none'}`);
+
+    const response = await api.get<ModelMappingListResponse>('/fitment/model-mappings', {
+      params: {
+        skip: skip,
+        limit: limit,
+        pattern: pattern || undefined
+      }
     });
+
+    console.log(`API response received:`, response);
+    console.log(`Total items from API: ${response.total}, Items length: ${response.items.length}`);
+
+    return response;
   },
 
   /**

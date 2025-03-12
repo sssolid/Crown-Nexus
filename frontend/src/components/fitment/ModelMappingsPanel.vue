@@ -141,7 +141,7 @@
                 size="x-small"
                 color="primary"
                 v-bind="props"
-                @click="editMapping(item.raw)"
+                @click="editMapping(item)"
                 class="mr-1"
               >
                 <v-icon>mdi-pencil</v-icon>
@@ -156,7 +156,7 @@
                 size="x-small"
                 :color="item.active ? 'warning' : 'success'"
                 v-bind="props"
-                @click="toggleActive(item.raw)"
+                @click="toggleActive(item)"
                 class="mr-1"
               >
                 <v-icon>{{ item.active ? 'mdi-eye-off' : 'mdi-eye' }}</v-icon>
@@ -171,7 +171,7 @@
                 size="x-small"
                 color="error"
                 v-bind="props"
-                @click="confirmDelete(item.raw)"
+                @click="confirmDelete(item)"
               >
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
@@ -186,7 +186,8 @@
       <v-pagination
         v-model="page"
         :length="Math.ceil(totalMappings / itemsPerPage)"
-        @update:modelValue="fetchMappings"
+        @update:model-value="fetchMappings"
+        :total="totalMappings"
         density="compact"
         rounded="circle"
       ></v-pagination>
@@ -335,7 +336,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed, watch, onMounted } from 'vue';
 import modelMappingService, { ModelMapping } from '@/services/modelMapping';
 import { notificationService } from '@/utils/notification';
 
@@ -398,6 +399,18 @@ export default defineComponent({
       { title: 'Active', key: 'active', sortable: true, width: '60px' },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: '100px' },
     ];
+
+    // Watch for pagination changes
+    watch(page, (newPage) => {
+      console.log(`Page changed to ${newPage}, fetching data...`);
+      fetchMappings();
+    });
+
+    watch(itemsPerPage, (newSize) => {
+      console.log(`Items per page changed to ${newSize}, resetting to page 1...`);
+      page.value = 1; // Reset to first page when changing page size
+      fetchMappings();
+    });
 
     // Helper methods for mapping display
     const getMake = (mapping: string): string => {

@@ -256,8 +256,8 @@ async def upload_model_mappings(
 @router.get("/model-mappings", response_model=ModelMappingList)
 async def list_model_mappings(
     mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
-    skip: int = 0,
-    limit: int = 100,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, gt=0, le=1000),
     pattern: Optional[str] = None
 ):
     """
@@ -265,12 +265,12 @@ async def list_model_mappings(
 
     Args:
         mapping_engine: Mapping engine instance
-        skip: Number of items to skip
-        limit: Maximum number of items to return
+        skip: Number of items to skip (for pagination)
+        limit: Maximum number of items to return (for pagination)
         pattern: Optional pattern to filter by
 
     Returns:
-        List of model mappings
+        List of model mappings with pagination information
 
     Raises:
         HTTPException: If retrieval fails
@@ -279,6 +279,11 @@ async def list_model_mappings(
         async with mapping_engine.db_service.get_session() as session:
             from app.models.model_mapping import ModelMapping
             from sqlalchemy import or_, select, func
+            import logging
+
+            # Log pagination parameters for debugging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Model mappings request - skip: {skip}, limit: {limit}, pattern: {pattern}")
 
             # Build query
             query = select(ModelMapping)
@@ -287,33 +292,29 @@ async def list_model_mappings(
             if pattern:
                 query = query.where(ModelMapping.pattern.ilike(f"%{pattern}%"))
 
-            # Count total
+            # Count total before pagination
             count_query = select(func.count()).select_from(query.subquery())
             total = await session.scalar(count_query) or 0
+            logger.info(f"Total mappings before pagination: {total}")
 
-            # Add pagination
+            # Add pagination and ordering
             query = query.order_by(ModelMapping.pattern, ModelMapping.priority.desc())
             query = query.offset(skip).limit(limit)
 
             # Execute query
             result = await session.execute(query)
             items = result.scalars().all()
+            logger.info(f"Returning {len(items)} items")
 
             return {
                 "items": items,
                 "total": total
             }
-    except FitmentError as e:
-        logger.error(f"Fitment error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
-        ) from e
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+        logger.error(f"Error listing model mappings: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"Failed to list model mappings: {str(e)}"
         ) from e
 
 

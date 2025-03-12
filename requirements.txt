@@ -16,7 +16,6 @@ annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
     # via
-    #   fastapi
     #   httpx
     #   starlette
     #   watchfiles
@@ -35,10 +34,6 @@ cffi==1.17.1
     # via cryptography
 click==8.1.8
     # via uvicorn
-colorama==0.4.6
-    # via
-    #   click
-    #   uvicorn
 cryptography==44.0.2
     # via
     #   python-jose
@@ -54,7 +49,7 @@ elasticsearch[async]==8.10.1
     # via -r requirements.in
 email-validator==2.2.0
     # via pydantic
-fastapi==0.104.1
+fastapi==0.115.11
     # via -r requirements.in
 frozenlist==1.5.0
     # via
@@ -131,7 +126,7 @@ sqlalchemy[asyncio]==2.0.38
     # via
     #   -r requirements.in
     #   alembic
-starlette==0.27.0
+starlette==0.46.1
     # via fastapi
 tenacity==8.2.3
     # via -r requirements.in
@@ -160,6 +155,8 @@ urllib3==2.3.0
     # via elastic-transport
 uvicorn[standard]==0.23.2
     # via -r requirements.in
+uvloop==0.21.0
+    # via uvicorn
 watchfiles==1.0.4
     # via uvicorn
 websockets==15.0.1

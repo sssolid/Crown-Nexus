@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="about-hero">
       <v-parallax
-        src="https://images.unsplash.com/photo-1486262322291-6f1660445269?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        :src=marketingLandingHomePageHeroBanner2
         :height="400"
       >
         <div class="hero-overlay"></div>
@@ -292,8 +292,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
+import marketingLandingHomePageHeroBanner2 from '@/assets/marketing_landing/home_page_hero_banner2.png';
 
 interface Milestone {
   year: string;
@@ -342,230 +343,214 @@ interface Certification {
   icon: string;
 }
 
-export default defineComponent({
-  name: 'AboutPage',
-
-  setup() {
-    // Company milestones data
-    const milestones = ref<Milestone[]>([
-      {
-        year: '2005',
-        title: 'Founding of Crown Nexus',
-        description: 'Founded by automotive industry veterans Michael Reynolds and Sarah Chen, Crown Nexus began as a small-scale distributor of specialty brake components.',
-        image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        color: 'primary'
-      },
-      {
-        year: '2008',
-        title: 'Expansion into Full-Line Distribution',
-        description: 'Following early success, Crown Nexus expanded its catalog to include a comprehensive range of automotive aftermarket parts and opened its first major distribution center.',
-        color: 'info'
-      },
-      {
-        year: '2012',
-        title: 'Launch of First Digital Catalog',
-        description: 'Crown Nexus revolutionized the industry with the launch of its digital catalog system, allowing customers to search and order parts online for the first time.',
-        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-      },
-      {
-        year: '2015',
-        title: 'Introduction of CrownFit™ Technology',
-        description: 'Our proprietary fitment database technology was launched, providing unprecedented accuracy in part compatibility matching.',
-        color: 'success'
-      },
-      {
-        year: '2018',
-        title: 'National Expansion',
-        description: 'Opened distribution centers in Los Angeles, Dallas, and Atlanta, achieving coast-to-coast coverage and next-day delivery to 85% of the US market.',
-        image: 'https://images.unsplash.com/photo-1577416412292-129af7a4c111?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-      },
-      {
-        year: '2021',
-        title: 'Launch of Crown Nexus B2B Platform',
-        description: 'Introduced our state-of-the-art B2B platform, integrating inventory management, ordering, and analytics into a seamless digital experience.',
-        color: 'warning'
-      },
-      {
-        year: 'Today',
-        title: 'Industry Leader',
-        description: 'Today, Crown Nexus serves over 5,000 businesses across North America with more than 10,000 quality aftermarket parts, setting the standard for the industry.',
-        color: 'error'
-      }
-    ]);
-
-    // Company values data
-    const companyValues = ref<CompanyValue[]>([
-      {
-        title: 'Quality',
-        description: 'We are committed to providing aftermarket parts that meet or exceed OEM specifications, ensuring reliability and customer satisfaction.',
-        icon: 'mdi-check-decagram',
-        color: 'primary'
-      },
-      {
-        title: 'Innovation',
-        description: 'We continuously invest in new technologies and processes to improve our products, services, and the overall customer experience.',
-        icon: 'mdi-lightbulb',
-        color: 'info'
-      },
-      {
-        title: 'Integrity',
-        description: 'We conduct business with honesty, transparency, and ethical standards that build trust with our customers, suppliers, and employees.',
-        icon: 'mdi-handshake',
-        color: 'success'
-      },
-      {
-        title: 'Partnership',
-        description: 'We view our relationships with customers as true partnerships, focusing on mutual growth and long-term success.',
-        icon: 'mdi-account-group',
-        color: 'error'
-      },
-      {
-        title: 'Expertise',
-        description: 'We pride ourselves on deep automotive industry knowledge and product expertise, providing valuable insights to our partners.',
-        icon: 'mdi-brain',
-        color: 'warning'
-      },
-      {
-        title: 'Reliability',
-        description: 'We deliver on our promises with consistent product quality, on-time shipping, and dependable support when our partners need it most.',
-        icon: 'mdi-shield-check',
-        color: 'secondary'
-      }
-    ]);
-
-    // Leadership team data
-    const leadershipTeam = ref<TeamMember[]>([
-      {
-        name: 'Michael Reynolds',
-        title: 'CEO & Co-Founder',
-        bio: 'With over 25 years in the automotive industry, Michael brings extensive experience from both OEM and aftermarket sectors. Prior to founding Crown Nexus, he held executive positions at major auto parts manufacturers.',
-        photo: 'https://randomuser.me/api/portraits/men/32.jpg',
-        linkedin: '#',
-        twitter: '#',
-        email: 'michael.reynolds@crownnexus.com'
-      },
-      {
-        name: 'Sarah Chen',
-        title: 'COO & Co-Founder',
-        bio: 'Sarah\'s background in supply chain optimization and logistics has been instrumental in building Crown Nexus\'s efficient distribution network. She holds an MBA from MIT and previously led operations at a Fortune 500 automotive company.',
-        photo: 'https://randomuser.me/api/portraits/women/44.jpg',
-        linkedin: '#',
-        email: 'sarah.chen@crownnexus.com'
-      },
-      {
-        name: 'David Miller',
-        title: 'CTO',
-        bio: 'David leads our technology initiatives, including the development of our proprietary B2B platform. With a background in software engineering and 15 years in e-commerce, he\'s transforming how partners interact with our catalog.',
-        photo: 'https://randomuser.me/api/portraits/men/67.jpg',
-        linkedin: '#',
-        twitter: '#'
-      },
-      {
-        name: 'Jennifer Lopez',
-        title: 'VP of Product Management',
-        bio: 'Jennifer oversees our product catalog strategy and category expansion. Her automotive engineering background and aftermarket expertise ensure we offer the right products to meet market demands.',
-        photo: 'https://randomuser.me/api/portraits/women/68.jpg',
-        linkedin: '#',
-        email: 'jennifer.lopez@crownnexus.com'
-      },
-      {
-        name: 'Robert Washington',
-        title: 'VP of Sales',
-        bio: 'Robert leads our national sales team with a focus on building strong B2B relationships. His consultative approach has helped hundreds of businesses optimize their parts programs.',
-        photo: 'https://randomuser.me/api/portraits/men/91.jpg',
-        linkedin: '#',
-        twitter: '#'
-      },
-      {
-        name: 'Maria Garcia',
-        title: 'VP of Customer Success',
-        bio: 'Maria ensures our partners receive exceptional support throughout their journey with Crown Nexus. Her team provides training, technical assistance, and ongoing consultation for continuous improvement.',
-        photo: 'https://randomuser.me/api/portraits/women/89.jpg',
-        linkedin: '#',
-        email: 'maria.garcia@crownnexus.com'
-      }
-    ]);
-
-    // Facility stats data
-    const facilityStats = ref<FacilityStat[]>([
-      {
-        icon: 'mdi-warehouse',
-        value: '4',
-        label: 'Distribution Centers',
-        color: 'primary'
-      },
-      {
-        icon: 'mdi-package-variant-closed',
-        value: '250,000+',
-        label: 'Parts in Stock',
-        color: 'success'
-      },
-      {
-        icon: 'mdi-truck-fast',
-        value: '98.7%',
-        label: 'On-Time Delivery Rate',
-        color: 'info'
-      },
-      {
-        icon: 'mdi-clock-outline',
-        value: '24-48 hrs',
-        label: 'Average Order Fulfillment Time',
-        color: 'warning'
-      }
-    ]);
-
-    // Facility images data
-    const facilityImages = ref<FacilityImage[]>([
-      {
-        src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        alt: 'Crown Nexus Headquarters'
-      },
-      {
-        src: 'https://images.unsplash.com/photo-1553413077-190dd305871c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        alt: 'Distribution Center Interior'
-      },
-      {
-        src: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        alt: 'Automated Warehouse System'
-      },
-      {
-        src: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        alt: 'Technology Center'
-      }
-    ]);
-
-    // Partners data
-    const partners = ref<Partner[]>([
-      { name: 'AutoZone', logo: 'https://logo.clearbit.com/autozone.com' },
-      { name: 'O\'Reilly Auto Parts', logo: 'https://logo.clearbit.com/oreillyauto.com' },
-      { name: 'Advance Auto Parts', logo: 'https://logo.clearbit.com/advanceautoparts.com' },
-      { name: 'NAPA Auto Parts', logo: 'https://logo.clearbit.com/napaonline.com' },
-      { name: 'CarParts.com', logo: 'https://logo.clearbit.com/carparts.com' },
-      { name: 'Summit Racing', logo: 'https://logo.clearbit.com/summitracing.com' },
-      { name: 'RockAuto', logo: 'https://logo.clearbit.com/rockauto.com' },
-      { name: 'Keystone Automotive', logo: 'https://logo.clearbit.com/keystoneautomotive.com' }
-    ]);
-
-    // Certifications data
-    const certifications = ref<Certification[]>([
-      { name: 'ISO 9001:2015 Certified', icon: 'mdi-certificate' },
-      { name: 'AASA Member', icon: 'mdi-car' },
-      { name: 'SEMA Member', icon: 'mdi-car-cog' },
-      { name: 'AAPEX Verified Supplier', icon: 'mdi-check-decagram' },
-      { name: 'AIAG Compliant', icon: 'mdi-shield-check' }
-    ]);
-
-    return {
-      milestones,
-      companyValues,
-      leadershipTeam,
-      facilityStats,
-      facilityImages,
-      partners,
-      certifications
-    };
+// Company milestones data
+const milestones = ref<Milestone[]>([
+  {
+    year: '2005',
+    title: 'Founding of Crown Nexus',
+    description: 'Founded by automotive industry veterans Michael Reynolds and Sarah Chen, Crown Nexus began as a small-scale distributor of specialty brake components.',
+    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    color: 'primary'
+  },
+  {
+    year: '2008',
+    title: 'Expansion into Full-Line Distribution',
+    description: 'Following early success, Crown Nexus expanded its catalog to include a comprehensive range of automotive aftermarket parts and opened its first major distribution center.',
+    color: 'info'
+  },
+  {
+    year: '2012',
+    title: 'Launch of First Digital Catalog',
+    description: 'Crown Nexus revolutionized the industry with the launch of its digital catalog system, allowing customers to search and order parts online for the first time.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
+  },
+  {
+    year: '2015',
+    title: 'Introduction of CrownFit™ Technology',
+    description: 'Our proprietary fitment database technology was launched, providing unprecedented accuracy in part compatibility matching.',
+    color: 'success'
+  },
+  {
+    year: '2018',
+    title: 'National Expansion',
+    description: 'Opened distribution centers in Los Angeles, Dallas, and Atlanta, achieving coast-to-coast coverage and next-day delivery to 85% of the US market.',
+    image: 'https://images.unsplash.com/photo-1577416412292-129af7a4c111?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
+  },
+  {
+    year: '2021',
+    title: 'Launch of Crown Nexus B2B Platform',
+    description: 'Introduced our state-of-the-art B2B platform, integrating inventory management, ordering, and analytics into a seamless digital experience.',
+    color: 'warning'
+  },
+  {
+    year: 'Today',
+    title: 'Industry Leader',
+    description: 'Today, Crown Nexus serves over 5,000 businesses across North America with more than 10,000 quality aftermarket parts, setting the standard for the industry.',
+    color: 'error'
   }
-});
+]);
+
+// Company values data
+const companyValues = ref<CompanyValue[]>([
+  {
+    title: 'Quality',
+    description: 'We are committed to providing aftermarket parts that meet or exceed OEM specifications, ensuring reliability and customer satisfaction.',
+    icon: 'mdi-check-decagram',
+    color: 'primary'
+  },
+  {
+    title: 'Innovation',
+    description: 'We continuously invest in new technologies and processes to improve our products, services, and the overall customer experience.',
+    icon: 'mdi-lightbulb',
+    color: 'info'
+  },
+  {
+    title: 'Integrity',
+    description: 'We conduct business with honesty, transparency, and ethical standards that build trust with our customers, suppliers, and employees.',
+    icon: 'mdi-handshake',
+    color: 'success'
+  },
+  {
+    title: 'Partnership',
+    description: 'We view our relationships with customers as true partnerships, focusing on mutual growth and long-term success.',
+    icon: 'mdi-account-group',
+    color: 'error'
+  },
+  {
+    title: 'Expertise',
+    description: 'We pride ourselves on deep automotive industry knowledge and product expertise, providing valuable insights to our partners.',
+    icon: 'mdi-brain',
+    color: 'warning'
+  },
+  {
+    title: 'Reliability',
+    description: 'We deliver on our promises with consistent product quality, on-time shipping, and dependable support when our partners need it most.',
+    icon: 'mdi-shield-check',
+    color: 'secondary'
+  }
+]);
+
+// Leadership team data
+const leadershipTeam = ref<TeamMember[]>([
+  {
+    name: 'Michael Reynolds',
+    title: 'CEO & Co-Founder',
+    bio: 'With over 25 years in the automotive industry, Michael brings extensive experience from both OEM and aftermarket sectors. Prior to founding Crown Nexus, he held executive positions at major auto parts manufacturers.',
+    photo: 'https://randomuser.me/api/portraits/men/32.jpg',
+    linkedin: '#',
+    twitter: '#',
+    email: 'michael.reynolds@crownnexus.com'
+  },
+  {
+    name: 'Sarah Chen',
+    title: 'COO & Co-Founder',
+    bio: 'Sarah\'s background in supply chain optimization and logistics has been instrumental in building Crown Nexus\'s efficient distribution network. She holds an MBA from MIT and previously led operations at a Fortune 500 automotive company.',
+    photo: 'https://randomuser.me/api/portraits/women/44.jpg',
+    linkedin: '#',
+    email: 'sarah.chen@crownnexus.com'
+  },
+  {
+    name: 'David Miller',
+    title: 'CTO',
+    bio: 'David leads our technology initiatives, including the development of our proprietary B2B platform. With a background in software engineering and 15 years in e-commerce, he\'s transforming how partners interact with our catalog.',
+    photo: 'https://randomuser.me/api/portraits/men/67.jpg',
+    linkedin: '#',
+    twitter: '#'
+  },
+  {
+    name: 'Jennifer Lopez',
+    title: 'VP of Product Management',
+    bio: 'Jennifer oversees our product catalog strategy and category expansion. Her automotive engineering background and aftermarket expertise ensure we offer the right products to meet market demands.',
+    photo: 'https://randomuser.me/api/portraits/women/68.jpg',
+    linkedin: '#',
+    email: 'jennifer.lopez@crownnexus.com'
+  },
+  {
+    name: 'Robert Washington',
+    title: 'VP of Sales',
+    bio: 'Robert leads our national sales team with a focus on building strong B2B relationships. His consultative approach has helped hundreds of businesses optimize their parts programs.',
+    photo: 'https://randomuser.me/api/portraits/men/91.jpg',
+    linkedin: '#',
+    twitter: '#'
+  },
+  {
+    name: 'Maria Garcia',
+    title: 'VP of Customer Success',
+    bio: 'Maria ensures our partners receive exceptional support throughout their journey with Crown Nexus. Her team provides training, technical assistance, and ongoing consultation for continuous improvement.',
+    photo: 'https://randomuser.me/api/portraits/women/89.jpg',
+    linkedin: '#',
+    email: 'maria.garcia@crownnexus.com'
+  }
+]);
+
+// Facility stats data
+const facilityStats = ref<FacilityStat[]>([
+  {
+    icon: 'mdi-warehouse',
+    value: '4',
+    label: 'Distribution Centers',
+    color: 'primary'
+  },
+  {
+    icon: 'mdi-package-variant-closed',
+    value: '250,000+',
+    label: 'Parts in Stock',
+    color: 'success'
+  },
+  {
+    icon: 'mdi-truck-fast',
+    value: '98.7%',
+    label: 'On-Time Delivery Rate',
+    color: 'info'
+  },
+  {
+    icon: 'mdi-clock-outline',
+    value: '24-48 hrs',
+    label: 'Average Order Fulfillment Time',
+    color: 'warning'
+  }
+]);
+
+// Facility images data
+const facilityImages = ref<FacilityImage[]>([
+  {
+    src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    alt: 'Crown Nexus Headquarters'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1553413077-190dd305871c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    alt: 'Distribution Center Interior'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    alt: 'Automated Warehouse System'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    alt: 'Technology Center'
+  }
+]);
+
+// Partners data
+const partners = ref<Partner[]>([
+  { name: 'AutoZone', logo: 'https://logo.clearbit.com/autozone.com' },
+  { name: 'O\'Reilly Auto Parts', logo: 'https://logo.clearbit.com/oreillyauto.com' },
+  { name: 'Advance Auto Parts', logo: 'https://logo.clearbit.com/advanceautoparts.com' },
+  { name: 'NAPA Auto Parts', logo: 'https://logo.clearbit.com/napaonline.com' },
+  { name: 'CarParts.com', logo: 'https://logo.clearbit.com/carparts.com' },
+  { name: 'Summit Racing', logo: 'https://logo.clearbit.com/summitracing.com' },
+  { name: 'RockAuto', logo: 'https://logo.clearbit.com/rockauto.com' },
+  { name: 'Keystone Automotive', logo: 'https://logo.clearbit.com/keystoneautomotive.com' }
+]);
+
+// Certifications data
+const certifications = ref<Certification[]>([
+  { name: 'ISO 9001:2015 Certified', icon: 'mdi-certificate' },
+  { name: 'AASA Member', icon: 'mdi-car' },
+  { name: 'SEMA Member', icon: 'mdi-car-cog' },
+  { name: 'AAPEX Verified Supplier', icon: 'mdi-check-decagram' },
+  { name: 'AIAG Compliant', icon: 'mdi-shield-check' }
+]);
 </script>
 
 <style scoped>

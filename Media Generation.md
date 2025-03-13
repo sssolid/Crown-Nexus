@@ -383,21 +383,33 @@ Professional welcome email header image for automotive B2B platform. Create a ho
 ```
 
 **Order Confirmation**
+
+<img src="media/png/email_notification/order_confirmation.png" alt="Order Confirmation" width="128" /> <img src="media/png/email_notification/order_confirmation2.png" alt="Order Confirmation 2" width="128" />
+
 ```
 Professional order confirmation email header for automotive parts B2B platform. Create a horizontal image showing a clipboard or digital document with checkmark over a subtle background of organized automotive parts. Use Crown Nexus blue (#1976D2) as primary color with "Order Confirmed" message. Clean, corporate style focusing on professionalism and reliability. Include subtle packaging or shipping elements. White background with blue accent colors matching brand identity.
 ```
 
 **Account Alerts**
+
+<img src="media/png/email_notification/account_alerts.png" alt="Account Alerts" width="128" /> <img src="media/png/email_notification/account_alerts2.png" alt="Account Alerts 2" width="128" />
+
 ```
 Professional account alert email header for automotive B2B platform. Create a horizontal composition with a shield or alert bell icon in Crown Nexus blue (#1976D2) on white background. Include subtle technical/dashboard elements suggesting account monitoring. Corporate, serious style appropriate for security notifications with "Account Alert" message. Clean design with blue and gray brand colors, suitable for various alert types. Professional B2B context.
 ```
 
 **Newsletter/Updates**
+
+<img src="media/png/email_notification/newsletter_updates.png" alt="Newsletter Updates" width="128" /> <img src="media/png/email_notification/newsletter_updates2.png" alt="Newsletter Updates 2" width="128" />
+
 ```
 Professional newsletter header for automotive aftermarket B2B platform. Create a horizontal composition with "Industry Updates" or "Crown Nexus Newsletter" message in clean typography. Include subtle imagery of digital devices showing automotive catalog or news alongside simplified part icons. Use Crown Nexus blue (#1976D2) as primary color with professional business aesthetic. Clean composition with white background and balanced elements suggesting industry news and updates.
 ```
 
 **Password Reset/Security**
+
+<img src="media/png/email_notification/password_reset_security.png" alt="Password Reset Security" width="128" /> <img src="media/png/email_notification/password_reset_security2.png" alt="Password Reset Security 2" width="128" />
+
 ```
 Professional password reset email header for automotive B2B platform. Create a horizontal composition with lock/key imagery and "Secure Your Account" or "Password Reset" message in clean typography. Use Crown Nexus blue (#1976D2) as primary color with security-focused imagery in a corporate style. Simple, serious design appropriate for security communications with subtle technical elements. White background with blue accent colors matching brand identity.
 ```
@@ -405,16 +417,25 @@ Professional password reset email header for automotive B2B platform. Create a h
 ## Mobile-Responsive Assets
 
 ### Mobile Header Collapsed (375px × 60px)
+
+<img src="media/png/mobile_responsive/header_collapsed.png" alt="Header Collapsed" width="128" /> <img src="media/png/mobile_responsive/header_collapsed2.png" alt="Header Collapsed 2" width="128" />
+
 ```
 Clean, compressed mobile header design for automotive B2B platform. Create a narrow horizontal bar in Crown Nexus blue (#1976D2) with simplified logo version on left and mobile menu icon (hamburger) on right. Minimalist design optimized for small screens with perfect centering and spacing. Include subtle shadow or separator at bottom edge. Professional appearance with brand colors and minimal elements to conserve vertical space.
 ```
 
 ### Mobile Menu Button States (44px × 44px)
+
+<img src="media/png/mobile_responsive/menu_button_states.png" alt="Menu Button States" width="128" /> <img src="media/png/mobile_responsive/menu_button_states2.png" alt="Menu Button States 2" width="128" />
+
 ```
 Clean, professional hamburger menu icon set for mobile navigation. Create 3 states: closed (three horizontal lines), opening transition (diagonal lines), and open (X shape). Use Crown Nexus blue (#1976D2) on transparent background with consistent line weight (2px) and spacing. Large, finger-friendly tap target size (44px square) with clear state transitions. Simple, geometric style with proper padding within the square boundary.
 ```
 
 ### Simplified Mobile Illustrations (300px × 200px each)
+
+<img src="media/png/mobile_responsive/simplified_illustration.png" alt="Simplified Illustration" width="128" />
+
 ```
 Simplified, mobile-optimized versions of the main Crown Nexus illustrations. Create horizontal, compact versions of key platform features (catalog, fitment, orders, analytics) using Crown Nexus blue (#1976D2) and gray (#424242). Reduce detail while maintaining core visual concepts. Optimized for small screens with clear focal points and reduced complexity. Clean, professional style with consistent color use and white backgrounds. Maintain brand identity while ensuring clarity at smaller sizes.
 ```

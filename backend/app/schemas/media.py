@@ -19,8 +19,9 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, validator
+from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.config import settings
 from app.models.media import MediaType, MediaVisibility
 
 
@@ -123,45 +124,29 @@ class Media(MediaInDB):
         url: URL to access the file
         thumbnail_url: URL to access the thumbnail (optional)
     """
-    url: str
+    url: str = ""
     thumbnail_url: Optional[str] = None
 
-    @validator("url", "thumbnail_url", pre=True, always=True)
-    def set_urls(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
+    def model_post_init(self, __context: Any) -> None:
         """
-        Set URLs based on file_path for frontend consumption.
+        Post initialization hook to set URLs.
+
+        This method runs after the model is initialized, allowing us to
+        set the URL fields based on the media properties.
 
         Args:
-            v: Current value (should be None since this is a computed field)
-            values: Values of other fields
-
-        Returns:
-            Optional[str]: URL to the file or thumbnail
+            __context: Context information (not used)
         """
-        if v is not None:  # If value already set somehow
-            return v
-
-        # Only continue if we have file_path and id
-        if "file_path" not in values or "id" not in values:
-            return None
-
-        # For thumbnail, check if we're processing thumbnail_url and it's an image
-        is_thumbnail = False
-        if values.get("id") and values.get("media_type") == MediaType.IMAGE:
-            try:
-                # Determine which field we're validating by looking at which one is missing
-                current_field = next(iter(set(cls.__fields__.keys()) - set(values.keys())))
-                is_thumbnail = current_field == "thumbnail_url"
-            except (StopIteration, KeyError):
-                pass
-
         # Base URL for media files
-        base_url = "/api/v1/media"
+        api_base = f"{settings.API_V1_STR}/media"
 
-        if is_thumbnail:
-            return f"{base_url}/thumbnail/{values.get('id')}"
-        else:
-            return f"{base_url}/file/{values.get('id')}"
+        # Set the main file URL if not already set
+        if not self.url:
+            self.url = f"{api_base}/file/{self.id}"
+
+        # Set thumbnail URL for images if not already set
+        if self.thumbnail_url is None and self.media_type == MediaType.IMAGE:
+            self.thumbnail_url = f"{api_base}/thumbnail/{self.id}"
 
 
 class MediaListResponse(BaseModel):

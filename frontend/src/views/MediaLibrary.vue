@@ -44,7 +44,7 @@
                 <!-- Type Filter -->
                 <v-col cols="12" md="3">
                   <v-select
-                    v-model="filters.file_type"
+                    v-model="filters.mime_type"
                     label="File Type"
                     :items="fileTypeOptions"
                     variant="outlined"
@@ -1162,7 +1162,7 @@ export default defineComponent({
     // Table headers for list view
     const headers = ref([
       { title: 'Filename', key: 'filename', sortable: true },
-      { title: 'Type', key: 'file_type', sortable: true },
+      { title: 'Type', key: 'mime_type', sortable: true },
       { title: 'Size', key: 'size', sortable: true },
       { title: 'Uploaded', key: 'created_at', sortable: true },
       { title: 'Product', key: 'product', sortable: false },
@@ -1214,11 +1214,11 @@ export default defineComponent({
     // Type checking utilities
     const isImage = (media: Media): boolean => {
       const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-      return imageTypes.includes(media.file_type);
+      return imageTypes.includes(media.mime_type);
     };
 
     const getFileTypeLabel = (media: Media): string => {
-      switch (media.file_type) {
+      switch (media.mime_type) {
         case 'image/jpeg':
           return 'JPEG Image';
         case 'image/png':
@@ -1232,16 +1232,16 @@ export default defineComponent({
         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
           return 'Word Document';
         default:
-          return media.file_type;
+          return media.mime_type;
       }
     };
 
     const getFileTypeIcon = (media: Media): string => {
       if (isImage(media)) {
         return 'mdi-file-image';
-      } else if (media.file_type === 'application/pdf') {
+      } else if (media.mime_type === 'application/pdf') {
         return 'mdi-file-pdf';
-      } else if (media.file_type.includes('document')) {
+      } else if (media.mime_type.includes('document')) {
         return 'mdi-file-document';
       } else {
         return 'mdi-file';
@@ -1358,10 +1358,10 @@ export default defineComponent({
       }
 
       // Apply file type filter
-      if (filters.value.file_type && filters.value.file_type !== 'all') {
-        if (filters.value.file_type === 'image') {
+      if (filters.value.mime_type && filters.value.mime_type !== 'all') {
+        if (filters.value.mime_type === 'image') {
           result = result.filter(item => isImage(item));
-        } else if (filters.value.file_type === 'document') {
+        } else if (filters.value.mime_type === 'document') {
           result = result.filter(item => !isImage(item));
         }
       }

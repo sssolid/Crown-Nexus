@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <v-parallax
-        src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        :src="homePageHeroBanner"
         :height="600"
       >
         <div class="hero-overlay"></div>
@@ -332,9 +332,18 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import homePageHeroBanner from '@/assets/marketing_landing/home_page_hero_banner.png';
+import productCatalogBrakeSystem from '@/assets/product_catalog/brake_systems.png';
+import productCatalogSuspensionSystem from '@/assets/product_catalog/suspension_parts.png';
+import productCatalogEngineComponents from '@/assets/product_catalog/engine_components.png';
+import productCatalogElectricalSystems from '@/assets/product_catalog/electrical_systems.png';
+import productCatalogInteriorAccessories from '@/assets/product_catalog/interior_accessories.png';
+import productCatalogExteriorAccessories from '@/assets/product_catalog/exterior_accessories.png';
+import productCatalogMaintenanceItems from '@/assets/product_catalog/maintenance_items.png';
+import productCatalogPerformanceParts from '@/assets/product_catalog/performance_parts.png';
 
 interface FeaturedCategory {
   id: string;
@@ -352,104 +361,93 @@ interface Testimonial {
   rating: number;
 }
 
-export default defineComponent({
-  name: 'LandingPage',
+// Setup router
+const router = useRouter();
 
-  setup() {
-    const router = useRouter();
-
-    // Featured categories data
-    const featuredCategories = ref<FeaturedCategory[]>([
-      {
-        id: 'brakes',
-        name: 'Brake Systems',
-        image: 'https://images.unsplash.com/photo-1486325825272-e9754e0099a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 423
-      },
-      {
-        id: 'suspension',
-        name: 'Suspension',
-        image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 358
-      },
-      {
-        id: 'engine',
-        name: 'Engine Components',
-        image: 'https://images.unsplash.com/photo-1565087918595-dd6a53f7d449?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 621
-      },
-      {
-        id: 'exhaust',
-        name: 'Exhaust Systems',
-        image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 287
-      },
-      {
-        id: 'electrical',
-        name: 'Electrical',
-        image: 'https://images.unsplash.com/photo-1559297434-fae8a1916a79?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 514
-      },
-      {
-        id: 'body',
-        name: 'Body & Exterior',
-        image: 'https://images.unsplash.com/photo-1542272201-b1ca555f8505?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 389
-      },
-      {
-        id: 'interior',
-        name: 'Interior Accessories',
-        image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 276
-      },
-      {
-        id: 'tools',
-        name: 'Specialty Tools',
-        image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-        productCount: 193
-      },
-    ]);
-
-    // Testimonials data
-    const testimonials = ref<Testimonial[]>([
-      {
-        quote: "Crown Nexus has revolutionized how we manage our aftermarket parts inventory. The platform's ease of use and comprehensive database have saved us countless hours and increased our sales by 30%.",
-        name: "Michael Johnson",
-        position: "Operations Manager",
-        company: "AutoPro Distributors",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        rating: 5
-      },
-      {
-        quote: "The fitment search functionality is a game-changer. We can quickly find the exact parts needed for specific vehicles, eliminating guesswork and reducing returns dramatically.",
-        name: "Sarah Williams",
-        position: "Purchasing Director",
-        company: "Elite Auto Parts",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        rating: 5
-      },
-      {
-        quote: "As a growing chain of auto repair shops, Crown Nexus gives us the ability to centralize our parts ordering across all locations. The platform's reliability and customer support are unmatched.",
-        name: "David Chen",
-        position: "CEO",
-        company: "FastFix Auto Centers",
-        avatar: "https://randomuser.me/api/portraits/men/67.jpg",
-        rating: 4
-      },
-    ]);
-
-    // Navigation function
-    const goToCategory = (categoryId: string) => {
-      router.push(`/products?category=${categoryId}`);
-    };
-
-    return {
-      featuredCategories,
-      testimonials,
-      goToCategory,
-    };
+// Featured categories data
+const featuredCategories = ref<FeaturedCategory[]>([
+  {
+    id: 'brakes',
+    name: 'Brake Systems',
+    image: productCatalogBrakeSystem,
+    productCount: 423
   },
-});
+  {
+    id: 'suspension',
+    name: 'Suspension',
+    image: productCatalogSuspensionSystem,
+    productCount: 358
+  },
+  {
+    id: 'engine',
+    name: 'Engine Components',
+    image: productCatalogEngineComponents,
+    productCount: 621
+  },
+  {
+    id: 'electrical',
+    name: 'Electrical Systems',
+    image: productCatalogElectricalSystems,
+    productCount: 287
+  },
+  {
+    id: 'interior',
+    name: 'Interior Accessories',
+    image: productCatalogInteriorAccessories,
+    productCount: 514
+  },
+  {
+    id: 'exterior',
+    name: 'Body & Exterior',
+    image: productCatalogExteriorAccessories,
+    productCount: 389
+  },
+  {
+    id: 'maintenance',
+    name: 'Maintenance Items',
+    image: productCatalogMaintenanceItems,
+    productCount: 276
+  },
+  {
+    id: 'performance',
+    name: 'Performance Parts',
+    image: productCatalogPerformanceParts,
+    productCount: 193
+  },
+]);
+
+// Testimonials data
+const testimonials = ref<Testimonial[]>([
+  {
+    quote: "Crown Nexus has revolutionized how we manage our aftermarket parts inventory. The platform's ease of use and comprehensive database have saved us countless hours and increased our sales by 30%.",
+    name: "Michael Johnson",
+    position: "Operations Manager",
+    company: "AutoPro Distributors",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    rating: 5
+  },
+  {
+    quote: "The fitment search functionality is a game-changer. We can quickly find the exact parts needed for specific vehicles, eliminating guesswork and reducing returns dramatically.",
+    name: "Sarah Williams",
+    position: "Purchasing Director",
+    company: "Elite Auto Parts",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    rating: 5
+  },
+  {
+    quote: "As a growing chain of auto repair shops, Crown Nexus gives us the ability to centralize our parts ordering across all locations. The platform's reliability and customer support are unmatched.",
+    name: "David Chen",
+    position: "CEO",
+    company: "FastFix Auto Centers",
+    avatar: "https://randomuser.me/api/portraits/men/67.jpg",
+    rating: 4
+  },
+]);
+
+// Navigation function
+const goToCategory = (categoryId: string) => {
+  router.push(`/products?category=${categoryId}`);
+};
 </script>
 
 <style scoped>

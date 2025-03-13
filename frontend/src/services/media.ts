@@ -24,7 +24,7 @@ export interface MediaListResponse {
 // Media filter parameters
 export interface MediaFilters {
   product_id?: string;
-  file_type?: string;
+  mime_type?: string;
   search?: string;
   page?: number;
   page_size?: number;

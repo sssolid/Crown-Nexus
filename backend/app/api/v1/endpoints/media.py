@@ -21,7 +21,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
+from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination, get_optional_user
 from app.core.config import settings
 from app.models.media import Media, MediaType, MediaVisibility
 from app.models.product import Product, product_media_association
@@ -393,7 +393,7 @@ async def delete_media(
 async def get_media_file(
     media_id: str,
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Optional[User] = Depends(get_current_active_user),
+    current_user: Optional[User] = Depends(get_optional_user),
 ) -> Any:
     """
     Get the file for media.
@@ -450,7 +450,7 @@ async def get_media_file(
 async def get_media_thumbnail(
     media_id: str,
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Optional[User] = Depends(get_current_active_user),
+    current_user: Optional[User] = Depends(get_optional_user),  # Changed to optional user
 ) -> Any:
     """
     Get the thumbnail for an image.

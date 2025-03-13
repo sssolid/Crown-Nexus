@@ -729,12 +729,12 @@ export default defineComponent({
     // Type checking utilities
     const isImage = (media: Media): boolean => {
       const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-      return imageTypes.includes(media.file_type);
+      return imageTypes.includes(media.mime_type);
     };
 
     const isDocument = (media: Media): boolean => {
       const docTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      return docTypes.includes(media.file_type);
+      return docTypes.includes(media.mime_type);
     };
 
     // Get icon for file type

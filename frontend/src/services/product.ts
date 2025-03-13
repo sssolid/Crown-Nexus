@@ -25,7 +25,7 @@ const productService = {
    * @returns Promise with product list response
    */
   async getProducts(filters?: ProductFilters): Promise<ProductListResponse> {
-    return api.get<ProductListResponse>('/products', { params: filters });
+    return api.get<ProductListResponse>('/products/', { params: filters });
   },
 
   /**

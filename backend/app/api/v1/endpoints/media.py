@@ -132,8 +132,13 @@ async def upload_file(
         await db.commit()
         await db.refresh(media)
 
-        # Create response object
+        # Create response object with explicit URLs
         response_media = MediaSchema.model_validate(media)
+
+        # Ensure URLs are set correctly
+        response_media.url = f"/api/v1/media/file/{media.id}"
+        if media.media_type == MediaType.IMAGE:
+            response_media.thumbnail_url = f"/api/v1/media/thumbnail/{media.id}"
 
         return {
             "media": response_media,

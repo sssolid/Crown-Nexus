@@ -53,7 +53,7 @@ const mediaService = {
    * @returns Promise with media list response
    */
   async getMediaList(filters?: MediaFilters): Promise<MediaListResponse> {
-    return api.get<MediaListResponse>('/media', { params: filters });
+    return api.get<MediaListResponse>('/media/', { params: filters });
   },
 
   /**
@@ -78,12 +78,12 @@ const mediaService = {
     formData.append('file', file);
 
     // Set the media type based on file type
-    const mediaType = file.type.startsWith('image/') ? 'IMAGE' :
-      file.type.includes('pdf') || file.type.includes('document') ? 'DOCUMENT' :
-        file.type.startsWith('video/') ? 'VIDEO' : 'OTHER';
+    const mediaType = file.type.startsWith('image/') ? 'image' :
+      file.type.includes('pdf') || file.type.includes('document') ? 'document' :
+        file.type.startsWith('video/') ? 'video' : 'other';
 
     formData.append('media_type', mediaType);
-    formData.append('visibility', 'PUBLIC'); // Default to public
+    formData.append('visibility', 'public'); // Default to public
 
     if (productId) {
       formData.append('product_id', productId);

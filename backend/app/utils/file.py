@@ -24,7 +24,7 @@ from typing import BinaryIO, Dict, List, Optional, Set, Tuple, Union
 from fastapi import HTTPException, UploadFile, status
 from PIL import Image, UnidentifiedImageError
 
-from app.core.config import settings
+from app.core.config import Environment, settings
 from app.models.media import MediaType
 
 
@@ -254,11 +254,30 @@ def get_file_path(file_path: str) -> Path:
     Get the absolute path of a file.
 
     Args:
-        file_path: Relative path from media root
+        file_path: Relative path from media root or full URL
 
     Returns:
         Path: Absolute path to the file
     """
+    # Handle URLs - extract the path part
+    if file_path.startswith(('http://', 'https://')):
+        # If it's a fully qualified URL (e.g., from CDN), find the path part
+        # Extract the path component from a URL like https://cdn.example.com/media/path/to/file.jpg
+        from urllib.parse import urlparse
+        parsed_url = urlparse(file_path)
+        file_path = parsed_url.path
+
+    # Handle media URL paths
+    if file_path.startswith(settings.MEDIA_URL):
+        file_path = file_path[len(settings.MEDIA_URL):]
+    elif settings.MEDIA_CDN_URL and file_path.startswith(settings.MEDIA_CDN_URL):
+        file_path = file_path[len(settings.MEDIA_CDN_URL):]
+
+    # Remove leading slash if present
+    if file_path.startswith('/'):
+        file_path = file_path[1:]
+
+    # Return the absolute path
     return Path(settings.MEDIA_ROOT) / file_path
 
 
@@ -267,19 +286,53 @@ def get_thumbnail_path(file_path: str) -> Optional[Path]:
     Get the thumbnail path for an image.
 
     Args:
-        file_path: Relative path from media root
+        file_path: Relative path from media root or full URL
 
     Returns:
         Optional[Path]: Absolute path to the thumbnail, or None if not found
     """
+    # Convert to a clean path first
+    clean_path = str(get_file_path(file_path))
+
+    # If the path doesn't exist within MEDIA_ROOT, it might be external
+    if not clean_path.startswith(str(settings.MEDIA_ROOT)):
+        return None
+
+    # Extract parts relative to media root
+    rel_path = Path(clean_path).relative_to(settings.MEDIA_ROOT)
+
     # Replace the media type directory with 'thumbnails'
-    parts = Path(file_path).parts
+    parts = rel_path.parts
     if len(parts) > 1:
         thumbnail_path = Path(settings.MEDIA_ROOT) / "thumbnails" / "/".join(parts[1:])
         if thumbnail_path.exists():
             return thumbnail_path
 
+        # Try alternative format with thumb_ prefix
+        filename = parts[-1]
+        thumbnail_alt = Path(settings.MEDIA_ROOT) / "thumbnails" / f"thumb_{filename}"
+        if thumbnail_alt.exists():
+            return thumbnail_alt
+
     return None
+
+
+def get_file_url(file_path: str) -> str:
+    """
+    Get the URL for a file path, taking environment into account.
+
+    Args:
+        file_path: Relative path from media root
+
+    Returns:
+        str: Full URL to access the file
+    """
+    # Remove leading slash if present
+    if file_path.startswith('/'):
+        file_path = file_path[1:]
+
+    # Use the environment-aware media_base_url property
+    return f"{settings.media_base_url}{file_path}"
 
 
 def get_file_extension(filename: str) -> str:

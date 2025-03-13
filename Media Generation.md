@@ -333,21 +333,32 @@ Technical flowchart showing the process of associating parts with vehicle fitmen
 ```
 
 **Order Processing Workflow**
+
+<img src="media/png/documentation_help/order_processing_workflow.png" alt="Order Processing Workflow" width="128" /> <img src="media/png/documentation_help/order_processing_workflow2.png" alt="Order Processing Workflow 2" width="128" />
+
 ```
 Professional business process flowchart showing order handling from receipt to fulfillment. Use Crown Nexus brand colors (#1976D2 blue for primary steps, #424242 gray for secondary, #FB8C00 for approval highlights). Create clear process boxes with connecting arrows showing progression through order validation, inventory check, payment processing, picking, packing, and shipping. Include decision diamonds for approval/rejection paths. B2B context with professional symbols and consistent design elements. White background with subtle grid.
 ```
 
 **User Permission Management**
+
+<img src="media/png/documentation_help/user_permission_management.png" alt="User Permission Management" width="128" /> <img src="media/png/documentation_help/user_permission_management2.png" alt="User Permission Management 2" width="128" />
+
 ```
 Corporate flowchart showing user role and permission assignment process. Use Crown Nexus brand colors (#1976D2 blue for primary steps, #424242 gray for secondary, #FF5252 for security elements). Create a professional diagram with rectangular process boxes and diamond decision points showing how administrators assign roles, manage permissions, and handle access requests. Include user icons and lock symbols where appropriate. Clean, professional style on white background with subtle grid.
 ```
 
 **Import/Export Data Workflow**
+
+<img src="media/png/documentation_help/import_export_workflow.png" alt="Import Export Workflow" width="128" /> <img src="media/png/documentation_help/import_export_workflow2.png" alt="Import Export Workflow 2" width="128" />
+
 ```
 Technical flowchart showing data import/export process for the Crown Nexus platform. Use brand colors (#1976D2 blue for primary steps, #424242 gray for secondary, #4CAF50 for success indicators). Create a professional diagram with process boxes and decision diamonds showing file selection, validation, mapping, processing, and completion steps for both import and export functions. Include database and file icons where appropriate. Clean, corporate style on white background with subtle grid.
 ```
 
 ### Database Relationship Diagram (1200px × 900px)
+<img src="media/png/documentation_help/database_relationship_diagram.png" alt="Database Relationship Diagram" width="128" /> <img src="media/png/documentation_help/database_relationship_diagram2.png" alt="Database Relationship Diagram 2" width="128" />
+
 ```
 Professional entity-relationship diagram (ERD) showing the Crown Nexus database schema. Create a technical diagram using Crown Nexus blue (#1976D2) for primary entities and gray (#424242) for supporting elements. Show proper database tables for Products, Categories, Fitments, Users, Orders, and Media with clear relationship lines (one-to-many, many-to-many) and proper crow's foot notation. Include key fields in each entity box with primary keys indicated. Technical, precise style with consistent typography and symbols. Clean white background with subtle grid for alignment.
 ```
@@ -355,6 +366,8 @@ Professional entity-relationship diagram (ERD) showing the Crown Nexus database 
 ## Email & Notification Templates
 
 ### Email Header with Logo (600px × 150px)
+<img src="media/png/email_notification/email_header.png" alt="Email Header" width="128" /> <img src="media/png/email_notification/email_header2.png" alt="Email Header 2" width="128" />
+
 ```
 Professional email header featuring the Crown Nexus logo centered or left-aligned on a white or very light gray (#F5F5F5) background. Create a clean, horizontal design with the Crown Nexus logo (blue #1976D2) with subtle automotive-themed graphic elements or separators at the bottom. Simple, corporate email-safe design with balanced negative space. Include thin separator line at bottom in light gray (#E0E0E0). Professional B2B appearance suitable for all email communications.
 ```
@@ -362,6 +375,9 @@ Professional email header featuring the Crown Nexus logo centered or left-aligne
 ### Email Notification Graphics (600px × 300px each, 5 variations)
 
 **Welcome/Onboarding**
+
+<img src="media/png/email_notification/welcom_onboarding.png" alt="Welcome Onboarding" width="128" />
+
 ```
 Professional welcome email header image for automotive B2B platform. Create a horizontal composition showing handshake or open door concept with professional automotive parts warehouse or distribution setting in the background. Use Crown Nexus blue (#1976D2) as primary color with clean typography saying "Welcome to Crown Nexus". Business professional style, not consumer-focused, with subtle automotive industry elements. Clean white background with blue color accents matching brand.
 ```

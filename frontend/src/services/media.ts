@@ -73,9 +73,17 @@ const mediaService = {
    * @param productId - Optional product ID to associate with
    * @returns Promise with uploaded media
    */
-  async uploadMedia(file: File, productId?: string): Promise<Media> {
+  async uploadMedia(file: File, productId?: string | null): Promise<Media> {
     const formData = new FormData();
     formData.append('file', file);
+
+    // Set the media type based on file type
+    const mediaType = file.type.startsWith('image/') ? 'IMAGE' :
+      file.type.includes('pdf') || file.type.includes('document') ? 'DOCUMENT' :
+        file.type.startsWith('video/') ? 'VIDEO' : 'OTHER';
+
+    formData.append('media_type', mediaType);
+    formData.append('visibility', 'PUBLIC'); // Default to public
 
     if (productId) {
       formData.append('product_id', productId);
@@ -92,17 +100,15 @@ const mediaService = {
    * @returns Promise with array of uploaded media
    */
   async uploadMultipleMedia(files: File[], productId?: string): Promise<Media[]> {
-    const formData = new FormData();
+    // For multiple files, we'll upload them one by one and collect the results
+    const uploadedMedia: Media[] = [];
 
-    files.forEach((file, index) => {
-      formData.append(`files[${index}]`, file);
-    });
-
-    if (productId) {
-      formData.append('product_id', productId);
+    for (const file of files) {
+      const media = await this.uploadMedia(file, productId);
+      uploadedMedia.push(media);
     }
 
-    return api.uploadFile<Media[]>('/media/upload-multiple', formData);
+    return uploadedMedia;
   },
 
   /**
@@ -134,17 +140,18 @@ const mediaService = {
    * @returns Promise with the updated media
    */
   async associateMediaWithProduct(mediaId: string, productId: string): Promise<Media> {
-    return api.post<Media>(`/media/${mediaId}/associate`, { product_id: productId });
+    return api.post<Media>(`/media/${mediaId}/products/${productId}`, {});
   },
 
   /**
    * Remove product association from media.
    *
    * @param mediaId - Media ID
+   * @param productId - Product ID
    * @returns Promise with the updated media
    */
-  async removeProductAssociation(mediaId: string): Promise<Media> {
-    return api.post<Media>(`/media/${mediaId}/disassociate`, {});
+  async removeProductAssociation(mediaId: string, productId: string): Promise<{message: string}> {
+    return api.delete<{message: string}>(`/media/${mediaId}/products/${productId}`);
   },
 
   /**
@@ -154,7 +161,7 @@ const mediaService = {
    * @returns Promise with array of media
    */
   async getProductMedia(productId: string): Promise<Media[]> {
-    return api.get<Media[]>(`/products/${productId}/media`);
+    return api.get<Media[]>(`/media/products/${productId}`);
   },
 
   /**
@@ -165,7 +172,9 @@ const mediaService = {
    * @returns Promise with result
    */
   async setPrimaryMedia(productId: string, mediaId: string): Promise<{message: string}> {
-    return api.post<{message: string}>(`/products/${productId}/media/primary`, { media_id: mediaId });
+    return api.post<{message: string}>(`/media/${mediaId}/products/${productId}`, {
+      is_primary: true
+    });
   },
 
   /**

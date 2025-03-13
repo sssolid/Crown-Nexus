@@ -23,10 +23,18 @@ Examples:
 from __future__ import annotations
 
 import os
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import AnyHttpUrl, DirectoryPath, PostgresDsn, validator
 from pydantic_settings import BaseSettings
+
+
+class Environment(str, Enum):
+    """Environment enumeration."""
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
 
 
 class Settings(BaseSettings):
@@ -52,6 +60,8 @@ class Settings(BaseSettings):
         REDIS_PORT: Redis port
         MEDIA_ROOT: Root directory for media files
         MEDIA_URL: Base URL for media files
+        MEDIA_STORAGE_TYPE: Type of media storage to use
+        ENVIRONMENT: Current environment (development, staging, production)
     """
     PROJECT_NAME: str = "Crown Nexus"
     DESCRIPTION: str = "B2B platform for automotive aftermarket industry"
@@ -59,6 +69,9 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = "your-secret-key-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+
+    # Environment
+    ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
     # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
@@ -126,10 +139,6 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 
-    # Redis
-    REDIS_HOST: str = "localhost"
-    REDIS_PORT: int = 6379
-
     # Fitment module settings
     VCDB_PATH: str = "data/vcdb.accdb"
     PCDB_PATH: str = "data/pcdb.accdb"
@@ -141,6 +150,8 @@ class Settings(BaseSettings):
     # Media settings
     MEDIA_ROOT: DirectoryPath = "media"
     MEDIA_URL: str = "/media/"
+    MEDIA_STORAGE_TYPE: str = "local"  # Options: "local", "s3", etc.
+    MEDIA_CDN_URL: Optional[str] = None  # CDN URL for production
 
     @validator("MEDIA_ROOT", pre=True)
     def create_media_directories(cls, v: str) -> str:
@@ -161,6 +172,20 @@ class Settings(BaseSettings):
             os.makedirs(os.path.join(v, media_type), exist_ok=True)
 
         return v
+
+    @property
+    def media_base_url(self) -> str:
+        """
+        Get the base URL for media files.
+
+        This will use the CDN URL in production or the local media URL in development.
+
+        Returns:
+            str: Base URL for media files
+        """
+        if self.ENVIRONMENT == Environment.PRODUCTION and self.MEDIA_CDN_URL:
+            return self.MEDIA_CDN_URL
+        return self.MEDIA_URL
 
     class Config:
         case_sensitive = True

@@ -1063,7 +1063,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import mediaService from '@/services/media';
 import productService from '@/services/product';
-import { Media, MediaMetadata } from '@/types/media';
+import { Media } from '@/types/media';
 import { Product } from '@/types/product';
 import { formatDate, formatDateTime, formatFileSize } from '@/utils/formatters';
 import { notificationService } from '@/utils/notification';
@@ -1471,7 +1471,8 @@ export default defineComponent({
       // Create a temporary link and click it to download
       const link = document.createElement('a');
       link.href = media.url;
-      link.download = media.filename;
+      link.setAttribute('download', media.filename);
+      link.setAttribute('target', '_blank');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -1788,10 +1789,12 @@ export default defineComponent({
         // For simulation, we'll increment the progress bar
         const totalFiles = filesToUpload.value.length;
         const progressIncrement = 100 / totalFiles;
+        const uploadedFiles: Media[] = [];
 
         for (let i = 0; i < filesToUpload.value.length; i++) {
           // Upload each file
-          await mediaService.uploadMedia(filesToUpload.value[i], uploadForm.value.product_id);
+          const media = await mediaService.uploadMedia(filesToUpload.value[i], uploadForm.value.product_id);
+          uploadedFiles.push(media);
 
           // Update progress
           uploadProgress.value += progressIncrement;

@@ -19,14 +19,16 @@ from __future__ import annotations
 import logging
 import time
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import AsyncGenerator, Callable
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.router import api_router
-from app.core.config import settings
+from app.core.config import Environment, settings
 from app.fitment.api import router as fitment_router
 from app.fitment.dependencies import initialize_mapping_engine
 
@@ -130,6 +132,13 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
+# Mount static files directory for media (only in development)
+if settings.ENVIRONMENT == Environment.DEVELOPMENT:
+    media_path = Path(settings.MEDIA_ROOT).resolve()
+    media_path.mkdir(parents=True, exist_ok=True)
+    app.mount("/media", StaticFiles(directory=str(media_path)), name="media")
+    logger.info(f"Mounted media directory at {media_path}")
+
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(fitment_router)
@@ -149,7 +158,8 @@ async def health_check() -> dict:
     return {
         "status": "ok",
         "version": settings.VERSION,
-        "service": settings.PROJECT_NAME
+        "service": settings.PROJECT_NAME,
+        "environment": settings.ENVIRONMENT
     }
 
 

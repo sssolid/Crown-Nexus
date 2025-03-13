@@ -6,7 +6,10 @@ export interface Media {
   thumbnail_url?: string;
   file_type: string;
   size: number;
-  product_id?: string;
+  media_type: string;
+  alt_text?: string;
+  description?: string;
+  product?: any;
   created_at: string;
   updated_at: string;
 }

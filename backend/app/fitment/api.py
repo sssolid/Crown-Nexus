@@ -252,13 +252,14 @@ async def upload_model_mappings(
             detail=f"An unexpected error occurred: {str(e)}"
         ) from e
 
-
 @router.get("/model-mappings", response_model=ModelMappingList)
 async def list_model_mappings(
     mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, gt=0, le=1000),
-    pattern: Optional[str] = None
+    pattern: Optional[str] = None,
+    sort_by: Optional[str] = None,
+    sort_order: Optional[str] = None
 ):
     """
     List model mappings from database.
@@ -268,6 +269,8 @@ async def list_model_mappings(
         skip: Number of items to skip (for pagination)
         limit: Maximum number of items to return (for pagination)
         pattern: Optional pattern to filter by
+        sort_by: Field to sort by (pattern, mapping, priority, active)
+        sort_order: Sort order (asc, desc)
 
     Returns:
         List of model mappings with pagination information
@@ -278,12 +281,7 @@ async def list_model_mappings(
     try:
         async with mapping_engine.db_service.get_session() as session:
             from app.models.model_mapping import ModelMapping
-            from sqlalchemy import or_, select, func
-            import logging
-
-            # Log pagination parameters for debugging
-            logger = logging.getLogger(__name__)
-            logger.info(f"Model mappings request - skip: {skip}, limit: {limit}, pattern: {pattern}")
+            from sqlalchemy import or_, select, func, desc, asc
 
             # Build query
             query = select(ModelMapping)
@@ -292,24 +290,51 @@ async def list_model_mappings(
             if pattern:
                 query = query.where(ModelMapping.pattern.ilike(f"%{pattern}%"))
 
-            # Count total before pagination
+            # Count total before pagination and sorting
             count_query = select(func.count()).select_from(query.subquery())
             total = await session.scalar(count_query) or 0
-            logger.info(f"Total mappings before pagination: {total}")
 
-            # Add pagination and ordering
-            query = query.order_by(ModelMapping.pattern, ModelMapping.priority.desc())
+            # Add sorting
+            if sort_by:
+                # Map frontend field names to DB column names if needed
+                column_map = {
+                    "pattern": ModelMapping.pattern,
+                    "mapping": ModelMapping.mapping,
+                    "priority": ModelMapping.priority,
+                    "active": ModelMapping.active,
+                    "created_at": ModelMapping.created_at,
+                    "updated_at": ModelMapping.updated_at
+                }
+
+                sort_field = column_map.get(sort_by, ModelMapping.pattern)
+
+                # Apply sort direction
+                if sort_order and sort_order.lower() == 'desc':
+                    query = query.order_by(desc(sort_field))
+                else:
+                    query = query.order_by(asc(sort_field))
+            else:
+                # Default sorting
+                query = query.order_by(ModelMapping.pattern, desc(ModelMapping.priority))
+
+            # Add pagination
             query = query.offset(skip).limit(limit)
 
             # Execute query
             result = await session.execute(query)
             items = result.scalars().all()
-            logger.info(f"Returning {len(items)} items")
 
             return {
                 "items": items,
                 "total": total
             }
+    except Exception as e:
+        logger.error(f"Error listing model mappings: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to list model mappings: {str(e)}"
+        ) from e
+
     except Exception as e:
         logger.error(f"Error listing model mappings: {str(e)}", exc_info=True)
         raise HTTPException(

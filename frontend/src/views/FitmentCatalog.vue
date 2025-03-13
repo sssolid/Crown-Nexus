@@ -6,18 +6,7 @@
       <v-row class="mb-6">
         <v-col cols="12" md="8">
           <h1 class="text-h3 font-weight-bold">Fitment Catalog</h1>
-          <v-spacer></v-spacer>
           <p class="text-subtitle-1">Browse and manage vehicle compatibility</p>
-          <v-btn
-            color="info"
-            variant="tonal"
-            prepend-icon="mdi-cog"
-            @click="showModelMappingsPanel = !showModelMappingsPanel"
-            class="mr-2"
-            v-if="isAdmin"
-          >
-            {{ showModelMappingsPanel ? 'Hide' : 'Manage' }} Model Mappings
-          </v-btn>
         </v-col>
         <v-col cols="12" md="4" class="d-flex justify-end align-center">
           <v-btn
@@ -28,20 +17,6 @@
           >
             Add Fitment
           </v-btn>
-        </v-col>
-      </v-row>
-
-      <v-row class="mb-6">
-        <v-col cols="12">
-        <!-- Model Mappings Panel (Admin only) -->
-        <v-expand-transition>
-          <div v-if="showModelMappingsPanel && isAdmin">
-            <v-divider></v-divider>
-            <v-card-text class="pa-0">
-              <model-mappings-panel @close="showModelMappingsPanel = false" />
-            </v-card-text>
-          </div>
-        </v-expand-transition>
         </v-col>
       </v-row>
 
@@ -308,13 +283,9 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { Fitment, FitmentFilters } from '@/types/fitment';
-import ModelMappingsPanel from '@/components/fitment/ModelMappingsPanel.vue';
 
 export default defineComponent({
   name: 'FitmentCatalog',
-  components: {
-    ModelMappingsPanel
-  },
 
   setup() {
     const router = useRouter();
@@ -322,9 +293,6 @@ export default defineComponent({
 
     // User permissions
     const isAdmin = computed(() => authStore.isAdmin);
-
-    // Model Mappings panel visibility
-    const showModelMappingsPanel = ref(false);
 
     // Data loading state
     const loading = ref(false);
@@ -486,7 +454,6 @@ export default defineComponent({
       deleteDialog,
       deleteLoading,
       fitmentToDelete,
-      showModelMappingsPanel,
       fetchFitments,
       resetFilters,
       confirmDelete,

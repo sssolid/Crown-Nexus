@@ -38,28 +38,33 @@ export interface ModelMappingRequest {
  */
 const modelMappingService = {
   /**
-   * Get a paginated list of model mappings with optional filtering.
+   * Get a paginated list of model mappings with optional filtering and sorting.
    *
    * @param skip - Number of items to skip
    * @param limit - Maximum number of items to return
    * @param pattern - Optional pattern filter
+   * @param sortBy - Optional field to sort by
+   * @param sortOrder - Optional sort order (asc/desc)
    * @returns Promise with model mapping list response
    */
-  async getModelMappings(skip = 0, limit = 100, pattern?: string): Promise<ModelMappingListResponse> {
-    console.log(`API call with params: skip=${skip}, limit=${limit}, pattern=${pattern || 'none'}`);
+  async getModelMappings(
+    skip = 0,
+    limit = 100,
+    pattern?: string,
+    sortBy?: string,
+    sortOrder?: string
+  ): Promise<ModelMappingListResponse> {
+    console.log(`API call with params: skip=${skip}, limit=${limit}, pattern=${pattern || 'none'}, sortBy=${sortBy || 'none'}, sortOrder=${sortOrder || 'none'}`);
 
-    const response = await api.get<ModelMappingListResponse>('/fitment/model-mappings', {
+    return api.get<ModelMappingListResponse>('/fitment/model-mappings', {
       params: {
-        skip: skip,
-        limit: limit,
-        pattern: pattern || undefined
+        skip,
+        limit,
+        pattern: pattern || undefined,
+        sort_by: sortBy || undefined,
+        sort_order: sortOrder || undefined
       }
     });
-
-    console.log(`API response received:`, response);
-    console.log(`Total items from API: ${response.total}, Items length: ${response.items.length}`);
-
-    return response;
   },
 
   /**

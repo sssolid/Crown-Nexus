@@ -22,13 +22,16 @@ class ModelMappingBase(BaseModel):
 
     @field_validator('mapping')
     def validate_mapping_format(cls, v: str) -> str:
-        """Validate that mapping is in the correct format."""
+        """Validate that mapping has the correct format (Make|VehicleCode|Model)."""
         parts = v.split('|')
-        if len(parts) != 3:
-            raise ValueError("Mapping must be in format 'Make|VehicleCode|Model'")
 
-        if not all(parts):
-            raise ValueError("Make, VehicleCode, and Model must not be empty")
+        # Only check that we have the correct number of parts
+        if len(parts) != 3:
+            raise ValueError("Mapping must be in format 'Make|VehicleCode|Model' with exactly 2 pipe separators")
+
+        # At least one part should be non-empty
+        if not any(parts):
+            raise ValueError("At least one of Make, VehicleCode, or Model must not be empty")
 
         return v
 
@@ -47,16 +50,19 @@ class ModelMappingUpdate(BaseModel):
 
     @field_validator('mapping')
     def validate_mapping_format(cls, v: Optional[str]) -> Optional[str]:
-        """Validate that mapping is in the correct format if provided."""
+        """Validate that mapping has the correct format if provided."""
         if v is None:
             return v
 
         parts = v.split('|')
-        if len(parts) != 3:
-            raise ValueError("Mapping must be in format 'Make|VehicleCode|Model'")
 
-        if not all(parts):
-            raise ValueError("Make, VehicleCode, and Model must not be empty")
+        # Only check that we have the correct number of parts
+        if len(parts) != 3:
+            raise ValueError("Mapping must be in format 'Make|VehicleCode|Model' with exactly 2 pipe separators")
+
+        # At least one part should be non-empty
+        if not any(parts):
+            raise ValueError("At least one of Make, VehicleCode, or Model must not be empty")
 
         return v
 

@@ -155,9 +155,47 @@ class FitmentParser:
         for pattern in patterns:
             if pattern in vehicle_text:
                 mappings = self.model_mappings[pattern]
-                return [{"make": mapping.split('|')[0],
-                         "model": mapping.split('|')[2]}
-                        for mapping in mappings]
+                result = []
+
+                for mapping in mappings:
+                    parts = mapping.split('|')
+                    if len(parts) != 3:
+                        # Skip invalid format
+                        continue
+
+                    # Handle various cases flexibly
+                    make = parts[0]
+                    vehicle_code = parts[1]
+                    model = parts[2]
+
+                    # Case 1: Standard "Make|VehicleCode|Model"
+                    if make and model:
+                        result.append({"make": make, "model": model})
+
+                    # Case 2: "Make|VehicleCode|" (missing model)
+                    elif make and vehicle_code and not model:
+                        # Use vehicle code as model if available, otherwise use make
+                        model_value = vehicle_code if vehicle_code else make
+                        result.append({"make": make, "model": model_value})
+
+                    # Case 3: "Make||" (only make, like "Universal||")
+                    elif make and not vehicle_code and not model:
+                        result.append({"make": make, "model": make})
+
+                    # Case 4: "||Model" (only model)
+                    elif not make and not vehicle_code and model:
+                        result.append({"make": model, "model": model})
+
+                    # Case 5: "|VehicleCode|" (only vehicle code)
+                    elif not make and vehicle_code and not model:
+                        result.append({"make": vehicle_code, "model": vehicle_code})
+
+                if result:
+                    return result
+
+        # Special fallback for Universal parts
+        if "universal" in vehicle_text.lower():
+            return [{"make": "Universal", "model": "Universal"}]
 
         raise ParsingError(f"No model mapping found for: {vehicle_text}")
 

@@ -45,6 +45,8 @@ from app.db.base import Base
 from app.db.session import get_db_context
 from app.models.user import User, UserRole, get_password_hash
 
+from scripts.bootstrap_countries import insert_countries
+
 
 async def check_connection() -> bool:
     """
@@ -204,6 +206,16 @@ async def main() -> bool:
     if not await create_tables():
         print("Table creation failed. Cannot continue with bootstrap.")
         return False
+        
+    # Add this section - populate country data
+    print("Populating country reference data...")
+    try:
+        async with get_db_context() as db:
+            await insert_countries(db)
+        print("✅ Country data populated successfully!")
+    except Exception as e:
+        print(f"⚠️ Country data population failed: {e}")
+        print("Continuing with bootstrap process...")
 
     # Create admin user
     if len(sys.argv) >= 4:

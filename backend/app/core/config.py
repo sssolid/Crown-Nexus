@@ -138,6 +138,12 @@ class Settings(BaseSettings):
     # Redis
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
+    
+    # Exchange Rate API settings
+    EXCHANGE_RATE_API_KEY: str = ""
+    EXCHANGE_RATE_UPDATE_FREQUENCY: int = 24  # Update frequency in hours
+    STORE_INVERSE_RATES: bool = True  # Store inverse rates (e.g., EUR->USD and USD->EUR)
+
 
     # Fitment module settings
     VCDB_PATH: str = "data/vcdb.accdb"

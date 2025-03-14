@@ -1,55 +1,202 @@
 # backend/app/models/associations.py
 """
-Database association tables.
+Association tables for many-to-many relationships.
 
-This module defines SQLAlchemy association tables for many-to-many
-relationships between models. These tables enable:
-- Products to be associated with multiple fitments
-- Products to be associated with multiple media assets
+This module defines SQLAlchemy association tables that establish
+many-to-many relationships between different entities in the application:
+- Products and fitments (vehicle compatibility)
+- Products and media assets
+- Products and warehouses (stock levels)
+- And other many-to-many relationships as needed
 
-Association tables are defined directly without using the Base class
-to keep them lightweight and focused on their relationship function.
+These tables don't have their own identity beyond connecting related entities
+and should not contain business logic.
 """
 
 from __future__ import annotations
 
-from sqlalchemy import Column, ForeignKey, Table
+import uuid
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.db.base_class import Base
 
-# Association table for many-to-many relationship between products and fitments
+# Association table for products and fitments
 product_fitment_association = Table(
     "product_fitment",
     Base.metadata,
-    Column(
-        "product_id",
-        UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
-        primary_key=True
-    ),
-    Column(
-        "fitment_id",
-        UUID(as_uuid=True),
-        ForeignKey("fitment.id", ondelete="CASCADE"),
-        primary_key=True
-    ),
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("fitment_id", UUID(as_uuid=True), ForeignKey("fitment.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
 )
 
-# Association table for many-to-many relationship between products and media
+# Association table for products and media
 product_media_association = Table(
     "product_media",
     Base.metadata,
-    Column(
-        "product_id",
-        UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
-        primary_key=True
-    ),
-    Column(
-        "media_id",
-        UUID(as_uuid=True),
-        ForeignKey("media.id", ondelete="CASCADE"),
-        primary_key=True
-    ),
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("media_id", UUID(as_uuid=True), ForeignKey("media.id", ondelete="CASCADE"), primary_key=True),
+    # Optional sequence for ordering media items
+    Column("display_order", Integer, nullable=False, default=0),
+    # Is this the primary/featured media for the product
+    Column("is_primary", Integer, nullable=False, default=0),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and tariff codes
+product_tariff_code_association = Table(
+    "product_tariff_code",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("tariff_code_id", UUID(as_uuid=True), ForeignKey("tariff_code.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("assigned_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and UNSPSC codes
+product_unspsc_association = Table(
+    "product_unspsc",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("unspsc_code_id", UUID(as_uuid=True), ForeignKey("unspsc_code.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("assigned_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and countries of origin
+product_country_origin_association = Table(
+    "product_country_origin",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("country_id", UUID(as_uuid=True), ForeignKey("country.id", ondelete="CASCADE"), primary_key=True),
+    Column("manufacturer_id", UUID(as_uuid=True), ForeignKey("manufacturer.id", ondelete="SET NULL"), nullable=True),
+    # Type of origin (Origin, Assembly, etc.)
+    Column("origin_type", Integer, nullable=False, default=0),
+    # Order for organizing countries
+    Column("origin_order", Integer, nullable=False, default=0),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    # Add a unique constraint for product_id and country_id
+    UniqueConstraint("product_id", "country_id", name="uix_product_country"),
+)
+
+# Association table for products and hardware items
+product_hardware_association = Table(
+    "product_hardware",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("hardware_id", UUID(as_uuid=True), ForeignKey("hardware_item.id", ondelete="CASCADE"), primary_key=True),
+    # Number of hardware pieces included
+    Column("quantity", Integer, nullable=False, default=1),
+    # Is the hardware required
+    Column("is_optional", Integer, nullable=False, default=0),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    # Add a unique constraint for product_id and hardware_id
+    UniqueConstraint("product_id", "hardware_id", name="uix_product_hardware"),
+)
+
+# Association table for products and interchanges
+product_interchange_association = Table(
+    "product_interchange",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    # Interchange number (part number from another brand/supplier)
+    Column("interchange_number", Integer, nullable=False),
+    # Optional brand reference
+    Column("brand_id", UUID(as_uuid=True), ForeignKey("brand.id", ondelete="SET NULL"), nullable=True),
+    # Optional compatibility notes
+    Column("notes", Integer, nullable=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    # Primary key is product_id and interchange_number
+    UniqueConstraint("product_id", "interchange_number", "brand_id", name="uix_product_interchange"),
+)
+
+# Association table for products and packaging types
+product_packaging_association = Table(
+    "product_packaging",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("packaging_type_id", UUID(as_uuid=True), ForeignKey("packaging_type.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and colors
+product_color_association = Table(
+    "product_color",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("color_id", UUID(as_uuid=True), ForeignKey("color.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and construction types
+product_construction_type_association = Table(
+    "product_construction_type",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("construction_type_id", UUID(as_uuid=True), ForeignKey("construction_type.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and textures
+product_texture_association = Table(
+    "product_texture",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("texture_id", UUID(as_uuid=True), ForeignKey("texture.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+)
+
+# Association table for products and chemical associations
+product_chemical_association = Table(
+    "product_chemical",
+    Base.metadata,
+    Column("product_id", UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True),
+    Column("chemical_id", UUID(as_uuid=True), ForeignKey("prop65_chemical.id", ondelete="CASCADE"), primary_key=True),
+    # Exposure scenario
+    Column("exposure_scenario", Integer, nullable=False, default=0),
+    # Whether warning is required
+    Column("warning_required", Integer, nullable=False, default=0),
+    # Warning text for label
+    Column("warning_label", Integer, nullable=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    # Add a unique constraint for product_id and chemical_id
+    UniqueConstraint("product_id", "chemical_id", name="uix_product_chemical"),
+)
+
+# Association table for users and roles
+user_role_association = Table(
+    "user_role",
+    Base.metadata,
+    Column("user_id", UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), primary_key=True),
+    Column("role_id", UUID(as_uuid=True), ForeignKey("role.id", ondelete="CASCADE"), primary_key=True),
+    # When the role was assigned
+    Column("assigned_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    # Who assigned the role
+    Column("assigned_by", UUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"), nullable=True),
+    # Metadata
+    UniqueConstraint("user_id", "role_id", name="uix_user_role"),
+)
+
+# Association table for roles and permissions
+role_permission_association = Table(
+    "role_permission",
+    Base.metadata,
+    Column("role_id", UUID(as_uuid=True), ForeignKey("role.id", ondelete="CASCADE"), primary_key=True),
+    Column("permission_id", UUID(as_uuid=True), ForeignKey("permission.id", ondelete="CASCADE"), primary_key=True),
+    # Metadata
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    # Add a unique constraint for role_id and permission_id
+    UniqueConstraint("role_id", "permission_id", name="uix_role_permission"),
 )

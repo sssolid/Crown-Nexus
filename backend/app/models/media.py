@@ -44,6 +44,8 @@ class MediaType(str, Enum):
     IMAGE = "image"
     DOCUMENT = "document"
     VIDEO = "video"
+    MSDS = "msds"
+    DOT_APPROVAL = "dot_approval"
     OTHER = "other"
 
 

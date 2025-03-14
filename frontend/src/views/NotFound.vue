@@ -7,7 +7,7 @@
 
       <v-card-text>
         <v-img
-          src="@/assets/not-found.svg"
+          :src=notFound
           alt="Page not found"
           height="200"
           class="mb-4"
@@ -43,25 +43,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import { useRouter } from 'vue-router';
+import notFound from '@/assets/status_notification/no_search_results.png';
 
-export default defineComponent({
-  name: 'NotFound',
+const router = useRouter();
 
-  setup() {
-    const router = useRouter();
-
-    const goBack = () => {
-      router.back();
-    };
-
-    return {
-      goBack
-    };
-  }
-});
+const goBack = () => {
+  router.back();
+};
 </script>
 
 <style scoped>

@@ -1,0 +1,4 @@
+hostname,ip,username,key_path,description
+server1,172.28.1.10,crown,~/.ssh/id_rsa,Database server
+server2,172.28.1.11,crown,~/.ssh/id_rsa,Backend server
+server3,172.28.1.12,crown,~/.ssh/id_rsa,Frontend server

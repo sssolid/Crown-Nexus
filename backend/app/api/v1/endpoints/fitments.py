@@ -318,7 +318,6 @@ async def read_fitment_products(
         select(Product)
         .join(product_fitment_association)
         .where(product_fitment_association.c.fitment_id == fitment_id)
-        .options(selectinload(Product.category))
         .offset(skip)
         .limit(limit)
     )

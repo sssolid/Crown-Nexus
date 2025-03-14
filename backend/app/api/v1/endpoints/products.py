@@ -11,7 +11,6 @@ from sqlalchemy.orm import selectinload
 from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
 from app.models.product import (
     Brand,
-    Category,
     Fitment,
     Product,
     ProductActivity,
@@ -28,9 +27,6 @@ from app.schemas.product import (
     Brand as BrandSchema,
     BrandCreate,
     BrandUpdate,
-    Category as CategorySchema,
-    CategoryCreate,
-    CategoryUpdate,
     Fitment as FitmentSchema,
     FitmentCreate,
     FitmentUpdate,
@@ -62,7 +58,6 @@ router = APIRouter()
 async def read_products(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_active_user)],
-    category_id: Optional[str] = None,
     search: Optional[str] = None,
     vintage: Optional[bool] = None,
     late_model: Optional[bool] = None,
@@ -80,7 +75,6 @@ async def read_products(
     Args:
         db: Database session
         current_user: Current authenticated user
-        category_id: Filter by category ID
         search: Search term for product part number or application
         vintage: Filter by vintage flag
         late_model: Filter by late model flag
@@ -104,9 +98,6 @@ async def read_products(
     query = select(Product)
 
     # Apply filters
-    if category_id:
-        query = query.where(Product.category_id == category_id)
-
     if search:
         search_term = f"%{search}%"
         query = query.where(
@@ -139,7 +130,6 @@ async def read_products(
 
     # Include related data
     query = query.options(
-        selectinload(Product.category),
         selectinload(Product.descriptions),
         selectinload(Product.marketing),
         selectinload(Product.activities).selectinload(ProductActivity.changed_by),
@@ -190,16 +180,6 @@ async def create_product(
             detail="Product with this part number already exists",
         )
 
-    # Check if category exists if provided
-    if product_in.category_id:
-        stmt = select(Category).where(Category.id == product_in.category_id)
-        result = await db.execute(stmt)
-        if not result.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Category not found",
-            )
-
     # Prepare main product data
     product_data = product_in.model_dump(
         exclude={"descriptions", "marketing"},
@@ -246,7 +226,6 @@ async def create_product(
 
     # Refresh product with all related data
     await db.refresh(product, [
-        "category",
         "descriptions",
         "marketing",
         "activities",
@@ -278,7 +257,6 @@ async def read_product(
     """
     # Query with joined load for related data
     stmt = select(Product).where(Product.id == product_id).options(
-        selectinload(Product.category),
         selectinload(Product.descriptions),
         selectinload(Product.marketing),
         selectinload(Product.activities).selectinload(ProductActivity.changed_by),
@@ -320,7 +298,6 @@ async def update_product(
     """
     # Get existing product
     stmt = select(Product).where(Product.id == product_id).options(
-        selectinload(Product.category),
         selectinload(Product.descriptions),
         selectinload(Product.marketing),
         selectinload(Product.activities),
@@ -347,17 +324,6 @@ async def update_product(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Product with this part number already exists",
             )
-
-    # Check if category exists if provided
-    if product_in.category_id is not None:
-        if product_in.category_id:  # Not None and not empty
-            stmt = select(Category).where(Category.id == product_in.category_id)
-            result = await db.execute(stmt)
-            if not result.scalar_one_or_none():
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Category not found",
-                )
 
     # Track if is_active status changed
     was_active = product.is_active
@@ -436,228 +402,6 @@ async def delete_product(
     await db.commit()
 
     return {"message": "Product deleted successfully"}
-
-
-# Category endpoints
-@router.get("/categories/", response_model=List[CategorySchema])
-async def read_categories(
-    db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    skip: int = 0,
-    limit: int = 100,
-) -> Any:
-    """
-    Retrieve categories.
-
-    Args:
-        db: Database session
-        current_user: Current authenticated user
-        skip: Number of categories to skip
-        limit: Maximum number of categories to return
-
-    Returns:
-        List[Category]: List of categories
-    """
-    stmt = select(Category).offset(skip).limit(limit)
-    result = await db.execute(stmt)
-    return result.scalars().all()
-
-
-@router.post("/categories/", response_model=CategorySchema, status_code=status.HTTP_201_CREATED)
-async def create_category(
-    db: Annotated[AsyncSession, Depends(get_db)],
-    category_in: CategoryCreate,
-    current_user: Annotated[User, Depends(get_admin_user)],
-) -> Any:
-    """
-    Create new category.
-
-    Args:
-        db: Database session
-        category_in: Category data
-        current_user: Current authenticated admin user
-
-    Returns:
-        Category: Created category
-    """
-    # Check if slug already exists
-    stmt = select(Category).where(Category.slug == category_in.slug)
-    result = await db.execute(stmt)
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Category with this slug already exists",
-        )
-
-    # Check if parent exists if provided
-    if category_in.parent_id:
-        stmt = select(Category).where(Category.id == category_in.parent_id)
-        result = await db.execute(stmt)
-        if not result.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Parent category not found",
-            )
-
-    # Create new category
-    category = Category(**category_in.model_dump())
-    db.add(category)
-    await db.commit()
-    await db.refresh(category)
-
-    return category
-
-
-@router.get("/categories/{category_id}", response_model=CategorySchema)
-async def read_category(
-    category_id: str,
-    db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_active_user)],
-) -> Any:
-    """
-    Get category by ID.
-
-    Args:
-        category_id: Category ID
-        db: Database session
-        current_user: Current authenticated user
-
-    Returns:
-        Category: Category with specified ID
-    """
-    stmt = select(Category).where(Category.id == category_id)
-    result = await db.execute(stmt)
-    category = result.scalar_one_or_none()
-
-    if not category:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Category not found",
-        )
-
-    return category
-
-
-@router.put("/categories/{category_id}", response_model=CategorySchema)
-async def update_category(
-    category_id: str,
-    category_in: CategoryUpdate,
-    db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_admin_user)],
-) -> Any:
-    """
-    Update a category.
-
-    Args:
-        category_id: Category ID
-        category_in: Updated category data
-        db: Database session
-        current_user: Current authenticated admin user
-
-    Returns:
-        Category: Updated category
-    """
-    # Get existing category
-    stmt = select(Category).where(Category.id == category_id)
-    result = await db.execute(stmt)
-    category = result.scalar_one_or_none()
-
-    if not category:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Category not found",
-        )
-
-    # Check if slug is changed and already exists
-    if category_in.slug is not None and category_in.slug != category.slug:
-        stmt = select(Category).where(Category.slug == category_in.slug)
-        result = await db.execute(stmt)
-        if result.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Category with this slug already exists",
-            )
-
-    # Check if parent exists if provided
-    if category_in.parent_id is not None and category_in.parent_id:
-        stmt = select(Category).where(Category.id == category_in.parent_id)
-        result = await db.execute(stmt)
-        if not result.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Parent category not found",
-            )
-
-        # Prevent circular references
-        if str(category_in.parent_id) == str(category_id):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Category cannot be its own parent",
-            )
-
-    # Update category attributes
-    update_data = category_in.model_dump(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(category, field, value)
-
-    # Save changes
-    await db.commit()
-    await db.refresh(category)
-
-    return category
-
-
-@router.delete("/categories/{category_id}")
-async def delete_category(
-    category_id: str,
-    db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_admin_user)],
-) -> dict:
-    """
-    Delete a category.
-
-    Args:
-        category_id: Category ID
-        db: Database session
-        current_user: Current authenticated admin user
-
-    Returns:
-        dict: Success message
-    """
-    # Get existing category
-    stmt = select(Category).where(Category.id == category_id)
-    result = await db.execute(stmt)
-    category = result.scalar_one_or_none()
-
-    if not category:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Category not found",
-        )
-
-    # Check if category has products
-    stmt = select(func.count()).select_from(Product).where(Product.category_id == category_id)
-    result = await db.scalar(stmt)
-    if result and result > 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot delete category with {result} associated products",
-        )
-
-    # Check if category has children
-    stmt = select(func.count()).select_from(Category).where(Category.parent_id == category_id)
-    result = await db.scalar(stmt)
-    if result and result > 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot delete category with {result} child categories",
-        )
-
-    # Delete the category
-    await db.delete(category)
-    await db.commit()
-
-    return {"message": "Category deleted successfully"}
 
 
 # Product Description endpoints

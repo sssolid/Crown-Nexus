@@ -62,96 +62,6 @@ class ProductStatus(str, Enum):
     PENDING = "pending"
 
 
-# Category Schemas
-class CategoryBase(BaseModel):
-    """
-    Base schema for Category data.
-
-    Defines common fields used across category-related schemas.
-
-    Attributes:
-        name: Category name
-        slug: URL-friendly version of name
-        parent_id: Reference to parent category (optional)
-        description: Category description (optional)
-    """
-    name: str
-    slug: str
-    parent_id: Optional[uuid.UUID] = None
-    description: Optional[str] = None
-
-
-class CategoryCreate(CategoryBase):
-    """
-    Schema for creating a new Category.
-
-    Extends the base category schema for creation requests.
-    """
-    pass
-
-
-class CategoryUpdate(BaseModel):
-    """
-    Schema for updating an existing Category.
-
-    Defines fields that can be updated on a category, with all
-    fields being optional to allow partial updates.
-
-    Attributes:
-        name: Category name (optional)
-        slug: URL-friendly version of name (optional)
-        parent_id: Reference to parent category (optional, can be set to None)
-        description: Category description (optional)
-    """
-    name: Optional[str] = None
-    slug: Optional[str] = None
-    parent_id: Optional[Union[uuid.UUID, None]] = Field(
-        default=..., description="Parent category ID, can be null to make a top-level category"
-    )
-    description: Optional[str] = None
-
-
-class CategoryInDB(CategoryBase):
-    """
-    Schema for Category as stored in the database.
-
-    Extends the base category schema with database-specific fields.
-
-    Attributes:
-        id: Category UUID
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
-    """
-    id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class Category(CategoryInDB):
-    """
-    Schema for Category responses.
-
-    This schema is used for API responses returning category data.
-    It extends the database schema with child categories.
-
-    Attributes:
-        children: List of child categories
-    """
-    children: List["Category"] = []
-
-    @property
-    def has_children(self) -> bool:
-        """
-        Check if the category has child categories.
-
-        Returns:
-            bool: True if the category has children, False otherwise
-        """
-        return len(self.children) > 0
-
-
 # Description Schemas
 class ProductDescriptionBase(BaseModel):
     """
@@ -633,7 +543,6 @@ class ProductBase(BaseModel):
         soft: Soft good flag
         universal: Universal fit flag
         is_active: Whether the product is active
-        category_id: Reference to category (optional)
     """
     part_number: str
     part_number_stripped: Optional[str] = None
@@ -643,7 +552,6 @@ class ProductBase(BaseModel):
     soft: bool = False
     universal: bool = False
     is_active: bool = True
-    category_id: Optional[uuid.UUID] = None
 
     @model_validator(mode='after')
     def generate_part_number_stripped(self) -> 'ProductBase':
@@ -689,7 +597,6 @@ class ProductUpdate(BaseModel):
         soft: Soft good flag (optional)
         universal: Universal fit flag (optional)
         is_active: Whether the product is active (optional)
-        category_id: Reference to category (optional, can be set to None)
     """
     part_number: Optional[str] = None
     application: Optional[str] = None
@@ -698,9 +605,6 @@ class ProductUpdate(BaseModel):
     soft: Optional[bool] = None
     universal: Optional[bool] = None
     is_active: Optional[bool] = None
-    category_id: Optional[Union[uuid.UUID, None]] = Field(
-        default=..., description="Category ID, can be null to remove from category"
-    )
 
 
 class ProductInDB(ProductBase):
@@ -729,7 +633,6 @@ class Product(ProductInDB):
     It extends the database schema with related entities.
 
     Attributes:
-        category: Associated category information (optional)
         descriptions: List of product descriptions
         marketing: List of marketing content
         activities: List of product activities
@@ -738,7 +641,6 @@ class Product(ProductInDB):
         measurements: List of product measurements
         stock: List of product stock information
     """
-    category: Optional[Category] = None
     descriptions: List[ProductDescription] = []
     marketing: List[ProductMarketing] = []
     activities: List[ProductActivity] = []
@@ -917,7 +819,3 @@ class FitmentListResponse(PaginatedResponse):
         items: List of fitments
     """
     items: List[Fitment]
-
-
-# Update forward references for nested models
-Category.model_rebuild()

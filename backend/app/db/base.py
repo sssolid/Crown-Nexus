@@ -19,7 +19,7 @@ from app.db.base_class import Base
 # NOTE: Order matters here due to foreign key relationships
 
 # User-related models
-from app.models.user import Company, User, Role, Permission  # noqa
+from app.models.user import Company, User, UserRole  # noqa
 
 # Association tables
 from app.models.associations import (
@@ -33,10 +33,7 @@ from app.models.associations import (
     product_packaging_association,
     product_color_association,
     product_construction_type_association,
-    product_texture_association,
-    product_chemical_association,
-    user_role_association,
-    role_permission_association
+    product_texture_association
 )  # noqa
 
 # Location models
@@ -58,7 +55,6 @@ from app.models.reference import (
 from app.models.product import (
     AttributeDefinition,
     Brand,
-    Category,
     Fitment,
     Manufacturer,
     PriceType,

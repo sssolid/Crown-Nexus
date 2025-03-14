@@ -74,7 +74,6 @@ async def search_products(
     current_user: Annotated[User, Depends(get_current_active_user)],
     search_service: Annotated[SearchService, Depends(get_search_service)],
     q: Optional[str] = Query(None, description="Search query"),
-    category_id: Optional[str] = Query(None, description="Category ID"),
     is_active: Optional[bool] = Query(None, description="Active status"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
@@ -88,7 +87,6 @@ async def search_products(
         current_user: Current authenticated user
         search_service: Search service
         q: Search query
-        category_id: Category ID filter
         is_active: Active status filter
         page: Page number
         page_size: Items per page
@@ -103,7 +101,6 @@ async def search_products(
     # Perform search
     results = await search_service.search_products(
         search_term=q,
-        category_id=category_id,
         attributes=attributes or None,
         is_active=is_active,
         page=page,

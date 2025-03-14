@@ -32,6 +32,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    UniqueConstraint,
     func,
     text
 )
@@ -103,12 +104,6 @@ class Product(Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
-
-    # Category relationship maintained for backward compatibility
-    category_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("category.id"), nullable=True
-    )
-    category: Mapped[Optional["Category"]] = relationship("Category")
 
     # Relationships
     descriptions: Mapped[List["ProductDescription"]] = relationship(
@@ -656,7 +651,7 @@ class ProductAttribute(Base):
 
     __table_args__ = (
         # Ensure a product can't have the same attribute twice
-        {'unique_constraints': [('product_id', 'attribute_id')]}
+        UniqueConstraint('product_id', 'attribute_id', name='uix_product_attribute'),
     )
 
     def __repr__(self) -> str:
@@ -910,55 +905,6 @@ class ProductMeasurement(Base):
         return f"<ProductMeasurement {self.product_id}>"
 
 
-class Warehouse(Base):
-    """
-    Warehouse model.
-
-    Represents product storage locations.
-
-    Attributes:
-        id: Primary key UUID
-        name: Warehouse name
-        address_id: Reference to address
-        is_active: If warehouse is currently operational
-        created_at: Creation timestamp
-    """
-    __tablename__ = "warehouse"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    name: Mapped[str] = mapped_column(
-        String(255), nullable=False, index=True
-    )
-    address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
-    )
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, default=True, server_default=expression.true(), nullable=False, index=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-
-    # Relationships
-    address = relationship("Address", foreign_keys=[address_id])
-
-    # Stock
-    stock: Mapped[List["ProductStock"]] = relationship(
-        "ProductStock", back_populates="warehouse"
-    )
-
-    def __repr__(self) -> str:
-        """
-        String representation of the warehouse.
-
-        Returns:
-            str: Warehouse representation
-        """
-        return f"<Warehouse {self.name}>"
-
-
 class ProductStock(Base):
     """
     Product stock model.
@@ -1079,100 +1025,3 @@ class Fitment(Base):
             str: Fitment representation with year, make, and model
         """
         return f"<Fitment {self.year} {self.make} {self.model}>"
-
-
-class Category(Base):
-    """
-    Product category model for hierarchical organization.
-
-    This model supports organizing products into categories and subcategories:
-    - Hierarchical structure via self-referential relationship
-    - URL-friendly slugs for routing
-    - Optional description for additional context
-
-    Attributes:
-        id: Primary key UUID
-        name: Category name
-        slug: URL-friendly version of name
-        parent_id: Reference to parent category (optional)
-        description: Category description (optional)
-        children: List of child categories
-        parent: Reference to parent category
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
-    """
-    __tablename__ = "category"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False
-    )
-    slug: Mapped[str] = mapped_column(
-        String(100), nullable=False, unique=True, index=True
-    )
-    parent_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("category.id"), nullable=True
-    )
-    description: Mapped[Optional[str]] = mapped_column(
-        String(500), nullable=True
-    )
-
-    # Self-referential relationship for hierarchy
-    children: Mapped[List["Category"]] = relationship(
-        "Category",
-        backref=backref("parent", remote_side=[id]),
-        cascade="all, delete-orphan",
-    )
-
-    # Audit timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
-
-    def __repr__(self) -> str:
-        """
-        String representation of the category.
-
-        Returns:
-            str: Category representation with name
-        """
-        return f"<Category {self.name}>"
-
-    def get_ancestors(self) -> List[Category]:
-        """
-        Get all ancestor categories in ascending order.
-
-        Returns:
-            List[Category]: List of ancestor categories, starting with the parent
-        """
-        ancestors = []
-        current = self.parent
-
-        while current:
-            ancestors.append(current)
-            current = current.parent
-
-        return ancestors
-
-    def get_full_path(self) -> str:
-        """
-        Get the full category path as a string.
-
-        Returns:
-            str: Full path with ancestor names separated by "/"
-        """
-        ancestors = self.get_ancestors()
-        path = "/".join(reversed([ancestor.name for ancestor in ancestors]))
-
-        if path:
-            return f"{path}/{self.name}"
-
-        return self.name

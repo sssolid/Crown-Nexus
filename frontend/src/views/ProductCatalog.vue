@@ -38,22 +38,6 @@
               ></v-text-field>
             </v-col>
 
-            <!-- Category Filter -->
-            <v-col cols="12" md="3">
-              <v-select
-                v-model="filters.category_id"
-                label="Category"
-                :items="categories"
-                item-title="name"
-                item-value="id"
-                variant="outlined"
-                density="comfortable"
-                clearable
-                hide-details
-                return-object
-              ></v-select>
-            </v-col>
-
             <!-- Active Filter -->
             <v-col cols="12" md="3">
               <v-select
@@ -194,19 +178,6 @@
             </div>
           </template>
 
-          <!-- Category Column -->
-          <template v-slot:item.category="{ item }">
-            <v-chip
-              v-if="item.category"
-              size="small"
-              color="primary"
-              variant="tonal"
-            >
-              {{ item.category.name }}
-            </v-chip>
-            <span v-else class="text-medium-emphasis">None</span>
-          </template>
-
           <!-- Status Column -->
           <template v-slot:item.is_active="{ item }">
             <v-chip
@@ -318,7 +289,6 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import productService from '@/services/product';
 import { Product, ProductFilters } from '@/types/product';
-import { Category } from '@/types/category';
 
 export default defineComponent({
   name: 'ProductCatalog',

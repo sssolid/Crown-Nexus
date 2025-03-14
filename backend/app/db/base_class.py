@@ -17,6 +17,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from sqlalchemy import Column, DateTime, inspect, func
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.sql.expression import Select
@@ -25,8 +26,7 @@ from sqlalchemy.sql.expression import Select
 T = TypeVar('T', bound='Base')
 
 
-@as_declarative()
-class Base:
+class Base(DeclarativeBase):
     """
     Base class for all database models.
 
@@ -42,9 +42,6 @@ class Base:
 
     # Define common columns that should be available to all models
     id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(),
-                                  onupdate=func.now(), nullable=False)
 
     # Generate __tablename__ automatically based on class name
     @declared_attr

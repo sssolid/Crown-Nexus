@@ -86,11 +86,11 @@ class TransportRestriction(str, Enum):
     Defines the possible transportation restrictions for
     hazardous materials.
     """
-    NONE = "None"
-    AIR = "Air"
-    GROUND = "Ground"
-    SEA = "Sea"
-    ALL = "All"
+    NONE = "NONE"
+    AIR = "AIR"
+    GROUND = "GROUND"
+    SEA = "SEA"
+    ALL = "ALL"
 
 
 class Prop65Chemical(Base):

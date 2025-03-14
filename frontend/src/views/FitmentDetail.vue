@@ -182,7 +182,6 @@
                   <th>SKU</th>
                   <th>Name</th>
                   <th>Part Number</th>
-                  <th>Category</th>
                   <th>Actions</th>
                 </tr>
                 </thead>
@@ -198,17 +197,6 @@
                     </router-link>
                   </td>
                   <td>{{ product.part_number || 'N/A' }}</td>
-                  <td>
-                    <v-chip
-                      v-if="product.category"
-                      size="small"
-                      color="primary"
-                      variant="tonal"
-                    >
-                      {{ product.category.name }}
-                    </v-chip>
-                    <span v-else class="text-medium-emphasis">None</span>
-                  </td>
                   <td>
                     <div class="d-flex">
                       <v-tooltip text="View Product">

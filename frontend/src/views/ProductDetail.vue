@@ -85,24 +85,6 @@
 
                       <v-list-item>
                         <template v-slot:prepend>
-                          <v-icon icon="mdi-tag" class="mr-2"></v-icon>
-                        </template>
-                        <v-list-item-title>Category</v-list-item-title>
-                        <v-list-item-subtitle>
-                          <v-chip
-                            v-if="product.category"
-                            size="small"
-                            color="primary"
-                            variant="tonal"
-                          >
-                            {{ product.category.name }}
-                          </v-chip>
-                          <span v-else class="text-medium-emphasis">None</span>
-                        </v-list-item-subtitle>
-                      </v-list-item>
-
-                      <v-list-item>
-                        <template v-slot:prepend>
                           <v-icon icon="mdi-circle" class="mr-2"></v-icon>
                         </template>
                         <v-list-item-title>Status</v-list-item-title>

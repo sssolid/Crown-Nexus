@@ -6,7 +6,6 @@ This module tests:
 - Product listing with filtering
 - Product creation, retrieval, update, and deletion
 - Permission checks for different user roles
-- Category operations
 - Error handling for invalid operations
 """
 
@@ -20,7 +19,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.product import Category, Product
+from app.models.product import Product
 from app.models.user import User
 from tests.utils import make_authenticated_request, create_random_string
 
@@ -86,24 +85,15 @@ async def test_read_products_with_filters(
     assert len(data["items"]) > 0
     assert data["items"][0]["name"] == test_product.name
 
-    # Filter by category
-    response = await make_authenticated_request(
-        client,
-        "get",
-        f"/api/v1/products/?category_id={test_product.category_id}",
-        token=admin_token,
-    )
-
     # Check response
     assert response.status_code == 200
     data = response.json()
     assert len(data["items"]) > 0
-    assert data["items"][0]["category_id"] == str(test_product.category_id)
 
 
 @pytest.mark.asyncio
 async def test_create_product_admin(
-    client: AsyncClient, admin_token: str, test_category: Category
+    client: AsyncClient, admin_token: str
 ) -> None:
     """
     Test creating a product as admin.
@@ -111,7 +101,6 @@ async def test_create_product_admin(
     Args:
         client: Test client
         admin_token: Admin token
-        test_category: Test category fixture
     """
     # Product data
     product_data = {
@@ -119,7 +108,6 @@ async def test_create_product_admin(
         "name": f"Test Product {create_random_string(5)}",
         "description": "A test product for unit testing",
         "part_number": f"TP-{create_random_string(5)}",
-        "category_id": str(test_category.id),
         "attributes": {"material": "steel", "weight": 1.5},
         "is_active": True,
     }
@@ -140,7 +128,6 @@ async def test_create_product_admin(
     assert data["name"] == product_data["name"]
     assert data["description"] == product_data["description"]
     assert data["part_number"] == product_data["part_number"]
-    assert data["category_id"] == product_data["category_id"]
     assert data["attributes"] == product_data["attributes"]
     assert data["is_active"] == product_data["is_active"]
     assert "id" in data
@@ -150,7 +137,7 @@ async def test_create_product_admin(
 
 @pytest.mark.asyncio
 async def test_create_product_non_admin(
-    client: AsyncClient, user_token: str, test_category: Category
+    client: AsyncClient, user_token: str
 ) -> None:
     """
     Test that non-admin users cannot create products.
@@ -158,7 +145,6 @@ async def test_create_product_non_admin(
     Args:
         client: Test client
         user_token: User token
-        test_category: Test category fixture
     """
     # Product data
     product_data = {
@@ -166,7 +152,6 @@ async def test_create_product_non_admin(
         "name": f"Test Product {create_random_string(5)}",
         "description": "A test product for unit testing",
         "part_number": f"TP-{create_random_string(5)}",
-        "category_id": str(test_category.id),
         "attributes": {"material": "steel", "weight": 1.5},
         "is_active": True,
     }
@@ -202,7 +187,6 @@ async def test_create_product_duplicate_sku(
         "name": f"Test Product {create_random_string(5)}",
         "description": "A test product for unit testing",
         "part_number": f"TP-{create_random_string(5)}",
-        "category_id": str(test_product.category_id),
         "attributes": {"material": "aluminum", "weight": 2.0},
         "is_active": True,
     }
@@ -249,8 +233,6 @@ async def test_read_product(
     assert data["id"] == str(test_product.id)
     assert data["sku"] == test_product.sku
     assert data["name"] == test_product.name
-    assert data["category_id"] == str(test_product.category_id)
-    assert "category" in data
 
 
 @pytest.mark.asyncio
@@ -414,94 +396,3 @@ async def test_delete_product_non_admin(
 
     # Check response
     assert response.status_code == 403
-
-
-@pytest.mark.asyncio
-async def test_categories_crud(
-    client: AsyncClient, admin_token: str, db: AsyncSession
-) -> None:
-    """
-    Test CRUD operations for categories.
-
-    Args:
-        client: Test client
-        admin_token: Admin token
-        db: Database session
-    """
-    # Create a category
-    category_data = {
-        "name": f"Test Category {create_random_string(5)}",
-        "slug": f"test-category-{create_random_string(5)}",
-        "description": "A test category for unit testing",
-    }
-
-    # Create category
-    create_response = await make_authenticated_request(
-        client,
-        "post",
-        "/api/v1/products/categories/",
-        token=admin_token,
-        json=category_data,
-    )
-
-    # Check create response
-    assert create_response.status_code == 201
-    data = create_response.json()
-    assert data["name"] == category_data["name"]
-    assert data["slug"] == category_data["slug"]
-    assert data["description"] == category_data["description"]
-    assert "id" in data
-    category_id = data["id"]
-
-    # Read the category
-    read_response = await make_authenticated_request(
-        client,
-        "get",
-        f"/api/v1/products/categories/{category_id}",
-        token=admin_token,
-    )
-
-    # Check read response
-    assert read_response.status_code == 200
-    data = read_response.json()
-    assert data["name"] == category_data["name"]
-    assert data["id"] == category_id
-
-    # Update the category
-    update_data = {
-        "name": f"Updated Category {create_random_string(5)}",
-        "description": "Updated description for testing",
-    }
-
-    update_response = await make_authenticated_request(
-        client,
-        "put",
-        f"/api/v1/products/categories/{category_id}",
-        token=admin_token,
-        json=update_data,
-    )
-
-    # Check update response
-    assert update_response.status_code == 200
-    data = update_response.json()
-    assert data["name"] == update_data["name"]
-    assert data["description"] == update_data["description"]
-    assert data["slug"] == category_data["slug"]  # Unchanged
-
-    # Delete the category
-    delete_response = await make_authenticated_request(
-        client,
-        "delete",
-        f"/api/v1/products/categories/{category_id}",
-        token=admin_token,
-    )
-
-    # Check delete response
-    assert delete_response.status_code == 200
-    data = delete_response.json()
-    assert "message" in data
-    assert "deleted" in data["message"]
-
-    # Verify category is deleted
-    result = await db.execute(select(Category).where(Category.id == category_id))
-    assert result.scalar_one_or_none() is None

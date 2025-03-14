@@ -31,7 +31,7 @@ from app.db.base import Base
 from app.main import app
 from app.models.user import User, UserRole, get_password_hash
 from app.api.deps import get_db
-from app.models.product import Category, Fitment, Product
+from app.models.product import Fitment, Product
 
 # Test database URL
 TEST_DATABASE_URL = str(settings.SQLALCHEMY_DATABASE_URI).replace(
@@ -251,34 +251,7 @@ async def user_token(normal_user: User) -> str:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_category(db: AsyncSession) -> Category:
-    """
-    Create a test product category.
-
-    This fixture provides a product category for testing
-    product-related functionality.
-
-    Args:
-        db: Database session fixture
-
-    Returns:
-        Category: Category model instance
-    """
-    # Create test category
-    category = Category(
-        name="Test Category",
-        slug="test-category",
-        description="A test category for unit testing",
-    )
-
-    db.add(category)
-    await db.commit()
-    await db.refresh(category)
-    return category
-
-
-@pytest_asyncio.fixture(scope="function")
-async def test_product(db: AsyncSession, test_category: Category) -> Product:
+async def test_product(db: AsyncSession) -> Product:
     """
     Create a test product.
 
@@ -287,7 +260,6 @@ async def test_product(db: AsyncSession, test_category: Category) -> Product:
 
     Args:
         db: Database session fixture
-        test_category: Category fixture
 
     Returns:
         Product: Product model instance
@@ -298,7 +270,6 @@ async def test_product(db: AsyncSession, test_category: Category) -> Product:
         name="Test Product",
         description="A test product for unit testing",
         part_number="TP001",
-        category_id=test_category.id,
         attributes={"material": "steel", "weight": 1.5},
         is_active=True,
     )

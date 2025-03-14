@@ -24,7 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
 from app.core.config import settings
-from app.models.product import Category, Fitment, Product
+from app.models.product import Fitment, Product
 from app.utils.db import paginate
 
 
@@ -63,7 +63,6 @@ class SearchService:
     async def search_products(
         self,
         search_term: Optional[str] = None,
-        category_id: Optional[str] = None,
         attributes: Optional[Dict[str, Any]] = None,
         is_active: Optional[bool] = None,
         page: int = 1,
@@ -75,7 +74,6 @@ class SearchService:
 
         Args:
             search_term: Text to search for
-            category_id: Filter by category ID
             attributes: Filter by product attributes
             is_active: Filter by active status
             page: Page number
@@ -93,7 +91,6 @@ class SearchService:
                     return await self._search_products_elasticsearch(
                         es_client,
                         search_term,
-                        category_id,
                         attributes,
                         is_active,
                         page,
@@ -106,7 +103,6 @@ class SearchService:
         # Fall back to database search
         return await self._search_products_database(
             search_term,
-            category_id,
             attributes,
             is_active,
             page,
@@ -116,7 +112,6 @@ class SearchService:
     async def _search_products_database(
         self,
         search_term: Optional[str] = None,
-        category_id: Optional[str] = None,
         attributes: Optional[Dict[str, Any]] = None,
         is_active: Optional[bool] = None,
         page: int = 1,
@@ -127,7 +122,6 @@ class SearchService:
 
         Args:
             search_term: Text to search for
-            category_id: Filter by category ID
             attributes: Filter by product attributes
             is_active: Filter by active status
             page: Page number
@@ -137,7 +131,7 @@ class SearchService:
             Dict[str, Any]: Search results with pagination
         """
         # Start with base query
-        query = select(Product).options(selectinload(Product.category))
+        query = select(Product)
 
         # Apply filters
         if search_term:
@@ -151,9 +145,6 @@ class SearchService:
                     func.lower(Product.part_number).like(search_pattern),
                 )
             )
-
-        if category_id:
-            query = query.where(Product.category_id == category_id)
 
         if is_active is not None:
             query = query.where(Product.is_active == is_active)
@@ -173,7 +164,6 @@ class SearchService:
         self,
         es_client: AsyncElasticsearch,
         search_term: str,
-        category_id: Optional[str] = None,
         attributes: Optional[Dict[str, Any]] = None,
         is_active: Optional[bool] = None,
         page: int = 1,
@@ -185,7 +175,6 @@ class SearchService:
         Args:
             es_client: Elasticsearch client
             search_term: Text to search for
-            category_id: Filter by category ID
             attributes: Filter by product attributes
             is_active: Filter by active status
             page: Page number
@@ -225,10 +214,6 @@ class SearchService:
         }
 
         # Add filters
-        if category_id:
-            query["query"]["bool"]["filter"].append(
-                {"term": {"category_id": category_id}}
-            )
 
         if is_active is not None:
             query["query"]["bool"]["filter"].append(
@@ -260,7 +245,7 @@ class SearchService:
             # Fetch products in the same order as search results
             query = select(Product).where(
                 Product.id.in_(product_ids)
-            ).options(selectinload(Product.category))
+            )
 
             result = await self.db.execute(query)
             db_products = {str(p.id): p for p in result.scalars().all()}
@@ -340,46 +325,6 @@ class SearchService:
         # Use the paginate utility for consistent pagination
         return await paginate(self.db, query, page, page_size)
 
-    async def search_categories(
-        self,
-        search_term: Optional[str] = None,
-        parent_id: Optional[str] = None,
-        page: int = 1,
-        page_size: int = 20,
-    ) -> Dict[str, Any]:
-        """
-        Search for categories with filtering and pagination.
-
-        Args:
-            search_term: Text to search for
-            parent_id: Filter by parent category ID
-            page: Page number
-            page_size: Items per page
-
-        Returns:
-            Dict[str, Any]: Search results with pagination
-        """
-        # Start with base query
-        query = select(Category)
-
-        # Apply filters
-        if search_term:
-            # Convert to lowercase and add wildcards
-            search_pattern = f"%{search_term.lower()}%"
-            query = query.where(
-                or_(
-                    func.lower(Category.name).like(search_pattern),
-                    func.lower(Category.slug).like(search_pattern),
-                    func.lower(Category.description).like(search_pattern),
-                )
-            )
-
-        if parent_id:
-            query = query.where(Category.parent_id == parent_id)
-
-        # Use the paginate utility for consistent pagination
-        return await paginate(self.db, query, page, page_size)
-
     async def global_search(
         self,
         search_term: str,
@@ -422,15 +367,6 @@ class SearchService:
                 page_size=page_size,
             )
             results["fitments"] = fitment_results
-
-        # Search categories
-        if "categories" in entity_types:
-            category_results = await self.search_categories(
-                search_term=search_term,
-                page=page,
-                page_size=page_size,
-            )
-            results["categories"] = category_results
 
         return results
 

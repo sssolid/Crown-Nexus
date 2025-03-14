@@ -80,23 +80,22 @@ export interface ProductStock {
   warehouse: any; // Warehouse object
 }
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  parent_id?: string;
-  description?: string;
-  created_at: string;
-  updated_at: string;
-  children?: Category[];
-}
-
 export interface Brand {
   id: string;
   name: string;
   parent_company_id?: string;
   created_at: string;
   parent_company?: any; // Company object
+}
+
+export interface BrandCreateDTO {
+  name: string;
+  parent_company_id?: string; // Optional UUID
+}
+
+export interface BrandUpdateDTO {
+  name?: string;
+  parent_company_id?: string | null; // Can be null to remove parent company association
 }
 
 export interface Product {
@@ -109,12 +108,10 @@ export interface Product {
   soft: boolean;
   universal: boolean;
   is_active: boolean;
-  category_id?: string;
   created_at: string;
   updated_at: string;
 
   // Relationships
-  category?: Category;
   descriptions: ProductDescription[];
   marketing: ProductMarketing[];
   activities: ProductActivity[];
@@ -126,7 +123,6 @@ export interface Product {
 
 export interface ProductFilters {
   search?: string;
-  category_id?: string;
   vintage?: boolean;
   late_model?: boolean;
   soft?: boolean;
@@ -165,7 +161,6 @@ export interface ProductCreateDTO {
   soft?: boolean;
   universal?: boolean;
   is_active?: boolean;
-  category_id?: string;
   descriptions?: ProductDescriptionCreateDTO[];
   marketing?: ProductMarketingCreateDTO[];
 }
@@ -190,7 +185,6 @@ export interface ProductUpdateDTO {
   soft?: boolean;
   universal?: boolean;
   is_active?: boolean;
-  category_id?: string | null;
 }
 
 export interface ProductMeasurementCreateDTO {

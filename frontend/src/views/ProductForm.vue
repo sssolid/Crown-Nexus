@@ -103,22 +103,6 @@
                       ></v-textarea>
                     </v-col>
 
-                    <!-- Category -->
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="form.category_id"
-                        label="Category"
-                        :items="categories"
-                        item-title="name"
-                        item-value="id"
-                        variant="outlined"
-                        :error-messages="errors.category_id"
-                        :disabled="loading"
-                        @update:modelValue="clearError('category_id')"
-                        clearable
-                      ></v-select>
-                    </v-col>
-
                     <!-- Status -->
                     <v-col cols="12" md="6">
                       <v-switch
@@ -321,7 +305,6 @@ import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import productService from '@/services/product';
 import { Product } from '@/types/product';
-import { Category } from '@/types/category';
 import { notificationService } from '@/utils/notification';
 import { parseValidationErrors } from '@/utils/error-handler';
 
@@ -330,7 +313,6 @@ interface ProductForm {
   name: string;
   description: string;
   part_number: string;
-  category_id: string | null;
   is_active: boolean;
   attributes: Record<string, any>;
 }
@@ -366,7 +348,6 @@ export default defineComponent({
       name: '',
       description: '',
       part_number: '',
-      category_id: null,
       is_active: true,
       attributes: {}
     });
@@ -378,9 +359,6 @@ export default defineComponent({
 
     // Product attributes
     const attributes = ref<AttributeItem[]>([]);
-
-    // Categories for dropdown
-    const categories = ref<Category[]>([]);
 
     // Navigation guard - check for unsaved changes
     const navigationGuard = (event: BeforeUnloadEvent) => {
@@ -469,7 +447,6 @@ export default defineComponent({
         form.value.name = product.name;
         form.value.description = product.description || '';
         form.value.part_number = product.part_number || '';
-        form.value.category_id = product.category_id || null;
         form.value.is_active = product.is_active;
 
         // Convert product attributes to form format

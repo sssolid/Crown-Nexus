@@ -1,9 +1,5 @@
 # Import schemas for easy access
 from app.schemas.product import (
-    Category,
-    CategoryCreate,
-    CategoryInDB,
-    CategoryUpdate,
     Fitment,
     FitmentCreate,
     FitmentInDB,

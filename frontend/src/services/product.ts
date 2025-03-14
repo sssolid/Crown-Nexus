@@ -16,9 +16,6 @@ import {
   Brand,
   BrandCreateDTO,
   BrandUpdateDTO,
-  Category,
-  CategoryCreateDTO,
-  CategoryUpdateDTO,
   Product,
   ProductCreateDTO,
   ProductDescriptionCreateDTO,
@@ -87,56 +84,6 @@ const productService = {
    */
   async deleteProduct(id: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/products/${id}`);
-  },
-
-  /**
-   * Get a list of all product categories.
-   *
-   * @returns Promise with list of categories
-   */
-  async getCategories(): Promise<Category[]> {
-    return api.get<Category[]>('/products/categories/');
-  },
-
-  /**
-   * Get a single category by ID.
-   *
-   * @param id - Category ID
-   * @returns Promise with category details
-   */
-  async getCategory(id: string): Promise<Category> {
-    return api.get<Category>(`/products/categories/${id}`);
-  },
-
-  /**
-   * Create a new category.
-   *
-   * @param category - Category data
-   * @returns Promise with created category
-   */
-  async createCategory(category: CategoryCreateDTO): Promise<Category> {
-    return api.post<Category>('/products/categories/', category);
-  },
-
-  /**
-   * Update an existing category.
-   *
-   * @param id - Category ID
-   * @param category - Updated category data
-   * @returns Promise with updated category
-   */
-  async updateCategory(id: string, category: CategoryUpdateDTO): Promise<Category> {
-    return api.put<Category>(`/products/categories/${id}`, category);
-  },
-
-  /**
-   * Delete a category.
-   *
-   * @param id - Category ID
-   * @returns Promise with deletion response
-   */
-  async deleteCategory(id: string): Promise<{message: string}> {
-    return api.delete<{message: string}>(`/products/categories/${id}`);
   },
 
   /**

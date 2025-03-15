@@ -19,6 +19,8 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.db.base import Base
+
 from .models import PCDBPosition, PartTerminology, VCDBVehicle
 from .exceptions import DatabaseError
 

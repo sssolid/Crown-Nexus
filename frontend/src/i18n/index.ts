@@ -1,7 +1,7 @@
 // frontend/src/i18n/index.ts
 import { createI18n } from 'vue-i18n'
 import axios from 'axios'
-import { useUserStore } from '@/stores/user'
+import { useAuthStore } from '@/stores/auth'
 
 // Import base messages
 import en from './locales/en.json'
@@ -23,7 +23,7 @@ const loadedLanguages: string[] = ['en']
 
 /**
  * Load locale messages from the backend
- * 
+ *
  * @param locale - The locale to load
  * @returns Promise for loading completion
  */
@@ -38,15 +38,15 @@ export async function loadLanguageAsync(locale: string): Promise<string> {
   // Load locale from backend API
   try {
     const response = await axios.get(`/api/v1/i18n/messages/${locale}`)
-    
+
     // Set the locale messages
     i18n.global.setLocaleMessage(locale, response.data)
     loadedLanguages.push(locale)
-    
+
     // Set locale
     i18n.global.locale.value = locale
     document.querySelector('html')?.setAttribute('lang', locale)
-    
+
     return locale
   } catch (error) {
     console.error(`Could not load language: ${locale}`, error)
@@ -56,30 +56,30 @@ export async function loadLanguageAsync(locale: string): Promise<string> {
 
 /**
  * Set application locale
- * 
+ *
  * @param locale - The locale to set
  * @returns Promise for locale change completion
  */
 export async function setLocale(locale: string): Promise<string> {
-  const userStore = useUserStore()
-  
+  const authStore = useAuthStore()
+
   // Load the language
   await loadLanguageAsync(locale)
-  
+
   // Save user preference if logged in
-  if (userStore.isLoggedIn) {
+  if (authStore.isLoggedIn) {
     try {
-      await userStore.updateUserPreferences(userStore.user!.id, {
+      await authStore.updateUserPreferences(authStore.user!.id, {
         language: locale
       })
     } catch (error) {
       console.error('Could not save language preference', error)
     }
   }
-  
+
   // Store in localStorage for guests
   localStorage.setItem('locale', locale)
-  
+
   return locale
 }
 
@@ -87,19 +87,19 @@ export async function setLocale(locale: string): Promise<string> {
  * Initialize i18n with the user's preferred language
  */
 export async function initializeI18n(): Promise<void> {
-  const userStore = useUserStore()
+  const authStore = useAuthStore()
   let locale = 'en'
-  
+
   // Try to get locale from user preferences if logged in
-  if (userStore.isLoggedIn && userStore.user?.preferences?.language) {
-    locale = userStore.user.preferences.language
-  } 
+  if (authStore.isLoggedIn && authStore.user?.preferences?.language) {
+    locale = authStore.user.preferences.language
+  }
   // Otherwise try from localStorage
   else {
     const savedLocale = localStorage.getItem('locale')
     if (savedLocale) {
       locale = savedLocale
-    } 
+    }
     // Or browser preference
     else {
       const browserLang = navigator.language.split('-')[0]
@@ -108,6 +108,6 @@ export async function initializeI18n(): Promise<void> {
       }
     }
   }
-  
+
   await loadLanguageAsync(locale)
 }

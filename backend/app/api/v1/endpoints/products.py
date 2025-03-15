@@ -19,9 +19,9 @@ from app.models.product import (
     ProductMarketing,
     ProductMeasurement,
     ProductStock,
-    ProductSupersession,
-    Warehouse
+    ProductSupersession
 )
+from app.models.reference import Warehouse
 from app.models.user import User
 from app.schemas.product import (
     Brand as BrandSchema,

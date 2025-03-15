@@ -38,8 +38,8 @@
                 {{ featuredPost.title }}
               </v-card-title>
               <v-card-subtitle class="text-subtitle-1 mb-4">
-                <span class="text-primary font-weight-medium">{{ featuredPost.category }}</span> | 
-                {{ formatDate(featuredPost.published_at) }} | 
+                <span class="text-primary font-weight-medium">{{ featuredPost.category }}</span> |
+                {{ formatDate(featuredPost.published_at) }} |
                 By {{ featuredPost.author }}
               </v-card-subtitle>
               <v-card-text class="text-body-1 flex-grow-1">
@@ -79,7 +79,7 @@
                     @click:clear="clearSearch"
                   ></v-text-field>
                 </v-col>
-                
+
                 <!-- Category Filter -->
                 <v-col cols="12" md="3">
                   <v-select
@@ -93,7 +93,7 @@
                     @update:model-value="filterPosts"
                   ></v-select>
                 </v-col>
-                
+
                 <!-- Sort Order -->
                 <v-col cols="12" md="3">
                   <v-select
@@ -127,8 +127,8 @@
         <v-col cols="12" lg="8">
           <!-- Blog Post Cards -->
           <div v-if="filteredPosts.length > 0">
-            <v-card 
-              v-for="post in filteredPosts" 
+            <v-card
+              v-for="post in filteredPosts"
               :key="post.id"
               class="mb-6"
               variant="outlined"
@@ -145,7 +145,7 @@
                 <v-col cols="12" sm="8">
                   <v-card-item class="pa-4">
                     <v-card-title class="text-h5 font-weight-bold mb-2">
-                      <router-link 
+                      <router-link
                         :to="`/blog/${post.slug}`"
                         class="text-decoration-none text-inherit hover-primary"
                       >
@@ -153,8 +153,8 @@
                       </router-link>
                     </v-card-title>
                     <v-card-subtitle class="pb-0">
-                      <span class="text-primary font-weight-medium">{{ post.category }}</span> | 
-                      {{ formatDate(post.published_at) }} | 
+                      <span class="text-primary font-weight-medium">{{ post.category }}</span> |
+                      {{ formatDate(post.published_at) }} |
                       By {{ post.author }}
                     </v-card-subtitle>
                     <v-card-text class="text-body-1 pt-3">
@@ -193,7 +193,7 @@
                 </v-col>
               </v-row>
             </v-card>
-          
+
             <!-- Pagination -->
             <div class="d-flex justify-center mt-6">
               <v-pagination
@@ -205,7 +205,7 @@
               ></v-pagination>
             </div>
           </div>
-          
+
           <!-- No Results -->
           <v-card v-else class="text-center pa-8">
             <v-icon icon="mdi-newspaper-variant-outline" size="64" color="grey-lighten-1"></v-icon>
@@ -216,7 +216,7 @@
             <v-btn color="primary" variant="tonal" @click="resetFilters">Reset Filters</v-btn>
           </v-card>
         </v-col>
-        
+
         <!-- Sidebar -->
         <v-col cols="12" lg="4">
           <!-- Categories Card -->
@@ -244,7 +244,7 @@
               </v-list-item>
             </v-list>
           </v-card>
-          
+
           <!-- Popular Posts Card -->
           <v-card class="mb-6">
             <v-card-title class="font-weight-bold">
@@ -271,7 +271,7 @@
               </v-list-item>
             </v-list>
           </v-card>
-          
+
           <!-- Newsletter Card -->
           <v-card>
             <v-card-title class="font-weight-bold">
@@ -406,42 +406,42 @@ export default defineComponent({
   setup() {
     const authStore = useAuthStore();
     const isAdmin = computed(() => authStore.isAdmin);
-    
+
     // Data loading state
     const loading = ref(true);
     const posts = ref<BlogPost[]>([]);
     const featuredPost = ref<BlogPost | null>(null);
     const popularPosts = ref<BlogPost[]>([]);
-    
+
     // Pagination
     const page = ref(1);
     const itemsPerPage = ref(5);
     const totalItems = ref(0);
     const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
-    
+
     // Filters and search
     const searchQuery = ref('');
     const selectedCategory = ref<string | null>(null);
     const sortOrder = ref('newest');
     const filteredPosts = ref<BlogPost[]>([]);
-    
+
     // Newsletter subscription
     const email = ref('');
     const privacyConsent = ref(false);
     const subscribing = ref(false);
     const subscribeDialog = ref(false);
-    
+
     // Form validation rules
     const rules = {
       required: (v: string) => !!v || 'This field is required',
       email: (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
     };
-    
+
     // Delete functionality
     const deleteDialog = ref(false);
     const deleteLoading = ref(false);
     const postToDelete = ref<BlogPost | null>(null);
-    
+
     // Category and sort options
     const categories = ref([
       'Industry News',
@@ -451,18 +451,18 @@ export default defineComponent({
       'Market Trends',
       'Company News'
     ]);
-    
+
     const sortOptions = ref([
       { title: 'Newest First', value: 'newest' },
       { title: 'Oldest First', value: 'oldest' },
       { title: 'Most Popular', value: 'popular' },
       { title: 'Alphabetical', value: 'alphabetical' }
     ]);
-    
+
     // Fetch blog posts from API
     const fetchPosts = async () => {
       loading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const response = await api.get('/blog/posts', {
@@ -474,10 +474,10 @@ export default defineComponent({
         //     sort: sortOrder.value
         //   }
         // });
-        
+
         // Mock data for demonstration
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Sample blog posts
         const mockPosts: BlogPost[] = [
           {
@@ -524,7 +524,7 @@ export default defineComponent({
             author_id: 'user-3',
             category: 'Technical Tips',
             tags: ['Catalog Management', 'SEO', 'Digital Marketing'],
-            excerpt: 'Learn proven strategies to enhance your parts catalog's visibility, improve search rankings, and drive more qualified traffic to your products.',
+            excerpt: 'Learn proven strategies to enhance your parts catalog\'s visibility, improve search rankings, and drive more qualified traffic to your products.',
             content: 'Full article content would go here...',
             image_url: 'https://via.placeholder.com/800x600?text=Catalog+Optimization',
             published_at: '2023-04-12T10:15:00Z',
@@ -560,7 +560,7 @@ export default defineComponent({
             author_id: 'user-5',
             category: 'Case Studies',
             tags: ['Case Study', 'Success Story', 'Digital Transformation'],
-            excerpt: 'Learn how AutoPro Distributors transformed their business by implementing Crown Nexus's digital catalog and streamlining their ordering process.',
+            excerpt: 'Learn how AutoPro Distributors transformed their business by implementing Crown Nexus\'s digital catalog and streamlining their ordering process.',
             content: 'Full article content would go here...',
             image_url: 'https://via.placeholder.com/800x600?text=AutoPro+Case+Study',
             published_at: '2023-03-08T09:15:00Z',
@@ -578,7 +578,7 @@ export default defineComponent({
             author_id: 'user-6',
             category: 'Company News',
             tags: ['Integration', 'Partnerships', 'Shop Management'],
-            excerpt: 'We're excited to announce new integration partnerships with five leading shop management systems, providing seamless workflow for automotive repair shops.',
+            excerpt: 'We\'re excited to announce new integration partnerships with five leading shop management systems, providing seamless workflow for automotive repair shops.',
             content: 'Full article content would go here...',
             image_url: 'https://via.placeholder.com/800x600?text=Integration+Partnerships',
             published_at: '2023-02-20T11:45:00Z',
@@ -625,21 +625,21 @@ export default defineComponent({
             updated_at: '2023-01-18T10:30:00Z'
           }
         ];
-        
+
         // Set featured post
         featuredPost.value = mockPosts.find(p => p.is_featured) || null;
-        
+
         // Filter out featured post from main list
         posts.value = mockPosts.filter(p => !p.is_featured);
-        
+
         // Set popular posts (top 3 by view count)
         popularPosts.value = [...mockPosts]
           .sort((a, b) => b.view_count - a.view_count)
           .slice(0, 3);
-        
+
         // Apply filters
         applyFilters();
-        
+
         totalItems.value = posts.value.length;
       } catch (error) {
         console.error('Error fetching blog posts:', error);
@@ -647,27 +647,27 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    
+
     // Apply filters to posts
     const applyFilters = () => {
       // Start with all posts
       let filtered = [...posts.value];
-      
+
       // Apply category filter
       if (selectedCategory.value) {
         filtered = filtered.filter(post => post.category === selectedCategory.value);
       }
-      
+
       // Apply search filter
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        filtered = filtered.filter(post => 
-          post.title.toLowerCase().includes(query) || 
+        filtered = filtered.filter(post =>
+          post.title.toLowerCase().includes(query) ||
           post.excerpt.toLowerCase().includes(query) ||
           post.category.toLowerCase().includes(query)
         );
       }
-      
+
       // Apply sort order
       switch (sortOrder.value) {
         case 'newest':
@@ -683,26 +683,26 @@ export default defineComponent({
           filtered.sort((a, b) => a.title.localeCompare(b.title));
           break;
       }
-      
+
       filteredPosts.value = filtered;
     };
-    
+
     // Filter posts based on current filters
     const filterPosts = () => {
       applyFilters();
     };
-    
+
     // Search posts
     const searchPosts = () => {
       applyFilters();
     };
-    
+
     // Clear search
     const clearSearch = () => {
       searchQuery.value = '';
       applyFilters();
     };
-    
+
     // Reset all filters
     const resetFilters = () => {
       searchQuery.value = '';
@@ -710,26 +710,26 @@ export default defineComponent({
       sortOrder.value = 'newest';
       applyFilters();
     };
-    
+
     // Get count of posts in a category
     const getCategoryCount = (category: string) => {
       return posts.value.filter(post => post.category === category).length;
     };
-    
+
     // Subscribe to newsletter
     const subscribeNewsletter = async () => {
       subscribing.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.post('/newsletter/subscribe', { email: email.value });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Show success dialog
         subscribeDialog.value = true;
-        
+
         // Reset form
         email.value = '';
         privacyConsent.value = false;
@@ -739,32 +739,32 @@ export default defineComponent({
         subscribing.value = false;
       }
     };
-    
+
     // Delete confirmation
     const confirmDelete = (post: BlogPost) => {
       postToDelete.value = post;
       deleteDialog.value = true;
     };
-    
+
     // Delete post
     const deletePost = async () => {
       if (!postToDelete.value) return;
-      
+
       deleteLoading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.delete(`/blog/posts/${postToDelete.value.id}`);
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Remove post from list
         posts.value = posts.value.filter(p => p.id !== postToDelete.value?.id);
-        
+
         // Re-apply filters
         applyFilters();
-        
+
         // Close dialog
         deleteDialog.value = false;
       } catch (error) {
@@ -773,17 +773,17 @@ export default defineComponent({
         deleteLoading.value = false;
       }
     };
-    
+
     // Watch for filter changes
     watch([selectedCategory, sortOrder], () => {
       applyFilters();
     });
-    
+
     // Initialize component
     onMounted(() => {
       fetchPosts();
     });
-    
+
     return {
       isAdmin,
       loading,

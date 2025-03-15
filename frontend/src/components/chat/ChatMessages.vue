@@ -1,6 +1,6 @@
 <!-- frontend/src/components/chat/ChatMessages.vue -->
 <template>
-  <div 
+  <div
     class="messages-container"
     ref="messagesContainer"
     @scroll="handleScroll"
@@ -15,11 +15,11 @@
         Load older messages
       </v-btn>
     </div>
-    
+
     <div class="messages-list">
       <template v-for="(message, index) in messages" :key="message.id">
         <!-- Date separator -->
-        <div 
+        <div
           v-if="shouldShowDateSeparator(message, index)"
           class="date-separator"
         >
@@ -27,9 +27,9 @@
           <div class="date-text">{{ formatDateSeparator(message.created_at) }}</div>
           <div class="date-line"></div>
         </div>
-        
+
         <!-- Message -->
-        <ChatMessage 
+        <ChatMessageItem
           :message="message"
           :is-own-message="message.sender_id === currentUserId"
           :show-sender="shouldShowSender(message, index)"
@@ -39,22 +39,22 @@
         />
       </template>
     </div>
-    
+
     <div class="typing-indicator" v-if="typingUsers.length > 0">
       <v-icon size="small" class="typing-icon">mdi-message-processing</v-icon>
       <span>{{ typingText }}</span>
     </div>
-    
+
     <div ref="bottomAnchor"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUpdated, watch } from 'vue';
+import { ref, computed, onMounted, onUpdated, watch, nextTick, onBeforeUnmount } from 'vue';
 import { format, isToday, isYesterday, isSameDay } from 'date-fns';
 import { ChatMessage } from '@/types/chat';
 import { chatService } from '@/services/chat';
-import ChatMessage from './ChatMessage.vue';
+import ChatMessageItem from './ChatMessage.vue';
 
 const props = defineProps<{
   messages: ChatMessage[];
@@ -95,14 +95,14 @@ const canLoadMore = computed(() => !hasReachedTop.value && props.messages.length
 // Methods
 function handleScroll() {
   if (!messagesContainer.value) return;
-  
+
   // Save current scroll position
   lastScrollTop.value = messagesContainer.value.scrollTop;
-  
+
   // Determine if we should auto-scroll to bottom on new messages
-  shouldScrollToBottom.value = 
+  shouldScrollToBottom.value =
     messagesContainer.value.scrollHeight - messagesContainer.value.scrollTop - messagesContainer.value.clientHeight < 10;
-  
+
   // Check if reached top for loading more
   if (messagesContainer.value.scrollTop < 50 && props.messages.length > 0 && !isLoadingMore.value) {
     loadMore();
@@ -111,17 +111,17 @@ function handleScroll() {
 
 function loadMore() {
   if (isLoadingMore.value || props.messages.length === 0) return;
-  
+
   isLoadingMore.value = true;
   const oldestMessage = props.messages[0];
-  
+
   // Save current scroll height
   if (messagesContainer.value) {
     lastHeight.value = messagesContainer.value.scrollHeight;
   }
-  
+
   emit('load-more', oldestMessage.id);
-  
+
   // Reset loading after a timeout in case of error
   setTimeout(() => {
     isLoadingMore.value = false;
@@ -130,7 +130,7 @@ function loadMore() {
 
 function restoreScrollPosition() {
   if (!messagesContainer.value) return;
-  
+
   // If we loaded more (at top), maintain relative scroll position
   if (isLoadingMore.value && lastHeight.value > 0) {
     const newHeight = messagesContainer.value.scrollHeight;
@@ -152,16 +152,16 @@ function scrollToBottom() {
 
 function shouldShowDateSeparator(message: ChatMessage, index: number): boolean {
   if (index === 0) return true;
-  
+
   const currentDate = new Date(message.created_at);
   const prevDate = new Date(props.messages[index - 1].created_at);
-  
+
   return !isSameDay(currentDate, prevDate);
 }
 
 function formatDateSeparator(dateStr: string): string {
   const date = new Date(dateStr);
-  
+
   if (isToday(date)) {
     return 'Today';
   } else if (isYesterday(date)) {
@@ -174,15 +174,15 @@ function formatDateSeparator(dateStr: string): string {
 function shouldShowSender(message: ChatMessage, index: number): boolean {
   // Always show sender for system messages
   if (message.message_type === 'system') return false;
-  
+
   // First message or after date separator
   if (index === 0) return true;
-  
+
   const prevMessage = props.messages[index - 1];
-  
+
   // Different sender or more than 5 minutes gap
   if (prevMessage.sender_id !== message.sender_id) return true;
-  
+
   const timeDiff = new Date(message.created_at).getTime() - new Date(prevMessage.created_at).getTime();
   return timeDiff > 5 * 60 * 1000; // 5 minutes
 }
@@ -214,7 +214,7 @@ watch(() => props.roomId, () => {
   shouldScrollToBottom.value = true;
   lastHeight.value = 0;
   lastScrollTop.value = 0;
-  
+
   // Scroll to bottom on room change
   nextTick(() => {
     scrollToBottom();

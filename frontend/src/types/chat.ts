@@ -67,6 +67,22 @@ export interface ChatNotification {
   is_read: boolean;
 }
 
+export interface TypingIndicator {
+  user_id: string;
+  user_name: string;
+  room_id: string;
+  timestamp: number;
+}
+
+export interface ChatServiceState {
+  chatRooms: Record<string, ChatRoom>;
+  activeRoomId: string | null;
+  activeRoom: ChatRoom | null;
+  activeRoomMessages: ChatMessage[];
+  activeRoomMembers: ChatMember[];
+  typingUsers: Record<string, TypingIndicator[]>; // roomId -> list of typing users
+}
+
 export interface UserPresence {
   user_id: string;
   is_online: boolean;

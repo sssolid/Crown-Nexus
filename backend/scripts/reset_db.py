@@ -5,12 +5,15 @@ This will drop and recreate the crown_nexus database, then create the initial ta
 """
 
 import asyncio
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-# Add the parent directory to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Add the backend directory to sys.path
+script_path = Path(__file__).resolve()
+backend_dir = script_path.parent.parent  # Go up two levels: from scripts/ to backend/
+sys.path.insert(0, str(backend_dir))
 
 import asyncpg
 from sqlalchemy import text
@@ -87,6 +90,15 @@ def run_alembic_migrations():
     """Run Alembic migrations to create tables."""
     print("\nRunning Alembic migrations...")
     try:
+        # Change to the backend directory where alembic.ini is located
+        original_dir = os.getcwd()
+        os.chdir(str(backend_dir))
+
+        # Check if alembic.ini exists
+        if not Path("alembic.ini").exists():
+            print(f"❌ alembic.ini not found in {os.getcwd()}")
+            return False
+
         # Generate migration
         subprocess.run(
             ["alembic", "revision", "--autogenerate", "-m", "Initial migration"],
@@ -101,9 +113,14 @@ def run_alembic_migrations():
         )
         print("✅ Migration applied successfully!")
 
+        # Change back to original directory
+        os.chdir(original_dir)
         return True
     except subprocess.CalledProcessError as e:
         print(f"❌ Migration failed: {e}")
+        # Change back to original directory if error occurs
+        if 'original_dir' in locals():
+            os.chdir(original_dir)
         return False
 
 

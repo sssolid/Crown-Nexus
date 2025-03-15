@@ -130,13 +130,19 @@ class Company(Base):
     It supports:
     - Account number tracking for integration with external systems
     - Different account types (distributor, jobber, etc.)
+    - Address information for headquarters, billing, and shipping
+    - Industry classification
     - Status tracking
 
     Attributes:
         id: Primary key UUID
         name: Company name
+        headquarters_address_id: Reference to headquarters address
+        billing_address_id: Reference to billing address
+        shipping_address_id: Reference to shipping address
         account_number: External account number (e.g., from iSeries)
         account_type: Type of account (distributor, jobber, etc.)
+        industry: Industry sector (Automotive, Electronics, etc.)
         is_active: Whether the company account is active
         created_at: Creation timestamp
         updated_at: Last update timestamp
@@ -149,11 +155,26 @@ class Company(Base):
     name: Mapped[str] = mapped_column(
         String(255), nullable=False
     )
+    # Address relationships
+    headquarters_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+    )
+    billing_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+    )
+    shipping_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+    )
+    # Existing fields
     account_number: Mapped[Optional[str]] = mapped_column(
         String(50), unique=True, index=True, nullable=True
     )
     account_type: Mapped[str] = mapped_column(
         String(50), nullable=False
+    )
+    # New industry field
+    industry: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
@@ -169,6 +190,11 @@ class Company(Base):
         onupdate=func.now(),
         nullable=False
     )
+
+    # Relationships
+    headquarters_address = relationship("Address", foreign_keys=[headquarters_address_id])
+    billing_address = relationship("Address", foreign_keys=[billing_address_id])
+    shipping_address = relationship("Address", foreign_keys=[shipping_address_id])
 
     def __repr__(self) -> str:
         """

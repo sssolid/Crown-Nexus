@@ -25,6 +25,7 @@ from __future__ import annotations
 import os
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
+from pathlib import Path
 
 from pydantic import AnyHttpUrl, DirectoryPath, PostgresDsn, validator
 from pydantic_settings import BaseSettings
@@ -140,7 +141,7 @@ class Settings(BaseSettings):
     # Redis
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
-    
+
     DEFAULT_LOCALE: str = "en"
     AVAILABLE_LOCALES: List[str] = ["en", "es", "fr", "de"]
 

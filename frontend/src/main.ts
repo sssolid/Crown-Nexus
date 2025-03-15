@@ -5,6 +5,8 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import router from '@/router';
 import App from '@/App.vue';
+import { i18n, initializeI18n } from '@/i18n';
+
 
 // Import styles
 import '@mdi/font/css/materialdesignicons.css';
@@ -163,7 +165,11 @@ const app = createApp(App);
 // Use plugins
 app.use(createPinia());
 app.use(router);
+app.use(i18n);
 app.use(vuetify);
 
-// Mount app
-app.mount('#app');
+// Initialize i18n before mounting
+initializeI18n().then(() => {
+  // Mount app
+  app.mount('#app')
+})

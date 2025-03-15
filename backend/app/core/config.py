@@ -70,6 +70,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
 
+    BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
+
     # Environment
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
@@ -139,6 +141,9 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
     
+    DEFAULT_LOCALE: str = "en"
+    AVAILABLE_LOCALES: List[str] = ["en", "es", "fr", "de"]
+
     # Exchange Rate API settings
     EXCHANGE_RATE_API_KEY: str = ""
     EXCHANGE_RATE_UPDATE_FREQUENCY: int = 24  # Update frequency in hours

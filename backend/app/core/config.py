@@ -144,6 +144,13 @@ class Settings(BaseSettings):
     DEFAULT_LOCALE: str = "en"
     AVAILABLE_LOCALES: List[str] = ["en", "es", "fr", "de"]
 
+    # Chat settings
+    CHAT_ENCRYPTION_SALT: str = ""  # Generate a secure random salt for production
+    CHAT_MESSAGE_LIMIT: int = 50
+    CHAT_RATE_LIMIT_PER_MINUTE: int = 60
+    CHAT_WEBSOCKET_KEEPALIVE: int = 30  # In seconds
+    CHAT_MAX_MESSAGE_LENGTH: int = 5000  # Characters
+
     # Exchange Rate API settings
     EXCHANGE_RATE_API_KEY: str = ""
     EXCHANGE_RATE_UPDATE_FREQUENCY: int = 24  # Update frequency in hours

@@ -251,3 +251,81 @@ async def get_optional_user(
         pass
 
     return None
+
+
+async def get_current_user_ws(
+    websocket: WebSocket,
+    db: AsyncSession = Depends(get_db),
+) -> User:
+    """
+    Get the current authenticated user from WebSocket connection.
+    
+    This dependency extracts the JWT token from WebSocket query parameters
+    or cookies, validates it, and returns the corresponding user.
+    
+    Args:
+        websocket: WebSocket connection
+        db: Database session
+        
+    Returns:
+        User: Authenticated user
+        
+    Raises:
+        WebSocketDisconnect: If authentication fails
+    """
+    try:
+        # Try to get token from query parameters
+        token = websocket.query_params.get("token")
+        
+        # If not in query params, try to get from cookies
+        if not token and "token" in websocket.cookies:
+            token = websocket.cookies["token"]
+        
+        # If not in cookies, try authorization header
+        if not token:
+            headers = dict(websocket.headers)
+            auth_header = headers.get("authorization", "")
+            if auth_header.startswith("Bearer "):
+                token = auth_header[7:]
+        
+        if not token:
+            # No token found
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
+        
+        # Validate token
+        credentials_exception = WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
+        
+        try:
+            # Decode and validate the JWT token
+            payload = jwt.decode(
+                token, settings.SECRET_KEY, algorithms=["HS256"]
+            )
+            token_data = TokenPayload(**payload)
+            
+            # Check if token has expired
+            if token_data.exp < int(datetime.utcnow().timestamp()):
+                await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+                raise credentials_exception
+        except (JWTError, ValidationError) as e:
+            logger.error(f"Token validation error: {str(e)}")
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            raise credentials_exception
+        
+        # Get the user from the database
+        stmt = select(User).where(User.id == token_data.sub)
+        result = await db.execute(stmt)
+        user = result.scalar_one_or_none()
+        
+        if user is None or not user.is_active:
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            raise credentials_exception
+        
+        return user
+    
+    except WebSocketDisconnect:
+        raise
+    except Exception as e:
+        logger.exception(f"Error authenticating WebSocket: {e}")
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)

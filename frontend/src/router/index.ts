@@ -204,6 +204,15 @@ const routes: RouteRecordRaw[] = [
       title: 'Saved Lists'
     }
   },
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: () => import('@/views/ChatPage.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Chat'
+    }
+  },
 
   // Product routes
   {

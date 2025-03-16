@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:15:20
+Generated on 2025-03-16 15:21:41
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -2334,7 +2334,6 @@ from app.models.compliance import Prop65Chemical, ProductChemical
 ```
 
 ##### Module: base_class
-*SQLAlchemy base model class.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/base_class.py`
 
 **Imports:**
@@ -2342,27 +2341,28 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/base_class.py`
 from __future__ import annotations
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Type, TypeVar
-from sqlalchemy import Column, DateTime, inspect, func
-from sqlalchemy.orm import DeclarativeBase
+from typing import Any, Dict, List, Optional, Type, TypeVar, cast, ClassVar, get_args, get_origin, get_type_hints
+from sqlalchemy import Column, DateTime, Boolean, String, inspect, func, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy.orm import DeclarativeBase, Session, relationship
 from sqlalchemy.sql.expression import Select
+from app.core.logging import get_logger
 ```
 
 **Global Variables:**
 ```python
+logger = logger = get_logger("app.db.base_class")
 T = T = TypeVar('T', bound='Base')
 ```
 
 **Classes:**
 ```python
+@as_declarative()
 class Base(DeclarativeBase):
-    """Base class for all database models.
+    """Enhanced base class for all database models.
 
-This class provides common functionality for all models, including: - Automatic table name generation - JSON serialization via the dict() method - Common field definitions like id, created_at, updated_at - Helper methods for common query operations
-
-All models should inherit from this class rather than defining their own Base class or using SQLAlchemy's declarative_base directly."""
+This class provides common functionality for all models, including: - Automatic table name generation - Audit fields (created_at, updated_at, created_by_id, updated_by_id) - Soft deletion support - JSON serialization via the to_dict() method - Helper methods for common query operations"""
 ```
 *Methods:*
 ```python
@@ -2370,30 +2370,70 @@ All models should inherit from this class rather than defining their own Base cl
     def __tablename__(cls) -> str:
         """Generate table name automatically from class name.
 
-The generated name is the lowercase version of the class name.
-
-Returns: str: Table name"""
-```
-```python
-    def dict(self) -> Dict[(str, Any)]:
-        """Convert model instance to dictionary.
-
-This method is useful for API responses and JSON serialization. It uses SQLAlchemy's inspection capabilities to convert all column attributes to a dictionary.
-
-Returns: Dict[str, Any]: Dictionary representation of model"""
+Returns: str: Table name as lowercase class name"""
 ```
 ```python
 @classmethod
-    def filter_by_id(cls, id) -> Select:
+    def active_only(cls) -> Select:
+        """Create a query for non-deleted records only.
+
+Returns: Select: SQLAlchemy select statement filtered to non-deleted records"""
+```
+```python
+@classmethod
+    def filter_by_id(cls, id_value) -> Select:
         """Create a query to filter by id.
 
-Args: id: UUID primary key to filter by
+Args: id_value: UUID primary key to filter by
 
 Returns: Select: SQLAlchemy select statement filtered by id"""
 ```
 ```python
-    def update(self, **kwargs) -> None:
-        """Update model attributes from keyword arguments.  Args: **kwargs: Attributes to update"""
+@classmethod
+    def from_dict(cls, data) -> T:
+        """Create a new instance from a dictionary.
+
+Args: data: Dictionary containing model data
+
+Returns: T: New model instance"""
+```
+```python
+@classmethod
+    def get_columns(cls) -> List[str]:
+        """Get a list of column names for this model.  Returns: List[str]: Column names"""
+```
+```python
+@classmethod
+    def get_relationships(cls) -> Dict[(str, Any)]:
+        """Get relationships defined on this model.
+
+Returns: Dict[str, Any]: Dictionary of relationship names and their properties"""
+```
+```python
+    def restore(self, user_id) -> None:
+        """Restore a soft-deleted record.  Args: user_id: ID of the user restoring the record"""
+```
+```python
+    def soft_delete(self, user_id) -> None:
+        """Mark the record as deleted without removing from database.
+
+Args: user_id: ID of the user performing the deletion"""
+```
+```python
+    def to_dict(self, exclude, include_relationships) -> Dict[(str, Any)]:
+        """Convert model instance to dictionary.
+
+This method provides a consistent way to serialize models for API responses. It respects the exclude_from_dict and include_relationships configurations.
+
+Args: exclude: Additional fields to exclude from the result include_relationships: Override __include_relationships__ setting
+
+Returns: Dict[str, Any]: Dictionary representation of model"""
+```
+```python
+    def update_from_dict(self, data, user_id, exclude) -> None:
+        """Update model attributes from dictionary.
+
+Args: data: Dictionary containing values to update user_id: ID of the user performing the update exclude: Fields to exclude from update"""
 ```
 
 ##### Module: session

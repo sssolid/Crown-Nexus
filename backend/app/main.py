@@ -189,7 +189,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add request context middleware (must be first to capture all requests)
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
+
+app.add_middleware(ErrorHandlerMiddleware)
 app.add_middleware(RequestContextMiddleware)
 
 # Set up CORS middleware

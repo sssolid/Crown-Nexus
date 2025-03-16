@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:37:09
+Generated on 2025-03-16 15:39:12
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -99,6 +99,7 @@ backend/
 │   │   ├── media.py
 │   │   ├── model_mapping.py
 │   │   ├── product.py
+│   │   ├── responses.py
 │   │   └── user.py
 │   ├── services/
 │   │   ├── __init__.py
@@ -6306,6 +6307,102 @@ class ProductUpdate(BaseModel):
 Defines fields that can be updated on a product, with all fields being optional to allow partial updates.
 
 Attributes: part_number: Unique identifier for the product (optional) application: Unformatted data for vehicle fitment applications (optional) vintage: Vintage fitments flag (optional) late_model: Late model fitments flag (optional) soft: Soft good flag (optional) universal: Universal fit flag (optional) is_active: Whether the product is active (optional)"""
+```
+
+##### Module: responses
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/responses.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+from datetime import datetime
+from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
+from pydantic import BaseModel, Field
+from pydantic.generics import GenericModel
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar("T")
+```
+
+**Classes:**
+```python
+class MetaData(BaseModel):
+    """Response metadata.
+
+Attributes: pagination: Pagination metadata request_id: Request ID for tracking extra: Additional metadata"""
+```
+
+```python
+class PaginatedResponse(Response, Generic[T]):
+    """Paginated API response.
+
+This is a specialized response model for paginated results.
+
+Attributes: data: List of items meta: Response metadata with pagination"""
+```
+*Methods:*
+```python
+@classmethod
+    def from_pagination_result(cls, items, pagination, message, code, meta, request_id) -> 'PaginatedResponse[T]':
+        """Create a paginated response from pagination result.
+
+Args: items: List of items pagination: Pagination metadata message: Success message code: HTTP status code meta: Additional metadata request_id: Request ID for tracking
+
+Returns: PaginatedResponse[T]: Paginated response"""
+```
+
+```python
+class PaginationMeta(BaseModel):
+    """Pagination metadata.
+
+Attributes: page: Current page number page_size: Number of items per page total_items: Total number of items total_pages: Total number of pages has_next: Whether there are more pages has_prev: Whether there are previous pages"""
+```
+*Methods:*
+```python
+@classmethod
+    def from_pagination_result(cls, result) -> 'PaginationMeta':
+        """Create pagination metadata from pagination result.
+
+Args: result: Pagination result from service
+
+Returns: PaginationMeta: Pagination metadata"""
+```
+
+```python
+class Response(GenericModel, Generic[T]):
+    """Standard API response envelope.
+
+All API responses are wrapped in this model to ensure a consistent format.
+
+Attributes: status: Response status information data: Response data meta: Response metadata"""
+```
+*Methods:*
+```python
+@classmethod
+    def error(cls, message, code, data, meta, request_id) -> 'Response[T]':
+        """Create an error response.
+
+Args: message: Error message code: HTTP status code data: Error data meta: Additional metadata request_id: Request ID for tracking
+
+Returns: Response[T]: Error response"""
+```
+```python
+@classmethod
+    def success(cls, data, message, code, meta, pagination, request_id) -> 'Response[T]':
+        """Create a success response.
+
+Args: data: Response data message: Success message code: HTTP status code meta: Additional metadata pagination: Pagination metadata request_id: Request ID for tracking
+
+Returns: Response[T]: Success response"""
+```
+
+```python
+class ResponseStatus(BaseModel):
+    """Response status information.
+
+Attributes: success: Whether the request was successful code: HTTP status code message: Status message timestamp: Response timestamp"""
 ```
 
 ##### Module: user

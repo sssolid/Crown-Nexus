@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 23:49:30
+Generated on 2025-03-16 23:50:09
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -8778,15 +8778,16 @@ Returns: str: JWT token for normal user"""
 ```
 
 #### Module: utils
-*Testing utilities and helpers.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/utils.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 import json
+import random
+import string
 import uuid
-from typing import Any, Dict, List, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 from pydantic import BaseModel
@@ -8816,7 +8817,7 @@ def create_random_email() -> str:
 def create_random_string(length) -> str:
     """Create a random string for test data.
 
-Args: length: Length of the string to generate
+Args: length: Length of the string to generate, defaults to 10
 
 Returns: str: Random string"""
 ```
@@ -8836,7 +8837,7 @@ Raises: ValueError: If invalid HTTP method is provided"""
 def validate_model_response(response_data, model_type, exclude_fields) -> M:
     """Validate that an API response matches a model schema.
 
-Args: response_data: API response data model_type: Pydantic model class to validate against exclude_fields: Fields to exclude from validation
+Args: response_data: API response data model_type: Pydantic model class to validate against exclude_fields: Fields to exclude from validation, defaults to None
 
 Returns: M: Validated model instance
 

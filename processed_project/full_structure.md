@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 23:57:33
+Generated on 2025-03-16 23:58:19
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -112,6 +112,7 @@ backend/
 │   │   ├── media_service.py
 │   │   ├── pagination.py
 │   │   ├── search.py
+│   │   ├── test_service.py
 │   │   └── vehicle.py
 │   ├── tasks/
 │   │   ├── __init__.py
@@ -7764,6 +7765,67 @@ Args: search_term: Text to search for attributes: Filter by product attributes i
 Returns: Dict[str, Any]: Search results with pagination"""
 ```
 
+##### Module: test_service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/test_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, cast
+from app.core.logging import get_logger
+from app.services.base import BaseService
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.test_service")
+T = T = TypeVar('T')
+```
+
+**Classes:**
+```python
+class TestService(Generic[T]):
+    """Service for test-related functionality.
+
+This service provides methods for setting up and tearing down test data, creating test fixtures, and validating test results."""
+```
+*Methods:*
+```python
+    def __init__(self) -> None:
+        """Initialize the test service."""
+```
+```python
+    async def create_test_token(self, user_id, role, expires_in) -> str:
+        """Create a test JWT token.
+
+Args: user_id: User ID to include in the token role: User role to include in the token expires_in: Token expiration time in seconds
+
+Returns: str: JWT token"""
+```
+```python
+    async def setup_test_data(self, model_class, count) -> List[T]:
+        """Set up test data for a model.
+
+Args: model_class: Model class to create instances of count: Number of instances to create
+
+Returns: List[T]: List of created model instances"""
+```
+```python
+    async def teardown_test_data(self, model_class, instances) -> None:
+        """Clean up test data.
+
+Args: model_class: Model class of the instances instances: List of model instances to clean up"""
+```
+```python
+    async def validate_test_result(self, actual, expected, ignore_fields) -> bool:
+        """Validate that a test result matches the expected value.
+
+Args: actual: Actual result from the test expected: Expected result ignore_fields: Fields to ignore during comparison
+
+Returns: bool: True if the actual result matches the expected result"""
+```
+
 ##### Module: vehicle
 *Vehicle data lookup service.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/vehicle.py`
@@ -9060,7 +9122,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 23:57:33
+Generated on 2025-03-16 23:58:19
 
 ## Project Overview
 - Project Name: frontend

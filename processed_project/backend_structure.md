@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 19:07:48
+Generated on 2025-03-16 19:13:04
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -595,7 +595,7 @@ Returns: dict: Token validation status"""
 ```
 
 ####### Module: chat
-*Chat system REST API endpoints.*
+*Chat API endpoints.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/chat.py`
 
 **Imports:**
@@ -605,13 +605,12 @@ import logging
 from typing import Any, Dict, List, Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, validator
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_admin_user, get_current_active_user, get_db
-from app.chat.schemas import ChatRoomSchema, ChatMessageSchema, ChatMemberSchema
-from app.chat.service import ChatService
-from app.db.session import get_db_context
-from app.models.chat import ChatRoom, ChatMember, ChatMemberRole, ChatRoomType
+from app.core.exceptions import BusinessLogicException, ResourceNotFoundException, ValidationException
+from app.db.session import AsyncSession
+from app.models.chat import ChatMember, ChatMemberRole, ChatRoom, ChatRoomType
 from app.models.user import User
+from app.services import get_chat_service
 ```
 
 **Global Variables:**
@@ -624,21 +623,27 @@ logger = logger = logging.getLogger(__name__)
 ```python
 @router.post('/rooms/{room_id}/members')
 async def add_room_member(room_id, request, db, current_user) -> Dict[(str, Any)]:
-    """Add a member to a room.
+    """Add a member to a chat room.
 
-Args: room_id: Room ID request: Member addition request db: Database session current_user: Current authenticated user
+Args: room_id: ID of the chat room request: Member addition request data db: Database session current_user: Authenticated user making the request
 
-Returns: dict: Success response"""
+Returns: Dictionary containing success status and message
+
+Raises: HTTPException: If validation fails, the room is not found, or the user lacks permissions"""
 ```
 
 ```python
 @router.post('/direct-chats')
 async def create_direct_chat(request, db, current_user) -> Dict[(str, Any)]:
-    """Create or get a direct chat with another user.
+    """Create or get a direct chat between two users.
 
-Args: request: Direct chat creation request db: Database session current_user: Current authenticated user
+If a direct chat already exists between the users, it returns the existing chat. Otherwise, it creates a new direct chat.
 
-Returns: dict: Direct chat information"""
+Args: request: Direct chat creation request data db: Database session current_user: Authenticated user making the request
+
+Returns: Dictionary containing the direct chat room information
+
+Raises: HTTPException: If the target user doesn't exist or an error occurs"""
 ```
 
 ```python
@@ -646,98 +651,130 @@ Returns: dict: Direct chat information"""
 async def create_room(request, db, current_user) -> Dict[(str, Any)]:
     """Create a new chat room.
 
-Args: request: Room creation request db: Database session current_user: Current authenticated user
+Args: request: Room creation request data db: Database session current_user: Authenticated user making the request
 
-Returns: dict: Created room information"""
+Returns: Dictionary containing the created room information
+
+Raises: HTTPException: If validation fails or an error occurs during room creation"""
 ```
 
 ```python
 @router.get('/rooms/{room_id}')
 async def get_room(room_id, db, current_user) -> Dict[(str, Any)]:
-    """Get information about a specific room.
+    """Get a specific chat room by ID.
 
-Args: room_id: Room ID db: Database session current_user: Current authenticated user
+Args: room_id: ID of the chat room db: Database session current_user: Authenticated user making the request
 
-Returns: dict: Room information"""
+Returns: Dictionary containing the room information
+
+Raises: HTTPException: If the room is not found or the user doesn't have access"""
 ```
 
 ```python
 @router.get('/rooms/{room_id}/messages')
 async def get_room_messages(room_id, before_id, limit, db, current_user) -> Dict[(str, Any)]:
-    """Get messages from a room.
+    """Get messages for a chat room.
 
-Args: room_id: Room ID before_id: Get messages before this ID (for pagination) limit: Maximum number of messages to return db: Database session current_user: Current authenticated user
+Args: room_id: ID of the chat room before_id: Optional message ID to get messages before (for pagination) limit: Maximum number of messages to return db: Database session current_user: Authenticated user making the request
 
-Returns: dict: List of messages"""
+Returns: Dictionary containing the list of messages
+
+Raises: HTTPException: If the room is not found or the user doesn't have access"""
 ```
 
 ```python
 @router.get('/rooms')
 async def get_rooms(db, current_user) -> Dict[(str, Any)]:
-    """Get all rooms for the current user.
+    """Get all chat rooms for the current user.
 
-Args: db: Database session current_user: Current authenticated user
+Args: db: Database session current_user: Authenticated user making the request
 
-Returns: dict: List of rooms"""
+Returns: Dictionary containing the list of rooms
+
+Raises: HTTPException: If an error occurs during fetching rooms"""
 ```
 
 ```python
 @router.delete('/rooms/{room_id}/members/{user_id}')
 async def remove_room_member(room_id, user_id, db, current_user) -> Dict[(str, Any)]:
-    """Remove a member from a room.
+    """Remove a member from a chat room.
 
-Args: room_id: Room ID user_id: User ID db: Database session current_user: Current authenticated user
+Users can remove themselves (leave the room) or admins can remove any member. Owners can only be removed by other owners.
 
-Returns: dict: Success response"""
+Args: room_id: ID of the chat room user_id: ID of the user to remove db: Database session current_user: Authenticated user making the request
+
+Returns: Dictionary containing success status and message
+
+Raises: HTTPException: If the room/member is not found or the user lacks permissions"""
 ```
 
 ```python
 @router.put('/rooms/{room_id}/members/{user_id}')
 async def update_room_member(room_id, user_id, request, db, current_user) -> Dict[(str, Any)]:
-    """Update a member's role in a room.
+    """Update a member's role in a chat room.
 
-Args: room_id: Room ID user_id: User ID request: Member update request db: Database session current_user: Current authenticated user
+Args: room_id: ID of the chat room user_id: ID of the user to update request: Role update request data db: Database session current_user: Authenticated user making the request
 
-Returns: dict: Success response"""
+Returns: Dictionary containing success status and message
+
+Raises: HTTPException: If validation fails, the room/member is not found, or the user lacks permissions"""
 ```
 
 **Classes:**
 ```python
 class AddMemberRequest(BaseModel):
-    """Request model for adding a member to a room."""
+    """Request model for adding a member to a chat room."""
 ```
 *Methods:*
 ```python
 @validator('role')
     def validate_role(cls, v) -> str:
-        """Validate member role."""
+        """Validate that the member role is valid.
+
+Args: v: Role value to validate
+
+Returns: The validated role
+
+Raises: ValueError: If the role is not valid"""
 ```
 
 ```python
 class CreateDirectChatRequest(BaseModel):
-    """Request model for creating a direct chat."""
+    """Request model for creating a direct chat between two users."""
 ```
 
 ```python
 class CreateRoomRequest(BaseModel):
-    """Request model for creating a room."""
+    """Request model for creating a chat room."""
 ```
 *Methods:*
 ```python
 @validator('type')
     def validate_type(cls, v) -> str:
-        """Validate room type."""
+        """Validate that the room type is valid.
+
+Args: v: Room type value to validate
+
+Returns: The validated room type
+
+Raises: ValueError: If the room type is not valid"""
 ```
 
 ```python
 class UpdateMemberRequest(BaseModel):
-    """Request model for updating a member in a room."""
+    """Request model for updating a member's role in a chat room."""
 ```
 *Methods:*
 ```python
 @validator('role')
     def validate_role(cls, v) -> str:
-        """Validate member role."""
+        """Validate that the member role is valid.
+
+Args: v: Role value to validate
+
+Returns: The validated role
+
+Raises: ValueError: If the role is not valid"""
 ```
 
 ####### Module: currency

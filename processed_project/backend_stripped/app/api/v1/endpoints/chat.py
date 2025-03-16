@@ -3,13 +3,12 @@ import logging
 from typing import Any, Dict, List, Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, validator
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_admin_user, get_current_active_user, get_db
-from app.chat.schemas import ChatRoomSchema, ChatMessageSchema, ChatMemberSchema
-from app.chat.service import ChatService
-from app.db.session import get_db_context
-from app.models.chat import ChatRoom, ChatMember, ChatMemberRole, ChatRoomType
+from app.core.exceptions import BusinessLogicException, ResourceNotFoundException, ValidationException
+from app.db.session import AsyncSession
+from app.models.chat import ChatMember, ChatMemberRole, ChatRoom, ChatRoomType
 from app.models.user import User
+from app.services import get_chat_service
 router = APIRouter()
 logger = logging.getLogger(__name__)
 class CreateRoomRequest(BaseModel):
@@ -44,28 +43,28 @@ class CreateDirectChatRequest(BaseModel):
     user_id: str
 @router.post('/rooms', status_code=status.HTTP_201_CREATED)
 async def create_room(request: CreateRoomRequest, db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     try:
         room = await chat_service.create_room(name=request.name, room_type=request.type, creator_id=str(current_user.id), company_id=request.company_id, members=request.members)
         room_info = await chat_service.get_room_info(str(room.id))
         return {'success': True, 'room': room_info}
-    except ValueError as e:
+    except ValidationException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    except Exception as e:
+    except BusinessLogicException as e:
         logger.exception(f'Error creating room: {e}')
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error creating room')
 @router.get('/rooms')
 async def get_rooms(db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     try:
         rooms = await chat_service.get_user_rooms(str(current_user.id))
         return {'success': True, 'rooms': rooms}
-    except Exception as e:
+    except BusinessLogicException as e:
         logger.exception(f'Error getting rooms: {e}')
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error getting rooms')
 @router.get('/rooms/{room_id}')
 async def get_room(room_id: str, db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     has_access = await chat_service.check_room_access(str(current_user.id), room_id)
     if not has_access:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied to room')
@@ -81,7 +80,7 @@ async def get_room(room_id: str, db: AsyncSession=Depends(get_db), current_user:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error getting room')
 @router.post('/rooms/{room_id}/members')
 async def add_room_member(room_id: str, request: AddMemberRequest, db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     has_access = await chat_service.check_room_access(str(current_user.id), room_id)
     if not has_access:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied to room')
@@ -101,14 +100,12 @@ async def add_room_member(room_id: str, request: AddMemberRequest, db: AsyncSess
         if not success:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Failed to add member')
         return {'success': True, 'message': 'Member added successfully'}
-    except HTTPException:
-        raise
     except Exception as e:
         logger.exception(f'Error adding member: {e}')
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error adding member')
 @router.put('/rooms/{room_id}/members/{user_id}')
 async def update_room_member(room_id: str, user_id: str, request: UpdateMemberRequest, db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     room = await chat_service.get_room_with_members(room_id)
     if not room:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Room not found')
@@ -129,21 +126,19 @@ async def update_room_member(room_id: str, user_id: str, request: UpdateMemberRe
             break
     if not target_member:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Member not found')
-    if request.role == ChatMemberRole.OWNER and current_user_role != ChatMemberRole.OWNER:
+    if request.role == ChatMemberRole.OWNER.value and current_user_role != ChatMemberRole.OWNER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Only owners can create new owners')
     try:
         success = await chat_service.update_member_role(room_id=room_id, user_id=user_id, role=ChatMemberRole(request.role))
         if not success:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Failed to update member role')
         return {'success': True, 'message': 'Member role updated successfully'}
-    except HTTPException:
-        raise
     except Exception as e:
         logger.exception(f'Error updating member role: {e}')
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error updating member role')
 @router.delete('/rooms/{room_id}/members/{user_id}')
 async def remove_room_member(room_id: str, user_id: str, db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     room = await chat_service.get_room_with_members(room_id)
     if not room:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Room not found')
@@ -153,8 +148,6 @@ async def remove_room_member(room_id: str, user_id: str, db: AsyncSession=Depend
             if not success:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Failed to leave room')
             return {'success': True, 'message': 'Left room successfully'}
-        except HTTPException:
-            raise
         except Exception as e:
             logger.exception(f'Error leaving room: {e}')
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error leaving room')
@@ -186,14 +179,12 @@ async def remove_room_member(room_id: str, user_id: str, db: AsyncSession=Depend
         if not success:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Failed to remove member')
         return {'success': True, 'message': 'Member removed successfully'}
-    except HTTPException:
-        raise
     except Exception as e:
         logger.exception(f'Error removing member: {e}')
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error removing member')
 @router.get('/rooms/{room_id}/messages')
 async def get_room_messages(room_id: str, before_id: Optional[str]=None, limit: int=Query(50, ge=1, le=100), db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     has_access = await chat_service.check_room_access(str(current_user.id), room_id)
     if not has_access:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied to room')
@@ -205,7 +196,7 @@ async def get_room_messages(room_id: str, before_id: Optional[str]=None, limit: 
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error getting messages')
 @router.post('/direct-chats')
 async def create_direct_chat(request: CreateDirectChatRequest, db: AsyncSession=Depends(get_db), current_user: User=Depends(get_current_active_user)) -> Dict[str, Any]:
-    chat_service = ChatService(db)
+    chat_service = get_chat_service(db)
     from sqlalchemy import select
     from app.models.user import User
     query = select(User).where(User.id == request.user_id)

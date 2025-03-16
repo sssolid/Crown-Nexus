@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 23:56:36
+Generated on 2025-03-16 23:57:33
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -171,6 +171,7 @@ backend/
 ├── alembic.ini
 ├── backend.iml
 ├── pyproject.toml
+├── pytest.ini
 ├── requirements-dev.in
 ├── requirements-dev.txt
 ├── requirements.in
@@ -9059,7 +9060,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 23:56:36
+Generated on 2025-03-16 23:57:33
 
 ## Project Overview
 - Project Name: frontend

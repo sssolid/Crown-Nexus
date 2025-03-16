@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 14:07:01
+Generated on 2025-03-16 14:15:16
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -72,6 +72,8 @@ backend/
 │   │   └── validator.py
 │   ├── i18n/
 │   │   └── translations.py
+│   ├── middleware/
+│   │   └── error_handler.py
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── associations.py

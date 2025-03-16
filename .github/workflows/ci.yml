@@ -1,10 +1,12 @@
 name: Crown Nexus CI
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
+  workflow_dispatch:
+
+#  push:
+#    branches: [ main, develop ]
+#  pull_request:
+#    types: [opened, reopened, synchronize, edited]
 
 permissions:
   contents: write

@@ -29,7 +29,7 @@ jobs:
           cat processed_project/backend_structure.md processed_project/frontend_structure.md > processed_project/full_structure.md
 
       - name: Upload Processed Structure as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: processed-structure
           path: processed_project/

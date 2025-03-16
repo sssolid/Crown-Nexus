@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 13:50:48
+Generated on 2025-03-16 14:07:01
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -51,6 +51,7 @@ backend/
 │   │   ├── celery_app.py
 │   │   ├── celeryconfig.py
 │   │   ├── config.py
+│   │   ├── exceptions.py
 │   │   └── logging.py
 │   ├── db/
 │   │   ├── __init__.py
@@ -1981,6 +1982,159 @@ Returns: Base URL for media files (CDN URL in production, local path otherwise)"
 @property
     def security(self) -> SecuritySettings:
         """Get security settings."""
+```
+
+##### Module: exceptions
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/exceptions.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import traceback
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
+from fastapi import HTTPException, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+```
+
+**Functions:**
+```python
+async def app_exception_handler(request, exc) -> JSONResponse:
+    """Handle AppException instances.
+
+Args: request: FastAPI request exc: AppException instance
+
+Returns: JSON response with error details"""
+```
+
+```python
+async def generic_exception_handler(request, exc) -> JSONResponse:
+    """Handle unhandled exceptions.
+
+Args: request: FastAPI request exc: Unhandled exception
+
+Returns: JSON response with error details"""
+```
+
+```python
+async def http_exception_handler(request, exc) -> JSONResponse:
+    """Handle FastAPI's HTTPException.
+
+Args: request: FastAPI request exc: HTTPException instance
+
+Returns: JSON response with error details"""
+```
+
+```python
+async def validation_exception_handler(request, exc) -> JSONResponse:
+    """Handle FastAPI's RequestValidationError.
+
+Args: request: FastAPI request exc: RequestValidationError instance
+
+Returns: JSON response with validation error details"""
+```
+
+**Classes:**
+```python
+class AppException(Exception):
+    """Base exception for all application-specific exceptions."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code) -> None:
+        """Initialize the exception with customizable properties.
+
+Args: message: Human-readable error message code: Error code details: Detailed error information status_code: HTTP status code"""
+```
+```python
+    def to_response(self, request_id) -> ErrorResponse:
+        """Convert exception to a standardized error response.
+
+Args: request_id: Request ID for tracking
+
+Returns: Standardized error response"""
+```
+
+```python
+class AuthenticationException(AppException):
+    """Exception raised for authentication errors."""
+```
+
+```python
+class BadRequestException(AppException):
+    """Exception raised for bad requests."""
+```
+
+```python
+class BusinessLogicException(AppException):
+    """Exception raised for business logic errors."""
+```
+
+```python
+class DatabaseException(AppException):
+    """Exception raised for database errors."""
+```
+
+```python
+class ErrorCode(str, Enum):
+    """Error codes for standardized error responses."""
+```
+*Class attributes:*
+```python
+UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+VALIDATION_ERROR = 'VALIDATION_ERROR'
+PERMISSION_DENIED = 'PERMISSION_DENIED'
+RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND'
+RESOURCE_ALREADY_EXISTS = 'RESOURCE_ALREADY_EXISTS'
+BAD_REQUEST = 'BAD_REQUEST'
+AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED'
+TOKEN_EXPIRED = 'TOKEN_EXPIRED'
+INVALID_TOKEN = 'INVALID_TOKEN'
+USER_NOT_ACTIVE = 'USER_NOT_ACTIVE'
+DATABASE_ERROR = 'DATABASE_ERROR'
+TRANSACTION_FAILED = 'TRANSACTION_FAILED'
+DATA_INTEGRITY_ERROR = 'DATA_INTEGRITY_ERROR'
+EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR'
+RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'
+SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE'
+BUSINESS_LOGIC_ERROR = 'BUSINESS_LOGIC_ERROR'
+```
+
+```python
+class ErrorDetail(BaseModel):
+    """Detailed error information for API responses."""
+```
+
+```python
+class ErrorResponse(BaseModel):
+    """Standardized error response model."""
+```
+
+```python
+class ExternalServiceException(AppException):
+    """Exception raised for external service errors."""
+```
+
+```python
+class PermissionDeniedException(AppException):
+    """Exception raised for permission errors."""
+```
+
+```python
+class ResourceAlreadyExistsException(AppException):
+    """Exception raised when a resource already exists."""
+```
+
+```python
+class ResourceNotFoundException(AppException):
+    """Exception raised when a resource is not found."""
+```
+
+```python
+class ValidationException(AppException):
+    """Exception raised for validation errors."""
 ```
 
 ##### Module: logging
@@ -7157,7 +7311,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 13:50:48
+Generated on 2025-03-16 14:07:01
 
 ## Project Overview
 - Project Name: frontend

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 19:00:23
+Generated on 2025-03-16 19:07:48
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -6737,59 +6737,81 @@ Raises: ValueError: If password doesn't meet strength requirements"""
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services`
 
 **__init__.py:**
+*Service layer for the application.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/__init__.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 import logging
-from typing import Any, Dict, Type
+from typing import Any, Dict, Optional, Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import get_logger
 from app.services.user_service import UserService
 from app.services.product_service import ProductService
+from app.services.chat import ChatService
 ```
 
 **Global Variables:**
 ```python
-logger = logger = get_logger("app.services")
+logger = logger = get_logger('app.services')
 service_registry = service_registry = ServiceRegistry()
+```
+
+**Functions:**
+```python
+def get_chat_service(db) -> ChatService:
+    """Get a ChatService instance.
+
+This factory function provides a clean way to get a ChatService instance without directly depending on the ChatService implementation.
+
+Args: db: Database session to pass to the ChatService constructor
+
+Returns: ChatService: A new ChatService instance
+
+Raises: ValueError: If the ChatService is not registered in the ServiceRegistry"""
 ```
 
 **Classes:**
 ```python
 class ServiceRegistry(object):
-    """Registry for service instances.
+    """Registry for application services.
 
-This class provides a central registry for service instances, allowing for dependency injection and simplified access to services."""
+This class implements the Singleton pattern to provide a central registry for all services in the application. Services can be registered and retrieved by name."""
 ```
 *Methods:*
 ```python
     def __new__(cls, *args, **kwargs):
-        """Ensure singleton instance."""
+        """Create a singleton instance of the ServiceRegistry.
+
+Returns: ServiceRegistry: The singleton instance"""
 ```
 ```python
 @classmethod
     def get(cls, name, db) -> Any:
-        """Get a service instance.
+        """Get a service instance by name.
 
-Args: name: Service name db: Database session
+Args: name: Name of the service to retrieve db: Database session to pass to the service constructor
 
-Returns: Any: Service instance
+Returns: An instance of the requested service
 
-Raises: ValueError: If service not found"""
+Raises: ValueError: If the service name is not found in the registry"""
 ```
 ```python
 @classmethod
     def get_all(cls, db) -> Dict[(str, Any)]:
-        """Get all service instances.  Args: db: Database session  Returns: Dict[str, Any]: Service instances"""
+        """Get instances of all registered services.
+
+Args: db: Database session to pass to the service constructors
+
+Returns: Dictionary mapping service names to service instances"""
 ```
 ```python
 @classmethod
     def register(cls, service_class, name) -> None:
         """Register a service class.
 
-Args: service_class: Service class to register name: Optional name for the service (defaults to class name)"""
+Args: service_class: The service class to register name: Optional name for the service. If not provided, the class name is used."""
 ```
 
 ##### Module: base
@@ -8835,7 +8857,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 19:00:23
+Generated on 2025-03-16 19:07:49
 
 ## Project Overview
 - Project Name: frontend

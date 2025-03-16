@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import Any, Dict, Type
+from typing import Any, Dict, Optional, Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import get_logger
 logger = get_logger('app.services')
@@ -30,5 +30,9 @@ class ServiceRegistry:
 service_registry = ServiceRegistry()
 from app.services.user_service import UserService
 from app.services.product_service import ProductService
+from app.services.chat import ChatService
 service_registry.register(UserService)
 service_registry.register(ProductService)
+service_registry.register(ChatService)
+def get_chat_service(db: AsyncSession) -> ChatService:
+    return service_registry.get('ChatService', db)

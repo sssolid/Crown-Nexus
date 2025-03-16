@@ -35,6 +35,8 @@ jobs:
           path: processed_project/
 
       - name: Commit and Push Processed Files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"

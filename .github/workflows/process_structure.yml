@@ -18,10 +18,6 @@ jobs:
         with:
           python-version: '3.12'  # Adjust based on your requirement
 
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt  # Ensure dependencies are listed in requirements.txt
-
       - name: Process Everything
         run: |
           rm -rf processed_project

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:24:16
+Generated on 2025-03-16 15:26:27
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -52,7 +52,8 @@ backend/
 │   │   ├── celeryconfig.py
 │   │   ├── config.py
 │   │   ├── exceptions.py
-│   │   └── logging.py
+│   │   ├── logging.py
+│   │   └── security.py
 │   ├── db/
 │   │   ├── __init__.py
 │   │   ├── base.py
@@ -2312,6 +2313,151 @@ This filter adds the current user ID to log records if available."""
 Args: record: Log record to modify
 
 Returns: True to include the record"""
+```
+
+##### Module: security
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/security.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import secrets
+import uuid
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Union
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from pydantic import BaseModel, EmailStr, Field, ValidationError
+from app.core.config import settings
+from app.core.exceptions import AuthenticationException, ErrorCode
+from app.core.logging import get_logger
+from app.utils.redis_manager import delete_key, get_key, set_key
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.core.security")
+pwd_context = pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/auth/login"
+)
+```
+
+**Functions:**
+```python
+async def add_token_to_blacklist(token_jti, expires_at) -> None:
+    """Add a token to the blacklist in Redis.
+
+Args: token_jti: JWT ID to blacklist expires_at: When the token expires"""
+```
+
+```python
+def create_token(subject, token_type, expires_delta, role, user_data) -> str:
+    """Create a JWT token.
+
+Args: subject: Subject (user ID) token_type: Token type (access or refresh) expires_delta: Token expiration time role: User role user_data: Additional user data to include in token
+
+Returns: str: JWT token"""
+```
+
+```python
+def create_token_pair(user_id, role, user_data) -> TokenPair:
+    """Create an access and refresh token pair.
+
+Args: user_id: User ID role: User role user_data: Additional user data to include in tokens
+
+Returns: TokenPair: Access and refresh token pair"""
+```
+
+```python
+async def decode_token(token) -> TokenData:
+    """Decode and validate a JWT token.
+
+Args: token: JWT token
+
+Returns: TokenData: Decoded token data
+
+Raises: AuthenticationException: If token is invalid or expired"""
+```
+
+```python
+def generate_random_token(length) -> str:
+    """Generate a secure random token.
+
+Args: length: Length of the token in bytes
+
+Returns: str: Secure random token"""
+```
+
+```python
+def generate_token_jti() -> str:
+    """Generate a unique JWT ID for token tracking.  Returns: str: Unique token identifier"""
+```
+
+```python
+def get_password_hash(password) -> str:
+    """Hash a password using bcrypt.  Args: password: Plain text password  Returns: str: Hashed password"""
+```
+
+```python
+async def is_token_blacklisted(token_jti) -> bool:
+    """Check if a token is blacklisted.
+
+Args: token_jti: JWT ID to check
+
+Returns: bool: True if token is blacklisted"""
+```
+
+```python
+async def refresh_tokens(refresh_token) -> TokenPair:
+    """Generate new token pair using a refresh token.
+
+Args: refresh_token: JWT refresh token
+
+Returns: TokenPair: New access and refresh token pair
+
+Raises: AuthenticationException: If refresh token is invalid"""
+```
+
+```python
+async def revoke_token(token) -> None:
+    """Revoke a token by adding it to the blacklist.
+
+Args: token: JWT token to revoke
+
+Raises: AuthenticationException: If token is invalid"""
+```
+
+```python
+def verify_password(plain_password, hashed_password) -> bool:
+    """Verify a password against a hash.
+
+Args: plain_password: Plain text password hashed_password: Hashed password
+
+Returns: bool: True if password matches"""
+```
+
+**Classes:**
+```python
+class TokenData(BaseModel):
+    """Token payload data."""
+```
+
+```python
+class TokenPair(BaseModel):
+    """Access and refresh token pair."""
+```
+
+```python
+class TokenType(str):
+    """Token type constants."""
+```
+*Class attributes:*
+```python
+ACCESS = 'access'
+REFRESH = 'refresh'
 ```
 
 #### Package: db
@@ -7789,7 +7935,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 15:24:16
+Generated on 2025-03-16 15:26:27
 
 ## Project Overview
 - Project Name: frontend

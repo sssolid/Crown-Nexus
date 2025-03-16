@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 19:18:01
+Generated on 2025-03-16 23:49:30
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -8566,14 +8566,16 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests`
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/__init__.py`
 
 #### Module: conftest
-*Test configuration and fixtures for pytest.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/conftest.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 import asyncio
-from typing import Any, AsyncGenerator, Callable, Dict, Generator, List
+import os
+import uuid
+from datetime import datetime
+from typing import Any, AsyncGenerator, Callable, Dict, Generator, List, Optional, Type, TypeVar
 import pytest
 import pytest_asyncio
 from fastapi import FastAPI
@@ -8582,12 +8584,13 @@ from httpx import AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from app.core.config import settings
+from app.core.config import Environment, settings
+from app.core.security import create_access_token
 from app.db.base import Base
 from app.main import app
-from app.models.user import User, UserRole, get_password_hash
+from app.models.user import Company, User, UserRole, get_password_hash
+from app.models.product import Brand, Fitment, Product
 from app.api.deps import get_db
-from app.models.product import Fitment, Product
 ```
 
 **Global Variables:**
@@ -8612,6 +8615,18 @@ TestingSessionLocal = TestingSessionLocal = sessionmaker(
 **Functions:**
 ```python
 @pytest_asyncio.fixture(scope='function')
+async def admin_headers(admin_token) -> Dict[(str, str)]:
+    """Create headers with admin authentication token.
+
+This fixture creates headers with the admin JWT token for authenticated requests.
+
+Args: admin_token: Admin JWT token
+
+Returns: Dict[str, str]: Headers with admin authentication token"""
+```
+
+```python
+@pytest_asyncio.fixture(scope='function')
 async def admin_token(admin_user) -> str:
     """Create an authentication token for admin user.
 
@@ -8632,6 +8647,18 @@ This fixture provides an admin user for testing endpoints that require admin pri
 Args: db: Database session fixture
 
 Returns: User: Admin user model instance"""
+```
+
+```python
+@pytest_asyncio.fixture(scope='function')
+async def auth_headers(user_token) -> Dict[(str, str)]:
+    """Create headers with authentication token.
+
+This fixture creates headers with the JWT token for authenticated requests.
+
+Args: user_token: User JWT token
+
+Returns: Dict[str, str]: Headers with authentication token"""
 ```
 
 ```python
@@ -8692,6 +8719,30 @@ Yields: None"""
 
 ```python
 @pytest_asyncio.fixture(scope='function')
+async def test_brand(db) -> Brand:
+    """Create a test brand.
+
+This fixture provides a brand for testing brand-related functionality.
+
+Args: db: Database session fixture
+
+Returns: Brand: Brand model instance"""
+```
+
+```python
+@pytest_asyncio.fixture(scope='function')
+async def test_company(db) -> Company:
+    """Create a test company.
+
+This fixture provides a company for testing company-related functionality.
+
+Args: db: Database session fixture
+
+Returns: Company: Company model instance"""
+```
+
+```python
+@pytest_asyncio.fixture(scope='function')
 async def test_fitment(db) -> Fitment:
     """Create a test fitment.
 
@@ -8704,12 +8755,12 @@ Returns: Fitment: Fitment model instance"""
 
 ```python
 @pytest_asyncio.fixture(scope='function')
-async def test_product(db) -> Product:
+async def test_product(db, test_brand) -> Product:
     """Create a test product.
 
 This fixture provides a product for testing product-related functionality.
 
-Args: db: Database session fixture
+Args: db: Database session fixture test_brand: Brand fixture
 
 Returns: Product: Product model instance"""
 ```
@@ -8998,7 +9049,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 19:18:01
+Generated on 2025-03-16 23:49:30
 
 ## Project Overview
 - Project Name: frontend

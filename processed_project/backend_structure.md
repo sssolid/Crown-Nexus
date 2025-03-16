@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 23:55:44
+Generated on 2025-03-16 23:56:36
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -157,7 +157,8 @@ backend/
 │   │   └── __init__.py
 │   ├── integration/
 │   │   └── test_api/
-│   │       └── test_auth.py
+│   │       ├── test_auth.py
+│   │       └── test_products.py
 │   ├── unit/
 │   │   ├── test_config.py
 │   │   └── test_db.py

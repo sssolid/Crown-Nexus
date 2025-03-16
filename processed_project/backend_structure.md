@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:43:11
+Generated on 2025-03-16 15:45:31
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -100,6 +100,7 @@ backend/
 │   │   ├── currency.py
 │   │   ├── media.py
 │   │   ├── model_mapping.py
+│   │   ├── pagination.py
 │   │   ├── product.py
 │   │   ├── responses.py
 │   │   └── user.py
@@ -5854,6 +5855,116 @@ class ModelMappingUpdate(BaseModel):
 @field_validator('mapping')
     def validate_mapping_format(cls, v) -> Optional[str]:
         """Validate that mapping has the correct format if provided."""
+```
+
+##### Module: pagination
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/pagination.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+from enum import Enum
+from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
+from fastapi import Query
+from pydantic import BaseModel, Field, validator
+from pydantic.generics import GenericModel
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar("T")
+```
+
+**Functions:**
+```python
+def cursor_pagination_params(cursor, limit, sort) -> CursorPaginationParams:
+    """FastAPI dependency for cursor-based pagination parameters.
+
+Args: cursor: Pagination cursor limit: Maximum number of items to return sort: Sort fields
+
+Returns: CursorPaginationParams: Parsed pagination parameters"""
+```
+
+```python
+def offset_pagination_params(page, page_size, sort) -> OffsetPaginationParams:
+    """FastAPI dependency for offset-based pagination parameters.
+
+Args: page: Page number page_size: Number of items per page sort: Sort fields
+
+Returns: OffsetPaginationParams: Parsed pagination parameters"""
+```
+
+**Classes:**
+```python
+class CursorPaginationParams(BaseModel):
+    """Cursor-based pagination parameters.
+
+Attributes: cursor: Cursor for pagination limit: Maximum number of items to return sort: Fields to sort by"""
+```
+*Methods:*
+```python
+@validator('sort', pre=True)
+    def parse_sort(cls, value) -> Optional[List[SortField]]:
+        """Parse sort parameter from various input formats.
+
+Same behavior as in OffsetPaginationParams.
+
+Args: value: Sort parameter in various formats
+
+Returns: Optional[List[SortField]]: Parsed sort fields"""
+```
+
+```python
+class OffsetPaginationParams(BaseModel):
+    """Offset-based pagination parameters.
+
+Attributes: page: Page number (1-indexed) page_size: Number of items per page sort: Fields to sort by"""
+```
+*Methods:*
+```python
+@validator('sort', pre=True)
+    def parse_sort(cls, value) -> Optional[List[SortField]]:
+        """Parse sort parameter from various input formats.
+
+Supports: - Single string: "field" or "field:asc" - List of strings: ["field1", "field2:desc"] - Already parsed list of SortField
+
+Args: value: Sort parameter in various formats
+
+Returns: Optional[List[SortField]]: Parsed sort fields"""
+```
+
+```python
+class PaginationResult(GenericModel, Generic[T]):
+    """Result of a paginated query.
+
+Attributes: items: Items in the current page total: Total number of items page: Current page number (for offset pagination) page_size: Items per page (for offset pagination) pages: Total number of pages (for offset pagination) next_cursor: Cursor for next page (for cursor pagination) prev_cursor: Cursor for previous page (for cursor pagination) has_next: Whether there are more items has_prev: Whether there are previous items"""
+```
+
+```python
+class SortDirection(str, Enum):
+    """Sort direction for query results."""
+```
+*Class attributes:*
+```python
+ASC = 'asc'
+DESC = 'desc'
+```
+
+```python
+class SortField(BaseModel):
+    """Sort field configuration.  Attributes: field: Field name to sort by direction: Sort direction"""
+```
+*Methods:*
+```python
+@classmethod
+    def from_string(cls, sort_string) -> 'SortField':
+        """Create a sort field from a string.
+
+The string format is: field_name[:asc|desc] If direction is not specified, it defaults to ASC.
+
+Args: sort_string: String representing sort field and direction
+
+Returns: SortField: Sort field configuration"""
 ```
 
 ##### Module: product

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 04:43:57
+Generated on 2025-03-16 13:13:05
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -7608,7 +7608,7 @@ async def test_update_user_admin(client, admin_token, normal_user) -> None:
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 04:43:57
+Generated on 2025-03-16 13:13:06
 
 ## Project Overview
 - Project Name: frontend

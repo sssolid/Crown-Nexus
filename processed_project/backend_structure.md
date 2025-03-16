@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:51:32
+Generated on 2025-03-16 19:00:23
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -107,6 +107,7 @@ backend/
 │   ├── services/
 │   │   ├── __init__.py
 │   │   ├── base.py
+│   │   ├── chat.py
 │   │   ├── currency_service.py
 │   │   ├── media_service.py
 │   │   ├── pagination.py
@@ -6966,6 +6967,132 @@ Raises: ValidationException: If validation fails"""
 Args: entity: Existing entity data: Updated data current_user: Current authenticated user
 
 Raises: ValidationException: If validation fails"""
+```
+
+##### Module: chat
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/chat.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from sqlalchemy import and_, desc, func, or_, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+from app.core.exceptions import AuthenticationException, BusinessLogicException, ResourceNotFoundException, ValidationException
+from app.core.logging import get_logger
+from app.db.session import get_db_context
+from app.models.chat import ChatMember, ChatMemberRole, ChatMessage, ChatRoom, ChatRoomType, MessageReaction, MessageType
+from app.models.user import User
+from app.utils.crypto import decrypt_message, encrypt_message
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.chat")
+```
+
+**Classes:**
+```python
+class ChatService(object):
+    """Service for chat-related operations.
+
+This service handles all chat operations including: - Chat rooms (create, update, delete) - Chat messages (create, update, delete) - Chat members (add, remove, update roles) - Reactions (add, remove) - Reading status (mark as read, get unread count)"""
+```
+*Methods:*
+```python
+    def __init__(self, db):
+        """Initialize the chat service.  Args: db: AsyncSession for database operations"""
+```
+```python
+    async def check_message_permission(self, message_id, user_id, require_admin) -> bool:
+        """Check if a user has permission to modify a message.
+
+Args: message_id: ID of the message user_id: ID of the user require_admin: Whether to require admin permissions
+
+Returns: True if the user has permission, False otherwise"""
+```
+```python
+    async def check_room_access(self, user_id, room_id) -> bool:
+        """Check if a user has access to a room.
+
+Args: user_id: ID of the user room_id: ID of the room
+
+Returns: True if the user has access, False otherwise"""
+```
+```python
+    async def create_message(self, room_id, sender_id, content, message_type, metadata) -> ChatMessage:
+        """Create a new chat message.
+
+Args: room_id: ID of the chat room sender_id: ID of the message sender content: Message content message_type: Type of message (text, image, file, etc.) metadata: Additional metadata for the message
+
+Returns: The created message
+
+Raises: ValidationException: If message parameters are invalid BusinessLogicException: If message creation fails"""
+```
+```python
+    async def create_room(self, name, room_type, creator_id, company_id, members) -> ChatRoom:
+        """Create a new chat room.
+
+Args: name: Name of the chat room room_type: Type of chat room (direct, group, company) creator_id: ID of the user creating the room company_id: Optional company ID for company rooms members: Optional list of members to add (with user_id and role)
+
+Returns: The newly created chat room
+
+Raises: ValidationException: If room parameters are invalid"""
+```
+```python
+    async def delete_message(self, message_id) -> bool:
+        """Delete a chat message.
+
+Args: message_id: ID of the message to delete
+
+Returns: True if successful, False otherwise
+
+Raises: BusinessLogicException: If message deletion fails"""
+```
+```python
+    async def edit_message(self, message_id, content) -> Tuple[(bool, Optional[ChatMessage])]:
+        """Edit an existing chat message.
+
+Args: message_id: ID of the message to edit content: New content for the message
+
+Returns: Tuple of (success, updated message or None)
+
+Raises: BusinessLogicException: If message editing fails"""
+```
+```python
+    async def get_message_history(self, room_id, before_id, limit) -> List[Dict[(str, Any)]]:
+        """Get message history for a room.
+
+Args: room_id: ID of the room before_id: Get messages before this ID (for pagination) limit: Maximum number of messages to return
+
+Returns: List of message data dictionaries
+
+Raises: BusinessLogicException: If retrieving message history fails"""
+```
+```python
+    async def get_room(self, room_id) -> Optional[ChatRoom]:
+        """Get a chat room by ID.
+
+Args: room_id: ID of the chat room
+
+Returns: The chat room if found, None otherwise"""
+```
+```python
+    async def get_room_with_members(self, room_id) -> Optional[ChatRoom]:
+        """Get a chat room with its members.
+
+Args: room_id: ID of the chat room
+
+Returns: The chat room with members if found, None otherwise"""
+```
+```python
+@classmethod
+    def register(cls) -> None:
+        """Register this service with the service registry."""
 ```
 
 ##### Module: currency_service

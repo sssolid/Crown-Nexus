@@ -16,19 +16,24 @@ The module provides:
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated, AsyncGenerator, Dict, Optional, Union
+from typing import Annotated, Dict, Optional, Union
 
-from fastapi import Depends, HTTPException, Query, status
+from fastapi import Depends, HTTPException, Query, WebSocket, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.websockets import WebSocketDisconnect
 
 from app.core.config import settings
+from app.core.logging import get_logger, set_user_id
 from app.db.session import get_db
 from app.models.user import User, UserRole
 from app.schemas.user import TokenPayload
+
+# Create a logger for this module
+logger = get_logger("app.api.deps")
 
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(
@@ -71,11 +76,23 @@ async def get_current_user(
         token_data = TokenPayload(**payload)
 
         # Check if token has expired
-        if token_data.exp < int(datetime.utcnow().timestamp()):
+        current_time = int(datetime.utcnow().timestamp())
+        if token_data.exp < current_time:
+            logger.warning(
+                "Token expired",
+                token_exp=token_data.exp,
+                current_time=current_time,
+                expires_in=token_data.exp - current_time
+            )
             raise credentials_exception
+            
     except (JWTError, ValidationError) as e:
         # Log the error with more details for debugging
-        print(f"Token validation error: {str(e)}")
+        logger.warning(
+            "Token validation failed",
+            error=str(e),
+            error_type=type(e).__name__
+        )
         raise credentials_exception from e
 
     # Get the user from the database
@@ -84,8 +101,21 @@ async def get_current_user(
     user = result.scalar_one_or_none()
 
     if user is None:
+        logger.warning(
+            "User from token not found",
+            user_id=token_data.sub
+        )
         raise credentials_exception
 
+    # Add user ID to the logging context
+    set_user_id(str(user.id))
+    
+    logger.debug(
+        "User authenticated",
+        user_id=str(user.id),
+        user_role=user.role
+    )
+    
     return user
 
 
@@ -108,6 +138,10 @@ async def get_current_active_user(
         HTTPException: If user is inactive
     """
     if not current_user.is_active:
+        logger.warning(
+            "Inactive user attempted access",
+            user_id=str(current_user.id)
+        )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
         )
@@ -133,6 +167,11 @@ async def get_admin_user(
         HTTPException: If user is not an admin
     """
     if current_user.role != UserRole.ADMIN:
+        logger.warning(
+            "Non-admin user attempted admin action",
+            user_id=str(current_user.id),
+            user_role=current_user.role
+        )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Insufficient permissions"
@@ -159,6 +198,11 @@ async def get_manager_user(
         HTTPException: If user is not a manager or admin
     """
     if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
+        logger.warning(
+            "Non-manager user attempted manager action",
+            user_id=str(current_user.id),
+            user_role=current_user.role
+        )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Insufficient permissions"
@@ -226,6 +270,7 @@ async def get_optional_user(
         Optional[User]: Authenticated user or None
     """
     if not token:
+        logger.debug("No authentication token provided")
         return None
 
     try:
@@ -236,7 +281,13 @@ async def get_optional_user(
         token_data = TokenPayload(**payload)
 
         # Check if token has expired
-        if token_data.exp < int(datetime.utcnow().timestamp()):
+        current_time = int(datetime.utcnow().timestamp())
+        if token_data.exp < current_time:
+            logger.debug(
+                "Optional token expired",
+                token_exp=token_data.exp,
+                current_time=current_time
+            )
             return None
 
         # Get the user from the database
@@ -245,10 +296,33 @@ async def get_optional_user(
         user = result.scalar_one_or_none()
 
         if user and user.is_active:
+            # Add user ID to the logging context
+            set_user_id(str(user.id))
+            
+            logger.debug(
+                "Optional user authenticated",
+                user_id=str(user.id),
+                user_role=user.role
+            )
             return user
+        
+        if not user:
+            logger.debug(
+                "Optional token user not found",
+                user_id=token_data.sub
+            )
+        elif not user.is_active:
+            logger.debug(
+                "Optional token user is inactive",
+                user_id=str(user.id)
+            )
 
-    except (JWTError, ValidationError):
-        pass
+    except (JWTError, ValidationError) as e:
+        logger.debug(
+            "Optional token validation failed",
+            error=str(e),
+            error_type=type(e).__name__
+        )
 
     return None
 
@@ -290,6 +364,10 @@ async def get_current_user_ws(
         
         if not token:
             # No token found
+            logger.warning(
+                "WebSocket connection without token",
+                client=websocket.client.host
+            )
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
             raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
         
@@ -304,11 +382,23 @@ async def get_current_user_ws(
             token_data = TokenPayload(**payload)
             
             # Check if token has expired
-            if token_data.exp < int(datetime.utcnow().timestamp()):
+            current_time = int(datetime.utcnow().timestamp())
+            if token_data.exp < current_time:
+                logger.warning(
+                    "WebSocket token expired",
+                    token_exp=token_data.exp,
+                    current_time=current_time,
+                    client=websocket.client.host
+                )
                 await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
                 raise credentials_exception
         except (JWTError, ValidationError) as e:
-            logger.error(f"Token validation error: {str(e)}")
+            logger.warning(
+                "WebSocket token validation failed",
+                error=str(e),
+                error_type=type(e).__name__,
+                client=websocket.client.host
+            )
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
             raise credentials_exception
         
@@ -318,14 +408,34 @@ async def get_current_user_ws(
         user = result.scalar_one_or_none()
         
         if user is None or not user.is_active:
+            logger.warning(
+                "WebSocket user not found or inactive",
+                user_id=token_data.sub,
+                client=websocket.client.host
+            )
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
             raise credentials_exception
+        
+        # Add user ID to the logging context
+        set_user_id(str(user.id))
+        
+        logger.debug(
+            "WebSocket user authenticated",
+            user_id=str(user.id),
+            user_role=user.role,
+            client=websocket.client.host
+        )
         
         return user
     
     except WebSocketDisconnect:
         raise
     except Exception as e:
-        logger.exception(f"Error authenticating WebSocket: {e}")
+        logger.exception(
+            "Unexpected error in WebSocket authentication",
+            error=str(e),
+            error_type=type(e).__name__,
+            client=getattr(websocket, "client", {}).get("host", "unknown")
+        )
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)

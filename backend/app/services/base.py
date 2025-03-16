@@ -22,6 +22,12 @@ from app.db.utils import (
 )
 from app.models.user import User
 from app.repositories.base import BaseRepository
+from app.schemas.pagination import (
+    CursorPaginationParams,
+    OffsetPaginationParams,
+    PaginationResult,
+)
+from app.services.pagination import PaginationService
 from app.utils.errors import (
     ensure_not_none,
     resource_already_exists,
@@ -158,6 +164,106 @@ class BaseService(Generic[T, C, U, R]):
         )
         
         return result
+    
+    async def get_paginated(
+        self,
+        current_user: User,
+        params: OffsetPaginationParams,
+        filters: Optional[Dict[str, Any]] = None,
+    ) -> PaginationResult[R]:
+        """Get paginated entities using offset-based pagination.
+        
+        Args:
+            current_user: Current authenticated user
+            params: Pagination parameters
+            filters: Filters to apply
+            
+        Returns:
+            PaginationResult[R]: Paginated results
+            
+        Raises:
+            PermissionDeniedException: If user doesn't have permission
+        """
+        # Check read permission
+        permission = f"{self.resource_name.lower()}:read"
+        PermissionChecker.ensure_object_permission(
+            current_user, 
+            {},  # Dummy object for permission check
+            cast(Permission, permission),
+        )
+        
+        # Build query
+        query = self.model.active_only()
+        
+        # Apply filters
+        if filters:
+            for field, value in filters.items():
+                if hasattr(self.model, field):
+                    query = query.where(getattr(self.model, field) == value)
+        
+        # Use pagination service
+        pagination_service = PaginationService(
+            self.db,
+            self.model,
+            self.response_schema,
+        )
+        
+        # Execute paginated query
+        return await pagination_service.paginate_with_offset(
+            query=query,
+            params=params,
+            transform_func=self.to_response,
+        )
+    
+    async def get_paginated_with_cursor(
+        self,
+        current_user: User,
+        params: CursorPaginationParams,
+        filters: Optional[Dict[str, Any]] = None,
+    ) -> PaginationResult[R]:
+        """Get paginated entities using cursor-based pagination.
+        
+        Args:
+            current_user: Current authenticated user
+            params: Pagination parameters
+            filters: Filters to apply
+            
+        Returns:
+            PaginationResult[R]: Paginated results
+            
+        Raises:
+            PermissionDeniedException: If user doesn't have permission
+        """
+        # Check read permission
+        permission = f"{self.resource_name.lower()}:read"
+        PermissionChecker.ensure_object_permission(
+            current_user, 
+            {},  # Dummy object for permission check
+            cast(Permission, permission),
+        )
+        
+        # Build query
+        query = self.model.active_only()
+        
+        # Apply filters
+        if filters:
+            for field, value in filters.items():
+                if hasattr(self.model, field):
+                    query = query.where(getattr(self.model, field) == value)
+        
+        # Use pagination service
+        pagination_service = PaginationService(
+            self.db,
+            self.model,
+            self.response_schema,
+        )
+        
+        # Execute paginated query
+        return await pagination_service.paginate_with_cursor(
+            query=query,
+            params=params,
+            transform_func=self.to_response,
+        )
     
     @transactional
     async def create(
@@ -338,7 +444,9 @@ class BaseService(Generic[T, C, U, R]):
         Returns:
             R: Response model
         """
-        return self.response_schema.from_orm(entity)
+        if hasattr(self.response_schema, "from_orm"):
+            return self.response_schema.from_orm(entity)
+        return self.response_schema(**entity.to_dict())
     
     async def to_response_multi(self, entities: List[T]) -> List[R]:
         """Convert multiple entities to response models.

@@ -22,7 +22,7 @@ try:
                 if ':' in auth:
                     user, pwd = auth.split(':', 1)
                     print(f'Username: {user}')
-                    print(f'Password: {'*' * len(pwd)}')
+                    print(f"Password: {'*' * len(pwd)}")
                 if '/' in location:
                     host_port, db_path = location.split('/', 1)
                     print(f'Host/port: {host_port}')

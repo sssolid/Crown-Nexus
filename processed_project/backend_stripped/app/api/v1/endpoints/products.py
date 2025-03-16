@@ -94,7 +94,7 @@ async def update_product(product_id: str, product_in: ProductUpdate, db: Annotat
     await db.commit()
     await db.refresh(product)
     if was_active != will_be_active:
-        activity = ProductActivity(product_id=product.id, status=ProductStatus.ACTIVE if will_be_active else ProductStatus.INACTIVE, reason=f'Product {('activated' if will_be_active else 'deactivated')}', changed_by_id=current_user.id)
+        activity = ProductActivity(product_id=product.id, status=ProductStatus.ACTIVE if will_be_active else ProductStatus.INACTIVE, reason=f"Product {('activated' if will_be_active else 'deactivated')}", changed_by_id=current_user.id)
         db.add(activity)
         await db.commit()
     await db.refresh(product, ['activities', 'descriptions', 'marketing', 'superseded_by', 'supersedes', 'measurements', 'stock'])

@@ -8,7 +8,7 @@ async def check_tables():
         if tables:
             print(f'Found {len(tables)} tables:')
             for table in tables:
-                print(f'  - {table['table_name']}')
+                print(f"  - {table['table_name']}")
         else:
             print('No tables found in the public schema.')
         schemas = await conn.fetch("\n            SELECT DISTINCT table_schema\n            FROM information_schema.tables\n            WHERE table_schema NOT IN ('pg_catalog', 'information_schema');\n        ")
@@ -20,7 +20,7 @@ async def check_tables():
                     schema_tables = await conn.fetch(f"\n                        SELECT table_name\n                        FROM information_schema.tables\n                        WHERE table_schema = '{schema_name}';\n                    ")
                     print(f"Schema '{schema_name}': {len(schema_tables)} tables")
                     for table in schema_tables:
-                        print(f'  - {table['table_name']}')
+                        print(f"  - {table['table_name']}")
     finally:
         await conn.close()
 if __name__ == '__main__':

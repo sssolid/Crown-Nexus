@@ -30,7 +30,7 @@ class ChatRoom(Base):
     messages: Mapped[List['ChatMessage']] = relationship('ChatMessage', back_populates='room', cascade='all, delete-orphan')
     members: Mapped[List['ChatMember']] = relationship('ChatMember', back_populates='room', cascade='all, delete-orphan')
     def __repr__(self) -> str:
-        return f'<ChatRoom {self.id}: {self.name or '(Direct)'} ({self.type})>'
+        return f"<ChatRoom {self.id}: {self.name or '(Direct)'} ({self.type})>"
 class ChatMemberRole(str, Enum):
     OWNER = 'owner'
     ADMIN = 'admin'

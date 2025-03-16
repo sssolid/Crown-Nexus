@@ -16,7 +16,7 @@ class Color(Base):
     hex_code: Mapped[Optional[str]] = mapped_column(String(7), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     def __repr__(self) -> str:
-        return f'<Color {self.name} ({self.hex_code or 'no hex'})>'
+        return f"<Color {self.name} ({self.hex_code or 'no hex'})>"
 class ConstructionType(Base):
     __tablename__ = 'construction_type'
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

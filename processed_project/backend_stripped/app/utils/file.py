@@ -26,7 +26,7 @@ def validate_file(file: UploadFile, allowed_types: Optional[Set[MediaType]]=None
     mime_type = file.content_type or 'application/octet-stream'
     media_type = get_media_type_from_mime(mime_type)
     if allowed_types and media_type not in allowed_types:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'File type not allowed. Allowed types: {', '.join((t.value for t in allowed_types))}')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"File type not allowed. Allowed types: {', '.join((t.value for t in allowed_types))}")
     if mime_type not in ALLOWED_MIME_TYPES[media_type]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'MIME type {mime_type} not allowed for {media_type.value}')
     max_size = MAX_FILE_SIZES[media_type]

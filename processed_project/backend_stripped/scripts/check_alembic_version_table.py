@@ -14,7 +14,7 @@ async def check_alembic_version():
         tables = await conn.fetch("\n            SELECT table_name\n            FROM information_schema.tables\n            WHERE table_schema = 'public'\n            ORDER BY table_name;\n        ")
         print(f'\nFound {len(tables)} tables in the public schema:')
         for table in tables:
-            print(f'  - {table['table_name']}')
+            print(f"  - {table['table_name']}")
     finally:
         await conn.close()
 if __name__ == '__main__':

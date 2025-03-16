@@ -217,7 +217,7 @@ class S3MediaStorage:
         if file_path.startswith('/'):
             file_path = file_path[1:]
         if self.cdn_url:
-            return f'{self.cdn_url.rstrip('/')}/{file_path}'
+            return f"{self.cdn_url.rstrip('/')}/{file_path}"
         region_url = f'.{self.region_name}' if self.region_name else ''
         return f'https://{self.bucket_name}.s3{region_url}.amazonaws.com/{file_path}'
     async def delete_file(self, file_path: str) -> bool:

@@ -26,7 +26,7 @@ async def print_database_info():
             if schema != current_schema:
                 current_schema = schema
                 print(f'\n  Schema: {schema}')
-            print(f'    - {table['table_name']}')
+            print(f"    - {table['table_name']}")
     finally:
         await conn.close()
 if __name__ == '__main__':

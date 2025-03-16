@@ -21,7 +21,7 @@ class CreateRoomRequest(BaseModel):
     def validate_type(cls, v: str) -> str:
         valid_types = [t.value for t in ChatRoomType]
         if v not in valid_types:
-            raise ValueError(f'Invalid room type. Must be one of: {', '.join(valid_types)}')
+            raise ValueError(f"Invalid room type. Must be one of: {', '.join(valid_types)}")
         return v
 class AddMemberRequest(BaseModel):
     user_id: str
@@ -30,7 +30,7 @@ class AddMemberRequest(BaseModel):
     def validate_role(cls, v: str) -> str:
         valid_roles = [r.value for r in ChatMemberRole]
         if v not in valid_roles:
-            raise ValueError(f'Invalid role. Must be one of: {', '.join(valid_roles)}')
+            raise ValueError(f"Invalid role. Must be one of: {', '.join(valid_roles)}")
         return v
 class UpdateMemberRequest(BaseModel):
     role: str
@@ -38,7 +38,7 @@ class UpdateMemberRequest(BaseModel):
     def validate_role(cls, v: str) -> str:
         valid_roles = [r.value for r in ChatMemberRole]
         if v not in valid_roles:
-            raise ValueError(f'Invalid role. Must be one of: {', '.join(valid_roles)}')
+            raise ValueError(f"Invalid role. Must be one of: {', '.join(valid_roles)}")
         return v
 class CreateDirectChatRequest(BaseModel):
     user_id: str

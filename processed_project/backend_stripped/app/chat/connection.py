@@ -59,7 +59,7 @@ class ConnectionManager:
             for connection_id in self.room_connections[room_id]:
                 if connection_id != exclude and connection_id in self.active_connections:
                     await self.active_connections[connection_id].send_json(message)
-            logger.debug(f'Broadcast message to room {room_id} (excluding {(exclude if exclude else 'none')})')
+            logger.debug(f"Broadcast message to room {room_id} (excluding {(exclude if exclude else 'none')})")
     async def broadcast_to_user(self, message: dict, user_id: str) -> None:
         if user_id in self.user_connection_ids:
             for connection_id in self.user_connection_ids[user_id]:

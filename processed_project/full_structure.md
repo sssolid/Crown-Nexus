@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 01:06:27
+Generated on 2025-03-16 04:43:57
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -8,7 +8,7 @@ Generated on 2025-03-16 01:06:27
 
 ## Project Overview
 - Project Name: backend
-- Root Path: /workspaces/Crown-Nexus/backend
+- Root Path: /home/runner/work/Crown-Nexus/Crown-Nexus/backend
 - Packages: 3
 - Top-level Modules: 1
 
@@ -50,7 +50,8 @@ backend/
 │   │   ├── __init__.py
 │   │   ├── celery_app.py
 │   │   ├── celeryconfig.py
-│   │   └── config.py
+│   │   ├── config.py
+│   │   └── logging.py
 │   ├── db/
 │   │   ├── __init__.py
 │   │   ├── base.py
@@ -154,7 +155,7 @@ backend/
 ## Packages and Modules
 ### Top-level Modules
 ### Module: test_db
-Path: `/workspaces/Crown-Nexus/backend/test_db.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/test_db.py`
 
 **Imports:**
 ```python
@@ -172,37 +173,41 @@ async def test_connection():
 
 ### Packages
 ### Package: app
-Path: `/workspaces/Crown-Nexus/backend/app`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/__init__.py`
 
 #### Module: main
 *FastAPI application entry point.*
-Path: `/workspaces/Crown-Nexus/backend/app/main.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/main.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 import logging
 import time
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncGenerator, Callable
-from fastapi import FastAPI, Request, Response
+from typing import AsyncGenerator, Callable, Optional
+from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
+from app.core.logging import setup_logging, get_logger, request_context, set_user_id
 from app.fitment.api import router as fitment_router
 from app.fitment.dependencies import initialize_mapping_engine
+from app.models.user import User
 import uvicorn
 ```
 
 **Global Variables:**
 ```python
-logger = logger = logging.getLogger(__name__)
+logger = logger = get_logger("app.main")
 app = app = FastAPI(
     title=settings.PROJECT_NAME,
     description=settings.DESCRIPTION,
@@ -213,18 +218,11 @@ app = app = FastAPI(
     lifespan=lifespan,
 )
 media_path =     media_path = Path(settings.MEDIA_ROOT).resolve()
+host = '0.0.0.0'
+port = 8000
 ```
 
 **Functions:**
-```python
-@app.middleware('http')
-async def add_process_time_header(request, call_next) -> Response:
-    """
-    Middleware to add processing time to response headers.
-
-    This middleware measures how long e..."""
-```
-
 ```python
 @app.get('/health')
 async def health_check() -> dict:
@@ -243,28 +241,61 @@ async def lifespan(app) -> AsyncGenerator[(None, None)]:
     This context manager handles application startup and shutd..."""
 ```
 
+```python
+async def log_current_user(current_user) -> Optional[User]:
+    """
+    Log the current user ID in the request context.
+    
+    Args:
+        current_user: Current au..."""
+```
+
+**Classes:**
+```python
+class RequestContextMiddleware(object):
+    """
+    Middleware that sets up logging request context.
+    
+    This middleware ensures each request ..."""
+```
+*Methods:*
+```python
+    async def __call__(self, request, call_next) -> Response:
+        """
+        Process the request and set up logging context.
+        
+        Args:
+            request:..."""
+```
+```python
+    def __init__(self, app) -> None:
+        """Initialize middleware with the FastAPI app."""
+```
+
 #### Package: api
-Path: `/workspaces/Crown-Nexus/backend/app/api`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/api/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/__init__.py`
 
 ##### Module: deps
 *API dependency providers.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/deps.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/deps.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 from datetime import datetime
-from typing import Annotated, AsyncGenerator, Dict, Optional, Union
-from fastapi import Depends, HTTPException, Query, status
+from typing import Annotated, Dict, Optional, Union
+from fastapi import Depends, HTTPException, Query, WebSocket, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.websockets import WebSocketDisconnect
 from app.core.config import settings
+from app.core.logging import get_logger, set_user_id
 from app.db.session import get_db
 from app.models.user import User, UserRole
 from app.schemas.user import TokenPayload
@@ -272,6 +303,7 @@ from app.schemas.user import TokenPayload
 
 **Global Variables:**
 ```python
+logger = logger = get_logger("app.api.deps")
 oauth2_scheme = oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
 )
@@ -336,14 +368,14 @@ def get_pagination(page, page_size) -> PaginationParams:
 ```
 
 ##### Package: v1
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/__init__.py`
 
 ###### Module: router
 *API router configuration.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/router.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/router.py`
 
 **Imports:**
 ```python
@@ -358,14 +390,14 @@ api_router = api_router = APIRouter()
 ```
 
 ###### Package: endpoints
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/__init__.py`
 
 ####### Module: auth
 *Authentication API endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/auth.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/auth.py`
 
 **Imports:**
 ```python
@@ -422,7 +454,7 @@ async def validate_token(token) -> dict:
 
 ####### Module: chat
 *Chat system REST API endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/chat.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/chat.py`
 
 **Imports:**
 ```python
@@ -576,7 +608,7 @@ class UpdateMemberRequest(BaseModel):
 
 ####### Module: currency
 *Currency API endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/currency.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/currency.py`
 
 **Imports:**
 ```python
@@ -644,7 +676,7 @@ async def trigger_exchange_rate_update(background_tasks, db, current_user, async
 ```
 
 ####### Module: fitments
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/fitments.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/fitments.py`
 
 **Imports:**
 ```python
@@ -758,7 +790,7 @@ async def update_fitment(fitment_id, fitment_in, db, current_user) -> Any:
 ```
 
 ####### Module: i18n
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/i18n.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/i18n.py`
 
 **Imports:**
 ```python
@@ -794,7 +826,7 @@ async def get_messages(locale) -> Dict[(str, Dict[(str, str)])]:
 ```
 
 ####### Module: media
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/media.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/media.py`
 
 **Imports:**
 ```python
@@ -937,7 +969,7 @@ async def upload_file(background_tasks, db, current_user, file, media_type, visi
 ```
 
 ####### Module: products
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/products.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/products.py`
 
 **Imports:**
 ```python
@@ -1212,7 +1244,7 @@ async def update_product_stock(product_id, stock_id, stock_in, db, current_user)
 
 ####### Module: search
 *Global search API endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/search.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/search.py`
 
 **Imports:**
 ```python
@@ -1343,7 +1375,7 @@ async def validate_vehicle_fitment(db, current_user, vehicle_service, year, make
 
 ####### Module: users
 *User management API endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/app/api/v1/endpoints/users.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/users.py`
 
 **Imports:**
 ```python
@@ -1493,14 +1525,14 @@ async def update_user(user_id, user_in, db, current_user) -> Any:
 ```
 
 #### Package: commands
-Path: `/workspaces/Crown-Nexus/backend/app/commands`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/commands`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/commands/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/commands/__init__.py`
 
 ##### Module: init_currencies
 *Command to initialize currencies in the database.*
-Path: `/workspaces/Crown-Nexus/backend/app/commands/init_currencies.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/commands/init_currencies.py`
 
 **Imports:**
 ```python
@@ -1528,14 +1560,14 @@ def init_currencies(force, sync, base_currency):
 ```
 
 #### Package: core
-Path: `/workspaces/Crown-Nexus/backend/app/core`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/core/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/__init__.py`
 
 ##### Module: celery_app
 *Celery configuration.*
-Path: `/workspaces/Crown-Nexus/backend/app/core/celery_app.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/celery_app.py`
 
 **Imports:**
 ```python
@@ -1560,7 +1592,7 @@ def get_celery_app() -> Celery:
 
 ##### Module: celeryconfig
 *Celery configuration settings.*
-Path: `/workspaces/Crown-Nexus/backend/app/core/celeryconfig.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/celeryconfig.py`
 
 **Imports:**
 ```python
@@ -1597,38 +1629,179 @@ beat_schedule_filename = 'celerybeat-schedule'
 ```
 
 ##### Module: config
-*Application configuration module.*
-Path: `/workspaces/Crown-Nexus/backend/app/core/config.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/config.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 import os
+import secrets
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from functools import lru_cache
 from pathlib import Path
-from pydantic import AnyHttpUrl, DirectoryPath, PostgresDsn, validator
-from pydantic_settings import BaseSettings
+from typing import Any, Dict, List, Optional, Union
+from pydantic import AnyHttpUrl, DirectoryPath, Field, PostgresDsn, SecretStr, field_validator, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 ```
 
 **Global Variables:**
 ```python
-settings = settings = Settings()
+settings = settings = get_settings()
+```
+
+**Functions:**
+```python
+@lru_cache
+def get_settings() -> Settings:
+    """
+    Get application settings with caching.
+    
+    This function is cached to avoid loading settin..."""
 ```
 
 **Classes:**
 ```python
-class Config(object):
+class CORSSettings(BaseSettings):
+    """
+    CORS settings.
+    
+    Attributes:
+        BACKEND_CORS_ORIGINS: List of allowed origins for C..."""
 ```
 *Class attributes:*
 ```python
-case_sensitive = True
-env_file = '.env'
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+*Methods:*
+```python
+@field_validator('BACKEND_CORS_ORIGINS', mode='before')
+@classmethod
+    def assemble_cors_origins(cls, v) -> List[str]:
+        """
+        Parse CORS origins from string or list.
+        
+        Args:
+            v: CORS origins ..."""
+```
+
+```python
+class CelerySettings(BaseSettings):
+    """
+    Celery worker settings.
+    
+    Attributes:
+        CELERY_BROKER_URL: URL for Celery broker
+ ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+
+```python
+class ChatSettings(BaseSettings):
+    """
+    Chat system settings.
+    
+    Attributes:
+        CHAT_ENCRYPTION_SALT: Salt for chat message ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+
+```python
+class CurrencySettings(BaseSettings):
+    """
+    Currency and exchange rate settings.
+    
+    Attributes:
+        EXCHANGE_RATE_API_KEY: API ke..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+
+```python
+class DatabaseSettings(BaseSettings):
+    """
+    Database connection settings.
+    
+    Attributes:
+        POSTGRES_SERVER: PostgreSQL server h..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+*Methods:*
+```python
+@model_validator(mode='after')
+    def assemble_db_connection(self) -> 'DatabaseSettings':
+        """
+        Assemble database URI from components.
+        
+        Returns:
+            Self with SQLA..."""
+```
+
+```python
+class ElasticsearchSettings(BaseSettings):
+    """
+    Elasticsearch connection settings.
+    
+    Attributes:
+        ELASTICSEARCH_HOST: Elasticsear..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+*Methods:*
+```python
+@property
+    def uri(self) -> str:
+        """
+        Get Elasticsearch URI.
+        
+        Returns:
+            Elasticsearch connection URI
+ ..."""
 ```
 
 ```python
 class Environment(str, Enum):
-    """Environment enumeration."""
+    """
+    Application environment enumeration.
+    
+    Attributes:
+        DEVELOPMENT: Development envi..."""
 ```
 *Class attributes:*
 ```python
@@ -1638,60 +1811,458 @@ PRODUCTION = 'production'
 ```
 
 ```python
-class Settings(BaseSettings):
+class FitmentSettings(BaseSettings):
     """
-    Application settings.
-
+    Fitment system settings.
+    
     Attributes:
-        PROJECT_NAME: Name of the project
-        DESCRI..."""
+        VCDB_PATH: Path to VCDB Access database
+ ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
 ```
 *Methods:*
 ```python
-@validator('BACKEND_CORS_ORIGINS', pre=True)
-    def assemble_cors_origins(cls, v) -> Union[(List[str], str)]:
+@model_validator(mode='after')
+    def validate_file_paths(self) -> 'FitmentSettings':
         """
-        Parse CORS origins from string or list.
-
-        Args:
-            v: CORS origins as strin..."""
+        Validate that required file paths exist.
+        
+        Returns:
+            Self with va..."""
 ```
-```python
-@validator('SQLALCHEMY_DATABASE_URI', pre=True)
-    def assemble_db_connection(cls, v, values) -> Any:
-        """
-        Assemble database URI from components.
 
-        Args:
-            v: Database URI if alread..."""
-```
 ```python
-@validator('MEDIA_ROOT', pre=True)
+class LocaleSettings(BaseSettings):
+    """
+    Internationalization and localization settings.
+    
+    Attributes:
+        DEFAULT_LOCALE: De..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+
+```python
+class LogLevel(str, Enum):
+    """
+    Log level enumeration.
+    
+    Attributes:
+        DEBUG: Debug level logging
+        INFO: In..."""
+```
+*Class attributes:*
+```python
+DEBUG = 'DEBUG'
+INFO = 'INFO'
+WARNING = 'WARNING'
+ERROR = 'ERROR'
+CRITICAL = 'CRITICAL'
+```
+
+```python
+class LoggingSettings(BaseSettings):
+    """
+    Logging configuration settings.
+    
+    Attributes:
+        LOG_LEVEL: Default log level
+     ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+
+```python
+class MediaSettings(BaseSettings):
+    """
+    Media handling settings.
+    
+    Attributes:
+        MEDIA_ROOT: Root directory for media file..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+*Methods:*
+```python
+@field_validator('MEDIA_ROOT', mode='before')
+@classmethod
     def create_media_directories(cls, v) -> str:
         """
         Create media directories if they don't exist.
-
+        
         Args:
-            v: Media root path..."""
+            v: Media r..."""
 ```
 ```python
 @property
     def media_base_url(self) -> str:
         """
         Get the base URL for media files.
+        
+        Returns:
+            Base URL for media ..."""
+```
 
-        This will use the CDN URL in production or the l..."""
+```python
+class RedisSettings(BaseSettings):
+    """
+    Redis connection settings.
+    
+    Attributes:
+        REDIS_HOST: Redis server hostname
+     ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+*Methods:*
+```python
+@property
+    def uri(self) -> str:
+        """
+        Get Redis URI.
+        
+        Returns:
+            Redis connection URI
+        """
+```
+
+```python
+class SecuritySettings(BaseSettings):
+    """
+    Security settings.
+    
+    Attributes:
+        SECRET_KEY: Secret key for token signing
+      ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+
+```python
+class Settings(BaseSettings):
+    """
+    Main application settings combining all subsystems.
+    
+    Attributes:
+        PROJECT_NAME: ..."""
+```
+*Class attributes:*
+```python
+model_config =     model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
+```
+*Methods:*
+```python
+@field_validator('BACKEND_CORS_ORIGINS', mode='before')
+@classmethod
+    def assemble_cors_origins(cls, v) -> List[str]:
+        """
+        Parse CORS origins from string or list.
+        
+        Args:
+            v: CORS origins ..."""
+```
+```python
+@model_validator(mode='after')
+    def assemble_db_connection(self) -> 'Settings':
+        """
+        Assemble database URI from components.
+        
+        Returns:
+            Self with SQLA..."""
+```
+```python
+@property
+    def chat(self) -> ChatSettings:
+        """Get chat settings."""
+```
+```python
+@field_validator('MEDIA_ROOT', mode='before')
+@classmethod
+    def create_media_directories(cls, v) -> str:
+        """
+        Create media directories if they don't exist.
+        
+        Args:
+            v: Media r..."""
+```
+```python
+@property
+    def currency(self) -> CurrencySettings:
+        """Get currency settings."""
+```
+```python
+@property
+    def db(self) -> DatabaseSettings:
+        """Get database settings."""
+```
+```python
+@property
+    def elasticsearch(self) -> ElasticsearchSettings:
+        """Get Elasticsearch settings."""
+```
+```python
+@property
+    def fitment(self) -> FitmentSettings:
+        """Get fitment settings."""
+```
+```python
+@property
+    def locale(self) -> LocaleSettings:
+        """Get locale settings."""
+```
+```python
+@property
+    def media(self) -> MediaSettings:
+        """Get media settings."""
+```
+```python
+@property
+    def media_base_url(self) -> str:
+        """
+        Get the base URL for media files.
+        
+        Returns:
+            Base URL for media ..."""
+```
+```python
+@property
+    def redis(self) -> RedisSettings:
+        """Get Redis settings."""
+```
+```python
+@property
+    def security(self) -> SecuritySettings:
+        """Get security settings."""
+```
+
+##### Module: logging
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/logging.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+import logging.config
+import sys
+import threading
+import uuid
+from contextlib import contextmanager
+from datetime import datetime
+from functools import wraps
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, TypeVar, cast, Union
+import structlog
+from pythonjsonlogger import jsonlogger
+from structlog.stdlib import BoundLogger
+from structlog.types import EventDict, Processor, WrappedLogger
+from app.core.config import Environment, LogLevel, settings
+```
+
+**Global Variables:**
+```python
+F = F = TypeVar("F", bound=Callable[..., Any])
+T = T = TypeVar("T")
+```
+
+**Functions:**
+```python
+def add_request_id_processor(logger, method_name, event_dict) -> EventDict:
+    """
+    Structlog processor that adds request_id from thread-local storage.
+    
+    Args:
+        logg..."""
+```
+
+```python
+def add_service_info_processor(logger, method_name, event_dict) -> EventDict:
+    """
+    Structlog processor that adds service information to log events.
+    
+    Args:
+        logger:..."""
+```
+
+```python
+def add_timestamp_processor(logger, method_name, event_dict) -> EventDict:
+    """
+    Structlog processor that adds timestamp to log events.
+    
+    Args:
+        logger: Logger in..."""
+```
+
+```python
+def add_user_id_processor(logger, method_name, event_dict) -> EventDict:
+    """
+    Structlog processor that adds user_id from thread-local storage.
+    
+    Args:
+        logger:..."""
+```
+
+```python
+def clear_user_id() -> None:
+    """Clear the current user ID from the logging context."""
+```
+
+```python
+def configure_std_logging() -> None:
+    """
+    Configure standard library logging with appropriate handlers and formatters.
+    
+    This sets..."""
+```
+
+```python
+def configure_structlog() -> None:
+    """
+    Configure structlog with processors and renderers.
+    
+    This sets up structlog to work alon..."""
+```
+
+```python
+def get_logger(name) -> BoundLogger:
+    """
+    Get a structlog logger instance.
+    
+    Args:
+        name: Logger name (typically __name__)
+..."""
+```
+
+```python
+def log_execution_time(logger, level):
+    """
+    Decorator to log function execution time.
+    
+    Args:
+        logger: Logger to use (created..."""
+```
+
+```python
+def log_execution_time_async(logger, level):
+    """
+    Decorator to log async function execution time.
+    
+    Args:
+        logger: Logger to use (c..."""
+```
+
+```python
+@contextmanager
+def request_context(request_id, user_id):
+    """
+    Context manager for tracking request context in logs.
+    
+    Args:
+        request_id: Reques..."""
+```
+
+```python
+def set_user_id(user_id) -> None:
+    """
+    Set the current user ID in the logging context.
+    
+    Args:
+        user_id: User ID to set
+..."""
+```
+
+```python
+def setup_logging() -> None:
+    """
+    Set up the logging system.
+    
+    This function should be called early in the application sta..."""
+```
+
+**Classes:**
+```python
+class RequestIdFilter(logging.Filter):
+    """
+    Log filter that adds request_id from thread-local storage.
+    
+    This filter adds the curren..."""
+```
+*Methods:*
+```python
+    def filter(self, record) -> bool:
+        """
+        Add request_id to log record if available.
+        
+        Args:
+            record: Log r..."""
+```
+
+```python
+class UserIdFilter(logging.Filter):
+    """
+    Log filter that adds user_id from thread-local storage.
+    
+    This filter adds the current u..."""
+```
+*Methods:*
+```python
+    def filter(self, record) -> bool:
+        """
+        Add user_id to log record if available.
+        
+        Args:
+            record: Log reco..."""
 ```
 
 #### Package: db
-Path: `/workspaces/Crown-Nexus/backend/app/db`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/db/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/__init__.py`
 
 ##### Module: base
 *SQLAlchemy models import module.*
-Path: `/workspaces/Crown-Nexus/backend/app/db/base.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/base.py`
 
 **Imports:**
 ```python
@@ -1708,7 +2279,7 @@ from app.models.compliance import Prop65Chemical, ProductChemical
 
 ##### Module: base_class
 *SQLAlchemy base model class.*
-Path: `/workspaces/Crown-Nexus/backend/app/db/base_class.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/base_class.py`
 
 **Imports:**
 ```python
@@ -1772,7 +2343,7 @@ class Base(DeclarativeBase):
 
 ##### Module: session
 *Database session management module.*
-Path: `/workspaces/Crown-Nexus/backend/app/db/session.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/session.py`
 
 **Imports:**
 ```python
@@ -1820,14 +2391,14 @@ async def get_db_context() -> AsyncGenerator[(AsyncSession, None)]:
 ```
 
 #### Package: fitment
-Path: `/workspaces/Crown-Nexus/backend/app/fitment`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/__init__.py`
 
 ##### Module: api
 *API endpoints for fitment functionality.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/api.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/api.py`
 
 **Imports:**
 ```python
@@ -1993,7 +2564,7 @@ class UploadModelMappingsResponse(BaseModel):
 
 ##### Module: config
 *Configuration for the fitment module.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/config.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/config.py`
 
 **Imports:**
 ```python
@@ -2050,7 +2621,7 @@ model_config =     model_config = SettingsConfigDict(
 
 ##### Module: db
 *Database access for fitment data.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/db.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/db.py`
 
 **Imports:**
 ```python
@@ -2212,7 +2783,7 @@ class FitmentDBService(object):
 
 ##### Module: dependencies
 *Dependencies for the fitment module.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/dependencies.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/dependencies.py`
 
 **Imports:**
 ```python
@@ -2257,7 +2828,7 @@ async def initialize_mapping_engine() -> None:
 
 ##### Module: exceptions
 *Custom exceptions for the fitment module.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/exceptions.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/exceptions.py`
 
 **Imports:**
 ```python
@@ -2358,7 +2929,7 @@ class ValidationError(FitmentError):
 
 ##### Module: mapper
 *Mapper for fitment data.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/mapper.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/mapper.py`
 
 **Imports:**
 ```python
@@ -2486,7 +3057,7 @@ class FitmentMappingEngine(object):
 
 ##### Module: models
 *Fitment data models for the Crown Nexus platform.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/models.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/models.py`
 
 **Imports:**
 ```python
@@ -2614,7 +3185,7 @@ model_config =     model_config = ConfigDict(populate_by_name=True)
 
 ##### Module: parser
 *Parser for fitment application strings.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/parser.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/parser.py`
 
 **Imports:**
 ```python
@@ -2690,7 +3261,7 @@ class FitmentParser(object):
 
 ##### Module: validator
 *Validator for fitment data.*
-Path: `/workspaces/Crown-Nexus/backend/app/fitment/validator.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/fitment/validator.py`
 
 **Imports:**
 ```python
@@ -2730,10 +3301,10 @@ class FitmentValidator(object):
 ```
 
 #### Package: models
-Path: `/workspaces/Crown-Nexus/backend/app/models`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/models/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/__init__.py`
 
 **Imports:**
 ```python
@@ -2744,7 +3315,7 @@ from app.models.media import Media, MediaType, MediaVisibility, product_media_as
 
 ##### Module: associations
 *Association tables for many-to-many relationships.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/associations.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/associations.py`
 
 **Imports:**
 ```python
@@ -2874,7 +3445,7 @@ product_texture_association = product_texture_association = Table(
 
 ##### Module: chat
 *Chat system models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/chat.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/chat.py`
 
 **Imports:**
 ```python
@@ -3042,7 +3613,7 @@ __tablename__ = 'rate_limit_log'
 
 ##### Module: compliance
 *Compliance models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/compliance.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/compliance.py`
 
 **Imports:**
 ```python
@@ -3233,7 +3804,7 @@ __tablename__ = 'warning'
 
 ##### Module: currency
 *Currency models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/currency.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/currency.py`
 
 **Imports:**
 ```python
@@ -3303,7 +3874,7 @@ __table_args__ =     __table_args__ = (
 
 ##### Module: location
 *Location models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/location.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/location.py`
 
 **Imports:**
 ```python
@@ -3369,7 +3940,7 @@ __tablename__ = 'country'
 
 ##### Module: media
 *Media asset models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/media.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/media.py`
 
 **Imports:**
 ```python
@@ -3471,7 +4042,7 @@ RESTRICTED = 'restricted'
 
 ##### Module: model_mapping
 *Model mapping database model.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/model_mapping.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/model_mapping.py`
 
 **Imports:**
 ```python
@@ -3527,7 +4098,7 @@ updated_at =     updated_at = Column(DateTime(timezone=True), server_default=fun
 
 ##### Module: product
 *Product catalog models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/product.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/product.py`
 
 **Imports:**
 ```python
@@ -3913,7 +4484,7 @@ __tablename__ = 'product_supersession'
 
 ##### Module: reference
 *Reference data models.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/reference.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/reference.py`
 
 **Imports:**
 ```python
@@ -4125,7 +4696,7 @@ stock =     stock = relationship("ProductStock", back_populates="warehouse")
 
 ##### Module: user
 *User model and authentication utilities.*
-Path: `/workspaces/Crown-Nexus/backend/app/models/user.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/models/user.py`
 
 **Imports:**
 ```python
@@ -4245,10 +4816,10 @@ READ_ONLY = 'read_only'
 ```
 
 #### Package: schemas
-Path: `/workspaces/Crown-Nexus/backend/app/schemas`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/__init__.py`
 
 **Imports:**
 ```python
@@ -4258,7 +4829,7 @@ from app.schemas.user import Company, CompanyCreate, CompanyInDB, CompanyUpdate,
 
 ##### Module: chat
 *Chat system Pydantic schemas.*
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/chat.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/chat.py`
 
 **Imports:**
 ```python
@@ -4451,7 +5022,7 @@ class WebSocketResponse(BaseModel):
 
 ##### Module: currency
 *Currency schemas.*
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/currency.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/currency.py`
 
 **Imports:**
 ```python
@@ -4525,7 +5096,7 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ##### Module: media
 *Media asset schemas.*
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/media.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/media.py`
 
 **Imports:**
 ```python
@@ -4620,7 +5191,7 @@ class MediaUpdate(BaseModel):
 
 ##### Module: model_mapping
 *Model mapping schemas for API input/output.*
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/model_mapping.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/model_mapping.py`
 
 **Imports:**
 ```python
@@ -4679,7 +5250,7 @@ class ModelMappingUpdate(BaseModel):
 
 ##### Module: product
 *Product catalog schemas.*
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/product.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/product.py`
 
 **Imports:**
 ```python
@@ -5199,7 +5770,7 @@ class ProductUpdate(BaseModel):
 
 ##### Module: user
 *User data schemas.*
-Path: `/workspaces/Crown-Nexus/backend/app/schemas/user.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas/user.py`
 
 **Imports:**
 ```python
@@ -5354,14 +5925,14 @@ class UserUpdate(BaseModel):
 ```
 
 #### Package: services
-Path: `/workspaces/Crown-Nexus/backend/app/services`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/services/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/__init__.py`
 
 ##### Module: currency_service
 *Currency service for fetching and managing exchange rates.*
-Path: `/workspaces/Crown-Nexus/backend/app/services/currency_service.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/currency_service.py`
 
 **Imports:**
 ```python
@@ -5436,7 +6007,7 @@ DATA_SOURCE = 'exchangerate-api.com'
 ```
 
 ##### Module: media_service
-Path: `/workspaces/Crown-Nexus/backend/app/services/media_service.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/media_service.py`
 
 **Imports:**
 ```python
@@ -5698,7 +6269,7 @@ class StorageConnectionError(MediaStorageError):
 
 ##### Module: search
 *Search service.*
-Path: `/workspaces/Crown-Nexus/backend/app/services/search.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/search.py`
 
 **Imports:**
 ```python
@@ -5781,7 +6352,7 @@ class SearchService(object):
 
 ##### Module: vehicle
 *Vehicle data lookup service.*
-Path: `/workspaces/Crown-Nexus/backend/app/services/vehicle.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/vehicle.py`
 
 **Imports:**
 ```python
@@ -5901,14 +6472,14 @@ class VehicleDataService(object):
 ```
 
 #### Package: tasks
-Path: `/workspaces/Crown-Nexus/backend/app/tasks`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/tasks`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/tasks/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/tasks/__init__.py`
 
 ##### Module: chat_tasks
 *Celery worker for background tasks.*
-Path: `/workspaces/Crown-Nexus/backend/app/tasks/chat_tasks.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/tasks/chat_tasks.py`
 
 **Imports:**
 ```python
@@ -5974,7 +6545,7 @@ def update_user_presence(self) -> Dict[(str, Any)]:
 
 ##### Module: currency_tasks
 *Celery tasks for currency operations.*
-Path: `/workspaces/Crown-Nexus/backend/app/tasks/currency_tasks.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/tasks/currency_tasks.py`
 
 **Imports:**
 ```python
@@ -6015,14 +6586,14 @@ def update_exchange_rates(self) -> Dict[(str, Optional[int])]:
 ```
 
 #### Package: utils
-Path: `/workspaces/Crown-Nexus/backend/app/utils`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/app/utils/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/__init__.py`
 
 ##### Module: cache
 *Caching utility functions.*
-Path: `/workspaces/Crown-Nexus/backend/app/utils/cache.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/cache.py`
 
 **Imports:**
 ```python
@@ -6154,7 +6725,7 @@ class RequestCache(object):
 
 ##### Module: crypto
 *Cryptography utilities.*
-Path: `/workspaces/Crown-Nexus/backend/app/utils/crypto.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/crypto.py`
 
 **Imports:**
 ```python
@@ -6198,7 +6769,7 @@ def generate_secure_token(length) -> str:
 
 ##### Module: db
 *Database utility functions.*
-Path: `/workspaces/Crown-Nexus/backend/app/utils/db.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/db.py`
 
 **Imports:**
 ```python
@@ -6300,7 +6871,7 @@ async def update_object(db, model, id, obj_in) -> Optional[T]:
 
 ##### Module: file
 *File handling utilities.*
-Path: `/workspaces/Crown-Nexus/backend/app/utils/file.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/file.py`
 
 **Imports:**
 ```python
@@ -6403,7 +6974,7 @@ def validate_file(file, allowed_types) -> Tuple[(MediaType, bool)]:
 
 ##### Module: redis_manager
 *Redis connection manager.*
-Path: `/workspaces/Crown-Nexus/backend/app/utils/redis_manager.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/redis_manager.py`
 
 **Imports:**
 ```python
@@ -6515,14 +7086,14 @@ async def set_key(key, value, ttl) -> bool:
 ```
 
 ### Package: examples
-Path: `/workspaces/Crown-Nexus/backend/examples`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/examples`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/examples/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/examples/__init__.py`
 
 #### Module: process_fitment
 *Example script for processing fitment data.*
-Path: `/workspaces/Crown-Nexus/backend/examples/process_fitment.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/examples/process_fitment.py`
 
 **Imports:**
 ```python
@@ -6544,14 +7115,14 @@ async def main():
 ```
 
 ### Package: tests
-Path: `/workspaces/Crown-Nexus/backend/tests`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/tests/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/__init__.py`
 
 #### Module: conftest
 *Test configuration and fixtures for pytest.*
-Path: `/workspaces/Crown-Nexus/backend/tests/conftest.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/conftest.py`
 
 **Imports:**
 ```python
@@ -6690,7 +7261,7 @@ async def user_token(normal_user) -> str:
 
 #### Module: utils
 *Testing utilities and helpers.*
-Path: `/workspaces/Crown-Nexus/backend/tests/utils.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/utils.py`
 
 **Imports:**
 ```python
@@ -6757,20 +7328,20 @@ def validate_model_response(response_data, model_type, exclude_fields) -> M:
 ```
 
 #### Package: api
-Path: `/workspaces/Crown-Nexus/backend/tests/api`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/tests/api/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api/__init__.py`
 
 ##### Package: v1
-Path: `/workspaces/Crown-Nexus/backend/tests/api/v1`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api/v1`
 
 **__init__.py:**
-Path: `/workspaces/Crown-Nexus/backend/tests/api/v1/__init__.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api/v1/__init__.py`
 
 ###### Module: test_auth
 *Tests for authentication endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/tests/api/v1/test_auth.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api/v1/test_auth.py`
 
 **Imports:**
 ```python
@@ -6824,7 +7395,7 @@ async def test_login_success(client, normal_user) -> None:
 
 ###### Module: test_products
 *Tests for product management endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/tests/api/v1/test_products.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api/v1/test_products.py`
 
 **Imports:**
 ```python
@@ -6964,7 +7535,7 @@ async def test_update_product_non_admin(client, user_token, test_product) -> Non
 
 ###### Module: test_users
 *Tests for user management endpoints.*
-Path: `/workspaces/Crown-Nexus/backend/tests/api/v1/test_users.py`
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/api/v1/test_users.py`
 
 **Imports:**
 ```python
@@ -7037,12 +7608,12 @@ async def test_update_user_admin(client, admin_token, normal_user) -> None:
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 01:06:27
+Generated on 2025-03-16 04:43:57
 
 ## Project Overview
 - Project Name: frontend
 - Project Type: Vue 3
-- Root Path: /workspaces/Crown-Nexus/frontend
+- Root Path: /home/runner/work/Crown-Nexus/Crown-Nexus/frontend
 
 ### Dependencies
 **Production Dependencies:**
@@ -9878,6 +10449,17 @@ frontend/
 | valid_count | number |
 | warning_count | number |
 
+### index
+**Path:** `src/router/index.ts`
+
+#### Interface: `RouteMeta`
+| Property | Type |
+| -------- | ---- |
+| layout | string |
+| requiresAdmin | boolean |
+| requiresAuth | boolean |
+| title | string |
+
 ### media
 **Path:** `src/types/media.ts`
 
@@ -10250,15 +10832,6 @@ frontend/
 #### Function: `toTitleCase(text: string) → string`
 
 #### Function: `truncateText(text: string, maxLength: number = 50) → string`
-
-### index
-**Path:** `src/i18n/index.ts`
-
-#### Function: `async initializeI18n() → Promise<void>`
-
-#### Function: `async loadLanguageAsync(locale: string) → Promise<string>`
-
-#### Function: `async setLocale(locale: string) → Promise<string>`
 
 ### notification
 **Path:** `src/utils/notification.ts`

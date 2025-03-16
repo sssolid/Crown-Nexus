@@ -1,10 +1,10 @@
 # frontend Frontend Structure
-Generated on 2025-03-16 01:06:27
+Generated on 2025-03-16 04:43:57
 
 ## Project Overview
 - Project Name: frontend
 - Project Type: Vue 3
-- Root Path: /workspaces/Crown-Nexus/frontend
+- Root Path: /home/runner/work/Crown-Nexus/Crown-Nexus/frontend
 
 ### Dependencies
 **Production Dependencies:**
@@ -2840,6 +2840,17 @@ frontend/
 | valid_count | number |
 | warning_count | number |
 
+### index
+**Path:** `src/router/index.ts`
+
+#### Interface: `RouteMeta`
+| Property | Type |
+| -------- | ---- |
+| layout | string |
+| requiresAdmin | boolean |
+| requiresAuth | boolean |
+| title | string |
+
 ### media
 **Path:** `src/types/media.ts`
 
@@ -3212,15 +3223,6 @@ frontend/
 #### Function: `toTitleCase(text: string) → string`
 
 #### Function: `truncateText(text: string, maxLength: number = 50) → string`
-
-### index
-**Path:** `src/i18n/index.ts`
-
-#### Function: `async initializeI18n() → Promise<void>`
-
-#### Function: `async loadLanguageAsync(locale: string) → Promise<string>`
-
-#### Function: `async setLocale(locale: string) → Promise<string>`
 
 ### notification
 **Path:** `src/utils/notification.ts`

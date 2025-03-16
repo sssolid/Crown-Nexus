@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:36:17
+Generated on 2025-03-16 15:37:09
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -6466,6 +6466,59 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services`
 **__init__.py:**
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/__init__.py`
 
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+from typing import Any, Dict, Type
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.logging import get_logger
+from app.services.user_service import UserService
+from app.services.product_service import ProductService
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services")
+service_registry = service_registry = ServiceRegistry()
+```
+
+**Classes:**
+```python
+class ServiceRegistry(object):
+    """Registry for service instances.
+
+This class provides a central registry for service instances, allowing for dependency injection and simplified access to services."""
+```
+*Methods:*
+```python
+    def __new__(cls, *args, **kwargs):
+        """Ensure singleton instance."""
+```
+```python
+@classmethod
+    def get(cls, name, db) -> Any:
+        """Get a service instance.
+
+Args: name: Service name db: Database session
+
+Returns: Any: Service instance
+
+Raises: ValueError: If service not found"""
+```
+```python
+@classmethod
+    def get_all(cls, db) -> Dict[(str, Any)]:
+        """Get all service instances.  Args: db: Database session  Returns: Dict[str, Any]: Service instances"""
+```
+```python
+@classmethod
+    def register(cls, service_class, name) -> None:
+        """Register a service class.
+
+Args: service_class: Service class to register name: Optional name for the service (defaults to class name)"""
+```
+
 ##### Module: base
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/base.py`
 
@@ -8292,7 +8345,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 15:36:17
+Generated on 2025-03-16 15:37:09
 
 ## Project Overview
 - Project Name: frontend

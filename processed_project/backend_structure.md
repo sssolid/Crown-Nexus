@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 23:50:50
+Generated on 2025-03-16 23:51:41
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -157,7 +157,6 @@ backend/
 │   │   └── __init__.py
 │   ├── __init__.py
 │   ├── conftest.py
-│   ├── factories.py
 │   └── utils.py
 ├── README.md
 ├── alembic.ini
@@ -8776,128 +8775,6 @@ This fixture generates a valid JWT token for the normal user to use in authentic
 Args: normal_user: Normal user fixture
 
 Returns: str: JWT token for normal user"""
-```
-
-#### Module: factories
-Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/factories.py`
-
-**Imports:**
-```python
-from __future__ import annotations
-import uuid
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Type
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.user import Company, User, UserRole, get_password_hash
-from app.models.product import Brand, Fitment, Product, ProductDescription, ProductStatus
-from app.models.media import Media, MediaType, MediaVisibility
-from tests.utils import create_random_email, create_random_string
-```
-
-**Classes:**
-```python
-class BaseFactory(object):
-    """Base factory for test models.  Provides utility methods for all factory classes."""
-```
-*Methods:*
-```python
-@classmethod
-    async def create_batch(cls, db_session, count, **kwargs) -> List[Any]:
-        """Create multiple instances of a model.
-
-Args: db_session: Database session count: Number of instances to create **kwargs: Attributes to set on each instance
-
-Returns: List[Any]: List of created model instances"""
-```
-
-```python
-class BrandFactory(BaseFactory):
-    """Factory for Brand models."""
-```
-*Methods:*
-```python
-@staticmethod
-    async def create(db_session, **kwargs) -> Brand:
-        """Create a brand instance.
-
-Args: db_session: Database session **kwargs: Brand attributes
-
-Returns: Brand: Created brand"""
-```
-
-```python
-class CompanyFactory(BaseFactory):
-    """Factory for Company models."""
-```
-*Methods:*
-```python
-@staticmethod
-    async def create(db_session, **kwargs) -> Company:
-        """Create a company instance.
-
-Args: db_session: Database session **kwargs: Company attributes
-
-Returns: Company: Created company"""
-```
-
-```python
-class FitmentFactory(BaseFactory):
-    """Factory for Fitment models."""
-```
-*Methods:*
-```python
-@staticmethod
-    async def create(db_session, **kwargs) -> Fitment:
-        """Create a fitment instance.
-
-Args: db_session: Database session **kwargs: Fitment attributes
-
-Returns: Fitment: Created fitment"""
-```
-
-```python
-class MediaFactory(BaseFactory):
-    """Factory for Media models."""
-```
-*Methods:*
-```python
-@staticmethod
-    async def create(db_session, **kwargs) -> Media:
-        """Create a media instance.
-
-Args: db_session: Database session **kwargs: Media attributes
-
-Returns: Media: Created media"""
-```
-
-```python
-class ProductFactory(BaseFactory):
-    """Factory for Product models."""
-```
-*Methods:*
-```python
-@staticmethod
-    async def create(db_session, **kwargs) -> Product:
-        """Create a product instance.
-
-Args: db_session: Database session **kwargs: Product attributes
-
-Returns: Product: Created product"""
-```
-
-```python
-class UserFactory(BaseFactory):
-    """Factory for User models."""
-```
-*Methods:*
-```python
-@staticmethod
-    async def create(db_session, **kwargs) -> User:
-        """Create a user instance.
-
-Args: db_session: Database session **kwargs: User attributes
-
-Returns: User: Created user"""
 ```
 
 #### Module: utils

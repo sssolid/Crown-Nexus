@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 14:17:56
+Generated on 2025-03-16 14:21:26
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -195,10 +195,13 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator, Callable, Optional
-from fastapi import FastAPI, Request, Response, Depends
+from fastapi import FastAPI, Request, Response, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.exceptions import RequestValidationError
+from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, http_exception_handler, generic_exception_handler
+from app.middleware.error_handler import ErrorHandlerMiddleware
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
@@ -7413,7 +7416,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 14:17:56
+Generated on 2025-03-16 14:21:26
 
 ## Project Overview
 - Project Name: frontend

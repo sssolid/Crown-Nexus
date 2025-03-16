@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:41:22
+Generated on 2025-03-16 15:43:11
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -212,6 +212,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, http_exception_handler, generic_exception_handler
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings

@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, http_exception_handler, generic_exception_handler
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
@@ -58,6 +59,7 @@ app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 app.add_middleware(ErrorHandlerMiddleware)
 app.add_middleware(RequestContextMiddleware)
+app.add_middleware(ResponseFormatterMiddleware)
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(CORSMiddleware, allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS], allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
 if settings.MEDIA_STORAGE_TYPE == 'local':

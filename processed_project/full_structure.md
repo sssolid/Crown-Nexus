@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 19:13:04
+Generated on 2025-03-16 19:18:01
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -601,121 +601,198 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/v1/endpoints/ch
 **Imports:**
 ```python
 from __future__ import annotations
-import logging
-from typing import Any, Dict, List, Optional, Union
+import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 from app.api.deps import get_admin_user, get_current_active_user, get_db
-from app.core.exceptions import BusinessLogicException, ResourceNotFoundException, ValidationException
+from app.api.responses import created_response, error_response, success_response
+from app.core.exceptions import AuthenticationException, BusinessLogicException, PermissionDeniedException, ResourceAlreadyExistsException, ResourceNotFoundException, ValidationException
+from app.core.logging import get_logger, log_execution_time
 from app.db.session import AsyncSession
-from app.models.chat import ChatMember, ChatMemberRole, ChatRoom, ChatRoomType
+from app.models.chat import ChatMember, ChatMemberRole, ChatRoom, ChatRoomType, MessageType
 from app.models.user import User
 from app.services import get_chat_service
+from app.schemas.responses import Response
 ```
 
 **Global Variables:**
 ```python
 router = router = APIRouter()
-logger = logger = logging.getLogger(__name__)
+logger = logger = get_logger("app.api.v1.endpoints.chat")
 ```
 
 **Functions:**
 ```python
+@router.post('/rooms/{room_id}/messages/{message_id}/reactions')
+@log_execution_time(logger)
+async def add_reaction(room_id, message_id, request, db, current_user) -> Response:
+    """Add a reaction to a message.
+
+Args: room_id: ID of the chat room message_id: ID of the message request: Reaction request data db: Database session current_user: Authenticated user making the request
+
+Returns: Response with success status and message
+
+Raises: HTTPException: If the message is not found or the user doesn't have access to the room"""
+```
+
+```python
 @router.post('/rooms/{room_id}/members')
-async def add_room_member(room_id, request, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def add_room_member(room_id, request, db, current_user) -> Response:
     """Add a member to a chat room.
 
 Args: room_id: ID of the chat room request: Member addition request data db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing success status and message
+Returns: Response with success status and message
 
 Raises: HTTPException: If validation fails, the room is not found, or the user lacks permissions"""
 ```
 
 ```python
 @router.post('/direct-chats')
-async def create_direct_chat(request, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def create_direct_chat(request, db, current_user) -> Response:
     """Create or get a direct chat between two users.
 
 If a direct chat already exists between the users, it returns the existing chat. Otherwise, it creates a new direct chat.
 
 Args: request: Direct chat creation request data db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing the direct chat room information
+Returns: Response containing the direct chat room information
 
 Raises: HTTPException: If the target user doesn't exist or an error occurs"""
 ```
 
 ```python
+@router.post('/rooms/{room_id}/messages')
+@log_execution_time(logger)
+async def create_message(room_id, request, db, current_user) -> Response:
+    """Create a new message in a chat room.
+
+Args: room_id: ID of the chat room request: Message creation request data db: Database session current_user: Authenticated user making the request
+
+Returns: Response containing the created message information
+
+Raises: HTTPException: If the room is not found, the user doesn't have access, or validation fails"""
+```
+
+```python
 @router.post('/rooms', status_code=status.HTTP_201_CREATED)
-async def create_room(request, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def create_room(request, db, current_user) -> Response:
     """Create a new chat room.
 
 Args: request: Room creation request data db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing the created room information
+Returns: Response with the created room information
 
 Raises: HTTPException: If validation fails or an error occurs during room creation"""
 ```
 
 ```python
+@router.delete('/rooms/{room_id}/messages/{message_id}')
+@log_execution_time(logger)
+async def delete_message(room_id, message_id, db, current_user) -> Response:
+    """Delete a message.
+
+Args: room_id: ID of the chat room message_id: ID of the message to delete db: Database session current_user: Authenticated user making the request
+
+Returns: Response with success status and message
+
+Raises: HTTPException: If the message is not found or the user doesn't have permission to delete it"""
+```
+
+```python
+@router.put('/rooms/{room_id}/messages/{message_id}')
+@log_execution_time(logger)
+async def edit_message(room_id, message_id, request, db, current_user) -> Response:
+    """Edit an existing message.
+
+Args: room_id: ID of the chat room message_id: ID of the message to edit request: Message edit request data db: Database session current_user: Authenticated user making the request
+
+Returns: Response with the updated message information
+
+Raises: HTTPException: If the message is not found or the user doesn't have permission to edit it"""
+```
+
+```python
 @router.get('/rooms/{room_id}')
-async def get_room(room_id, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def get_room(room_id, db, current_user) -> Response:
     """Get a specific chat room by ID.
 
 Args: room_id: ID of the chat room db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing the room information
+Returns: Response containing the room information
 
 Raises: HTTPException: If the room is not found or the user doesn't have access"""
 ```
 
 ```python
 @router.get('/rooms/{room_id}/messages')
-async def get_room_messages(room_id, before_id, limit, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def get_room_messages(room_id, before_id, limit, db, current_user) -> Response:
     """Get messages for a chat room.
 
 Args: room_id: ID of the chat room before_id: Optional message ID to get messages before (for pagination) limit: Maximum number of messages to return db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing the list of messages
+Returns: Response containing the list of messages
 
 Raises: HTTPException: If the room is not found or the user doesn't have access"""
 ```
 
 ```python
 @router.get('/rooms')
-async def get_rooms(db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def get_rooms(db, current_user) -> Response:
     """Get all chat rooms for the current user.
 
 Args: db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing the list of rooms
+Returns: Response containing the list of rooms
 
 Raises: HTTPException: If an error occurs during fetching rooms"""
 ```
 
 ```python
+@router.delete('/rooms/{room_id}/messages/{message_id}/reactions/{reaction}')
+@log_execution_time(logger)
+async def remove_reaction(room_id, message_id, reaction, db, current_user) -> Response:
+    """Remove a reaction from a message.
+
+Args: room_id: ID of the chat room message_id: ID of the message reaction: Reaction emoji or code to remove db: Database session current_user: Authenticated user making the request
+
+Returns: Response with success status and message
+
+Raises: HTTPException: If the message is not found or the user doesn't have access to the room"""
+```
+
+```python
 @router.delete('/rooms/{room_id}/members/{user_id}')
-async def remove_room_member(room_id, user_id, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def remove_room_member(room_id, user_id, db, current_user) -> Response:
     """Remove a member from a chat room.
 
 Users can remove themselves (leave the room) or admins can remove any member. Owners can only be removed by other owners.
 
 Args: room_id: ID of the chat room user_id: ID of the user to remove db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing success status and message
+Returns: Response with success status and message
 
 Raises: HTTPException: If the room/member is not found or the user lacks permissions"""
 ```
 
 ```python
 @router.put('/rooms/{room_id}/members/{user_id}')
-async def update_room_member(room_id, user_id, request, db, current_user) -> Dict[(str, Any)]:
+@log_execution_time(logger)
+async def update_room_member(room_id, user_id, request, db, current_user) -> Response:
     """Update a member's role in a chat room.
 
 Args: room_id: ID of the chat room user_id: ID of the user to update request: Role update request data db: Database session current_user: Authenticated user making the request
 
-Returns: Dictionary containing success status and message
+Returns: Response with success status and message
 
 Raises: HTTPException: If validation fails, the room/member is not found, or the user lacks permissions"""
 ```
@@ -744,6 +821,23 @@ class CreateDirectChatRequest(BaseModel):
 ```
 
 ```python
+class CreateMessageRequest(BaseModel):
+    """Request model for creating a new message."""
+```
+*Methods:*
+```python
+@validator('message_type')
+    def validate_message_type(cls, v) -> str:
+        """Validate that the message type is valid.
+
+Args: v: Message type value to validate
+
+Returns: The validated message type
+
+Raises: ValueError: If the message type is not valid"""
+```
+
+```python
 class CreateRoomRequest(BaseModel):
     """Request model for creating a chat room."""
 ```
@@ -758,6 +852,16 @@ Args: v: Room type value to validate
 Returns: The validated room type
 
 Raises: ValueError: If the room type is not valid"""
+```
+
+```python
+class EditMessageRequest(BaseModel):
+    """Request model for editing a message."""
+```
+
+```python
+class ReactionRequest(BaseModel):
+    """Request model for adding/removing a reaction to a message."""
 ```
 
 ```python
@@ -8894,7 +8998,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 19:13:04
+Generated on 2025-03-16 19:18:01
 
 ## Project Overview
 - Project Name: frontend

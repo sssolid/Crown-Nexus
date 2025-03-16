@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 14:15:16
+Generated on 2025-03-16 14:17:56
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -109,6 +109,7 @@ backend/
 │   │   ├── cache.py
 │   │   ├── crypto.py
 │   │   ├── db.py
+│   │   ├── errors.py
 │   │   ├── file.py
 │   │   └── redis_manager.py
 │   ├── __init__.py
@@ -6640,6 +6641,105 @@ async def update_object(db, model, id, obj_in) -> Optional[T]:
 Args: db: Database session model: Model class id: Instance ID obj_in: Object data
 
 Returns: Optional[T]: Updated model instance or None if not found"""
+```
+
+##### Module: errors
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/errors.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union
+from app.core.exceptions import AppException, BadRequestException, BusinessLogicException, DatabaseException, ErrorCode, ErrorDetail, PermissionDeniedException, ResourceAlreadyExistsException, ResourceNotFoundException, ValidationException
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar("T")
+```
+
+**Functions:**
+```python
+def bad_request(message) -> BadRequestException:
+    """Create a BadRequestException with the provided message.
+
+Args: message: Error message
+
+Returns: BadRequestException with the provided message"""
+```
+
+```python
+def business_logic_error(message) -> BusinessLogicException:
+    """Create a BusinessLogicException with the provided message.
+
+Args: message: Error message
+
+Returns: BusinessLogicException with the provided message"""
+```
+
+```python
+def create_error_details(loc, msg, type_str) -> ErrorDetail:
+    """Create an error detail object.
+
+Args: loc: Location of the error (e.g., ["body", "username"]) msg: Error message type_str: Error type string
+
+Returns: ErrorDetail object"""
+```
+
+```python
+def database_error(message, original_error) -> DatabaseException:
+    """Create a DatabaseException with the provided message.
+
+Args: message: Error message original_error: Original exception that was caught
+
+Returns: DatabaseException with the provided message"""
+```
+
+```python
+def ensure_not_none(value, resource_type, resource_id) -> T:
+    """Ensure a value is not None, raising ResourceNotFoundException if it is.
+
+Args: value: Value to check resource_type: Type of resource for error message resource_id: ID of the resource for error message
+
+Returns: The value if it's not None
+
+Raises: ResourceNotFoundException: If the value is None"""
+```
+
+```python
+def permission_denied(action, resource_type) -> PermissionDeniedException:
+    """Create a PermissionDeniedException with standard formatting.
+
+Args: action: Action attempted (e.g., "create", "update") resource_type: Type of resource (e.g., "User", "Product")
+
+Returns: PermissionDeniedException with a standardized message"""
+```
+
+```python
+def resource_already_exists(resource_type, identifier) -> ResourceAlreadyExistsException:
+    """Create a ResourceAlreadyExistsException with standard formatting.
+
+Args: resource_type: Type of resource (e.g., "User", "Product") identifier: Identifier(s) that caused the conflict
+
+Returns: ResourceAlreadyExistsException with a standardized message"""
+```
+
+```python
+def resource_not_found(resource_type, resource_id) -> ResourceNotFoundException:
+    """Create a ResourceNotFoundException with standard formatting.
+
+Args: resource_type: Type of resource (e.g., "User", "Product") resource_id: ID of the resource that wasn't found
+
+Returns: ResourceNotFoundException with a standardized message"""
+```
+
+```python
+def validation_error(field, message) -> ValidationException:
+    """Create a ValidationException for a specific field.
+
+Args: field: Field name or path message: Error message
+
+Returns: ValidationException with details for the specified field"""
 ```
 
 ##### Module: file

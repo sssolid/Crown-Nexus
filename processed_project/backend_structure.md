@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:45:31
+Generated on 2025-03-16 15:46:19
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -109,6 +109,7 @@ backend/
 │   │   ├── base.py
 │   │   ├── currency_service.py
 │   │   ├── media_service.py
+│   │   ├── pagination.py
 │   │   ├── search.py
 │   │   └── vehicle.py
 │   ├── tasks/
@@ -7302,6 +7303,75 @@ AZURE = 'azure'
 ```python
 class StorageConnectionError(MediaStorageError):
     """Exception raised when connection to storage fails."""
+```
+
+##### Module: pagination
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/pagination.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import base64
+import json
+import uuid
+from datetime import datetime
+from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union, cast
+from fastapi import HTTPException, Query, status
+from pydantic import BaseModel
+from sqlalchemy import Column, asc, desc, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeMeta, InstrumentedAttribute
+from sqlalchemy.sql import Select
+from sqlalchemy.sql.expression import ClauseElement
+from app.core.exceptions import ValidationException
+from app.core.logging import get_logger
+from app.db.base_class import Base
+from app.db.utils import count_query, execute_query
+from app.schemas.pagination import CursorPaginationParams, OffsetPaginationParams, PaginationResult, SortDirection, SortField
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.pagination")
+T = T = TypeVar("T", bound=Base)
+R = R = TypeVar("R", bound=BaseModel)
+```
+
+**Classes:**
+```python
+class PaginationService(Generic[(T, R)]):
+    """Service for handling pagination.
+
+This service supports both offset-based and cursor-based pagination.
+
+Attributes: db: Database session model: SQLAlchemy model class response_model: Pydantic response model"""
+```
+*Methods:*
+```python
+    def __init__(self, db, model, response_model) -> None:
+        """Initialize the pagination service.
+
+Args: db: Database session model: SQLAlchemy model class response_model: Pydantic response model"""
+```
+```python
+    async def paginate_with_cursor(self, query, params, transform_func) -> PaginationResult[R]:
+        """Paginate query results using cursor-based pagination.
+
+Args: query: SQLAlchemy query params: Pagination parameters transform_func: Function to transform items
+
+Returns: PaginationResult[R]: Paginated results
+
+Raises: ValidationException: If pagination parameters are invalid"""
+```
+```python
+    async def paginate_with_offset(self, query, params, transform_func) -> PaginationResult[R]:
+        """Paginate query results using offset-based pagination.
+
+Args: query: SQLAlchemy query params: Pagination parameters transform_func: Function to transform items
+
+Returns: PaginationResult[R]: Paginated results
+
+Raises: ValidationException: If pagination parameters are invalid"""
 ```
 
 ##### Module: search

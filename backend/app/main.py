@@ -37,6 +37,7 @@ from app.core.exceptions import (
     generic_exception_handler,
 )
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.response_formatter import ResponseFormatterMiddleware
 
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
@@ -196,6 +197,7 @@ app.add_exception_handler(Exception, generic_exception_handler)
 
 app.add_middleware(ErrorHandlerMiddleware)
 app.add_middleware(RequestContextMiddleware)
+app.add_middleware(ResponseFormatterMiddleware)
 
 # Set up CORS middleware
 if settings.BACKEND_CORS_ORIGINS:

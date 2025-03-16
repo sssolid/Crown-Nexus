@@ -161,12 +161,12 @@ python frontend-structure-mapper.py my_vue_project/ --format text --ignore "node
 mkdir processed_project
 
 :: Strip and map the backend code
-python backend-stripper.py backend_dir\ --output processed_project\backend_stripped\
-python code-structure-mapper.py backend_dir\ --output processed_project\backend_structure.md --include-docstrings
+python backend-stripper.py backend\ --output processed_project\backend_stripped\
+python code-structure-mapper.py backend\ --output processed_project\backend_structure.md --include-docstrings
 
 :: Strip and map the frontend code
-python frontend-stripper.py frontend_dir\ --output processed_project\frontend_stripped\
-python frontend-structure-mapper.py frontend_dir\ --output processed_project\frontend_structure.md
+python frontend-stripper.py frontend\ --output processed_project\frontend_stripped\
+python frontend-structure-mapper.py frontend\ --output processed_project\frontend_structure.md
 
 :: Combine the structure files (optional)
 type processed_project\backend_structure.md processed_project\frontend_structure.md > processed_project\full_structure.md
@@ -179,12 +179,12 @@ type processed_project\backend_structure.md processed_project\frontend_structure
 mkdir -p processed_project
 
 # Strip and map the backend code
-python backend-stripper.py backend_dir/ --output processed_project/backend_stripped/
-python code-structure-mapper.py backend_dir/ --output processed_project/backend_structure.md --include-docstrings
+python backend-stripper.py backend/ --output processed_project/backend_stripped/
+python code-structure-mapper.py backend/ --output processed_project/backend_structure.md --include-docstrings
 
 # Strip and map the frontend code
-python frontend-stripper.py frontend_dir/ --output processed_project/frontend_stripped/
-python frontend-structure-mapper.py frontend_dir/ --output processed_project/frontend_structure.md
+python frontend-stripper.py frontend/ --output processed_project/frontend_stripped/
+python frontend-structure-mapper.py frontend/ --output processed_project/frontend_structure.md
 
 # Combine the structure files (optional)
 cat processed_project/backend_structure.md processed_project/frontend_structure.md > processed_project/full_structure.md
@@ -195,17 +195,17 @@ cat processed_project/backend_structure.md processed_project/frontend_structure.
 ```bash
 # Process everything and create a combined structure file
 mkdir -p processed_project && \
-python backend-stripper.py backend_dir/ --output processed_project/backend_stripped/ && \
-python frontend-stripper.py frontend_dir/ --output processed_project/frontend_stripped/ && \
-python code-structure-mapper.py backend_dir/ --output processed_project/backend_structure.md --include-docstrings && \
-python frontend-structure-mapper.py frontend_dir/ --output processed_project/frontend_structure.md && \
+python backend-stripper.py backend/ --output processed_project/backend_stripped/ && \
+python frontend-stripper.py frontend/ --output processed_project/frontend_stripped/ && \
+python code-structure-mapper.py backend/ --output processed_project/backend_structure.md --include-docstrings && \
+python frontend-structure-mapper.py frontend/ --output processed_project/frontend_structure.md && \
 cat processed_project/backend_structure.md processed_project/frontend_structure.md > processed_project/full_structure.md
 ```
 
 ### One-liner for Windows
 
 ```batch
-mkdir processed_project && python backend-stripper.py backend_dir\ --output processed_project\backend_stripped\ && python frontend-stripper.py frontend_dir\ --output processed_project\frontend_stripped\ && python code-structure-mapper.py backend_dir\ --output processed_project\backend_structure.md --include-docstrings && python frontend-structure-mapper.py frontend_dir\ --output processed_project\frontend_structure.md && type processed_project\backend_structure.md processed_project\frontend_structure.md > processed_project\full_structure.md
+mkdir processed_project && python backend-stripper.py backend\ --output processed_project\backend_stripped\ && python frontend-stripper.py frontend\ --output processed_project\frontend_stripped\ && python code-structure-mapper.py backend\ --output processed_project\backend_structure.md --include-docstrings && python frontend-structure-mapper.py frontend\ --output processed_project\frontend_structure.md && type processed_project\backend_structure.md processed_project\frontend_structure.md > processed_project\full_structure.md
 ```
 
 ## Best Practices for AI Assistance

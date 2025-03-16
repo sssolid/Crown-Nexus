@@ -1,0 +1,47 @@
+name: Process Structure on Push
+
+on:
+  push:
+    branches:
+      - main  # Adjust this if you want to trigger on other branches
+
+jobs:
+  process_structure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'  # Adjust based on your requirement
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt  # Ensure dependencies are listed in requirements.txt
+
+      - name: Process Everything
+        run: |
+          rm -rf processed_project
+          mkdir -p processed_project
+          python backend-stripper.py backend/ --output processed_project/backend_stripped/
+          python frontend-stripper.py frontend/ --output processed_project/frontend_stripped/
+          python code-structure-mapper.py backend/ --output processed_project/backend_structure.md --include-docstrings
+          python frontend-structure-mapper.py frontend/ --output processed_project/frontend_structure.md
+          cat processed_project/backend_structure.md processed_project/frontend_structure.md > processed_project/full_structure.md
+
+      - name: Upload Processed Structure as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: processed-structure
+          path: processed_project/
+
+      - name: Commit and Push Processed Files
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add processed_project/
+          git commit -m "Update processed structure [Automated]"
+          git push

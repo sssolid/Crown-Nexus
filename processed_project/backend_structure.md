@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:40:32
+Generated on 2025-03-16 15:41:22
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -38,7 +38,8 @@ backend/
 │   │   │   ├── __init__.py
 │   │   │   └── router.py
 │   │   ├── __init__.py
-│   │   └── deps.py
+│   │   ├── deps.py
+│   │   └── responses.py
 │   ├── chat/
 │   │   ├── connection.py
 │   │   ├── service.py
@@ -433,6 +434,66 @@ def require_permissions(permissions, require_all):
 Args: permissions: List of required permissions require_all: Whether all permissions are required (AND) or any (OR)
 
 Returns: Callable: Dependency function"""
+```
+
+##### Module: responses
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/responses.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
+from fastapi import status
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from app.schemas.responses import Response, PaginatedResponse
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar("T")
+```
+
+**Functions:**
+```python
+def created_response(data, message, meta, request_id) -> JSONResponse:
+    """Create a 201 Created response.
+
+Args: data: Response data message: Success message meta: Additional metadata request_id: Request ID for tracking
+
+Returns: JSONResponse: Created response"""
+```
+
+```python
+def error_response(message, code, data, meta, request_id) -> JSONResponse:
+    """Create an error response.
+
+Args: message: Error message code: HTTP status code data: Error data meta: Additional metadata request_id: Request ID for tracking
+
+Returns: JSONResponse: Error response"""
+```
+
+```python
+def no_content_response() -> JSONResponse:
+    """Create a 204 No Content response.  Returns: JSONResponse: No content response"""
+```
+
+```python
+def paginated_response(items, pagination, message, code, meta, request_id) -> JSONResponse:
+    """Create a paginated response.
+
+Args: items: List of items pagination: Pagination metadata message: Success message code: HTTP status code meta: Additional metadata request_id: Request ID for tracking
+
+Returns: JSONResponse: Paginated response"""
+```
+
+```python
+def success_response(data, message, code, meta, pagination, request_id) -> JSONResponse:
+    """Create a success response.
+
+Args: data: Response data message: Success message code: HTTP status code meta: Additional metadata pagination: Pagination metadata request_id: Request ID for tracking
+
+Returns: JSONResponse: Success response"""
 ```
 
 ##### Package: v1

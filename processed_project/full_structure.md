@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:26:27
+Generated on 2025-03-16 15:27:22
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -53,6 +53,7 @@ backend/
 │   │   ├── config.py
 │   │   ├── exceptions.py
 │   │   ├── logging.py
+│   │   ├── permissions.py
 │   │   └── security.py
 │   ├── db/
 │   │   ├── __init__.py
@@ -2313,6 +2314,188 @@ This filter adds the current user ID to log records if available."""
 Args: record: Log record to modify
 
 Returns: True to include the record"""
+```
+
+##### Module: permissions
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/permissions.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import enum
+from typing import Any, Callable, Dict, List, Optional, Set, Type, TypeVar, Union, cast
+from fastapi import Depends, HTTPException, Request, status
+from pydantic import BaseModel
+from app.core.exceptions import PermissionDeniedException
+from app.core.logging import get_logger
+from app.models.user import User, UserRole
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.core.permissions")
+T = T = TypeVar("T", bound=Callable[..., Any])
+ROLE_PERMISSIONS = ROLE_PERMISSIONS = {
+    UserRole.ADMIN: {
+        # Admin has all permissions
+        p for p in Permission
+    },
+    UserRole.MANAGER: {
+        # Managers have most permissions except for system administration
+        Permission.USER_READ,
+        Permission.USER_CREATE,
+        Permission.USER_UPDATE,
+        
+        Permission.PRODUCT_READ,
+        Permission.PRODUCT_CREATE,
+        Permission.PRODUCT_UPDATE,
+        Permission.PRODUCT_DELETE,
+        Permission.PRODUCT_ADMIN,
+        
+        Permission.MEDIA_READ,
+        Permission.MEDIA_CREATE,
+        Permission.MEDIA_UPDATE,
+        Permission.MEDIA_DELETE,
+        Permission.MEDIA_ADMIN,
+        
+        Permission.FITMENT_READ,
+        Permission.FITMENT_CREATE,
+        Permission.FITMENT_UPDATE,
+        Permission.FITMENT_DELETE,
+        Permission.FITMENT_ADMIN,
+        
+        Permission.COMPANY_READ,
+    },
+    UserRole.CLIENT: {
+        # Clients have basic read permissions and can manage their own data
+        Permission.PRODUCT_READ,
+        Permission.FITMENT_READ,
+        Permission.MEDIA_READ,
+        Permission.COMPANY_READ,
+    },
+    UserRole.DISTRIBUTOR: {
+        # Distributors have slightly more permissions than regular clients
+        Permission.PRODUCT_READ,
+        Permission.FITMENT_READ,
+        Permission.MEDIA_READ,
+        Permission.MEDIA_CREATE,
+        Permission.COMPANY_READ,
+    },
+    UserRole.READ_ONLY: {
+        # Read-only users can only read data
+        Permission.PRODUCT_READ,
+        Permission.FITMENT_READ,
+        Permission.MEDIA_READ,
+        Permission.COMPANY_READ,
+    },
+}
+permissions = permissions = PermissionChecker()
+```
+
+**Classes:**
+```python
+class Permission(str, enum.Enum):
+    """Permission types for the application.
+
+This enum defines all available permissions in the system. Permissions follow a resource:action format."""
+```
+*Class attributes:*
+```python
+USER_CREATE = 'user:create'
+USER_READ = 'user:read'
+USER_UPDATE = 'user:update'
+USER_DELETE = 'user:delete'
+USER_ADMIN = 'user:admin'
+PRODUCT_CREATE = 'product:create'
+PRODUCT_READ = 'product:read'
+PRODUCT_UPDATE = 'product:update'
+PRODUCT_DELETE = 'product:delete'
+PRODUCT_ADMIN = 'product:admin'
+MEDIA_CREATE = 'media:create'
+MEDIA_READ = 'media:read'
+MEDIA_UPDATE = 'media:update'
+MEDIA_DELETE = 'media:delete'
+MEDIA_ADMIN = 'media:admin'
+FITMENT_CREATE = 'fitment:create'
+FITMENT_READ = 'fitment:read'
+FITMENT_UPDATE = 'fitment:update'
+FITMENT_DELETE = 'fitment:delete'
+FITMENT_ADMIN = 'fitment:admin'
+COMPANY_CREATE = 'company:create'
+COMPANY_READ = 'company:read'
+COMPANY_UPDATE = 'company:update'
+COMPANY_DELETE = 'company:delete'
+COMPANY_ADMIN = 'company:admin'
+SYSTEM_ADMIN = 'system:admin'
+```
+
+```python
+class PermissionChecker(object):
+    """Permission checker for authorization control.
+
+This class provides methods to check if a user has the required permissions for a given action."""
+```
+*Methods:*
+```python
+@staticmethod
+    def check_object_permission(user, obj, permission, owner_field) -> bool:
+        """Check if a user has permission for a specific object.
+
+This allows for object-level permissions where users can perform actions on objects they own, even if they don't have the global permission.
+
+Args: user: User to check obj: Object to check permissions for permission: Required permission owner_field: Field name that contains the owner ID
+
+Returns: bool: True if user has permission"""
+```
+```python
+@staticmethod
+    def ensure_object_permission(user, obj, permission, owner_field) -> None:
+        """Ensure a user has permission for a specific object.
+
+Args: user: User to check obj: Object to check permissions for permission: Required permission owner_field: Field name that contains the owner ID
+
+Raises: PermissionDeniedException: If user doesn't have permission"""
+```
+```python
+@staticmethod
+    def has_permission(user, permission) -> bool:
+        """Check if a user has a specific permission.
+
+Args: user: User to check permission: Required permission
+
+Returns: bool: True if user has the permission"""
+```
+```python
+@staticmethod
+    def has_permissions(user, permissions, require_all) -> bool:
+        """Check if a user has multiple permissions.
+
+Args: user: User to check permissions: Required permissions require_all: Whether all permissions are required (AND) or any (OR)
+
+Returns: bool: True if user has the required permissions"""
+```
+```python
+@staticmethod
+    def require_admin() -> Callable[([T], T)]:
+        """Decorator to require admin role.  Returns: Callable: Decorator function"""
+```
+```python
+@staticmethod
+    def require_permission(permission) -> Callable[([T], T)]:
+        """Decorator to require a specific permission.
+
+Args: permission: Required permission
+
+Returns: Callable: Decorator function"""
+```
+```python
+@staticmethod
+    def require_permissions(permissions, require_all) -> Callable[([T], T)]:
+        """Decorator to require multiple permissions.
+
+Args: permissions: Required permissions require_all: Whether all permissions are required (AND) or any (OR)
+
+Returns: Callable: Decorator function"""
 ```
 
 ##### Module: security
@@ -7935,7 +8118,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 15:26:27
+Generated on 2025-03-16 15:27:22
 
 ## Project Overview
 - Project Name: frontend

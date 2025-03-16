@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:22:37
+Generated on 2025-03-16 15:23:59
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -87,6 +87,8 @@ backend/
 │   │   ├── product.py
 │   │   ├── reference.py
 │   │   └── user.py
+│   ├── repositories/
+│   │   └── base.py
 │   ├── schemas/
 │   │   ├── __init__.py
 │   │   ├── chat.py
@@ -7633,7 +7635,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 15:22:37
+Generated on 2025-03-16 15:23:59
 
 ## Project Overview
 - Project Name: frontend

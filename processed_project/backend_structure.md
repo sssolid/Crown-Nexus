@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:46:19
+Generated on 2025-03-16 15:51:32
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -6808,6 +6808,8 @@ from app.db.base_class import Base
 from app.db.utils import count_query, transaction, transactional
 from app.models.user import User
 from app.repositories.base import BaseRepository
+from app.schemas.pagination import CursorPaginationParams, OffsetPaginationParams, PaginationResult
+from app.services.pagination import PaginationService
 from app.utils.errors import ensure_not_none, resource_already_exists, resource_not_found, validation_error
 ```
 
@@ -6895,6 +6897,26 @@ Raises: ResourceNotFoundException: If entity not found PermissionDeniedException
 Args: current_user: Current authenticated user page: Page number page_size: Items per page filters: Filters to apply order_by: Field to order by
 
 Returns: Dict[str, Any]: Paginated results
+
+Raises: PermissionDeniedException: If user doesn't have permission"""
+```
+```python
+    async def get_paginated(self, current_user, params, filters) -> PaginationResult[R]:
+        """Get paginated entities using offset-based pagination.
+
+Args: current_user: Current authenticated user params: Pagination parameters filters: Filters to apply
+
+Returns: PaginationResult[R]: Paginated results
+
+Raises: PermissionDeniedException: If user doesn't have permission"""
+```
+```python
+    async def get_paginated_with_cursor(self, current_user, params, filters) -> PaginationResult[R]:
+        """Get paginated entities using cursor-based pagination.
+
+Args: current_user: Current authenticated user params: Pagination parameters filters: Filters to apply
+
+Returns: PaginationResult[R]: Paginated results
 
 Raises: PermissionDeniedException: If user doesn't have permission"""
 ```

@@ -10,6 +10,8 @@ from app.db.base_class import Base
 from app.db.utils import count_query, transaction, transactional
 from app.models.user import User
 from app.repositories.base import BaseRepository
+from app.schemas.pagination import CursorPaginationParams, OffsetPaginationParams, PaginationResult
+from app.services.pagination import PaginationService
 from app.utils.errors import ensure_not_none, resource_already_exists, resource_not_found, validation_error
 logger = get_logger('app.services.base')
 T = TypeVar('T', bound=Base)
@@ -40,6 +42,26 @@ class BaseService(Generic[T, C, U, R]):
         PermissionChecker.ensure_object_permission(current_user, {}, cast(Permission, permission))
         result = await self.repository.get_all(page=page, page_size=page_size, filters=filters, order_by=order_by)
         return result
+    async def get_paginated(self, current_user: User, params: OffsetPaginationParams, filters: Optional[Dict[str, Any]]=None) -> PaginationResult[R]:
+        permission = f'{self.resource_name.lower()}:read'
+        PermissionChecker.ensure_object_permission(current_user, {}, cast(Permission, permission))
+        query = self.model.active_only()
+        if filters:
+            for field, value in filters.items():
+                if hasattr(self.model, field):
+                    query = query.where(getattr(self.model, field) == value)
+        pagination_service = PaginationService(self.db, self.model, self.response_schema)
+        return await pagination_service.paginate_with_offset(query=query, params=params, transform_func=self.to_response)
+    async def get_paginated_with_cursor(self, current_user: User, params: CursorPaginationParams, filters: Optional[Dict[str, Any]]=None) -> PaginationResult[R]:
+        permission = f'{self.resource_name.lower()}:read'
+        PermissionChecker.ensure_object_permission(current_user, {}, cast(Permission, permission))
+        query = self.model.active_only()
+        if filters:
+            for field, value in filters.items():
+                if hasattr(self.model, field):
+                    query = query.where(getattr(self.model, field) == value)
+        pagination_service = PaginationService(self.db, self.model, self.response_schema)
+        return await pagination_service.paginate_with_cursor(query=query, params=params, transform_func=self.to_response)
     @transactional
     async def create(self, obj_in: Union[C, Dict[str, Any]], current_user: User) -> T:
         permission = f'{self.resource_name.lower()}:create'
@@ -107,7 +129,9 @@ class BaseService(Generic[T, C, U, R]):
                 raise
             raise DatabaseException(message=f'Failed to delete {self.resource_name}: {str(e)}') from e
     async def to_response(self, entity: T) -> R:
-        return self.response_schema.from_orm(entity)
+        if hasattr(self.response_schema, 'from_orm'):
+            return self.response_schema.from_orm(entity)
+        return self.response_schema(**entity.to_dict())
     async def to_response_multi(self, entities: List[T]) -> List[R]:
         return [await self.to_response(entity) for entity in entities]
     async def validate_create(self, data: Dict[str, Any], current_user: User) -> None:

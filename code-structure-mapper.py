@@ -342,9 +342,9 @@ class CodeStructureMapper:
         project_name: Optional[str] = None,
         include_docstrings: bool = True,
         include_source: bool = False,
-        max_docstring_length: int = 100,
         include_private: bool = False,
         ignore_patterns: Optional[List[str]] = None,
+        preserve_docstring_format: bool = False,
     ) -> None:
         """
         Initialize the code structure mapper.
@@ -354,18 +354,18 @@ class CodeStructureMapper:
             project_name: Name of the project (default: inferred from directory name)
             include_docstrings: Whether to include docstrings in the output
             include_source: Whether to include source code in the output
-            max_docstring_length: Maximum length for included docstrings
             include_private: Whether to include private members (prefixed with _)
             ignore_patterns: List of regex patterns for files/dirs to ignore
+            preserve_docstring_format: Whether to preserve paragraph format in docstrings
         """
         self.root_path = Path(root_path).resolve()
         self.project_name = project_name or self.root_path.name
         self.include_docstrings = include_docstrings
         self.include_source = include_source
-        self.max_docstring_length = max_docstring_length
         self.include_private = include_private
         self.ignore_patterns = ignore_patterns or []
         self.ignore_regexes = [re.compile(pattern) for pattern in self.ignore_patterns]
+        self.preserve_docstring_format = preserve_docstring_format
         
         # Add common patterns to ignore if not specified
         default_ignores = [
@@ -588,11 +588,11 @@ class CodeStructureMapper:
             if not self.include_private:
                 self._filter_private_members(module_info)
                 
-            # Truncate docstrings if needed
+            # Process docstrings
             if not self.include_docstrings:
                 self._remove_docstrings(module_info)
-            elif self.max_docstring_length > 0:
-                self._truncate_docstrings(module_info)
+            else:
+                self._clean_docstrings(module_info)
                 
             # Remove source code if not included
             if not self.include_source:
@@ -660,27 +660,91 @@ class CodeStructureMapper:
         for func_info in module_info.functions.values():
             func_info.docstring = None
     
-    def _truncate_docstrings(self, module_info: ModuleInfo) -> None:
+    def _clean_docstrings(self, module_info: ModuleInfo) -> None:
         """
-        Truncate docstrings to the specified maximum length.
+        Clean and normalize docstrings by removing extra whitespace while preserving content.
         
         Args:
             module_info: ModuleInfo object to modify
         """
-        if module_info.docstring and len(module_info.docstring) > self.max_docstring_length:
-            module_info.docstring = module_info.docstring[:self.max_docstring_length] + "..."
+        if module_info.docstring:
+            module_info.docstring = self._normalize_docstring(module_info.docstring)
         
         for class_info in module_info.classes.values():
-            if class_info.docstring and len(class_info.docstring) > self.max_docstring_length:
-                class_info.docstring = class_info.docstring[:self.max_docstring_length] + "..."
+            if class_info.docstring:
+                class_info.docstring = self._normalize_docstring(class_info.docstring)
             
             for method_info in class_info.methods.values():
-                if method_info.docstring and len(method_info.docstring) > self.max_docstring_length:
-                    method_info.docstring = method_info.docstring[:self.max_docstring_length] + "..."
+                if method_info.docstring:
+                    method_info.docstring = self._normalize_docstring(method_info.docstring)
                 
         for func_info in module_info.functions.values():
-            if func_info.docstring and len(func_info.docstring) > self.max_docstring_length:
-                func_info.docstring = func_info.docstring[:self.max_docstring_length] + "..."
+            if func_info.docstring:
+                func_info.docstring = self._normalize_docstring(func_info.docstring)
+
+    def _normalize_docstring(self, docstring: str) -> str:
+        """
+        Normalize a docstring by cleaning whitespace while preserving content.
+        
+        Args:
+            docstring: The original docstring
+            
+        Returns:
+            Cleaned docstring with normalized whitespace
+        """
+        if not docstring:
+            return ""
+            
+        # If we want to preserve formatting, just clean up indentation
+        if self.preserve_docstring_format:
+            lines = []
+            for line in docstring.splitlines():
+                lines.append(line.strip())
+            return "\n".join(lines)
+            
+        # For normal cleaning mode:
+        # Split into lines and strip each line
+        lines = [line.strip() for line in docstring.splitlines()]
+        
+        # Remove empty lines at the beginning and end
+        while lines and not lines[0]:
+            lines.pop(0)
+        while lines and not lines[-1]:
+            lines.pop()
+        
+        if not lines:
+            return ""
+        
+        # For single line docstrings, just return as is
+        if len(lines) == 1:
+            return lines[0]
+        
+        # For multi-line docstrings, join with a space if short
+        # or with a newline for longer ones to preserve structure
+        joined = " ".join(lines)
+        
+        # If the result is short, return as a single line
+        if len(joined) < 100:
+            return joined
+            
+        # For longer docstrings, preserve paragraph structure but clean up spacing
+        result = []
+        current_paragraph = []
+        
+        for line in lines:
+            if not line:  # Empty line marks paragraph boundary
+                if current_paragraph:
+                    result.append(" ".join(current_paragraph))
+                    current_paragraph = []
+                result.append("")  # Keep paragraph break
+            else:
+                current_paragraph.append(line)
+        
+        # Don't forget the last paragraph
+        if current_paragraph:
+            result.append(" ".join(current_paragraph))
+        
+        return "\n".join(result)
     
     def _remove_source_code(self, module_info: ModuleInfo) -> None:
         """
@@ -1381,12 +1445,6 @@ def main() -> None:
         help="Include source code in the output"
     )
     parser.add_argument(
-        "--max-docstring-length",
-        type=int,
-        default=100,
-        help="Maximum length for docstrings (default: 100 chars, 0 for unlimited)"
-    )
-    parser.add_argument(
         "--include-private",
         action="store_true",
         help="Include private members in the output"
@@ -1394,6 +1452,11 @@ def main() -> None:
     parser.add_argument(
         "--ignore",
         help="Comma-separated list of patterns to ignore"
+    )
+    parser.add_argument(
+        "--preserve-docstring-format",
+        action="store_true",
+        help="Preserve paragraph format in docstrings (default: clean and compact)"
     )
     parser.add_argument(
         "--verbose",
@@ -1418,9 +1481,9 @@ def main() -> None:
         project_name=args.project_name,
         include_docstrings=args.include_docstrings,
         include_source=args.include_source,
-        max_docstring_length=args.max_docstring_length,
         include_private=args.include_private,
-        ignore_patterns=ignore_patterns
+        ignore_patterns=ignore_patterns,
+        preserve_docstring_format=args.preserve_docstring_format
     )
     
     # Analyze the project

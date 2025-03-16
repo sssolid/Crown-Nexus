@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 13:13:05
+Generated on 2025-03-16 13:50:48
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -226,46 +226,49 @@ port = 8000
 ```python
 @app.get('/health')
 async def health_check() -> dict:
-    """
-    Health check endpoint.
+    """Health check endpoint.
 
-    This endpoint allows monitoring systems to check if the application..."""
+This endpoint allows monitoring systems to check if the application is running and responding to requests.
+
+Returns: dict: Health status information"""
 ```
 
 ```python
 @asynccontextmanager
 async def lifespan(app) -> AsyncGenerator[(None, None)]:
-    """
-    FastAPI lifespan event handler.
+    """FastAPI lifespan event handler.
 
-    This context manager handles application startup and shutd..."""
+This context manager handles application startup and shutdown events. It's responsible for initializing and cleaning up resources.
+
+Args: app: FastAPI application instance
+
+Yields: None"""
 ```
 
 ```python
 async def log_current_user(current_user) -> Optional[User]:
-    """
-    Log the current user ID in the request context.
-    
-    Args:
-        current_user: Current au..."""
+    """Log the current user ID in the request context.
+
+Args: current_user: Current authenticated user from token
+
+Returns: The current user unchanged"""
 ```
 
 **Classes:**
 ```python
 class RequestContextMiddleware(object):
-    """
-    Middleware that sets up logging request context.
-    
-    This middleware ensures each request ..."""
+    """Middleware that sets up logging request context.
+
+This middleware ensures each request has a unique ID and tracks execution time, both stored in the logging context."""
 ```
 *Methods:*
 ```python
     async def __call__(self, request, call_next) -> Response:
-        """
-        Process the request and set up logging context.
-        
-        Args:
-            request:..."""
+        """Process the request and set up logging context.
+
+Args: request: The incoming request call_next: The next middleware or route handler
+
+Returns: Response: The processed response"""
 ```
 ```python
     def __init__(self, app) -> None:
@@ -313,58 +316,89 @@ PaginationParams = PaginationParams = Dict[str, Union[int, float]]
 **Functions:**
 ```python
 async def get_admin_user(current_user) -> User:
-    """
-    Get the current active admin user.
+    """Get the current active admin user.
 
-    This dependency builds on get_current_active_user and e..."""
+This dependency builds on get_current_active_user and ensures the user has admin role.
+
+Args: current_user: Current authenticated user
+
+Returns: User: Current active admin user
+
+Raises: HTTPException: If user is not an admin"""
 ```
 
 ```python
 async def get_current_active_user(current_user) -> User:
-    """
-    Get the current active user.
+    """Get the current active user.
 
-    This dependency builds on get_current_user and ensures the us..."""
+This dependency builds on get_current_user and ensures the user is active in the system.
+
+Args: current_user: Current authenticated user
+
+Returns: User: Current active user
+
+Raises: HTTPException: If user is inactive"""
 ```
 
 ```python
 async def get_current_user(db, token) -> User:
-    """
-    Get the current authenticated user.
+    """Get the current authenticated user.
 
-    This dependency validates the JWT token, decodes it, a..."""
+This dependency validates the JWT token, decodes it, and retrieves the corresponding user from the database.
+
+Args: db: Database session token: JWT token
+
+Returns: User: Authenticated user
+
+Raises: HTTPException: If authentication fails, token is invalid, or user doesn't exist"""
 ```
 
 ```python
 async def get_current_user_ws(websocket, db) -> User:
-    """
-    Get the current authenticated user from WebSocket connection.
-    
-    This dependency extracts..."""
+    """Get the current authenticated user from WebSocket connection.
+
+This dependency extracts the JWT token from WebSocket query parameters or cookies, validates it, and returns the corresponding user.
+
+Args: websocket: WebSocket connection db: Database session
+
+Returns: User: Authenticated user
+
+Raises: WebSocketDisconnect: If authentication fails"""
 ```
 
 ```python
 async def get_manager_user(current_user) -> User:
-    """
-    Get the current active manager or admin user.
+    """Get the current active manager or admin user.
 
-    This dependency builds on get_current_active..."""
+This dependency builds on get_current_active_user and ensures the user has manager or admin role.
+
+Args: current_user: Current authenticated user
+
+Returns: User: Current active manager or admin user
+
+Raises: HTTPException: If user is not a manager or admin"""
 ```
 
 ```python
 async def get_optional_user(db, token) -> Optional[User]:
-    """
-    Get the current user if authenticated, otherwise None.
+    """Get the current user if authenticated, otherwise None.
 
-    This dependency is useful for endpo..."""
+This dependency is useful for endpoints that can be accessed both by authenticated and anonymous users, with different behavior.
+
+Args: db: Database session token: Optional JWT token
+
+Returns: Optional[User]: Authenticated user or None"""
 ```
 
 ```python
 def get_pagination(page, page_size) -> PaginationParams:
-    """
-    Get pagination parameters.
+    """Get pagination parameters.
 
-    This dependency generates pagination parameters based on page n..."""
+This dependency generates pagination parameters based on page number and size, with validation to ensure reasonable values.
+
+Args: page: Page number (starting from 1) page_size: Number of items per page (max 100)
+
+Returns: Dict: Pagination parameters including: - skip: Number of items to skip - limit: Number of items to return - page: Current page number - page_size: Items per page"""
 ```
 
 ##### Package: v1
@@ -426,30 +460,39 @@ oauth2_scheme = oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1
 ```python
 @router.post('/login', response_model=Token)
 async def login_for_access_token(db, form_data) -> Any:
-    """
-    OAuth2 compatible token login endpoint.
+    """OAuth2 compatible token login endpoint.
 
-    This endpoint authenticates a user and provides a ..."""
+This endpoint authenticates a user and provides a JWT access token for use in subsequent requests. It conforms to the OAuth2 password flow specification.
+
+Args: db: Database session form_data: Form data with username (email) and password
+
+Returns: Dict: JWT access token and type
+
+Raises: HTTPException: If authentication fails due to invalid credentials or inactive user account"""
 ```
 
 ```python
 @router.get('/me', response_model=UserSchema)
 async def read_users_me(current_user) -> Any:
-    """
-    Get current user information.
+    """Get current user information.
 
-    This endpoint returns information about the currently
-    au..."""
+This endpoint returns information about the currently authenticated user based on their JWT token.
+
+Args: current_user: Current authenticated user (via dependency)
+
+Returns: User: Current user information"""
 ```
 
 ```python
 @router.get('/validate-token')
 async def validate_token(token) -> dict:
-    """
-    Validate a JWT token.
+    """Validate a JWT token.
 
-    This endpoint verifies if a token is valid and active.
-    It's usef..."""
+This endpoint verifies if a token is valid and active. It's useful for client applications to check token validity without making a full API request.
+
+Args: token: Decoded token payload (via dependency)
+
+Returns: dict: Token validation status"""
 ```
 
 ####### Module: chat
@@ -482,89 +525,81 @@ logger = logger = logging.getLogger(__name__)
 ```python
 @router.post('/rooms/{room_id}/members')
 async def add_room_member(room_id, request, db, current_user) -> Dict[(str, Any)]:
-    """
-    Add a member to a room.
-    
-    Args:
-        room_id: Room ID
-        request: Member additio..."""
+    """Add a member to a room.
+
+Args: room_id: Room ID request: Member addition request db: Database session current_user: Current authenticated user
+
+Returns: dict: Success response"""
 ```
 
 ```python
 @router.post('/direct-chats')
 async def create_direct_chat(request, db, current_user) -> Dict[(str, Any)]:
-    """
-    Create or get a direct chat with another user.
-    
-    Args:
-        request: Direct chat crea..."""
+    """Create or get a direct chat with another user.
+
+Args: request: Direct chat creation request db: Database session current_user: Current authenticated user
+
+Returns: dict: Direct chat information"""
 ```
 
 ```python
 @router.post('/rooms', status_code=status.HTTP_201_CREATED)
 async def create_room(request, db, current_user) -> Dict[(str, Any)]:
-    """
-    Create a new chat room.
-    
-    Args:
-        request: Room creation request
-        db: Datab..."""
+    """Create a new chat room.
+
+Args: request: Room creation request db: Database session current_user: Current authenticated user
+
+Returns: dict: Created room information"""
 ```
 
 ```python
 @router.get('/rooms/{room_id}')
 async def get_room(room_id, db, current_user) -> Dict[(str, Any)]:
-    """
-    Get information about a specific room.
-    
-    Args:
-        room_id: Room ID
-        db: Data..."""
+    """Get information about a specific room.
+
+Args: room_id: Room ID db: Database session current_user: Current authenticated user
+
+Returns: dict: Room information"""
 ```
 
 ```python
 @router.get('/rooms/{room_id}/messages')
 async def get_room_messages(room_id, before_id, limit, db, current_user) -> Dict[(str, Any)]:
-    """
-    Get messages from a room.
-    
-    Args:
-        room_id: Room ID
-        before_id: Get messag..."""
+    """Get messages from a room.
+
+Args: room_id: Room ID before_id: Get messages before this ID (for pagination) limit: Maximum number of messages to return db: Database session current_user: Current authenticated user
+
+Returns: dict: List of messages"""
 ```
 
 ```python
 @router.get('/rooms')
 async def get_rooms(db, current_user) -> Dict[(str, Any)]:
-    """
-    Get all rooms for the current user.
-    
-    Args:
-        db: Database session
-        current..."""
+    """Get all rooms for the current user.
+
+Args: db: Database session current_user: Current authenticated user
+
+Returns: dict: List of rooms"""
 ```
 
 ```python
 @router.delete('/rooms/{room_id}/members/{user_id}')
 async def remove_room_member(room_id, user_id, db, current_user) -> Dict[(str, Any)]:
-    """
-    Remove a member from a room.
-    
-    Args:
-        room_id: Room ID
-        user_id: User ID
- ..."""
+    """Remove a member from a room.
+
+Args: room_id: Room ID user_id: User ID db: Database session current_user: Current authenticated user
+
+Returns: dict: Success response"""
 ```
 
 ```python
 @router.put('/rooms/{room_id}/members/{user_id}')
 async def update_room_member(room_id, user_id, request, db, current_user) -> Dict[(str, Any)]:
-    """
-    Update a member's role in a room.
-    
-    Args:
-        room_id: Room ID
-        user_id: User..."""
+    """Update a member's role in a room.
+
+Args: room_id: Room ID user_id: User ID request: Member update request db: Database session current_user: Current authenticated user
+
+Returns: dict: Success response"""
 ```
 
 **Classes:**
@@ -635,44 +670,45 @@ router = router = APIRouter()
 ```python
 @router.post('/convert', response_model=ConversionResponse)
 async def convert_currency(conversion, db, current_user) -> Any:
-    """
-    Convert an amount between currencies.
+    """Convert an amount between currencies.
 
-    Args:
-        conversion: Conversion request paramet..."""
+Args: conversion: Conversion request parameters db: Database session current_user: Current authenticated user
+
+Returns: ConversionResponse: Conversion result
+
+Raises: HTTPException: If currencies not found or conversion fails"""
 ```
 
 ```python
 @router.get('/', response_model=List[CurrencyRead])
 async def read_currencies(db, current_user, active_only) -> Any:
-    """
-    Get list of available currencies.
+    """Get list of available currencies.
 
-    Args:
-        db: Database session
-        current_user:..."""
+Args: db: Database session current_user: Current authenticated user active_only: Whether to return only active currencies (default: True)
+
+Returns: List[CurrencyRead]: List of currencies"""
 ```
 
 ```python
 @router.get('/rates', response_model=List[ExchangeRateRead])
 async def read_exchange_rates(db, current_user, source_code, target_code, limit) -> Any:
-    """
-    Get exchange rates with optional filtering.
+    """Get exchange rates with optional filtering.
 
-    Args:
-        db: Database session
-        cur..."""
+Args: db: Database session current_user: Current authenticated user source_code: Source currency code target_code: Target currency code limit: Maximum number of rates to return (default: 10)
+
+Returns: List[ExchangeRateRead]: List of exchange rates"""
 ```
 
 ```python
 @router.post('/update', status_code=status.HTTP_202_ACCEPTED)
 async def trigger_exchange_rate_update(background_tasks, db, current_user, async_update) -> Dict[(str, Any)]:
-    """
-    Trigger an update of exchange rates.
+    """Trigger an update of exchange rates.
 
-    Args:
-        background_tasks: Background tasks
-    ..."""
+Args: background_tasks: Background tasks db: Database session current_user: Current authenticated admin user async_update: Whether to update asynchronously or wait for completion
+
+Returns: Dict[str, Any]: Result of the operation
+
+Raises: HTTPException: If update fails"""
 ```
 
 ####### Module: fitments
@@ -701,92 +737,81 @@ router = router = APIRouter()
 ```python
 @router.post('/{fitment_id}/products/{product_id}')
 async def associate_product_with_fitment(fitment_id, product_id, db, current_user) -> dict:
-    """
-    Associate a product with a fitment.
+    """Associate a product with a fitment.
 
-    Args:
-        fitment_id: Fitment ID
-        product_i..."""
+Args: fitment_id: Fitment ID product_id: Product ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.post('/', response_model=FitmentSchema, status_code=status.HTTP_201_CREATED)
 async def create_fitment(db, fitment_in, current_user) -> Any:
-    """
-    Create new fitment.
+    """Create new fitment.
 
-    Args:
-        db: Database session
-        fitment_in: Fitment data
-  ..."""
+Args: db: Database session fitment_in: Fitment data current_user: Current authenticated admin user
+
+Returns: Fitment: Created fitment"""
 ```
 
 ```python
 @router.delete('/{fitment_id}')
 async def delete_fitment(fitment_id, db, current_user) -> dict:
-    """
-    Delete a fitment.
+    """Delete a fitment.
 
-    Args:
-        fitment_id: Fitment ID
-        db: Database session
-      ..."""
+Args: fitment_id: Fitment ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.get('/{fitment_id}', response_model=FitmentSchema)
 async def read_fitment(fitment_id, db, current_user) -> Any:
-    """
-    Get fitment by ID.
+    """Get fitment by ID.
 
-    Args:
-        fitment_id: Fitment ID
-        db: Database session
-     ..."""
+Args: fitment_id: Fitment ID db: Database session current_user: Current authenticated user
+
+Returns: Fitment: Fitment with specified ID"""
 ```
 
 ```python
 @router.get('/{fitment_id}/products', response_model=List[ProductSchema])
 async def read_fitment_products(fitment_id, db, current_user, skip, limit) -> Any:
-    """
-    Get products associated with a fitment.
+    """Get products associated with a fitment.
 
-    Args:
-        fitment_id: Fitment ID
-        db: D..."""
+Args: fitment_id: Fitment ID db: Database session current_user: Current authenticated user skip: Number of products to skip limit: Maximum number of products to return
+
+Returns: List[Product]: List of products associated with the fitment"""
 ```
 
 ```python
 @router.get('/', response_model=FitmentListResponse)
 async def read_fitments(db, current_user, year, make, model, engine, transmission, page, page_size) -> Any:
-    """
-    Retrieve fitments with filtering options.
+    """Retrieve fitments with filtering options.
 
-    Args:
-        db: Database session
-        curre..."""
+Args: db: Database session current_user: Current authenticated user year: Filter by year make: Filter by make model: Filter by model engine: Filter by engine transmission: Filter by transmission page: Page number page_size: Number of items per page
+
+Returns: FitmentListResponse: Paginated list of fitments"""
 ```
 
 ```python
 @router.delete('/{fitment_id}/products/{product_id}')
 async def remove_product_from_fitment(fitment_id, product_id, db, current_user) -> dict:
-    """
-    Remove association between a product and a fitment.
+    """Remove association between a product and a fitment.
 
-    Args:
-        fitment_id: Fitment ID
- ..."""
+Args: fitment_id: Fitment ID product_id: Product ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.put('/{fitment_id}', response_model=FitmentSchema)
 async def update_fitment(fitment_id, fitment_in, db, current_user) -> Any:
-    """
-    Update a fitment.
+    """Update a fitment.
 
-    Args:
-        fitment_id: Fitment ID
-        fitment_in: Updated fitment..."""
+Args: fitment_id: Fitment ID fitment_in: Updated fitment data db: Database session current_user: Current authenticated admin user
+
+Returns: Fitment: Updated fitment"""
 ```
 
 ####### Module: i18n
@@ -808,21 +833,21 @@ router = router = APIRouter()
 ```python
 @router.get('/current-locale')
 async def get_current_locale(locale) -> Dict[(str, str)]:
-    """
-    Get the current locale based on the request.
-    
-    Args:
-        locale: Current locale from..."""
+    """Get the current locale based on the request.
+
+Args: locale: Current locale from dependency
+
+Returns: Dict[str, str]: Current locale information"""
 ```
 
 ```python
 @router.get('/messages/{locale}')
 async def get_messages(locale) -> Dict[(str, Dict[(str, str)])]:
-    """
-    Get all translation messages for a specific locale.
-    
-    Args:
-        locale: Locale code ..."""
+    """Get all translation messages for a specific locale.
+
+Args: locale: Locale code (e.g., 'en', 'es')
+
+Returns: Dict[str, Dict[str, str]]: Translation messages for the requested locale"""
 ```
 
 ####### Module: media
@@ -858,114 +883,101 @@ router = router = APIRouter()
 ```python
 @router.post('/{media_id}/products/{product_id}')
 async def associate_media_with_product(media_id, product_id, db, current_user) -> dict:
-    """
-    Associate media with a product.
+    """Associate media with a product.
 
-    Args:
-        media_id: Media ID
-        product_id: Produ..."""
+Args: media_id: Media ID product_id: Product ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.delete('/{media_id}')
 async def delete_media(media_id, db, current_user) -> dict:
-    """
-    Delete media.
+    """Delete media.
 
-    Args:
-        media_id: Media ID
-        db: Database session
-        curren..."""
+Args: media_id: Media ID db: Database session current_user: Current authenticated user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.get('/file/{media_id}')
 async def get_media_file(media_id, db, current_user) -> Any:
-    """
-    Get the file for media.
+    """Get the file for media.
 
-    Args:
-        media_id: Media ID
-        db: Database session
-    ..."""
+Args: media_id: Media ID db: Database session current_user: Current authenticated user (optional for public files)
+
+Returns: FileResponse: Media file"""
 ```
 
 ```python
 @router.get('/thumbnail/{media_id}')
 async def get_media_thumbnail(media_id, db, current_user) -> Any:
-    """
-    Get the thumbnail for an image.
+    """Get the thumbnail for an image.
 
-    Args:
-        media_id: Media ID
-        db: Database sess..."""
+Args: media_id: Media ID db: Database session current_user: Current authenticated user (optional for public files)
+
+Returns: FileResponse: Thumbnail file or original file if thumbnail doesn't exist"""
 ```
 
 ```python
 @router.get('/products/{product_id}', response_model=List[MediaSchema])
 async def get_product_media(product_id, db, current_user, media_type) -> Any:
-    """
-    Get media associated with a product.
+    """Get media associated with a product.
 
-    Args:
-        product_id: Product ID
-        db: Data..."""
+Args: product_id: Product ID db: Database session current_user: Current authenticated user media_type: Filter by media type
+
+Returns: List[Media]: List of media associated with the product"""
 ```
 
 ```python
 @router.get('/', response_model=MediaListResponse)
 async def read_media(db, current_user, media_type, visibility, is_approved, product_id, page, page_size) -> Any:
-    """
-    Retrieve media with filtering options.
+    """Retrieve media with filtering options.
 
-    Args:
-        db: Database session
-        current_..."""
+Args: db: Database session current_user: Current authenticated user media_type: Filter by media type visibility: Filter by visibility is_approved: Filter by approval status product_id: Filter by associated product page: Page number page_size: Number of items per page
+
+Returns: MediaListResponse: Paginated list of media"""
 ```
 
 ```python
 @router.get('/{media_id}', response_model=MediaSchema)
 async def read_media_item(media_id, db, current_user) -> Any:
-    """
-    Get media by ID.
+    """Get media by ID.
 
-    Args:
-        media_id: Media ID
-        db: Database session
-        cur..."""
+Args: media_id: Media ID db: Database session current_user: Current authenticated user
+
+Returns: Media: Media with specified ID"""
 ```
 
 ```python
 @router.delete('/{media_id}/products/{product_id}')
 async def remove_media_from_product(media_id, product_id, db, current_user) -> dict:
-    """
-    Remove association between media and a product.
+    """Remove association between media and a product.
 
-    Args:
-        media_id: Media ID
-        p..."""
+Args: media_id: Media ID product_id: Product ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.put('/{media_id}', response_model=MediaSchema)
 async def update_media(media_id, media_in, db, current_user) -> Any:
-    """
-    Update media metadata.
+    """Update media metadata.
 
-    Args:
-        media_id: Media ID
-        media_in: Updated media da..."""
+Args: media_id: Media ID media_in: Updated media data db: Database session current_user: Current authenticated user
+
+Returns: Media: Updated media"""
 ```
 
 ```python
 @router.post('/upload', response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED)
 async def upload_file(background_tasks, db, current_user, file, media_type, visibility, metadata, product_id) -> Any:
-    """
-    Upload a new file.
+    """Upload a new file.
 
-    Args:
-        background_tasks: Background tasks
-        db: Database s..."""
+Args: background_tasks: Background tasks db: Database session current_user: Current authenticated user file: Uploaded file media_type: Type of media visibility: Visibility level metadata: Additional metadata as JSON string product_id: ID of product to associate with the media
+
+Returns: FileUploadResponse: Response with the created media"""
 ```
 
 ####### Module: products
@@ -996,250 +1008,221 @@ router = router = APIRouter()
 ```python
 @router.post('/brands/', response_model=BrandSchema, status_code=status.HTTP_201_CREATED)
 async def create_brand(db, brand_in, current_user) -> Any:
-    """
-    Create new brand.
+    """Create new brand.
 
-    Args:
-        db: Database session
-        brand_in: Brand data
-        ..."""
+Args: db: Database session brand_in: Brand data current_user: Current authenticated admin user
+
+Returns: Brand: Created brand"""
 ```
 
 ```python
 @router.post('/', response_model=ProductSchema, status_code=status.HTTP_201_CREATED)
 async def create_product(db, product_in, current_user) -> Any:
-    """
-    Create new product.
+    """Create new product.
 
-    Args:
-        db: Database session
-        product_in: Product data
-  ..."""
+Args: db: Database session product_in: Product data current_user: Current authenticated admin user
+
+Returns: Product: Created product"""
 ```
 
 ```python
 @router.post('/{product_id}/descriptions', response_model=ProductDescriptionSchema)
 async def create_product_description(product_id, description_in, db, current_user) -> Any:
-    """
-    Add a description to a product.
+    """Add a description to a product.
 
-    Args:
-        product_id: Product ID
-        description_i..."""
+Args: product_id: Product ID description_in: Description data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductDescription: Created description"""
 ```
 
 ```python
 @router.post('/{product_id}/marketing', response_model=ProductMarketingSchema)
 async def create_product_marketing(product_id, marketing_in, db, current_user) -> Any:
-    """
-    Add marketing content to a product.
+    """Add marketing content to a product.
 
-    Args:
-        product_id: Product ID
-        marketing..."""
+Args: product_id: Product ID marketing_in: Marketing data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductMarketing: Created marketing content"""
 ```
 
 ```python
 @router.post('/{product_id}/measurements', response_model=ProductMeasurementSchema)
 async def create_product_measurement(product_id, measurement_in, db, current_user) -> Any:
-    """
-    Add measurements to a product.
+    """Add measurements to a product.
 
-    Args:
-        product_id: Product ID
-        measurement_in..."""
+Args: product_id: Product ID measurement_in: Measurement data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductMeasurement: Created measurement"""
 ```
 
 ```python
 @router.post('/{product_id}/stock', response_model=ProductStockSchema)
 async def create_product_stock(product_id, stock_in, db, current_user) -> Any:
-    """
-    Add stock information to a product.
+    """Add stock information to a product.
 
-    Args:
-        product_id: Product ID
-        stock_in:..."""
+Args: product_id: Product ID stock_in: Stock data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductStock: Created stock information"""
 ```
 
 ```python
 @router.post('/{product_id}/supersessions', response_model=ProductSupersessionSchema)
 async def create_product_supersession(product_id, supersession_in, db, current_user) -> Any:
-    """
-    Create a product supersession.
+    """Create a product supersession.
 
-    Args:
-        product_id: Product ID
-        supersession_i..."""
+Args: product_id: Product ID supersession_in: Supersession data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductSupersession: Created supersession"""
 ```
 
 ```python
 @router.delete('/brands/{brand_id}')
 async def delete_brand(brand_id, db, current_user) -> dict:
-    """
-    Delete a brand.
+    """Delete a brand.
 
-    Args:
-        brand_id: Brand ID
-        db: Database session
-        curr..."""
+Args: brand_id: Brand ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.delete('/{product_id}')
 async def delete_product(product_id, db, current_user) -> dict:
-    """
-    Delete a product.
+    """Delete a product.
 
-    Args:
-        product_id: Product ID
-        db: Database session
-      ..."""
+Args: product_id: Product ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.delete('/{product_id}/descriptions/{description_id}')
 async def delete_product_description(product_id, description_id, db, current_user) -> dict:
-    """
-    Delete a product description.
+    """Delete a product description.
 
-    Args:
-        product_id: Product ID
-        description_id:..."""
+Args: product_id: Product ID description_id: Description ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.delete('/{product_id}/marketing/{marketing_id}')
 async def delete_product_marketing(product_id, marketing_id, db, current_user) -> dict:
-    """
-    Delete product marketing content.
+    """Delete product marketing content.
 
-    Args:
-        product_id: Product ID
-        marketing_i..."""
+Args: product_id: Product ID marketing_id: Marketing content ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.delete('/{product_id}/stock/{stock_id}')
 async def delete_product_stock(product_id, stock_id, db, current_user) -> dict:
-    """
-    Delete product stock information.
+    """Delete product stock information.
 
-    Args:
-        product_id: Product ID
-        stock_id: S..."""
+Args: product_id: Product ID stock_id: Stock ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.delete('/{product_id}/supersessions/{supersession_id}')
 async def delete_product_supersession(product_id, supersession_id, db, current_user) -> dict:
-    """
-    Delete a product supersession.
+    """Delete a product supersession.
 
-    Args:
-        product_id: Product ID
-        supersession_i..."""
+Args: product_id: Product ID supersession_id: Supersession ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message"""
 ```
 
 ```python
 @router.get('/brands/{brand_id}', response_model=BrandSchema)
 async def read_brand(brand_id, db, current_user) -> Any:
-    """
-    Get brand by ID.
+    """Get brand by ID.
 
-    Args:
-        brand_id: Brand ID
-        db: Database session
-        cur..."""
+Args: brand_id: Brand ID db: Database session current_user: Current authenticated user
+
+Returns: Brand: Brand with specified ID"""
 ```
 
 ```python
 @router.get('/brands/', response_model=List[BrandSchema])
 async def read_brands(db, current_user, skip, limit) -> Any:
-    """
-    Retrieve brands.
+    """Retrieve brands.
 
-    Args:
-        db: Database session
-        current_user: Current authenti..."""
+Args: db: Database session current_user: Current authenticated user skip: Number of brands to skip limit: Maximum number of brands to return
+
+Returns: List[Brand]: List of brands"""
 ```
 
 ```python
 @router.get('/{product_id}', response_model=ProductSchema)
 async def read_product(product_id, db, current_user) -> Any:
-    """
-    Get product by ID.
+    """Get product by ID.
 
-    Args:
-        product_id: Product ID
-        db: Database session
-     ..."""
+Args: product_id: Product ID db: Database session current_user: Current authenticated user
+
+Returns: Product: Product with specified ID"""
 ```
 
 ```python
 @router.get('/', response_model=ProductListResponse)
 async def read_products(db, current_user, search, vintage, late_model, soft, universal, is_active, skip, limit, page, page_size) -> Any:
-    """
-    Retrieve products with filtering.
+    """Retrieve products with filtering.
 
-    Args:
-        db: Database session
-        current_user:..."""
+Args: db: Database session current_user: Current authenticated user search: Search term for product part number or application vintage: Filter by vintage flag late_model: Filter by late model flag soft: Filter by soft good flag universal: Filter by universal fit flag is_active: Filter by active status skip: Number of products to skip limit: Maximum number of products to return page: Page number page_size: Number of items per page
+
+Returns: ProductListResponse: Paginated list of products"""
 ```
 
 ```python
 @router.put('/brands/{brand_id}', response_model=BrandSchema)
 async def update_brand(brand_id, brand_in, db, current_user) -> Any:
-    """
-    Update a brand.
+    """Update a brand.
 
-    Args:
-        brand_id: Brand ID
-        brand_in: Updated brand data
-    ..."""
+Args: brand_id: Brand ID brand_in: Updated brand data db: Database session current_user: Current authenticated admin user
+
+Returns: Brand: Updated brand"""
 ```
 
 ```python
 @router.put('/{product_id}', response_model=ProductSchema)
 async def update_product(product_id, product_in, db, current_user) -> Any:
-    """
-    Update a product.
+    """Update a product.
 
-    Args:
-        product_id: Product ID
-        product_in: Updated product..."""
+Args: product_id: Product ID product_in: Updated product data db: Database session current_user: Current authenticated admin user
+
+Returns: Product: Updated product"""
 ```
 
 ```python
 @router.put('/{product_id}/descriptions/{description_id}', response_model=ProductDescriptionSchema)
 async def update_product_description(product_id, description_id, description_in, db, current_user) -> Any:
-    """
-    Update a product description.
+    """Update a product description.
 
-    Args:
-        product_id: Product ID
-        description_id:..."""
+Args: product_id: Product ID description_id: Description ID description_in: Updated description data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductDescription: Updated description"""
 ```
 
 ```python
 @router.put('/{product_id}/marketing/{marketing_id}', response_model=ProductMarketingSchema)
 async def update_product_marketing(product_id, marketing_id, marketing_in, db, current_user) -> Any:
-    """
-    Update product marketing content.
+    """Update product marketing content.
 
-    Args:
-        product_id: Product ID
-        marketing_i..."""
+Args: product_id: Product ID marketing_id: Marketing content ID marketing_in: Updated marketing data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductMarketing: Updated marketing content"""
 ```
 
 ```python
 @router.put('/{product_id}/stock/{stock_id}', response_model=ProductStockSchema)
 async def update_product_stock(product_id, stock_id, stock_in, db, current_user) -> Any:
-    """
-    Update product stock information.
+    """Update product stock information.
 
-    Args:
-        product_id: Product ID
-        stock_id: S..."""
+Args: product_id: Product ID stock_id: Stock ID stock_in: Updated stock data db: Database session current_user: Current authenticated admin user
+
+Returns: ProductStock: Updated stock information"""
 ```
 
 ####### Module: search
@@ -1267,110 +1250,101 @@ router = router = APIRouter()
 ```python
 @router.get('/vehicle-data/decode-vin/{vin}')
 async def decode_vin(vin, db, current_user, vehicle_service) -> Any:
-    """
-    Decode a Vehicle Identification Number (VIN).
+    """Decode a Vehicle Identification Number (VIN).
 
-    Args:
-        vin: Vehicle Identification Nu..."""
+Args: vin: Vehicle Identification Number db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service
+
+Returns: Dict[str, Any]: Decoded vehicle data"""
 ```
 
 ```python
 @router.get('/vehicle-data/engines')
 async def get_vehicle_engines(db, current_user, vehicle_service, make, model, year) -> List[str]:
-    """
-    Get all available vehicle engines.
+    """Get all available vehicle engines.
 
-    Args:
-        db: Database session
-        current_user..."""
+Args: db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service make: Filter by make model: Filter by model year: Filter by year
+
+Returns: List[str]: List of engines"""
 ```
 
 ```python
 @router.get('/vehicle-data/makes')
 async def get_vehicle_makes(db, current_user, vehicle_service, year) -> List[str]:
-    """
-    Get all available vehicle makes.
+    """Get all available vehicle makes.
 
-    Args:
-        db: Database session
-        current_user: ..."""
+Args: db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service year: Filter by year
+
+Returns: List[str]: List of makes"""
 ```
 
 ```python
 @router.get('/vehicle-data/models')
 async def get_vehicle_models(db, current_user, vehicle_service, make, year) -> List[str]:
-    """
-    Get all available vehicle models.
+    """Get all available vehicle models.
 
-    Args:
-        db: Database session
-        current_user:..."""
+Args: db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service make: Filter by make year: Filter by year
+
+Returns: List[str]: List of models"""
 ```
 
 ```python
 @router.get('/vehicle-data/transmissions')
 async def get_vehicle_transmissions(db, current_user, vehicle_service, make, model, year, engine) -> List[str]:
-    """
-    Get all available vehicle transmissions.
+    """Get all available vehicle transmissions.
 
-    Args:
-        db: Database session
-        curren..."""
+Args: db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service make: Filter by make model: Filter by model year: Filter by year engine: Filter by engine
+
+Returns: List[str]: List of transmissions"""
 ```
 
 ```python
 @router.get('/vehicle-data/years')
 async def get_vehicle_years(db, current_user, vehicle_service) -> List[int]:
-    """
-    Get all available vehicle years.
+    """Get all available vehicle years.
 
-    Args:
-        db: Database session
-        current_user: ..."""
+Args: db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service
+
+Returns: List[int]: List of years"""
 ```
 
 ```python
 @router.get('/')
 async def global_search(db, current_user, search_service, q, entity_types, page, page_size) -> Any:
-    """
-    Perform a global search across multiple entity types.
+    """Perform a global search across multiple entity types.
 
-    Args:
-        db: Database session
- ..."""
+Args: db: Database session current_user: Current authenticated user search_service: Search service q: Search query entity_types: Entity types to search page: Page number page_size: Items per page
+
+Returns: Dict[str, Any]: Search results grouped by entity type"""
 ```
 
 ```python
 @router.get('/fitments')
 async def search_fitments(db, current_user, search_service, q, year, make, model, engine, transmission, page, page_size) -> Any:
-    """
-    Search for fitments with filtering.
+    """Search for fitments with filtering.
 
-    Args:
-        db: Database session
-        current_use..."""
+Args: db: Database session current_user: Current authenticated user search_service: Search service q: Search query year: Vehicle year filter make: Vehicle make filter model: Vehicle model filter engine: Vehicle engine filter transmission: Vehicle transmission filter page: Page number page_size: Items per page
+
+Returns: Dict[str, Any]: Search results with pagination"""
 ```
 
 ```python
 @router.get('/products')
 async def search_products(db, current_user, search_service, q, is_active, page, page_size, use_elasticsearch) -> Any:
-    """
-    Search for products with filtering.
+    """Search for products with filtering.
 
-    Args:
-        db: Database session
-        current_use..."""
+Args: db: Database session current_user: Current authenticated user search_service: Search service q: Search query is_active: Active status filter page: Page number page_size: Items per page use_elasticsearch: Whether to use Elasticsearch
+
+Returns: Dict[str, Any]: Search results with pagination"""
 ```
 
 ```python
 @router.post('/vehicle-data/validate-fitment')
 async def validate_vehicle_fitment(db, current_user, vehicle_service, year, make, model, engine, transmission) -> dict:
-    """
-    Validate if a fitment combination exists.
+    """Validate if a fitment combination exists.
 
-    Args:
-        db: Database session
-        curre..."""
+Args: db: Database session current_user: Current authenticated user vehicle_service: Vehicle data service year: Vehicle year make: Vehicle make model: Vehicle model engine: Vehicle engine transmission: Vehicle transmission
+
+Returns: dict: Validation result"""
 ```
 
 ####### Module: users
@@ -1399,129 +1373,127 @@ router = router = APIRouter()
 ```python
 @router.post('/companies/', response_model=CompanySchema, status_code=status.HTTP_201_CREATED)
 async def create_company(company_in, db, current_user) -> Any:
-    """
-    Create new company.
+    """Create new company.
 
-    Args:
-        company_in: Company data
-        db: Database session
-  ..."""
+Args: company_in: Company data db: Database session current_user: Current authenticated admin user
+
+Returns: Company: Created company
+
+Raises: HTTPException: If account number already exists"""
 ```
 
 ```python
 @router.post('/', response_model=UserSchema, status_code=status.HTTP_201_CREATED)
 async def create_user(user_in, db, current_user) -> Any:
-    """
-    Create new user.
+    """Create new user.
 
-    Args:
-        user_in: User data
-        db: Database session
-        cur..."""
+Args: user_in: User data db: Database session current_user: Current authenticated admin user
+
+Returns: User: Created user
+
+Raises: HTTPException: If email already exists or company not found"""
 ```
 
 ```python
 @router.delete('/companies/{company_id}')
 async def delete_company(company_id, db, current_user) -> dict:
-    """
-    Delete a company.
+    """Delete a company.
 
-    Args:
-        company_id: Company ID
-        db: Database session
-      ..."""
+Args: company_id: Company ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message
+
+Raises: HTTPException: If company not found or has associated users"""
 ```
 
 ```python
 @router.delete('/{user_id}')
 async def delete_user(user_id, db, current_user) -> dict:
-    """
-    Delete a user.
+    """Delete a user.
 
-    Args:
-        user_id: User ID
-        db: Database session
-        current..."""
+Args: user_id: User ID db: Database session current_user: Current authenticated admin user
+
+Returns: dict: Success message
+
+Raises: HTTPException: If user not found or is the current user"""
 ```
 
 ```python
 @router.get('/companies/', response_model=List[CompanySchema])
 async def read_companies(db, current_user, skip, limit, is_active) -> Any:
-    """
-    Retrieve companies with filtering options.
+    """Retrieve companies with filtering options.
 
-    Args:
-        db: Database session
-        curr..."""
+Args: db: Database session current_user: Current authenticated admin user skip: Number of companies to skip limit: Maximum number of companies to return is_active: Filter by active status
+
+Returns: List[Company]: List of companies"""
 ```
 
 ```python
 @router.get('/companies/{company_id}', response_model=CompanySchema)
 async def read_company(company_id, db, current_user) -> Any:
-    """
-    Get company by ID.
+    """Get company by ID.
 
-    Args:
-        company_id: Company ID
-        db: Database session
-     ..."""
+Args: company_id: Company ID db: Database session current_user: Current authenticated admin user
+
+Returns: Company: Company with specified ID
+
+Raises: HTTPException: If company not found"""
 ```
 
 ```python
 @router.get('/{user_id}', response_model=UserSchema)
 async def read_user(user_id, db, current_user) -> Any:
-    """
-    Get user by ID.
+    """Get user by ID.
 
-    Args:
-        user_id: User ID
-        db: Database session
-        curren..."""
+Args: user_id: User ID db: Database session current_user: Current authenticated admin user
+
+Returns: User: User with specified ID
+
+Raises: HTTPException: If user not found"""
 ```
 
 ```python
 @router.get('/me', response_model=UserSchema)
 async def read_user_me(current_user, db) -> Any:
-    """
-    Get current user.
+    """Get current user.
 
-    Args:
-        current_user: Current authenticated user
-        db: Datab..."""
+Args: current_user: Current authenticated user db: Database session
+
+Returns: User: Current user with company information"""
 ```
 
 ```python
 @router.get('/', response_model=List[UserSchema])
 async def read_users(db, current_user, skip, limit, role, company_id, is_active) -> Any:
-    """
-    Retrieve users with filtering options.
+    """Retrieve users with filtering options.
 
-    Args:
-        db: Database session
-        current_..."""
+Args: db: Database session current_user: Current authenticated admin user skip: Number of users to skip limit: Maximum number of users to return role: Filter by user role company_id: Filter by company ID is_active: Filter by active status
+
+Returns: List[User]: List of users"""
 ```
 
 ```python
 @router.put('/companies/{company_id}', response_model=CompanySchema)
 async def update_company(company_id, company_in, db, current_user) -> Any:
-    """
-    Update a company.
+    """Update a company.
 
-    Args:
-        company_id: Company ID
-        company_in: Updated company..."""
+Args: company_id: Company ID company_in: Updated company data db: Database session current_user: Current authenticated admin user
+
+Returns: Company: Updated company
+
+Raises: HTTPException: If company not found or account number already exists"""
 ```
 
 ```python
 @router.put('/{user_id}', response_model=UserSchema)
 async def update_user(user_id, user_in, db, current_user) -> Any:
-    """
-    Update a user.
+    """Update a user.
 
-    Args:
-        user_id: User ID
-        user_in: Updated user data
-        d..."""
+Args: user_id: User ID user_in: Updated user data db: Database session current_user: Current authenticated admin user
+
+Returns: User: Updated user
+
+Raises: HTTPException: If user not found or company not found"""
 ```
 
 #### Package: commands
@@ -1653,20 +1625,17 @@ settings = settings = get_settings()
 ```python
 @lru_cache
 def get_settings() -> Settings:
-    """
-    Get application settings with caching.
-    
-    This function is cached to avoid loading settin..."""
+    """Get application settings with caching.
+
+This function is cached to avoid loading settings multiple times.
+
+Returns: Application settings"""
 ```
 
 **Classes:**
 ```python
 class CORSSettings(BaseSettings):
-    """
-    CORS settings.
-    
-    Attributes:
-        BACKEND_CORS_ORIGINS: List of allowed origins for C..."""
+    """CORS settings.  Attributes: BACKEND_CORS_ORIGINS: List of allowed origins for CORS"""
 ```
 *Class attributes:*
 ```python
@@ -1681,21 +1650,18 @@ model_config =     model_config = SettingsConfigDict(
 @field_validator('BACKEND_CORS_ORIGINS', mode='before')
 @classmethod
     def assemble_cors_origins(cls, v) -> List[str]:
-        """
-        Parse CORS origins from string or list.
-        
-        Args:
-            v: CORS origins ..."""
+        """Parse CORS origins from string or list.
+
+Args: v: CORS origins as string or list
+
+Returns: List of CORS origin strings"""
 ```
 
 ```python
 class CelerySettings(BaseSettings):
-    """
-    Celery worker settings.
-    
-    Attributes:
-        CELERY_BROKER_URL: URL for Celery broker
- ..."""
+    """Celery worker settings.
+
+Attributes: CELERY_BROKER_URL: URL for Celery broker CELERY_RESULT_BACKEND: URL for Celery result backend"""
 ```
 *Class attributes:*
 ```python
@@ -1708,11 +1674,9 @@ model_config =     model_config = SettingsConfigDict(
 
 ```python
 class ChatSettings(BaseSettings):
-    """
-    Chat system settings.
-    
-    Attributes:
-        CHAT_ENCRYPTION_SALT: Salt for chat message ..."""
+    """Chat system settings.
+
+Attributes: CHAT_ENCRYPTION_SALT: Salt for chat message encryption CHAT_MESSAGE_LIMIT: Default message limit for fetching history CHAT_RATE_LIMIT_PER_MINUTE: Maximum messages per minute per user CHAT_WEBSOCKET_KEEPALIVE: Keepalive interval in seconds CHAT_MAX_MESSAGE_LENGTH: Maximum message length in characters"""
 ```
 *Class attributes:*
 ```python
@@ -1725,11 +1689,9 @@ model_config =     model_config = SettingsConfigDict(
 
 ```python
 class CurrencySettings(BaseSettings):
-    """
-    Currency and exchange rate settings.
-    
-    Attributes:
-        EXCHANGE_RATE_API_KEY: API ke..."""
+    """Currency and exchange rate settings.
+
+Attributes: EXCHANGE_RATE_API_KEY: API key for exchange rate service EXCHANGE_RATE_UPDATE_FREQUENCY: Update frequency in hours STORE_INVERSE_RATES: Whether to store inverse rates"""
 ```
 *Class attributes:*
 ```python
@@ -1742,11 +1704,9 @@ model_config =     model_config = SettingsConfigDict(
 
 ```python
 class DatabaseSettings(BaseSettings):
-    """
-    Database connection settings.
-    
-    Attributes:
-        POSTGRES_SERVER: PostgreSQL server h..."""
+    """Database connection settings.
+
+Attributes: POSTGRES_SERVER: PostgreSQL server hostname POSTGRES_USER: PostgreSQL username POSTGRES_PASSWORD: PostgreSQL password POSTGRES_DB: PostgreSQL database name POSTGRES_PORT: PostgreSQL server port SQLALCHEMY_DATABASE_URI: Constructed database URI"""
 ```
 *Class attributes:*
 ```python
@@ -1760,20 +1720,14 @@ model_config =     model_config = SettingsConfigDict(
 ```python
 @model_validator(mode='after')
     def assemble_db_connection(self) -> 'DatabaseSettings':
-        """
-        Assemble database URI from components.
-        
-        Returns:
-            Self with SQLA..."""
+        """Assemble database URI from components.  Returns: Self with SQLALCHEMY_DATABASE_URI set"""
 ```
 
 ```python
 class ElasticsearchSettings(BaseSettings):
-    """
-    Elasticsearch connection settings.
-    
-    Attributes:
-        ELASTICSEARCH_HOST: Elasticsear..."""
+    """Elasticsearch connection settings.
+
+Attributes: ELASTICSEARCH_HOST: Elasticsearch server hostname ELASTICSEARCH_PORT: Elasticsearch server port ELASTICSEARCH_USE_SSL: Whether to use SSL for connection ELASTICSEARCH_USERNAME: Elasticsearch username (optional) ELASTICSEARCH_PASSWORD: Elasticsearch password (optional)"""
 ```
 *Class attributes:*
 ```python
@@ -1787,21 +1741,14 @@ model_config =     model_config = SettingsConfigDict(
 ```python
 @property
     def uri(self) -> str:
-        """
-        Get Elasticsearch URI.
-        
-        Returns:
-            Elasticsearch connection URI
- ..."""
+        """Get Elasticsearch URI.  Returns: Elasticsearch connection URI"""
 ```
 
 ```python
 class Environment(str, Enum):
-    """
-    Application environment enumeration.
-    
-    Attributes:
-        DEVELOPMENT: Development envi..."""
+    """Application environment enumeration.
+
+Attributes: DEVELOPMENT: Development environment STAGING: Staging/testing environment PRODUCTION: Production environment"""
 ```
 *Class attributes:*
 ```python
@@ -1812,12 +1759,9 @@ PRODUCTION = 'production'
 
 ```python
 class FitmentSettings(BaseSettings):
-    """
-    Fitment system settings.
-    
-    Attributes:
-        VCDB_PATH: Path to VCDB Access database
- ..."""
+    """Fitment system settings.
+
+Attributes: VCDB_PATH: Path to VCDB Access database PCDB_PATH: Path to PCDB Access database MODEL_MAPPINGS_PATH: Path to model mappings file (optional) FITMENT_DB_URL: Database URL for fitment data (optional) FITMENT_LOG_LEVEL: Log level for fitment system FITMENT_CACHE_SIZE: Size of fitment cache"""
 ```
 *Class attributes:*
 ```python
@@ -1831,20 +1775,18 @@ model_config =     model_config = SettingsConfigDict(
 ```python
 @model_validator(mode='after')
     def validate_file_paths(self) -> 'FitmentSettings':
-        """
-        Validate that required file paths exist.
-        
-        Returns:
-            Self with va..."""
+        """Validate that required file paths exist.
+
+Returns: Self with validated paths
+
+Raises: ValueError: If required paths don't exist"""
 ```
 
 ```python
 class LocaleSettings(BaseSettings):
-    """
-    Internationalization and localization settings.
-    
-    Attributes:
-        DEFAULT_LOCALE: De..."""
+    """Internationalization and localization settings.
+
+Attributes: DEFAULT_LOCALE: Default locale AVAILABLE_LOCALES: List of available locales"""
 ```
 *Class attributes:*
 ```python
@@ -1857,12 +1799,9 @@ model_config =     model_config = SettingsConfigDict(
 
 ```python
 class LogLevel(str, Enum):
-    """
-    Log level enumeration.
-    
-    Attributes:
-        DEBUG: Debug level logging
-        INFO: In..."""
+    """Log level enumeration.
+
+Attributes: DEBUG: Debug level logging INFO: Info level logging WARNING: Warning level logging ERROR: Error level logging CRITICAL: Critical level logging"""
 ```
 *Class attributes:*
 ```python
@@ -1875,12 +1814,9 @@ CRITICAL = 'CRITICAL'
 
 ```python
 class LoggingSettings(BaseSettings):
-    """
-    Logging configuration settings.
-    
-    Attributes:
-        LOG_LEVEL: Default log level
-     ..."""
+    """Logging configuration settings.
+
+Attributes: LOG_LEVEL: Default log level LOG_FORMAT: Log format (json or text)"""
 ```
 *Class attributes:*
 ```python
@@ -1893,11 +1829,9 @@ model_config =     model_config = SettingsConfigDict(
 
 ```python
 class MediaSettings(BaseSettings):
-    """
-    Media handling settings.
-    
-    Attributes:
-        MEDIA_ROOT: Root directory for media file..."""
+    """Media handling settings.
+
+Attributes: MEDIA_ROOT: Root directory for media files MEDIA_URL: URL prefix for media files MEDIA_STORAGE_TYPE: Storage type (local, s3, etc.) MEDIA_CDN_URL: CDN URL for media files (optional)"""
 ```
 *Class attributes:*
 ```python
@@ -1912,30 +1846,21 @@ model_config =     model_config = SettingsConfigDict(
 @field_validator('MEDIA_ROOT', mode='before')
 @classmethod
     def create_media_directories(cls, v) -> str:
-        """
-        Create media directories if they don't exist.
-        
-        Args:
-            v: Media r..."""
+        """Create media directories if they don't exist.  Args: v: Media root path  Returns: Media root path"""
 ```
 ```python
 @property
     def media_base_url(self) -> str:
-        """
-        Get the base URL for media files.
-        
-        Returns:
-            Base URL for media ..."""
+        """Get the base URL for media files.
+
+Returns: Base URL for media files (CDN URL in production, local path otherwise)"""
 ```
 
 ```python
 class RedisSettings(BaseSettings):
-    """
-    Redis connection settings.
-    
-    Attributes:
-        REDIS_HOST: Redis server hostname
-     ..."""
+    """Redis connection settings.
+
+Attributes: REDIS_HOST: Redis server hostname REDIS_PORT: Redis server port REDIS_PASSWORD: Redis password (optional) REDIS_DB: Redis database number"""
 ```
 *Class attributes:*
 ```python
@@ -1949,22 +1874,14 @@ model_config =     model_config = SettingsConfigDict(
 ```python
 @property
     def uri(self) -> str:
-        """
-        Get Redis URI.
-        
-        Returns:
-            Redis connection URI
-        """
+        """Get Redis URI.  Returns: Redis connection URI"""
 ```
 
 ```python
 class SecuritySettings(BaseSettings):
-    """
-    Security settings.
-    
-    Attributes:
-        SECRET_KEY: Secret key for token signing
-      ..."""
+    """Security settings.
+
+Attributes: SECRET_KEY: Secret key for token signing ACCESS_TOKEN_EXPIRE_MINUTES: JWT token expiration time in minutes ALGORITHM: JWT signing algorithm"""
 ```
 *Class attributes:*
 ```python
@@ -1977,11 +1894,11 @@ model_config =     model_config = SettingsConfigDict(
 
 ```python
 class Settings(BaseSettings):
-    """
-    Main application settings combining all subsystems.
-    
-    Attributes:
-        PROJECT_NAME: ..."""
+    """Main application settings combining all subsystems.
+
+Attributes: PROJECT_NAME: Name of the project DESCRIPTION: Project description VERSION: Application version ENVIRONMENT: Current environment API_V1_STR: API v1 prefix BASE_DIR: Base directory for the application
+
+# Subsystem settings included as properties"""
 ```
 *Class attributes:*
 ```python
@@ -1996,20 +1913,16 @@ model_config =     model_config = SettingsConfigDict(
 @field_validator('BACKEND_CORS_ORIGINS', mode='before')
 @classmethod
     def assemble_cors_origins(cls, v) -> List[str]:
-        """
-        Parse CORS origins from string or list.
-        
-        Args:
-            v: CORS origins ..."""
+        """Parse CORS origins from string or list.
+
+Args: v: CORS origins as string or list
+
+Returns: List of CORS origin strings"""
 ```
 ```python
 @model_validator(mode='after')
     def assemble_db_connection(self) -> 'Settings':
-        """
-        Assemble database URI from components.
-        
-        Returns:
-            Self with SQLA..."""
+        """Assemble database URI from components.  Returns: Self with SQLALCHEMY_DATABASE_URI set"""
 ```
 ```python
 @property
@@ -2020,11 +1933,7 @@ model_config =     model_config = SettingsConfigDict(
 @field_validator('MEDIA_ROOT', mode='before')
 @classmethod
     def create_media_directories(cls, v) -> str:
-        """
-        Create media directories if they don't exist.
-        
-        Args:
-            v: Media r..."""
+        """Create media directories if they don't exist.  Args: v: Media root path  Returns: Media root path"""
 ```
 ```python
 @property
@@ -2059,11 +1968,9 @@ model_config =     model_config = SettingsConfigDict(
 ```python
 @property
     def media_base_url(self) -> str:
-        """
-        Get the base URL for media files.
-        
-        Returns:
-            Base URL for media ..."""
+        """Get the base URL for media files.
+
+Returns: Base URL for media files (CDN URL in production, local path otherwise)"""
 ```
 ```python
 @property
@@ -2108,38 +2015,38 @@ T = T = TypeVar("T")
 **Functions:**
 ```python
 def add_request_id_processor(logger, method_name, event_dict) -> EventDict:
-    """
-    Structlog processor that adds request_id from thread-local storage.
-    
-    Args:
-        logg..."""
+    """Structlog processor that adds request_id from thread-local storage.
+
+Args: logger: Logger instance method_name: Method name being called event_dict: Event dictionary to modify
+
+Returns: Modified event dictionary"""
 ```
 
 ```python
 def add_service_info_processor(logger, method_name, event_dict) -> EventDict:
-    """
-    Structlog processor that adds service information to log events.
-    
-    Args:
-        logger:..."""
+    """Structlog processor that adds service information to log events.
+
+Args: logger: Logger instance method_name: Method name being called event_dict: Event dictionary to modify
+
+Returns: Modified event dictionary"""
 ```
 
 ```python
 def add_timestamp_processor(logger, method_name, event_dict) -> EventDict:
-    """
-    Structlog processor that adds timestamp to log events.
-    
-    Args:
-        logger: Logger in..."""
+    """Structlog processor that adds timestamp to log events.
+
+Args: logger: Logger instance method_name: Method name being called event_dict: Event dictionary to modify
+
+Returns: Modified event dictionary"""
 ```
 
 ```python
 def add_user_id_processor(logger, method_name, event_dict) -> EventDict:
-    """
-    Structlog processor that adds user_id from thread-local storage.
-    
-    Args:
-        logger:..."""
+    """Structlog processor that adds user_id from thread-local storage.
+
+Args: logger: Logger instance method_name: Method name being called event_dict: Event dictionary to modify
+
+Returns: Modified event dictionary"""
 ```
 
 ```python
@@ -2149,109 +2056,98 @@ def clear_user_id() -> None:
 
 ```python
 def configure_std_logging() -> None:
-    """
-    Configure standard library logging with appropriate handlers and formatters.
-    
-    This sets..."""
+    """Configure standard library logging with appropriate handlers and formatters.
+
+This sets up log handlers based on environment and configuration settings."""
 ```
 
 ```python
 def configure_structlog() -> None:
-    """
-    Configure structlog with processors and renderers.
-    
-    This sets up structlog to work alon..."""
+    """Configure structlog with processors and renderers.
+
+This sets up structlog to work alongside the standard library logging, with consistent formatting and context handling."""
 ```
 
 ```python
 def get_logger(name) -> BoundLogger:
-    """
-    Get a structlog logger instance.
-    
-    Args:
-        name: Logger name (typically __name__)
-..."""
+    """Get a structlog logger instance.
+
+Args: name: Logger name (typically __name__)
+
+Returns: Structured logger instance"""
 ```
 
 ```python
 def log_execution_time(logger, level):
-    """
-    Decorator to log function execution time.
-    
-    Args:
-        logger: Logger to use (created..."""
+    """Decorator to log function execution time.
+
+Args: logger: Logger to use (created from function name if not provided) level: Log level to use ("debug", "info", etc.)
+
+Returns: Decorated function"""
 ```
 
 ```python
 def log_execution_time_async(logger, level):
-    """
-    Decorator to log async function execution time.
-    
-    Args:
-        logger: Logger to use (c..."""
+    """Decorator to log async function execution time.
+
+Args: logger: Logger to use (created from function name if not provided) level: Log level to use ("debug", "info", etc.)
+
+Returns: Decorated async function"""
 ```
 
 ```python
 @contextmanager
 def request_context(request_id, user_id):
-    """
-    Context manager for tracking request context in logs.
-    
-    Args:
-        request_id: Reques..."""
+    """Context manager for tracking request context in logs.
+
+Args: request_id: Request ID (generated if not provided) user_id: User ID (optional)
+
+Yields: The request_id"""
 ```
 
 ```python
 def set_user_id(user_id) -> None:
-    """
-    Set the current user ID in the logging context.
-    
-    Args:
-        user_id: User ID to set
-..."""
+    """Set the current user ID in the logging context.  Args: user_id: User ID to set"""
 ```
 
 ```python
 def setup_logging() -> None:
-    """
-    Set up the logging system.
-    
-    This function should be called early in the application sta..."""
+    """Set up the logging system.
+
+This function should be called early in the application startup process to configure all logging components."""
 ```
 
 **Classes:**
 ```python
 class RequestIdFilter(logging.Filter):
-    """
-    Log filter that adds request_id from thread-local storage.
-    
-    This filter adds the curren..."""
+    """Log filter that adds request_id from thread-local storage.
+
+This filter adds the current request ID to log records if available."""
 ```
 *Methods:*
 ```python
     def filter(self, record) -> bool:
-        """
-        Add request_id to log record if available.
-        
-        Args:
-            record: Log r..."""
+        """Add request_id to log record if available.
+
+Args: record: Log record to modify
+
+Returns: True to include the record"""
 ```
 
 ```python
 class UserIdFilter(logging.Filter):
-    """
-    Log filter that adds user_id from thread-local storage.
-    
-    This filter adds the current u..."""
+    """Log filter that adds user_id from thread-local storage.
+
+This filter adds the current user ID to log records if available."""
 ```
 *Methods:*
 ```python
     def filter(self, record) -> bool:
-        """
-        Add user_id to log record if available.
-        
-        Args:
-            record: Log reco..."""
+        """Add user_id to log record if available.
+
+Args: record: Log record to modify
+
+Returns: True to include the record"""
 ```
 
 #### Package: db
@@ -2302,43 +2198,42 @@ T = T = TypeVar('T', bound='Base')
 **Classes:**
 ```python
 class Base(DeclarativeBase):
-    """
-    Base class for all database models.
+    """Base class for all database models.
 
-    This class provides common functionality for all model..."""
+This class provides common functionality for all models, including: - Automatic table name generation - JSON serialization via the dict() method - Common field definitions like id, created_at, updated_at - Helper methods for common query operations
+
+All models should inherit from this class rather than defining their own Base class or using SQLAlchemy's declarative_base directly."""
 ```
 *Methods:*
 ```python
 @declared_attr
     def __tablename__(cls) -> str:
-        """
-        Generate table name automatically from class name.
+        """Generate table name automatically from class name.
 
-        The generated name is the lower..."""
+The generated name is the lowercase version of the class name.
+
+Returns: str: Table name"""
 ```
 ```python
     def dict(self) -> Dict[(str, Any)]:
-        """
-        Convert model instance to dictionary.
+        """Convert model instance to dictionary.
 
-        This method is useful for API responses and ..."""
+This method is useful for API responses and JSON serialization. It uses SQLAlchemy's inspection capabilities to convert all column attributes to a dictionary.
+
+Returns: Dict[str, Any]: Dictionary representation of model"""
 ```
 ```python
 @classmethod
     def filter_by_id(cls, id) -> Select:
-        """
-        Create a query to filter by id.
+        """Create a query to filter by id.
 
-        Args:
-            id: UUID primary key to filter b..."""
+Args: id: UUID primary key to filter by
+
+Returns: Select: SQLAlchemy select statement filtered by id"""
 ```
 ```python
     def update(self, **kwargs) -> None:
-        """
-        Update model attributes from keyword arguments.
-
-        Args:
-            **kwargs: Attrib..."""
+        """Update model attributes from keyword arguments.  Args: **kwargs: Attributes to update"""
 ```
 
 ##### Module: session
@@ -2375,19 +2270,21 @@ async_session_maker = async_session_maker = async_sessionmaker(
 **Functions:**
 ```python
 async def get_db() -> AsyncGenerator[(AsyncSession, None)]:
-    """
-    Get a database session.
+    """Get a database session.
 
-    This dependency provides an async database session that automatica..."""
+This dependency provides an async database session that automatically rolls back any failed transactions and closes the session when done.
+
+Yields: AsyncSession: Database session"""
 ```
 
 ```python
 @contextlib.asynccontextmanager
 async def get_db_context() -> AsyncGenerator[(AsyncSession, None)]:
-    """
-    Context manager for database sessions.
+    """Context manager for database sessions.
 
-    This is useful for scripts that need to handle thei..."""
+This is useful for scripts that need to handle their own transactions and session lifecycle outside of FastAPI's dependency injection.
+
+Yields: AsyncSession: Database session"""
 ```
 
 #### Package: fitment
@@ -2426,104 +2323,118 @@ router = router = APIRouter(prefix="/api/v1/fitment", tags=["fitment"])
 ```python
 @router.post('/model-mappings', response_model=ModelMappingSchema, status_code=status.HTTP_201_CREATED)
 async def create_model_mapping(mapping_data, mapping_engine):
-    """
-    Create a new model mapping.
+    """Create a new model mapping.
 
-    Args:
-        mapping_data: Mapping data
-        mapping_engin..."""
+Args: mapping_data: Mapping data mapping_engine: Mapping engine instance
+
+Returns: Created mapping
+
+Raises: HTTPException: If creation fails"""
 ```
 
 ```python
 @router.delete('/model-mappings/{mapping_id}', status_code=status.HTTP_200_OK)
 async def delete_model_mapping(mapping_id, mapping_engine):
-    """
-    Delete a model mapping.
+    """Delete a model mapping.
 
-    Args:
-        mapping_id: ID of the mapping to delete
-        mapp..."""
+Args: mapping_id: ID of the mapping to delete mapping_engine: Mapping engine instance
+
+Returns: Success message
+
+Raises: HTTPException: If deletion fails"""
 ```
 
 ```python
 def get_mapping_engine():
-    """
-    Get an instance of the mapping engine.
+    """Get an instance of the mapping engine.
 
-    This is a FastAPI dependency for endpoints that nee..."""
+This is a FastAPI dependency for endpoints that need the mapping engine."""
 ```
 
 ```python
 @router.get('/pcdb-positions/{terminology_id}', response_model=List[Dict[(str, Any)]])
 async def get_pcdb_positions(terminology_id, mapping_engine):
-    """
-    Get PCDB positions for a part terminology.
+    """Get PCDB positions for a part terminology.
 
-    Args:
-        terminology_id: Part terminology ..."""
+Args: terminology_id: Part terminology ID mapping_engine: Mapping engine instance
+
+Returns: List of PCDB positions
+
+Raises: HTTPException: If retrieval fails"""
 ```
 
 ```python
 @router.get('/model-mappings', response_model=ModelMappingList)
 async def list_model_mappings(mapping_engine, skip, limit, pattern, sort_by, sort_order):
-    """
-    List model mappings from database.
+    """List model mappings from database.
 
-    Args:
-        mapping_engine: Mapping engine instance
- ..."""
+Args: mapping_engine: Mapping engine instance skip: Number of items to skip (for pagination) limit: Maximum number of items to return (for pagination) pattern: Optional pattern to filter by sort_by: Field to sort by (pattern, mapping, priority, active) sort_order: Sort order (asc, desc)
+
+Returns: List of model mappings with pagination information
+
+Raises: HTTPException: If retrieval fails"""
 ```
 
 ```python
 @router.post('/parse-application', response_model=Dict[(str, Any)])
 async def parse_application(application_text, mapping_engine):
-    """
-    Parse a part application text.
+    """Parse a part application text.
 
-    Args:
-        application_text: Raw part application text
- ..."""
+Args: application_text: Raw part application text mapping_engine: Mapping engine instance
+
+Returns: Parsed application components
+
+Raises: HTTPException: If parsing fails"""
 ```
 
 ```python
 @router.post('/process', response_model=ProcessFitmentResponse)
 async def process_fitment(request, mapping_engine):
-    """
-    Process fitment application texts.
+    """Process fitment application texts.
 
-    Args:
-        request: Request body with application te..."""
+Args: request: Request body with application texts and part terminology ID mapping_engine: Mapping engine instance
+
+Returns: Processing results
+
+Raises: HTTPException: If processing fails"""
 ```
 
 ```python
 @router.post('/refresh-mappings', status_code=status.HTTP_200_OK)
 async def refresh_mappings(mapping_engine):
-    """
-    Refresh model mappings from the database.
+    """Refresh model mappings from the database.
 
-    This allows for updating mappings without restar..."""
+This allows for updating mappings without restarting the server.
+
+Args: mapping_engine: Mapping engine instance
+
+Returns: Success message
+
+Raises: HTTPException: If refresh fails"""
 ```
 
 ```python
 @router.put('/model-mappings/{mapping_id}', response_model=ModelMappingSchema)
 async def update_model_mapping(mapping_id, mapping_data, mapping_engine):
-    """
-    Update an existing model mapping.
+    """Update an existing model mapping.
 
-    Args:
-        mapping_id: ID of the mapping to update
-  ..."""
+Args: mapping_id: ID of the mapping to update mapping_data: Updated mapping data mapping_engine: Mapping engine instance
+
+Returns: Updated mapping
+
+Raises: HTTPException: If update fails"""
 ```
 
 ```python
 @router.post('/upload-model-mappings', response_model=UploadModelMappingsResponse)
 async def upload_model_mappings(file, mapping_engine):
-    """
-    Upload model mappings JSON file.
+    """Upload model mappings JSON file.
 
-    Args:
-        file: JSON file with model mappings
-       ..."""
+Args: file: JSON file with model mappings mapping_engine: Mapping engine instance
+
+Returns: Upload result
+
+Raises: HTTPException: If upload fails"""
 ```
 
 **Classes:**
@@ -2586,12 +2497,7 @@ def configure_logging() -> None:
 ```python
 @lru_cache(maxsize=1)
 def get_settings() -> FitmentSettings:
-    """
-    Get the fitment settings.
-
-    Returns:
-        FitmentSettings instance
-    """
+    """Get the fitment settings.  Returns: FitmentSettings instance"""
 ```
 
 **Classes:**
@@ -2654,27 +2560,25 @@ class AccessDBClient(object):
 *Methods:*
 ```python
     def __init__(self, db_path) -> None:
-        """
-        Initialize the Access DB client.
-
-        Args:
-            db_path: Path to the MS Access ..."""
+        """Initialize the Access DB client.  Args: db_path: Path to the MS Access database file"""
 ```
 ```python
     def connect(self) -> pyodbc.Connection:
-        """
-        Connect to the Access database.
+        """Connect to the Access database.
 
-        Returns:
-            ODBC connection to the databa..."""
+Returns: ODBC connection to the database
+
+Raises: DatabaseError: If connection fails"""
 ```
 ```python
     def query(self, sql, params) -> List[Dict[(str, Any)]]:
-        """
-        Execute a SQL query on the Access database.
+        """Execute a SQL query on the Access database.
 
-        Args:
-            sql: SQL query to ex..."""
+Args: sql: SQL query to execute params: Optional parameters for the query
+
+Returns: List of dictionaries representing the query results
+
+Raises: DatabaseError: If query execution fails"""
 ```
 
 ```python
@@ -2684,101 +2588,116 @@ class FitmentDBService(object):
 *Methods:*
 ```python
     def __init__(self, vcdb_path, pcdb_path, sqlalchemy_url) -> None:
-        """
-        Initialize the fitment database service.
+        """Initialize the fitment database service.
 
-        Args:
-            vcdb_path: Path to the ..."""
+Args: vcdb_path: Path to the VCDB MS Access database pcdb_path: Path to the PCDB MS Access database sqlalchemy_url: Optional SQLAlchemy URL for async database"""
 ```
 ```python
     async def add_model_mapping(self, pattern, mapping, priority) -> int:
-        """
-        Add a new model mapping to the database.
+        """Add a new model mapping to the database.
 
-        Args:
-            pattern: Pattern to mat..."""
+Args: pattern: Pattern to match in vehicle text mapping: Mapping string in format "Make|VehicleCode|Model" priority: Optional priority for matching (higher values are processed first)
+
+Returns: ID of the new mapping
+
+Raises: DatabaseError: If insert fails"""
 ```
 ```python
     async def delete_model_mapping(self, mapping_id) -> bool:
-        """
-        Delete a model mapping.
+        """Delete a model mapping.
 
-        Args:
-            mapping_id: ID of the mapping to delete
-..."""
+Args: mapping_id: ID of the mapping to delete
+
+Returns: True if successful
+
+Raises: DatabaseError: If delete fails"""
 ```
 ```python
     async def get_model_mappings(self) -> Dict[(str, List[str])]:
-        """
-        Get model mappings from the database.
+        """Get model mappings from the database.
 
-        Returns:
-            Dictionary of model map..."""
+Returns: Dictionary of model mappings where keys are patterns and values are lists of mapping strings
+
+Raises: DatabaseError: If query fails"""
 ```
 ```python
     def get_pcdb_part_terminology(self, terminology_id) -> PartTerminology:
-        """
-        Get part terminology information from PCDB.
+        """Get part terminology information from PCDB.
 
-        Args:
-            terminology_id: ID o..."""
+Args: terminology_id: ID of the part terminology
+
+Returns: PartTerminology object
+
+Raises: DatabaseError: If query fails or part terminology not found"""
 ```
 ```python
     def get_pcdb_positions(self, position_ids) -> List[PCDBPosition]:
-        """
-        Get position information from PCDB.
+        """Get position information from PCDB.
 
-        Args:
-            position_ids: Optional list ..."""
+Args: position_ids: Optional list of position IDs to filter by
+
+Returns: List of PCDBPosition objects
+
+Raises: DatabaseError: If query fails"""
 ```
 ```python
 @asynccontextmanager
     async def get_session(self) -> AsyncGenerator[(AsyncSession, None)]:
-        """
-        Get an async session for database operations.
+        """Get an async session for database operations.
 
-        Yields:
-            AsyncSession obj..."""
+Yields: AsyncSession object
+
+Raises: DatabaseError: If async database is not configured"""
 ```
 ```python
     def get_vcdb_vehicles(self, year, make, model) -> List[VCDBVehicle]:
-        """
-        Get vehicles from VCDB matching the specified criteria.
+        """Get vehicles from VCDB matching the specified criteria.
 
-        Args:
-            year: Op..."""
+Args: year: Optional year to filter by make: Optional make to filter by model: Optional model to filter by
+
+Returns: List of VCDBVehicle objects
+
+Raises: DatabaseError: If query fails"""
 ```
 ```python
     async def import_mappings_from_json(self, json_data) -> int:
-        """
-        Import mappings from a JSON dictionary.
+        """Import mappings from a JSON dictionary.
 
-        Args:
-            json_data: Dictionary wh..."""
+Args: json_data: Dictionary where keys are patterns and values are lists of mappings
+
+Returns: Number of mappings imported
+
+Raises: DatabaseError: If import fails"""
 ```
 ```python
     def load_model_mappings_from_json(self, json_path) -> Dict[(str, List[str])]:
-        """
-        Load model mappings from a JSON file.
+        """Load model mappings from a JSON file.
 
-        Args:
-            json_path: Path to the JSO..."""
+Args: json_path: Path to the JSON file
+
+Returns: Dictionary of model mappings
+
+Raises: DatabaseError: If loading fails"""
 ```
 ```python
     async def save_fitment_results(self, product_id, fitments) -> bool:
-        """
-        Save fitment results to the database.
+        """Save fitment results to the database.
 
-        Args:
-            product_id: ID of the prod..."""
+Args: product_id: ID of the product fitments: List of fitment dictionaries
+
+Returns: True if successful
+
+Raises: DatabaseError: If saving fails"""
 ```
 ```python
     async def update_model_mapping(self, mapping_id, **kwargs) -> bool:
-        """
-        Update an existing model mapping.
+        """Update an existing model mapping.
 
-        Args:
-            mapping_id: ID of the mapping ..."""
+Args: mapping_id: ID of the mapping to update **kwargs: Fields to update (pattern, mapping, priority, active)
+
+Returns: True if successful
+
+Raises: DatabaseError: If update fails"""
 ```
 
 ##### Module: dependencies
@@ -2801,29 +2720,28 @@ from mapper import FitmentMappingEngine
 ```python
 @lru_cache(maxsize=1)
 def get_fitment_db_service() -> FitmentDBService:
-    """
-    Get a singleton instance of the FitmentDBService.
+    """Get a singleton instance of the FitmentDBService.
 
-    Returns:
-        FitmentDBService instan..."""
+Returns: FitmentDBService instance
+
+Raises: ConfigurationError: If required configuration is missing"""
 ```
 
 ```python
 @lru_cache(maxsize=1)
 def get_fitment_mapping_engine() -> FitmentMappingEngine:
-    """
-    Get a singleton instance of the FitmentMappingEngine.
+    """Get a singleton instance of the FitmentMappingEngine.
 
-    Returns:
-        FitmentMappingEngin..."""
+Returns: FitmentMappingEngine instance
+
+Raises: ConfigurationError: If required configuration is missing"""
 ```
 
 ```python
 async def initialize_mapping_engine() -> None:
-    """
-    Initialize the mapping engine with database mappings.
+    """Initialize the mapping engine with database mappings.
 
-    This should be called during applica..."""
+This should be called during application startup."""
 ```
 
 ##### Module: exceptions
@@ -2844,12 +2762,9 @@ class ConfigurationError(FitmentError):
 *Methods:*
 ```python
     def __init__(self, message, details) -> None:
-        """
-        Initialize a configuration error.
+        """Initialize a configuration error.
 
-        Args:
-            message: Error message
-       ..."""
+Args: message: Error message details: Optional dictionary with additional error details"""
 ```
 
 ```python
@@ -2859,12 +2774,9 @@ class DatabaseError(FitmentError):
 *Methods:*
 ```python
     def __init__(self, message, details) -> None:
-        """
-        Initialize a database error.
+        """Initialize a database error.
 
-        Args:
-            message: Error message
-            ..."""
+Args: message: Error message details: Optional dictionary with additional error details"""
 ```
 
 ```python
@@ -2874,12 +2786,9 @@ class FitmentError(Exception):
 *Methods:*
 ```python
     def __init__(self, message, details) -> None:
-        """
-        Initialize a fitment error.
+        """Initialize a fitment error.
 
-        Args:
-            message: Error message
-            d..."""
+Args: message: Error message details: Optional dictionary with additional error details"""
 ```
 
 ```python
@@ -2889,12 +2798,9 @@ class MappingError(FitmentError):
 *Methods:*
 ```python
     def __init__(self, message, details) -> None:
-        """
-        Initialize a mapping error.
+        """Initialize a mapping error.
 
-        Args:
-            message: Error message
-            d..."""
+Args: message: Error message details: Optional dictionary with additional error details"""
 ```
 
 ```python
@@ -2904,12 +2810,9 @@ class ParsingError(FitmentError):
 *Methods:*
 ```python
     def __init__(self, message, details) -> None:
-        """
-        Initialize a parsing error.
+        """Initialize a parsing error.
 
-        Args:
-            message: Error message
-            d..."""
+Args: message: Error message details: Optional dictionary with additional error details"""
 ```
 
 ```python
@@ -2919,12 +2822,9 @@ class ValidationError(FitmentError):
 *Methods:*
 ```python
     def __init__(self, message, details) -> None:
-        """
-        Initialize a validation error.
+        """Initialize a validation error.
 
-        Args:
-            message: Error message
-          ..."""
+Args: message: Error message details: Optional dictionary with additional error details"""
 ```
 
 ##### Module: mapper
@@ -2959,100 +2859,101 @@ class FitmentMappingEngine(object):
 *Methods:*
 ```python
     def __init__(self, db_service) -> None:
-        """
-        Initialize the mapping engine.
-
-        Args:
-            db_service: Database service for ..."""
+        """Initialize the mapping engine.  Args: db_service: Database service for fitment data"""
 ```
 ```python
     def batch_process_applications(self, application_texts, terminology_id) -> Dict[(str, List[ValidationResult])]:
-        """
-        Process a batch of part application strings.
+        """Process a batch of part application strings.
 
-        Args:
-            application_texts: ..."""
+Args: application_texts: List of raw part application texts terminology_id: ID of the part terminology
+
+Returns: Dictionary mapping application text to validation results
+
+Raises: MappingError: If processing fails"""
 ```
 ```python
     def configure(self, model_mappings_path) -> None:
-        """
-        Configure the mapping engine with model mappings.
+        """Configure the mapping engine with model mappings.
 
-        Args:
-            model_mappings..."""
+Args: model_mappings_path: Path to the model mappings Excel file"""
 ```
 ```python
     async def configure_from_database(self) -> None:
-        """
-        Configure the mapping engine with model mappings from the database.
+        """Configure the mapping engine with model mappings from the database.
 
-        This allows fo..."""
+This allows for dynamic updates to mappings without server restarts."""
 ```
 ```python
     def configure_from_file(self, model_mappings_path) -> None:
-        """
-        Configure the mapping engine with model mappings from a file.
+        """Configure the mapping engine with model mappings from a file.
 
-        Args:
-            mo..."""
+Args: model_mappings_path: Path to the model mappings JSON file"""
 ```
 ```python
 @lru_cache(maxsize=100)
     def get_part_terminology(self, terminology_id) -> PartTerminology:
-        """
-        Get part terminology information by ID.
+        """Get part terminology information by ID.
 
-        Args:
-            terminology_id: ID of th..."""
+Args: terminology_id: ID of the part terminology
+
+Returns: PartTerminology object
+
+Raises: MappingError: If part terminology not found"""
 ```
 ```python
 @lru_cache(maxsize=100)
     def get_pcdb_positions(self, terminology_id) -> List[PCDBPosition]:
-        """
-        Get PCDB positions for a part terminology.
+        """Get PCDB positions for a part terminology.
 
-        Args:
-            terminology_id: ID of..."""
+Args: terminology_id: ID of the part terminology
+
+Returns: List of PCDBPosition objects
+
+Raises: MappingError: If positions not found"""
 ```
 ```python
     def get_vcdb_vehicles(self, year, make, model) -> List[VCDBVehicle]:
-        """
-        Get VCDB vehicles matching criteria.
+        """Get VCDB vehicles matching criteria.
 
-        Args:
-            year: Optional year filter
-..."""
+Args: year: Optional year filter make: Optional make filter model: Optional model filter
+
+Returns: List of VCDBVehicle objects
+
+Raises: MappingError: If query fails"""
 ```
 ```python
     def process_application(self, application_text, terminology_id) -> List[ValidationResult]:
-        """
-        Process a part application string and validate against databases.
+        """Process a part application string and validate against databases.
 
-        Args:
-          ..."""
+Args: application_text: Raw part application text terminology_id: ID of the part terminology
+
+Returns: List of ValidationResult objects
+
+Raises: MappingError: If processing fails"""
 ```
 ```python
     async def refresh_mappings(self) -> None:
-        """
-        Refresh model mappings from the database.
+        """Refresh model mappings from the database.
 
-        This allows for reloading mappings witho..."""
+This allows for reloading mappings without restarting the server."""
 ```
 ```python
     async def save_mapping_results(self, product_id, results) -> bool:
-        """
-        Save mapping results to the database.
+        """Save mapping results to the database.
 
-        Args:
-            product_id: ID of the prod..."""
+Args: product_id: ID of the product results: List of ValidationResult objects
+
+Returns: True if successful
+
+Raises: MappingError: If saving fails"""
 ```
 ```python
     def serialize_validation_results(self, results) -> List[Dict[(str, Any)]]:
-        """
-        Serialize validation results to JSON-compatible dictionaries.
+        """Serialize validation results to JSON-compatible dictionaries.
 
-        Args:
-            re..."""
+Args: results: List of ValidationResult objects
+
+Returns: List of dictionaries"""
 ```
 
 ##### Module: models
@@ -3204,59 +3105,65 @@ class FitmentParser(object):
 *Methods:*
 ```python
     def __init__(self, model_mappings) -> None:
-        """
-        Initialize the parser with model mappings.
+        """Initialize the parser with model mappings.
 
-        Args:
-            model_mappings: Dicti..."""
+Args: model_mappings: Dictionary mapping vehicle model text to structured make/model data"""
 ```
 ```python
     def expand_year_range(self, start_year, end_year) -> List[int]:
-        """
-        Expand a year range into a list of individual years.
+        """Expand a year range into a list of individual years.
 
-        Args:
-            start_year:..."""
+Args: start_year: First year in range end_year: Last year in range
+
+Returns: List of all years in the range (inclusive)"""
 ```
 ```python
     def extract_positions(self, position_text) -> List[PositionGroup]:
-        """
-        Extract position information from the position text.
+        """Extract position information from the position text.
 
-        Args:
-            position_te..."""
+Args: position_text: Text describing position (e.g., "Left or Right Front Upper")
+
+Returns: List of PositionGroup objects representing all position combinations"""
 ```
 ```python
     def extract_year_range(self, year_text) -> Tuple[(int, int)]:
-        """
-        Extract start and end years from a year range string.
+        """Extract start and end years from a year range string.
 
-        Args:
-            year_text:..."""
+Args: year_text: Year range text (e.g., "2005-2010")
+
+Returns: Tuple of (start_year, end_year)
+
+Raises: ParsingError: If the year range cannot be parsed"""
 ```
 ```python
     def find_model_mapping(self, vehicle_text) -> List[Dict[(str, str)]]:
-        """
-        Find the appropriate model mapping for the vehicle text.
+        """Find the appropriate model mapping for the vehicle text.
 
-        Args:
-            vehicle..."""
+Args: vehicle_text: Text describing the vehicle model
+
+Returns: List of dictionaries with make, model mappings
+
+Raises: ParsingError: If no mapping is found"""
 ```
 ```python
     def parse_application(self, application_text) -> PartApplication:
-        """
-        Parse a raw part application text into a structured PartApplication object.
+        """Parse a raw part application text into a structured PartApplication object.
 
-        Args:
-..."""
+Args: application_text: Raw application text string
+
+Returns: PartApplication with extracted components
+
+Raises: ParsingError: If the application text cannot be parsed"""
 ```
 ```python
     def process_application(self, part_app) -> List[PartFitment]:
-        """
-        Process a part application into a list of specific part fitments.
+        """Process a part application into a list of specific part fitments.
 
-        Args:
-          ..."""
+Args: part_app: Parsed part application
+
+Returns: List of expanded PartFitment objects
+
+Raises: ParsingError: If processing fails"""
 ```
 
 ##### Module: validator
@@ -3285,19 +3192,17 @@ class FitmentValidator(object):
 *Methods:*
 ```python
     def __init__(self, part_terminology_id, pcdb_positions) -> None:
-        """
-        Initialize the validator.
+        """Initialize the validator.
 
-        Args:
-            part_terminology_id: ID of the part te..."""
+Args: part_terminology_id: ID of the part terminology pcdb_positions: List of valid PCDB positions for this part"""
 ```
 ```python
     def validate_fitment(self, fitment, available_vehicles) -> ValidationResult:
-        """
-        Validate a fitment against VCDB and PCDB data.
+        """Validate a fitment against VCDB and PCDB data.
 
-        Args:
-            fitment: The fitm..."""
+Args: fitment: The fitment to validate available_vehicles: List of available VCDB vehicles
+
+Returns: ValidationResult with status and messages"""
 ```
 
 #### Package: models
@@ -3466,11 +3371,11 @@ from app.models.user import User, Company
 **Classes:**
 ```python
 class ChatMember(Base):
-    """
-    Chat room member model.
-    
-    This model tracks users' membership in chat rooms:
-    - Each ..."""
+    """Chat room member model.
+
+This model tracks users' membership in chat rooms: - Each member has a role (owner, admin, etc.) - Tracks when the user last read messages - Records membership status
+
+Attributes: id: Primary key UUID room_id: Reference to chat room user_id: Reference to user role: Member role (owner, admin, member, guest) last_read_at: When the user last read messages is_active: Whether the membership is active created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3487,10 +3392,9 @@ __table_args__ =     __table_args__ = (
 
 ```python
 class ChatMemberRole(str, Enum):
-    """
-    Roles of chat room members.
-    
-    Defines the possible roles a user can have in a chat room:..."""
+    """Roles of chat room members.
+
+Defines the possible roles a user can have in a chat room: - OWNER: Creator/owner with full permissions - ADMIN: Administrator with moderation rights - MEMBER: Regular participant - GUEST: Temporary participant with limited rights"""
 ```
 *Class attributes:*
 ```python
@@ -3502,11 +3406,11 @@ GUEST = 'guest'
 
 ```python
 class ChatMessage(Base):
-    """
-    Chat message model.
-    
-    This model represents individual messages in chat rooms:
-    - Mes..."""
+    """Chat message model.
+
+This model represents individual messages in chat rooms: - Messages support various types (text, image, etc.) - Content is encrypted for security - Tracks message status (sent, delivered, read)
+
+Attributes: id: Primary key UUID room_id: Reference to chat room sender_id: Reference to sender user message_type: Type of message (text, image, file, system, action) content_encrypted: Encrypted message content metadata: Additional message metadata as JSON is_deleted: Whether the message has been deleted deleted_at: When the message was deleted created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3525,10 +3429,11 @@ __tablename__ = 'chat_message'
 
 ```python
 class ChatRoom(Base):
-    """
-    Chat room model representing a conversation space.
-    
-    This model defines a chat room wher..."""
+    """Chat room model representing a conversation space.
+
+This model defines a chat room where users can exchange messages: - Each room has a type (direct, group, etc.) - Rooms can be associated with a company - Messages are linked to rooms - Members track participants in the room
+
+Attributes: id: Primary key UUID name: Room name (optional for direct chats) type: Room type (direct, group, company, support) company_id: Associated company (optional) is_active: Whether the room is active metadata: Additional room data as JSON created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3543,10 +3448,9 @@ company =     company = relationship("Company", back_populates="chat_rooms")
 
 ```python
 class ChatRoomType(str, Enum):
-    """
-    Types of chat rooms supported by the system.
-    
-    Defines the possible chat room configurat..."""
+    """Types of chat rooms supported by the system.
+
+Defines the possible chat room configurations: - DIRECT: One-to-one chat between two users - GROUP: Group chat for multiple users - COMPANY: Company-wide chat room - SUPPORT: Customer support chat"""
 ```
 *Class attributes:*
 ```python
@@ -3558,10 +3462,11 @@ SUPPORT = 'support'
 
 ```python
 class MessageReaction(Base):
-    """
-    Message reaction model.
-    
-    This model tracks reactions to messages (like emoji reactions)..."""
+    """Message reaction model.
+
+This model tracks reactions to messages (like emoji reactions): - Each reaction is associated with a specific message - Users can react with emoji or predefined reactions - Multiple users can add the same reaction
+
+Attributes: id: Primary key UUID message_id: Reference to chat message user_id: Reference to user who reacted reaction: Reaction content (emoji or predefined reaction) created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3578,11 +3483,9 @@ __table_args__ =     __table_args__ = (
 
 ```python
 class MessageType(str, Enum):
-    """
-    Types of messages supported by the chat system.
-    
-    Defines the possible message types:
-  ..."""
+    """Types of messages supported by the chat system.
+
+Defines the possible message types: - TEXT: Regular text message - IMAGE: Image attachment - FILE: File attachment - SYSTEM: System-generated message - ACTION: User action notification"""
 ```
 *Class attributes:*
 ```python
@@ -3595,11 +3498,11 @@ ACTION = 'action'
 
 ```python
 class RateLimitLog(Base):
-    """
-    Rate limiting log model.
-    
-    This model tracks rate limiting for users to prevent spam:
-  ..."""
+    """Rate limiting log model.
+
+This model tracks rate limiting for users to prevent spam: - Records user's message sending attempts - Used to enforce rate limits on messaging - Supports both global and room-specific limits
+
+Attributes: id: Primary key UUID user_id: Reference to user room_id: Reference to chat room (optional) event_type: Type of event being rate limited timestamp: When the event occurred count: Number of events in the current period"""
 ```
 *Class attributes:*
 ```python
@@ -3634,11 +3537,7 @@ from app.models.user import User
 **Classes:**
 ```python
 class ApprovalStatus(str, Enum):
-    """
-    Statuses for regulatory approvals.
-
-    Defines the possible states of a regulatory approval.
- ..."""
+    """Statuses for regulatory approvals.  Defines the possible states of a regulatory approval."""
 ```
 *Class attributes:*
 ```python
@@ -3650,10 +3549,9 @@ NOT_REQUIRED = 'Not Required'
 
 ```python
 class ChemicalType(str, Enum):
-    """
-    Types of chemical hazards under Proposition 65.
+    """Types of chemical hazards under Proposition 65.
 
-    Defines the categories of chemical hazards..."""
+Defines the categories of chemical hazards recognized by California's Proposition 65."""
 ```
 *Class attributes:*
 ```python
@@ -3664,10 +3562,9 @@ BOTH = 'Both'
 
 ```python
 class ExposureScenario(str, Enum):
-    """
-    Types of exposure scenarios for chemicals.
+    """Types of exposure scenarios for chemicals.
 
-    Defines the different contexts in which chemica..."""
+Defines the different contexts in which chemical exposure might occur."""
 ```
 *Class attributes:*
 ```python
@@ -3678,12 +3575,11 @@ ENVIRONMENTAL = 'Environmental'
 
 ```python
 class HazardousMaterial(Base):
-    """
-    Hazardous material model.
+    """Hazardous material model.
 
-    Represents hazardous material information for products.
+Represents hazardous material information for products.
 
-    Att..."""
+Attributes: id: Primary key UUID product_id: Reference to product un_number: UN/NA Number (e.g., 1993 for flammable liquids) hazard_class: Hazard Classification (e.g., Flammable Liquid) packing_group: Packing Group (I, II, III) handling_instructions: Storage or transport precautions restricted_transport: Restrictions (Air, Ground, Sea, None) created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3692,19 +3588,16 @@ __tablename__ = 'hazardous_material'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the hazardous material.
-
-        Returns:
-            str: Hazardo..."""
+        """String representation of the hazardous material.  Returns: str: Hazardous material representation"""
 ```
 
 ```python
 class ProductChemical(Base):
-    """
-    Product chemical association model.
+    """Product chemical association model.
 
-    Represents relationships between products and chemical..."""
+Represents relationships between products and chemicals, including exposure scenarios and warning requirements.
+
+Attributes: id: Primary key UUID product_id: Reference to product chemical_id: Reference to chemical exposure_scenario: Scenario (Consumer, Occupational, Environmental) warning_required: Whether a warning is required warning_label: Warning text for label"""
 ```
 *Class attributes:*
 ```python
@@ -3713,19 +3606,18 @@ __tablename__ = 'product_chemical'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product chemical association.
+        """String representation of the product chemical association.
 
-        Returns:
-            st..."""
+Returns: str: Product chemical association representation"""
 ```
 
 ```python
 class ProductDOTApproval(Base):
-    """
-    Product DOT approval model.
+    """Product DOT approval model.
 
-    Represents Department of Transportation approvals for products..."""
+Represents Department of Transportation approvals for products.
+
+Attributes: id: Primary key UUID product_id: Reference to product approval_status: Status (Approved, Pending, Revoked, Not Required) approval_number: Official DOT approval number approved_by: Entity or agency that approved the product approval_date: When the product was approved expiration_date: If the approval has an expiration date reason: If revoked or pending, store reason changed_by_id: User who made the change changed_at: When the change occurred"""
 ```
 *Class attributes:*
 ```python
@@ -3734,19 +3626,16 @@ __tablename__ = 'product_dot_approval'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the DOT approval.
-
-        Returns:
-            str: DOT approval ..."""
+        """String representation of the DOT approval.  Returns: str: DOT approval representation"""
 ```
 
 ```python
 class Prop65Chemical(Base):
-    """
-    Proposition 65 chemical model.
+    """Proposition 65 chemical model.
 
-    Represents chemicals listed under California's Proposition ..."""
+Represents chemicals listed under California's Proposition 65.
+
+Attributes: id: Primary key UUID name: Chemical name cas_number: Chemical Abstracts Service (CAS) Number type: Type of hazard (Carcinogen, Reproductive Toxicant, Both) exposure_limit: Exposure limit if applicable updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3755,19 +3644,14 @@ __tablename__ = 'prop65_chemical'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the chemical.
-
-        Returns:
-            str: Chemical represen..."""
+        """String representation of the chemical.  Returns: str: Chemical representation"""
 ```
 
 ```python
 class TransportRestriction(str, Enum):
-    """
-    Types of transportation restrictions.
+    """Types of transportation restrictions.
 
-    Defines the possible transportation restrictions for..."""
+Defines the possible transportation restrictions for hazardous materials."""
 ```
 *Class attributes:*
 ```python
@@ -3780,13 +3664,11 @@ ALL = 'ALL'
 
 ```python
 class Warning(Base):
-    """
-    Warning model.
+    """Warning model.
 
-    Represents warning text for chemicals in products.
+Represents warning text for chemicals in products.
 
-    Attributes:
-       ..."""
+Attributes: id: Primary key UUID product_id: Reference to product chemical_id: Reference to chemical warning_text: Warning text last_updated: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3795,11 +3677,7 @@ __tablename__ = 'warning'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the warning.
-
-        Returns:
-            str: Warning representa..."""
+        """String representation of the warning.  Returns: str: Warning representation"""
 ```
 
 ##### Module: currency
@@ -3821,14 +3699,11 @@ from app.db.base_class import Base
 **Classes:**
 ```python
 class Currency(Base):
-    """
-    Currency model.
+    """Currency model.
 
-    Represents currency information:
-    - ISO codes
-    - Name
-    - Symbol
- ..."""
+Represents currency information: - ISO codes - Name - Symbol - Active status
+
+Attributes: id: Primary key UUID code: ISO 4217 currency code (USD, EUR, etc.) name: Currency name symbol: Currency symbol is_active: Whether the currency is active is_base: Whether this is the base currency for the system created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3837,20 +3712,16 @@ __tablename__ = 'currency'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the currency.
-
-        Returns:
-            str: Currency represen..."""
+        """String representation of the currency.  Returns: str: Currency representation"""
 ```
 
 ```python
 class ExchangeRate(Base):
-    """
-    Exchange rate model.
+    """Exchange rate model.
 
-    Tracks historical exchange rates between currencies:
-    - Source and..."""
+Tracks historical exchange rates between currencies: - Source and target currencies - Rate value - Effective date
+
+Attributes: id: Primary key UUID source_currency_id: Reference to source currency target_currency_id: Reference to target currency rate: Exchange rate value effective_date: When the rate became effective fetched_at: When the rate was fetched from the API data_source: API or source that provided the rate created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3865,11 +3736,7 @@ __table_args__ =     __table_args__ = (
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the exchange rate.
-
-        Returns:
-            str: Exchange rat..."""
+        """String representation of the exchange rate.  Returns: str: Exchange rate representation"""
 ```
 
 ##### Module: location
@@ -3894,12 +3761,11 @@ from app.models.user import Company
 **Classes:**
 ```python
 class Address(Base):
-    """
-    Address model.
+    """Address model.
 
-    Represents physical addresses for companies, warehouses, etc.
+Represents physical addresses for companies, warehouses, etc.
 
-    Attribut..."""
+Attributes: id: Primary key UUID street: Street address city: City name state: State or province postal_code: Postal or ZIP code country_id: Reference to country latitude: Geographical latitude longitude: Geographical longitude created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3908,21 +3774,16 @@ __tablename__ = 'address'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the address.
-
-        Returns:
-            str: Address representa..."""
+        """String representation of the address.  Returns: str: Address representation"""
 ```
 
 ```python
 class Country(Base):
-    """
-    Country model.
+    """Country model.
 
-    Represents countries with ISO codes and related information.
+Represents countries with ISO codes and related information.
 
-    Attribute..."""
+Attributes: id: Primary key UUID name: Full country name iso_alpha_2: 2-letter country code (US, etc.) iso_alpha_3: 3-letter country code (USA, etc.) iso_numeric: Numeric country code (840, etc.) region: Region name (North America, etc.) subregion: Subregion name (Northern America, etc.) currency: Currency code (USD, etc.) created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3931,11 +3792,7 @@ __tablename__ = 'country'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the country.
-
-        Returns:
-            str: Country representa..."""
+        """String representation of the country.  Returns: str: Country representation"""
 ```
 
 ##### Module: media
@@ -3962,10 +3819,11 @@ from app.models.user import User
 **Classes:**
 ```python
 class Media(Base):
-    """
-    Media model for storing file metadata.
+    """Media model for storing file metadata.
 
-    This model tracks uploaded files and their metadata..."""
+This model tracks uploaded files and their metadata: - Basic file information (name, path, size, type) - Access control via visibility settings - Ownership tracking - Approval workflow status - Product associations
+
+Attributes: id: Primary key UUID filename: Original filename file_path: Path to the stored file file_size: Size of the file in bytes media_type: Type of media (image, document, video, other) mime_type: MIME type of the file visibility: Visibility level file_metadata: Additional metadata as JSON uploaded_by_id: Reference to the user who uploaded the file is_approved: Whether the file has been approved for use approved_by_id: Reference to the user who approved the file approved_at: When the file was approved products: Associated products created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -3974,46 +3832,33 @@ __tablename__ = 'media'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the media.
-
-        Returns:
-            str: Media representation..."""
+        """String representation of the media.  Returns: str: Media representation with filename and type"""
 ```
 ```python
 @property
     def extension(self) -> str:
-        """
-        Get the file extension from the filename.
+        """Get the file extension from the filename.
 
-        Returns:
-            str: File extension..."""
+Returns: str: File extension (lowercase, without leading period)"""
 ```
 ```python
 @property
     def has_thumbnail(self) -> bool:
-        """
-        Check if the media should have a thumbnail.
+        """Check if the media should have a thumbnail.
 
-        Returns:
-            bool: True if med..."""
+Returns: bool: True if media is an image and should have a thumbnail"""
 ```
 ```python
 @property
     def is_image(self) -> bool:
-        """
-        Check if the media is an image.
-
-        Returns:
-            bool: True if media_type is I..."""
+        """Check if the media is an image.  Returns: bool: True if media_type is IMAGE"""
 ```
 
 ```python
 class MediaType(str, Enum):
-    """
-    Types of media files supported by the system.
+    """Types of media files supported by the system.
 
-    Defines the different categories of files th..."""
+Defines the different categories of files that can be uploaded and helps determine appropriate handling and validation rules."""
 ```
 *Class attributes:*
 ```python
@@ -4027,11 +3872,9 @@ OTHER = 'other'
 
 ```python
 class MediaVisibility(str, Enum):
-    """
-    Visibility levels for media files.
+    """Visibility levels for media files.
 
-    Controls who can access the media files:
-    - PUBLIC: ..."""
+Controls who can access the media files: - PUBLIC: Accessible without authentication - PRIVATE: Requires authentication - RESTRICTED: Requires specific permissions"""
 ```
 *Class attributes:*
 ```python
@@ -4058,10 +3901,9 @@ from app.db.base_class import Base
 **Classes:**
 ```python
 class ModelMapping(Base):
-    """
-    Model mapping database model.
+    """Model mapping database model.
 
-    This model stores mappings between part application text pat..."""
+This model stores mappings between part application text patterns and structured make/model data in the format "Make|VehicleCode|Model"."""
 ```
 *Class attributes:*
 ```python
@@ -4119,13 +3961,11 @@ from app.models.user import User
 **Classes:**
 ```python
 class AttributeDefinition(Base):
-    """
-    Attribute definition model.
+    """Attribute definition model.
 
-    Defines flexible product attributes.
+Defines flexible product attributes.
 
-    Attributes:
-        ..."""
+Attributes: id: Primary key UUID name: Attribute name code: Code for the attribute description: Description of the attribute data_type: Data type is_required: Whether the attribute is required default_value: Default value for the attribute validation_regex: Regular expression for validation min_value: Minimum value max_value: Maximum value options: For picklist values display_order: Order for displaying attributes created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4134,23 +3974,18 @@ __tablename__ = 'attribute_definition'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the attribute definition.
+        """String representation of the attribute definition.
 
-        Returns:
-            str: Attri..."""
+Returns: str: Attribute definition representation"""
 ```
 
 ```python
 class Brand(Base):
-    """
-    Brand model.
+    """Brand model.
 
-    Represents product brands.
+Represents product brands.
 
-    Attributes:
-        id: Primary key UUID
-    ..."""
+Attributes: id: Primary key UUID name: Brand name parent_company_id: Reference to parent company created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4160,19 +3995,16 @@ parent_company =     parent_company = relationship("Company", foreign_keys=[pare
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the brand.
-
-        Returns:
-            str: Brand representation..."""
+        """String representation of the brand.  Returns: str: Brand representation"""
 ```
 
 ```python
 class Fitment(Base):
-    """
-    Fitment model representing vehicle compatibility information.
+    """Fitment model representing vehicle compatibility information.
 
-    This model stores informatio..."""
+This model stores information about vehicle compatibility for products: - Year/Make/Model data for basic vehicle identification - Engine and transmission details for specific applications - Flexible JSON attributes for additional fitment criteria
+
+Attributes: id: Primary key UUID year: Vehicle model year make: Vehicle manufacturer model: Vehicle model name engine: Engine specification transmission: Transmission type attributes: JSON field for additional fitment attributes products: Associated products for this fitment created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4181,22 +4013,18 @@ __tablename__ = 'fitment'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the fitment.
+        """String representation of the fitment.
 
-        Returns:
-            str: Fitment representa..."""
+Returns: str: Fitment representation with year, make, and model"""
 ```
 
 ```python
 class Manufacturer(Base):
-    """
-    Manufacturer model.
+    """Manufacturer model.
 
-    Represents product manufacturers.
+Represents product manufacturers.
 
-    Attributes:
-        id: Primary..."""
+Attributes: id: Primary key UUID name: Manufacturer name company_id: Parent company if applicable address_id: Reference to address billing_address_id: Reference to billing address shipping_address_id: Reference to shipping address country_id: Manufacturing location created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4210,23 +4038,16 @@ country =     country = relationship("Country", foreign_keys=[country_id])
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the manufacturer.
-
-        Returns:
-            str: Manufacturer ..."""
+        """String representation of the manufacturer.  Returns: str: Manufacturer representation"""
 ```
 
 ```python
 class PriceType(Base):
-    """
-    Price type model.
+    """Price type model.
 
-    Defines types of prices.
+Defines types of prices.
 
-    Attributes:
-        id: Primary key UUID
- ..."""
+Attributes: id: Primary key UUID name: Price type name description: Description of price type created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4235,19 +4056,16 @@ __tablename__ = 'price_type'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the price type.
-
-        Returns:
-            str: Price type repr..."""
+        """String representation of the price type.  Returns: str: Price type representation"""
 ```
 
 ```python
 class Product(Base):
-    """
-    Product model representing automotive parts and accessories.
+    """Product model representing automotive parts and accessories.
 
-    This model stores core inform..."""
+This model stores core information about products including: - Basic product details (part number, application) - Product flags (vintage, late_model, soft, universal) - Search capabilities via search_vector - Relationships to descriptions, marketing, activities, etc.
+
+Attributes: id: Primary key UUID part_number: Unique identifier for the product part_number_stripped: Alphanumeric version of part_number application: Unformatted data for vehicle fitment applications vintage: Vintage fitments flag late_model: Late model fitments flag soft: Soft good flag universal: Universal fit flag search_vector: Full-text search vector created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4256,22 +4074,16 @@ __tablename__ = 'product'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product.
-
-        Returns:
-            str: Product representa..."""
+        """String representation of the product.  Returns: str: Product representation with part number"""
 ```
 
 ```python
 class ProductActivity(Base):
-    """
-    Product activity model.
+    """Product activity model.
 
-    Tracks status changes for products.
+Tracks status changes for products.
 
-    Attributes:
-        id: P..."""
+Attributes: id: Primary key UUID product_id: Reference to product status: Product status (active, inactive) reason: Reason for status change changed_by: User who made the change changed_at: When the change occurred"""
 ```
 *Class attributes:*
 ```python
@@ -4280,22 +4092,16 @@ __tablename__ = 'product_activity'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product activity.
-
-        Returns:
-            str: Product a..."""
+        """String representation of the product activity.  Returns: str: Product activity representation"""
 ```
 
 ```python
 class ProductAttribute(Base):
-    """
-    Product attribute model.
+    """Product attribute model.
 
-    Stores flexible attribute values for products.
+Stores flexible attribute values for products.
 
-    Attributes:
- ..."""
+Attributes: id: Primary key UUID product_id: Reference to product attribute_id: Reference to attribute definition value_string: String value value_number: Numeric value value_boolean: Boolean value value_date: Date value value_json: JSON value created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4308,22 +4114,16 @@ __table_args__ =     __table_args__ = (
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product attribute.
-
-        Returns:
-            str: Product ..."""
+        """String representation of the product attribute.  Returns: str: Product attribute representation"""
 ```
 
 ```python
 class ProductBrandHistory(Base):
-    """
-    Product brand history model.
+    """Product brand history model.
 
-    Tracks brand changes for products.
+Tracks brand changes for products.
 
-    Attributes:
-        i..."""
+Attributes: id: Primary key UUID product_id: Reference to product old_brand_id: Previous brand new_brand_id: New brand changed_by_id: User who made the change changed_at: When the change occurred"""
 ```
 *Class attributes:*
 ```python
@@ -4332,21 +4132,18 @@ __tablename__ = 'product_brand_history'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product brand history.
+        """String representation of the product brand history.
 
-        Returns:
-            str: Prod..."""
+Returns: str: Product brand history representation"""
 ```
 
 ```python
 class ProductDescription(Base):
-    """
-    Product description model.
+    """Product description model.
 
-    Stores different types of descriptions for products.
+Stores different types of descriptions for products.
 
-    Attri..."""
+Attributes: id: Primary key UUID product_id: Reference to product description_type: Type of description (Short, Long, Keywords, etc.) description: Description content created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4355,22 +4152,16 @@ __tablename__ = 'product_description'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product description.
-
-        Returns:
-            str: Produc..."""
+        """String representation of the product description.  Returns: str: Product description representation"""
 ```
 
 ```python
 class ProductMarketing(Base):
-    """
-    Product marketing model.
+    """Product marketing model.
 
-    Stores marketing content for products.
+Stores marketing content for products.
 
-    Attributes:
-        i..."""
+Attributes: id: Primary key UUID product_id: Reference to product marketing_type: Type of marketing content (Bullet Point, Ad Copy) content: Marketing content position: Order for display created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4379,22 +4170,16 @@ __tablename__ = 'product_marketing'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product marketing.
-
-        Returns:
-            str: Product ..."""
+        """String representation of the product marketing.  Returns: str: Product marketing representation"""
 ```
 
 ```python
 class ProductMeasurement(Base):
-    """
-    Product measurement model.
+    """Product measurement model.
 
-    Stores dimensional information for products.
+Stores dimensional information for products.
 
-    Attributes:
- ..."""
+Attributes: id: Primary key UUID product_id: Reference to product manufacturer_id: Optional manufacturer reference length: Length in inches width: Width in inches height: Height in inches weight: Weight in pounds volume: Volume in cubic inches dimensional_weight: DIM weight calculation effective_date: When measurements become effective"""
 ```
 *Class attributes:*
 ```python
@@ -4403,22 +4188,16 @@ __tablename__ = 'product_measurement'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product measurement.
-
-        Returns:
-            str: Produc..."""
+        """String representation of the product measurement.  Returns: str: Product measurement representation"""
 ```
 
 ```python
 class ProductPricing(Base):
-    """
-    Product pricing model.
+    """Product pricing model.
 
-    Stores pricing information for products.
+Stores pricing information for products.
 
-    Attributes:
-        i..."""
+Attributes: id: Primary key UUID product_id: Reference to product pricing_type_id: Reference to price type manufacturer_id: Optional manufacturer reference price: The current price currency: Currency code last_updated: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4427,22 +4206,16 @@ __tablename__ = 'product_pricing'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product pricing.
-
-        Returns:
-            str: Product pr..."""
+        """String representation of the product pricing.  Returns: str: Product pricing representation"""
 ```
 
 ```python
 class ProductStock(Base):
-    """
-    Product stock model.
+    """Product stock model.
 
-    Tracks inventory levels for products.
+Tracks inventory levels for products.
 
-    Attributes:
-        id: Pr..."""
+Attributes: id: Primary key UUID product_id: Reference to product warehouse_id: Reference to warehouse quantity: Quantity in stock last_updated: Last stock update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4451,22 +4224,16 @@ __tablename__ = 'product_stock'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product stock.
-
-        Returns:
-            str: Product stoc..."""
+        """String representation of the product stock.  Returns: str: Product stock representation"""
 ```
 
 ```python
 class ProductSupersession(Base):
-    """
-    Product supersession model.
+    """Product supersession model.
 
-    Tracks product replacements.
+Tracks product replacements.
 
-    Attributes:
-        id: Prim..."""
+Attributes: id: Primary key UUID old_product_id: Product being replaced new_product_id: Replacement product reason: Explanation of why the product was superseded changed_at: When the change occurred"""
 ```
 *Class attributes:*
 ```python
@@ -4475,11 +4242,9 @@ __tablename__ = 'product_supersession'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the product supersession.
+        """String representation of the product supersession.
 
-        Returns:
-            str: Produ..."""
+Returns: str: Product supersession representation"""
 ```
 
 ##### Module: reference
@@ -4503,13 +4268,11 @@ from app.models.product import Product
 **Classes:**
 ```python
 class Color(Base):
-    """
-    Color model.
+    """Color model.
 
-    Represents standard color names and their hex codes.
+Represents standard color names and their hex codes.
 
-    Attributes:
-       ..."""
+Attributes: id: Primary key UUID name: Standard color name hex_code: Hex code for digital representation (optional) created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4518,21 +4281,16 @@ __tablename__ = 'color'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the color.
-
-        Returns:
-            str: Color representation..."""
+        """String representation of the color.  Returns: str: Color representation"""
 ```
 
 ```python
 class ConstructionType(Base):
-    """
-    Construction type model.
+    """Construction type model.
 
-    Represents materials used in product construction.
+Represents materials used in product construction.
 
-    Attribute..."""
+Attributes: id: Primary key UUID name: Material name description: Optional description created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4541,22 +4299,16 @@ __tablename__ = 'construction_type'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the construction type.
-
-        Returns:
-            str: Construc..."""
+        """String representation of the construction type.  Returns: str: Construction type representation"""
 ```
 
 ```python
 class Hardware(Base):
-    """
-    Hardware item model.
+    """Hardware item model.
 
-    Represents hardware items included with products.
+Represents hardware items included with products.
 
-    Attributes:
-  ..."""
+Attributes: id: Primary key UUID name: Name of the hardware item description: Optional details part_number: Optional part number for the hardware item created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4565,22 +4317,16 @@ __tablename__ = 'hardware_item'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the hardware item.
-
-        Returns:
-            str: Hardware ite..."""
+        """String representation of the hardware item.  Returns: str: Hardware item representation"""
 ```
 
 ```python
 class PackagingType(Base):
-    """
-    Packaging type model.
+    """Packaging type model.
 
-    Represents types of product packaging.
+Represents types of product packaging.
 
-    Attributes:
-        id: ..."""
+Attributes: id: Primary key UUID pies_code: AutoCare PCdb PIES Code (optional) name: Packaging type name description: Optional description source: Source of the data created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4589,22 +4335,16 @@ __tablename__ = 'packaging_type'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the packaging type.
-
-        Returns:
-            str: Packaging t..."""
+        """String representation of the packaging type.  Returns: str: Packaging type representation"""
 ```
 
 ```python
 class TariffCode(Base):
-    """
-    Tariff code model.
+    """Tariff code model.
 
-    Represents HS, HTS, or other tariff codes.
+Represents HS, HTS, or other tariff codes.
 
-    Attributes:
-        id:..."""
+Attributes: id: Primary key UUID code: Tariff code description: Description of the code country_id: Country this code applies to (optional) created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4614,22 +4354,16 @@ country =     country = relationship("Country")
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the tariff code.
-
-        Returns:
-            str: Tariff code re..."""
+        """String representation of the tariff code.  Returns: str: Tariff code representation"""
 ```
 
 ```python
 class Texture(Base):
-    """
-    Texture model.
+    """Texture model.
 
-    Represents surface textures of products.
+Represents surface textures of products.
 
-    Attributes:
-        id: Prima..."""
+Attributes: id: Primary key UUID name: Texture name description: Optional description created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4638,21 +4372,16 @@ __tablename__ = 'texture'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the texture.
-
-        Returns:
-            str: Texture representa..."""
+        """String representation of the texture.  Returns: str: Texture representation"""
 ```
 
 ```python
 class UnspscCode(Base):
-    """
-    UNSPSC code model.
+    """UNSPSC code model.
 
-    Represents United Nations Standard Products and Services Code.
+Represents United Nations Standard Products and Services Code.
 
-    Att..."""
+Attributes: id: Primary key UUID code: 8- or 10-digit UNSPSC code description: UNSPSC category description segment: High-level category family: Sub-category class: Product class commodity: Specific commodity category created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4661,22 +4390,16 @@ __tablename__ = 'unspsc_code'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the UNSPSC code.
-
-        Returns:
-            str: UNSPSC code re..."""
+        """String representation of the UNSPSC code.  Returns: str: UNSPSC code representation"""
 ```
 
 ```python
 class Warehouse(Base):
-    """
-    Warehouse model.
+    """Warehouse model.
 
-    Represents product storage locations.
+Represents product storage locations.
 
-    Attributes:
-        id: Primar..."""
+Attributes: id: Primary key UUID name: Warehouse name address_id: Reference to address (optional) is_active: Whether the warehouse is active created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4687,11 +4410,7 @@ stock =     stock = relationship("ProductStock", back_populates="warehouse")
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the warehouse.
-
-        Returns:
-            str: Warehouse repres..."""
+        """String representation of the warehouse.  Returns: str: Warehouse representation"""
 ```
 
 ##### Module: user
@@ -4724,42 +4443,35 @@ pwd_context = pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 **Functions:**
 ```python
 def create_access_token(subject, role, expires_delta) -> str:
-    """
-    Create a JWT access token.
+    """Create a JWT access token.
 
-    Args:
-        subject: Subject (usually user ID) to include in ..."""
+Args: subject: Subject (usually user ID) to include in the token role: User role to include in the token expires_delta: Token expiration time delta (optional)
+
+Returns: str: JWT token string"""
 ```
 
 ```python
 def get_password_hash(password) -> str:
-    """
-    Hash a password using Bcrypt.
-
-    Args:
-        password: Plain text password
-
-    Returns:
-  ..."""
+    """Hash a password using Bcrypt.  Args: password: Plain text password  Returns: str: Hashed password"""
 ```
 
 ```python
 def verify_password(plain_password, hashed_password) -> bool:
-    """
-    Verify a password against a hash.
+    """Verify a password against a hash.
 
-    Args:
-        plain_password: Plain text password
-      ..."""
+Args: plain_password: Plain text password hashed_password: Bcrypt hashed password
+
+Returns: bool: True if password matches, False otherwise"""
 ```
 
 **Classes:**
 ```python
 class Company(Base):
-    """
-    Company model for B2B customers and distributors.
+    """Company model for B2B customers and distributors.
 
-    This model stores information about clie..."""
+This model stores information about client companies and distributors. It supports: - Account number tracking for integration with external systems - Different account types (distributor, jobber, etc.) - Address information for headquarters, billing, and shipping - Industry classification - Status tracking
+
+Attributes: id: Primary key UUID name: Company name headquarters_address_id: Reference to headquarters address billing_address_id: Reference to billing address shipping_address_id: Reference to shipping address account_number: External account number (e.g., from iSeries) account_type: Type of account (distributor, jobber, etc.) industry: Industry sector (Automotive, Electronics, etc.) is_active: Whether the company account is active created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4771,19 +4483,18 @@ shipping_address =     shipping_address = relationship("Address", foreign_keys=[
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the company.
+        """String representation of the company.
 
-        Returns:
-            str: Company representa..."""
+Returns: str: Company representation with name and account type"""
 ```
 
 ```python
 class User(Base):
-    """
-    User model for authentication and authorization.
+    """User model for authentication and authorization.
 
-    This model stores user information, crede..."""
+This model stores user information, credentials, and permissions. It supports: - Email-based authentication - Role-based access control - Company association for B2B users - Account status tracking
+
+Attributes: id: Primary key UUID email: User's email address (used for login) hashed_password: Bcrypt-hashed password full_name: User's full name role: User's role in the system is_active: Whether the user account is active company_id: Reference to associated company (optional) company: Relationship to Company model created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -4792,19 +4503,14 @@ __tablename__ = 'user'
 *Methods:*
 ```python
     def __repr__(self) -> str:
-        """
-        String representation of the user.
-
-        Returns:
-            str: User representation w..."""
+        """String representation of the user.  Returns: str: User representation with email and role"""
 ```
 
 ```python
 class UserRole(str, Enum):
-    """
-    User role enumeration for authorization.
+    """User role enumeration for authorization.
 
-    These roles define different permission levels in..."""
+These roles define different permission levels in the system: - ADMIN: Full system access and management capabilities - MANAGER: Product and user management, approvals - CLIENT: Regular customer access - DISTRIBUTOR: B2B partner access - READ_ONLY: Limited view-only access"""
 ```
 *Class attributes:*
 ```python
@@ -4844,32 +4550,23 @@ from pydantic import BaseModel, Field, validator
 **Classes:**
 ```python
 class ChatMemberSchema(BaseModel):
-    """
-    Chat room member schema.
-    
-    Attributes:
-        user_id: User identifier
-        user_nam..."""
+    """Chat room member schema.
+
+Attributes: user_id: User identifier user_name: User display name role: Member role in the room is_online: Whether the user is currently online last_seen_at: When the user was last active"""
 ```
 
 ```python
 class ChatMessageSchema(BaseModel):
-    """
-    Chat message schema.
-    
-    Attributes:
-        id: Message identifier
-        room_id: Room ..."""
+    """Chat message schema.
+
+Attributes: id: Message identifier room_id: Room identifier sender_id: Sender user identifier sender_name: Sender display name message_type: Type of message content: Message content reactions: Message reactions created_at: Creation timestamp updated_at: Last update timestamp is_edited: Whether the message has been edited is_deleted: Whether the message has been deleted"""
 ```
 
 ```python
 class ChatRoomSchema(BaseModel):
-    """
-    Chat room information schema.
-    
-    Attributes:
-        id: Room identifier
-        name: Ro..."""
+    """Chat room information schema.
+
+Attributes: id: Room identifier name: Room name type: Room type created_at: Creation timestamp member_count: Number of members in the room last_message: Last message information (optional)"""
 ```
 
 ```python
@@ -4893,52 +4590,31 @@ DELETE_MESSAGE = 'delete_message'
 
 ```python
 class DeleteMessageCommand(BaseModel):
-    """
-    Command to delete a message.
-    
-    Attributes:
-        room_id: Room identifier
-        mess..."""
+    """Command to delete a message.  Attributes: room_id: Room identifier message_id: Message identifier"""
 ```
 
 ```python
 class EditMessageCommand(BaseModel):
-    """
-    Command to edit a message.
-    
-    Attributes:
-        room_id: Room identifier
-        messag..."""
+    """Command to edit a message.
+
+Attributes: room_id: Room identifier message_id: Message identifier content: New message content"""
 ```
 
 ```python
 class FetchHistoryCommand(BaseModel):
-    """
-    Command to fetch message history.
-    
-    Attributes:
-        room_id: Room identifier
-       ..."""
+    """Command to fetch message history.
+
+Attributes: room_id: Room identifier before_id: Fetch messages before this ID limit: Maximum number of messages to return"""
 ```
 
 ```python
 class JoinRoomCommand(BaseModel):
-    """
-    Command to join a chat room.
-    
-    Attributes:
-        room_id: Room identifier
-    """
+    """Command to join a chat room.  Attributes: room_id: Room identifier"""
 ```
 
 ```python
 class LeaveRoomCommand(BaseModel):
-    """
-    Command to leave a chat room.
-    
-    Attributes:
-        room_id: Room identifier
-    """
+    """Command to leave a chat room.  Attributes: room_id: Room identifier"""
 ```
 
 ```python
@@ -4956,68 +4632,49 @@ ACTION = 'action'
 
 ```python
 class ReactionCommand(BaseModel):
-    """
-    Command for message reactions.
-    
-    Attributes:
-        room_id: Room identifier
-        me..."""
+    """Command for message reactions.
+
+Attributes: room_id: Room identifier message_id: Message identifier reaction: Reaction content"""
 ```
 
 ```python
 class ReadMessagesCommand(BaseModel):
-    """
-    Command to mark messages as read.
-    
-    Attributes:
-        room_id: Room identifier
-       ..."""
+    """Command to mark messages as read.
+
+Attributes: room_id: Room identifier last_read_id: ID of the last read message"""
 ```
 
 ```python
 class SendMessageCommand(BaseModel):
-    """
-    Command to send a message.
-    
-    Attributes:
-        room_id: Room identifier
-        conten..."""
+    """Command to send a message.
+
+Attributes: room_id: Room identifier content: Message content message_type: Type of message (text, image, etc.) metadata: Additional message data"""
 ```
 
 ```python
 class TypingCommand(BaseModel):
-    """
-    Command for typing indicators.
-    
-    Attributes:
-        room_id: Room identifier
-    """
+    """Command for typing indicators.  Attributes: room_id: Room identifier"""
 ```
 
 ```python
 class UserPresenceSchema(BaseModel):
-    """
-    User presence information schema.
-    
-    Attributes:
-        user_id: User identifier
-       ..."""
+    """User presence information schema.
+
+Attributes: user_id: User identifier is_online: Whether the user is currently online last_seen_at: When the user was last active status: Custom status message"""
 ```
 
 ```python
 class WebSocketCommand(BaseModel):
-    """
-    Base WebSocket command structure.
-    
-    This model defines the common structure for all WebS..."""
+    """Base WebSocket command structure.
+
+This model defines the common structure for all WebSocket commands: - Command type to identify the action - Optional room identifier - Command data with type-specific content"""
 ```
 
 ```python
 class WebSocketResponse(BaseModel):
-    """
-    Base WebSocket response structure.
-    
-    This model defines the common structure for all Web..."""
+    """Base WebSocket response structure.
+
+This model defines the common structure for all WebSocket responses: - Response type for client handling - Optional error information - Response data with type-specific content"""
 ```
 
 ##### Module: currency
@@ -5112,61 +4769,65 @@ from app.models.media import MediaType, MediaVisibility
 **Classes:**
 ```python
 class FileUploadError(BaseModel):
-    """
-    Error response for file upload.
+    """Error response for file upload.
 
-    This schema defines the structure of error responses for f..."""
+This schema defines the structure of error responses for file uploads.
+
+Attributes: error: Error type detail: Detailed error information (optional)"""
 ```
 
 ```python
 class FileUploadResponse(BaseModel):
-    """
-    Response after file upload.
+    """Response after file upload.
 
-    This schema defines the structure of responses to file uploads..."""
+This schema defines the structure of responses to file uploads.
+
+Attributes: media: Media information message: Success message"""
 ```
 
 ```python
 class Media(MediaInDB):
-    """
-    Schema for Media responses.
+    """Schema for Media responses.
 
-    This schema is used for API responses returning media data.
-  ..."""
+This schema is used for API responses returning media data. It extends the database schema with URLs for frontend use.
+
+Attributes: url: URL to access the file thumbnail_url: URL to access the thumbnail (optional)"""
 ```
 *Methods:*
 ```python
     def model_post_init(self, __context) -> None:
-        """
-        Post initialization hook to set URLs.
+        """Post initialization hook to set URLs.
 
-        This method runs after the model is initiali..."""
+This method runs after the model is initialized, allowing us to set the URL fields based on the media properties.
+
+Args: __context: Context information (not used)"""
 ```
 
 ```python
 class MediaBase(BaseModel):
-    """
-    Base schema for Media data.
+    """Base schema for Media data.
 
-    Defines common fields used across media-related schemas.
+Defines common fields used across media-related schemas.
 
-    ..."""
+Attributes: filename: Original file name media_type: Type of media (image, document, video, other) visibility: Visibility level file_metadata: Additional file metadata"""
 ```
 
 ```python
 class MediaCreate(BaseModel):
-    """
-    Schema for creating new Media (separate from file upload).
+    """Schema for creating new Media (separate from file upload).
 
-    This schema is used for the for..."""
+This schema is used for the form data part of media uploads, separate from the actual file data.
+
+Attributes: media_type: Type of media visibility: Visibility level file_metadata: Additional file metadata"""
 ```
 
 ```python
 class MediaInDB(MediaBase):
-    """
-    Schema for Media as stored in the database.
+    """Schema for Media as stored in the database.
 
-    Extends the base media schema with database-sp..."""
+Extends the base media schema with database-specific fields.
+
+Attributes: id: Media UUID file_path: Path to the stored file file_size: Size of the file in bytes mime_type: MIME type of the file uploaded_by_id: Reference to user who uploaded the file is_approved: Whether the media is approved approved_by_id: Reference to user who approved the media (optional) approved_at: Approval timestamp (optional) created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5175,18 +4836,20 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class MediaListResponse(BaseModel):
-    """
-    Paginated response for media listings.
+    """Paginated response for media listings.
 
-    This schema provides a structure for paginated medi..."""
+This schema provides a structure for paginated media list responses.
+
+Attributes: items: List of media items total: Total number of items page: Current page number page_size: Number of items per page pages: Total number of pages"""
 ```
 
 ```python
 class MediaUpdate(BaseModel):
-    """
-    Schema for updating existing Media.
+    """Schema for updating existing Media.
 
-    Defines fields that can be updated on a media asset, w..."""
+Defines fields that can be updated on a media asset, with all fields being optional to allow partial updates.
+
+Attributes: filename: Original file name (optional) media_type: Type of media (optional) visibility: Visibility level (optional) file_metadata: Additional file metadata (optional) is_approved: Whether the media is approved (optional)"""
 ```
 
 ##### Module: model_mapping
@@ -5265,39 +4928,34 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 **Classes:**
 ```python
 class Brand(BrandInDB):
-    """
-    Schema for Brand responses.
+    """Schema for Brand responses.
 
-    This schema is used for API responses returning brand data.
+This schema is used for API responses returning brand data.
 
- ..."""
+Attributes: parent_company: Parent company information (optional)"""
 ```
 
 ```python
 class BrandBase(BaseModel):
-    """
-    Base schema for Brand data.
+    """Base schema for Brand data.
 
-    Defines common fields used across brand schemas.
+Defines common fields used across brand schemas.
 
-    Attribut..."""
+Attributes: name: Brand name parent_company_id: Parent company ID (optional)"""
 ```
 
 ```python
 class BrandCreate(BrandBase):
-    """
-    Schema for creating a new Brand.
-
-    Extends the base brand schema for creation requests.
-    """
+    """Schema for creating a new Brand.  Extends the base brand schema for creation requests."""
 ```
 
 ```python
 class BrandInDB(BrandBase):
-    """
-    Schema for Brand as stored in the database.
+    """Schema for Brand as stored in the database.
 
-    Extends the base brand schema with database-sp..."""
+Extends the base brand schema with database-specific fields.
+
+Attributes: id: Brand UUID created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5306,20 +4964,18 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class BrandUpdate(BaseModel):
-    """
-    Schema for updating an existing Brand.
+    """Schema for updating an existing Brand.
 
-    Defines fields that can be updated on a brand.
+Defines fields that can be updated on a brand.
 
-   ..."""
+Attributes: name: Brand name (optional) parent_company_id: Parent company ID (optional)"""
 ```
 
 ```python
 class DescriptionType(str, Enum):
-    """
-    Types of product descriptions.
+    """Types of product descriptions.
 
-    Defines the different categories of descriptions that can b..."""
+Defines the different categories of descriptions that can be associated with a product."""
 ```
 *Class attributes:*
 ```python
@@ -5332,50 +4988,43 @@ NOTES = 'Notes'
 
 ```python
 class Fitment(FitmentInDB):
-    """
-    Schema for Fitment responses.
-
-    This schema is used for API responses returning fitment data..."""
+    """Schema for Fitment responses.  This schema is used for API responses returning fitment data."""
 ```
 
 ```python
 class FitmentBase(BaseModel):
-    """
-    Base schema for Fitment data.
+    """Base schema for Fitment data.
 
-    Defines common fields used across fitment-related schemas.
+Defines common fields used across fitment-related schemas.
 
-..."""
+Attributes: year: Vehicle model year make: Vehicle manufacturer model: Vehicle model name engine: Engine specification (optional) transmission: Transmission type (optional) attributes: Additional fitment attributes"""
 ```
 *Methods:*
 ```python
 @field_validator('year')
 @classmethod
     def validate_year(cls, v) -> int:
-        """
-        Validate the year is within a reasonable range.
+        """Validate the year is within a reasonable range.
 
-        Args:
-            v: Year value
+Args: v: Year value
 
- ..."""
+Returns: int: Validated year
+
+Raises: ValueError: If year is outside reasonable range"""
 ```
 
 ```python
 class FitmentCreate(FitmentBase):
-    """
-    Schema for creating a new Fitment.
-
-    Extends the base fitment schema for creation requests.
-..."""
+    """Schema for creating a new Fitment.  Extends the base fitment schema for creation requests."""
 ```
 
 ```python
 class FitmentInDB(FitmentBase):
-    """
-    Schema for Fitment as stored in the database.
+    """Schema for Fitment as stored in the database.
 
-    Extends the base fitment schema with databas..."""
+Extends the base fitment schema with database-specific fields.
+
+Attributes: id: Fitment UUID created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5384,37 +5033,40 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class FitmentListResponse(PaginatedResponse):
-    """
-    Paginated response for fitment listings.
+    """Paginated response for fitment listings.
 
-    This schema specializes the generic paginated res..."""
+This schema specializes the generic paginated response for fitment listings.
+
+Attributes: items: List of fitments"""
 ```
 
 ```python
 class FitmentUpdate(BaseModel):
-    """
-    Schema for updating an existing Fitment.
+    """Schema for updating an existing Fitment.
 
-    Defines fields that can be updated on a fitment, ..."""
+Defines fields that can be updated on a fitment, with all fields being optional to allow partial updates.
+
+Attributes: year: Vehicle model year (optional) make: Vehicle manufacturer (optional) model: Vehicle model name (optional) engine: Engine specification (optional) transmission: Transmission type (optional) attributes: Additional fitment attributes (optional)"""
 ```
 *Methods:*
 ```python
 @field_validator('year')
 @classmethod
     def validate_year(cls, v) -> Optional[int]:
-        """
-        Validate the year is within a reasonable range if provided.
+        """Validate the year is within a reasonable range if provided.
 
-        Args:
-            v: Y..."""
+Args: v: Year value (optional)
+
+Returns: Optional[int]: Validated year
+
+Raises: ValueError: If year is outside reasonable range"""
 ```
 
 ```python
 class MarketingType(str, Enum):
-    """
-    Types of product marketing content.
+    """Types of product marketing content.
 
-    Defines the different categories of marketing content ..."""
+Defines the different categories of marketing content that can be associated with a product."""
 ```
 *Class attributes:*
 ```python
@@ -5424,50 +5076,54 @@ AD_COPY = 'Ad Copy'
 
 ```python
 class PaginatedResponse(BaseModel):
-    """
-    Generic paginated response schema.
+    """Generic paginated response schema.
 
-    This schema provides a structure for paginated list res..."""
+This schema provides a structure for paginated list responses, including metadata about the pagination.
+
+Attributes: items: List of items total: Total number of items page: Current page number page_size: Number of items per page pages: Total number of pages"""
 ```
 
 ```python
 class Product(ProductInDB):
-    """
-    Schema for Product responses.
+    """Schema for Product responses.
 
-    This schema is used for API responses returning product data..."""
+This schema is used for API responses returning product data. It extends the database schema with related entities.
+
+Attributes: descriptions: List of product descriptions marketing: List of marketing content activities: List of product activities superseded_by: List of products this product is superseded by supersedes: List of products this product supersedes measurements: List of product measurements stock: List of product stock information"""
 ```
 
 ```python
 class ProductActivity(ProductActivityInDB):
-    """
-    Schema for Product Activity responses.
+    """Schema for Product Activity responses.
 
-    This schema is used for API responses returning pro..."""
+This schema is used for API responses returning product activity data.
+
+Attributes: changed_by: User who made the change (optional)"""
 ```
 
 ```python
 class ProductActivityBase(BaseModel):
-    """
-    Base schema for Product Activity data.
+    """Base schema for Product Activity data.
 
-    Defines common fields used across product activity ..."""
+Defines common fields used across product activity schemas.
+
+Attributes: status: Product status reason: Reason for status change (optional)"""
 ```
 
 ```python
 class ProductActivityCreate(ProductActivityBase):
-    """
-    Schema for creating a new Product Activity.
+    """Schema for creating a new Product Activity.
 
-    Extends the base product activity schema for c..."""
+Extends the base product activity schema for creation requests."""
 ```
 
 ```python
 class ProductActivityInDB(ProductActivityBase):
-    """
-    Schema for Product Activity as stored in the database.
+    """Schema for Product Activity as stored in the database.
 
-    Extends the base product activity s..."""
+Extends the base product activity schema with database-specific fields.
+
+Attributes: id: Activity UUID product_id: Product UUID changed_by_id: User UUID who made the change (optional) changed_at: When the change occurred"""
 ```
 *Class attributes:*
 ```python
@@ -5476,63 +5132,58 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductBase(BaseModel):
-    """
-    Base schema for Product data.
+    """Base schema for Product data.
 
-    Defines common fields used across product schemas.
+Defines common fields used across product schemas.
 
-    Attr..."""
+Attributes: part_number: Unique identifier for the product part_number_stripped: Alphanumeric version of part_number (auto-generated) application: Unformatted data for vehicle fitment applications (optional) vintage: Vintage fitments flag late_model: Late model fitments flag soft: Soft good flag universal: Universal fit flag is_active: Whether the product is active"""
 ```
 *Methods:*
 ```python
 @model_validator(mode='after')
     def generate_part_number_stripped(self) -> 'ProductBase':
-        """
-        Generate the stripped part number if not provided.
-
-        Returns:
-            ProductBas..."""
+        """Generate the stripped part number if not provided.  Returns: ProductBase: Validated model instance"""
 ```
 
 ```python
 class ProductCreate(ProductBase):
-    """
-    Schema for creating a new Product.
+    """Schema for creating a new Product.
 
-    Extends the base product schema for creation requests.
-..."""
+Extends the base product schema for creation requests.
+
+Attributes: descriptions: List of product descriptions (optional) marketing: List of marketing content (optional)"""
 ```
 
 ```python
 class ProductDescription(ProductDescriptionInDB):
-    """
-    Schema for Product Description responses.
+    """Schema for Product Description responses.
 
-    This schema is used for API responses returning ..."""
+This schema is used for API responses returning product description data."""
 ```
 
 ```python
 class ProductDescriptionBase(BaseModel):
-    """
-    Base schema for Product Description data.
+    """Base schema for Product Description data.
 
-    Defines common fields used across product descri..."""
+Defines common fields used across product description schemas.
+
+Attributes: description_type: Type of description description: Description content"""
 ```
 
 ```python
 class ProductDescriptionCreate(ProductDescriptionBase):
-    """
-    Schema for creating a new Product Description.
+    """Schema for creating a new Product Description.
 
-    Extends the base product description schema..."""
+Extends the base product description schema for creation requests."""
 ```
 
 ```python
 class ProductDescriptionInDB(ProductDescriptionBase):
-    """
-    Schema for Product Description as stored in the database.
+    """Schema for Product Description as stored in the database.
 
-    Extends the base product descrip..."""
+Extends the base product description schema with database-specific fields.
+
+Attributes: id: Description UUID product_id: Product UUID created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5541,18 +5192,20 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductDescriptionUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Description.
+    """Schema for updating an existing Product Description.
 
-    Defines fields that can be updated on..."""
+Defines fields that can be updated on a product description.
+
+Attributes: description_type: Type of description (optional) description: Description content (optional)"""
 ```
 
 ```python
 class ProductInDB(ProductBase):
-    """
-    Schema for Product as stored in the database.
+    """Schema for Product as stored in the database.
 
-    Extends the base product schema with databas..."""
+Extends the base product schema with database-specific fields.
+
+Attributes: id: Product UUID created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5561,42 +5214,43 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductListResponse(PaginatedResponse):
-    """
-    Paginated response for product listings.
+    """Paginated response for product listings.
 
-    This schema specializes the generic paginated res..."""
+This schema specializes the generic paginated response for product listings.
+
+Attributes: items: List of products"""
 ```
 
 ```python
 class ProductMarketing(ProductMarketingInDB):
-    """
-    Schema for Product Marketing responses.
+    """Schema for Product Marketing responses.
 
-    This schema is used for API responses returning pr..."""
+This schema is used for API responses returning product marketing data."""
 ```
 
 ```python
 class ProductMarketingBase(BaseModel):
-    """
-    Base schema for Product Marketing data.
+    """Base schema for Product Marketing data.
 
-    Defines common fields used across product marketin..."""
+Defines common fields used across product marketing schemas.
+
+Attributes: marketing_type: Type of marketing content content: Marketing content position: Order for display (optional)"""
 ```
 
 ```python
 class ProductMarketingCreate(ProductMarketingBase):
-    """
-    Schema for creating a new Product Marketing.
+    """Schema for creating a new Product Marketing.
 
-    Extends the base product marketing schema for..."""
+Extends the base product marketing schema for creation requests."""
 ```
 
 ```python
 class ProductMarketingInDB(ProductMarketingBase):
-    """
-    Schema for Product Marketing as stored in the database.
+    """Schema for Product Marketing as stored in the database.
 
-    Extends the base product marketing..."""
+Extends the base product marketing schema with database-specific fields.
+
+Attributes: id: Marketing UUID product_id: Product UUID created_at: Creation timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5605,42 +5259,45 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductMarketingUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Marketing.
+    """Schema for updating an existing Product Marketing.
 
-    Defines fields that can be updated on p..."""
+Defines fields that can be updated on product marketing content.
+
+Attributes: marketing_type: Type of marketing content (optional) content: Marketing content (optional) position: Order for display (optional)"""
 ```
 
 ```python
 class ProductMeasurement(ProductMeasurementInDB):
-    """
-    Schema for Product Measurement responses.
+    """Schema for Product Measurement responses.
 
-    This schema is used for API responses returning ..."""
+This schema is used for API responses returning product measurement data.
+
+Attributes: manufacturer: Manufacturer information (optional)"""
 ```
 
 ```python
 class ProductMeasurementBase(BaseModel):
-    """
-    Base schema for Product Measurement data.
+    """Base schema for Product Measurement data.
 
-    Defines common fields used across product measur..."""
+Defines common fields used across product measurement schemas.
+
+Attributes: manufacturer_id: Manufacturer UUID (optional) length: Length in inches (optional) width: Width in inches (optional) height: Height in inches (optional) weight: Weight in pounds (optional) volume: Volume in cubic inches (optional) dimensional_weight: DIM weight calculation (optional)"""
 ```
 
 ```python
 class ProductMeasurementCreate(ProductMeasurementBase):
-    """
-    Schema for creating a new Product Measurement.
+    """Schema for creating a new Product Measurement.
 
-    Extends the base product measurement schema..."""
+Extends the base product measurement schema for creation requests."""
 ```
 
 ```python
 class ProductMeasurementInDB(ProductMeasurementBase):
-    """
-    Schema for Product Measurement as stored in the database.
+    """Schema for Product Measurement as stored in the database.
 
-    Extends the base product measure..."""
+Extends the base product measurement schema with database-specific fields.
+
+Attributes: id: Measurement UUID product_id: Product UUID effective_date: When measurements become effective"""
 ```
 *Class attributes:*
 ```python
@@ -5649,19 +5306,14 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductMeasurementUpdate(ProductMeasurementBase):
-    """
-    Schema for updating an existing Product Measurement.
+    """Schema for updating an existing Product Measurement.
 
-    Fields are the same as the base schem..."""
+Fields are the same as the base schema since all are optional."""
 ```
 
 ```python
 class ProductStatus(str, Enum):
-    """
-    Product status options.
-
-    Defines the possible status values for product activities.
-    """
+    """Product status options.  Defines the possible status values for product activities."""
 ```
 *Class attributes:*
 ```python
@@ -5674,34 +5326,36 @@ PENDING = 'pending'
 
 ```python
 class ProductStock(ProductStockInDB):
-    """
-    Schema for Product Stock responses.
+    """Schema for Product Stock responses.
 
-    This schema is used for API responses returning produc..."""
+This schema is used for API responses returning product stock data.
+
+Attributes: warehouse: Warehouse information"""
 ```
 
 ```python
 class ProductStockBase(BaseModel):
-    """
-    Base schema for Product Stock data.
+    """Base schema for Product Stock data.
 
-    Defines common fields used across product stock schema..."""
+Defines common fields used across product stock schemas.
+
+Attributes: warehouse_id: Warehouse UUID quantity: Quantity in stock"""
 ```
 
 ```python
 class ProductStockCreate(ProductStockBase):
-    """
-    Schema for creating a new Product Stock.
+    """Schema for creating a new Product Stock.
 
-    Extends the base product stock schema for creatio..."""
+Extends the base product stock schema for creation requests."""
 ```
 
 ```python
 class ProductStockInDB(ProductStockBase):
-    """
-    Schema for Product Stock as stored in the database.
+    """Schema for Product Stock as stored in the database.
 
-    Extends the base product stock schema ..."""
+Extends the base product stock schema with database-specific fields.
+
+Attributes: id: Stock UUID product_id: Product UUID last_updated: Last stock update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5710,42 +5364,45 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductStockUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Stock.
+    """Schema for updating an existing Product Stock.
 
-    Defines fields that can be updated on produ..."""
+Defines fields that can be updated on product stock.
+
+Attributes: quantity: Quantity in stock (optional)"""
 ```
 
 ```python
 class ProductSupersession(ProductSupersessionInDB):
-    """
-    Schema for Product Supersession responses.
+    """Schema for Product Supersession responses.
 
-    This schema is used for API responses returning..."""
+This schema is used for API responses returning product supersession data.
+
+Attributes: old_product: Basic information about the product being replaced new_product: Basic information about the replacement product"""
 ```
 
 ```python
 class ProductSupersessionBase(BaseModel):
-    """
-    Base schema for Product Supersession data.
+    """Base schema for Product Supersession data.
 
-    Defines common fields used across product super..."""
+Defines common fields used across product supersession schemas.
+
+Attributes: old_product_id: Product being replaced new_product_id: Replacement product reason: Explanation of why the product was superseded (optional)"""
 ```
 
 ```python
 class ProductSupersessionCreate(ProductSupersessionBase):
-    """
-    Schema for creating a new Product Supersession.
+    """Schema for creating a new Product Supersession.
 
-    Extends the base product supersession sche..."""
+Extends the base product supersession schema for creation requests."""
 ```
 
 ```python
 class ProductSupersessionInDB(ProductSupersessionBase):
-    """
-    Schema for Product Supersession as stored in the database.
+    """Schema for Product Supersession as stored in the database.
 
-    Extends the base product supers..."""
+Extends the base product supersession schema with database-specific fields.
+
+Attributes: id: Supersession UUID changed_at: When the change occurred"""
 ```
 *Class attributes:*
 ```python
@@ -5754,18 +5411,20 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class ProductSupersessionUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Supersession.
+    """Schema for updating an existing Product Supersession.
 
-    Defines fields that can be updated o..."""
+Defines fields that can be updated on a product supersession.
+
+Attributes: reason: Explanation of why the product was superseded (optional)"""
 ```
 
 ```python
 class ProductUpdate(BaseModel):
-    """
-    Schema for updating an existing Product.
+    """Schema for updating an existing Product.
 
-    Defines fields that can be updated on a product, ..."""
+Defines fields that can be updated on a product, with all fields being optional to allow partial updates.
+
+Attributes: part_number: Unique identifier for the product (optional) application: Unformatted data for vehicle fitment applications (optional) vintage: Vintage fitments flag (optional) late_model: Late model fitments flag (optional) soft: Soft good flag (optional) universal: Universal fit flag (optional) is_active: Whether the product is active (optional)"""
 ```
 
 ##### Module: user
@@ -5785,37 +5444,32 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, validator
 **Classes:**
 ```python
 class Company(CompanyInDB):
-    """
-    Schema for Company responses.
+    """Schema for Company responses.
 
-    This schema is used for API responses returning company data..."""
+This schema is used for API responses returning company data. It extends the database schema with any additional computed fields."""
 ```
 
 ```python
 class CompanyBase(BaseModel):
-    """
-    Base schema for Company data.
+    """Base schema for Company data.
 
-    Defines common fields used across company-related schemas.
+Defines common fields used across company-related schemas.
 
-..."""
+Attributes: name: Company name account_number: External account number (optional) account_type: Type of account is_active: Whether the account is active"""
 ```
 
 ```python
 class CompanyCreate(CompanyBase):
-    """
-    Schema for creating a new Company.
-
-    Extends the base company schema for creation requests.
-..."""
+    """Schema for creating a new Company.  Extends the base company schema for creation requests."""
 ```
 
 ```python
 class CompanyInDB(CompanyBase):
-    """
-    Schema for Company as stored in the database.
+    """Schema for Company as stored in the database.
 
-    Extends the base company schema with databas..."""
+Extends the base company schema with database-specific fields.
+
+Attributes: id: Company UUID created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5824,62 +5478,65 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class CompanyUpdate(BaseModel):
-    """
-    Schema for updating an existing Company.
+    """Schema for updating an existing Company.
 
-    Defines fields that can be updated on a company, ..."""
+Defines fields that can be updated on a company, with all fields being optional to allow partial updates.
+
+Attributes: name: Company name (optional) account_number: External account number (optional) account_type: Type of account (optional) is_active: Whether the account is active (optional)"""
 ```
 
 ```python
 class Token(BaseModel):
-    """
-    Token schema for authentication responses.
+    """Token schema for authentication responses.
 
-    This schema defines the structure of token resp..."""
+This schema defines the structure of token responses sent to clients after successful authentication.
+
+Attributes: access_token: JWT access token token_type: Token type (usually "bearer")"""
 ```
 
 ```python
 class TokenPayload(BaseModel):
-    """
-    Token payload schema.
+    """Token payload schema.
 
-    This schema defines the structure of the JWT token payload
-    for v..."""
+This schema defines the structure of the JWT token payload for validation and extraction of token data.
+
+Attributes: sub: User ID (subject) exp: Expiration timestamp role: User role iat: Issued at timestamp (optional)"""
 ```
 
 ```python
 class User(UserInDB):
-    """
-    Schema for User responses.
+    """Schema for User responses.
 
-    This schema is used for API responses returning user data.
-    ..."""
+This schema is used for API responses returning user data. It extends the database schema with the associated company.
+
+Attributes: company: Associated company information (optional)"""
 ```
 
 ```python
 class UserBase(BaseModel):
-    """
-    Base schema for User data.
+    """Base schema for User data.
 
-    Defines common fields used across user-related schemas.
+Defines common fields used across user-related schemas.
 
-    At..."""
+Attributes: email: User email address full_name: User's full name role: User role is_active: Whether the user account is active company_id: Reference to associated company (optional)"""
 ```
 
 ```python
 class UserCreate(UserBase):
-    """
-    Schema for creating a new User.
+    """Schema for creating a new User.
 
-    Extends the base user schema with password field for user ..."""
+Extends the base user schema with password field for user creation.
+
+Attributes: password: User password (min length: 8)"""
 ```
 
 ```python
 class UserInDB(UserBase):
-    """
-    Schema for User as stored in the database.
+    """Schema for User as stored in the database.
 
-    Extends the base user schema with database-spec..."""
+Extends the base user schema with database-specific fields.
+
+Attributes: id: User UUID created_at: Creation timestamp updated_at: Last update timestamp"""
 ```
 *Class attributes:*
 ```python
@@ -5888,11 +5545,9 @@ model_config =     model_config = ConfigDict(from_attributes=True)
 
 ```python
 class UserRole(str, Enum):
-    """
-    User role enumeration.
+    """User role enumeration.
 
-    Defines the possible roles a user can have in the system,
-    deter..."""
+Defines the possible roles a user can have in the system, determining their access privileges."""
 ```
 *Class attributes:*
 ```python
@@ -5905,23 +5560,23 @@ READ_ONLY = 'read_only'
 
 ```python
 class UserUpdate(BaseModel):
-    """
-    Schema for updating an existing User.
+    """Schema for updating an existing User.
 
-    Defines fields that can be updated on a user, with a..."""
+Defines fields that can be updated on a user, with all fields being optional to allow partial updates.
+
+Attributes: email: User email address (optional) full_name: User's full name (optional) password: User password (optional, min length: 8) role: User role (optional) is_active: Whether the user account is active (optional) company_id: Reference to associated company (optional, can be set to None)"""
 ```
 *Methods:*
 ```python
 @validator('password')
     def password_strength(cls, v) -> Optional[str]:
-        """
-        Validate password strength.
+        """Validate password strength.
 
-        Args:
-            v: Password value
+Args: v: Password value
 
-        Returns:
-..."""
+Returns: Optional[str]: Validated password
+
+Raises: ValueError: If password doesn't meet strength requirements"""
 ```
 
 #### Package: services
@@ -5970,40 +5625,43 @@ DATA_SOURCE = 'exchangerate-api.com'
 ```python
 @classmethod
     async def convert_amount(cls, db, amount, source_code, target_code) -> Optional[float]:
-        """
-        Convert an amount from one currency to another.
+        """Convert an amount from one currency to another.
 
-        Args:
-            db: Database ses..."""
+Args: db: Database session amount: Amount to convert source_code: Source currency code target_code: Target currency code
+
+Returns: Optional[float]: Converted amount or None if rate not found"""
 ```
 ```python
 @classmethod
     async def fetch_latest_rates(cls, db, base_currency) -> Dict[(str, float)]:
-        """
-        Fetch the latest exchange rates from the API.
+        """Fetch the latest exchange rates from the API.
 
-        Args:
-            db: Database sessi..."""
+Args: db: Database session base_currency: Base currency code (default: USD)
+
+Returns: Dict[str, float]: Dictionary of currency codes to rates
+
+Raises: ValueError: If API key is missing or invalid httpx.RequestError: If request fails httpx.HTTPStatusError: If API returns error status"""
 ```
 ```python
 @classmethod
 @redis_cache(prefix='currency', ttl=3600)
     async def get_latest_exchange_rate(cls, db, source_code, target_code) -> Optional[float]:
-        """
-        Get the latest exchange rate between two currencies.
+        """Get the latest exchange rate between two currencies.
 
-        Args:
-            db: Databas..."""
+Args: db: Database session source_code: Source currency code target_code: Target currency code
+
+Returns: Optional[float]: Exchange rate or None if not found"""
 ```
 ```python
 @classmethod
     async def update_exchange_rates(cls, db, force) -> int:
-        """
-        Update exchange rates in the database.
+        """Update exchange rates in the database.
 
-        Args:
-            db: Database session
-    ..."""
+Args: db: Database session force: Force update even if not due yet
+
+Returns: int: Number of rates updated
+
+Raises: ValueError: If API returns invalid data SQLAlchemyError: If database operations fail"""
 ```
 
 ##### Module: media_service
@@ -6058,52 +5716,55 @@ class LocalMediaStorage(object):
 ```
 ```python
     async def delete_file(self, file_path) -> bool:
-        """
-        Delete file from local storage asynchronously.
+        """Delete file from local storage asynchronously.
 
-        Args:
-            file_path: Relati..."""
+Args: file_path: Relative path to the file
+
+Returns: bool: True if file was successfully deleted, False otherwise
+
+Raises: FileNotFoundError: If the file doesn't exist MediaStorageError: If deletion fails"""
 ```
 ```python
     async def file_exists(self, file_path) -> bool:
-        """
-        Check if a file exists in storage asynchronously.
+        """Check if a file exists in storage asynchronously.
 
-        Args:
-            file_path: Rel..."""
+Args: file_path: Relative path to the file
+
+Returns: bool: True if file exists, False otherwise"""
 ```
 ```python
     async def generate_thumbnail(self, file_path, width, height) -> Optional[str]:
-        """
-        Generate a thumbnail for an image file asynchronously.
+        """Generate a thumbnail for an image file asynchronously.
 
-        Args:
-            file_path..."""
+Args: file_path: Relative path to the original image width: Desired thumbnail width height: Desired thumbnail height
+
+Returns: Optional[str]: Path to the thumbnail if successful, None otherwise
+
+Raises: MediaStorageError: If thumbnail generation fails FileNotFoundError: If the original file doesn't exist"""
 ```
 ```python
     async def get_file_url(self, file_path) -> str:
-        """
-        Get URL for local file.
+        """Get URL for local file.
 
-        Args:
-            file_path: Relative path to the file
+Args: file_path: Relative path to the file
 
-  ..."""
+Returns: str: Public URL to access the file"""
 ```
 ```python
     async def initialize(self) -> None:
-        """
-        Initialize storage backend connection.
+        """Initialize storage backend connection.
 
-        For local storage, this is a no-op as direc..."""
+For local storage, this is a no-op as directories are created in __post_init__."""
 ```
 ```python
     async def save_file(self, file, destination, media_type, content_type) -> str:
-        """
-        Save file to local storage asynchronously.
+        """Save file to local storage asynchronously.
 
-        Args:
-            file: The file to upl..."""
+Args: file: The file to upload (UploadFile, file-like object, or bytes) destination: Relative path where the file should be stored media_type: Type of media being stored content_type: Optional content type override
+
+Returns: str: URL to access the saved file
+
+Raises: MediaStorageError: If file saving fails ValueError: If invalid file type or format"""
 ```
 
 ```python
@@ -6114,11 +5775,13 @@ class MediaService(object):
 *Methods:*
 ```python
     async def delete_file(self, file_url) -> bool:
-        """
-        Delete a file from storage with improved error handling.
+        """Delete a file from storage with improved error handling.
 
-        Args:
-            file_ur..."""
+Args: file_url: URL of the file to delete
+
+Returns: bool: True if file was successfully deleted
+
+Raises: HTTPException: If deletion fails"""
 ```
 ```python
     async def ensure_initialized(self) -> None:
@@ -6126,18 +5789,21 @@ class MediaService(object):
 ```
 ```python
     async def initialize(self) -> None:
-        """
-        Initialize the media service and storage backend.
+        """Initialize the media service and storage backend.
 
-        This must be called before using..."""
+This must be called before using any other methods.
+
+Raises: MediaStorageError: If storage initialization fails"""
 ```
 ```python
     async def upload_file(self, file, media_type, product_id, filename, visibility, generate_thumbnail) -> Tuple[(str, Dict[(str, Any)], Optional[str])]:
-        """
-        Upload a file to storage with improved error handling.
+        """Upload a file to storage with improved error handling.
 
-        Args:
-            file: The..."""
+Args: file: The uploaded file media_type: Type of media being uploaded product_id: Optional product ID to associate with the file filename: Optional filename override visibility: Visibility level for the file generate_thumbnail: Whether to generate a thumbnail for images
+
+Returns: Tuple[str, Dict[str, Any], Optional[str]]: Tuple of (file URL, metadata, thumbnail URL or None)
+
+Raises: HTTPException: If the file type is invalid or upload fails"""
 ```
 
 ```python
@@ -6147,35 +5813,39 @@ class MediaStorageBackend(Protocol):
 *Methods:*
 ```python
     async def delete_file(self, file_path) -> bool:
-        """
-        Delete a file from storage.
+        """Delete a file from storage.
 
-        Args:
-            file_path: Relative path to the file..."""
+Args: file_path: Relative path to the file
+
+Returns: bool: True if file was successfully deleted, False otherwise
+
+Raises: MediaStorageError: If deletion fails"""
 ```
 ```python
     async def file_exists(self, file_path) -> bool:
-        """
-        Check if a file exists in storage.
+        """Check if a file exists in storage.
 
-        Args:
-            file_path: Relative path to t..."""
+Args: file_path: Relative path to the file
+
+Returns: bool: True if file exists, False otherwise"""
 ```
 ```python
     async def generate_thumbnail(self, file_path, width, height) -> Optional[str]:
-        """
-        Generate a thumbnail for an image file.
+        """Generate a thumbnail for an image file.
 
-        Args:
-            file_path: Relative path..."""
+Args: file_path: Relative path to the original image width: Desired thumbnail width height: Desired thumbnail height
+
+Returns: Optional[str]: Path to the thumbnail if successful, None otherwise
+
+Raises: MediaStorageError: If thumbnail generation fails"""
 ```
 ```python
     async def get_file_url(self, file_path) -> str:
-        """
-        Get the URL for accessing a file.
+        """Get the URL for accessing a file.
 
-        Args:
-            file_path: Relative path to th..."""
+Args: file_path: Relative path to the file
+
+Returns: str: Public URL to access the file"""
 ```
 ```python
     async def initialize(self) -> None:
@@ -6183,11 +5853,13 @@ class MediaStorageBackend(Protocol):
 ```
 ```python
     async def save_file(self, file, destination, media_type, content_type) -> str:
-        """
-        Save a file to storage and return its public URL.
+        """Save a file to storage and return its public URL.
 
-        Args:
-            file: The file..."""
+Args: file: The file to upload (UploadFile, file-like object, or bytes) destination: Relative path where the file should be stored media_type: Type of media being stored content_type: Optional content type override
+
+Returns: str: Public URL to access the file
+
+Raises: MediaStorageError: If saving fails"""
 ```
 
 ```python
@@ -6203,52 +5875,57 @@ class S3MediaStorage(object):
 *Methods:*
 ```python
     async def delete_file(self, file_path) -> bool:
-        """
-        Delete file from S3 storage.
+        """Delete file from S3 storage.
 
-        Args:
-            file_path: Relative path to the fil..."""
+Args: file_path: Relative path to the file
+
+Returns: bool: True if file was successfully deleted, False otherwise
+
+Raises: MediaStorageError: If deletion fails"""
 ```
 ```python
     async def file_exists(self, file_path) -> bool:
-        """
-        Check if a file exists in S3 storage.
+        """Check if a file exists in S3 storage.
 
-        Args:
-            file_path: Relative path t..."""
+Args: file_path: Relative path to the file
+
+Returns: bool: True if file exists, False otherwise"""
 ```
 ```python
     async def generate_thumbnail(self, file_path, width, height) -> Optional[str]:
-        """
-        Generate a thumbnail for an image file in S3.
+        """Generate a thumbnail for an image file in S3.
 
-        This implementation downloads the fi..."""
+This implementation downloads the file, generates the thumbnail locally, then uploads it back to S3. In a production environment, you might want to use a service like AWS Lambda or a dedicated image processing service.
+
+Args: file_path: Relative path to the original image width: Desired thumbnail width height: Desired thumbnail height
+
+Returns: Optional[str]: Path to the thumbnail if successful, None otherwise
+
+Raises: MediaStorageError: If thumbnail generation fails"""
 ```
 ```python
     async def get_file_url(self, file_path) -> str:
-        """
-        Get URL for S3 file.
+        """Get URL for S3 file.
 
-        Args:
-            file_path: Relative path to the file
+Args: file_path: Relative path to the file
 
-     ..."""
+Returns: str: Public URL to access the file"""
 ```
 ```python
     async def initialize(self) -> None:
-        """
-        Initialize S3 client and create bucket if it doesn't exist.
+        """Initialize S3 client and create bucket if it doesn't exist.
 
-        Raises:
-            St..."""
+Raises: StorageConnectionError: If connection to S3 fails"""
 ```
 ```python
     async def save_file(self, file, destination, media_type, content_type) -> str:
-        """
-        Save file to S3 storage.
+        """Save file to S3 storage.
 
-        Args:
-            file: The file to upload (UploadFile, f..."""
+Args: file: The file to upload (UploadFile, file-like object, or bytes) destination: Relative path where the file should be stored media_type: Type of media being stored content_type: Optional content type override
+
+Returns: str: URL to access the saved file
+
+Raises: MediaStorageError: If file saving fails ValueError: If invalid file type or format"""
 ```
 
 ```python
@@ -6289,65 +5966,50 @@ from app.utils.db import paginate
 **Functions:**
 ```python
 async def get_search_service(db) -> SearchService:
-    """
-    Get search service instance.
-
-    Args:
-        db: Database session
-
-    Returns:
-        Sear..."""
+    """Get search service instance.  Args: db: Database session  Returns: SearchService: Search service"""
 ```
 
 **Classes:**
 ```python
 class SearchService(object):
-    """
-    Service for search functionality.
+    """Service for search functionality.
 
-    This service provides methods for searching across diffe..."""
+This service provides methods for searching across different entities in the application, with support for text search, filtering, and pagination."""
 ```
 *Methods:*
 ```python
     def __init__(self, db):
-        """
-        Initialize the search service.
-
-        Args:
-            db: Database session
-        """
+        """Initialize the search service.  Args: db: Database session"""
 ```
 ```python
     async def get_es_client(self) -> Optional[AsyncElasticsearch]:
-        """
-        Get Elasticsearch client instance.
+        """Get Elasticsearch client instance.
 
-        Returns:
-            Optional[AsyncElasticsearc..."""
+Returns: Optional[AsyncElasticsearch]: Elasticsearch client or None if not configured"""
 ```
 ```python
     async def global_search(self, search_term, entity_types, page, page_size) -> Dict[(str, Any)]:
-        """
-        Search across multiple entity types.
+        """Search across multiple entity types.
 
-        Args:
-            search_term: Text to search..."""
+Args: search_term: Text to search for entity_types: List of entity types to search (products, fitments, categories) page: Page number page_size: Items per page
+
+Returns: Dict[str, Any]: Search results grouped by entity type"""
 ```
 ```python
     async def search_fitments(self, search_term, year, make, model, engine, transmission, page, page_size) -> Dict[(str, Any)]:
-        """
-        Search for fitments with filtering and pagination.
+        """Search for fitments with filtering and pagination.
 
-        Args:
-            search_term: ..."""
+Args: search_term: Text to search for year: Filter by year make: Filter by make model: Filter by model engine: Filter by engine transmission: Filter by transmission page: Page number page_size: Items per page
+
+Returns: Dict[str, Any]: Search results with pagination"""
 ```
 ```python
     async def search_products(self, search_term, attributes, is_active, page, page_size, use_elasticsearch) -> Dict[(str, Any)]:
-        """
-        Search for products with filtering and pagination.
+        """Search for products with filtering and pagination.
 
-        Args:
-            search_term: ..."""
+Args: search_term: Text to search for attributes: Filter by product attributes is_active: Filter by active status page: Page number page_size: Items per page use_elasticsearch: Whether to use Elasticsearch (if available)
+
+Returns: Dict[str, Any]: Search results with pagination"""
 ```
 
 ##### Module: vehicle
@@ -6370,105 +6032,94 @@ from app.utils.cache import memory_cache, redis_cache
 **Functions:**
 ```python
 async def get_vehicle_service(db) -> VehicleDataService:
-    """
-    Get vehicle data service instance.
+    """Get vehicle data service instance.
 
-    Args:
-        db: Database session
+Args: db: Database session
 
-    Returns:
-      ..."""
+Returns: VehicleDataService: Vehicle data service"""
 ```
 
 **Classes:**
 ```python
 class VehicleDataService(object):
-    """
-    Service for vehicle data lookups and validation.
+    """Service for vehicle data lookups and validation.
 
-    This service provides methods for working..."""
+This service provides methods for working with vehicle data, including lookups, validation, and standardization."""
 ```
 *Methods:*
 ```python
     def __init__(self, db):
-        """
-        Initialize the vehicle data service.
-
-        Args:
-            db: Database session
-      ..."""
+        """Initialize the vehicle data service.  Args: db: Database session"""
 ```
 ```python
 @memory_cache(maxsize=1000, ttl=86400)
     async def decode_vin(self, vin) -> Optional[Dict[(str, Any)]]:
-        """
-        Decode a Vehicle Identification Number (VIN).
+        """Decode a Vehicle Identification Number (VIN).
 
-        This method could integrate with an ..."""
+This method could integrate with an external VIN decoding service or use internal logic to parse VIN information.
+
+Args: vin: Vehicle Identification Number
+
+Returns: Optional[Dict[str, Any]]: Decoded vehicle data or None if invalid"""
 ```
 ```python
 @redis_cache(prefix='vehicle:engines', ttl=3600)
     async def get_engines(self, make, model, year) -> List[str]:
-        """
-        Get all available engines, optionally filtered by make, model, and year.
+        """Get all available engines, optionally filtered by make, model, and year.
 
-        Args:
-   ..."""
+Args: make: Filter by make model: Filter by model year: Filter by year
+
+Returns: List[str]: Sorted list of engines"""
 ```
 ```python
 @redis_cache(prefix='vehicle:makes', ttl=3600)
     async def get_makes(self, year) -> List[str]:
-        """
-        Get all available makes, optionally filtered by year.
+        """Get all available makes, optionally filtered by year.
 
-        Args:
-            year: Filt..."""
+Args: year: Filter by year
+
+Returns: List[str]: Sorted list of makes"""
 ```
 ```python
 @redis_cache(prefix='vehicle:models', ttl=3600)
     async def get_models(self, make, year) -> List[str]:
-        """
-        Get all available models, optionally filtered by make and year.
+        """Get all available models, optionally filtered by make and year.
 
-        Args:
-            ..."""
+Args: make: Filter by make year: Filter by year
+
+Returns: List[str]: Sorted list of models"""
 ```
 ```python
 @redis_cache(prefix='vehicle:transmissions', ttl=3600)
     async def get_transmissions(self, make, model, year, engine) -> List[str]:
-        """
-        Get all available transmissions, optionally filtered.
+        """Get all available transmissions, optionally filtered.
 
-        Args:
-            make: Filt..."""
+Args: make: Filter by make model: Filter by model year: Filter by year engine: Filter by engine
+
+Returns: List[str]: Sorted list of transmissions"""
 ```
 ```python
 @redis_cache(prefix='vehicle:years', ttl=3600)
     async def get_years(self) -> List[int]:
-        """
-        Get all available years from fitment data.
-
-        Returns:
-            List[int]: Sorted ..."""
+        """Get all available years from fitment data.  Returns: List[int]: Sorted list of years"""
 ```
 ```python
 @memory_cache(maxsize=100, ttl=3600)
     async def standardize_make(self, make) -> str:
-        """
-        Standardize vehicle make to ensure consistent naming.
+        """Standardize vehicle make to ensure consistent naming.
 
-        Args:
-            make: Vehi..."""
+Args: make: Vehicle make
+
+Returns: str: Standardized make name"""
 ```
 ```python
 @memory_cache(maxsize=100, ttl=3600)
     async def validate_fitment(self, year, make, model, engine, transmission) -> bool:
-        """
-        Validate if a fitment combination exists.
+        """Validate if a fitment combination exists.
 
-        Args:
-            year: Vehicle year
-   ..."""
+Args: year: Vehicle year make: Vehicle make model: Vehicle model engine: Vehicle engine transmission: Vehicle transmission
+
+Returns: bool: True if fitment exists"""
 ```
 
 #### Package: tasks
@@ -6505,42 +6156,41 @@ celery_app = celery_app = Celery(
 ```python
 @celery_app.task(bind=True, name='analyze_chat_activity')
 def analyze_chat_activity(self, room_id, time_period) -> Dict[(str, Any)]:
-    """
-    Analyze chat activity for a room.
-    
-    Args:
-        room_id: The room ID
-        time_peri..."""
+    """Analyze chat activity for a room.
+
+Args: room_id: The room ID time_period: Time period for analysis ("day", "week", "month")
+
+Returns: dict: Analysis results"""
 ```
 
 ```python
 @celery_app.task(bind=True, name='moderate_message_content')
 def moderate_message_content(self, message_id, content, sender_id, room_id) -> Dict[(str, Any)]:
-    """
-    Moderate message content for prohibited content.
-    
-    Args:
-        message_id: The message..."""
+    """Moderate message content for prohibited content.
+
+Args: message_id: The message ID content: Message content to moderate sender_id: ID of the message sender room_id: The room ID
+
+Returns: dict: Moderation results"""
 ```
 
 ```python
 @celery_app.task(bind=True, name='process_message_notifications')
 def process_message_notifications(self, message_id, room_id, sender_id, recipients, message_preview) -> Dict[(str, Any)]:
-    """
-    Process and send message notifications.
-    
-    Args:
-        message_id: The message ID
-     ..."""
+    """Process and send message notifications.
+
+Args: message_id: The message ID room_id: The room ID sender_id: ID of the message sender recipients: List of recipient user IDs message_preview: Preview text for notification
+
+Returns: dict: Task result information"""
 ```
 
 ```python
 @celery_app.task(bind=True, name='update_user_presence')
 def update_user_presence(self) -> Dict[(str, Any)]:
-    """
-    Update user presence status based on activity.
-    
-    This task runs periodically to update u..."""
+    """Update user presence status based on activity.
+
+This task runs periodically to update user online status based on their last activity.
+
+Returns: dict: Task result information"""
 ```
 
 ##### Module: currency_tasks
@@ -6568,21 +6218,13 @@ logger = logger = logging.getLogger(__name__)
 ```python
 @shared_task
 def init_currencies() -> Dict[(str, Optional[int])]:
-    """
-    Initialize currencies in the database.
-
-    Returns:
-        Dict[str, Optional[int]]: Result o..."""
+    """Initialize currencies in the database.  Returns: Dict[str, Optional[int]]: Result of the operation"""
 ```
 
 ```python
 @shared_task(bind=True, max_retries=3, default_retry_delay=300, autoretry_for=(Exception), retry_backoff=True)
 def update_exchange_rates(self) -> Dict[(str, Optional[int])]:
-    """
-    Update exchange rates from the API.
-
-    Returns:
-        Dict[str, Optional[int]]: Result of t..."""
+    """Update exchange rates from the API.  Returns: Dict[str, Optional[int]]: Result of the operation"""
 ```
 
 #### Package: utils
@@ -6618,71 +6260,64 @@ RT = RT = TypeVar('RT')  # Return type
 **Functions:**
 ```python
 def generate_cache_key(prefix, func, args, kwargs) -> str:
-    """
-    Generate a cache key for a function call.
+    """Generate a cache key for a function call.
 
-    Args:
-        prefix: Key prefix
-        func: F..."""
+Args: prefix: Key prefix func: Function args: Function arguments kwargs: Function keyword arguments
+
+Returns: str: Cache key"""
 ```
 
 ```python
 async def get_redis() -> redis.Redis:
-    """
-    Get Redis client instance.
+    """Get Redis client instance.
 
-    Creates a new connection if one doesn't exist.
+Creates a new connection if one doesn't exist.
 
-    Returns:
-  ..."""
+Returns: redis.Redis: Redis client"""
 ```
 
 ```python
 def get_request_cache(request) -> RequestCache:
-    """
-    Get or create a RequestCache instance for the current request.
+    """Get or create a RequestCache instance for the current request.
 
-    Args:
-        request: Fast..."""
+Args: request: FastAPI request
+
+Returns: RequestCache: Request cache"""
 ```
 
 ```python
 async def invalidate_cache(prefix, pattern, redis_conn) -> int:
-    """
-    Invalidate cache keys matching a pattern.
+    """Invalidate cache keys matching a pattern.
 
-    Args:
-        prefix: Cache key prefix
-        p..."""
+Args: prefix: Cache key prefix pattern: Key pattern redis_conn: Redis client
+
+Returns: int: Number of keys deleted"""
 ```
 
 ```python
 def memory_cache(maxsize, ttl) -> Callable[([F], F)]:
-    """
-    Decorator for in-memory caching with TTL.
+    """Decorator for in-memory caching with TTL.
 
-    Args:
-        maxsize: Maximum cache size
-      ..."""
+Args: maxsize: Maximum cache size ttl: Time-to-live in seconds
+
+Returns: Callable: Decorator function"""
 ```
 
 ```python
 def redis_cache(prefix, ttl, skip_args) -> Callable[([F], F)]:
-    """
-    Decorator for Redis caching.
+    """Decorator for Redis caching.
 
-    Args:
-        prefix: Cache key prefix
-        ttl: Time-to-l..."""
+Args: prefix: Cache key prefix ttl: Time-to-live in seconds skip_args: List of argument names to skip when generating cache key
+
+Returns: Callable: Decorator function"""
 ```
 
 **Classes:**
 ```python
 class RequestCache(object):
-    """
-    Cache for the current request lifecycle.
+    """Cache for the current request lifecycle.
 
-    This class provides a way to cache data during a ..."""
+This class provides a way to cache data during a single request, which can be useful for repeated database queries or expensive computations within the same request."""
 ```
 *Methods:*
 ```python
@@ -6695,32 +6330,15 @@ class RequestCache(object):
 ```
 ```python
     def delete(self, key) -> None:
-        """
-        Delete value from cache.
-
-        Args:
-            key: Cache key
-        """
+        """Delete value from cache.  Args: key: Cache key"""
 ```
 ```python
     def get(self, key) -> Optional[Any]:
-        """
-        Get value from cache.
-
-        Args:
-            key: Cache key
-
-        Returns:
-         ..."""
+        """Get value from cache.  Args: key: Cache key  Returns: Optional[Any]: Cached value or None"""
 ```
 ```python
     def set(self, key, value) -> None:
-        """
-        Set value in cache.
-
-        Args:
-            key: Cache key
-            value: Value to c..."""
+        """Set value in cache.  Args: key: Cache key value: Value to cache"""
 ```
 
 ##### Module: crypto
@@ -6742,29 +6360,31 @@ from app.core.config import settings
 **Functions:**
 ```python
 def decrypt_message(encrypted_message) -> str:
-    """
-    Decrypt a Fernet-encrypted message.
-    
-    Args:
-        encrypted_message: The encrypted mes..."""
+    """Decrypt a Fernet-encrypted message.
+
+Args: encrypted_message: The encrypted message as a base64-encoded string
+
+Returns: str: The decrypted plaintext message
+
+Raises: cryptography.fernet.InvalidToken: If the message is invalid or corrupted"""
 ```
 
 ```python
 def encrypt_message(message) -> str:
-    """
-    Encrypt a message using Fernet symmetric encryption.
-    
-    Args:
-        message: The plaint..."""
+    """Encrypt a message using Fernet symmetric encryption.
+
+Args: message: The plaintext message to encrypt
+
+Returns: str: The encrypted message as a base64-encoded string"""
 ```
 
 ```python
 def generate_secure_token(length) -> str:
-    """
-    Generate a cryptographically secure random token.
-    
-    Args:
-        length: The desired le..."""
+    """Generate a cryptographically secure random token.
+
+Args: length: The desired length of the token in bytes
+
+Returns: str: A secure random token as a hex string"""
 ```
 
 ##### Module: db
@@ -6791,82 +6411,79 @@ T = T = TypeVar('T', bound=Base)
 **Functions:**
 ```python
 async def bulk_create(db, model, objects) -> List[T]:
-    """
-    Create multiple model instances in a single transaction.
+    """Create multiple model instances in a single transaction.
 
-    This is more efficient than creat..."""
+This is more efficient than creating objects one at a time.
+
+Args: db: Database session model: Model class objects: List of object data
+
+Returns: List[T]: List of created model instances"""
 ```
 
 ```python
 async def create_object(db, model, obj_in) -> T:
-    """
-    Create a model instance.
+    """Create a model instance.
 
-    Args:
-        db: Database session
-        model: Model class
-   ..."""
+Args: db: Database session model: Model class obj_in: Object data
+
+Returns: T: Created model instance"""
 ```
 
 ```python
 async def delete_object(db, model, id) -> bool:
-    """
-    Delete a model instance by ID.
+    """Delete a model instance by ID.
 
-    Args:
-        db: Database session
-        model: Model cla..."""
+Args: db: Database session model: Model class id: Instance ID
+
+Returns: bool: True if deleted, False if not found"""
 ```
 
 ```python
 async def execute_query(db, query) -> Any:
-    """
-    Execute a SQLAlchemy query.
+    """Execute a SQLAlchemy query.
 
-    Args:
-        db: Database session
-        query: SQLAlchemy q..."""
+Args: db: Database session query: SQLAlchemy query
+
+Returns: Any: Query result"""
 ```
 
 ```python
 async def get_by_id(db, model, id) -> Optional[T]:
-    """
-    Get a model instance by ID.
+    """Get a model instance by ID.
 
-    Args:
-        db: Database session
-        model: Model class
-..."""
+Args: db: Database session model: Model class id: Instance ID
+
+Returns: Optional[T]: Model instance or None if not found"""
 ```
 
 ```python
 async def paginate(db, query, page, page_size) -> Dict[(str, Any)]:
-    """
-    Paginate a query.
+    """Paginate a query.
 
-    Args:
-        db: Database session
-        query: Base query
-        pag..."""
+Args: db: Database session query: Base query page: Page number (starting from 1) page_size: Number of items per page
+
+Returns: Dict[str, Any]: Pagination result with items, total, page, page_size, and pages"""
 ```
 
 ```python
 @contextlib.asynccontextmanager
 async def transaction(db) -> AsyncGenerator[(AsyncSession, None)]:
-    """
-    Context manager for database transactions.
+    """Context manager for database transactions.
 
-    This ensures that all operations within the con..."""
+This ensures that all operations within the context are committed together or rolled back on error.
+
+Args: db: Database session
+
+Yields: AsyncSession: Database session"""
 ```
 
 ```python
 async def update_object(db, model, id, obj_in) -> Optional[T]:
-    """
-    Update a model instance by ID.
+    """Update a model instance by ID.
 
-    Args:
-        db: Database session
-        model: Model cla..."""
+Args: db: Database session model: Model class id: Instance ID obj_in: Object data
+
+Returns: Optional[T]: Updated model instance or None if not found"""
 ```
 
 ##### Module: file
@@ -6891,85 +6508,93 @@ from app.models.media import MediaType
 **Functions:**
 ```python
 def get_file_extension(filename) -> str:
-    """
-    Get the file extension from a filename.
+    """Get the file extension from a filename.
 
-    Args:
-        filename: Filename to extract extens..."""
+Args: filename: Filename to extract extension from
+
+Returns: str: File extension (lowercase, without leading period)"""
 ```
 
 ```python
 def get_file_path(file_path) -> Path:
-    """
-    Get the absolute path of a file.
+    """Get the absolute path of a file.
 
-    Args:
-        file_path: Relative path from media root or..."""
+Args: file_path: Relative path from media root or full URL
+
+Returns: Path: Absolute path to the file"""
 ```
 
 ```python
 def get_file_url(file_path) -> str:
-    """
-    Get the URL for a file path, taking environment into account.
+    """Get the URL for a file path, taking environment into account.
 
-    Args:
-        file_path: Rel..."""
+Args: file_path: Relative path from media root
+
+Returns: str: Full URL to access the file"""
 ```
 
 ```python
 def get_media_type_from_mime(mime_type) -> MediaType:
-    """
-    Determine the media type from MIME type.
+    """Determine the media type from MIME type.
 
-    Args:
-        mime_type: MIME type of the file
+Args: mime_type: MIME type of the file
 
- ..."""
+Returns: MediaType: Determined media type"""
 ```
 
 ```python
 def get_thumbnail_path(file_path) -> Optional[Path]:
-    """
-    Get the thumbnail path for an image.
+    """Get the thumbnail path for an image.
 
-    Args:
-        file_path: Relative path from media roo..."""
+Args: file_path: Relative path from media root or full URL
+
+Returns: Optional[Path]: Absolute path to the thumbnail, or None if not found"""
 ```
 
 ```python
 def is_safe_filename(filename) -> bool:
-    """
-    Check if a filename is safe to use.
+    """Check if a filename is safe to use.
 
-    Validates that the filename doesn't contain any potent..."""
+Validates that the filename doesn't contain any potentially dangerous characters or path traversal attempts.
+
+Args: filename: Filename to check
+
+Returns: bool: True if filename is safe, False otherwise"""
 ```
 
 ```python
 def sanitize_filename(filename) -> str:
-    """
-    Sanitize a filename to be safe for storage.
+    """Sanitize a filename to be safe for storage.
 
-    Args:
-        filename: Original filename
+Args: filename: Original filename
 
-   ..."""
+Returns: str: Sanitized filename"""
 ```
 
 ```python
 def save_upload_file(file, media_id, media_type, is_image) -> Tuple[(str, int, str)]:
-    """
-    Save an uploaded file to disk.
+    """Save an uploaded file to disk.
 
-    Handles saving the file to the appropriate directory and cr..."""
+Handles saving the file to the appropriate directory and creating thumbnails for images.
+
+Args: file: Uploaded file media_id: ID of the media record media_type: Type of media is_image: Whether the file is an image
+
+Returns: Tuple[str, int, str]: File path, file size, and media hash
+
+Raises: IOError: If file saving fails"""
 ```
 
 ```python
 def validate_file(file, allowed_types) -> Tuple[(MediaType, bool)]:
-    """
-    Validate a file for upload.
+    """Validate a file for upload.
 
-    Performs various validations on the uploaded file:
-    - Filen..."""
+Performs various validations on the uploaded file: - Filename presence - File size within limits - MIME type allowed for the media type - Image validity for image files
+
+Args: file: Uploaded file allowed_types: Set of allowed media types (if None, all types are allowed)
+
+Returns: Tuple[MediaType, bool]: Media type and whether the file is an image
+
+Raises: HTTPException: If file is invalid"""
 ```
 
 ##### Module: redis_manager
@@ -6997,92 +6622,71 @@ T = T = TypeVar('T')
 **Functions:**
 ```python
 async def cache_get_or_set(key, callback, ttl, force_refresh) -> Any:
-    """
-    Get a value from cache or compute and store it.
-    
-    Args:
-        key: Cache key
-        c..."""
+    """Get a value from cache or compute and store it.
+
+Args: key: Cache key callback: Function to compute the value if not cached ttl: Time-to-live in seconds force_refresh: Force cache refresh
+
+Returns: Any: Cached or computed value"""
 ```
 
 ```python
 async def delete_key(key) -> bool:
-    """
-    Delete a key from Redis.
-    
-    Args:
-        key: Redis key
-        
-    Returns:
-        bo..."""
+    """Delete a key from Redis.  Args: key: Redis key  Returns: bool: Success status"""
 ```
 
 ```python
 async def get_key(key, default) -> Optional[T]:
-    """
-    Get a value from Redis.
-    
-    Args:
-        key: Redis key
-        default: Default value if..."""
+    """Get a value from Redis.
+
+Args: key: Redis key default: Default value if key doesn't exist
+
+Returns: Any: Deserialized value or default"""
 ```
 
 ```python
 async def get_redis_client() -> Redis:
-    """
-    Get a Redis client using the connection pool.
-    
-    Returns:
-        Redis: Redis client
-   ..."""
+    """Get a Redis client using the connection pool.  Returns: Redis: Redis client"""
 ```
 
 ```python
 async def get_redis_pool() -> ConnectionPool:
-    """
-    Get or create the Redis connection pool.
-    
-    Returns:
-        ConnectionPool: Redis connec..."""
+    """Get or create the Redis connection pool.  Returns: ConnectionPool: Redis connection pool"""
 ```
 
 ```python
 async def increment_counter(key, amount, ttl) -> Optional[int]:
-    """
-    Increment a counter in Redis.
-    
-    Args:
-        key: Redis key
-        amount: Amount to i..."""
+    """Increment a counter in Redis.
+
+Args: key: Redis key amount: Amount to increment by ttl: Time-to-live in seconds (optional)
+
+Returns: Optional[int]: New counter value or None on error"""
 ```
 
 ```python
 async def publish_message(channel, message) -> bool:
-    """
-    Publish a message to a Redis channel.
-    
-    Args:
-        channel: Redis channel name
-      ..."""
+    """Publish a message to a Redis channel.
+
+Args: channel: Redis channel name message: Message data to publish
+
+Returns: bool: Success status"""
 ```
 
 ```python
 async def rate_limit_check(key, limit, window) -> tuple[(bool, int)]:
-    """
-    Check if a rate limit has been exceeded.
-    
-    Args:
-        key: Redis key for the rate lim..."""
+    """Check if a rate limit has been exceeded.
+
+Args: key: Redis key for the rate limit limit: Maximum number of operations window: Time window in seconds
+
+Returns: tuple[bool, int]: (is_limited, current_count)"""
 ```
 
 ```python
 async def set_key(key, value, ttl) -> bool:
-    """
-    Set a value in Redis.
-    
-    Args:
-        key: Redis key
-        value: Value to store (will..."""
+    """Set a value in Redis.
+
+Args: key: Redis key value: Value to store (will be JSON serialized) ttl: Time-to-live in seconds (optional)
+
+Returns: bool: Success status"""
 ```
 
 ### Package: examples
@@ -7168,95 +6772,117 @@ TestingSessionLocal = TestingSessionLocal = sessionmaker(
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def admin_token(admin_user) -> str:
-    """
-    Create an authentication token for admin user.
+    """Create an authentication token for admin user.
 
-    This fixture generates a valid JWT token fo..."""
+This fixture generates a valid JWT token for the admin user to use in authenticated API requests.
+
+Args: admin_user: Admin user fixture
+
+Returns: str: JWT token for admin user"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def admin_user(db) -> User:
-    """
-    Create a test admin user.
+    """Create a test admin user.
 
-    This fixture provides an admin user for testing endpoints
-    th..."""
+This fixture provides an admin user for testing endpoints that require admin privileges.
+
+Args: db: Database session fixture
+
+Returns: User: Admin user model instance"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def client(db) -> AsyncGenerator[(AsyncClient, None)]:
-    """
-    Create a test client with the database session.
+    """Create a test client with the database session.
 
-    This fixture overrides the database depend..."""
+This fixture overrides the database dependency to use the test database session and provides an async HTTP client for testing API endpoints.
+
+Args: db: Database session fixture
+
+Yields: AsyncClient: Test client for async API requests"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def db(setup_db) -> AsyncGenerator[(AsyncSession, None)]:
-    """
-    Create a fresh database session for a test.
+    """Create a fresh database session for a test.
 
-    This fixture provides an isolated database ses..."""
+This fixture provides an isolated database session for each test with proper transaction management and cleanup.
+
+Args: setup_db: Ensures database tables are created
+
+Yields: AsyncSession: Database session"""
 ```
 
 ```python
 @pytest.fixture(scope='session')
 def event_loop() -> Generator[(asyncio.AbstractEventLoop, None, None)]:
-    """
-    Create an instance of the default event loop for each test case.
+    """Create an instance of the default event loop for each test case.
 
-    This fixture is required ..."""
+This fixture is required for pytest-asyncio to work properly.
+
+Yields: asyncio.AbstractEventLoop: Event loop for async tests"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def normal_user(db) -> User:
-    """
-    Create a test normal user.
+    """Create a test normal user.
 
-    This fixture provides a regular user for testing endpoints
-    ..."""
+This fixture provides a regular user for testing endpoints that require authentication but not admin privileges.
+
+Args: db: Database session fixture
+
+Returns: User: Normal user model instance"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='session')
 async def setup_db() -> AsyncGenerator[(None, None)]:
-    """
-    Set up test database tables.
+    """Set up test database tables.
 
-    This fixture creates all tables for testing and drops them af..."""
+This fixture creates all tables for testing and drops them after all tests are complete. It runs only once per test session.
+
+Yields: None"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def test_fitment(db) -> Fitment:
-    """
-    Create a test fitment.
+    """Create a test fitment.
 
-    This fixture provides a fitment for testing fitment-related
-    fun..."""
+This fixture provides a fitment for testing fitment-related functionality.
+
+Args: db: Database session fixture
+
+Returns: Fitment: Fitment model instance"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def test_product(db) -> Product:
-    """
-    Create a test product.
+    """Create a test product.
 
-    This fixture provides a product for testing product-related
-    fun..."""
+This fixture provides a product for testing product-related functionality.
+
+Args: db: Database session fixture
+
+Returns: Product: Product model instance"""
 ```
 
 ```python
 @pytest_asyncio.fixture(scope='function')
 async def user_token(normal_user) -> str:
-    """
-    Create an authentication token for normal user.
+    """Create an authentication token for normal user.
 
-    This fixture generates a valid JWT token f..."""
+This fixture generates a valid JWT token for the normal user to use in authenticated API requests.
+
+Args: normal_user: Normal user fixture
+
+Returns: str: JWT token for normal user"""
 ```
 
 #### Module: utils
@@ -7282,49 +6908,47 @@ M = M = TypeVar('M', bound=BaseModel)
 **Functions:**
 ```python
 def assert_model_data_matches(model, data) -> None:
-    """
-    Assert that a model instance data matches the provided data.
+    """Assert that a model instance data matches the provided data.
 
-    Args:
-        model: Model in..."""
+Args: model: Model instance data: Expected data
+
+Raises: AssertionError: If model data doesn't match expected data"""
 ```
 
 ```python
 def create_random_email() -> str:
-    """
-    Create a random email for test data.
-
-    Returns:
-        str: Random email address
-    """
+    """Create a random email for test data.  Returns: str: Random email address"""
 ```
 
 ```python
 def create_random_string(length) -> str:
-    """
-    Create a random string for test data.
+    """Create a random string for test data.
 
-    Args:
-        length: Length of the string to genera..."""
+Args: length: Length of the string to generate
+
+Returns: str: Random string"""
 ```
 
 ```python
 async def make_authenticated_request(client, method, url, token, **kwargs) -> Any:
-    """
-    Make an authenticated request to the API.
+    """Make an authenticated request to the API.
 
-    Args:
-        client: HTTPX AsyncClient
-        ..."""
+Args: client: HTTPX AsyncClient method: HTTP method (get, post, put, delete) url: API endpoint URL token: JWT token for authentication **kwargs: Additional arguments to pass to the client method
+
+Returns: Any: API response
+
+Raises: ValueError: If invalid HTTP method is provided"""
 ```
 
 ```python
 def validate_model_response(response_data, model_type, exclude_fields) -> M:
-    """
-    Validate that an API response matches a model schema.
+    """Validate that an API response matches a model schema.
 
-    Args:
-        response_data: API res..."""
+Args: response_data: API response data model_type: Pydantic model class to validate against exclude_fields: Fields to exclude from validation
+
+Returns: M: Validated model instance
+
+Raises: ValueError: If response doesn't match model schema"""
 ```
 
 #### Package: api
@@ -7355,42 +6979,26 @@ from tests.utils import make_authenticated_request
 **Functions:**
 ```python
 async def test_get_current_user(client, normal_user, user_token) -> None:
-    """
-    Test retrieving the current user profile.
+    """Test retrieving the current user profile.
 
-    Args:
-        client: Test client
-        normal..."""
+Args: client: Test client normal_user: Test user fixture user_token: User authentication token"""
 ```
 
 ```python
 async def test_get_current_user_unauthorized(client) -> None:
-    """
-    Test retrieving user profile without authentication.
-
-    Args:
-        client: Test client
-   ..."""
+    """Test retrieving user profile without authentication.  Args: client: Test client"""
 ```
 
 ```python
 async def test_login_invalid_credentials(client, normal_user) -> None:
-    """
-    Test login with invalid credentials.
-
-    Args:
-        client: Test client
-        normal_user..."""
+    """Test login with invalid credentials.  Args: client: Test client normal_user: Test user fixture"""
 ```
 
 ```python
 async def test_login_success(client, normal_user) -> None:
-    """
-    Test successful login with valid credentials.
+    """Test successful login with valid credentials.
 
-    Args:
-        client: Test client
-        no..."""
+Args: client: Test client normal_user: Test user fixture"""
 ```
 
 ###### Module: test_products
@@ -7415,122 +7023,83 @@ from tests.utils import make_authenticated_request, create_random_string
 ```python
 @pytest.mark.asyncio
 async def test_create_product_admin(client, admin_token) -> None:
-    """
-    Test creating a product as admin.
-
-    Args:
-        client: Test client
-        admin_token: A..."""
+    """Test creating a product as admin.  Args: client: Test client admin_token: Admin token"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_create_product_duplicate_sku(client, admin_token, test_product) -> None:
-    """
-    Test creating a product with a duplicate SKU.
+    """Test creating a product with a duplicate SKU.
 
-    Args:
-        client: Test client
-        ad..."""
+Args: client: Test client admin_token: Admin token test_product: Test product fixture"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_create_product_non_admin(client, user_token) -> None:
-    """
-    Test that non-admin users cannot create products.
-
-    Args:
-        client: Test client
-      ..."""
+    """Test that non-admin users cannot create products.  Args: client: Test client user_token: User token"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_delete_product_admin(client, admin_token, db) -> None:
-    """
-    Test deleting a product as admin.
+    """Test deleting a product as admin.
 
-    Args:
-        client: Test client
-        admin_token: A..."""
+Args: client: Test client admin_token: Admin token db: Database session"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_delete_product_non_admin(client, user_token, test_product) -> None:
-    """
-    Test that non-admin users cannot delete products.
+    """Test that non-admin users cannot delete products.
 
-    Args:
-        client: Test client
-      ..."""
+Args: client: Test client user_token: User token test_product: Test product fixture"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_read_product(client, user_token, test_product) -> None:
-    """
-    Test retrieving a single product.
+    """Test retrieving a single product.
 
-    Args:
-        client: Test client
-        user_token: Us..."""
+Args: client: Test client user_token: User token test_product: Test product fixture"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_read_product_not_found(client, user_token) -> None:
-    """
-    Test retrieving a non-existent product.
-
-    Args:
-        client: Test client
-        user_tok..."""
+    """Test retrieving a non-existent product.  Args: client: Test client user_token: User token"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_read_products(client, normal_user, user_token, test_product) -> None:
-    """
-    Test retrieving a list of products.
+    """Test retrieving a list of products.
 
-    Args:
-        client: Test client
-        normal_user:..."""
+Args: client: Test client normal_user: Regular user user_token: User token test_product: Test product fixture"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_read_products_with_filters(client, admin_token, test_product) -> None:
-    """
-    Test retrieving products with filters.
+    """Test retrieving products with filters.
 
-    Args:
-        client: Test client
-        admin_tok..."""
+Args: client: Test client admin_token: Admin token test_product: Test product fixture"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_update_product_admin(client, admin_token, test_product) -> None:
-    """
-    Test updating a product as admin.
+    """Test updating a product as admin.
 
-    Args:
-        client: Test client
-        admin_token: A..."""
+Args: client: Test client admin_token: Admin token test_product: Test product fixture"""
 ```
 
 ```python
 @pytest.mark.asyncio
 async def test_update_product_non_admin(client, user_token, test_product) -> None:
-    """
-    Test that non-admin users cannot update products.
+    """Test that non-admin users cannot update products.
 
-    Args:
-        client: Test client
-      ..."""
+Args: client: Test client user_token: User token test_product: Test product fixture"""
 ```
 
 ###### Module: test_users
@@ -7549,66 +7118,46 @@ from tests.utils import create_random_email, create_random_string, make_authenti
 **Functions:**
 ```python
 async def test_create_user_admin(client, admin_token) -> None:
-    """
-    Test user creation by admin.
-
-    Args:
-        client: Test client
-        admin_token: Admin ..."""
+    """Test user creation by admin.  Args: client: Test client admin_token: Admin authentication token"""
 ```
 
 ```python
 async def test_delete_user_admin(client, admin_token, normal_user) -> None:
-    """
-    Test deleting a user as admin.
+    """Test deleting a user as admin.
 
-    Args:
-        client: Test client
-        admin_token: Admi..."""
+Args: client: Test client admin_token: Admin authentication token normal_user: User to delete"""
 ```
 
 ```python
 async def test_read_user_by_id_admin(client, admin_token, normal_user) -> None:
-    """
-    Test retrieving a user by ID as admin.
+    """Test retrieving a user by ID as admin.
 
-    Args:
-        client: Test client
-        admin_tok..."""
+Args: client: Test client admin_token: Admin authentication token normal_user: User to retrieve"""
 ```
 
 ```python
 async def test_read_users_admin(client, admin_user, admin_token, normal_user) -> None:
-    """
-    Test that admin users can list all users.
+    """Test that admin users can list all users.
 
-    Args:
-        client: Test client
-        admin_..."""
+Args: client: Test client admin_user: Admin user fixture admin_token: Admin authentication token normal_user: Regular user fixture"""
 ```
 
 ```python
 async def test_read_users_non_admin(client, normal_user, user_token) -> None:
-    """
-    Test that non-admin users cannot list all users.
+    """Test that non-admin users cannot list all users.
 
-    Args:
-        client: Test client
-       ..."""
+Args: client: Test client normal_user: Regular user fixture user_token: User authentication token"""
 ```
 
 ```python
 async def test_update_user_admin(client, admin_token, normal_user) -> None:
-    """
-    Test updating a user as admin.
+    """Test updating a user as admin.
 
-    Args:
-        client: Test client
-        admin_token: Admi..."""
+Args: client: Test client admin_token: Admin authentication token normal_user: User to update"""
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 13:13:06
+Generated on 2025-03-16 13:50:48
 
 ## Project Overview
 - Project Name: frontend

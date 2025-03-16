@@ -15,7 +15,7 @@ A B2B platform for the automotive aftermarket industry, providing a centralized 
 
 ### Prerequisites
 
-- Python 3.11+
+- Python 3.12+
 - Node.js 18+
 - Docker and Docker Compose
 - PostgreSQL 15

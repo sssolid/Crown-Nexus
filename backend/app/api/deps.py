@@ -1,22 +1,8 @@
-# backend/app/api/deps.py
-"""
-API dependency providers.
-
-This module defines FastAPI dependency providers for database sessions,
-authentication, and authorization. These dependencies are used throughout
-the API routes to ensure consistent access control and resource management.
-
-The module provides:
-- Database session dependency
-- Authentication dependencies for different authorization levels
-- Pagination parameter handling
-- Error handling for auth failures
-"""
-
+# app/api/deps.py
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated, Dict, Optional, Union
+from typing import Annotated, Dict, List, Optional, Union
 
 from fastapi import Depends, HTTPException, Query, WebSocket, status
 from fastapi.security import OAuth2PasswordBearer
@@ -27,312 +13,182 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.websockets import WebSocketDisconnect
 
 from app.core.config import settings
+from app.core.exceptions import (
+    AuthenticationException,
+    ErrorCode,
+    PermissionDeniedException,
+)
 from app.core.logging import get_logger, set_user_id
+from app.core.permissions import Permission, PermissionChecker
+from app.core.security import (
+    TokenData,
+    decode_token,
+    oauth2_scheme,
+)
 from app.db.session import get_db
 from app.models.user import User, UserRole
-from app.schemas.user import TokenPayload
+from app.repositories.user import UserRepository
+from app.utils.errors import ensure_not_none
 
-# Create a logger for this module
 logger = get_logger("app.api.deps")
 
-# OAuth2 scheme for token authentication
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/auth/login"
-)
+PaginationParams = Dict[str, Union[int, float]]
 
 
 async def get_current_user(
-    db: Annotated[AsyncSession, Depends(get_db)],
-    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
 ) -> User:
-    """
-    Get the current authenticated user.
-
+    """Get the current authenticated user.
+    
     This dependency validates the JWT token, decodes it, and retrieves
     the corresponding user from the database.
-
+    
     Args:
         db: Database session
         token: JWT token
-
+        
     Returns:
         User: Authenticated user
-
+        
     Raises:
-        HTTPException: If authentication fails, token is invalid,
-            or user doesn't exist
+        AuthenticationException: If authentication fails
     """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
     try:
-        # Decode and validate the JWT token
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=["HS256"]
-        )
-        token_data = TokenPayload(**payload)
-
-        # Check if token has expired
-        current_time = int(datetime.utcnow().timestamp())
-        if token_data.exp < current_time:
-            logger.warning(
-                "Token expired",
-                token_exp=token_data.exp,
-                current_time=current_time,
-                expires_in=token_data.exp - current_time
+        # Decode and validate token
+        token_data = await decode_token(token)
+        
+        # Get user from database
+        user_repo = UserRepository(db)
+        user = await user_repo.get_by_id(token_data.sub)
+        
+        if user is None:
+            logger.warning(f"User not found: {token_data.sub}")
+            raise AuthenticationException(
+                message="User not found", 
+                code=ErrorCode.AUTHENTICATION_FAILED
             )
-            raise credentials_exception
             
+        # Set user ID in logging context
+        set_user_id(str(user.id))
+        
+        return user
     except (JWTError, ValidationError) as e:
-        # Log the error with more details for debugging
-        logger.warning(
-            "Token validation failed",
-            error=str(e),
-            error_type=type(e).__name__
-        )
-        raise credentials_exception from e
-
-    # Get the user from the database
-    stmt = select(User).where(User.id == token_data.sub)
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
-
-    if user is None:
-        logger.warning(
-            "User from token not found",
-            user_id=token_data.sub
-        )
-        raise credentials_exception
-
-    # Add user ID to the logging context
-    set_user_id(str(user.id))
-    
-    logger.debug(
-        "User authenticated",
-        user_id=str(user.id),
-        user_role=user.role
-    )
-    
-    return user
+        logger.warning(f"Token validation error: {str(e)}")
+        raise AuthenticationException(
+            message="Could not validate credentials", 
+            code=ErrorCode.AUTHENTICATION_FAILED
+        ) from e
 
 
 async def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: User = Depends(get_current_user),
 ) -> User:
-    """
-    Get the current active user.
-
-    This dependency builds on get_current_user and ensures the user
-    is active in the system.
-
+    """Get the current active user.
+    
+    This dependency builds on get_current_user and ensures the user is active
+    in the system.
+    
     Args:
         current_user: Current authenticated user
-
+        
     Returns:
         User: Current active user
-
+        
     Raises:
-        HTTPException: If user is inactive
+        AuthenticationException: If user is inactive
     """
     if not current_user.is_active:
-        logger.warning(
-            "Inactive user attempted access",
-            user_id=str(current_user.id)
-        )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
+        logger.warning(f"Inactive user attempted login: {current_user.id}")
+        raise AuthenticationException(
+            message="Inactive user",
+            code=ErrorCode.USER_NOT_ACTIVE,
         )
     return current_user
 
 
 async def get_admin_user(
-    current_user: Annotated[User, Depends(get_current_active_user)],
+    current_user: User = Depends(get_current_active_user),
 ) -> User:
-    """
-    Get the current active admin user.
-
-    This dependency builds on get_current_active_user and ensures the
-    user has admin role.
-
+    """Get the current active admin user.
+    
+    This dependency builds on get_current_active_user and ensures the user
+    has admin role.
+    
     Args:
         current_user: Current authenticated user
-
+        
     Returns:
         User: Current active admin user
-
+        
     Raises:
-        HTTPException: If user is not an admin
+        PermissionDeniedException: If user is not an admin
     """
-    if current_user.role != UserRole.ADMIN:
+    if not PermissionChecker.has_permission(current_user, Permission.SYSTEM_ADMIN):
         logger.warning(
-            "Non-admin user attempted admin action",
-            user_id=str(current_user.id),
-            user_role=current_user.role
+            f"Non-admin user attempted admin action: {current_user.email}",
+            extra={"user_id": str(current_user.id), "role": current_user.role},
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Insufficient permissions"
-        )
+        raise PermissionDeniedException(message="Admin privileges required")
     return current_user
 
 
 async def get_manager_user(
-    current_user: Annotated[User, Depends(get_current_active_user)],
+    current_user: User = Depends(get_current_active_user),
 ) -> User:
-    """
-    Get the current active manager or admin user.
-
-    This dependency builds on get_current_active_user and ensures the
-    user has manager or admin role.
-
+    """Get the current active manager or admin user.
+    
+    This dependency builds on get_current_active_user and ensures the user
+    has manager or admin role.
+    
     Args:
         current_user: Current authenticated user
-
+        
     Returns:
         User: Current active manager or admin user
-
+        
     Raises:
-        HTTPException: If user is not a manager or admin
+        PermissionDeniedException: If user is not a manager or admin
     """
     if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
         logger.warning(
-            "Non-manager user attempted manager action",
-            user_id=str(current_user.id),
-            user_role=current_user.role
+            f"Non-manager user attempted manager action: {current_user.email}",
+            extra={"user_id": str(current_user.id), "role": current_user.role},
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Insufficient permissions"
-        )
+        raise PermissionDeniedException(message="Manager privileges required")
     return current_user
 
 
-# Type definitions for pagination parameters
-PaginationParams = Dict[str, Union[int, float]]
-
-
-def get_pagination(
-    page: Annotated[int, Query(ge=1, description="Page number")] = 1,
-    page_size: Annotated[int, Query(ge=1, le=100, description="Items per page")] = 20,
-) -> PaginationParams:
-    """
-    Get pagination parameters.
-
-    This dependency generates pagination parameters based on page number and size,
-    with validation to ensure reasonable values.
-
-    Args:
-        page: Page number (starting from 1)
-        page_size: Number of items per page (max 100)
-
-    Returns:
-        Dict: Pagination parameters including:
-            - skip: Number of items to skip
-            - limit: Number of items to return
-            - page: Current page number
-            - page_size: Items per page
-    """
-    # Ensure valid values
-    page = max(1, page)
-    page_size = max(1, min(100, page_size))
-
-    return {
-        "skip": (page - 1) * page_size,
-        "limit": page_size,
-        "page": page,
-        "page_size": page_size,
-    }
-
-
-# Optional authenticated user dependency for endpoints that accept both
-# authenticated and anonymous users
 async def get_optional_user(
-    db: Annotated[AsyncSession, Depends(get_db)],
-    token: str = Depends(OAuth2PasswordBearer(
-        tokenUrl=f"{settings.API_V1_STR}/auth/login",
-        auto_error=False
-    )),
+    db: AsyncSession = Depends(get_db),
+    token: Optional[str] = Depends(oauth2_scheme),
 ) -> Optional[User]:
-    """
-    Get the current user if authenticated, otherwise None.
-
-    This dependency is useful for endpoints that can be accessed both
-    by authenticated and anonymous users, with different behavior.
-
+    """Get the current user if authenticated, otherwise None.
+    
+    This dependency is useful for endpoints that can be accessed both by
+    authenticated and anonymous users, with different behavior.
+    
     Args:
         db: Database session
         token: Optional JWT token
-
+        
     Returns:
         Optional[User]: Authenticated user or None
     """
-    if not token:
-        logger.debug("No authentication token provided")
+    if token is None:
         return None
-
-    try:
-        # Decode and validate the JWT token
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=["HS256"]
-        )
-        token_data = TokenPayload(**payload)
-
-        # Check if token has expired
-        current_time = int(datetime.utcnow().timestamp())
-        if token_data.exp < current_time:
-            logger.debug(
-                "Optional token expired",
-                token_exp=token_data.exp,
-                current_time=current_time
-            )
-            return None
-
-        # Get the user from the database
-        stmt = select(User).where(User.id == token_data.sub)
-        result = await db.execute(stmt)
-        user = result.scalar_one_or_none()
-
-        if user and user.is_active:
-            # Add user ID to the logging context
-            set_user_id(str(user.id))
-            
-            logger.debug(
-                "Optional user authenticated",
-                user_id=str(user.id),
-                user_role=user.role
-            )
-            return user
         
-        if not user:
-            logger.debug(
-                "Optional token user not found",
-                user_id=token_data.sub
-            )
-        elif not user.is_active:
-            logger.debug(
-                "Optional token user is inactive",
-                user_id=str(user.id)
-            )
-
-    except (JWTError, ValidationError) as e:
-        logger.debug(
-            "Optional token validation failed",
-            error=str(e),
-            error_type=type(e).__name__
-        )
-
-    return None
+    try:
+        return await get_current_user(db, token)
+    except AuthenticationException:
+        return None
 
 
 async def get_current_user_ws(
     websocket: WebSocket,
     db: AsyncSession = Depends(get_db),
 ) -> User:
-    """
-    Get the current authenticated user from WebSocket connection.
+    """Get the current authenticated user from WebSocket connection.
     
     This dependency extracts the JWT token from WebSocket query parameters
     or cookies, validates it, and returns the corresponding user.
@@ -348,94 +204,101 @@ async def get_current_user_ws(
         WebSocketDisconnect: If authentication fails
     """
     try:
-        # Try to get token from query parameters
+        # Try to get token from query params
         token = websocket.query_params.get("token")
         
-        # If not in query params, try to get from cookies
-        if not token and "token" in websocket.cookies:
-            token = websocket.cookies["token"]
-        
-        # If not in cookies, try authorization header
+        # If not in query params, try cookies
         if not token:
-            headers = dict(websocket.headers)
-            auth_header = headers.get("authorization", "")
-            if auth_header.startswith("Bearer "):
-                token = auth_header[7:]
-        
+            cookies = websocket.cookies
+            if "token" in cookies:
+                token = cookies["token"]
+                
         if not token:
-            # No token found
-            logger.warning(
-                "WebSocket connection without token",
-                client=websocket.client.host
-            )
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            logger.warning("WebSocket connection without token")
             raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
-        
-        # Validate token
-        credentials_exception = WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
-        
-        try:
-            # Decode and validate the JWT token
-            payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=["HS256"]
-            )
-            token_data = TokenPayload(**payload)
             
-            # Check if token has expired
-            current_time = int(datetime.utcnow().timestamp())
-            if token_data.exp < current_time:
-                logger.warning(
-                    "WebSocket token expired",
-                    token_exp=token_data.exp,
-                    current_time=current_time,
-                    client=websocket.client.host
-                )
-                await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-                raise credentials_exception
-        except (JWTError, ValidationError) as e:
-            logger.warning(
-                "WebSocket token validation failed",
-                error=str(e),
-                error_type=type(e).__name__,
-                client=websocket.client.host
-            )
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-            raise credentials_exception
+        # Decode and validate token
+        token_data = await decode_token(token)
         
-        # Get the user from the database
-        stmt = select(User).where(User.id == token_data.sub)
-        result = await db.execute(stmt)
-        user = result.scalar_one_or_none()
+        # Get user from database
+        user_repo = UserRepository(db)
+        user = await user_repo.get_by_id(token_data.sub)
         
         if user is None or not user.is_active:
-            logger.warning(
-                "WebSocket user not found or inactive",
-                user_id=token_data.sub,
-                client=websocket.client.host
-            )
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-            raise credentials_exception
-        
-        # Add user ID to the logging context
-        set_user_id(str(user.id))
-        
-        logger.debug(
-            "WebSocket user authenticated",
-            user_id=str(user.id),
-            user_role=user.role,
-            client=websocket.client.host
-        )
-        
+            logger.warning(f"WebSocket auth failed: User not found or inactive: {token_data.sub}")
+            raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
+            
         return user
-    
-    except WebSocketDisconnect:
-        raise
-    except Exception as e:
-        logger.exception(
-            "Unexpected error in WebSocket authentication",
-            error=str(e),
-            error_type=type(e).__name__,
-            client=getattr(websocket, "client", {}).get("host", "unknown")
-        )
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+    except (JWTError, ValidationError, AuthenticationException) as e:
+        logger.warning(f"WebSocket auth error: {str(e)}")
         raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
+
+
+def require_permissions(
+    permissions: List[Permission],
+    require_all: bool = True,
+):
+    """Dependency to require specific permissions.
+    
+    Args:
+        permissions: List of required permissions
+        require_all: Whether all permissions are required (AND) or any (OR)
+        
+    Returns:
+        Callable: Dependency function
+    """
+    async def dependency(current_user: User = Depends(get_current_active_user)):
+        if not PermissionChecker.has_permissions(current_user, permissions, require_all):
+            permission_str = " and ".join(p.value for p in permissions) if require_all else " or ".join(p.value for p in permissions)
+            logger.warning(
+                f"Permission denied: {current_user.email} missing required permissions: {permission_str}",
+                extra={
+                    "user_id": str(current_user.id),
+                    "user_role": current_user.role,
+                    "permissions": [p.value for p in permissions],
+                },
+            )
+            raise PermissionDeniedException(
+                message=f"You don't have the required permissions: {permission_str}",
+            )
+        return current_user
+    
+    return dependency
+
+
+def require_permission(permission: Permission):
+    """Dependency to require a specific permission.
+    
+    Args:
+        permission: Required permission
+        
+    Returns:
+        Callable: Dependency function
+    """
+    return require_permissions([permission])
+
+
+def get_pagination(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+) -> PaginationParams:
+    """Get pagination parameters.
+    
+    This dependency generates pagination parameters based on page number
+    and size, with validation to ensure reasonable values.
+    
+    Args:
+        page: Page number (starting from 1)
+        page_size: Number of items per page (max 100)
+        
+    Returns:
+        Dict: Pagination parameters
+    """
+    skip = (page - 1) * page_size
+    
+    return {
+        "skip": skip,
+        "limit": page_size,
+        "page": page,
+        "page_size": page_size,
+    }

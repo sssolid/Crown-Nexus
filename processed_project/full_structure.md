@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:23:59
+Generated on 2025-03-16 15:24:16
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -88,6 +88,7 @@ backend/
 │   │   ├── reference.py
 │   │   └── user.py
 │   ├── repositories/
+│   │   ├── __init__.py
 │   │   └── base.py
 │   ├── schemas/
 │   │   ├── __init__.py
@@ -4900,6 +4901,159 @@ DISTRIBUTOR = 'distributor'
 READ_ONLY = 'read_only'
 ```
 
+#### Package: repositories
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/repositories`
+
+**__init__.py:**
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/repositories/__init__.py`
+
+##### Module: base
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/repositories/base.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.exceptions import DatabaseException
+from app.core.logging import get_logger
+from app.db.base_class import Base
+from app.db.utils import bulk_create, count_query, create_object, delete_object, get_by_id, get_by_ids, paginate, update_object, upsert
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.repositories.base")
+T = T = TypeVar("T", bound=Base)
+ID = ID = TypeVar("ID")
+```
+
+**Classes:**
+```python
+class BaseRepository(Generic[(T, ID)]):
+    """Generic repository for database operations.
+
+This class provides a standard interface for database operations, implementing the repository pattern for clean architecture.
+
+Attributes: model: SQLAlchemy model class db: Database session"""
+```
+*Methods:*
+```python
+    def __init__(self, model, db) -> None:
+        """Initialize the repository.  Args: model: SQLAlchemy model class db: Database session"""
+```
+```python
+    async def bulk_create(self, items) -> List[T]:
+        """Create multiple entities.
+
+Args: items: List of entity data
+
+Returns: List[T]: Created entities
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def count(self, filters) -> int:
+        """Count entities matching filters.
+
+Args: filters: Dictionary of field:value pairs for filtering
+
+Returns: int: Count of matching entities
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def create(self, data) -> T:
+        """Create a new entity.
+
+Args: data: Entity data
+
+Returns: T: Created entity
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def delete(self, id_value, user_id, hard_delete) -> bool:
+        """Delete an entity.
+
+Args: id_value: Entity ID user_id: ID of the user performing the deletion hard_delete: Whether to permanently delete
+
+Returns: bool: True if deleted, False if not found
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def exists(self, filters) -> bool:
+        """Check if an entity exists with the given filters.
+
+Args: filters: Filters to apply
+
+Returns: bool: True if entity exists
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def find_one_by(self, filters) -> Optional[T]:
+        """Find a single entity by filters.
+
+Args: filters: Filters to apply
+
+Returns: Optional[T]: Entity or None if not found
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def get_all(self, page, page_size, order_by, filters) -> Dict[(str, Any)]:
+        """Get all entities with pagination.
+
+Args: page: Page number page_size: Page size order_by: Field to order by (prefix with - for descending) filters: Dictionary of field:value pairs for filtering
+
+Returns: Dict[str, Any]: Paginated results
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def get_by_id(self, id_value) -> Optional[T]:
+        """Get entity by ID.
+
+Args: id_value: Entity ID
+
+Returns: Optional[T]: Entity or None if not found
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def get_by_ids(self, ids) -> List[T]:
+        """Get entities by IDs.
+
+Args: ids: List of entity IDs
+
+Returns: List[T]: List of found entities
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def update(self, id_value, data, user_id) -> Optional[T]:
+        """Update an entity.
+
+Args: id_value: Entity ID data: Updated data user_id: ID of the user making the update
+
+Returns: Optional[T]: Updated entity or None if not found
+
+Raises: DatabaseException: If a database error occurs"""
+```
+```python
+    async def upsert(self, data, unique_fields) -> T:
+        """Insert or update an entity based on unique fields.
+
+Args: data: Entity data unique_fields: Fields to use for uniqueness check
+
+Returns: T: Created or updated entity
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
 #### Package: schemas
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/schemas`
 
@@ -7635,7 +7789,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 15:23:59
+Generated on 2025-03-16 15:24:16
 
 ## Project Overview
 - Project Name: frontend

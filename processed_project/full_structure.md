@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:21:41
+Generated on 2025-03-16 15:22:37
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -57,7 +57,8 @@ backend/
 │   │   ├── __init__.py
 │   │   ├── base.py
 │   │   ├── base_class.py
-│   │   └── session.py
+│   │   ├── session.py
+│   │   └── utils.py
 │   ├── fitment/
 │   │   ├── README.md
 │   │   ├── __init__.py
@@ -2485,6 +2486,182 @@ async def get_db_context() -> AsyncGenerator[(AsyncSession, None)]:
 This is useful for scripts that need to handle their own transactions and session lifecycle outside of FastAPI's dependency injection.
 
 Yields: AsyncSession: Database session"""
+```
+
+##### Module: utils
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/db/utils.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import contextlib
+import functools
+from typing import Any, AsyncGenerator, Callable, Dict, List, Optional, Sequence, Type, TypeVar, Union, cast, overload
+from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Query, Session
+from sqlalchemy.sql import Select
+from sqlalchemy.sql.expression import Delete, Insert, Update
+from app.core.exceptions import DatabaseException
+from app.core.logging import get_logger
+from app.db.base_class import Base
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.db.utils")
+T = T = TypeVar("T", bound=Base)
+F = F = TypeVar("F", bound=Callable[..., Any])
+```
+
+**Functions:**
+```python
+async def bulk_create(db, model, objects) -> List[T]:
+    """Create multiple model instances in a single transaction.
+
+Args: db: Database session model: Model class objects: List of object data
+
+Returns: List[T]: List of created instances
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def bulk_update(db, model, id_field, objects) -> int:
+    """Update multiple model instances in a single transaction.
+
+Args: db: Database session model: Model class id_field: Field name to use for identifying records (usually 'id') objects: List of object data (must include id_field)
+
+Returns: int: Number of updated instances
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def count_query(db, query) -> int:
+    """Count results of a query.
+
+Args: db: Database session query: Base query
+
+Returns: int: Count of matching records
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def create_object(db, model, obj_in) -> T:
+    """Create a new model instance.
+
+Args: db: Database session model: Model class obj_in: Object data
+
+Returns: T: Created instance
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def delete_object(db, model, id_value, user_id, hard_delete) -> bool:
+    """Delete a model instance by ID.
+
+By default, performs a soft delete unless hard_delete is True.
+
+Args: db: Database session model: Model class id_value: ID value to look up user_id: ID of the user performing the deletion hard_delete: Whether to permanently delete the record
+
+Returns: bool: True if deleted, False if not found
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def execute_query(db, query) -> Any:
+    """Execute a SQLAlchemy query with error handling.
+
+Args: db: Database session query: SQLAlchemy query to execute
+
+Returns: Any: Query result
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def get_by_id(db, model, id_value) -> Optional[T]:
+    """Get a model instance by ID with proper error handling.
+
+Args: db: Database session model: Model class id_value: ID value to look up
+
+Returns: Optional[T]: Found instance or None
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def get_by_ids(db, model, ids) -> List[T]:
+    """Get multiple model instances by their IDs.
+
+Args: db: Database session model: Model class ids: List of IDs to look up
+
+Returns: List[T]: List of found instances
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def paginate(db, query, page, page_size, load_items) -> Dict[(str, Any)]:
+    """Paginate a query.
+
+Args: db: Database session query: Base query page: Page number (1-indexed) page_size: Number of items per page load_items: Whether to load the items or just return metadata
+
+Returns: Dict[str, Any]: Pagination result with items, total, page, page_size, and pages
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+@contextlib.asynccontextmanager
+async def transaction(db) -> AsyncGenerator[(AsyncSession, None)]:
+    """Context manager for database transactions.
+
+This ensures that operations within the context are committed together or rolled back on error, simplifying transaction management.
+
+Args: db: Database session
+
+Yields: AsyncSession: Database session with transaction
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+def transactional(func) -> F:
+    """Decorator for managing transactions in service methods.
+
+Ensures the method runs within a transaction and properly handles errors.
+
+Args: func: Function to decorate
+
+Returns: Decorated function with transaction management"""
+```
+
+```python
+async def update_object(db, model, id_value, obj_in, user_id) -> Optional[T]:
+    """Update a model instance by ID.
+
+Args: db: Database session model: Model class id_value: ID value to look up obj_in: New data to update user_id: ID of the user making the update
+
+Returns: Optional[T]: Updated instance or None if not found
+
+Raises: DatabaseException: If a database error occurs"""
+```
+
+```python
+async def upsert(db, model, data, unique_fields) -> T:
+    """Insert a record or update it if it already exists.
+
+Args: db: Database session model: Model class data: Object data unique_fields: Fields to use for uniqueness check
+
+Returns: T: Created or updated instance
+
+Raises: DatabaseException: If a database error occurs"""
 ```
 
 #### Package: fitment
@@ -7456,7 +7633,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 15:21:42
+Generated on 2025-03-16 15:22:37
 
 ## Project Overview
 - Project Name: frontend

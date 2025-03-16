@@ -1,30 +1,36 @@
-# backend/tests/utils.py
-"""
-Testing utilities and helpers.
-
-This module provides utility functions for:
-- Creating test data
-- Making authenticated API requests
-- Comparing API responses
-- Validating model instances
-
-These utilities help reduce code duplication in tests and
-provide consistent patterns for common testing tasks.
-"""
-
+# /backend/tests/utils.py
 from __future__ import annotations
 
 import json
+import random
+import string
 import uuid
-from typing import Any, Dict, List, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar, cast
 
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 from pydantic import BaseModel
 
-# Generic type for model
 M = TypeVar('M', bound=BaseModel)
 
+def create_random_string(length: int = 10) -> str:
+    """Create a random string for test data.
+
+    Args:
+        length: Length of the string to generate, defaults to 10
+
+    Returns:
+        str: Random string
+    """
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+def create_random_email() -> str:
+    """Create a random email for test data.
+
+    Returns:
+        str: Random email address
+    """
+    return f"{create_random_string(8)}@{create_random_string(6)}.com"
 
 async def make_authenticated_request(
     client: AsyncClient,
@@ -33,8 +39,7 @@ async def make_authenticated_request(
     token: str,
     **kwargs: Any
 ) -> Any:
-    """
-    Make an authenticated request to the API.
+    """Make an authenticated request to the API.
 
     Args:
         client: HTTPX AsyncClient
@@ -49,58 +54,23 @@ async def make_authenticated_request(
     Raises:
         ValueError: If invalid HTTP method is provided
     """
-    # Add authorization header
-    headers = kwargs.get("headers", {})
-    headers["Authorization"] = f"Bearer {token}"
-    kwargs["headers"] = headers
-
-    # Call appropriate client method
-    method = method.lower()
-    if method == "get":
-        return await client.get(url, **kwargs)
-    elif method == "post":
-        return await client.post(url, **kwargs)
-    elif method == "put":
-        return await client.put(url, **kwargs)
-    elif method == "delete":
-        return await client.delete(url, **kwargs)
+    headers = {"Authorization": f"Bearer {token}"}
+    if "headers" in kwargs:
+        headers.update(kwargs.pop("headers"))
+    
+    if method.lower() == "get":
+        return await client.get(url, headers=headers, **kwargs)
+    elif method.lower() == "post":
+        return await client.post(url, headers=headers, **kwargs)
+    elif method.lower() == "put":
+        return await client.put(url, headers=headers, **kwargs)
+    elif method.lower() == "delete":
+        return await client.delete(url, headers=headers, **kwargs)
     else:
         raise ValueError(f"Unsupported HTTP method: {method}")
 
-
-def validate_model_response(
-    response_data: Dict[str, Any],
-    model_type: Type[M],
-    exclude_fields: Optional[List[str]] = None
-) -> M:
-    """
-    Validate that an API response matches a model schema.
-
-    Args:
-        response_data: API response data
-        model_type: Pydantic model class to validate against
-        exclude_fields: Fields to exclude from validation
-
-    Returns:
-        M: Validated model instance
-
-    Raises:
-        ValueError: If response doesn't match model schema
-    """
-    # Parse response data with model
-    exclude_fields = exclude_fields or []
-    exclude_set = {field: True for field in exclude_fields}
-
-    try:
-        model_instance = model_type(**response_data)
-        return model_instance
-    except Exception as e:
-        raise ValueError(f"Response doesn't match {model_type.__name__} schema: {e}")
-
-
 def assert_model_data_matches(model: Any, data: Dict[str, Any]) -> None:
-    """
-    Assert that a model instance data matches the provided data.
+    """Assert that a model instance data matches the provided data.
 
     Args:
         model: Model instance
@@ -109,35 +79,34 @@ def assert_model_data_matches(model: Any, data: Dict[str, Any]) -> None:
     Raises:
         AssertionError: If model data doesn't match expected data
     """
-    model_data = jsonable_encoder(model)
-
-    # Check each expected data field
     for key, value in data.items():
-        assert key in model_data, f"Key '{key}' not found in model data"
-        assert model_data[key] == value, f"Value mismatch for '{key}': expected '{value}', got '{model_data[key]}'"
+        assert getattr(model, key) == value, f"Model {key} doesn't match: {getattr(model, key)} != {value}"
 
-
-def create_random_string(length: int = 10) -> str:
-    """
-    Create a random string for test data.
+def validate_model_response(
+    response_data: Dict[str, Any],
+    model_type: Type[M],
+    exclude_fields: Optional[List[str]] = None
+) -> M:
+    """Validate that an API response matches a model schema.
 
     Args:
-        length: Length of the string to generate
+        response_data: API response data
+        model_type: Pydantic model class to validate against
+        exclude_fields: Fields to exclude from validation, defaults to None
 
     Returns:
-        str: Random string
+        M: Validated model instance
+
+    Raises:
+        ValueError: If response doesn't match model schema
     """
-    import random
-    import string
-
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-
-
-def create_random_email() -> str:
-    """
-    Create a random email for test data.
-
-    Returns:
-        str: Random email address
-    """
-    return f"{create_random_string(8)}@example.com"
+    exclude_fields = exclude_fields or []
+    
+    # Remove excluded fields from response data
+    filtered_data = {k: v for k, v in response_data.items() if k not in exclude_fields}
+    
+    try:
+        # Try to parse the data using the model
+        return model_type.parse_obj(filtered_data)
+    except Exception as e:
+        raise ValueError(f"Response doesn't match {model_type.__name__} schema: {str(e)}")

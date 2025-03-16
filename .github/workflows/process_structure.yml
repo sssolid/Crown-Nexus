@@ -5,6 +5,9 @@ on:
     branches:
       - main  # Adjust this if you want to trigger on other branches
 
+permissions:
+  contents: write
+
 jobs:
   process_structure:
     runs-on: ubuntu-latest

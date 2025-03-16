@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 15:27:22
+Generated on 2025-03-16 15:33:55
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -295,14 +295,13 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api`
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/__init__.py`
 
 ##### Module: deps
-*API dependency providers.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/api/deps.py`
 
 **Imports:**
 ```python
 from __future__ import annotations
 from datetime import datetime
-from typing import Annotated, Dict, Optional, Union
+from typing import Annotated, Dict, List, Optional, Union
 from fastapi import Depends, HTTPException, Query, WebSocket, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -311,18 +310,19 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.websockets import WebSocketDisconnect
 from app.core.config import settings
+from app.core.exceptions import AuthenticationException, ErrorCode, PermissionDeniedException
 from app.core.logging import get_logger, set_user_id
+from app.core.permissions import Permission, PermissionChecker
+from app.core.security import TokenData, decode_token, oauth2_scheme
 from app.db.session import get_db
 from app.models.user import User, UserRole
-from app.schemas.user import TokenPayload
+from app.repositories.user import UserRepository
+from app.utils.errors import ensure_not_none
 ```
 
 **Global Variables:**
 ```python
 logger = logger = get_logger("app.api.deps")
-oauth2_scheme = oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/auth/login"
-)
 PaginationParams = PaginationParams = Dict[str, Union[int, float]]
 ```
 
@@ -337,7 +337,7 @@ Args: current_user: Current authenticated user
 
 Returns: User: Current active admin user
 
-Raises: HTTPException: If user is not an admin"""
+Raises: PermissionDeniedException: If user is not an admin"""
 ```
 
 ```python
@@ -350,7 +350,7 @@ Args: current_user: Current authenticated user
 
 Returns: User: Current active user
 
-Raises: HTTPException: If user is inactive"""
+Raises: AuthenticationException: If user is inactive"""
 ```
 
 ```python
@@ -363,7 +363,7 @@ Args: db: Database session token: JWT token
 
 Returns: User: Authenticated user
 
-Raises: HTTPException: If authentication fails, token is invalid, or user doesn't exist"""
+Raises: AuthenticationException: If authentication fails"""
 ```
 
 ```python
@@ -389,7 +389,7 @@ Args: current_user: Current authenticated user
 
 Returns: User: Current active manager or admin user
 
-Raises: HTTPException: If user is not a manager or admin"""
+Raises: PermissionDeniedException: If user is not a manager or admin"""
 ```
 
 ```python
@@ -411,7 +411,25 @@ This dependency generates pagination parameters based on page number and size, w
 
 Args: page: Page number (starting from 1) page_size: Number of items per page (max 100)
 
-Returns: Dict: Pagination parameters including: - skip: Number of items to skip - limit: Number of items to return - page: Current page number - page_size: Items per page"""
+Returns: Dict: Pagination parameters"""
+```
+
+```python
+def require_permission(permission):
+    """Dependency to require a specific permission.
+
+Args: permission: Required permission
+
+Returns: Callable: Dependency function"""
+```
+
+```python
+def require_permissions(permissions, require_all):
+    """Dependency to require specific permissions.
+
+Args: permissions: List of required permissions require_all: Whether all permissions are required (AND) or any (OR)
+
+Returns: Callable: Dependency function"""
 ```
 
 ##### Package: v1

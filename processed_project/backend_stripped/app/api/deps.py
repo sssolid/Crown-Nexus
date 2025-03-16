@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
-from typing import Annotated, Dict, Optional, Union
+from typing import Annotated, Dict, List, Optional, Union
 from fastapi import Depends, HTTPException, Query, WebSocket, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -9,118 +9,81 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.websockets import WebSocketDisconnect
 from app.core.config import settings
+from app.core.exceptions import AuthenticationException, ErrorCode, PermissionDeniedException
 from app.core.logging import get_logger, set_user_id
+from app.core.permissions import Permission, PermissionChecker
+from app.core.security import TokenData, decode_token, oauth2_scheme
 from app.db.session import get_db
 from app.models.user import User, UserRole
-from app.schemas.user import TokenPayload
+from app.repositories.user import UserRepository
+from app.utils.errors import ensure_not_none
 logger = get_logger('app.api.deps')
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f'{settings.API_V1_STR}/auth/login')
-async def get_current_user(db: Annotated[AsyncSession, Depends(get_db)], token: Annotated[str, Depends(oauth2_scheme)]) -> User:
-    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials', headers={'WWW-Authenticate': 'Bearer'})
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-        token_data = TokenPayload(**payload)
-        current_time = int(datetime.utcnow().timestamp())
-        if token_data.exp < current_time:
-            logger.warning('Token expired', token_exp=token_data.exp, current_time=current_time, expires_in=token_data.exp - current_time)
-            raise credentials_exception
-    except (JWTError, ValidationError) as e:
-        logger.warning('Token validation failed', error=str(e), error_type=type(e).__name__)
-        raise credentials_exception from e
-    stmt = select(User).where(User.id == token_data.sub)
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
-    if user is None:
-        logger.warning('User from token not found', user_id=token_data.sub)
-        raise credentials_exception
-    set_user_id(str(user.id))
-    logger.debug('User authenticated', user_id=str(user.id), user_role=user.role)
-    return user
-async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]) -> User:
-    if not current_user.is_active:
-        logger.warning('Inactive user attempted access', user_id=str(current_user.id))
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Inactive user')
-    return current_user
-async def get_admin_user(current_user: Annotated[User, Depends(get_current_active_user)]) -> User:
-    if current_user.role != UserRole.ADMIN:
-        logger.warning('Non-admin user attempted admin action', user_id=str(current_user.id), user_role=current_user.role)
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Insufficient permissions')
-    return current_user
-async def get_manager_user(current_user: Annotated[User, Depends(get_current_active_user)]) -> User:
-    if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
-        logger.warning('Non-manager user attempted manager action', user_id=str(current_user.id), user_role=current_user.role)
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Insufficient permissions')
-    return current_user
 PaginationParams = Dict[str, Union[int, float]]
-def get_pagination(page: Annotated[int, Query(ge=1, description='Page number')]=1, page_size: Annotated[int, Query(ge=1, le=100, description='Items per page')]=20) -> PaginationParams:
-    page = max(1, page)
-    page_size = max(1, min(100, page_size))
-    return {'skip': (page - 1) * page_size, 'limit': page_size, 'page': page, 'page_size': page_size}
-async def get_optional_user(db: Annotated[AsyncSession, Depends(get_db)], token: str=Depends(OAuth2PasswordBearer(tokenUrl=f'{settings.API_V1_STR}/auth/login', auto_error=False))) -> Optional[User]:
-    if not token:
-        logger.debug('No authentication token provided')
+async def get_current_user(db: AsyncSession=Depends(get_db), token: str=Depends(oauth2_scheme)) -> User:
+    try:
+        token_data = await decode_token(token)
+        user_repo = UserRepository(db)
+        user = await user_repo.get_by_id(token_data.sub)
+        if user is None:
+            logger.warning(f'User not found: {token_data.sub}')
+            raise AuthenticationException(message='User not found', code=ErrorCode.AUTHENTICATION_FAILED)
+        set_user_id(str(user.id))
+        return user
+    except (JWTError, ValidationError) as e:
+        logger.warning(f'Token validation error: {str(e)}')
+        raise AuthenticationException(message='Could not validate credentials', code=ErrorCode.AUTHENTICATION_FAILED) from e
+async def get_current_active_user(current_user: User=Depends(get_current_user)) -> User:
+    if not current_user.is_active:
+        logger.warning(f'Inactive user attempted login: {current_user.id}')
+        raise AuthenticationException(message='Inactive user', code=ErrorCode.USER_NOT_ACTIVE)
+    return current_user
+async def get_admin_user(current_user: User=Depends(get_current_active_user)) -> User:
+    if not PermissionChecker.has_permission(current_user, Permission.SYSTEM_ADMIN):
+        logger.warning(f'Non-admin user attempted admin action: {current_user.email}', extra={'user_id': str(current_user.id), 'role': current_user.role})
+        raise PermissionDeniedException(message='Admin privileges required')
+    return current_user
+async def get_manager_user(current_user: User=Depends(get_current_active_user)) -> User:
+    if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
+        logger.warning(f'Non-manager user attempted manager action: {current_user.email}', extra={'user_id': str(current_user.id), 'role': current_user.role})
+        raise PermissionDeniedException(message='Manager privileges required')
+    return current_user
+async def get_optional_user(db: AsyncSession=Depends(get_db), token: Optional[str]=Depends(oauth2_scheme)) -> Optional[User]:
+    if token is None:
         return None
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-        token_data = TokenPayload(**payload)
-        current_time = int(datetime.utcnow().timestamp())
-        if token_data.exp < current_time:
-            logger.debug('Optional token expired', token_exp=token_data.exp, current_time=current_time)
-            return None
-        stmt = select(User).where(User.id == token_data.sub)
-        result = await db.execute(stmt)
-        user = result.scalar_one_or_none()
-        if user and user.is_active:
-            set_user_id(str(user.id))
-            logger.debug('Optional user authenticated', user_id=str(user.id), user_role=user.role)
-            return user
-        if not user:
-            logger.debug('Optional token user not found', user_id=token_data.sub)
-        elif not user.is_active:
-            logger.debug('Optional token user is inactive', user_id=str(user.id))
-    except (JWTError, ValidationError) as e:
-        logger.debug('Optional token validation failed', error=str(e), error_type=type(e).__name__)
-    return None
+        return await get_current_user(db, token)
+    except AuthenticationException:
+        return None
 async def get_current_user_ws(websocket: WebSocket, db: AsyncSession=Depends(get_db)) -> User:
     try:
         token = websocket.query_params.get('token')
-        if not token and 'token' in websocket.cookies:
-            token = websocket.cookies['token']
         if not token:
-            headers = dict(websocket.headers)
-            auth_header = headers.get('authorization', '')
-            if auth_header.startswith('Bearer '):
-                token = auth_header[7:]
+            cookies = websocket.cookies
+            if 'token' in cookies:
+                token = cookies['token']
         if not token:
-            logger.warning('WebSocket connection without token', client=websocket.client.host)
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            logger.warning('WebSocket connection without token')
             raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
-        credentials_exception = WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-            token_data = TokenPayload(**payload)
-            current_time = int(datetime.utcnow().timestamp())
-            if token_data.exp < current_time:
-                logger.warning('WebSocket token expired', token_exp=token_data.exp, current_time=current_time, client=websocket.client.host)
-                await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-                raise credentials_exception
-        except (JWTError, ValidationError) as e:
-            logger.warning('WebSocket token validation failed', error=str(e), error_type=type(e).__name__, client=websocket.client.host)
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-            raise credentials_exception
-        stmt = select(User).where(User.id == token_data.sub)
-        result = await db.execute(stmt)
-        user = result.scalar_one_or_none()
+        token_data = await decode_token(token)
+        user_repo = UserRepository(db)
+        user = await user_repo.get_by_id(token_data.sub)
         if user is None or not user.is_active:
-            logger.warning('WebSocket user not found or inactive', user_id=token_data.sub, client=websocket.client.host)
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-            raise credentials_exception
-        set_user_id(str(user.id))
-        logger.debug('WebSocket user authenticated', user_id=str(user.id), user_role=user.role, client=websocket.client.host)
+            logger.warning(f'WebSocket auth failed: User not found or inactive: {token_data.sub}')
+            raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
         return user
-    except WebSocketDisconnect:
-        raise
-    except Exception as e:
-        logger.exception('Unexpected error in WebSocket authentication', error=str(e), error_type=type(e).__name__, client=getattr(websocket, 'client', {}).get('host', 'unknown'))
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+    except (JWTError, ValidationError, AuthenticationException) as e:
+        logger.warning(f'WebSocket auth error: {str(e)}')
         raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
+def require_permissions(permissions: List[Permission], require_all: bool=True):
+    async def dependency(current_user: User=Depends(get_current_active_user)):
+        if not PermissionChecker.has_permissions(current_user, permissions, require_all):
+            permission_str = ' and '.join((p.value for p in permissions)) if require_all else ' or '.join((p.value for p in permissions))
+            logger.warning(f'Permission denied: {current_user.email} missing required permissions: {permission_str}', extra={'user_id': str(current_user.id), 'user_role': current_user.role, 'permissions': [p.value for p in permissions]})
+            raise PermissionDeniedException(message=f"You don't have the required permissions: {permission_str}")
+        return current_user
+    return dependency
+def require_permission(permission: Permission):
+    return require_permissions([permission])
+def get_pagination(page: int=Query(1, ge=1, description='Page number'), page_size: int=Query(20, ge=1, le=100, description='Items per page')) -> PaginationParams:
+    skip = (page - 1) * page_size
+    return {'skip': skip, 'limit': page_size, 'page': page, 'page_size': page_size}

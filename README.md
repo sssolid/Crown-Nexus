@@ -2,6 +2,8 @@
 
 A B2B platform for the automotive aftermarket industry, providing a centralized hub for product data, fitment information, pricing, media, and customer support.
 
+[![Process Structure on Push](https://github.com/sssolid/Crown-Nexus/actions/workflows/process_structure.yml/badge.svg)](https://github.com/sssolid/Crown-Nexus/actions/workflows/process_structure.yml)
+
 ## Project Structure
 
 - **backend/**: FastAPI backend API

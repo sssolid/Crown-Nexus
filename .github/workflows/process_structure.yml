@@ -43,6 +43,14 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+
+          # Pull latest changes (but ignore conflicts)
+          git fetch origin
+          git checkout main
+          git pull --rebase --autostash
+
+          # Commit ONLY the processed_project folder
           git add processed_project/
-          git commit -m "Update processed structure [Automated]"
-          git push
+          git commit -m "Update processed structure [Automated]" || echo "No changes to commit"
+
+          git push origin main --no-verify

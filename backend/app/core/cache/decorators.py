@@ -1,4 +1,4 @@
-# /backend/app/core/cache/decorators.py
+# app/core/cache/decorators.py
 from __future__ import annotations
 
 import asyncio
@@ -11,252 +11,263 @@ from app.core.cache.keys import generate_cache_key
 from app.core.cache.manager import cache_manager
 from app.core.logging import get_logger
 
-F = TypeVar('F', bound=Callable[..., Any])
-
+F = TypeVar("F", bound=Callable[..., Any])
 logger = get_logger("app.core.cache.decorators")
+
 
 def cached(
     ttl: Optional[int] = 300,
     prefix: str = "cache",
     backend: Optional[str] = None,
     skip_args: Optional[List[int]] = None,
-    skip_kwargs: Optional[List[str]] = None
+    skip_kwargs: Optional[List[str]] = None,
+    tags: Optional[List[str]] = None
 ) -> Callable[[F], F]:
     """Decorator for caching function results.
-    
-    This decorator can be used on both synchronous and asynchronous functions.
-    
+
     Args:
-        ttl: Time-to-live in seconds (None for no expiration)
+        ttl: Time-to-live in seconds
         prefix: Cache key prefix
-        backend: Cache backend to use
-        skip_args: Indices of positional arguments to skip
-        skip_kwargs: Names of keyword arguments to skip
-        
+        backend: Optional cache backend name
+        skip_args: Optional list of argument indices to skip in key generation
+        skip_kwargs: Optional list of keyword argument names to skip in key generation
+        tags: Optional list of tags for cache invalidation
+
     Returns:
-        Callable: Decorated function
+        Decorator function
     """
     def decorator(func: F) -> F:
-        # Check if function is coroutine
         is_coroutine = asyncio.iscoroutinefunction(func)
-        
+
         if is_coroutine:
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-                # Generate cache key
-                key = generate_cache_key(
-                    prefix,
-                    func,
-                    args,
-                    kwargs,
-                    skip_args,
-                    skip_kwargs
-                )
-                
-                # Try to get cached value
+                key = generate_cache_key(prefix, func, args, kwargs, skip_args, skip_kwargs)
                 cached_value = await cache_manager.get(key, backend)
-                
-                # If found, return cached value
+
                 if cached_value is not None:
                     logger.debug(f"Cache hit for key: {key}")
                     return cached_value
-                    
-                # If not found, call function and cache result
+
                 logger.debug(f"Cache miss for key: {key}")
                 result = await func(*args, **kwargs)
-                
-                # Cache result
-                await cache_manager.set(key, result, ttl, backend)
-                
+
+                if result is not None:
+                    await cache_manager.set(key, result, ttl, backend)
+
+                    # Add tags if Redis backend is available
+                    if tags and "redis" in cache_manager.backends:
+                        for tag in tags:
+                            tag_key = f"cache:tag:{tag}"
+                            redis_backend = cache_manager.backends["redis"]
+                            if hasattr(redis_backend, "add_to_set"):
+                                await redis_backend.add_to_set(tag_key, key)
+
                 return result
-                
+
             return cast(F, async_wrapper)
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                # Generate cache key
-                key = generate_cache_key(
-                    prefix,
-                    func,
-                    args,
-                    kwargs,
-                    skip_args,
-                    skip_kwargs
-                )
-                
-                # Try to get cached value
-                cached_value = asyncio.run(cache_manager.get(key, backend))
-                
-                # If found, return cached value
+                loop = asyncio.get_event_loop() if asyncio.get_event_loop_policy().get_event_loop().is_running() else asyncio.new_event_loop()
+
+                key = generate_cache_key(prefix, func, args, kwargs, skip_args, skip_kwargs)
+
+                # Check cache
+                cached_value = loop.run_until_complete(cache_manager.get(key, backend))
                 if cached_value is not None:
                     logger.debug(f"Cache hit for key: {key}")
                     return cached_value
-                    
-                # If not found, call function and cache result
+
                 logger.debug(f"Cache miss for key: {key}")
                 result = func(*args, **kwargs)
-                
-                # Cache result
-                asyncio.run(cache_manager.set(key, result, ttl, backend))
-                
+
+                if result is not None:
+                    loop.run_until_complete(cache_manager.set(key, result, ttl, backend))
+
+                    # Add tags if Redis backend is available
+                    if tags and "redis" in cache_manager.backends:
+                        for tag in tags:
+                            tag_key = f"cache:tag:{tag}"
+                            redis_backend = cache_manager.backends["redis"]
+                            if hasattr(redis_backend, "add_to_set"):
+                                loop.run_until_complete(redis_backend.add_to_set(tag_key, key))
+
                 return result
-                
+
             return cast(F, sync_wrapper)
-            
+
     return decorator
+
 
 def invalidate_cache(
     pattern: str,
     prefix: str = "cache",
-    backend: Optional[str] = None
+    backend: Optional[str] = None,
+    tags: Optional[List[str]] = None
 ) -> Callable[[F], F]:
-    """Decorator for invalidating cache entries matching a pattern.
-    
-    This decorator can be used on both synchronous and asynchronous functions.
-    
+    """Decorator to invalidate cache after function execution.
+
     Args:
         pattern: Cache key pattern to invalidate
         prefix: Cache key prefix
-        backend: Cache backend to use
-        
+        backend: Optional cache backend name
+        tags: Optional list of tags to invalidate
+
     Returns:
-        Callable: Decorated function
+        Decorator function
     """
     def decorator(func: F) -> F:
-        # Check if function is coroutine
         is_coroutine = asyncio.iscoroutinefunction(func)
-        
+
         if is_coroutine:
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-                # Call function
                 result = await func(*args, **kwargs)
-                
-                # Invalidate cache
+
+                # Invalidate by pattern
                 pattern_key = f"{prefix}:{pattern}"
                 count = await cache_manager.invalidate_pattern(pattern_key, backend)
-                
                 logger.debug(f"Invalidated {count} cache entries matching pattern: {pattern_key}")
-                
+
+                # Invalidate by tags if Redis backend is available
+                if tags and "redis" in cache_manager.backends:
+                    for tag in tags:
+                        tag_key = f"cache:tag:{tag}"
+                        redis_backend = cache_manager.backends["redis"]
+                        if hasattr(redis_backend, "get_set_members"):
+                            keys = await redis_backend.get_set_members(tag_key)
+                            if keys:
+                                await cache_manager.delete_many(keys)
+                                await redis_backend.delete(tag_key)
+                                logger.debug(f"Invalidated tag: {tag} with {len(keys)} keys")
+
                 return result
-                
+
             return cast(F, async_wrapper)
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                # Call function
+                loop = asyncio.get_event_loop() if asyncio.get_event_loop_policy().get_event_loop().is_running() else asyncio.new_event_loop()
+
                 result = func(*args, **kwargs)
-                
-                # Invalidate cache
+
+                # Invalidate by pattern
                 pattern_key = f"{prefix}:{pattern}"
-                count = asyncio.run(cache_manager.invalidate_pattern(pattern_key, backend))
-                
+                count = loop.run_until_complete(cache_manager.invalidate_pattern(pattern_key, backend))
                 logger.debug(f"Invalidated {count} cache entries matching pattern: {pattern_key}")
-                
+
+                # Invalidate by tags if Redis backend is available
+                if tags and "redis" in cache_manager.backends:
+                    for tag in tags:
+                        tag_key = f"cache:tag:{tag}"
+                        redis_backend = cache_manager.backends["redis"]
+                        if hasattr(redis_backend, "get_set_members"):
+                            keys = loop.run_until_complete(redis_backend.get_set_members(tag_key))
+                            if keys:
+                                loop.run_until_complete(cache_manager.delete_many(keys))
+                                loop.run_until_complete(redis_backend.delete(tag_key))
+                                logger.debug(f"Invalidated tag: {tag} with {len(keys)} keys")
+
                 return result
-                
+
             return cast(F, sync_wrapper)
-            
+
     return decorator
+
 
 def cache_aside(
     key_func: Callable[..., str],
     ttl: Optional[int] = 300,
-    backend: Optional[str] = None
+    backend: Optional[str] = None,
+    tags: Optional[List[str]] = None
 ) -> Callable[[F], F]:
     """Decorator for implementing the cache-aside pattern.
-    
-    This decorator is used for functions that fetch data from a slow data source.
-    It tries to get data from the cache first, and if not found, fetches from
-    the data source and caches the result.
-    
+
     Args:
-        key_func: Function to generate cache key from arguments
-        ttl: Time-to-live in seconds (None for no expiration)
-        backend: Cache backend to use
-        
+        key_func: Function to generate cache key
+        ttl: Time-to-live in seconds
+        backend: Optional cache backend name
+        tags: Optional list of tags for cache invalidation
+
     Returns:
-        Callable: Decorated function
+        Decorator function
     """
     def decorator(func: F) -> F:
-        # Check if function is coroutine
         is_coroutine = asyncio.iscoroutinefunction(func)
-        
+
         if is_coroutine:
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-                # Generate cache key
                 key = key_func(*args, **kwargs)
-                
-                # Try to get cached value
                 cached_value = await cache_manager.get(key, backend)
-                
-                # If found, return cached value
+
                 if cached_value is not None:
                     logger.debug(f"Cache hit for key: {key}")
                     return cached_value
-                    
-                # If not found, call function and cache result
+
                 logger.debug(f"Cache miss for key: {key}")
                 result = await func(*args, **kwargs)
-                
-                # Cache result if not None
+
                 if result is not None:
                     await cache_manager.set(key, result, ttl, backend)
-                
+
+                    # Add tags if Redis backend is available
+                    if tags and "redis" in cache_manager.backends:
+                        for tag in tags:
+                            tag_key = f"cache:tag:{tag}"
+                            redis_backend = cache_manager.backends["redis"]
+                            if hasattr(redis_backend, "add_to_set"):
+                                await redis_backend.add_to_set(tag_key, key)
+
                 return result
-                
+
             return cast(F, async_wrapper)
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                # Generate cache key
+                loop = asyncio.get_event_loop() if asyncio.get_event_loop_policy().get_event_loop().is_running() else asyncio.new_event_loop()
+
                 key = key_func(*args, **kwargs)
-                
-                # Try to get cached value
-                cached_value = asyncio.run(cache_manager.get(key, backend))
-                
-                # If found, return cached value
+                cached_value = loop.run_until_complete(cache_manager.get(key, backend))
+
                 if cached_value is not None:
                     logger.debug(f"Cache hit for key: {key}")
                     return cached_value
-                    
-                # If not found, call function and cache result
+
                 logger.debug(f"Cache miss for key: {key}")
                 result = func(*args, **kwargs)
-                
-                # Cache result if not None
+
                 if result is not None:
-                    asyncio.run(cache_manager.set(key, result, ttl, backend))
-                
+                    loop.run_until_complete(cache_manager.set(key, result, ttl, backend))
+
+                    # Add tags if Redis backend is available
+                    if tags and "redis" in cache_manager.backends:
+                        for tag in tags:
+                            tag_key = f"cache:tag:{tag}"
+                            redis_backend = cache_manager.backends["redis"]
+                            if hasattr(redis_backend, "add_to_set"):
+                                loop.run_until_complete(redis_backend.add_to_set(tag_key, key))
+
                 return result
-                
+
             return cast(F, sync_wrapper)
-            
+
     return decorator
 
-def memoize(
-    ttl: Optional[int] = None,
-    max_size: int = 128
-) -> Callable[[F], F]:
-    """Decorator for memoizing function results in memory.
-    
-    This decorator is used for caching function results in memory,
-    similar to functools.lru_cache but with TTL support.
-    
+
+def memoize(ttl: Optional[int] = None, max_size: int = 128) -> Callable[[F], F]:
+    """In-memory memoization decorator.
+
     Args:
-        ttl: Time-to-live in seconds (None for no expiration)
-        max_size: Maximum number of items to store in the cache
-        
+        ttl: Optional time-to-live in seconds
+        max_size: Maximum cache size
+
     Returns:
-        Callable: Decorated function
+        Decorator function
     """
-    def decorator(func: F) -> F:
-        # Use memory cache backend
-        return cached(
-            ttl=ttl,
-            prefix=f"memoize:{func.__module__}.{func.__qualname__}",
-            backend="memory"
-        )(func)
-        
-    return decorator
+    return cached(
+        ttl=ttl,
+        prefix=f"memoize",
+        backend="memory"
+    )

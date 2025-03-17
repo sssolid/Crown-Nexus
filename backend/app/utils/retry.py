@@ -1,4 +1,22 @@
-# /backend/app/utils/retry.py
+# app/utils/retry.py
+"""
+Retry utilities for improving resilience of external service calls.
+
+This module provides decorators and utilities for automatically retrying operations
+that might fail due to transient issues, such as network timeouts, rate limiting,
+or temporary service unavailability.
+
+Features include:
+- Configurable retry count, delay, and backoff
+- Support for both synchronous and asynchronous functions
+- Jitter to prevent thundering herd problems
+- Exception filtering to retry only on specific errors
+- Timeout handling for operations
+
+All functions include proper error handling, logging, and configurable options to
+ensure external service calls are resilient while maintaining responsiveness.
+"""
+
 from __future__ import annotations
 
 import asyncio
@@ -6,170 +24,240 @@ import functools
 import logging
 import random
 import time
-from typing import Any, Callable, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Callable, List, Optional, Protocol, Type, TypeVar, Union, cast, overload
 
 from app.core.exceptions import (
     NetworkException,
     RateLimitException,
     ServiceUnavailableException,
     TimeoutException,
+    ErrorCode,
 )
 from app.core.logging import get_logger
 
-F = TypeVar('F', bound=Callable[..., Any])
-T = TypeVar('T')
-
+# Initialize structured logger
 logger = get_logger("app.utils.retry")
 
+# Type variables
+F = TypeVar("F", bound=Callable[..., Any])
+T = TypeVar("T")
+
+
+class RetryableError(Protocol):
+    """Protocol defining retryable error behaviors."""
+
+    def is_retryable(self) -> bool:
+        """Determine if exception should trigger retry."""
+        ...
+
+
+@overload
 def retry(
+    retries: int = ...,
+    delay: float = ...,
+    backoff_factor: float = ...,
+    jitter: bool = ...,
+    exceptions: Union[Type[Exception], List[Type[Exception]]] = ...
+) -> Callable[[F], F]:
+    ...
+
+
+@overload
+def retry(
+    func: F
+) -> F:
+    ...
+
+
+def retry(
+    func: Optional[F] = None,
+    *,
     retries: int = 3,
     delay: float = 0.1,
     backoff_factor: float = 2.0,
     jitter: bool = True,
     exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
-) -> Callable[[F], F]:
-    """Retry decorator for synchronous functions.
-    
-    This decorator retries a function when it raises specified exceptions,
-    with exponential backoff and optional jitter.
-    
+) -> Union[Callable[[F], F], F]:
+    """Decorator to retry synchronous functions with exponential backoff.
+
     Args:
-        retries: Maximum number of retries
+        func: Function to decorate (for direct use)
+        retries: Maximum number of retry attempts
         delay: Initial delay between retries in seconds
-        backoff_factor: Backoff multiplier (how much to increase delay each retry)
-        jitter: Whether to add random jitter to delay
-        exceptions: Exception types to catch and retry
-        
+        backoff_factor: Multiplier for delay after each retry
+        jitter: Whether to add randomness to delay timing
+        exceptions: Exception type(s) to catch and retry on
+
     Returns:
-        Callable: Decorated function
+        Callable: Decorated function that will retry on failure
+
+    Examples:
+        # As decorator with default settings
+        @retry
+        def fetch_data():
+            ...
+
+        # As decorator with custom settings
+        @retry(retries=5, delay=0.5, exceptions=[ConnectionError, TimeoutError])
+        def fetch_data():
+            ...
     """
-    # Ensure exceptions is a tuple
+    # Convert single exception to tuple
     if isinstance(exceptions, type) and issubclass(exceptions, Exception):
         exceptions = (exceptions,)
     elif isinstance(exceptions, list):
         exceptions = tuple(exceptions)
-        
-    def decorator(func: F) -> F:
-        @functools.wraps(func)
+
+    def decorator(fn: F) -> F:
+        @functools.wraps(fn)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             last_exception = None
-            
-            # Try multiple times
+
             for attempt in range(retries + 1):
                 try:
-                    # Execute function
-                    return func(*args, **kwargs)
+                    return fn(*args, **kwargs)
                 except exceptions as e:
-                    # Save exception for later
                     last_exception = e
-                    
-                    # Last attempt, re-raise exception
+
+                    # Check if maximum retries reached
                     if attempt >= retries:
                         logger.warning(
-                            f"Function {func.__name__} failed after {retries + 1} attempts",
+                            f"Function {fn.__name__} failed after {retries + 1} attempts",
                             exc_info=e
                         )
                         raise
-                        
+
+                    # Check if exception has is_retryable method and it returns False
+                    if hasattr(e, "is_retryable") and not e.is_retryable():
+                        logger.info(
+                            f"Not retrying {fn.__name__} for non-retryable error: {str(e)}"
+                        )
+                        raise
+
                     # Calculate retry delay with exponential backoff
                     retry_delay = delay * (backoff_factor ** attempt)
-                    
-                    # Add jitter if enabled
+
+                    # Add jitter to prevent thundering herd
                     if jitter:
                         retry_delay = retry_delay * (0.5 + random.random())
-                        
-                    # Log retry attempt
+
                     logger.info(
-                        f"Retrying {func.__name__} after error: {str(e)}, "
+                        f"Retrying {fn.__name__} after error: {str(e)}, "
                         f"attempt {attempt + 1}/{retries + 1}, delay: {retry_delay:.2f}s"
                     )
-                    
-                    # Sleep before retrying
+
+                    # Wait before next attempt
                     time.sleep(retry_delay)
-                    
-            # This should never happen, but just in case
+
+            # This should not be reached, but just in case
             if last_exception:
                 raise last_exception
-                
-            return None  # Unreachable, but makes mypy happy
-            
+
+            return None  # Unreachable
+
         return cast(F, wrapper)
+
+    # Handle direct decoration
+    if func is not None:
+        return decorator(func)
+
     return decorator
 
+
 async def async_retry(
+    func: Optional[F] = None,
+    *,
     retries: int = 3,
     delay: float = 0.1,
     backoff_factor: float = 2.0,
     jitter: bool = True,
     exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
-) -> Callable[[F], F]:
-    """Retry decorator for asynchronous functions.
-    
-    This decorator retries an async function when it raises specified exceptions,
-    with exponential backoff and optional jitter.
-    
+) -> Union[Callable[[F], F], F]:
+    """Decorator to retry asynchronous functions with exponential backoff.
+
     Args:
-        retries: Maximum number of retries
+        func: Function to decorate (for direct use)
+        retries: Maximum number of retry attempts
         delay: Initial delay between retries in seconds
-        backoff_factor: Backoff multiplier (how much to increase delay each retry)
-        jitter: Whether to add random jitter to delay
-        exceptions: Exception types to catch and retry
-        
+        backoff_factor: Multiplier for delay after each retry
+        jitter: Whether to add randomness to delay timing
+        exceptions: Exception type(s) to catch and retry on
+
     Returns:
-        Callable: Decorated async function
+        Callable: Decorated async function that will retry on failure
+
+    Examples:
+        # As decorator with default settings
+        @async_retry
+        async def fetch_data():
+            ...
+
+        # As decorator with custom settings
+        @async_retry(retries=5, delay=0.5, exceptions=[ConnectionError, TimeoutError])
+        async def fetch_data():
+            ...
     """
-    # Ensure exceptions is a tuple
+    # Convert single exception to tuple
     if isinstance(exceptions, type) and issubclass(exceptions, Exception):
         exceptions = (exceptions,)
     elif isinstance(exceptions, list):
         exceptions = tuple(exceptions)
-        
-    def decorator(func: F) -> F:
-        @functools.wraps(func)
+
+    def decorator(fn: F) -> F:
+        @functools.wraps(fn)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             last_exception = None
-            
-            # Try multiple times
+
             for attempt in range(retries + 1):
                 try:
-                    # Execute function
-                    return await func(*args, **kwargs)
+                    return await fn(*args, **kwargs)
                 except exceptions as e:
-                    # Save exception for later
                     last_exception = e
-                    
-                    # Last attempt, re-raise exception
+
+                    # Check if maximum retries reached
                     if attempt >= retries:
                         logger.warning(
-                            f"Function {func.__name__} failed after {retries + 1} attempts",
+                            f"Function {fn.__name__} failed after {retries + 1} attempts",
                             exc_info=e
                         )
                         raise
-                        
+
+                    # Check if exception has is_retryable method and it returns False
+                    if hasattr(e, "is_retryable") and not e.is_retryable():
+                        logger.info(
+                            f"Not retrying {fn.__name__} for non-retryable error: {str(e)}"
+                        )
+                        raise
+
                     # Calculate retry delay with exponential backoff
                     retry_delay = delay * (backoff_factor ** attempt)
-                    
-                    # Add jitter if enabled
+
+                    # Add jitter to prevent thundering herd
                     if jitter:
                         retry_delay = retry_delay * (0.5 + random.random())
-                        
-                    # Log retry attempt
+
                     logger.info(
-                        f"Retrying {func.__name__} after error: {str(e)}, "
+                        f"Retrying {fn.__name__} after error: {str(e)}, "
                         f"attempt {attempt + 1}/{retries + 1}, delay: {retry_delay:.2f}s"
                     )
-                    
-                    # Sleep before retrying
+
+                    # Wait before next attempt
                     await asyncio.sleep(retry_delay)
-                    
-            # This should never happen, but just in case
+
+            # This should not be reached, but just in case
             if last_exception:
                 raise last_exception
-                
-            return None  # Unreachable, but makes mypy happy
-            
+
+            return None  # Unreachable
+
         return cast(F, wrapper)
+
+    # Handle direct decoration
+    if func is not None:
+        return decorator(func)
+
     return decorator
+
 
 def retry_on_network_errors(
     retries: int = 3,
@@ -177,19 +265,19 @@ def retry_on_network_errors(
     backoff_factor: float = 2.0,
     jitter: bool = True
 ) -> Callable[[F], F]:
-    """Retry decorator for functions that may encounter network errors.
-    
-    This decorator is specialized for network-related errors and uses
-    appropriate exception types.
-    
+    """Decorator to retry functions specifically on network-related errors.
+
+    This is a convenience wrapper around retry() with pre-configured exception types
+    for common network errors.
+
     Args:
-        retries: Maximum number of retries
+        retries: Maximum number of retry attempts
         delay: Initial delay between retries in seconds
-        backoff_factor: Backoff multiplier (how much to increase delay each retry)
-        jitter: Whether to add random jitter to delay
-        
+        backoff_factor: Multiplier for delay after each retry
+        jitter: Whether to add randomness to delay timing
+
     Returns:
-        Callable: Decorated function
+        Callable: Decorator function
     """
     return retry(
         retries=retries,
@@ -205,25 +293,26 @@ def retry_on_network_errors(
         ]
     )
 
+
 async def async_retry_on_network_errors(
     retries: int = 3,
     delay: float = 0.5,
     backoff_factor: float = 2.0,
     jitter: bool = True
 ) -> Callable[[F], F]:
-    """Async retry decorator for functions that may encounter network errors.
-    
-    This decorator is specialized for network-related errors in async functions
-    and uses appropriate exception types.
-    
+    """Decorator to retry async functions specifically on network-related errors.
+
+    This is a convenience wrapper around async_retry() with pre-configured exception types
+    for common network errors.
+
     Args:
-        retries: Maximum number of retries
+        retries: Maximum number of retry attempts
         delay: Initial delay between retries in seconds
-        backoff_factor: Backoff multiplier (how much to increase delay each retry)
-        jitter: Whether to add random jitter to delay
-        
+        backoff_factor: Multiplier for delay after each retry
+        jitter: Whether to add randomness to delay timing
+
     Returns:
-        Callable: Decorated async function
+        Callable: Decorator function
     """
     return await async_retry(
         retries=retries,
@@ -236,8 +325,10 @@ async def async_retry_on_network_errors(
             ServiceUnavailableException,
             ConnectionError,
             TimeoutError,
+            asyncio.TimeoutError,
         ]
     )
+
 
 def retry_with_timeout(
     retries: int = 3,
@@ -247,23 +338,23 @@ def retry_with_timeout(
     jitter: bool = True,
     exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
 ) -> Callable[[F], F]:
-    """Retry decorator with timeout for synchronous functions.
-    
-    This decorator combines retry logic with a timeout for each attempt.
-    
+    """Decorator to retry functions with timeout.
+
+    Combines timeout functionality with retry logic.
+
     Args:
-        retries: Maximum number of retries
+        retries: Maximum number of retry attempts
         delay: Initial delay between retries in seconds
-        timeout: Timeout for each attempt in seconds
-        backoff_factor: Backoff multiplier (how much to increase delay each retry)
-        jitter: Whether to add random jitter to delay
-        exceptions: Exception types to catch and retry
-        
+        timeout: Maximum execution time in seconds
+        backoff_factor: Multiplier for delay after each retry
+        jitter: Whether to add randomness to delay timing
+        exceptions: Exception type(s) to catch and retry on
+
     Returns:
-        Callable: Decorated function
+        Callable: Decorator function
     """
     def decorator(func: F) -> F:
-        # Use the retry decorator for the retry logic
+        # Create retry decorator
         retry_wrapper = retry(
             retries=retries,
             delay=delay,
@@ -271,35 +362,38 @@ def retry_with_timeout(
             jitter=jitter,
             exceptions=[*exceptions, TimeoutError]
         )
-        
+
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # This will be called by the retry decorator
             def timeout_wrapper() -> Any:
-                # Import here to avoid circular imports
+                """Execute function with timeout using signal."""
                 import signal
-                
-                # Define timeout handler
+
                 def timeout_handler(signum: int, frame: Any) -> None:
-                    raise TimeoutError(f"Function {func.__name__} timed out after {timeout} seconds")
-                
-                # Set timeout
+                    """Handle timeout signal."""
+                    raise TimeoutException(
+                        message=f"Function {func.__name__} timed out after {timeout} seconds",
+                        code=ErrorCode.TIMEOUT_ERROR
+                    )
+
+                # Set timeout handler
                 old_handler = signal.signal(signal.SIGALRM, timeout_handler)
                 signal.setitimer(signal.ITIMER_REAL, timeout)
-                
+
                 try:
-                    # Call function
                     return func(*args, **kwargs)
                 finally:
-                    # Reset timeout
+                    # Reset timer and handler
                     signal.setitimer(signal.ITIMER_REAL, 0)
                     signal.signal(signal.SIGALRM, old_handler)
-            
-            # Call the retry wrapper with our timeout wrapper
+
+            # Apply both timeout and retry
             return retry_wrapper(timeout_wrapper)()
-            
+
         return cast(F, wrapper)
+
     return decorator
+
 
 async def async_retry_with_timeout(
     retries: int = 3,
@@ -309,23 +403,23 @@ async def async_retry_with_timeout(
     jitter: bool = True,
     exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
 ) -> Callable[[F], F]:
-    """Retry decorator with timeout for asynchronous functions.
-    
-    This decorator combines retry logic with a timeout for each attempt.
-    
+    """Decorator to retry async functions with timeout.
+
+    Combines timeout functionality with retry logic for async functions.
+
     Args:
-        retries: Maximum number of retries
+        retries: Maximum number of retry attempts
         delay: Initial delay between retries in seconds
-        timeout: Timeout for each attempt in seconds
-        backoff_factor: Backoff multiplier (how much to increase delay each retry)
-        jitter: Whether to add random jitter to delay
-        exceptions: Exception types to catch and retry
-        
+        timeout: Maximum execution time in seconds
+        backoff_factor: Multiplier for delay after each retry
+        jitter: Whether to add randomness to delay timing
+        exceptions: Exception type(s) to catch and retry on
+
     Returns:
-        Callable: Decorated async function
+        Callable: Decorator function
     """
     def decorator(func: F) -> F:
-        # Use the async_retry decorator for the retry logic
+        # Create retry decorator
         retry_wrapper = await async_retry(
             retries=retries,
             delay=delay,
@@ -333,22 +427,22 @@ async def async_retry_with_timeout(
             jitter=jitter,
             exceptions=[*exceptions, asyncio.TimeoutError]
         )
-        
+
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # This will be called by the retry decorator
             async def timeout_wrapper() -> Any:
+                """Execute async function with timeout."""
                 try:
-                    # Call function with timeout
                     return await asyncio.wait_for(func(*args, **kwargs), timeout=timeout)
                 except asyncio.TimeoutError:
-                    # Convert asyncio timeout to our timeout exception
                     raise TimeoutException(
-                        f"Function {func.__name__} timed out after {timeout} seconds"
+                        message=f"Function {func.__name__} timed out after {timeout} seconds",
+                        code=ErrorCode.TIMEOUT_ERROR
                     )
-            
-            # Call the retry wrapper with our timeout wrapper
+
+            # Apply both timeout and retry
             return await retry_wrapper(timeout_wrapper)()
-            
+
         return cast(F, wrapper)
+
     return decorator

@@ -98,61 +98,51 @@ async def initialize_services() -> None:
     """Initialize all registered services."""
     logger.info("Initializing services")
 
-    # Initialize services that don't require DB
-    logging_service = dependency_manager.get("logging_service")
-    await logging_service.initialize()
+    # Initialize services in the correct order
+    services_order = [
+        "logging_service",
+        "error_handling_service",
+        "validation_service",
+        "metrics_service",
+        "cache_service",
+        "security_service",
+        "audit_service",
+        "media_service",
+    ]
 
-    error_handling_service = dependency_manager.get("error_handling_service")
-    await error_handling_service.initialize()
-
-    validation_service = dependency_manager.get("validation_service")
-    await validation_service.initialize()
-
-    metrics_service = dependency_manager.get("metrics_service")
-    await metrics_service.initialize()
-
-    cache_service = dependency_manager.get("cache_service")
-    await cache_service.initialize()
-
-    security_service = dependency_manager.get("security_service")
-    await security_service.initialize()
-
-    audit_service = dependency_manager.get("audit_service")
-    await audit_service.initialize()
-
-    # Services like media_service may need initialization without DB
-    media_service = dependency_manager.get("media_service")
-    await media_service.initialize()
+    for service_name in services_order:
+        try:
+            service = dependency_manager.get(service_name)
+            await service.initialize()
+            logger.info(f"Initialized {service_name}")
+        except Exception as e:
+            logger.error(f"Error initializing {service_name}: {str(e)}", exc_info=e)
 
     logger.info("Services initialized successfully")
 
 
 async def shutdown_services() -> None:
-    """Properly shut down all registered services."""
+    """Shut down all registered services."""
     logger.info("Shutting down services")
 
-    logging_service = dependency_manager.get("logging_service")
-    await logging_service.shutdown()
+    # Shutdown services in reverse order
+    services_order = [
+        "media_service",
+        "audit_service",
+        "security_service",
+        "cache_service",
+        "metrics_service",
+        "validation_service",
+        "error_handling_service",
+        "logging_service",
+    ]
 
-    error_handling_service = dependency_manager.get("error_handling_service")
-    await error_handling_service.shutdown()
-
-    validation_service = dependency_manager.get("validation_service")
-    await validation_service.shutdown()
-
-    metrics_service = dependency_manager.get("metrics_service")
-    await metrics_service.shutdown()
-
-    cache_service = dependency_manager.get("cache_service")
-    await cache_service.shutdown()
-
-    security_service = dependency_manager.get("security_service")
-    await security_service.shutdown()
-
-    audit_service = dependency_manager.get("audit_service")
-    await audit_service.shutdown()
-
-    media_service = dependency_manager.get("media_service")
-    await media_service.shutdown()
+    for service_name in services_order:
+        try:
+            service = dependency_manager.get(service_name)
+            await service.shutdown()
+            logger.info(f"Shut down {service_name}")
+        except Exception as e:
+            logger.error(f"Error shutting down {service_name}: {str(e)}", exc_info=e)
 
     logger.info("Services shut down successfully")

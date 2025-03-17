@@ -1,5 +1,6 @@
+processed_project/
 backend/data
-media
+media/
 *.iso
 crown_deploy/test-output
 

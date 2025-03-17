@@ -1,4 +1,9 @@
-processed_project/
+# Ignore everything inside processed_project/
+processed_project/*
+
+# But allow Git to track the folder itself
+!processed_project/.gitkeep
+
 backend/data
 media/
 *.iso

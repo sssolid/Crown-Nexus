@@ -24,7 +24,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Environment(str, Enum):
     """
     Application environment enumeration.
-    
+
     Attributes:
         DEVELOPMENT: Development environment
         STAGING: Staging/testing environment
@@ -38,7 +38,7 @@ class Environment(str, Enum):
 class LogLevel(str, Enum):
     """
     Log level enumeration.
-    
+
     Attributes:
         DEBUG: Debug level logging
         INFO: Info level logging
@@ -56,7 +56,7 @@ class LogLevel(str, Enum):
 class DatabaseSettings(BaseSettings):
     """
     Database connection settings.
-    
+
     Attributes:
         POSTGRES_SERVER: PostgreSQL server hostname
         POSTGRES_USER: PostgreSQL username
@@ -71,24 +71,24 @@ class DatabaseSettings(BaseSettings):
     POSTGRES_DB: str = Field("crown_nexus")
     POSTGRES_PORT: str = Field("5432")
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "DatabaseSettings":
         """
         Assemble database URI from components.
-        
+
         Returns:
             Self with SQLALCHEMY_DATABASE_URI set
         """
         if self.SQLALCHEMY_DATABASE_URI:
             return self
-        
+
         # Construct PostgreSQL URL
         self.SQLALCHEMY_DATABASE_URI = PostgresDsn.build(
             scheme="postgresql+asyncpg",
@@ -98,14 +98,103 @@ class DatabaseSettings(BaseSettings):
             port=int(self.POSTGRES_PORT),
             path=f"{self.POSTGRES_DB}",
         )
-        
+
         return self
+
+
+class SecuritySettings(BaseSettings):
+    """Security configuration settings.
+
+    Attributes:
+        ALLOWED_HOSTS: List of allowed hostnames
+        TRUSTED_PROXIES: List of trusted proxy IP addresses
+        CORS_ALWAYS_ALLOW: Whether to always allow CORS requests
+        CSRF_COOKIE_SECURE: Whether to only send CSRF cookie over HTTPS
+        CSRF_TOKEN_EXPIRY: Expiration time for CSRF tokens in seconds
+        RATE_LIMIT_ENABLED: Whether rate limiting is enabled
+        RATE_LIMIT_REQUESTS_PER_MINUTE: Default requests allowed per minute
+        RATE_LIMIT_BURST_MULTIPLIER: Multiplier for burst capacity
+        RATE_LIMIT_STORAGE: Storage backend for rate limiting
+        CONTENT_SECURITY_POLICY: Content Security Policy header value
+        PERMISSIONS_POLICY: Permissions Policy header value
+        AUDIT_LOGGING_ENABLED: Whether audit logging is enabled
+        AUDIT_LOG_TO_DB: Whether to log audit events to database
+        AUDIT_LOG_TO_FILE: Whether to log audit events to file
+        AUDIT_LOG_FILE: File path for audit log
+    """
+
+    ALLOWED_HOSTS: List[str] = Field(
+        default=["localhost", "127.0.0.1"],
+        description="List of allowed hostnames"
+    )
+    TRUSTED_PROXIES: List[str] = Field(
+        default=["127.0.0.1", "::1"],
+        description="List of trusted proxy IP addresses"
+    )
+    CORS_ALWAYS_ALLOW: bool = Field(
+        default=False,
+        description="Whether to always allow CORS requests"
+    )
+    CSRF_COOKIE_SECURE: bool = Field(
+        default=True,
+        description="Whether to only send CSRF cookie over HTTPS"
+    )
+    CSRF_TOKEN_EXPIRY: int = Field(
+        default=86400,
+        description="Expiration time for CSRF tokens in seconds (24 hours)"
+    )
+    RATE_LIMIT_ENABLED: bool = Field(
+        default=True,
+        description="Whether rate limiting is enabled"
+    )
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = Field(
+        default=60,
+        description="Default requests allowed per minute"
+    )
+    RATE_LIMIT_BURST_MULTIPLIER: float = Field(
+        default=1.5,
+        description="Multiplier for burst capacity"
+    )
+    RATE_LIMIT_STORAGE: str = Field(
+        default="redis",
+        description="Storage backend for rate limiting ('redis' or 'memory')"
+    )
+    CONTENT_SECURITY_POLICY: str = Field(
+        default="default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self'; connect-src 'self'",
+        description="Content Security Policy header value"
+    )
+    PERMISSIONS_POLICY: str = Field(
+        default="camera=(), microphone=(), geolocation=(), payment=()",
+        description="Permissions Policy header value"
+    )
+    AUDIT_LOGGING_ENABLED: bool = Field(
+        default=True,
+        description="Whether audit logging is enabled"
+    )
+    AUDIT_LOG_TO_DB: bool = Field(
+        default=True,
+        description="Whether to log audit events to database"
+    )
+    AUDIT_LOG_TO_FILE: bool = Field(
+        default=False,
+        description="Whether to log audit events to file"
+    )
+    AUDIT_LOG_FILE: str = Field(
+        default="logs/audit.log",
+        description="File path for audit log"
+    )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
 
 
 class ElasticsearchSettings(BaseSettings):
     """
     Elasticsearch connection settings.
-    
+
     Attributes:
         ELASTICSEARCH_HOST: Elasticsearch server hostname
         ELASTICSEARCH_PORT: Elasticsearch server port
@@ -118,18 +207,18 @@ class ElasticsearchSettings(BaseSettings):
     ELASTICSEARCH_USE_SSL: bool = Field(False)
     ELASTICSEARCH_USERNAME: Optional[str] = None
     ELASTICSEARCH_PASSWORD: Optional[SecretStr] = None
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @property
     def uri(self) -> str:
         """
         Get Elasticsearch URI.
-        
+
         Returns:
             Elasticsearch connection URI
         """
@@ -138,14 +227,14 @@ class ElasticsearchSettings(BaseSettings):
         if self.ELASTICSEARCH_USERNAME:
             password = self.ELASTICSEARCH_PASSWORD.get_secret_value() if self.ELASTICSEARCH_PASSWORD else ""
             auth = f"{self.ELASTICSEARCH_USERNAME}:{password}@"
-        
+
         return f"{protocol}://{auth}{self.ELASTICSEARCH_HOST}:{self.ELASTICSEARCH_PORT}"
 
 
 class RedisSettings(BaseSettings):
     """
     Redis connection settings.
-    
+
     Attributes:
         REDIS_HOST: Redis server hostname
         REDIS_PORT: Redis server port
@@ -156,39 +245,39 @@ class RedisSettings(BaseSettings):
     REDIS_PORT: int = Field(6379)
     REDIS_PASSWORD: Optional[SecretStr] = None
     REDIS_DB: int = Field(0)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @property
     def uri(self) -> str:
         """
         Get Redis URI.
-        
+
         Returns:
             Redis connection URI
         """
         password_part = ""
         if self.REDIS_PASSWORD:
             password_part = f":{self.REDIS_PASSWORD.get_secret_value()}@"
-        
+
         return f"redis://{password_part}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
 
 class LocaleSettings(BaseSettings):
     """
     Internationalization and localization settings.
-    
+
     Attributes:
         DEFAULT_LOCALE: Default locale
         AVAILABLE_LOCALES: List of available locales
     """
     DEFAULT_LOCALE: str = Field("en")
     AVAILABLE_LOCALES: List[str] = Field(["en", "es", "fr", "de"])
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -199,7 +288,7 @@ class LocaleSettings(BaseSettings):
 class ChatSettings(BaseSettings):
     """
     Chat system settings.
-    
+
     Attributes:
         CHAT_ENCRYPTION_SALT: Salt for chat message encryption
         CHAT_MESSAGE_LIMIT: Default message limit for fetching history
@@ -212,7 +301,7 @@ class ChatSettings(BaseSettings):
     CHAT_RATE_LIMIT_PER_MINUTE: int = Field(60)
     CHAT_WEBSOCKET_KEEPALIVE: int = Field(30)
     CHAT_MAX_MESSAGE_LENGTH: int = Field(5000)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -223,7 +312,7 @@ class ChatSettings(BaseSettings):
 class FitmentSettings(BaseSettings):
     """
     Fitment system settings.
-    
+
     Attributes:
         VCDB_PATH: Path to VCDB Access database
         PCDB_PATH: Path to PCDB Access database
@@ -238,21 +327,21 @@ class FitmentSettings(BaseSettings):
     FITMENT_DB_URL: Optional[str] = None
     FITMENT_LOG_LEVEL: str = Field("INFO")
     FITMENT_CACHE_SIZE: int = Field(100)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @model_validator(mode="after")
     def validate_file_paths(self) -> "FitmentSettings":
         """
         Validate that required file paths exist.
-        
+
         Returns:
             Self with validated paths
-            
+
         Raises:
             ValueError: If required paths don't exist
         """
@@ -260,20 +349,20 @@ class FitmentSettings(BaseSettings):
         if os.getenv("ENVIRONMENT") == Environment.PRODUCTION.value:
             if not os.path.exists(self.VCDB_PATH):
                 raise ValueError(f"VCDB_PATH does not exist: {self.VCDB_PATH}")
-            
+
             if not os.path.exists(self.PCDB_PATH):
                 raise ValueError(f"PCDB_PATH does not exist: {self.PCDB_PATH}")
-            
+
             if self.MODEL_MAPPINGS_PATH and not os.path.exists(self.MODEL_MAPPINGS_PATH):
                 raise ValueError(f"MODEL_MAPPINGS_PATH does not exist: {self.MODEL_MAPPINGS_PATH}")
-                
+
         return self
 
 
 class CurrencySettings(BaseSettings):
     """
     Currency and exchange rate settings.
-    
+
     Attributes:
         EXCHANGE_RATE_API_KEY: API key for exchange rate service
         EXCHANGE_RATE_UPDATE_FREQUENCY: Update frequency in hours
@@ -282,7 +371,7 @@ class CurrencySettings(BaseSettings):
     EXCHANGE_RATE_API_KEY: str = Field("")
     EXCHANGE_RATE_UPDATE_FREQUENCY: int = Field(24)
     STORE_INVERSE_RATES: bool = Field(True)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -293,27 +382,27 @@ class CurrencySettings(BaseSettings):
 class CORSSettings(BaseSettings):
     """
     CORS settings.
-    
+
     Attributes:
         BACKEND_CORS_ORIGINS: List of allowed origins for CORS
     """
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = Field(default_factory=list)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         """
         Parse CORS origins from string or list.
-        
+
         Args:
             v: CORS origins as string or list
-            
+
         Returns:
             List of CORS origin strings
         """
@@ -327,7 +416,7 @@ class CORSSettings(BaseSettings):
 class SecuritySettings(BaseSettings):
     """
     Security settings.
-    
+
     Attributes:
         SECRET_KEY: Secret key for token signing
         ACCESS_TOKEN_EXPIRE_MINUTES: JWT token expiration time in minutes
@@ -336,7 +425,7 @@ class SecuritySettings(BaseSettings):
     SECRET_KEY: str = Field("your-secret-key-change-in-production")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(60 * 24 * 8)  # 8 days
     ALGORITHM: str = Field("HS256")
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -347,7 +436,7 @@ class SecuritySettings(BaseSettings):
 class MediaSettings(BaseSettings):
     """
     Media handling settings.
-    
+
     Attributes:
         MEDIA_ROOT: Root directory for media files
         MEDIA_URL: URL prefix for media files
@@ -358,22 +447,22 @@ class MediaSettings(BaseSettings):
     MEDIA_URL: str = Field("/media/")
     MEDIA_STORAGE_TYPE: str = Field("local")
     MEDIA_CDN_URL: Optional[str] = None
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @field_validator("MEDIA_ROOT", mode="before")
     @classmethod
     def create_media_directories(cls, v: str) -> str:
         """
         Create media directories if they don't exist.
-        
+
         Args:
             v: Media root path
-            
+
         Returns:
             Media root path
         """
@@ -381,12 +470,12 @@ class MediaSettings(BaseSettings):
         for media_type in ["image", "document", "video", "other", "thumbnails"]:
             os.makedirs(os.path.join(v, media_type), exist_ok=True)
         return v
-    
+
     @property
     def media_base_url(self) -> str:
         """
         Get the base URL for media files.
-        
+
         Returns:
             Base URL for media files (CDN URL in production, local path otherwise)
         """
@@ -398,14 +487,14 @@ class MediaSettings(BaseSettings):
 class CelerySettings(BaseSettings):
     """
     Celery worker settings.
-    
+
     Attributes:
         CELERY_BROKER_URL: URL for Celery broker
         CELERY_RESULT_BACKEND: URL for Celery result backend
     """
     CELERY_BROKER_URL: Optional[str] = None
     CELERY_RESULT_BACKEND: Optional[str] = None
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -416,14 +505,14 @@ class CelerySettings(BaseSettings):
 class LoggingSettings(BaseSettings):
     """
     Logging configuration settings.
-    
+
     Attributes:
         LOG_LEVEL: Default log level
         LOG_FORMAT: Log format (json or text)
     """
     LOG_LEVEL: LogLevel = Field(LogLevel.INFO)
     LOG_FORMAT: str = Field("text")
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -434,7 +523,7 @@ class LoggingSettings(BaseSettings):
 class Settings(BaseSettings):
     """
     Main application settings combining all subsystems.
-    
+
     Attributes:
         PROJECT_NAME: Name of the project
         DESCRIPTION: Project description
@@ -442,7 +531,7 @@ class Settings(BaseSettings):
         ENVIRONMENT: Current environment
         API_V1_STR: API v1 prefix
         BASE_DIR: Base directory for the application
-        
+
         # Subsystem settings included as properties
     """
     PROJECT_NAME: str = Field("Crown Nexus")
@@ -451,46 +540,46 @@ class Settings(BaseSettings):
     API_V1_STR: str = Field("/api/v1")
     ENVIRONMENT: Environment = Field(Environment.DEVELOPMENT)
     BASE_DIR: Path = Field(default_factory=lambda: Path(__file__).resolve().parent.parent.parent)
-    
+
     # Database settings
     POSTGRES_SERVER: str = Field("localhost")
     POSTGRES_USER: str = Field("postgres")
     POSTGRES_PASSWORD: str = Field("postgres")
     POSTGRES_DB: str = Field("crown_nexus")
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
-    
+
     # Elasticsearch settings
     ELASTICSEARCH_HOST: str = Field("localhost")
     ELASTICSEARCH_PORT: int = Field(9200)
-    
+
     # Redis settings
     REDIS_HOST: str = Field("localhost")
     REDIS_PORT: int = Field(6379)
-    
+
     # Security settings
     SECRET_KEY: str = Field("your-secret-key-change-in-production")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(60 * 24 * 8)
-    
+
     # CORS settings
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = Field(default_factory=list)
-    
+
     # Media settings
     MEDIA_ROOT: DirectoryPath = Field("media")
     MEDIA_URL: str = Field("/media/")
     MEDIA_STORAGE_TYPE: str = Field("local")
     MEDIA_CDN_URL: Optional[str] = None
-    
+
     # Locale settings
     DEFAULT_LOCALE: str = Field("en")
     AVAILABLE_LOCALES: List[str] = Field(["en", "es", "fr", "de"])
-    
+
     # Chat settings
     CHAT_ENCRYPTION_SALT: str = Field("")
     CHAT_MESSAGE_LIMIT: int = Field(50)
     CHAT_RATE_LIMIT_PER_MINUTE: int = Field(60)
     CHAT_WEBSOCKET_KEEPALIVE: int = Field(30)
     CHAT_MAX_MESSAGE_LENGTH: int = Field(5000)
-    
+
     # Fitment settings
     VCDB_PATH: str = Field("data/vcdb.accdb")
     PCDB_PATH: str = Field("data/pcdb.accdb")
@@ -498,27 +587,27 @@ class Settings(BaseSettings):
     FITMENT_DB_URL: Optional[str] = None
     FITMENT_LOG_LEVEL: str = Field("INFO")
     FITMENT_CACHE_SIZE: int = Field(100)
-    
+
     # Currency settings
     EXCHANGE_RATE_API_KEY: str = Field("")
     EXCHANGE_RATE_UPDATE_FREQUENCY: int = Field(24)
     STORE_INVERSE_RATES: bool = Field(True)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
-    
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         """
         Parse CORS origins from string or list.
-        
+
         Args:
             v: CORS origins as string or list
-            
+
         Returns:
             List of CORS origin strings
         """
@@ -527,16 +616,16 @@ class Settings(BaseSettings):
         elif isinstance(v, (list, str)):
             return v
         raise ValueError(v)
-    
+
     @field_validator("MEDIA_ROOT", mode="before")
     @classmethod
     def create_media_directories(cls, v: str) -> str:
         """
         Create media directories if they don't exist.
-        
+
         Args:
             v: Media root path
-            
+
         Returns:
             Media root path
         """
@@ -544,12 +633,12 @@ class Settings(BaseSettings):
         for media_type in ["image", "document", "video", "other", "thumbnails"]:
             os.makedirs(os.path.join(v, media_type), exist_ok=True)
         return v
-    
+
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "Settings":
         """
         Assemble database URI from components.
-        
+
         Returns:
             Self with SQLALCHEMY_DATABASE_URI set
         """
@@ -561,21 +650,27 @@ class Settings(BaseSettings):
                 host=self.POSTGRES_SERVER,
                 path=f"{self.POSTGRES_DB}",
             )
-        
+
         return self
-    
+
     @property
     def media_base_url(self) -> str:
         """
         Get the base URL for media files.
-        
+
         Returns:
             Base URL for media files (CDN URL in production, local path otherwise)
         """
         if self.ENVIRONMENT == Environment.PRODUCTION and self.MEDIA_CDN_URL:
             return self.MEDIA_CDN_URL
         return self.MEDIA_URL
-    
+
+    # Add the security settings property
+    @property
+    def security(self) -> SecuritySettings:
+        """Get security settings."""
+        return SecuritySettings()
+
     # Structured access to configuration subsystems
     @property
     def db(self) -> DatabaseSettings:
@@ -587,7 +682,7 @@ class Settings(BaseSettings):
             POSTGRES_DB=self.POSTGRES_DB,
             SQLALCHEMY_DATABASE_URI=self.SQLALCHEMY_DATABASE_URI,
         )
-    
+
     @property
     def elasticsearch(self) -> ElasticsearchSettings:
         """Get Elasticsearch settings."""
@@ -595,7 +690,7 @@ class Settings(BaseSettings):
             ELASTICSEARCH_HOST=self.ELASTICSEARCH_HOST,
             ELASTICSEARCH_PORT=self.ELASTICSEARCH_PORT,
         )
-    
+
     @property
     def redis(self) -> RedisSettings:
         """Get Redis settings."""
@@ -603,7 +698,7 @@ class Settings(BaseSettings):
             REDIS_HOST=self.REDIS_HOST,
             REDIS_PORT=self.REDIS_PORT,
         )
-    
+
     @property
     def security(self) -> SecuritySettings:
         """Get security settings."""
@@ -611,7 +706,7 @@ class Settings(BaseSettings):
             SECRET_KEY=self.SECRET_KEY,
             ACCESS_TOKEN_EXPIRE_MINUTES=self.ACCESS_TOKEN_EXPIRE_MINUTES,
         )
-    
+
     @property
     def media(self) -> MediaSettings:
         """Get media settings."""
@@ -621,7 +716,7 @@ class Settings(BaseSettings):
             MEDIA_STORAGE_TYPE=self.MEDIA_STORAGE_TYPE,
             MEDIA_CDN_URL=self.MEDIA_CDN_URL,
         )
-    
+
     @property
     def locale(self) -> LocaleSettings:
         """Get locale settings."""
@@ -629,7 +724,7 @@ class Settings(BaseSettings):
             DEFAULT_LOCALE=self.DEFAULT_LOCALE,
             AVAILABLE_LOCALES=self.AVAILABLE_LOCALES,
         )
-    
+
     @property
     def chat(self) -> ChatSettings:
         """Get chat settings."""
@@ -640,7 +735,7 @@ class Settings(BaseSettings):
             CHAT_WEBSOCKET_KEEPALIVE=self.CHAT_WEBSOCKET_KEEPALIVE,
             CHAT_MAX_MESSAGE_LENGTH=self.CHAT_MAX_MESSAGE_LENGTH,
         )
-    
+
     @property
     def fitment(self) -> FitmentSettings:
         """Get fitment settings."""
@@ -652,7 +747,7 @@ class Settings(BaseSettings):
             FITMENT_LOG_LEVEL=self.FITMENT_LOG_LEVEL,
             FITMENT_CACHE_SIZE=self.FITMENT_CACHE_SIZE,
         )
-    
+
     @property
     def currency(self) -> CurrencySettings:
         """Get currency settings."""
@@ -667,9 +762,9 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """
     Get application settings with caching.
-    
+
     This function is cached to avoid loading settings multiple times.
-    
+
     Returns:
         Application settings
     """

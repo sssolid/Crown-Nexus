@@ -8,6 +8,7 @@ from app.services.error_handling_service import ErrorHandlingService
 from app.services.logging_service import LoggingService
 from app.services.metrics_service import MetricsService
 from app.services.validation_service import ValidationService
+from app.services.cache_service import CacheService
 logger = get_logger('app.core.service_registry')
 def register_services() -> None:
     logger.info('Registering services')
@@ -15,6 +16,7 @@ def register_services() -> None:
     dependency_manager.register_factory('error_handling_service', lambda: ErrorHandlingService())
     dependency_manager.register_factory('validation_service', lambda: ValidationService())
     dependency_manager.register_factory('metrics_service', lambda: MetricsService())
+    dependency_manager.register_factory('cache_service', lambda: CacheService())
     logger.info('Services registered successfully')
 def get_service(service_name: str, db: Optional[AsyncSession]=None) -> Any:
     kwargs = {}
@@ -31,6 +33,8 @@ async def initialize_services() -> None:
     await validation_service.initialize()
     metrics_service = dependency_manager.get('metrics_service')
     await metrics_service.initialize()
+    cache_service = dependency_manager.get('cache_service')
+    await cache_service.initialize()
     logger.info('Services initialized successfully')
 async def shutdown_services() -> None:
     logger.info('Shutting down services')
@@ -42,4 +46,6 @@ async def shutdown_services() -> None:
     await validation_service.shutdown()
     metrics_service = dependency_manager.get('metrics_service')
     await metrics_service.shutdown()
+    cache_service = dependency_manager.get('cache_service')
+    await cache_service.shutdown()
     logger.info('Services shut down successfully')

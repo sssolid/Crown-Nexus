@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:20:52
+Generated on 2025-03-17 01:24:06
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -3007,6 +3007,7 @@ from app.services.error_handling_service import ErrorHandlingService
 from app.services.logging_service import LoggingService
 from app.services.metrics_service import MetricsService
 from app.services.validation_service import ValidationService
+from app.services.cache_service import CacheService
 ```
 
 **Global Variables:**
@@ -10045,7 +10046,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:20:52
+Generated on 2025-03-17 01:24:06
 
 ## Project Overview
 - Project Name: frontend

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:13:07
+Generated on 2025-03-17 01:13:47
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -49,7 +49,8 @@ backend/
 │   │   └── init_currencies.py
 │   ├── core/
 │   │   ├── cache/
-│   │   │   └── base.py
+│   │   │   ├── base.py
+│   │   │   └── memory.py
 │   │   ├── __init__.py
 │   │   ├── celery_app.py
 │   │   ├── celeryconfig.py
@@ -9908,7 +9909,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:13:07
+Generated on 2025-03-17 01:13:47
 
 ## Project Overview
 - Project Name: frontend

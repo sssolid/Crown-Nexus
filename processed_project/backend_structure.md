@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:50:05
+Generated on 2025-03-17 00:50:55
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -114,6 +114,7 @@ backend/
 │   │   ├── interfaces.py
 │   │   ├── logging_service.py
 │   │   ├── media_service.py
+│   │   ├── metrics_service.py
 │   │   ├── pagination.py
 │   │   ├── search.py
 │   │   ├── test_service.py
@@ -8111,6 +8112,134 @@ AZURE = 'azure'
 ```python
 class StorageConnectionError(MediaStorageError):
     """Exception raised when connection to storage fails."""
+```
+
+##### Module: metrics_service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/metrics_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import time
+from contextlib import contextmanager
+from dataclasses import dataclass, field
+from functools import wraps
+from typing import Any, Callable, Dict, Generator, List, Optional, TypeVar, cast
+from prometheus_client import Counter, Gauge, Histogram, Summary
+from app.core.logging import get_logger
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+F = F = TypeVar("F", bound=Callable[..., Any])
+logger = logger = get_logger("app.services.metrics_service")
+```
+
+**Classes:**
+```python
+@dataclass
+class MetricsConfig(object):
+    """Configuration for metrics."""
+```
+
+```python
+class MetricsService(object):
+    """Service for collecting and exporting metrics.
+
+This service provides standardized metrics collection across the application, with support for counters, gauges, histograms, and summaries."""
+```
+*Methods:*
+```python
+    def __init__(self, config) -> None:
+        """Initialize the metrics service.  Args: config: Metrics configuration"""
+```
+```python
+    def create_counter(self, name, description, labelnames, namespace, subsystem) -> Counter:
+        """Create a counter metric.
+
+Args: name: Metric name description: Metric description labelnames: Label names namespace: Metric namespace subsystem: Metric subsystem
+
+Returns: Counter: Created counter"""
+```
+```python
+    def create_gauge(self, name, description, labelnames, namespace, subsystem) -> Gauge:
+        """Create a gauge metric.
+
+Args: name: Metric name description: Metric description labelnames: Label names namespace: Metric namespace subsystem: Metric subsystem
+
+Returns: Gauge: Created gauge"""
+```
+```python
+    def create_histogram(self, name, description, labelnames, buckets, namespace, subsystem) -> Histogram:
+        """Create a histogram metric.
+
+Args: name: Metric name description: Metric description labelnames: Label names buckets: Histogram buckets namespace: Metric namespace subsystem: Metric subsystem
+
+Returns: Histogram: Created histogram"""
+```
+```python
+    def create_summary(self, name, description, labelnames, namespace, subsystem) -> Summary:
+        """Create a summary metric.
+
+Args: name: Metric name description: Metric description labelnames: Label names namespace: Metric namespace subsystem: Metric subsystem
+
+Returns: Summary: Created summary"""
+```
+```python
+    def increment_counter(self, name, amount, labels) -> None:
+        """Increment a counter metric.
+
+Args: name: Metric name amount: Amount to increment by labels: Metric labels"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    def observe_histogram(self, name, value, labels) -> None:
+        """Observe a histogram metric value.
+
+Args: name: Metric name value: Observation value labels: Metric labels"""
+```
+```python
+    def observe_summary(self, name, value, labels) -> None:
+        """Observe a summary metric value.
+
+Args: name: Metric name value: Observation value labels: Metric labels"""
+```
+```python
+    def set_gauge(self, name, value, labels) -> None:
+        """Set a gauge metric value.  Args: name: Metric name value: Gauge value labels: Metric labels"""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+```python
+@contextmanager
+    def timer(self, metric_type, name, labels) -> Generator[(None, None, None)]:
+        """Context manager for timing operations.
+
+Args: metric_type: Type of metric (histogram or summary) name: Metric name labels: Metric labels
+
+Yields: None"""
+```
+```python
+    def timing_decorator(self, metric_type, name, labels_func) -> Callable[([F], F)]:
+        """Decorator for timing function execution.
+
+Args: metric_type: Type of metric (histogram or summary) name: Metric name labels_func: Function to extract labels from function arguments
+
+Returns: Callable: Decorated function"""
+```
+```python
+    async def timing_decorator_async(self, metric_type, name, labels_func) -> Callable[([F], F)]:
+        """Decorator for timing async function execution.
+
+Args: metric_type: Type of metric (histogram or summary) name: Metric name labels_func: Function to extract labels from function arguments
+
+Returns: Callable: Decorated async function"""
 ```
 
 ##### Module: pagination

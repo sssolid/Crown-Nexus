@@ -1,23 +1,20 @@
 from __future__ import annotations
+import logging
+import time
 import traceback
-from typing import Callable, Optional
-from fastapi import FastAPI, Request, Response
+from datetime import datetime
+from typing import Callable, Dict, Optional
+from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.core.exceptions import AppException, ErrorCode, ErrorResponse
+from app.core.exceptions import AppException, ErrorCode, ErrorResponse, ErrorSeverity, ErrorCategory
 from app.core.logging import get_logger
+logger = get_logger('app.middleware.error_handler')
 class ErrorHandlerMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: FastAPI) -> None:
-        super().__init__(app)
-        self.logger = get_logger('app.middleware.error_handler')
-    async def dispatch(self, request: Request, call_next: Callable[[Request], Response]) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
         try:
             return await call_next(request)
         except Exception as exc:
-            if isinstance(exc, AppException):
-                raise
-            request_id = getattr(request.state, 'request_id', None)
-            self.logger.error(f'Unhandled exception in request: {str(exc)}', extra={'request_id': request_id, 'path': request.url.path, 'method': request.method, 'exception_type': exc.__class__.__name__, 'exception_message': str(exc)})
-            self.logger.debug(f'Traceback: {traceback.format_exc()}')
-            error_response = ErrorResponse(code=ErrorCode.UNKNOWN_ERROR, message='An unexpected error occurred', request_id=request_id)
+            logger.error(f'Unhandled exception in error handler middleware: {str(exc)}', exc_info=exc, request_id=getattr(request.state, 'request_id', None), path=request.url.path, method=request.method)
+            error_response = ErrorResponse(success=False, message='An unexpected server error occurred', code=ErrorCode.UNKNOWN_ERROR, data=None, details=[{'loc': ['server'], 'msg': 'An unexpected server error occurred', 'type': 'unknown_error'}], meta={'request_id': getattr(request.state, 'request_id', None), 'severity': ErrorSeverity.CRITICAL, 'category': ErrorCategory.UNKNOWN}, timestamp=datetime.utcnow().isoformat())
             return JSONResponse(status_code=500, content=error_response.dict())

@@ -28,11 +28,15 @@ class ServiceRegistry:
     def get_all(cls, db: AsyncSession) -> Dict[str, Any]:
         return {name: cls.get(name, db) for name in cls._services}
 service_registry = ServiceRegistry()
+from app.services.test_service import TestService
 from app.services.user_service import UserService
 from app.services.product_service import ProductService
 from app.services.chat import ChatService
+service_registry.register(TestService, 'test_service')
 service_registry.register(UserService)
 service_registry.register(ProductService)
 service_registry.register(ChatService)
+def get_test_service() -> TestService:
+    return TestService()
 def get_chat_service(db: AsyncSession) -> ChatService:
     return service_registry.get('ChatService', db)

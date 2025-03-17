@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-16 23:58:19
+Generated on 2025-03-17 00:03:20
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -6899,6 +6899,7 @@ import logging
 from typing import Any, Dict, Optional, Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import get_logger
+from app.services.test_service import TestService
 from app.services.user_service import UserService
 from app.services.product_service import ProductService
 from app.services.chat import ChatService
@@ -6922,6 +6923,11 @@ Args: db: Database session to pass to the ChatService constructor
 Returns: ChatService: A new ChatService instance
 
 Raises: ValueError: If the ChatService is not registered in the ServiceRegistry"""
+```
+
+```python
+def get_test_service() -> TestService:
+    """Get a TestService instance.  Returns: TestService: A new TestService instance"""
 ```
 
 **Classes:**
@@ -9122,7 +9128,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-16 23:58:19
+Generated on 2025-03-17 00:03:21
 
 ## Project Overview
 - Project Name: frontend

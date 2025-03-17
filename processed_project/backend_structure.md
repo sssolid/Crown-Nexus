@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:43:46
+Generated on 2025-03-17 00:44:56
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -52,6 +52,7 @@ backend/
 │   │   ├── celery_app.py
 │   │   ├── celeryconfig.py
 │   │   ├── config.py
+│   │   ├── dependency_manager.py
 │   │   ├── exceptions.py
 │   │   ├── logging.py
 │   │   ├── permissions.py
@@ -2233,6 +2234,101 @@ Returns: Base URL for media files (CDN URL in production, local path otherwise)"
 @property
     def security(self) -> SecuritySettings:
         """Get security settings."""
+```
+
+##### Module: dependency_manager
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/dependency_manager.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import inspect
+import logging
+from typing import Any, Callable, Dict, Optional, Type, TypeVar, cast
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar('T')
+dependency_manager = dependency_manager = DependencyManager()
+```
+
+**Functions:**
+```python
+def get_dependency(name, **kwargs) -> Any:
+    """Get a dependency instance.
+
+This is a convenience function for getting a dependency instance.
+
+Args: name: Dependency name **kwargs: Arguments to pass to the factory function
+
+Returns: Any: Dependency instance"""
+```
+
+```python
+def inject_dependency(dependency_name) -> Callable:
+    """Decorator for injecting dependencies.
+
+This decorator injects a dependency into a function or method.
+
+Args: dependency_name: Name of the dependency to inject
+
+Returns: Callable: Decorated function or method"""
+```
+
+**Classes:**
+```python
+class DependencyManager(object):
+    """Manager for application dependencies.
+
+This class provides a central registry for all dependencies in the application, allowing for better organization, testing, and dependency injection."""
+```
+*Methods:*
+```python
+    def __new__(cls) -> DependencyManager:
+        """Create a singleton instance of the dependency manager.
+
+Returns: DependencyManager: The singleton instance"""
+```
+```python
+    def clear(self) -> None:
+        """Clear all registered dependencies.  This is useful for testing to ensure a clean state."""
+```
+```python
+    def clear_instance(self, name) -> None:
+        """Clear a specific dependency instance.  Args: name: Dependency name"""
+```
+```python
+    def get(self, name, **kwargs) -> Any:
+        """Get a dependency instance.
+
+If the dependency is not already registered, it will be created using the registered factory function.
+
+Args: name: Dependency name **kwargs: Arguments to pass to the factory function
+
+Returns: Any: Dependency instance
+
+Raises: ValueError: If dependency is not registered"""
+```
+```python
+    def get_instance(self, cls, **kwargs) -> T:
+        """Get a dependency instance by class.
+
+Args: cls: Dependency class **kwargs: Arguments to pass to the factory function
+
+Returns: T: Dependency instance
+
+Raises: ValueError: If dependency is not registered"""
+```
+```python
+    def register_dependency(self, name, instance) -> None:
+        """Register a dependency instance.  Args: name: Dependency name instance: Dependency instance"""
+```
+```python
+    def register_factory(self, name, factory) -> None:
+        """Register a factory function for creating dependencies.
+
+Args: name: Dependency name factory: Factory function"""
 ```
 
 ##### Module: exceptions

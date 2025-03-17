@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:35:53
+Generated on 2025-03-17 01:36:47
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -136,6 +136,7 @@ backend/
 │   ├── utils/
 │   │   ├── __init__.py
 │   │   ├── cache.py
+│   │   ├── circuit_breaker.py
 │   │   ├── crypto.py
 │   │   ├── db.py
 │   │   ├── errors.py
@@ -9349,6 +9350,140 @@ This class provides a way to cache data during a single request, which can be us
         """Set value in cache.  Args: key: Cache key value: Value to cache"""
 ```
 
+##### Module: circuit_breaker
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/circuit_breaker.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import asyncio
+import enum
+import functools
+import logging
+import time
+from dataclasses import dataclass, field
+from threading import RLock
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
+from app.core.exceptions import ServiceUnavailableException
+from app.core.logging import get_logger
+```
+
+**Global Variables:**
+```python
+F = F = TypeVar('F', bound=Callable[..., Any])
+logger = logger = get_logger("app.utils.circuit_breaker")
+```
+
+**Functions:**
+```python
+def circuit_breaker(name, failure_threshold, success_threshold, timeout, exception_types, fallback) -> Callable[([F], F)]:
+    """Circuit breaker decorator.
+
+This decorator applies the circuit breaker pattern to a function.
+
+Args: name: Circuit breaker name failure_threshold: Number of failures before opening the circuit success_threshold: Number of successes before closing the circuit timeout: Time in seconds to wait before transitioning from OPEN to HALF_OPEN exception_types: Types of exceptions that increment the failure counter fallback: Optional fallback function to call when the circuit is open
+
+Returns: Callable: Function decorator"""
+```
+
+**Classes:**
+```python
+class CircuitBreaker(object):
+    """Circuit breaker implementation.
+
+This class implements the circuit breaker pattern, which prevents an application from repeatedly trying to execute an operation that's likely to fail, allowing it to continue without waiting for the fault to be fixed or wasting resources while the fault is being fixed.
+
+Attributes: name: Unique name for this circuit breaker config: Circuit breaker configuration state: Current circuit state failure_count: Count of consecutive failures success_count: Count of consecutive successes last_failure_time: Time of last failure last_state_change_time: Time of last state change"""
+```
+*Methods:*
+```python
+    def __call__(self, func) -> F:
+        """Decorate a function with circuit breaker.
+
+Args: func: Function to decorate
+
+Returns: F: Decorated function"""
+```
+```python
+    def __init__(self, name, config) -> None:
+        """Initialize the circuit breaker.
+
+Args: name: Unique name for this circuit breaker config: Circuit breaker configuration"""
+```
+```python
+    def async_call(self, func) -> F:
+        """Decorate an async function with circuit breaker.
+
+Args: func: Async function to decorate
+
+Returns: F: Decorated async function"""
+```
+```python
+    def check_state(self) -> None:
+        """Check and update the circuit breaker state.
+
+This method checks if the circuit breaker should transition to a new state based on its current state and the elapsed time since the last state change."""
+```
+```python
+@classmethod
+    def get(cls, name) -> CircuitBreaker:
+        """Get a circuit breaker by name.
+
+Args: name: Circuit breaker name
+
+Returns: CircuitBreaker: Circuit breaker instance
+
+Raises: ValueError: If circuit breaker not found"""
+```
+```python
+@classmethod
+    def get_all_states(cls) -> Dict[(str, CircuitState)]:
+        """Get the states of all circuit breakers.
+
+Returns: Dict[str, CircuitState]: Dictionary of circuit breaker names and states"""
+```
+```python
+@classmethod
+    def get_or_create(cls, name, config) -> CircuitBreaker:
+        """Get a circuit breaker by name or create it if it doesn't exist.
+
+Args: name: Circuit breaker name config: Circuit breaker configuration
+
+Returns: CircuitBreaker: Circuit breaker instance"""
+```
+```python
+    def reset(self) -> None:
+        """Reset the circuit breaker to its initial state."""
+```
+```python
+@classmethod
+    def reset_all(cls) -> None:
+        """Reset all circuit breakers."""
+```
+
+```python
+@dataclass
+class CircuitBreakerConfig(object):
+    """Circuit breaker configuration.
+
+This class holds the configuration for a circuit breaker.
+
+Attributes: failure_threshold: Number of failures before opening the circuit success_threshold: Number of successes before closing the circuit timeout: Time in seconds to wait before transitioning from OPEN to HALF_OPEN exception_types: Types of exceptions that increment the failure counter fallback: Optional fallback function to call when the circuit is open"""
+```
+
+```python
+class CircuitState(enum.Enum):
+    """Circuit breaker states.
+
+The circuit breaker can be in one of three states: - CLOSED: Normal operation, requests are allowed - OPEN: Circuit is broken, all requests fail immediately - HALF_OPEN: Allowing a limited number of test requests to check if the service is back"""
+```
+*Class attributes:*
+```python
+CLOSED = 'closed'
+OPEN = 'open'
+HALF_OPEN = 'half_open'
+```
+
 ##### Module: crypto
 *Cryptography utilities.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/crypto.py`
@@ -10406,7 +10541,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:35:54
+Generated on 2025-03-17 01:36:48
 
 ## Project Overview
 - Project Name: frontend

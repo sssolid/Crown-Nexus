@@ -3,8 +3,7 @@ from __future__ import annotations
 """Error handling service for application-wide error management.
 
 This module provides a centralized service for handling errors, creating error
-responses, and reporting errors. It consolidates error handling functionality
-from the error_handling_service.py and errors.py modules.
+responses, and reporting errors.
 
 The service provides methods for:
 - Handling exceptions and creating error responses

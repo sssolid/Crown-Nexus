@@ -88,16 +88,26 @@ class ServiceRegistry:
 service_registry = ServiceRegistry()
 
 # Import and register services
+from app.services.test_service import TestService
 from app.services.user_service import UserService
 from app.services.product_service import ProductService
 from app.services.chat import ChatService
 
+service_registry.register(TestService, "test_service")
 service_registry.register(UserService)
 service_registry.register(ProductService)
 service_registry.register(ChatService)
 
 
 # Factory functions
+def get_test_service() -> TestService:
+    """Get a TestService instance.
+    
+    Returns:
+        TestService: A new TestService instance
+    """
+    return TestService()
+
 def get_chat_service(db: AsyncSession) -> ChatService:
     """Get a ChatService instance.
     

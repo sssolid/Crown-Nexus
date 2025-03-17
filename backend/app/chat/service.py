@@ -1,4 +1,10 @@
 # backend/app/chat/service.py
+"""
+Module for chat functionality including rooms and messages.
+
+This module provides the ChatService class which handles chat room creation,
+message management, and member access control.
+"""
 from __future__ import annotations
 
 import logging

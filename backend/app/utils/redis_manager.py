@@ -1,19 +1,10 @@
-# backend/app/utils/redis_manager.py
 """
-Redis connection manager.
+Core Redis utility functions with proper error handling and structured logging.
 
-This module provides utilities for Redis connections and operations:
-- Connection pooling
-- Common Redis operations
-- Caching abstractions
-- Pub/Sub functionality
-
-These utilities provide a consistent interface for Redis usage
-throughout the application.
+This module provides functions for interacting with Redis, including connection management,
+caching operations, and utility functions to simplify common Redis operations.
 """
-
 from __future__ import annotations
-
 import json
 import logging
 from typing import Any, Dict, List, Optional, TypeVar, cast
@@ -23,62 +14,93 @@ from redis.asyncio.client import Redis
 from redis.asyncio.connection import ConnectionPool
 
 from app.core.config import settings
+from app.core.exceptions import ExternalServiceException, ErrorCode
+from app.core.logging import get_logger
 
+logger = get_logger('app.utils.redis_manager')
 
-logger = logging.getLogger(__name__)
-
-# Type variable for the return value
 T = TypeVar('T')
-
-# Redis connection pool
 _redis_pool: Optional[ConnectionPool] = None
 
-
 async def get_redis_pool() -> ConnectionPool:
-    """
-    Get or create the Redis connection pool.
-    
+    """Get or create a Redis connection pool.
+
     Returns:
-        ConnectionPool: Redis connection pool
+        ConnectionPool: A Redis connection pool instance.
+
+    Raises:
+        ExternalServiceException: If unable to connect to Redis.
     """
     global _redis_pool
-    
     if _redis_pool is None:
-        _redis_pool = redis.ConnectionPool(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
-            db=settings.REDIS_DB,
-            password=settings.REDIS_PASSWORD,
-            decode_responses=True,
-            max_connections=settings.REDIS_MAX_CONNECTIONS,
-        )
-        logger.info(f"Created Redis connection pool to {settings.REDIS_HOST}:{settings.REDIS_PORT}")
-    
+        try:
+            _redis_pool = redis.ConnectionPool(
+                host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                db=settings.REDIS_DB,
+                password=settings.REDIS_PASSWORD,
+                decode_responses=True,
+                max_connections=settings.REDIS_MAX_CONNECTIONS
+            )
+            logger.info(
+                "Created Redis connection pool",
+                host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                db=settings.REDIS_DB
+            )
+        except Exception as e:
+            logger.error(
+                "Failed to create Redis connection pool",
+                error=str(e),
+                host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                exc_info=True
+            )
+            raise ExternalServiceException(
+                message="Failed to connect to Redis",
+                code=ErrorCode.EXTERNAL_SERVICE_ERROR,
+                details={
+                    "service": "redis",
+                    "host": settings.REDIS_HOST,
+                    "port": settings.REDIS_PORT
+                },
+                original_exception=e
+            ) from e
     return _redis_pool
 
-
 async def get_redis_client() -> Redis:
-    """
-    Get a Redis client using the connection pool.
-    
+    """Get a Redis client from the connection pool.
+
     Returns:
-        Redis: Redis client
-    """
-    pool = await get_redis_pool()
-    return redis.Redis(connection_pool=pool)
+        Redis: A Redis client instance.
 
-
-async def set_key(key: str, value: Any, ttl: Optional[int] = None) -> bool:
+    Raises:
+        ExternalServiceException: If unable to connect to Redis.
     """
-    Set a value in Redis.
-    
+    try:
+        pool = await get_redis_pool()
+        return redis.Redis(connection_pool=pool)
+    except ExternalServiceException:
+        raise
+    except Exception as e:
+        logger.error("Failed to get Redis client", error=str(e), exc_info=True)
+        raise ExternalServiceException(
+            message="Failed to get Redis client",
+            code=ErrorCode.EXTERNAL_SERVICE_ERROR,
+            details={"service": "redis"},
+            original_exception=e
+        ) from e
+
+async def set_key(key: str, value: Any, ttl: Optional[int]=None) -> bool:
+    """Set a key in Redis with optional TTL.
+
     Args:
-        key: Redis key
-        value: Value to store (will be JSON serialized)
-        ttl: Time-to-live in seconds (optional)
-        
+        key: The Redis key.
+        value: The value to store (will be JSON serialized).
+        ttl: Optional TTL in seconds.
+
     Returns:
-        bool: Success status
+        bool: True if successful, False otherwise.
     """
     try:
         client = await get_redis_client()
@@ -87,162 +109,150 @@ async def set_key(key: str, value: Any, ttl: Optional[int] = None) -> bool:
             await client.setex(key, ttl, serialized)
         else:
             await client.set(key, serialized)
+        logger.debug("Redis key set", key=key, ttl=ttl)
         return True
     except Exception as e:
-        logger.error(f"Redis set error: {e}")
+        logger.error("Redis set error", key=key, error=str(e), exc_info=True)
         return False
 
+async def get_key(key: str, default: Optional[T]=None) -> Optional[T]:
+    """Get a key from Redis.
 
-async def get_key(key: str, default: Optional[T] = None) -> Optional[T]:
-    """
-    Get a value from Redis.
-    
     Args:
-        key: Redis key
-        default: Default value if key doesn't exist
-        
+        key: The Redis key.
+        default: Default value if key doesn't exist.
+
     Returns:
-        Any: Deserialized value or default
+        The stored value or default.
     """
     try:
         client = await get_redis_client()
         value = await client.get(key)
         if value is None:
+            logger.debug("Redis key not found", key=key)
             return default
+
+        logger.debug("Redis key retrieved", key=key)
         return cast(T, json.loads(value))
     except Exception as e:
-        logger.error(f"Redis get error: {e}")
+        logger.error("Redis get error", key=key, error=str(e), exc_info=True)
         return default
 
-
 async def delete_key(key: str) -> bool:
-    """
-    Delete a key from Redis.
-    
+    """Delete a key from Redis.
+
     Args:
-        key: Redis key
-        
+        key: The Redis key.
+
     Returns:
-        bool: Success status
+        bool: True if key was deleted, False otherwise.
     """
     try:
         client = await get_redis_client()
-        return await client.delete(key) > 0
+        result = await client.delete(key)
+        success = result > 0
+        if success:
+            logger.debug("Redis key deleted", key=key)
+        else:
+            logger.debug("Redis key not found for deletion", key=key)
+        return success
     except Exception as e:
-        logger.error(f"Redis delete error: {e}")
+        logger.error("Redis delete error", key=key, error=str(e), exc_info=True)
         return False
 
+async def increment_counter(key: str, amount: int=1, ttl: Optional[int]=None) -> Optional[int]:
+    """Increment a counter in Redis.
 
-async def increment_counter(key: str, amount: int = 1, ttl: Optional[int] = None) -> Optional[int]:
-    """
-    Increment a counter in Redis.
-    
     Args:
-        key: Redis key
-        amount: Amount to increment by
-        ttl: Time-to-live in seconds (optional)
-        
+        key: The Redis key.
+        amount: Amount to increment by.
+        ttl: Optional TTL in seconds.
+
     Returns:
-        Optional[int]: New counter value or None on error
+        int: New counter value, or None if operation failed.
     """
     try:
         client = await get_redis_client()
         value = await client.incrby(key, amount)
         if ttl:
             await client.expire(key, ttl)
+        logger.debug("Redis counter incremented", key=key, amount=amount, new_value=value)
         return value
     except Exception as e:
-        logger.error(f"Redis increment error: {e}")
+        logger.error("Redis increment error", key=key, error=str(e), exc_info=True)
         return None
 
+async def rate_limit_check(key: str, limit: int, window: int) -> tuple[bool, int]:
+    """Check if a rate limit has been exceeded.
 
-async def rate_limit_check(
-    key: str, 
-    limit: int, 
-    window: int
-) -> tuple[bool, int]:
-    """
-    Check if a rate limit has been exceeded.
-    
     Args:
-        key: Redis key for the rate limit
-        limit: Maximum number of operations
-        window: Time window in seconds
-        
+        key: The rate limit key.
+        limit: Maximum number of operations in the window.
+        window: Time window in seconds.
+
     Returns:
-        tuple[bool, int]: (is_limited, current_count)
+        tuple: (is_limited, current_count)
     """
     try:
         client = await get_redis_client()
         current = await client.get(key)
-        
-        # Initialize counter if it doesn't exist
         if current is None:
             await client.setex(key, window, 1)
-            return False, 1
-        
-        # Increment counter
-        count = await client.incr(key)
-        
-        # Check if limit exceeded
-        if count > limit:
-            return True, count
-        
-        return False, count
-    except Exception as e:
-        logger.error(f"Redis rate limit error: {e}")
-        # Fail open to avoid blocking legitimate requests
-        return False, 0
+            logger.debug("Rate limit initialized", key=key)
+            return (False, 1)
 
+        count = await client.incr(key)
+        if count > limit:
+            logger.warning("Rate limit exceeded", key=key, limit=limit, count=count)
+            return (True, count)
+
+        logger.debug("Rate limit check passed", key=key, count=count, limit=limit)
+        return (False, count)
+    except Exception as e:
+        logger.error("Redis rate limit error", key=key, error=str(e), exc_info=True)
+        return (False, 0)
 
 async def publish_message(channel: str, message: Dict[str, Any]) -> bool:
-    """
-    Publish a message to a Redis channel.
-    
+    """Publish a message to a Redis channel.
+
     Args:
-        channel: Redis channel name
-        message: Message data to publish
-        
+        channel: Redis channel name.
+        message: Message to publish (will be JSON serialized).
+
     Returns:
-        bool: Success status
+        bool: True if message was published to at least one subscriber.
     """
     try:
         client = await get_redis_client()
         receivers = await client.publish(channel, json.dumps(message))
+        if receivers > 0:
+            logger.debug("Redis message published", channel=channel, receivers=receivers)
+        else:
+            logger.warning("Redis message published but no receivers", channel=channel)
         return receivers > 0
     except Exception as e:
-        logger.error(f"Redis publish error: {e}")
+        logger.error("Redis publish error", channel=channel, error=str(e), exc_info=True)
         return False
 
+async def cache_get_or_set(key: str, callback: callable, ttl: int=3600, force_refresh: bool=False) -> Any:
+    """Get a value from Redis or set it using the callback.
 
-async def cache_get_or_set(
-    key: str,
-    callback: callable,
-    ttl: int = 3600,
-    force_refresh: bool = False
-) -> Any:
-    """
-    Get a value from cache or compute and store it.
-    
     Args:
-        key: Cache key
-        callback: Function to compute the value if not cached
-        ttl: Time-to-live in seconds
-        force_refresh: Force cache refresh
-        
+        key: Redis key.
+        callback: Async function to call if key doesn't exist.
+        ttl: TTL in seconds.
+        force_refresh: Force refresh the cache.
+
     Returns:
-        Any: Cached or computed value
+        The cached or newly computed value.
     """
     if not force_refresh:
-        # Try to get from cache
         cached = await get_key(key)
         if cached is not None:
+            logger.debug("Cache hit", key=key)
             return cached
-    
-    # Compute value
+
+    logger.debug("Cache miss, calling callback", key=key)
     value = await callback()
-    
-    # Store in cache
     await set_key(key, value, ttl)
-    
     return value

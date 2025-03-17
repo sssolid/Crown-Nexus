@@ -13,6 +13,8 @@ from fastapi.exceptions import RequestValidationError
 from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, http_exception_handler, generic_exception_handler
 from app.middleware.error_handler import ErrorHandlerMiddleware
 from app.middleware.response_formatter import ResponseFormatterMiddleware
+from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
+from app.core.rate_limiter import RateLimitMiddleware, RateLimitRule, RateLimitStrategy
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
@@ -37,17 +39,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 app = FastAPI(title=settings.PROJECT_NAME, description=settings.DESCRIPTION, version=settings.VERSION, openapi_url=f'{settings.API_V1_STR}/openapi.json', docs_url=f'{settings.API_V1_STR}/docs', redoc_url=f'{settings.API_V1_STR}/redoc', lifespan=lifespan)
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(CORSMiddleware, allow_origins=settings.BACKEND_CORS_ORIGINS, allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
-app.add_middleware(RequestContextMiddleware)
-app.add_middleware(ErrorHandlerMiddleware)
-app.add_middleware(ResponseFormatterMiddleware)
-app.add_exception_handler(AppException, app_exception_handler)
-app.add_exception_handler(RequestValidationError, validation_exception_handler)
-app.add_exception_handler(HTTPException, http_exception_handler)
-app.add_exception_handler(Exception, generic_exception_handler)
-app.include_router(api_router, prefix=settings.API_V1_STR)
-app.include_router(fitment_router, prefix=f'{settings.API_V1_STR}/fitment', tags=['fitment'])
-media_path = Path(settings.MEDIA_ROOT).resolve()
-app.mount('/media', StaticFiles(directory=media_path), name='media')
 class RequestContextMiddleware:
     def __init__(self, app: Callable) -> None:
         self.app = app
@@ -63,6 +54,21 @@ class RequestContextMiddleware:
             response.headers['X-Request-ID'] = request_id
             response.headers['X-Execution-Time'] = f'{execution_time:.4f}s'
             return response
+app.add_middleware(RequestContextMiddleware)
+app.add_middleware(ErrorHandlerMiddleware)
+app.add_middleware(ResponseFormatterMiddleware)
+if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.security.RATE_LIMIT_ENABLED:
+    app.add_middleware(RateLimitMiddleware, rules=[RateLimitRule(requests_per_window=settings.security.RATE_LIMIT_REQUESTS_PER_MINUTE, window_seconds=60, strategy=RateLimitStrategy.IP, exclude_paths=['/api/v1/health', '/static/']), RateLimitRule(requests_per_window=10, window_seconds=60, strategy=RateLimitStrategy.IP, path_pattern='/api/v1/auth/')], use_redis=settings.security.RATE_LIMIT_STORAGE == 'redis', enable_headers=True, block_exceeding_requests=True)
+app.add_middleware(SecurityHeadersMiddleware, content_security_policy=settings.security.CONTENT_SECURITY_POLICY, permissions_policy=settings.security.PERMISSIONS_POLICY)
+app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
+app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(fitment_router, prefix=f'{settings.API_V1_STR}/fitment', tags=['fitment'])
+media_path = Path(settings.MEDIA_ROOT).resolve()
+app.mount('/media', StaticFiles(directory=media_path), name='media')
 async def log_current_user(current_user: User=Depends(get_current_user)) -> Optional[User]:
     if current_user:
         set_user_id(str(current_user.id))

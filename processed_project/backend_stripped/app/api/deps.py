@@ -11,6 +11,9 @@ from starlette.websockets import WebSocketDisconnect
 from app.core.config import settings
 from app.core.exceptions import AuthenticationException, ErrorCode, PermissionDeniedException
 from app.core.logging import get_logger, set_user_id
+from app.services.security_service import SecurityService
+from app.services.audit_service import AuditService, AuditEventType
+from app.core.rate_limiter import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
 from app.core.security import TokenData, decode_token, oauth2_scheme
 from app.db.session import get_db
@@ -19,6 +22,20 @@ from app.repositories.user import UserRepository
 from app.utils.errors import ensure_not_none
 logger = get_logger('app.api.deps')
 PaginationParams = Dict[str, Union[int, float]]
+def get_security_service(error_handling_service: ErrorHandlingService=Depends(get_error_handling_service)) -> SecurityService:
+    return SecurityService(error_handling_service=error_handling_service)
+async def get_audit_service(db: AsyncSession=Depends(get_db)) -> AuditService:
+    return AuditService(db)
+def rate_limit(requests_per_window: int=10, window_seconds: int=60) -> Callable:
+    limiter = RateLimiter()
+    rule = RateLimitRule(requests_per_window=requests_per_window, window_seconds=window_seconds)
+    async def limit_requests(request: Request, error_handling_service: ErrorHandlingService=Depends(get_error_handling_service)) -> None:
+        key = limiter.get_key_for_request(request, rule)
+        is_limited, count, limit = await limiter.is_rate_limited(key, rule)
+        if is_limited:
+            headers = {'Retry-After': str(window_seconds), 'X-RateLimit-Limit': str(limit), 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': str(window_seconds)}
+            raise RateLimitException(message='Rate limit exceeded', details={'limit': limit, 'current': count}, headers=headers)
+    return limit_requests
 async def get_current_user(db: AsyncSession=Depends(get_db), token: str=Depends(oauth2_scheme)) -> User:
     try:
         token_data = await decode_token(token)

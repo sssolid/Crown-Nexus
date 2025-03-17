@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:42:38
+Generated on 2025-03-17 14:23:13
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -63,6 +63,7 @@ backend/
 │   │   ├── exceptions.py
 │   │   ├── logging.py
 │   │   ├── permissions.py
+│   │   ├── rate_limiter.py
 │   │   ├── security.py
 │   │   └── service_registry.py
 │   ├── db/
@@ -86,8 +87,10 @@ backend/
 │   ├── i18n/
 │   │   └── translations.py
 │   ├── middleware/
+│   │   ├── __init__.py
 │   │   ├── error_handler.py
-│   │   └── response_formatter.py
+│   │   ├── response_formatter.py
+│   │   └── security.py
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── associations.py
@@ -115,6 +118,7 @@ backend/
 │   │   └── user.py
 │   ├── services/
 │   │   ├── __init__.py
+│   │   ├── audit_service.py
 │   │   ├── base.py
 │   │   ├── cache_service.py
 │   │   ├── chat.py
@@ -126,6 +130,7 @@ backend/
 │   │   ├── metrics_service.py
 │   │   ├── pagination.py
 │   │   ├── search.py
+│   │   ├── security_service.py
 │   │   ├── test_service.py
 │   │   ├── validation_service.py
 │   │   └── vehicle.py
@@ -243,6 +248,8 @@ from fastapi.exceptions import RequestValidationError
 from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, http_exception_handler, generic_exception_handler
 from app.middleware.error_handler import ErrorHandlerMiddleware
 from app.middleware.response_formatter import ResponseFormatterMiddleware
+from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
+from app.core.rate_limiter import RateLimitMiddleware, RateLimitRule, RateLimitStrategy
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
@@ -349,6 +356,9 @@ from starlette.websockets import WebSocketDisconnect
 from app.core.config import settings
 from app.core.exceptions import AuthenticationException, ErrorCode, PermissionDeniedException
 from app.core.logging import get_logger, set_user_id
+from app.services.security_service import SecurityService
+from app.services.audit_service import AuditService, AuditEventType
+from app.core.rate_limiter import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
 from app.core.security import TokenData, decode_token, oauth2_scheme
 from app.db.session import get_db
@@ -375,6 +385,15 @@ Args: current_user: Current authenticated user
 Returns: User: Current active admin user
 
 Raises: PermissionDeniedException: If user is not an admin"""
+```
+
+```python
+async def get_audit_service(db) -> AuditService:
+    """Get an instance of the audit service.
+
+Args: db: Database session
+
+Returns: AuditService: The audit service instance"""
 ```
 
 ```python
@@ -449,6 +468,24 @@ This dependency generates pagination parameters based on page number and size, w
 Args: page: Page number (starting from 1) page_size: Number of items per page (max 100)
 
 Returns: Dict: Pagination parameters"""
+```
+
+```python
+def get_security_service(error_handling_service) -> SecurityService:
+    """Get an instance of the security service.
+
+Args: error_handling_service: Error handling service for security errors
+
+Returns: SecurityService: The security service instance"""
+```
+
+```python
+def rate_limit(requests_per_window, window_seconds) -> Callable:
+    """Rate limiting dependency for specific endpoints.
+
+Args: requests_per_window: Number of allowed requests per window window_seconds: Time window in seconds
+
+Returns: Callable: Dependency function"""
 ```
 
 ```python
@@ -3118,6 +3155,111 @@ Args: permissions: Required permissions require_all: Whether all permissions are
 Returns: Callable: Decorator function"""
 ```
 
+##### Module: rate_limiter
+*Rate limiting implementation for Crown Nexus application.*
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/rate_limiter.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import asyncio
+import time
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from fastapi import HTTPException, Request, Response, status
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.core.config import settings
+from app.core.exceptions import RateLimitException
+from app.core.logging import get_logger
+from app.utils.redis_manager import get_redis_client, increment_counter
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.core.rate_limiter")
+```
+
+**Classes:**
+```python
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """Middleware for applying rate limiting to requests.
+
+This middleware applies rate limiting to incoming requests based on configurable rules and can block requests that exceed limits.
+
+Attributes: rules: List of rate limit rules rate_limiter: Rate limiter instance enable_headers: Whether to add rate limit headers to responses block_exceeding_requests: Whether to block requests that exceed limits"""
+```
+*Methods:*
+```python
+    def __init__(self, app, rules, use_redis, enable_headers, block_exceeding_requests) -> None:
+        """Initialize rate limit middleware.
+
+Args: app: FastAPI application rules: List of rate limit rules use_redis: Whether to use Redis for distributed rate limiting enable_headers: Add rate limit headers to responses block_exceeding_requests: Block requests that exceed limits"""
+```
+```python
+    async def dispatch(self, request, call_next) -> Response:
+        """Process the request and apply rate limiting.
+
+Args: request: The incoming request call_next: The next middleware or route handler
+
+Returns: Response: The processed response
+
+Raises: RateLimitException: If the request exceeds rate limits"""
+```
+
+```python
+@dataclass
+class RateLimitRule(object):
+    """Rule for rate limiting configuration.
+
+Attributes: requests_per_window: Number of allowed requests in the time window window_seconds: Time window in seconds strategy: Rate limiting strategy (IP, user, or combined) burst_multiplier: Multiplier for burst capacity (temporary overage) path_pattern: Optional regex pattern to match request paths exclude_paths: Optional list of path prefixes to exclude from rate limiting"""
+```
+
+```python
+class RateLimitStrategy(str, Enum):
+    """Strategies for rate limiting.
+
+Defines the different strategies that can be used for rate limiting: - IP: Based on client IP address - USER: Based on authenticated user ID - COMBINED: Based on both IP address and user ID"""
+```
+*Class attributes:*
+```python
+IP = 'ip'
+USER = 'user'
+COMBINED = 'combined'
+```
+
+```python
+class RateLimiter(object):
+    """Rate limiter implementation for API request throttling.
+
+This class provides rate limiting functionality with support for different strategies and storage backends (in-memory or Redis).
+
+Attributes: use_redis: Whether to use Redis for distributed rate limiting prefix: Key prefix for Redis storage default_rule: Default rate limit rule _counters: In-memory storage for rate limiting counters"""
+```
+*Methods:*
+```python
+    def __init__(self, use_redis, prefix, default_rule) -> None:
+        """Initialize the rate limiter.
+
+Args: use_redis: Whether to use Redis for distributed rate limiting prefix: Key prefix for Redis storage default_rule: Default rate limit rule"""
+```
+```python
+    def get_key_for_request(self, request, rule) -> str:
+        """Generate a rate limiting key for a request.
+
+Args: request: The incoming request rule: Rate limit rule to apply
+
+Returns: str: Rate limiting key"""
+```
+```python
+    async def is_rate_limited(self, key, rule) -> Tuple[(bool, int, int)]:
+        """Check if a key is rate limited.
+
+Args: key: The rate limiting key rule: Rate limit rule to apply
+
+Returns: Tuple[bool, int, int]: (is_limited, current_count, limit)"""
+```
+
 ##### Module: security
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/security.py`
 
@@ -4586,6 +4728,161 @@ Args: part_terminology_id: ID of the part terminology pcdb_positions: List of va
 Args: fitment: The fitment to validate available_vehicles: List of available VCDB vehicles
 
 Returns: ValidationResult with status and messages"""
+```
+
+#### Package: middleware
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/middleware`
+
+**__init__.py:**
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/middleware/__init__.py`
+
+##### Module: error_handler
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/middleware/error_handler.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+import time
+import traceback
+from datetime import datetime
+from typing import Callable, Dict, Optional
+from fastapi import Request, Response
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.core.exceptions import AppException, ErrorCode, ErrorResponse, ErrorSeverity, ErrorCategory
+from app.core.logging import get_logger
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.middleware.error_handler")
+```
+
+**Classes:**
+```python
+class ErrorHandlerMiddleware(BaseHTTPMiddleware):
+    """Middleware for handling errors.
+
+This middleware catches all exceptions raised during request processing and converts them to standardized error responses. It also logs errors with appropriate severity and context."""
+```
+*Methods:*
+```python
+    async def dispatch(self, request, call_next) -> Response:
+        """Process the request and handle any errors.
+
+Args: request: FastAPI request call_next: Next middleware or route handler
+
+Returns: Response: Response with standardized error format if an error occurred"""
+```
+
+##### Module: response_formatter
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/middleware/response_formatter.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import json
+from datetime import datetime
+from typing import Any, Callable, Dict, Optional, Union
+from fastapi import Request, Response
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.core.logging import get_logger
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.middleware.response_formatter")
+```
+
+**Classes:**
+```python
+class ResponseFormatterMiddleware(BaseHTTPMiddleware):
+    """Middleware for formatting API responses.
+
+This middleware ensures all API responses follow a consistent format, with success flag, data, and metadata. It also adds timestamps and request IDs to responses."""
+```
+*Methods:*
+```python
+    async def dispatch(self, request, call_next) -> Response:
+        """Process the request and format the response.
+
+Args: request: FastAPI request call_next: Next middleware or route handler
+
+Returns: Response: Formatted response"""
+```
+
+##### Module: security
+*Security middleware components for Crown Nexus application.*
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/middleware/security.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+import re
+from typing import Callable, Optional, Pattern
+from fastapi import FastAPI, Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.core.config import settings
+from app.core.logging import get_logger
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.middleware.security")
+```
+
+**Classes:**
+```python
+class SecureRequestMiddleware(BaseHTTPMiddleware):
+    """Middleware for validating and sanitizing incoming requests.
+
+This middleware checks request data for potential security issues and can reject suspicious requests.
+
+Attributes: block_suspicious_requests: Whether to block suspicious requests suspicious_patterns: List of patterns to check for in request data"""
+```
+*Methods:*
+```python
+    def __init__(self, app, block_suspicious_requests) -> None:
+        """Initialize the secure request middleware.
+
+Args: app: The FastAPI application block_suspicious_requests: Whether to block requests that look suspicious"""
+```
+```python
+    async def dispatch(self, request, call_next) -> Response:
+        """Process and validate incoming requests.
+
+Args: request: The incoming request call_next: The next middleware or route handler
+
+Returns: Response: The processed response
+
+Raises: SecurityException: If the request appears suspicious"""
+```
+
+```python
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Middleware that adds security headers to all responses.
+
+This middleware adds various security headers to enhance protection against common web vulnerabilities like XSS, clickjacking, and MIME type sniffing.
+
+Attributes: content_security_policy: CSP policy string for the application permissions_policy: Permissions policy string to restrict features expect_ct: Certificate Transparency policy"""
+```
+*Methods:*
+```python
+    def __init__(self, app, content_security_policy, permissions_policy, expect_ct) -> None:
+        """Initialize the security headers middleware.
+
+Args: app: The FastAPI application content_security_policy: CSP policy string, defaults to restrictive policy permissions_policy: Permissions policy string, defaults to restrictive policy expect_ct: Certificate Transparency policy, defaults to None"""
+```
+```python
+    async def dispatch(self, request, call_next) -> Response:
+        """Process the request and add security headers to the response.
+
+Args: request: The incoming request call_next: The next middleware or route handler
+
+Returns: Response: The processed response with security headers"""
 ```
 
 #### Package: models
@@ -7408,6 +7705,108 @@ Returns: Dictionary mapping service names to service instances"""
 Args: service_class: The service class to register name: Optional name for the service. If not provided, the class name is used."""
 ```
 
+##### Module: audit_service
+*Audit service for security and compliance tracking.*
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/audit_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import json
+import uuid
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import settings
+from app.core.logging import get_logger
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.audit")
+```
+
+**Classes:**
+```python
+class AuditEventType(str, Enum):
+    """Types of events for auditing.
+
+Defines the different types of events that can be audited for security and compliance purposes."""
+```
+*Class attributes:*
+```python
+USER_LOGIN = 'user_login'
+USER_LOGOUT = 'user_logout'
+USER_CREATED = 'user_created'
+USER_UPDATED = 'user_updated'
+USER_DELETED = 'user_deleted'
+PASSWORD_CHANGED = 'password_changed'
+PASSWORD_RESET_REQUESTED = 'password_reset_requested'
+ACCESS_DENIED = 'access_denied'
+PERMISSION_CHANGED = 'permission_changed'
+PRODUCT_CREATED = 'product_created'
+PRODUCT_UPDATED = 'product_updated'
+PRODUCT_DELETED = 'product_deleted'
+DATA_EXPORTED = 'data_exported'
+SETTINGS_CHANGED = 'settings_changed'
+API_KEY_CREATED = 'api_key_created'
+API_KEY_REVOKED = 'api_key_revoked'
+```
+
+```python
+class AuditLogLevel(str, Enum):
+    """Log levels for audit events.
+
+Defines the severity levels for audit events to facilitate filtering and alerting."""
+```
+*Class attributes:*
+```python
+INFO = 'info'
+WARNING = 'warning'
+ERROR = 'error'
+CRITICAL = 'critical'
+```
+
+```python
+class AuditService(object):
+    """Service for auditing security-relevant events.
+
+This service logs events related to security, user actions, and system operations for compliance and security monitoring.
+
+Attributes: db: Database session for DB logging enabled: Whether audit logging is enabled log_to_db: Whether to log events to the database log_to_file: Whether to log events to a file audit_log_file: Path to the audit log file"""
+```
+*Methods:*
+```python
+    def __init__(self, db) -> None:
+        """Initialize the audit service.  Args: db: Optional database session"""
+```
+```python
+    async def get_events(self, user_id, event_type, resource_id, resource_type, start_time, end_time, level, limit, offset) -> Dict[(str, Any)]:
+        """Retrieve audit events with filtering.
+
+Args: user_id: Filter by user ID event_type: Filter by event type resource_id: Filter by resource ID resource_type: Filter by resource type start_time: Filter by minimum timestamp end_time: Filter by maximum timestamp level: Filter by audit log level limit: Maximum number of events to return offset: Number of events to skip
+
+Returns: Dict[str, Any]: Paginated audit events"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    async def log_event(self, event_type, user_id, ip_address, resource_id, resource_type, details, level) -> str:
+        """Log an auditable event.
+
+Args: event_type: Type of event user_id: ID of the user who performed the action ip_address: IP address of the user resource_id: ID of the resource affected resource_type: Type of resource affected details: Additional event details level: Audit log level
+
+Returns: str: ID of the audit log entry"""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+
 ##### Module: base
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/base.py`
 
@@ -8842,6 +9241,118 @@ Returns: Dict[str, Any]: Search results with pagination"""
 Args: search_term: Text to search for attributes: Filter by product attributes is_active: Filter by active status page: Page number page_size: Items per page use_elasticsearch: Whether to use Elasticsearch (if available)
 
 Returns: Dict[str, Any]: Search results with pagination"""
+```
+
+##### Module: security_service
+*Security service implementation for Crown Nexus application.*
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/security_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import hmac
+import ipaddress
+import re
+from typing import Any, Dict, List, Optional, Pattern, Set, Tuple, Union
+import secrets
+import time
+from app.core.config import settings
+from app.core.logging import get_logger
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.security")
+```
+
+**Classes:**
+```python
+class SecurityService(object):
+    """Service for security-related operations.
+
+This service provides methods for token validation, CSRF protection, IP validation, and other security operations.
+
+Attributes: secret_key: Application secret key for signing tokens allowed_hosts: Set of allowed hostnames trusted_ips: Set of trusted proxy IP addresses email_pattern: Compiled regex for validating email addresses username_pattern: Compiled regex for validating usernames"""
+```
+*Methods:*
+```python
+    def __init__(self, error_handling_service) -> None:
+        """Initialize the security service.
+
+Args: error_handling_service: Service for handling security errors"""
+```
+```python
+    def generate_csrf_token(self, session_id) -> str:
+        """Generate a CSRF token for a session.
+
+Args: session_id: The session ID to generate a token for
+
+Returns: str: A secure CSRF token"""
+```
+```python
+    def generate_secure_token(self, length) -> str:
+        """Generate a cryptographically secure random token.
+
+Args: length: Length of the token in bytes
+
+Returns: str: A secure random token"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    def is_trusted_ip(self, ip_address) -> bool:
+        """Check if an IP address is in the trusted IP range.
+
+Args: ip_address: The IP address to check
+
+Returns: bool: True if the IP address is trusted"""
+```
+```python
+    def is_valid_email(self, email) -> bool:
+        """Check if an email address is valid.
+
+Args: email: The email address to check
+
+Returns: bool: True if the email address is valid"""
+```
+```python
+    def is_valid_hostname(self, hostname) -> bool:
+        """Check if a hostname is valid and allowed.
+
+Args: hostname: The hostname to check
+
+Returns: bool: True if the hostname is valid and allowed"""
+```
+```python
+    def is_valid_username(self, username) -> bool:
+        """Check if a username is valid.
+
+Args: username: The username to check
+
+Returns: bool: True if the username is valid"""
+```
+```python
+    def sanitize_input(self, input_str) -> str:
+        """Sanitize user input to prevent XSS attacks.
+
+Args: input_str: The string to sanitize
+
+Returns: str: Sanitized string"""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+```python
+    def validate_csrf_token(self, token, session_id) -> bool:
+        """Validate a CSRF token.
+
+Args: token: The CSRF token to validate session_id: The session ID the token was generated for
+
+Returns: bool: True if the token is valid"""
 ```
 
 ##### Module: test_service
@@ -10586,7 +11097,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:42:38
+Generated on 2025-03-17 14:23:13
 
 ## Project Overview
 - Project Name: frontend

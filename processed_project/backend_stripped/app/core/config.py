@@ -31,6 +31,23 @@ class DatabaseSettings(BaseSettings):
             return self
         self.SQLALCHEMY_DATABASE_URI = PostgresDsn.build(scheme='postgresql+asyncpg', username=self.POSTGRES_USER, password=self.POSTGRES_PASSWORD, host=self.POSTGRES_SERVER, port=int(self.POSTGRES_PORT), path=f'{self.POSTGRES_DB}')
         return self
+class SecuritySettings(BaseSettings):
+    ALLOWED_HOSTS: List[str] = Field(default=['localhost', '127.0.0.1'], description='List of allowed hostnames')
+    TRUSTED_PROXIES: List[str] = Field(default=['127.0.0.1', '::1'], description='List of trusted proxy IP addresses')
+    CORS_ALWAYS_ALLOW: bool = Field(default=False, description='Whether to always allow CORS requests')
+    CSRF_COOKIE_SECURE: bool = Field(default=True, description='Whether to only send CSRF cookie over HTTPS')
+    CSRF_TOKEN_EXPIRY: int = Field(default=86400, description='Expiration time for CSRF tokens in seconds (24 hours)')
+    RATE_LIMIT_ENABLED: bool = Field(default=True, description='Whether rate limiting is enabled')
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = Field(default=60, description='Default requests allowed per minute')
+    RATE_LIMIT_BURST_MULTIPLIER: float = Field(default=1.5, description='Multiplier for burst capacity')
+    RATE_LIMIT_STORAGE: str = Field(default='redis', description="Storage backend for rate limiting ('redis' or 'memory')")
+    CONTENT_SECURITY_POLICY: str = Field(default="default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self'; connect-src 'self'", description='Content Security Policy header value')
+    PERMISSIONS_POLICY: str = Field(default='camera=(), microphone=(), geolocation=(), payment=()', description='Permissions Policy header value')
+    AUDIT_LOGGING_ENABLED: bool = Field(default=True, description='Whether audit logging is enabled')
+    AUDIT_LOG_TO_DB: bool = Field(default=True, description='Whether to log audit events to database')
+    AUDIT_LOG_TO_FILE: bool = Field(default=False, description='Whether to log audit events to file')
+    AUDIT_LOG_FILE: str = Field(default='logs/audit.log', description='File path for audit log')
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', case_sensitive=True)
 class ElasticsearchSettings(BaseSettings):
     ELASTICSEARCH_HOST: str = Field('localhost')
     ELASTICSEARCH_PORT: int = Field(9200)
@@ -199,6 +216,9 @@ class Settings(BaseSettings):
         if self.ENVIRONMENT == Environment.PRODUCTION and self.MEDIA_CDN_URL:
             return self.MEDIA_CDN_URL
         return self.MEDIA_URL
+    @property
+    def security(self) -> SecuritySettings:
+        return SecuritySettings()
     @property
     def db(self) -> DatabaseSettings:
         return DatabaseSettings(POSTGRES_SERVER=self.POSTGRES_SERVER, POSTGRES_USER=self.POSTGRES_USER, POSTGRES_PASSWORD=self.POSTGRES_PASSWORD, POSTGRES_DB=self.POSTGRES_DB, SQLALCHEMY_DATABASE_URI=self.SQLALCHEMY_DATABASE_URI)

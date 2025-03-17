@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:49:09
+Generated on 2025-03-17 00:50:05
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -112,6 +112,7 @@ backend/
 │   │   ├── currency_service.py
 │   │   ├── error_handling_service.py
 │   │   ├── interfaces.py
+│   │   ├── logging_service.py
 │   │   ├── media_service.py
 │   │   ├── pagination.py
 │   │   ├── search.py
@@ -7713,6 +7714,125 @@ Args: id: Entity ID data: Updated entity data user_id: Optional user ID for perm
 Returns: Optional[T]: The updated entity if found, None otherwise"""
 ```
 
+##### Module: logging_service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/logging_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import json
+import logging
+import sys
+import threading
+import time
+import uuid
+from contextlib import contextmanager
+from datetime import datetime
+from functools import wraps
+from pathlib import Path
+from typing import Any, Callable, Dict, Generator, List, Optional, TypeVar, cast
+import structlog
+from pythonjsonlogger import jsonlogger
+from structlog.stdlib import BoundLogger
+from structlog.types import EventDict, Processor, WrappedLogger
+from app.core.config import Environment, LogLevel, settings
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+F = F = TypeVar("F", bound=Callable[..., Any])
+T = T = TypeVar("T")
+```
+
+**Classes:**
+```python
+class LoggingService(object):
+    """Service for centralized logging functionality.
+
+This service provides standardized logging across the application, with support for structured logging, correlation IDs, and context tracking."""
+```
+*Methods:*
+```python
+    def __init__(self) -> None:
+        """Initialize the logging service."""
+```
+```python
+    def add_context_processor(self, logger, method_name, event_dict) -> EventDict:
+        """Add context data to log events.
+
+Args: logger: Logger instance method_name: Method name being called event_dict: Event dictionary to modify
+
+Returns: EventDict: Modified event dictionary"""
+```
+```python
+    def clear_context(self) -> None:
+        """Clear context data for the current thread."""
+```
+```python
+    def configure_logging(self) -> None:
+        """Configure logging with appropriate handlers and formatters."""
+```
+```python
+    def configure_std_logging(self) -> None:
+        """Configure standard library logging.
+
+Sets up log handlers based on environment and configuration settings."""
+```
+```python
+    def configure_structlog(self) -> None:
+        """Configure structlog with processors and renderers.
+
+Sets up structlog to work alongside standard library logging, with consistent formatting and context handling."""
+```
+```python
+    def get_logger(self, name) -> BoundLogger:
+        """Get a structlog logger instance.
+
+Args: name: Logger name (typically __name__)
+
+Returns: BoundLogger: Structured logger instance"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    def log_execution_time(self, logger, level) -> Callable[([F], F)]:
+        """Decorator to log function execution time.
+
+Args: logger: Logger to use level: Log level to use
+
+Returns: Callable: Decorated function"""
+```
+```python
+    async def log_execution_time_async(self, logger, level) -> Callable[([F], F)]:
+        """Decorator to log async function execution time.
+
+Args: logger: Logger to use level: Log level to use
+
+Returns: Callable: Decorated async function"""
+```
+```python
+@contextmanager
+    def request_context(self, request_id, user_id) -> Generator[(str, None, None)]:
+        """Context manager for tracking request context in logs.
+
+Args: request_id: Request ID (generated if not provided) user_id: User ID (optional)
+
+Yields: str: Request ID"""
+```
+```python
+    def set_context(self, request_id, user_id, **kwargs) -> None:
+        """Set context data for the current thread.
+
+Args: request_id: Request ID for correlation user_id: User ID for tracking **kwargs: Additional context data"""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+
 ##### Module: media_service
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/media_service.py`
 
@@ -9603,7 +9723,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 00:49:09
+Generated on 2025-03-17 00:50:05
 
 ## Project Overview
 - Project Name: frontend

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:46:50
+Generated on 2025-03-17 00:48:07
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -110,6 +110,7 @@ backend/
 │   │   ├── base.py
 │   │   ├── chat.py
 │   │   ├── currency_service.py
+│   │   ├── error_handling_service.py
 │   │   ├── interfaces.py
 │   │   ├── media_service.py
 │   │   ├── pagination.py
@@ -7503,6 +7504,77 @@ Returns: int: Number of rates updated
 Raises: ValueError: If API returns invalid data SQLAlchemyError: If database operations fail"""
 ```
 
+##### Module: error_handling_service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/error_handling_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import traceback
+from typing import Any, Dict, Optional, Type, cast
+from app.core.exceptions import AppException, BusinessLogicException, DatabaseException, ErrorCode, ErrorResponse, ValidationException
+from app.core.logging import get_logger
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.error_handling_service")
+```
+
+**Classes:**
+```python
+class ErrorHandlingService(object):
+    """Service for centralized error handling.
+
+This service provides standardized error handling across the application, with consistent error responses and logging."""
+```
+*Methods:*
+```python
+    def __init__(self) -> None:
+        """Initialize the error handling service."""
+```
+```python
+    def create_business_logic_error(self, message, details) -> BusinessLogicException:
+        """Create a business logic error exception.
+
+Args: message: Error message details: Additional error details
+
+Returns: BusinessLogicException: Business logic error exception"""
+```
+```python
+    def create_database_error(self, message, original_error, details) -> DatabaseException:
+        """Create a database error exception.
+
+Args: message: Error message original_error: Original exception details: Additional error details
+
+Returns: DatabaseException: Database error exception"""
+```
+```python
+    def create_validation_error(self, field, message, error_type) -> ValidationException:
+        """Create a validation error exception.
+
+Args: field: Field with the error message: Error message error_type: Type of error
+
+Returns: ValidationException: Validation error exception"""
+```
+```python
+    def handle_exception(self, exception, request_id) -> ErrorResponse:
+        """Handle an exception and return a standardized error response.
+
+Args: exception: The exception to handle request_id: Request ID for logging and tracking
+
+Returns: ErrorResponse: Standardized error response"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+
 ##### Module: interfaces
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/interfaces.py`
 
@@ -9414,7 +9486,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 00:46:50
+Generated on 2025-03-17 00:48:07
 
 ## Project Overview
 - Project Name: frontend

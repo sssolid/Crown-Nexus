@@ -108,6 +108,12 @@ async def initialize_services() -> None:
         "security_service",
         "audit_service",
         "media_service",
+        "user_service",
+        "chat_service",
+        "search_service",
+        "product_service",
+        "vehicle_service",
+        "exchange_rate_service",
     ]
 
     for service_name in services_order:
@@ -127,6 +133,12 @@ async def shutdown_services() -> None:
 
     # Shutdown services in reverse order
     services_order = [
+        "exchange_rate_service",
+        "vehicle_service",
+        "product_service",
+        "search_service",
+        "chat_service",
+        "user_service",
         "media_service",
         "audit_service",
         "security_service",
@@ -135,6 +147,7 @@ async def shutdown_services() -> None:
         "validation_service",
         "error_handling_service",
         "logging_service",
+        "exchange_rate_service",
     ]
 
     for service_name in services_order:

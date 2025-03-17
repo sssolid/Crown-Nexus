@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:24:06
+Generated on 2025-03-17 01:34:59
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -2351,13 +2351,21 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/exceptions.py`
 **Imports:**
 ```python
 from __future__ import annotations
+import logging
+import sys
 import traceback
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, Union, cast
 from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
+from app.core.logging import get_logger
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.core.exceptions")
 ```
 
 **Functions:**
@@ -2367,7 +2375,7 @@ async def app_exception_handler(request, exc) -> JSONResponse:
 
 Args: request: FastAPI request exc: AppException instance
 
-Returns: JSON response with error details"""
+Returns: JSONResponse: JSON response with error details"""
 ```
 
 ```python
@@ -2376,7 +2384,7 @@ async def generic_exception_handler(request, exc) -> JSONResponse:
 
 Args: request: FastAPI request exc: Unhandled exception
 
-Returns: JSON response with error details"""
+Returns: JSONResponse: JSON response with error details"""
 ```
 
 ```python
@@ -2385,7 +2393,7 @@ async def http_exception_handler(request, exc) -> JSONResponse:
 
 Args: request: FastAPI request exc: HTTPException instance
 
-Returns: JSON response with error details"""
+Returns: JSONResponse: JSON response with error details"""
 ```
 
 ```python
@@ -2394,20 +2402,26 @@ async def validation_exception_handler(request, exc) -> JSONResponse:
 
 Args: request: FastAPI request exc: RequestValidationError instance
 
-Returns: JSON response with validation error details"""
+Returns: JSONResponse: JSON response with validation error details"""
 ```
 
 **Classes:**
 ```python
 class AppException(Exception):
-    """Base exception for all application-specific exceptions."""
+    """Base exception for all application-specific exceptions.
+
+This class provides the foundation for a structured exception hierarchy, with standardized error codes, messages, and HTTP status codes."""
 ```
 *Methods:*
 ```python
-    def __init__(self, message, code, details, status_code) -> None:
+    def __init__(self, message, code, details, status_code, severity, category, original_exception) -> None:
         """Initialize the exception with customizable properties.
 
-Args: message: Human-readable error message code: Error code details: Detailed error information status_code: HTTP status code"""
+Args: message: Human-readable error message code: Error code details: Detailed error information status_code: HTTP status code severity: Error severity level category: Error category original_exception: Original exception that caused this error"""
+```
+```python
+    def log(self, request_id) -> None:
+        """Log the exception with appropriate severity level.  Args: request_id: Request ID for tracking"""
 ```
 ```python
     def to_response(self, request_id) -> ErrorResponse:
@@ -2415,32 +2429,112 @@ Args: message: Human-readable error message code: Error code details: Detailed e
 
 Args: request_id: Request ID for tracking
 
-Returns: Standardized error response"""
+Returns: ErrorResponse: Standardized error response"""
 ```
 
 ```python
 class AuthenticationException(AppException):
-    """Exception raised for authentication errors."""
+    """Exception raised for authentication errors.  This exception is used when authentication fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the authentication exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class BadRequestException(AppException):
-    """Exception raised for bad requests."""
+    """Exception raised for bad requests.  This exception is used when a request is malformed or invalid."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the bad request exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class BusinessLogicException(AppException):
-    """Exception raised for business logic errors."""
+    """Exception raised for business logic errors.
+
+This exception is used when a business rule is violated."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the business logic exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class ConfigurationException(AppException):
+    """Exception raised for configuration errors.
+
+This exception is used when there's an issue with application configuration."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the configuration exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class DataIntegrityException(DatabaseException):
+    """Exception raised for data integrity errors.
+
+This exception is used when a database constraint is violated."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the data integrity exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class DatabaseException(AppException):
-    """Exception raised for database errors."""
+    """Exception raised for database errors.  This exception is used when a database operation fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the database exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class ErrorCategory(str, Enum):
+    """Categories for errors.  These categories help group errors by their source or nature."""
+```
+*Class attributes:*
+```python
+VALIDATION = 'validation'
+AUTHENTICATION = 'authentication'
+AUTHORIZATION = 'authorization'
+RESOURCE = 'resource'
+DATABASE = 'database'
+NETWORK = 'network'
+EXTERNAL = 'external'
+BUSINESS = 'business'
+SECURITY = 'security'
+DATA = 'data'
+SYSTEM = 'system'
+UNKNOWN = 'unknown'
 ```
 
 ```python
 class ErrorCode(str, Enum):
-    """Error codes for standardized error responses."""
+    """Error codes for standardized error responses.
+
+These codes provide standardized identifiers for error types, allowing clients to handle errors consistently."""
 ```
 *Class attributes:*
 ```python
@@ -2457,45 +2551,220 @@ USER_NOT_ACTIVE = 'USER_NOT_ACTIVE'
 DATABASE_ERROR = 'DATABASE_ERROR'
 TRANSACTION_FAILED = 'TRANSACTION_FAILED'
 DATA_INTEGRITY_ERROR = 'DATA_INTEGRITY_ERROR'
+NETWORK_ERROR = 'NETWORK_ERROR'
+TIMEOUT_ERROR = 'TIMEOUT_ERROR'
+CONNECTION_ERROR = 'CONNECTION_ERROR'
 EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR'
 RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'
 SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE'
+EXTERNAL_DEPENDENCY_ERROR = 'EXTERNAL_DEPENDENCY_ERROR'
 BUSINESS_LOGIC_ERROR = 'BUSINESS_LOGIC_ERROR'
+INVALID_STATE_ERROR = 'INVALID_STATE_ERROR'
+OPERATION_NOT_ALLOWED = 'OPERATION_NOT_ALLOWED'
+SECURITY_ERROR = 'SECURITY_ERROR'
+ACCESS_DENIED = 'ACCESS_DENIED'
+CSRF_ERROR = 'CSRF_ERROR'
+DATA_ERROR = 'DATA_ERROR'
+SERIALIZATION_ERROR = 'SERIALIZATION_ERROR'
+DESERIALIZATION_ERROR = 'DESERIALIZATION_ERROR'
+SYSTEM_ERROR = 'SYSTEM_ERROR'
+CONFIGURATION_ERROR = 'CONFIGURATION_ERROR'
+DEPENDENCY_ERROR = 'DEPENDENCY_ERROR'
 ```
 
 ```python
 class ErrorDetail(BaseModel):
-    """Detailed error information for API responses."""
+    """Detailed error information for API responses.
+
+This model provides structured error details, including location, message, and error type."""
 ```
 
 ```python
 class ErrorResponse(BaseModel):
-    """Standardized error response model."""
+    """Standardized error response model.
+
+This model defines the structure of error responses returned by the API, providing consistent error information to clients."""
+```
+*Methods:*
+```python
+@validator('details', pre=True)
+    def validate_details(cls, v) -> List[ErrorDetail]:
+        """Validate and convert error details to proper format."""
+```
+
+```python
+class ErrorSeverity(str, Enum):
+    """Severity levels for errors.  These levels help categorize errors by their impact and urgency."""
+```
+*Class attributes:*
+```python
+DEBUG = 'debug'
+INFO = 'info'
+WARNING = 'warning'
+ERROR = 'error'
+CRITICAL = 'critical'
 ```
 
 ```python
 class ExternalServiceException(AppException):
-    """Exception raised for external service errors."""
+    """Exception raised for external service errors.
+
+This exception is used when an external service call fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the external service exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class InvalidStateException(BusinessLogicException):
+    """Exception raised for invalid state errors.
+
+This exception is used when an operation is attempted in an invalid state."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the invalid state exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class NetworkException(AppException):
+    """Exception raised for network errors.  This exception is used when a network operation fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the network exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class OperationNotAllowedException(BusinessLogicException):
+    """Exception raised when an operation is not allowed.
+
+This exception is used when an operation is not allowed due to business rules."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the operation not allowed exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class PermissionDeniedException(AppException):
-    """Exception raised for permission errors."""
+    """Exception raised for permission errors.
+
+This exception is used when a user doesn't have permission to perform an action."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the permission denied exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class RateLimitException(ExternalServiceException):
+    """Exception raised for rate limit errors.
+
+This exception is used when an external service rate limit is exceeded."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the rate limit exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class ResourceAlreadyExistsException(AppException):
-    """Exception raised when a resource already exists."""
+    """Exception raised when a resource already exists.
+
+This exception is used when attempting to create a resource that already exists."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the resource already exists exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class ResourceNotFoundException(AppException):
-    """Exception raised when a resource is not found."""
+    """Exception raised when a resource is not found.
+
+This exception is used when a requested resource doesn't exist."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the resource not found exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class ServiceUnavailableException(ExternalServiceException):
+    """Exception raised when an external service is unavailable.
+
+This exception is used when an external service is temporarily unavailable."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the service unavailable exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class TimeoutException(NetworkException):
+    """Exception raised for timeout errors.  This exception is used when a network operation times out."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the timeout exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
+```
+
+```python
+class TransactionException(DatabaseException):
+    """Exception raised for transaction errors.  This exception is used when a database transaction fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the transaction exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ```python
 class ValidationException(AppException):
-    """Exception raised for validation errors."""
+    """Exception raised for validation errors.
+
+This exception is used when input data fails validation checks."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+        """Initialize the validation exception.
+
+Args: message: Error message code: Error code details: Additional error details status_code: HTTP status code original_exception: Original exception"""
 ```
 
 ##### Module: logging

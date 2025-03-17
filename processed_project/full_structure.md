@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:37:54
+Generated on 2025-03-17 01:41:35
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -10541,7 +10541,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:37:54
+Generated on 2025-03-17 01:41:36
 
 ## Project Overview
 - Project Name: frontend

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:48:07
+Generated on 2025-03-17 00:49:09
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -116,6 +116,7 @@ backend/
 │   │   ├── pagination.py
 │   │   ├── search.py
 │   │   ├── test_service.py
+│   │   ├── validation_service.py
 │   │   └── vehicle.py
 │   ├── tasks/
 │   │   ├── __init__.py
@@ -8190,6 +8191,122 @@ Args: actual: Actual result from the test expected: Expected result ignore_field
 Returns: bool: True if the actual result matches the expected result"""
 ```
 
+##### Module: validation_service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/validation_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import re
+from datetime import date, datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set, Type, Union, cast
+from pydantic import BaseModel, Field, ValidationError, root_validator, validator
+from app.core.exceptions import ValidationException
+from app.core.logging import get_logger
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.services.validation_service")
+```
+
+**Classes:**
+```python
+class ValidationService(object):
+    """Service for validating data.
+
+This service provides standardized validation across the application, with support for common validation patterns."""
+```
+*Methods:*
+```python
+    def __init__(self) -> None:
+        """Initialize the validation service."""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+```python
+    def validate_data(self, data, schema_class) -> BaseModel:
+        """Validate data against a Pydantic schema.
+
+Args: data: Data to validate schema_class: Pydantic schema class
+
+Returns: BaseModel: Validated schema
+
+Raises: ValidationException: If validation fails"""
+```
+```python
+    def validate_date(self, value, min_date, max_date, format_str) -> bool:
+        """Validate a date.
+
+Args: value: Date to validate min_date: Minimum allowed date max_date: Maximum allowed date format_str: Date format string for string dates
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    def validate_email(self, email) -> bool:
+        """Validate an email address.
+
+Args: email: Email address to validate
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    def validate_length(self, value, min_length, max_length) -> bool:
+        """Validate string length.
+
+Args: value: String to validate min_length: Minimum allowed length max_length: Maximum allowed length
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    def validate_phone(self, phone) -> bool:
+        """Validate a phone number.
+
+Args: phone: Phone number to validate
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    def validate_range(self, value, min_value, max_value) -> bool:
+        """Validate a numeric value within a range.
+
+Args: value: Numeric value to validate min_value: Minimum allowed value max_value: Maximum allowed value
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    def validate_regex(self, value, pattern) -> bool:
+        """Validate a string against a regex pattern.
+
+Args: value: String to validate pattern: Regex pattern
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    def validate_required(self, value) -> bool:
+        """Validate that a value is not None or empty.
+
+Args: value: Value to validate
+
+Returns: bool: True if valid, False otherwise"""
+```
+```python
+    async def validate_unique(self, field, value, model, db, exclude_id) -> bool:
+        """Validate that a field value is unique.
+
+Args: field: Field name value: Field value model: SQLAlchemy model db: Database session exclude_id: ID to exclude from the check
+
+Returns: bool: True if valid, False otherwise"""
+```
+
 ##### Module: vehicle
 *Vehicle data lookup service.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/vehicle.py`
@@ -9486,7 +9603,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 00:48:07
+Generated on 2025-03-17 00:49:09
 
 ## Project Overview
 - Project Name: frontend

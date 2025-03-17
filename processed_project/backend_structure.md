@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:52:01
+Generated on 2025-03-17 01:01:10
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -214,7 +214,6 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app`
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/__init__.py`
 
 #### Module: main
-*FastAPI application entry point.*
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/main.py`
 
 **Imports:**
@@ -237,7 +236,8 @@ from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
-from app.core.logging import setup_logging, get_logger, request_context, set_user_id
+from app.core.logging import get_logger, request_context, set_user_id
+from app.core.service_registry import register_services, initialize_services, shutdown_services
 from app.fitment.api import router as fitment_router
 from app.fitment.dependencies import initialize_mapping_engine
 from app.models.user import User
@@ -256,7 +256,7 @@ app = app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
     lifespan=lifespan,
 )
-media_path =     media_path = Path(settings.MEDIA_ROOT).resolve()
+media_path = media_path = Path(settings.MEDIA_ROOT).resolve()
 host = '0.0.0.0'
 port = 8000
 ```

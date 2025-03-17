@@ -18,6 +18,7 @@ from app.api.v1.router import api_router
 from app.core.config import Environment, settings
 from app.core.logging import get_logger, request_context, set_user_id
 from app.core.service_registry import register_services, initialize_services, shutdown_services
+from app.core.cache.manager import initialize_cache
 from app.fitment.api import router as fitment_router
 from app.fitment.dependencies import initialize_mapping_engine
 from app.models.user import User
@@ -25,6 +26,7 @@ import uvicorn
 logger = get_logger('app.main')
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    initialize_cache()
     register_services()
     await initialize_services()
     await initialize_mapping_engine()

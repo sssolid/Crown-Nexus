@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:18:04
+Generated on 2025-03-17 01:20:52
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -246,6 +246,7 @@ from app.api.v1.router import api_router
 from app.core.config import Environment, settings
 from app.core.logging import get_logger, request_context, set_user_id
 from app.core.service_registry import register_services, initialize_services, shutdown_services
+from app.core.cache.manager import initialize_cache
 from app.fitment.api import router as fitment_router
 from app.fitment.dependencies import initialize_mapping_engine
 from app.models.user import User
@@ -10044,7 +10045,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:18:04
+Generated on 2025-03-17 01:20:52
 
 ## Project Overview
 - Project Name: frontend

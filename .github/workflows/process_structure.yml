@@ -45,12 +45,9 @@ jobs:
           git config --global user.email "actions@github.com"
 
           git fetch origin
-          git checkout main
-          git pull --rebase --autostash
-
-          # Force Git to track the processed_project folder and its files
+          git checkout -B processed-project
           git add -f processed_project/
           git commit -m "Update processed structure [Automated]" || echo "No changes to commit"
 
-          # Push only this folder without affecting other files
-          git push origin main --no-verify
+          # Push to a separate branch to prevent conflicts
+          git push origin processed-project --force

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:44:56
+Generated on 2025-03-17 00:46:50
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -7079,7 +7079,7 @@ import uuid
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.exceptions import BusinessLogicException, DatabaseException, ValidationException
+from app.core.exceptions import BusinessLogicException, DatabaseException, ErrorCode, PermissionDeniedException, ResourceAlreadyExistsException, ResourceNotFoundException, ValidationException
 from app.core.logging import get_logger
 from app.core.permissions import Permission, PermissionChecker
 from app.db.base_class import Base
@@ -7087,70 +7087,90 @@ from app.db.utils import count_query, transaction, transactional
 from app.models.user import User
 from app.repositories.base import BaseRepository
 from app.schemas.pagination import CursorPaginationParams, OffsetPaginationParams, PaginationResult
+from app.services.interfaces import CrudServiceInterface
 from app.services.pagination import PaginationService
 from app.utils.errors import ensure_not_none, resource_already_exists, resource_not_found, validation_error
 ```
 
 **Global Variables:**
 ```python
-logger = logger = get_logger("app.services.base")
 T = T = TypeVar("T", bound=Base)  # SQLAlchemy model
 C = C = TypeVar("C", bound=BaseModel)  # Create schema
 U = U = TypeVar("U", bound=BaseModel)  # Update schema
 R = R = TypeVar("R", bound=BaseModel)  # Response schema
+ID = ID = TypeVar("ID")  # ID type
+logger = logger = get_logger("app.services.base")
 ```
 
 **Classes:**
 ```python
-class BaseService(Generic[(T, C, U, R)]):
+class BaseService(Generic[(T, C, U, R, ID)], CrudServiceInterface[(T, ID, C, U, R)]):
     """Base service for CRUD operations on entities.
 
-This service provides standardized CRUD operations with: - Integrated permissions checking - Transaction management - Error handling - Validation
+This service provides standardized CRUD operations with: - Integrated permissions checking - Transaction management - Error handling - Validation - Event dispatching - Logging
 
-Attributes: model: SQLAlchemy model class repository: Repository for database operations create_schema: Pydantic model for create operations update_schema: Pydantic model for update operations response_schema: Pydantic model for responses"""
+Attributes: db: AsyncSession for database operations model: SQLAlchemy model class repository: Repository for database operations create_schema: Pydantic model for create operations update_schema: Pydantic model for update operations response_schema: Pydantic model for responses required_create_permission: Permission required for create operations required_read_permission: Permission required for read operations required_update_permission: Permission required for update operations required_delete_permission: Permission required for delete operations"""
 ```
 *Methods:*
 ```python
-    def __init__(self, db, model_class, create_schema, update_schema, response_schema) -> None:
+    def __init__(self, db, model_class, create_schema, update_schema, response_schema, repository_class) -> None:
         """Initialize the service.
 
-Args: db: Database session model_class: SQLAlchemy model class create_schema: Pydantic model for create operations update_schema: Pydantic model for update operations response_schema: Pydantic model for responses"""
+Args: db: Database session model_class: SQLAlchemy model class create_schema: Pydantic model for create operations update_schema: Pydantic model for update operations response_schema: Pydantic model for responses repository_class: Repository class for database operations"""
 ```
 ```python
-    async def after_create(self, entity, current_user) -> None:
-        """Hook for post-creation processing.
-
-Args: entity: Created entity current_user: Current authenticated user"""
+    async def after_create(self, entity, user_id) -> None:
+        """Hook after entity creation.  Args: entity: Created entity user_id: Current user ID"""
 ```
 ```python
-    async def after_delete(self, entity, current_user) -> None:
-        """Hook for post-deletion processing.
-
-Args: entity: Deleted entity current_user: Current authenticated user"""
+    async def after_delete(self, entity, user_id) -> None:
+        """Hook after entity deletion.  Args: entity: Deleted entity user_id: Current user ID"""
 ```
 ```python
-    async def after_update(self, updated_entity, original_entity, current_user) -> None:
-        """Hook for post-update processing.
+    async def after_update(self, updated_entity, original_entity, user_id) -> None:
+        """Hook after entity update.
 
-Args: updated_entity: Updated entity original_entity: Original entity before update current_user: Current authenticated user"""
+Args: updated_entity: Updated entity original_entity: Original entity before update user_id: Current user ID"""
+```
+```python
+    async def before_create(self, data, user_id) -> None:
+        """Hook before entity creation.  Args: data: Entity data user_id: Current user ID"""
+```
+```python
+    async def before_delete(self, entity, user_id) -> None:
+        """Hook before entity deletion.  Args: entity: Entity to delete user_id: Current user ID"""
+```
+```python
+    async def before_update(self, entity, data, user_id) -> None:
+        """Hook before entity update.
+
+Args: entity: Existing entity data: Updated data user_id: Current user ID"""
 ```
 ```python
 @transactional
-    async def create(self, obj_in, current_user) -> T:
+    async def create(self, data, user_id) -> T:
         """Create new entity.
 
-Args: obj_in: Entity data current_user: Current authenticated user
+Args: data: Entity data user_id: Current user ID
 
 Returns: T: Created entity
 
 Raises: ValidationException: If validation fails PermissionDeniedException: If user doesn't have permission"""
 ```
 ```python
+    async def create_with_schema(self, schema, user_id) -> T:
+        """Create a new entity using a Pydantic schema.
+
+Args: schema: Create schema user_id: Optional user ID for permission checks
+
+Returns: T: The created entity"""
+```
+```python
 @transactional
-    async def delete(self, id, current_user, hard_delete) -> bool:
+    async def delete(self, id, user_id, hard_delete) -> bool:
         """Delete entity.
 
-Args: id: Entity ID current_user: Current authenticated user hard_delete: Whether to permanently delete
+Args: id: Entity ID user_id: Current user ID hard_delete: Whether to permanently delete
 
 Returns: bool: True if deleted
 
@@ -7158,45 +7178,69 @@ Raises: ResourceNotFoundException: If entity not found PermissionDeniedException
 ```
 ```python
 @transactional
-    async def get(self, id, current_user) -> T:
+    async def get(self, id, user_id) -> T:
         """Get entity by ID with permission check.
 
-Args: id: Entity ID current_user: Current authenticated user
+Args: id: Entity ID user_id: Current user ID
 
 Returns: T: Entity
 
 Raises: ResourceNotFoundException: If entity not found PermissionDeniedException: If user doesn't have permission"""
 ```
 ```python
+    async def get_all(self, page, page_size, filters, user_id) -> Dict[(str, Any)]:
+        """Get all entities with pagination.
+
+Args: page: Page number (1-indexed) page_size: Number of items per page filters: Optional filters to apply user_id: Optional user ID for permission checks
+
+Returns: Dict[str, Any]: Paginated results"""
+```
+```python
+    async def get_by_id(self, id, user_id) -> Optional[T]:
+        """Get entity by ID without raising exceptions.
+
+Args: id: Entity ID user_id: Current user ID
+
+Returns: Optional[T]: Entity or None if not found"""
+```
+```python
 @transactional
-    async def get_multi(self, current_user, page, page_size, filters, order_by) -> Dict[(str, Any)]:
+    async def get_multi(self, user_id, page, page_size, filters, order_by) -> Dict[(str, Any)]:
         """Get multiple entities with pagination.
 
-Args: current_user: Current authenticated user page: Page number page_size: Items per page filters: Filters to apply order_by: Field to order by
+Args: user_id: Current user ID page: Page number page_size: Items per page filters: Filters to apply order_by: Field to order by
 
 Returns: Dict[str, Any]: Paginated results
 
 Raises: PermissionDeniedException: If user doesn't have permission"""
 ```
 ```python
-    async def get_paginated(self, current_user, params, filters) -> PaginationResult[R]:
+    async def get_paginated(self, user_id, params, filters) -> PaginationResult[R]:
         """Get paginated entities using offset-based pagination.
 
-Args: current_user: Current authenticated user params: Pagination parameters filters: Filters to apply
+Args: user_id: Current user ID params: Pagination parameters filters: Filters to apply
 
 Returns: PaginationResult[R]: Paginated results
 
 Raises: PermissionDeniedException: If user doesn't have permission"""
 ```
 ```python
-    async def get_paginated_with_cursor(self, current_user, params, filters) -> PaginationResult[R]:
+    async def get_paginated_with_cursor(self, user_id, params, filters) -> PaginationResult[R]:
         """Get paginated entities using cursor-based pagination.
 
-Args: current_user: Current authenticated user params: Pagination parameters filters: Filters to apply
+Args: user_id: Current user ID params: Pagination parameters filters: Filters to apply
 
 Returns: PaginationResult[R]: Paginated results
 
 Raises: PermissionDeniedException: If user doesn't have permission"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
 ```
 ```python
     async def to_response(self, entity) -> R:
@@ -7212,36 +7256,44 @@ Returns: List[R]: Response models"""
 ```
 ```python
 @transactional
-    async def update(self, id, obj_in, current_user) -> T:
+    async def update(self, id, data, user_id) -> T:
         """Update entity.
 
-Args: id: Entity ID obj_in: Updated data current_user: Current authenticated user
+Args: id: Entity ID data: Updated data user_id: Current user ID
 
 Returns: T: Updated entity
 
 Raises: ResourceNotFoundException: If entity not found ValidationException: If validation fails PermissionDeniedException: If user doesn't have permission"""
 ```
 ```python
-    async def validate_create(self, data, current_user) -> None:
+    async def update_with_schema(self, id, schema, user_id) -> Optional[T]:
+        """Update an existing entity using a Pydantic schema.
+
+Args: id: Entity ID schema: Update schema user_id: Optional user ID for permission checks
+
+Returns: Optional[T]: The updated entity if found, None otherwise"""
+```
+```python
+    async def validate_create(self, data, user_id) -> None:
         """Validate data before creation.
 
-Args: data: Entity data current_user: Current authenticated user
+Args: data: Entity data user_id: Current user ID
 
 Raises: ValidationException: If validation fails"""
 ```
 ```python
-    async def validate_delete(self, entity, current_user) -> None:
+    async def validate_delete(self, entity, user_id) -> None:
         """Validate before deletion.
 
-Args: entity: Entity to delete current_user: Current authenticated user
+Args: entity: Entity to delete user_id: Current user ID
 
 Raises: ValidationException: If validation fails"""
 ```
 ```python
-    async def validate_update(self, entity, data, current_user) -> None:
+    async def validate_update(self, entity, data, user_id) -> None:
         """Validate data before update.
 
-Args: entity: Existing entity data: Updated data current_user: Current authenticated user
+Args: entity: Existing entity data: Updated data user_id: Current user ID
 
 Raises: ValidationException: If validation fails"""
 ```

@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:15:57
+Generated on 2025-03-17 01:17:12
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -52,6 +52,7 @@ backend/
 │   │   │   ├── base.py
 │   │   │   ├── decorators.py
 │   │   │   ├── keys.py
+│   │   │   ├── manager.py
 │   │   │   ├── memory.py
 │   │   │   └── redis.py
 │   │   ├── __init__.py

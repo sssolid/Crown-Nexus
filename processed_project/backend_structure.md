@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:34:59
+Generated on 2025-03-17 01:35:53
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -140,7 +140,8 @@ backend/
 │   │   ├── db.py
 │   │   ├── errors.py
 │   │   ├── file.py
-│   │   └── redis_manager.py
+│   │   ├── redis_manager.py
+│   │   └── retry.py
 │   ├── __init__.py
 │   └── main.py
 ├── examples/
@@ -9793,6 +9794,96 @@ async def set_key(key, value, ttl) -> bool:
 Args: key: Redis key value: Value to store (will be JSON serialized) ttl: Time-to-live in seconds (optional)
 
 Returns: bool: Success status"""
+```
+
+##### Module: retry
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/utils/retry.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import asyncio
+import functools
+import logging
+import random
+import time
+from typing import Any, Callable, List, Optional, Type, TypeVar, Union, cast
+from app.core.exceptions import NetworkException, RateLimitException, ServiceUnavailableException, TimeoutException
+from app.core.logging import get_logger
+```
+
+**Global Variables:**
+```python
+F = F = TypeVar('F', bound=Callable[..., Any])
+T = T = TypeVar('T')
+logger = logger = get_logger("app.utils.retry")
+```
+
+**Functions:**
+```python
+async def async_retry(retries, delay, backoff_factor, jitter, exceptions) -> Callable[([F], F)]:
+    """Retry decorator for asynchronous functions.
+
+This decorator retries an async function when it raises specified exceptions, with exponential backoff and optional jitter.
+
+Args: retries: Maximum number of retries delay: Initial delay between retries in seconds backoff_factor: Backoff multiplier (how much to increase delay each retry) jitter: Whether to add random jitter to delay exceptions: Exception types to catch and retry
+
+Returns: Callable: Decorated async function"""
+```
+
+```python
+async def async_retry_on_network_errors(retries, delay, backoff_factor, jitter) -> Callable[([F], F)]:
+    """Async retry decorator for functions that may encounter network errors.
+
+This decorator is specialized for network-related errors in async functions and uses appropriate exception types.
+
+Args: retries: Maximum number of retries delay: Initial delay between retries in seconds backoff_factor: Backoff multiplier (how much to increase delay each retry) jitter: Whether to add random jitter to delay
+
+Returns: Callable: Decorated async function"""
+```
+
+```python
+async def async_retry_with_timeout(retries, delay, timeout, backoff_factor, jitter, exceptions) -> Callable[([F], F)]:
+    """Retry decorator with timeout for asynchronous functions.
+
+This decorator combines retry logic with a timeout for each attempt.
+
+Args: retries: Maximum number of retries delay: Initial delay between retries in seconds timeout: Timeout for each attempt in seconds backoff_factor: Backoff multiplier (how much to increase delay each retry) jitter: Whether to add random jitter to delay exceptions: Exception types to catch and retry
+
+Returns: Callable: Decorated async function"""
+```
+
+```python
+def retry(retries, delay, backoff_factor, jitter, exceptions) -> Callable[([F], F)]:
+    """Retry decorator for synchronous functions.
+
+This decorator retries a function when it raises specified exceptions, with exponential backoff and optional jitter.
+
+Args: retries: Maximum number of retries delay: Initial delay between retries in seconds backoff_factor: Backoff multiplier (how much to increase delay each retry) jitter: Whether to add random jitter to delay exceptions: Exception types to catch and retry
+
+Returns: Callable: Decorated function"""
+```
+
+```python
+def retry_on_network_errors(retries, delay, backoff_factor, jitter) -> Callable[([F], F)]:
+    """Retry decorator for functions that may encounter network errors.
+
+This decorator is specialized for network-related errors and uses appropriate exception types.
+
+Args: retries: Maximum number of retries delay: Initial delay between retries in seconds backoff_factor: Backoff multiplier (how much to increase delay each retry) jitter: Whether to add random jitter to delay
+
+Returns: Callable: Decorated function"""
+```
+
+```python
+def retry_with_timeout(retries, delay, timeout, backoff_factor, jitter, exceptions) -> Callable[([F], F)]:
+    """Retry decorator with timeout for synchronous functions.
+
+This decorator combines retry logic with a timeout for each attempt.
+
+Args: retries: Maximum number of retries delay: Initial delay between retries in seconds timeout: Timeout for each attempt in seconds backoff_factor: Backoff multiplier (how much to increase delay each retry) jitter: Whether to add random jitter to delay exceptions: Exception types to catch and retry
+
+Returns: Callable: Decorated function"""
 ```
 
 ### Package: examples

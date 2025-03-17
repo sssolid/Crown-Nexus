@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 01:17:12
+Generated on 2025-03-17 01:18:04
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -116,6 +116,7 @@ backend/
 │   ├── services/
 │   │   ├── __init__.py
 │   │   ├── base.py
+│   │   ├── cache_service.py
 │   │   ├── chat.py
 │   │   ├── currency_service.py
 │   │   ├── error_handling_service.py
@@ -7363,6 +7364,136 @@ Args: entity: Existing entity data: Updated data user_id: Current user ID
 Raises: ValidationException: If validation fails"""
 ```
 
+##### Module: cache_service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/cache_service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import logging
+from typing import Any, Dict, List, Optional, TypeVar
+from app.core.cache.decorators import cache_aside, cached, invalidate_cache, memoize
+from app.core.cache.keys import generate_cache_key, generate_list_key, generate_model_key, generate_query_key
+from app.core.cache.manager import cache_manager
+from app.core.logging import get_logger
+from app.services.interfaces import ServiceInterface
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar('T')
+logger = logger = get_logger("app.services.cache_service")
+```
+
+**Classes:**
+```python
+class CacheService(object):
+    """Service for caching operations.
+
+This service provides a high-level interface for caching operations, with support for model caching, query caching, and more."""
+```
+*Methods:*
+```python
+    def __init__(self) -> None:
+        """Initialize the cache service."""
+```
+```python
+    async def get_model(self, model_name, model_id, backend) -> Optional[Dict[(str, Any)]]:
+        """Get a model instance from the cache.
+
+Args: model_name: Model name model_id: Model ID backend: Cache backend to use
+
+Returns: Optional[Dict[str, Any]]: Cached model instance or None if not found"""
+```
+```python
+    async def get_model_list(self, model_name, filters, backend) -> Optional[List[Dict[(str, Any)]]]:
+        """Get a list of model instances from the cache.
+
+Args: model_name: Model name filters: Optional filters backend: Cache backend to use
+
+Returns: Optional[List[Dict[str, Any]]]: Cached list or None if not found"""
+```
+```python
+    async def get_or_set(self, key, default_factory, ttl, backend) -> Any:
+        """Get a value from the cache or set it if not found.
+
+Args: key: Cache key default_factory: Function to call to get default value ttl: Time-to-live in seconds backend: Cache backend to use
+
+Returns: Any: Cached value or default value"""
+```
+```python
+    async def get_or_set_async(self, key, default_factory, ttl, backend) -> Any:
+        """Get a value from the cache or set it if not found (async version).
+
+Args: key: Cache key default_factory: Async function to call to get default value ttl: Time-to-live in seconds backend: Cache backend to use
+
+Returns: Any: Cached value or default value"""
+```
+```python
+    async def get_query(self, query_name, params, backend) -> Optional[Any]:
+        """Get a query result from the cache.
+
+Args: query_name: Query name params: Optional query parameters backend: Cache backend to use
+
+Returns: Optional[Any]: Cached query result or None if not found"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources."""
+```
+```python
+    async def invalidate_model(self, model_name, model_id, backend) -> bool:
+        """Invalidate a model instance in the cache.
+
+Args: model_name: Model name model_id: Model ID backend: Cache backend to use
+
+Returns: bool: True if successful, False otherwise"""
+```
+```python
+    async def invalidate_model_list(self, model_name, backend) -> int:
+        """Invalidate all lists of a model in the cache.
+
+Args: model_name: Model name backend: Cache backend to use
+
+Returns: int: Number of keys invalidated"""
+```
+```python
+    async def invalidate_query(self, query_name, backend) -> int:
+        """Invalidate all results of a query in the cache.
+
+Args: query_name: Query name backend: Cache backend to use
+
+Returns: int: Number of keys invalidated"""
+```
+```python
+    async def set_model(self, model_name, model_id, data, ttl, backend) -> bool:
+        """Set a model instance in the cache.
+
+Args: model_name: Model name model_id: Model ID data: Model data ttl: Time-to-live in seconds backend: Cache backend to use
+
+Returns: bool: True if successful, False otherwise"""
+```
+```python
+    async def set_model_list(self, model_name, data, filters, ttl, backend) -> bool:
+        """Set a list of model instances in the cache.
+
+Args: model_name: Model name data: List data filters: Optional filters ttl: Time-to-live in seconds backend: Cache backend to use
+
+Returns: bool: True if successful, False otherwise"""
+```
+```python
+    async def set_query(self, query_name, data, params, ttl, backend) -> bool:
+        """Set a query result in the cache.
+
+Args: query_name: Query name data: Query result params: Optional query parameters ttl: Time-to-live in seconds backend: Cache backend to use
+
+Returns: bool: True if successful, False otherwise"""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources."""
+```
+
 ##### Module: chat
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/chat.py`
 
@@ -9913,7 +10044,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 01:17:12
+Generated on 2025-03-17 01:18:04
 
 ## Project Overview
 - Project Name: frontend

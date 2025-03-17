@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:50:55
+Generated on 2025-03-17 00:52:01
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -56,7 +56,8 @@ backend/
 │   │   ├── exceptions.py
 │   │   ├── logging.py
 │   │   ├── permissions.py
-│   │   └── security.py
+│   │   ├── security.py
+│   │   └── service_registry.py
 │   ├── db/
 │   │   ├── __init__.py
 │   │   ├── base.py
@@ -2980,6 +2981,59 @@ class TokenType(str):
 ```python
 ACCESS = 'access'
 REFRESH = 'refresh'
+```
+
+##### Module: service_registry
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/service_registry.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import inspect
+from typing import Any, Dict, Optional, Type
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.dependency_manager import dependency_manager
+from app.core.logging import get_logger
+from app.services.error_handling_service import ErrorHandlingService
+from app.services.logging_service import LoggingService
+from app.services.metrics_service import MetricsService
+from app.services.validation_service import ValidationService
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.core.service_registry")
+```
+
+**Functions:**
+```python
+def get_service(service_name, db) -> Any:
+    """Get a service instance by name.
+
+Args: service_name: Name of the service db: Optional database session
+
+Returns: Any: Service instance"""
+```
+
+```python
+async def initialize_services() -> None:
+    """Initialize all registered services.
+
+This function should be called during application startup to initialize all registered services."""
+```
+
+```python
+def register_services() -> None:
+    """Register all services in the dependency manager.
+
+This function should be called during application startup to register all services in the dependency manager."""
+```
+
+```python
+async def shutdown_services() -> None:
+    """Shutdown all registered services.
+
+This function should be called during application shutdown to release resources held by services."""
 ```
 
 #### Package: db
@@ -9852,7 +9906,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 00:50:55
+Generated on 2025-03-17 00:52:02
 
 ## Project Overview
 - Project Name: frontend

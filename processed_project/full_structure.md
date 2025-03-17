@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-17 00:03:20
+Generated on 2025-03-17 00:43:46
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -109,6 +109,7 @@ backend/
 │   │   ├── base.py
 │   │   ├── chat.py
 │   │   ├── currency_service.py
+│   │   ├── interfaces.py
 │   │   ├── media_service.py
 │   │   ├── pagination.py
 │   │   ├── search.py
@@ -7354,6 +7355,143 @@ Returns: int: Number of rates updated
 Raises: ValueError: If API returns invalid data SQLAlchemyError: If database operations fail"""
 ```
 
+##### Module: interfaces
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/interfaces.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import abc
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Generic, List, Optional, Protocol, Type, TypeVar, Union
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar('T')  # Entity type
+ID = ID = TypeVar('ID')  # ID type
+C = C = TypeVar('C')  # Create schema type
+U = U = TypeVar('U')  # Update schema type
+R = R = TypeVar('R')  # Response schema type
+```
+
+**Classes:**
+```python
+class CrudServiceInterface(ServiceInterface[(T, ID)], Generic[(T, ID, C, U, R)]):
+    """Extended interface for CRUD services with schema validation.
+
+This interface extends the base service interface with methods that use Pydantic models for validation."""
+```
+*Methods:*
+```python
+    async def create_with_schema(self, schema, user_id) -> T:
+        """Create a new entity using a Pydantic schema.
+
+Args: schema: Create schema user_id: Optional user ID for permission checks
+
+Returns: T: The created entity"""
+```
+```python
+    async def to_response(self, entity) -> R:
+        """Convert entity to response schema.  Args: entity: Entity to convert  Returns: R: Response schema"""
+```
+```python
+    async def to_response_multi(self, entities) -> List[R]:
+        """Convert entities to response schemas.
+
+Args: entities: Entities to convert
+
+Returns: List[R]: Response schemas"""
+```
+```python
+    async def update_with_schema(self, id, schema, user_id) -> Optional[T]:
+        """Update an existing entity using a Pydantic schema.
+
+Args: id: Entity ID schema: Update schema user_id: Optional user ID for permission checks
+
+Returns: Optional[T]: The updated entity if found, None otherwise"""
+```
+
+```python
+class ReadOnlyServiceInterface(ServiceInterface[(T, ID)], Generic[(T, ID, R)]):
+    """Interface for read-only services.
+
+This interface provides only read operations, useful for services that don't need to modify data."""
+```
+*Methods:*
+```python
+    async def to_response(self, entity) -> R:
+        """Convert entity to response schema.  Args: entity: Entity to convert  Returns: R: Response schema"""
+```
+```python
+    async def to_response_multi(self, entities) -> List[R]:
+        """Convert entities to response schemas.
+
+Args: entities: Entities to convert
+
+Returns: List[R]: Response schemas"""
+```
+
+```python
+class ServiceInterface(Protocol, Generic[(T, ID)]):
+    """Base protocol for all services.
+
+This protocol defines the standard interface that all services must implement."""
+```
+*Methods:*
+```python
+    async def create(self, data, user_id) -> T:
+        """Create a new entity.
+
+Args: data: Entity data user_id: Optional user ID for permission checks
+
+Returns: T: The created entity"""
+```
+```python
+    async def delete(self, id, user_id) -> bool:
+        """Delete an entity.
+
+Args: id: Entity ID user_id: Optional user ID for permission checks
+
+Returns: bool: True if the entity was deleted, False otherwise"""
+```
+```python
+    async def get_all(self, page, page_size, filters, user_id) -> Dict[(str, Any)]:
+        """Get all entities with pagination.
+
+Args: page: Page number (1-indexed) page_size: Number of items per page filters: Optional filters to apply user_id: Optional user ID for permission checks
+
+Returns: Dict[str, Any]: Paginated results"""
+```
+```python
+    async def get_by_id(self, id, user_id) -> Optional[T]:
+        """Get entity by ID.
+
+Args: id: Entity ID user_id: Optional user ID for permission checks
+
+Returns: Optional[T]: The entity if found, None otherwise"""
+```
+```python
+    async def initialize(self) -> None:
+        """Initialize service resources.
+
+This method should be called during application startup to initialize any resources needed by the service."""
+```
+```python
+    async def shutdown(self) -> None:
+        """Release service resources.
+
+This method should be called during application shutdown to release any resources held by the service."""
+```
+```python
+    async def update(self, id, data, user_id) -> Optional[T]:
+        """Update an existing entity.
+
+Args: id: Entity ID data: Updated entity data user_id: Optional user ID for permission checks
+
+Returns: Optional[T]: The updated entity if found, None otherwise"""
+```
+
 ##### Module: media_service
 Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/services/media_service.py`
 
@@ -9128,7 +9266,7 @@ Args: client: Test client admin_token: Admin authentication token normal_user: U
 ```
 
 # frontend Frontend Structure
-Generated on 2025-03-17 00:03:21
+Generated on 2025-03-17 00:43:46
 
 ## Project Overview
 - Project Name: frontend

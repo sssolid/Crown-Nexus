@@ -1,7 +1,11 @@
 # Ignore everything inside processed_project/
 processed_project/*
 
-# But allow Git to track the folder itself
+# Allow all subdirectories and files inside to be tracked
+!processed_project/
+!processed_project/**
+
+# Keep the folder even when empty
 !processed_project/.gitkeep
 
 backend/data

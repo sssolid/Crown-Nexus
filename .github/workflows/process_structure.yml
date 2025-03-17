@@ -44,13 +44,13 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-          # Pull latest changes (but ignore conflicts)
           git fetch origin
           git checkout main
           git pull --rebase --autostash
 
-          # Commit ONLY the processed_project folder
-          git add processed_project/
+          # Force Git to track the processed_project folder and its files
+          git add -f processed_project/
           git commit -m "Update processed structure [Automated]" || echo "No changes to commit"
 
+          # Push only this folder without affecting other files
           git push origin main --no-verify

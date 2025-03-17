@@ -1,50 +1,59 @@
 # backend/app/chat/websocket.py
-"""
-WebSocket handler for chat functionality.
-
-This module provides the WebSocket endpoint and handler for real-time chat:
-- WebSocket connections with authentication
-- Message processing and routing
-- Room management
-- Presence tracking
-- Error handling
-
-It serves as the entry point for WebSocket connections in the chat system.
-"""
-
 from __future__ import annotations
 
 import asyncio
 import json
-import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, Optional, cast
 
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, status
-from pydantic import ValidationError
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user_ws, get_db
 from app.chat.connection import manager, redis_manager
 from app.chat.schemas import (
-    ChatMessageSchema, 
-    CommandType, 
+    ChatMessageSchema,
+    CommandType,
     MessageType,
-    WebSocketCommand, 
+    WebSocketCommand,
     WebSocketResponse
 )
 from app.chat.service import ChatService
-from app.db.session import get_db_context
-from app.models.chat import ChatMessage, ChatRoom, ChatMember, ChatMemberRole
+from app.core.exceptions import (
+    BusinessLogicException,
+    ErrorCode,
+    PermissionDeniedException,
+    ResourceNotFoundException,
+    ValidationException,
+)
+from app.core.logging import get_logger
+from app.core.service_registry import get_service
 from app.models.user import User
-from app.utils.redis_manager import rate_limit_check, set_key, get_key
+from app.services.audit_service import AuditEventType, AuditLogLevel, AuditService
+from app.services.metrics_service import MetricsService
+from app.services.security_service import SecurityService
+from app.services.validation_service import ValidationService
+from app.utils.redis_manager import rate_limit_check
 
-
+logger = get_logger("app.chat.websocket")
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
+async def get_audit_service() -> AuditService:
+    """Get the audit service instance."""
+    return cast(AuditService, get_service("audit_service"))
+
+async def get_metrics_service() -> MetricsService:
+    """Get the metrics service instance."""
+    return cast(MetricsService, get_service("metrics_service"))
+
+async def get_security_service() -> SecurityService:
+    """Get the security service instance."""
+    return cast(SecurityService, get_service("security_service"))
+
+async def get_validation_service() -> ValidationService:
+    """Get the validation service instance."""
+    return cast(ValidationService, get_service("validation_service"))
 
 @router.websocket("/ws/chat")
 async def websocket_endpoint(
@@ -53,127 +62,232 @@ async def websocket_endpoint(
     current_user: User = Depends(get_current_user_ws),
 ):
     """
-    WebSocket endpoint for chat connections.
-    
-    This endpoint handles:
-    - WebSocket connection setup
-    - Authentication via JWT token
-    - Command processing
-    - Error handling and graceful disconnection
-    
+    WebSocket endpoint for chat functionality.
+
+    This endpoint manages the WebSocket connection for chat clients, handling
+    commands for joining/leaving rooms, sending/receiving messages, and more.
+
     Args:
         websocket: The WebSocket connection
-        db: Database session
+        db: Database session for database operations
         current_user: The authenticated user
     """
     connection_id = str(uuid.uuid4())
     user_id = str(current_user.id)
-    
-    # Start Redis Pub/Sub listener if not already running
+
+    # Get services
+    chat_service = ChatService(db)
+    audit_service = await get_audit_service()
+    metrics_service = await get_metrics_service()
+    security_service = await get_security_service()
+    validation_service = await get_validation_service()
+
+    # Initialize metrics
+    metrics_service.increment_counter(
+        "websocket_connections_total",
+        labels={"user_id": user_id}
+    )
+
+    # Log connection
+    logger.info(
+        "WebSocket connection initiated",
+        connection_id=connection_id,
+        user_id=user_id
+    )
+
+    # Audit log connection
+    await audit_service.log_event(
+        event_type=AuditEventType.USER_LOGIN,
+        user_id=user_id,
+        resource_type="websocket",
+        resource_id=connection_id,
+        details={"connection_type": "websocket", "source": "chat"},
+        level=AuditLogLevel.INFO,
+    )
+
     await redis_manager.start_pubsub_listener()
-    
+
     try:
         # Accept the connection
         await manager.connect(websocket, connection_id, user_id)
-        
-        # Set user as online
+
+        # Mark user as online
         online_key = f"user:online:{user_id}"
-        await set_key(online_key, True, 300)  # 5 minutes TTL
-        
-        # Create chat service
-        chat_service = ChatService(db)
-        
-        # Send welcome message
-        await websocket.send_json(WebSocketResponse(
-            type="connected",
-            data={
-                "user_id": user_id,
-                "connection_id": connection_id,
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        ).dict())
-        
-        # Send list of active rooms for this user
-        user_rooms = await chat_service.get_user_rooms(current_user.id)
-        await websocket.send_json(WebSocketResponse(
-            type="room_list",
-            data={
-                "rooms": user_rooms
-            }
-        ).dict())
-        
-        # Process incoming messages
+        await websocket.send_json(
+            WebSocketResponse(
+                type="connected",
+                data={
+                    "user_id": user_id,
+                    "connection_id": connection_id,
+                    "timestamp": datetime.utcnow().isoformat(),
+                }
+            ).dict()
+        )
+
+        # Send the user's room list
+        user_rooms = await chat_service.get_user_rooms(user_id)
+        await websocket.send_json(
+            WebSocketResponse(
+                type="room_list",
+                data={"rooms": user_rooms}
+            ).dict()
+        )
+
+        # Main WebSocket loop
         while True:
-            # Receive message
+            # Receive and parse message
             data = await websocket.receive_text()
-            
-            try:
-                # Check rate limits
-                is_limited, count = await rate_limit_check(
-                    f"rate:ws:{user_id}", 
-                    limit=50,  # 50 operations
-                    window=60   # per minute
+
+            # Check rate limiting
+            is_limited, count = await rate_limit_check(
+                f"rate:ws:{user_id}", limit=50, window=60
+            )
+            if is_limited:
+                logger.warning(
+                    "Rate limit exceeded for WebSocket user",
+                    user_id=user_id,
+                    count=count
                 )
-                
-                if is_limited:
-                    logger.warning(f"Rate limit exceeded for user {user_id}: {count}")
-                    await websocket.send_json(WebSocketResponse(
+                metrics_service.increment_counter(
+                    "websocket_rate_limit_exceeded",
+                    labels={"user_id": user_id}
+                )
+                await websocket.send_json(
+                    WebSocketResponse(
                         type="error",
                         success=False,
-                        error="Rate limit exceeded"
-                    ).dict())
-                    continue
-                
-                # Parse command
-                command_data = json.loads(data)
-                command = WebSocketCommand(**command_data)
-                
-                # Process command based on type
-                await process_command(
-                    command=command,
-                    websocket=websocket,
-                    connection_id=connection_id,
-                    user=current_user,
-                    chat_service=chat_service
+                        error="Rate limit exceeded. Please slow down."
+                    ).dict()
                 )
-                
+                continue
+
+            try:
+                # Parse and validate command
+                command_data = json.loads(data)
+
+                # Security check for suspicious input
+                if not security_service.validate_json_input(command_data):
+                    logger.warning(
+                        "Suspicious WebSocket input rejected",
+                        user_id=user_id,
+                        connection_id=connection_id
+                    )
+                    await websocket.send_json(
+                        WebSocketResponse(
+                            type="error",
+                            success=False,
+                            error="Invalid or suspicious input detected"
+                        ).dict()
+                    )
+                    continue
+
+                command = WebSocketCommand(**command_data)
+
+                # Process the command with metrics tracking
+                with metrics_service.timer(
+                    "histogram",
+                    "websocket_command_processing_seconds",
+                    {"command": command.command}
+                ):
+                    await process_command(
+                        command=command,
+                        websocket=websocket,
+                        connection_id=connection_id,
+                        user=current_user,
+                        chat_service=chat_service,
+                        audit_service=audit_service,
+                        security_service=security_service,
+                    )
+
+                # Increment command counter
+                metrics_service.increment_counter(
+                    "websocket_commands_processed",
+                    labels={"command": command.command, "user_id": user_id}
+                )
+
             except json.JSONDecodeError:
-                logger.error(f"Invalid JSON from client {connection_id}")
-                await websocket.send_json(WebSocketResponse(
-                    type="error",
-                    success=False,
-                    error="Invalid JSON"
-                ).dict())
-            
-            except ValidationError as e:
-                logger.error(f"Validation error: {e}")
-                await websocket.send_json(WebSocketResponse(
-                    type="error",
-                    success=False,
-                    error=f"Validation error: {str(e)}"
-                ).dict())
-            
+                logger.error(
+                    "Invalid JSON received from client",
+                    connection_id=connection_id
+                )
+                await websocket.send_json(
+                    WebSocketResponse(
+                        type="error",
+                        success=False,
+                        error="Invalid JSON message format"
+                    ).dict()
+                )
+
+            except ValidationException as e:
+                logger.warning(
+                    "Validation error processing WebSocket command",
+                    error=str(e),
+                    connection_id=connection_id,
+                    user_id=user_id,
+                )
+                await websocket.send_json(
+                    WebSocketResponse(
+                        type="error",
+                        success=False,
+                        error=f"Validation error: {str(e)}"
+                    ).dict()
+                )
+
             except Exception as e:
-                logger.exception(f"Error processing message: {e}")
-                await websocket.send_json(WebSocketResponse(
-                    type="error",
-                    success=False,
-                    error="Internal server error"
-                ).dict())
-    
+                logger.exception(
+                    "Error processing WebSocket message",
+                    error=str(e),
+                    connection_id=connection_id,
+                    user_id=user_id,
+                )
+                await websocket.send_json(
+                    WebSocketResponse(
+                        type="error",
+                        success=False,
+                        error="Internal server error"
+                    ).dict()
+                )
+
     except WebSocketDisconnect:
-        logger.info(f"WebSocket disconnected: {connection_id}")
-    
+        logger.info(
+            "WebSocket disconnected",
+            connection_id=connection_id,
+            user_id=user_id,
+        )
+
     except Exception as e:
-        logger.exception(f"WebSocket error: {e}")
-    
+        logger.exception(
+            "Unexpected WebSocket error",
+            error=str(e),
+            connection_id=connection_id,
+            user_id=user_id,
+        )
+
     finally:
-        # Handle disconnection cleanup
+        # Clean up connection
         manager.disconnect(connection_id)
-        
-        # Update user's last seen timestamp
+
+        # Update last seen time
         last_seen_key = f"user:last_seen:{user_id}"
-        await set_key(last_seen_key, datetime.utcnow().isoformat(), 86400)  # 24 hours TTL
+        current_time = datetime.utcnow().isoformat()
+
+        # Log disconnection
+        logger.info(
+            "WebSocket connection terminated",
+            connection_id=connection_id,
+            user_id=user_id,
+            last_seen=current_time,
+        )
+
+        # Audit log disconnection
+        await audit_service.log_event(
+            event_type=AuditEventType.USER_LOGOUT,
+            user_id=user_id,
+            resource_type="websocket",
+            resource_id=connection_id,
+            details={"connection_type": "websocket", "last_seen": current_time},
+            level=AuditLogLevel.INFO,
+        )
 
 
 async def process_command(
@@ -181,317 +295,401 @@ async def process_command(
     websocket: WebSocket,
     connection_id: str,
     user: User,
-    chat_service: ChatService
+    chat_service: ChatService,
+    audit_service: AuditService,
+    security_service: SecurityService,
 ) -> None:
     """
     Process a WebSocket command.
-    
-    This function handles different command types and routes them
-    to the appropriate handler functions.
-    
+
     Args:
         command: The command to process
         websocket: The WebSocket connection
-        connection_id: ID of this connection
+        connection_id: Unique connection identifier
         user: The authenticated user
-        chat_service: Chat service instance
+        chat_service: Chat service for chat operations
+        audit_service: Audit service for logging events
+        security_service: Security service for input validation
+
+    Raises:
+        ValidationException: If the command data is invalid
+        PermissionDeniedException: If the user lacks permission
+        ResourceNotFoundException: If a required resource isn't found
+        BusinessLogicException: If there's a logical error processing the command
     """
     user_id = str(user.id)
-    
-    # Process based on command type
+
+    # JOIN_ROOM command
     if command.command == CommandType.JOIN_ROOM:
-        # Validate room access
         room_id = command.data.get("room_id") or command.room_id
         if not room_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID is required"
-            ).dict())
-            return
-        
-        # Check if user has access to the room
-        has_access = await chat_service.check_room_access(str(user.id), room_id)
+            raise ValidationException(
+                message="Room ID is required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize input
+        room_id = security_service.sanitize_input(room_id)
+
+        # Check access permission
+        has_access = await chat_service.check_room_access(user_id, room_id)
         if not has_access:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Access denied to room"
-            ).dict())
-            return
-        
+            logger.warning(
+                "Access denied to room",
+                user_id=user_id,
+                room_id=room_id,
+            )
+            raise PermissionDeniedException(
+                message="Access denied to room",
+                code=ErrorCode.PERMISSION_DENIED,
+                details={"room_id": room_id},
+            )
+
         # Join the room
         manager.join_room(connection_id, room_id)
-        
-        # Get room info
         room_info = await chat_service.get_room_info(room_id)
-        
-        # Notify user of successful join
-        await websocket.send_json(WebSocketResponse(
-            type="room_joined",
-            data=room_info
-        ).dict())
-        
-        # Notify other room members
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(type="room_joined", data=room_info).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="user_joined",
                 data={
                     "room_id": room_id,
-                    "user": {
-                        "id": str(user.id),
-                        "name": user.full_name
-                    }
-                }
+                    "user": {"id": user_id, "name": user.full_name},
+                },
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+        # Audit log
+        await audit_service.log_event(
+            event_type=AuditEventType.USER_LOGIN,
+            user_id=user_id,
+            resource_type="chat_room",
+            resource_id=room_id,
+            details={"action": "join_room"},
+            level=AuditLogLevel.INFO,
+        )
+
+    # LEAVE_ROOM command
     elif command.command == CommandType.LEAVE_ROOM:
         room_id = command.data.get("room_id") or command.room_id
         if not room_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID is required"
-            ).dict())
-            return
-        
+            raise ValidationException(
+                message="Room ID is required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize input
+        room_id = security_service.sanitize_input(room_id)
+
         # Leave the room
         manager.leave_room(connection_id, room_id)
-        
-        # Notify user of successful leave
-        await websocket.send_json(WebSocketResponse(
-            type="room_left",
-            data={"room_id": room_id}
-        ).dict())
-        
-        # Notify other room members
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(
+                type="room_left",
+                data={"room_id": room_id}
+            ).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="user_left",
-                data={
-                    "room_id": room_id,
-                    "user_id": str(user.id)
-                }
+                data={"room_id": room_id, "user_id": user_id},
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+        # Audit log
+        await audit_service.log_event(
+            event_type=AuditEventType.USER_LOGOUT,
+            user_id=user_id,
+            resource_type="chat_room",
+            resource_id=room_id,
+            details={"action": "leave_room"},
+            level=AuditLogLevel.INFO,
+        )
+
+    # SEND_MESSAGE command
     elif command.command == CommandType.SEND_MESSAGE:
         room_id = command.data.get("room_id") or command.room_id
         content = command.data.get("content")
         message_type = command.data.get("message_type", "text")
-        
+
+        # Validate required fields
         if not room_id or not content:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID and content are required"
-            ).dict())
-            return
-        
-        # Check if user has access to the room
-        has_access = await chat_service.check_room_access(str(user.id), room_id)
+            raise ValidationException(
+                message="Room ID and content are required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        # We don't sanitize content to preserve message formatting, but we do validate message type
+        if not security_service.is_valid_enum_value(message_type, MessageType):
+            raise ValidationException(
+                message=f"Invalid message type: {message_type}",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Check access permission
+        has_access = await chat_service.check_room_access(user_id, room_id)
         if not has_access:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Access denied to room"
-            ).dict())
-            return
-        
-        # Filter content if needed
-        filtered_content = await filter_message_content(content)
-        
-        # Create and save message
+            logger.warning(
+                "Access denied to room",
+                user_id=user_id,
+                room_id=room_id,
+            )
+            raise PermissionDeniedException(
+                message="Access denied to room",
+                code=ErrorCode.PERMISSION_DENIED,
+                details={"room_id": room_id},
+            )
+
+        # Content moderation
+        filtered_content = await security_service.moderate_content(content)
+
+        # Create message
         message = await chat_service.create_message(
             room_id=room_id,
-            sender_id=str(user.id),
+            sender_id=user_id,
             content=filtered_content,
             message_type=message_type,
-            metadata=command.data.get("metadata", {})
+            metadata=command.data.get("metadata", {}),
         )
-        
-        # Format message for response
+
+        # Format message data
         message_data = {
             "id": str(message.id),
             "room_id": room_id,
-            "sender_id": str(user.id),
+            "sender_id": user_id,
             "sender_name": user.full_name,
             "message_type": message.message_type,
             "content": message.content,
             "created_at": message.created_at.isoformat(),
             "updated_at": message.updated_at.isoformat(),
-            "metadata": message.metadata
+            "metadata": message.metadata,
         }
-        
-        # Send confirmation to sender
-        await websocket.send_json(WebSocketResponse(
-            type="message_sent",
-            data=message_data
-        ).dict())
-        
-        # Broadcast to room
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(type="message_sent", data=message_data).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
-                type="new_message",
-                data=message_data
+                type="new_message", data=message_data
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+        # Audit log
+        await audit_service.log_event(
+            event_type=AuditEventType.USER_CREATED,
+            user_id=user_id,
+            resource_type="chat_message",
+            resource_id=str(message.id),
+            details={
+                "room_id": room_id,
+                "message_type": message_type,
+            },
+            level=AuditLogLevel.INFO,
+        )
+
+    # READ_MESSAGES command
     elif command.command == CommandType.READ_MESSAGES:
         room_id = command.data.get("room_id") or command.room_id
         last_read_id = command.data.get("last_read_id")
-        
+
+        # Validate required fields
         if not room_id or not last_read_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID and last_read_id are required"
-            ).dict())
-            return
-        
-        # Update last read timestamp
-        await chat_service.mark_as_read(str(user.id), room_id, last_read_id)
-        
-        # Send confirmation
-        await websocket.send_json(WebSocketResponse(
-            type="messages_read",
-            data={
-                "room_id": room_id,
-                "last_read_id": last_read_id
-            }
-        ).dict())
-    
+            raise ValidationException(
+                message="Room ID and last_read_id are required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        last_read_id = security_service.sanitize_input(last_read_id)
+
+        # Mark messages as read
+        success = await chat_service.mark_as_read(user_id, room_id, last_read_id)
+        if not success:
+            logger.warning(
+                "Failed to mark messages as read",
+                user_id=user_id,
+                room_id=room_id,
+                last_read_id=last_read_id,
+            )
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(
+                type="messages_read",
+                data={"room_id": room_id, "last_read_id": last_read_id},
+            ).dict()
+        )
+
+    # TYPING_START command
     elif command.command == CommandType.TYPING_START:
         room_id = command.data.get("room_id") or command.room_id
-        
+
+        # Validate required fields
         if not room_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID is required"
-            ).dict())
-            return
-        
-        # Broadcast typing indicator
+            raise ValidationException(
+                message="Room ID is required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize input
+        room_id = security_service.sanitize_input(room_id)
+
+        # Broadcast typing status to room
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="user_typing",
                 data={
                     "room_id": room_id,
-                    "user_id": str(user.id),
-                    "user_name": user.full_name
-                }
+                    "user_id": user_id,
+                    "user_name": user.full_name,
+                },
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+    # TYPING_STOP command
     elif command.command == CommandType.TYPING_STOP:
         room_id = command.data.get("room_id") or command.room_id
-        
+
+        # Validate required fields
         if not room_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID is required"
-            ).dict())
-            return
-        
-        # Broadcast typing stopped
+            raise ValidationException(
+                message="Room ID is required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize input
+        room_id = security_service.sanitize_input(room_id)
+
+        # Broadcast typing stopped status to room
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="user_typing_stopped",
-                data={
-                    "room_id": room_id,
-                    "user_id": str(user.id)
-                }
+                data={"room_id": room_id, "user_id": user_id},
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+    # FETCH_HISTORY command
     elif command.command == CommandType.FETCH_HISTORY:
         room_id = command.data.get("room_id") or command.room_id
         before_id = command.data.get("before_id")
         limit = int(command.data.get("limit", 50))
-        
+
+        # Validate required fields
         if not room_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID is required"
-            ).dict())
-            return
-        
-        # Check if user has access to the room
-        has_access = await chat_service.check_room_access(str(user.id), room_id)
+            raise ValidationException(
+                message="Room ID is required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        if before_id:
+            before_id = security_service.sanitize_input(before_id)
+
+        # Validate limit range
+        if limit < 1 or limit > 100:
+            limit = 50
+
+        # Check access permission
+        has_access = await chat_service.check_room_access(user_id, room_id)
         if not has_access:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Access denied to room"
-            ).dict())
-            return
-        
-        # Get message history
+            logger.warning(
+                "Access denied to room",
+                user_id=user_id,
+                room_id=room_id,
+            )
+            raise PermissionDeniedException(
+                message="Access denied to room",
+                code=ErrorCode.PERMISSION_DENIED,
+                details={"room_id": room_id},
+            )
+
+        # Fetch message history
         messages = await chat_service.get_message_history(room_id, before_id, limit)
-        
-        # Send message history
-        await websocket.send_json(WebSocketResponse(
-            type="message_history",
-            data={
-                "room_id": room_id,
-                "messages": messages
-            }
-        ).dict())
-    
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(
+                type="message_history",
+                data={"room_id": room_id, "messages": messages},
+            ).dict()
+        )
+
+    # ADD_REACTION command
     elif command.command == CommandType.ADD_REACTION:
         room_id = command.data.get("room_id") or command.room_id
         message_id = command.data.get("message_id")
         reaction = command.data.get("reaction")
-        
+
+        # Validate required fields
         if not room_id or not message_id or not reaction:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID, message ID, and reaction are required"
-            ).dict())
-            return
-        
+            raise ValidationException(
+                message="Room ID, message ID, and reaction are required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        message_id = security_service.sanitize_input(message_id)
+        # Don't sanitize reaction to preserve emoji
+
         # Add reaction
         success = await chat_service.add_reaction(
-            message_id=message_id,
-            user_id=str(user.id),
-            reaction=reaction
+            message_id=message_id, user_id=user_id, reaction=reaction
         )
-        
+
         if not success:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Failed to add reaction"
-            ).dict())
-            return
-        
-        # Send confirmation
-        await websocket.send_json(WebSocketResponse(
-            type="reaction_added",
-            data={
-                "room_id": room_id,
-                "message_id": message_id,
-                "reaction": reaction,
-                "user_id": str(user.id)
-            }
-        ).dict())
-        
-        # Broadcast to room
+            logger.warning(
+                "Failed to add reaction",
+                user_id=user_id,
+                message_id=message_id,
+                reaction=reaction,
+            )
+            raise BusinessLogicException(
+                message="Failed to add reaction",
+                code=ErrorCode.BUSINESS_LOGIC_ERROR,
+            )
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(
+                type="reaction_added",
+                data={
+                    "room_id": room_id,
+                    "message_id": message_id,
+                    "reaction": reaction,
+                    "user_id": user_id,
+                },
+            ).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="reaction_added",
@@ -499,54 +697,63 @@ async def process_command(
                     "room_id": room_id,
                     "message_id": message_id,
                     "reaction": reaction,
-                    "user_id": str(user.id),
-                    "user_name": user.full_name
-                }
+                    "user_id": user_id,
+                    "user_name": user.full_name,
+                },
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+    # REMOVE_REACTION command
     elif command.command == CommandType.REMOVE_REACTION:
         room_id = command.data.get("room_id") or command.room_id
         message_id = command.data.get("message_id")
         reaction = command.data.get("reaction")
-        
+
+        # Validate required fields
         if not room_id or not message_id or not reaction:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID, message ID, and reaction are required"
-            ).dict())
-            return
-        
+            raise ValidationException(
+                message="Room ID, message ID, and reaction are required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        message_id = security_service.sanitize_input(message_id)
+        # Don't sanitize reaction to preserve emoji
+
         # Remove reaction
         success = await chat_service.remove_reaction(
-            message_id=message_id,
-            user_id=str(user.id),
-            reaction=reaction
+            message_id=message_id, user_id=user_id, reaction=reaction
         )
-        
+
         if not success:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Failed to remove reaction"
-            ).dict())
-            return
-        
-        # Send confirmation
-        await websocket.send_json(WebSocketResponse(
-            type="reaction_removed",
-            data={
-                "room_id": room_id,
-                "message_id": message_id,
-                "reaction": reaction,
-                "user_id": str(user.id)
-            }
-        ).dict())
-        
-        # Broadcast to room
+            logger.warning(
+                "Failed to remove reaction",
+                user_id=user_id,
+                message_id=message_id,
+                reaction=reaction,
+            )
+            raise BusinessLogicException(
+                message="Failed to remove reaction",
+                code=ErrorCode.BUSINESS_LOGIC_ERROR,
+            )
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(
+                type="reaction_removed",
+                data={
+                    "room_id": room_id,
+                    "message_id": message_id,
+                    "reaction": reaction,
+                    "user_id": user_id,
+                },
+            ).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="reaction_removed",
@@ -554,170 +761,183 @@ async def process_command(
                     "room_id": room_id,
                     "message_id": message_id,
                     "reaction": reaction,
-                    "user_id": str(user.id)
-                }
+                    "user_id": user_id,
+                },
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+    # EDIT_MESSAGE command
     elif command.command == CommandType.EDIT_MESSAGE:
         room_id = command.data.get("room_id") or command.room_id
         message_id = command.data.get("message_id")
         content = command.data.get("content")
-        
+
+        # Validate required fields
         if not room_id or not message_id or not content:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID, message ID, and content are required"
-            ).dict())
-            return
-        
-        # Check if user can edit the message
+            raise ValidationException(
+                message="Room ID, message ID, and content are required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        message_id = security_service.sanitize_input(message_id)
+        # Don't sanitize content to preserve message formatting
+
+        # Check permission to edit message
         can_edit = await chat_service.check_message_permission(
-            message_id=message_id,
-            user_id=str(user.id)
+            message_id=message_id, user_id=user_id
         )
-        
+
         if not can_edit:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Permission denied to edit message"
-            ).dict())
-            return
-        
-        # Filter content if needed
-        filtered_content = await filter_message_content(content)
-        
+            logger.warning(
+                "Permission denied to edit message",
+                user_id=user_id,
+                message_id=message_id,
+            )
+            raise PermissionDeniedException(
+                message="Permission denied to edit message",
+                code=ErrorCode.PERMISSION_DENIED,
+                details={"message_id": message_id},
+            )
+
+        # Content moderation
+        filtered_content = await security_service.moderate_content(content)
+
         # Edit message
         success, updated_message = await chat_service.edit_message(
-            message_id=message_id,
-            content=filtered_content
+            message_id=message_id, content=filtered_content
         )
-        
+
         if not success or not updated_message:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Failed to edit message"
-            ).dict())
-            return
-        
-        # Format message for response
+            logger.warning(
+                "Failed to edit message",
+                user_id=user_id,
+                message_id=message_id,
+            )
+            raise BusinessLogicException(
+                message="Failed to edit message",
+                code=ErrorCode.BUSINESS_LOGIC_ERROR,
+            )
+
+        # Format message data
         message_data = {
-            "id": str(updated_message.id),
+            "id": message_id,
             "room_id": room_id,
             "content": updated_message.content,
             "updated_at": updated_message.updated_at.isoformat(),
-            "is_edited": True
+            "is_edited": True,
         }
-        
-        # Send confirmation
-        await websocket.send_json(WebSocketResponse(
-            type="message_edited",
-            data=message_data
-        ).dict())
-        
-        # Broadcast to room
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(type="message_edited", data=message_data).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
-                type="message_edited",
-                data=message_data
+                type="message_edited", data=message_data
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+        # Audit log
+        await audit_service.log_event(
+            event_type=AuditEventType.USER_UPDATED,
+            user_id=user_id,
+            resource_type="chat_message",
+            resource_id=message_id,
+            details={"room_id": room_id, "action": "edit_message"},
+            level=AuditLogLevel.INFO,
+        )
+
+    # DELETE_MESSAGE command
     elif command.command == CommandType.DELETE_MESSAGE:
         room_id = command.data.get("room_id") or command.room_id
         message_id = command.data.get("message_id")
-        
+
+        # Validate required fields
         if not room_id or not message_id:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Room ID and message ID are required"
-            ).dict())
-            return
-        
-        # Check if user can delete the message
+            raise ValidationException(
+                message="Room ID and message ID are required",
+                code=ErrorCode.VALIDATION_ERROR,
+            )
+
+        # Sanitize inputs
+        room_id = security_service.sanitize_input(room_id)
+        message_id = security_service.sanitize_input(message_id)
+
+        # Check permission to delete message
         can_delete = await chat_service.check_message_permission(
-            message_id=message_id,
-            user_id=str(user.id),
-            require_admin=False  # Allow message owners to delete
+            message_id=message_id, user_id=user_id, require_admin=False
         )
-        
+
         if not can_delete:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Permission denied to delete message"
-            ).dict())
-            return
-        
+            logger.warning(
+                "Permission denied to delete message",
+                user_id=user_id,
+                message_id=message_id,
+            )
+            raise PermissionDeniedException(
+                message="Permission denied to delete message",
+                code=ErrorCode.PERMISSION_DENIED,
+                details={"message_id": message_id},
+            )
+
         # Delete message
         success = await chat_service.delete_message(message_id)
-        
+
         if not success:
-            await websocket.send_json(WebSocketResponse(
-                type="error",
-                success=False,
-                error="Failed to delete message"
-            ).dict())
-            return
-        
-        # Send confirmation
-        await websocket.send_json(WebSocketResponse(
-            type="message_deleted",
-            data={
-                "room_id": room_id,
-                "message_id": message_id
-            }
-        ).dict())
-        
-        # Broadcast to room
+            logger.warning(
+                "Failed to delete message",
+                user_id=user_id,
+                message_id=message_id,
+            )
+            raise BusinessLogicException(
+                message="Failed to delete message",
+                code=ErrorCode.BUSINESS_LOGIC_ERROR,
+            )
+
+        # Send response
+        await websocket.send_json(
+            WebSocketResponse(
+                type="message_deleted",
+                data={"room_id": room_id, "message_id": message_id},
+            ).dict()
+        )
+
+        # Broadcast to other room members
         await redis_manager.broadcast_to_room(
             message=WebSocketResponse(
                 type="message_deleted",
-                data={
-                    "room_id": room_id,
-                    "message_id": message_id
-                }
+                data={"room_id": room_id, "message_id": message_id},
             ).dict(),
             room_id=room_id,
-            exclude=connection_id
+            exclude=connection_id,
         )
-    
+
+        # Audit log
+        await audit_service.log_event(
+            event_type=AuditEventType.USER_DELETED,
+            user_id=user_id,
+            resource_type="chat_message",
+            resource_id=message_id,
+            details={"room_id": room_id, "action": "delete_message"},
+            level=AuditLogLevel.INFO,
+        )
+
+    # Unknown command
     else:
-        # Unknown command
-        await websocket.send_json(WebSocketResponse(
-            type="error",
-            success=False,
-            error=f"Unknown command: {command.command}"
-        ).dict())
-
-
-async def filter_message_content(content: str) -> str:
-    """
-    Filter message content for prohibited content.
-    
-    Args:
-        content: The message content to filter
-        
-    Returns:
-        str: Filtered content
-    """
-    # Load prohibited words from Redis or a configuration file
-    prohibited_words = await get_key("chat:prohibited_words", default=[])
-    
-    # Simple filtering - replace prohibited words with asterisks
-    if prohibited_words:
-        filtered = content
-        for word in prohibited_words:
-            replacement = '*' * len(word)
-            filtered = filtered.replace(word, replacement)
-        return filtered
-    
-    return content
+        logger.warning(
+            "Unknown command received",
+            command=command.command,
+            user_id=user_id,
+        )
+        raise ValidationException(
+            message=f"Unknown command: {command.command}",
+            code=ErrorCode.VALIDATION_ERROR,
+        )

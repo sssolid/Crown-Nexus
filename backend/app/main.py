@@ -20,6 +20,7 @@ from app.core.exceptions import (
     http_exception_handler,
     generic_exception_handler
 )
+from app.middleware.metrics import MetricsMiddleware
 from app.middleware.error_handler import ErrorHandlerMiddleware
 from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
@@ -155,6 +156,7 @@ class RequestContextMiddleware:
             return response
 
 # Add middleware
+app.add_middleware(MetricsMiddleware)
 app.add_middleware(RequestContextMiddleware)
 app.add_middleware(ErrorHandlerMiddleware)
 app.add_middleware(ResponseFormatterMiddleware)

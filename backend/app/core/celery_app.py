@@ -14,8 +14,6 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-from app.core.config import settings
-
 # Set environment variables for Celery
 os.environ.setdefault("CELERY_CONFIG_MODULE", "app.core.celeryconfig")
 

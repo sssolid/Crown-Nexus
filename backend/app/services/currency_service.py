@@ -22,9 +22,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.dependency_manager import get_dependency
 from app.db.session import get_db_context
 from app.models.currency import Currency, ExchangeRate
-from app.utils.cache import redis_cache
+
+cache_service = get_dependency("cache_service")
 
 logger = logging.getLogger(__name__)
 
@@ -196,16 +198,16 @@ class ExchangeRateService:
         """
         # Get update frequency from settings (in hours)
         update_frequency = settings.EXCHANGE_RATE_UPDATE_FREQUENCY
-        
+
         # Get the most recent exchange rate
         stmt = select(ExchangeRate).order_by(desc(ExchangeRate.fetched_at)).limit(1)
         result = await db.execute(stmt)
         latest_rate = result.scalar_one_or_none()
-        
+
         # If no rates exist, update is due
         if not latest_rate:
             return True
-            
+
         # Check if enough time has passed since last update
         time_since_update = datetime.utcnow() - latest_rate.fetched_at
         return time_since_update > timedelta(hours=update_frequency)
@@ -225,15 +227,15 @@ class ExchangeRateService:
         stmt = select(Currency).where(Currency.is_base == True)
         result = await db.execute(stmt)
         base_currency = result.scalar_one_or_none()
-        
+
         if base_currency:
             return base_currency.code
-            
+
         # Default to USD if no base currency is set
         return "USD"
 
     @classmethod
-    @redis_cache(prefix="currency", ttl=3600)  # Cache for 1 hour
+    @cache_service.cache(prefix="currency", ttl=3600, backend="redis")  # Cache for 1 hour
     async def get_latest_exchange_rate(
         cls, db: AsyncSession, source_code: str, target_code: str
     ) -> Optional[float]:
@@ -252,35 +254,35 @@ class ExchangeRateService:
         stmt = select(Currency).where(Currency.code.in_([source_code, target_code]))
         result = await db.execute(stmt)
         currencies = {c.code: c.id for c in result.scalars().all()}
-        
+
         # Check if both currencies exist
         if source_code not in currencies or target_code not in currencies:
             return None
-            
+
         # Get the latest exchange rate
         stmt = select(ExchangeRate).where(
             ExchangeRate.source_currency_id == currencies[source_code],
             ExchangeRate.target_currency_id == currencies[target_code]
         ).order_by(desc(ExchangeRate.effective_date)).limit(1)
-        
+
         result = await db.execute(stmt)
         rate = result.scalar_one_or_none()
-        
+
         if rate:
             return rate.rate
-            
+
         # Try to find inverse rate and calculate
         stmt = select(ExchangeRate).where(
             ExchangeRate.source_currency_id == currencies[target_code],
             ExchangeRate.target_currency_id == currencies[source_code]
         ).order_by(desc(ExchangeRate.effective_date)).limit(1)
-        
+
         result = await db.execute(stmt)
         inverse_rate = result.scalar_one_or_none()
-        
+
         if inverse_rate and inverse_rate.rate != 0:
             return 1.0 / inverse_rate.rate
-            
+
         return None
 
     @classmethod
@@ -302,12 +304,12 @@ class ExchangeRateService:
         # Same currency, no conversion needed
         if source_code == target_code:
             return amount
-            
+
         # Get the latest exchange rate
         rate = await cls.get_latest_exchange_rate(db, source_code, target_code)
-        
+
         if rate is None:
             return None
-            
+
         # Perform conversion
         return amount * rate

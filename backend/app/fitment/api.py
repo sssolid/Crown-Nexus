@@ -335,13 +335,6 @@ async def list_model_mappings(
             detail=f"Failed to list model mappings: {str(e)}"
         ) from e
 
-    except Exception as e:
-        logger.error(f"Error listing model mappings: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list model mappings: {str(e)}"
-        ) from e
-
 
 @router.post("/model-mappings", response_model=ModelMappingSchema, status_code=status.HTTP_201_CREATED)
 async def create_model_mapping(

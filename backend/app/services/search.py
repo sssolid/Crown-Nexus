@@ -24,9 +24,10 @@ from app.core.exceptions import (
 )
 from app.core.logging import get_logger
 from app.models.product import Fitment, Product
-from app.utils.cache import redis_cache
 from app.utils.db import paginate
 from app.utils.retry import async_retry_on_network_errors
+
+cache_service = get_dependency("cache_service")
 
 logger = get_logger('app.services.search')
 
@@ -69,7 +70,7 @@ class SearchService:
                 # Don't raise - we'll fall back to database search
         return self.es_client
 
-    @redis_cache(prefix='search:products', ttl=300)
+    @cache_service.cache(prefix='search:products', ttl=300, backend="redis")
     async def search_products(
         self,
         search_term: Optional[str]=None,
@@ -340,7 +341,7 @@ class SearchService:
                 original_exception=e
             ) from e
 
-    @redis_cache(prefix='search:fitments', ttl=300)
+    @cache_service.cache(prefix='search:fitments', ttl=300, backend="redis")
     async def search_fitments(
         self,
         search_term: Optional[str]=None,

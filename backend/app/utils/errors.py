@@ -28,7 +28,7 @@ from app.core.exceptions import (
     TransactionException,
     ValidationException,
 )
-from app.services.error_handling_service import ErrorHandlingService
+from app.services.error_service import ErrorHandlingService
 
 T = TypeVar("T")
 

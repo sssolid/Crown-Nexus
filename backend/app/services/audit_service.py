@@ -1,20 +1,18 @@
 # app/services/audit_service.py
 from __future__ import annotations
 
-import asyncio
 import json
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
+from datetime import datetime, timedelta
 
-from sqlalchemy import and_, desc, select, text
+from sqlalchemy import and_, delete, desc, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.db.utils import execute_query
-from app.services.interfaces import ServiceInterface
 from app.models.audit import AuditLog  # Assuming we have this model
 
 logger = get_logger("app.services.audit")

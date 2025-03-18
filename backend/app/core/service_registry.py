@@ -112,7 +112,7 @@ def register_services() -> None:
     from app.services.cache_service import CacheService
     from app.services.chat import ChatService
     from app.services.currency_service import ExchangeRateService
-    from app.services.error_handling_service import ErrorHandlingService
+    from app.services.error_service import ErrorHandlingService
     from app.services.logging_service import LoggingService
     from app.services.media_service import MediaService
     from app.services.metrics_service import MetricsService

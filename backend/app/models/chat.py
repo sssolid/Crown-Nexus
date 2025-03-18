@@ -19,7 +19,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String, Text, Boolean, func
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, Text, Boolean, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
@@ -29,13 +29,13 @@ from app.utils.crypto import encrypt_message, decrypt_message
 
 # For type hints only, not runtime imports
 if TYPE_CHECKING:
-    from app.models.user import User, Company
+    from app.models.user import User
 
 
 class ChatRoomType(str, Enum):
     """
     Types of chat rooms supported by the system.
-    
+
     Defines the possible chat room configurations:
     - DIRECT: One-to-one chat between two users
     - GROUP: Group chat for multiple users
@@ -51,13 +51,13 @@ class ChatRoomType(str, Enum):
 class ChatRoom(Base):
     """
     Chat room model representing a conversation space.
-    
+
     This model defines a chat room where users can exchange messages:
     - Each room has a type (direct, group, etc.)
     - Rooms can be associated with a company
     - Messages are linked to rooms
     - Members track participants in the room
-    
+
     Attributes:
         id: Primary key UUID
         name: Room name (optional for direct chats)
@@ -115,7 +115,7 @@ class ChatRoom(Base):
 class ChatMemberRole(str, Enum):
     """
     Roles of chat room members.
-    
+
     Defines the possible roles a user can have in a chat room:
     - OWNER: Creator/owner with full permissions
     - ADMIN: Administrator with moderation rights
@@ -131,12 +131,12 @@ class ChatMemberRole(str, Enum):
 class ChatMember(Base):
     """
     Chat room member model.
-    
+
     This model tracks users' membership in chat rooms:
     - Each member has a role (owner, admin, etc.)
     - Tracks when the user last read messages
     - Records membership status
-    
+
     Attributes:
         id: Primary key UUID
         room_id: Reference to chat room
@@ -194,7 +194,7 @@ class ChatMember(Base):
 class MessageType(str, Enum):
     """
     Types of messages supported by the chat system.
-    
+
     Defines the possible message types:
     - TEXT: Regular text message
     - IMAGE: Image attachment
@@ -212,12 +212,12 @@ class MessageType(str, Enum):
 class ChatMessage(Base):
     """
     Chat message model.
-    
+
     This model represents individual messages in chat rooms:
     - Messages support various types (text, image, etc.)
     - Content is encrypted for security
     - Tracks message status (sent, delivered, read)
-    
+
     Attributes:
         id: Primary key UUID
         room_id: Reference to chat room
@@ -277,7 +277,7 @@ class ChatMessage(Base):
     def content(self) -> str:
         """Decrypt and return the message content."""
         return decrypt_message(self.content_encrypted)
-    
+
     @content.setter
     def content(self, value: str) -> None:
         """Encrypt and store the message content."""
@@ -291,12 +291,12 @@ class ChatMessage(Base):
 class MessageReaction(Base):
     """
     Message reaction model.
-    
+
     This model tracks reactions to messages (like emoji reactions):
     - Each reaction is associated with a specific message
     - Users can react with emoji or predefined reactions
     - Multiple users can add the same reaction
-    
+
     Attributes:
         id: Primary key UUID
         message_id: Reference to chat message
@@ -339,12 +339,12 @@ class MessageReaction(Base):
 class RateLimitLog(Base):
     """
     Rate limiting log model.
-    
+
     This model tracks rate limiting for users to prevent spam:
     - Records user's message sending attempts
     - Used to enforce rate limits on messaging
     - Supports both global and room-specific limits
-    
+
     Attributes:
         id: Primary key UUID
         user_id: Reference to user

@@ -13,12 +13,11 @@ These schemas ensure consistent data structures throughout the chat system.
 
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 
 class CommandType(str, Enum):
@@ -48,7 +47,7 @@ class MessageType(str, Enum):
 class WebSocketCommand(BaseModel):
     """
     Base WebSocket command structure.
-    
+
     This model defines the common structure for all WebSocket commands:
     - Command type to identify the action
     - Optional room identifier
@@ -62,7 +61,7 @@ class WebSocketCommand(BaseModel):
 class JoinRoomCommand(BaseModel):
     """
     Command to join a chat room.
-    
+
     Attributes:
         room_id: Room identifier
     """
@@ -72,7 +71,7 @@ class JoinRoomCommand(BaseModel):
 class LeaveRoomCommand(BaseModel):
     """
     Command to leave a chat room.
-    
+
     Attributes:
         room_id: Room identifier
     """
@@ -82,7 +81,7 @@ class LeaveRoomCommand(BaseModel):
 class SendMessageCommand(BaseModel):
     """
     Command to send a message.
-    
+
     Attributes:
         room_id: Room identifier
         content: Message content
@@ -98,7 +97,7 @@ class SendMessageCommand(BaseModel):
 class ReadMessagesCommand(BaseModel):
     """
     Command to mark messages as read.
-    
+
     Attributes:
         room_id: Room identifier
         last_read_id: ID of the last read message
@@ -110,7 +109,7 @@ class ReadMessagesCommand(BaseModel):
 class TypingCommand(BaseModel):
     """
     Command for typing indicators.
-    
+
     Attributes:
         room_id: Room identifier
     """
@@ -120,7 +119,7 @@ class TypingCommand(BaseModel):
 class FetchHistoryCommand(BaseModel):
     """
     Command to fetch message history.
-    
+
     Attributes:
         room_id: Room identifier
         before_id: Fetch messages before this ID
@@ -134,7 +133,7 @@ class FetchHistoryCommand(BaseModel):
 class ReactionCommand(BaseModel):
     """
     Command for message reactions.
-    
+
     Attributes:
         room_id: Room identifier
         message_id: Message identifier
@@ -148,7 +147,7 @@ class ReactionCommand(BaseModel):
 class EditMessageCommand(BaseModel):
     """
     Command to edit a message.
-    
+
     Attributes:
         room_id: Room identifier
         message_id: Message identifier
@@ -162,7 +161,7 @@ class EditMessageCommand(BaseModel):
 class DeleteMessageCommand(BaseModel):
     """
     Command to delete a message.
-    
+
     Attributes:
         room_id: Room identifier
         message_id: Message identifier
@@ -174,7 +173,7 @@ class DeleteMessageCommand(BaseModel):
 class WebSocketResponse(BaseModel):
     """
     Base WebSocket response structure.
-    
+
     This model defines the common structure for all WebSocket responses:
     - Response type for client handling
     - Optional error information
@@ -189,7 +188,7 @@ class WebSocketResponse(BaseModel):
 class ChatRoomSchema(BaseModel):
     """
     Chat room information schema.
-    
+
     Attributes:
         id: Room identifier
         name: Room name
@@ -209,7 +208,7 @@ class ChatRoomSchema(BaseModel):
 class ChatMessageSchema(BaseModel):
     """
     Chat message schema.
-    
+
     Attributes:
         id: Message identifier
         room_id: Room identifier
@@ -240,7 +239,7 @@ class ChatMessageSchema(BaseModel):
 class ChatMemberSchema(BaseModel):
     """
     Chat room member schema.
-    
+
     Attributes:
         user_id: User identifier
         user_name: User display name
@@ -258,7 +257,7 @@ class ChatMemberSchema(BaseModel):
 class UserPresenceSchema(BaseModel):
     """
     User presence information schema.
-    
+
     Attributes:
         user_id: User identifier
         is_online: Whether the user is currently online

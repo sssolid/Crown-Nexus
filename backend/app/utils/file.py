@@ -297,7 +297,7 @@ def validate_file(
                 raise FileValidationError(
                     message=f"Error validating image: {str(e)}",
                     details={"filename": file.filename, "error": str(e)}
-                )
+                ) from e
 
         logger.info(
             f"File validated successfully: {file.filename}",
@@ -316,7 +316,7 @@ def validate_file(
         raise FileValidationError(
             message=f"File validation failed: {str(e)}",
             details={"error": str(e)}
-        )
+        ) from e
 
 
 def save_upload_file(
@@ -414,7 +414,7 @@ def save_upload_file(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error saving file: {str(e)}"
-        )
+        ) from e
 
 
 def get_file_path(file_path: str) -> Path:

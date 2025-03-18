@@ -19,7 +19,10 @@ class CacheManager:
     def get_backend(self, name: str = None) -> CacheBackend:
         """Get cache backend by name."""
         if not self._initialized:
-            raise RuntimeError("Cache manager not initialized")
+            # Auto-initialize if needed
+            import asyncio
+            asyncio.create_task(self.initialize())
+            return self._backends.get(name, self._backends.get('memory'))
 
         name = name or settings.CACHE_DEFAULT_BACKEND
         if name not in self._backends:

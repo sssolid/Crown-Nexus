@@ -326,7 +326,7 @@ class SearchService:
 
         except Exception as e:
             if isinstance(e, DatabaseException):
-                raise
+                raise from e
 
             logger.error(
                 "Elasticsearch search failed",

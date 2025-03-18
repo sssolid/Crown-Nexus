@@ -208,30 +208,30 @@ class DependencyManager:
         """
         logger.info("Initializing services")
         service_names = list(self._services.keys())
-        
+
         # Add core services that should be initialized first
         core_services = [
-            "logging_service", 
+            "logging_service",
             "error_handling_service",
             "validation_service",
             "metrics_service",
             "cache_service",
             "security_service",
         ]
-        
+
         # Process core services first, then others
         for service_name in core_services + [s for s in service_names if s not in core_services]:
             try:
                 if service_name not in self._services:
                     continue
-                    
+
                 service = self.get(service_name)
                 if hasattr(service, "initialize") and callable(getattr(service, "initialize")):
                     await service.initialize()
                     logger.info(f"Initialized {service_name}")
             except Exception as e:
                 logger.error(f"Error initializing {service_name}: {str(e)}", exc_info=True)
-        
+
         self._initialized = True
         logger.info("Services initialized successfully")
 
@@ -243,7 +243,7 @@ class DependencyManager:
         logger.info("Shutting down services")
         # Shutdown in reverse order of initialization (approximately)
         service_names = list(self._dependencies.keys())
-        
+
         # Process services in roughly reverse order of initialization
         for service_name in reversed(service_names):
             try:
@@ -253,7 +253,7 @@ class DependencyManager:
                     logger.info(f"Shut down {service_name}")
             except Exception as e:
                 logger.error(f"Error shutting down {service_name}: {str(e)}", exc_info=True)
-        
+
         logger.info("Services shut down successfully")
 
 
@@ -315,7 +315,7 @@ def register_service(service_class: Type[Any], name: Optional[str] = None) -> Ty
 def register_services() -> None:
     """Register all application services with the dependency manager."""
     logger.info("Registering services")
-    
+
     # Import services here to avoid circular imports
     # These would typically be your service imports
     try:
@@ -323,7 +323,7 @@ def register_services() -> None:
         from app.services.cache_service import CacheService
         from app.services.chat import ChatService
         from app.services.currency_service import ExchangeRateService
-        from app.services.error_handling_service import ErrorHandlingService
+        from app.services.error_service import ErrorService
         from app.services.logging_service import LoggingService
         from app.services.media_service import MediaService
         from app.services.metrics_service import MetricsService
@@ -333,10 +333,10 @@ def register_services() -> None:
         from app.services.validation_service import ValidationService
         from app.services.vehicle import VehicleDataService
         from app.services.security_service import SecurityService
-        
+
         # Register dependencies as factories
         dependency_manager.register_factory("logging_service", lambda: LoggingService())
-        dependency_manager.register_factory("error_handling_service", lambda: ErrorHandlingService())
+        dependency_manager.register_factory("error_service", lambda: ErrorService())
         dependency_manager.register_factory("validation_service", lambda: ValidationService())
         dependency_manager.register_factory("metrics_service", lambda: MetricsService())
         dependency_manager.register_factory("cache_service", lambda: CacheService())
@@ -349,10 +349,10 @@ def register_services() -> None:
         dependency_manager.register_factory("vehicle_service", lambda db: VehicleDataService(db) if db else None)
         dependency_manager.register_factory("media_service", lambda: MediaService())
         dependency_manager.register_factory("exchange_rate_service", lambda db: ExchangeRateService(db) if db else None)
-        
+
         # Register service classes
         dependency_manager.register_service(LoggingService, "LoggingService")
-        dependency_manager.register_service(ErrorHandlingService, "ErrorHandlingService")
+        dependency_manager.register_service(ErrorService, "ErrorService")
         dependency_manager.register_service(ValidationService, "ValidationService")
         dependency_manager.register_service(MetricsService, "MetricsService")
         dependency_manager.register_service(CacheService, "CacheService")
@@ -365,10 +365,10 @@ def register_services() -> None:
         dependency_manager.register_service(VehicleDataService, "VehicleDataService")
         dependency_manager.register_service(MediaService, "MediaService")
         dependency_manager.register_service(ExchangeRateService, "ExchangeRateService")
-        
+
     except ImportError as e:
         logger.warning(f"Could not import all services: {str(e)}")
-    
+
     logger.info("Services registered successfully")
 
 

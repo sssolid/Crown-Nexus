@@ -139,7 +139,7 @@ async def run_migrations_online() -> None:
         # Show more detailed error information
         import traceback
         traceback.print_exc()
-        raise
+        raise from e
     finally:
         await connectable.dispose()
 

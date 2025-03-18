@@ -58,7 +58,7 @@ async def connect_to_postgres() -> Tuple[Connection, bool]:
         return conn, bool(exists)
     except PostgresError as e:
         print(f"❌ Failed to connect to PostgreSQL server: {e}")
-        raise
+        raise from e
 
 
 async def create_database_if_not_exists(conn: Connection, db_exists: bool) -> None:

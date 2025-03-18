@@ -310,7 +310,7 @@ async def get_current_user_ws(
         return user
     except (JWTError, ValidationError, AuthenticationException) as e:
         logger.warning(f"WebSocket auth error: {str(e)}")
-        raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
+        raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION) from e
 
 
 def require_permissions(

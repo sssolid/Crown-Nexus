@@ -57,7 +57,7 @@ async def make_authenticated_request(
     headers = {"Authorization": f"Bearer {token}"}
     if "headers" in kwargs:
         headers.update(kwargs.pop("headers"))
-    
+
     if method.lower() == "get":
         return await client.get(url, headers=headers, **kwargs)
     elif method.lower() == "post":
@@ -101,12 +101,12 @@ def validate_model_response(
         ValueError: If response doesn't match model schema
     """
     exclude_fields = exclude_fields or []
-    
+
     # Remove excluded fields from response data
     filtered_data = {k: v for k, v in response_data.items() if k not in exclude_fields}
-    
+
     try:
         # Try to parse the data using the model
         return model_type.parse_obj(filtered_data)
     except Exception as e:
-        raise ValueError(f"Response doesn't match {model_type.__name__} schema: {str(e)}")
+        raise ValueError(f"Response doesn't match {model_type.__name__} schema: {str(e)}") from e

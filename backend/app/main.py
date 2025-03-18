@@ -85,16 +85,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS configuration
-if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.BACKEND_CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
 # Request context middleware
 class RequestContextMiddleware:
     """Middleware that sets up logging request context.
@@ -155,12 +145,33 @@ class RequestContextMiddleware:
 
             return response
 
+# CORS configuration
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.BACKEND_CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 # Add middleware
 app.add_middleware(RequestContextMiddleware)
 app.add_middleware(MetricsMiddleware)
 app.add_middleware(ErrorHandlerMiddleware)
 app.add_middleware(ResponseFormatterMiddleware)
 
+# Add security middleware
+app.add_middleware(
+    SecurityHeadersMiddleware,
+    content_security_policy=settings.security.CONTENT_SECURITY_POLICY,
+    permissions_policy=settings.security.PERMISSIONS_POLICY
+)
+
+# Add secure request validation
+app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
+
+# Add rate limiting middleware
 if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.security.RATE_LIMIT_ENABLED:
     app.add_middleware(
         RateLimitMiddleware,
@@ -183,16 +194,6 @@ if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.security.RATE_LIM
         enable_headers=True,
         block_exceeding_requests=True,
     )
-
-# Add security middleware
-app.add_middleware(
-    SecurityHeadersMiddleware,
-    content_security_policy=settings.security.CONTENT_SECURITY_POLICY,
-    permissions_policy=settings.security.PERMISSIONS_POLICY
-)
-
-# Add secure request validation
-app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
 
 # Exception handlers
 app.add_exception_handler(AppException, app_exception_handler)

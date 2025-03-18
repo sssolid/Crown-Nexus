@@ -31,7 +31,6 @@ from app.core.security import (
 from app.db.session import get_db
 from app.models.user import User, UserRole
 from app.repositories.user import UserRepository
-from app.utils.errors import ensure_not_none
 
 logger = get_logger("app.api.deps")
 

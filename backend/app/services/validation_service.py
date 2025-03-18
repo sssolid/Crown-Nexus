@@ -21,7 +21,6 @@ from app.core.exceptions import (
 )
 from app.core.logging import get_logger
 from app.services.interfaces import ServiceInterface
-from app.utils.errors import validation_error
 
 logger = get_logger("app.services.validation_service")
 

@@ -41,7 +41,18 @@ from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
 from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
-from app.models.associations import product_fitment_association, product_media_association
+
+# Import associations with a conditional to avoid circular imports
+if TYPE_CHECKING:
+    from app.models.associations import (
+        product_fitment_association,
+        product_media_association
+    )
+else:
+    from app.models.associations import (
+        product_fitment_association,
+        product_media_association
+    )
 
 # For type hints only, not runtime imports
 if TYPE_CHECKING:

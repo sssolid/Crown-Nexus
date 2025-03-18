@@ -5,15 +5,6 @@ Alembic environment configuration.
 This module configures the Alembic environment for database migrations.
 It handles both online and offline migration modes, and integrates with
 the application's models and configuration.
-
-The module is responsible for:
-1. Setting up the migration context
-2. Connecting to the database
-3. Running migrations with proper error handling
-4. Providing diagnostic information during migrations
-
-Note: This file is executed by Alembic when running migrations and should
-not be imported or executed directly by application code.
 """
 
 from __future__ import annotations
@@ -33,9 +24,22 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 # Explicitly add parent directory to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-# Import Base and settings after path adjustment
+# Import settings from app config
 from app.core.config import settings
-from app.db.base import Base
+
+# Import the Base class directly - don't import all models here
+from app.db.base_class import Base
+
+# Import models individually to register them with SQLAlchemy
+# This avoids the circular imports caused by importing base.py
+# This section is crucial for Alembic to detect model changes
+import app.models.user  # noqa
+import app.models.associations  # noqa
+import app.models.location  # noqa
+import app.models.reference  # noqa
+import app.models.product  # noqa
+import app.models.media  # noqa
+import app.models.compliance  # noqa
 
 # This is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -50,8 +54,7 @@ config.set_section_option(config.config_ini_section, "sqlalchemy.url", db_url)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Add your model's MetaData object here
-# for 'autogenerate' support
+# Target metadata is the Base.metadata that all models are registered with
 target_metadata = Base.metadata
 
 

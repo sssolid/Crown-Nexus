@@ -20,18 +20,18 @@ logger = get_logger('app.services')
 
 class ServiceRegistry:
     """Registry for application services.
-    
+
     This class implements the Singleton pattern to provide a central registry
     for all services in the application. Services can be registered and retrieved
     by name.
     """
-    
+
     _instance = None
     _services: Dict[str, Any] = {}
 
     def __new__(cls, *args, **kwargs):
         """Create a singleton instance of the ServiceRegistry.
-        
+
         Returns:
             ServiceRegistry: The singleton instance
         """
@@ -43,7 +43,7 @@ class ServiceRegistry:
     @classmethod
     def register(cls, service_class: Type[Any], name: Optional[str] = None) -> None:
         """Register a service class.
-        
+
         Args:
             service_class: The service class to register
             name: Optional name for the service. If not provided, the class name is used.
@@ -56,14 +56,14 @@ class ServiceRegistry:
     @classmethod
     def get(cls, name: str, db: AsyncSession) -> Any:
         """Get a service instance by name.
-        
+
         Args:
             name: Name of the service to retrieve
             db: Database session to pass to the service constructor
-            
+
         Returns:
             An instance of the requested service
-            
+
         Raises:
             ValueError: If the service name is not found in the registry
         """
@@ -75,10 +75,10 @@ class ServiceRegistry:
     @classmethod
     def get_all(cls, db: AsyncSession) -> Dict[str, Any]:
         """Get instances of all registered services.
-        
+
         Args:
             db: Database session to pass to the service constructors
-            
+
         Returns:
             Dictionary mapping service names to service instances
         """
@@ -87,40 +87,34 @@ class ServiceRegistry:
 
 service_registry = ServiceRegistry()
 
-# Import and register services
-from app.services.test_service import TestService
-from app.services.user_service import UserService
-from app.services.product_service import ProductService
-from app.services.chat import ChatService
 
-service_registry.register(TestService, "test_service")
-service_registry.register(UserService)
-service_registry.register(ProductService)
-service_registry.register(ChatService)
-
-
-# Factory functions
-def get_test_service() -> TestService:
-    """Get a TestService instance.
-    
-    Returns:
-        TestService: A new TestService instance
-    """
+# Define factory functions without importing services
+def get_test_service():
+    """Get a TestService instance."""
+    # Import here to avoid circular imports
+    from app.services.test_service import TestService
     return TestService()
 
-def get_chat_service(db: AsyncSession) -> ChatService:
-    """Get a ChatService instance.
-    
-    This factory function provides a clean way to get a ChatService instance
-    without directly depending on the ChatService implementation.
-    
-    Args:
-        db: Database session to pass to the ChatService constructor
-        
-    Returns:
-        ChatService: A new ChatService instance
-        
-    Raises:
-        ValueError: If the ChatService is not registered in the ServiceRegistry
-    """
-    return service_registry.get("ChatService", db)
+def get_chat_service(db: AsyncSession):
+    """Get a ChatService instance."""
+    # Import here to avoid circular imports
+    from app.services.chat import ChatService
+    return ChatService(db)
+
+def register_services():
+    """Register all services with the registry."""
+    # Import here to avoid circular import issues
+    from app.services.test_service import TestService
+    # from app.services.user_service import UserService
+    from app.services.product_service import ProductService
+    from app.services.chat import ChatService
+
+    service_registry.register(TestService, "test_service")
+    # service_registry.register(UserService)
+    service_registry.register(ProductService)
+    service_registry.register(ChatService)
+
+# Only register services if this module is imported directly
+# This avoids registration during circular imports
+if __name__ != "__main__":
+    register_services()

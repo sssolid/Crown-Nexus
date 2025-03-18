@@ -8,12 +8,12 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import (
-    BusinessLogicException, 
-    DatabaseException, 
-    ErrorCode, 
-    PermissionDeniedException, 
-    ResourceAlreadyExistsException, 
-    ResourceNotFoundException, 
+    BusinessLogicException,
+    DatabaseException,
+    ErrorCode,
+    PermissionDeniedException,
+    ResourceAlreadyExistsException,
+    ResourceNotFoundException,
     ValidationException
 )
 from app.core.logging import get_logger
@@ -23,18 +23,12 @@ from app.db.utils import count_query, transaction, transactional
 from app.models.user import User
 from app.repositories.base import BaseRepository
 from app.schemas.pagination import (
-    CursorPaginationParams, 
-    OffsetPaginationParams, 
+    CursorPaginationParams,
+    OffsetPaginationParams,
     PaginationResult
 )
 from app.services.interfaces import CrudServiceInterface
 from app.services.pagination import PaginationService
-from app.utils.errors import (
-    ensure_not_none, 
-    resource_already_exists, 
-    resource_not_found, 
-    validation_error
-)
 
 # Type variables
 T = TypeVar("T", bound=Base)  # SQLAlchemy model
@@ -97,7 +91,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         self.repository = repository_class(model_class, db)
         self.pagination_service = PaginationService[T, R](db, model_class, response_schema)
         self.logger = logger.bind(service=self.__class__.__name__)
-        
+
         # Default permissions
         self.required_create_permission: Optional[Permission] = None
         self.required_read_permission: Optional[Permission] = None
@@ -107,7 +101,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
     async def initialize(self) -> None:
         """Initialize service resources."""
         self.logger.debug("Initializing service")
-        
+
     async def shutdown(self) -> None:
         """Release service resources."""
         self.logger.debug("Shutting down service")
@@ -128,7 +122,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             PermissionDeniedException: If user doesn't have permission
         """
         self.logger.debug(f"Creating entity with data: {data}")
-        
+
         # Check permissions if user_id is provided and permission is required
         if user_id and self.required_create_permission:
             user = await self._get_user(user_id)
@@ -145,17 +139,17 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
 
         # Validate data
         await self.validate_create(data, user_id)
-        
+
         # Pre-create hook
         await self.before_create(data, user_id)
-        
+
         try:
             # Create entity
             entity = await self.repository.create(data)
-            
+
             # Post-create hook
             await self.after_create(entity, user_id)
-            
+
             self.logger.info(
                 f"Created {self.model.__name__} with ID: {getattr(entity, 'id', None)}"
             )
@@ -193,7 +187,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             PermissionDeniedException: If user doesn't have permission
         """
         self.logger.debug(f"Deleting entity with ID: {id}")
-        
+
         # Get entity
         entity = await self.repository.get_by_id(id)
         if not entity:
@@ -204,7 +198,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                 details={"id": str(id)},
                 status_code=404,
             )
-            
+
         # Check permissions if user_id is provided and permission is required
         if user_id and self.required_delete_permission:
             user = await self._get_user(user_id)
@@ -218,20 +212,20 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"required_permission": self.required_delete_permission},
                     status_code=403,
                 )
-        
+
         # Validate delete
         await self.validate_delete(entity, user_id)
-        
+
         # Pre-delete hook
         await self.before_delete(entity, user_id)
-        
+
         try:
             # Delete entity
             result = await self.repository.delete(id, user_id, hard_delete)
-            
+
             # Post-delete hook
             await self.after_delete(entity, user_id)
-            
+
             self.logger.info(f"Deleted {self.model.__name__} with ID: {id}")
             return result
         except Exception as e:
@@ -254,7 +248,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             PermissionDeniedException: If user doesn't have permission
         """
         self.logger.debug(f"Getting entity with ID: {id}")
-        
+
         # Get entity
         entity = await self.repository.get_by_id(id)
         if not entity:
@@ -265,7 +259,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                 details={"id": str(id)},
                 status_code=404,
             )
-            
+
         # Check permissions if user_id is provided and permission is required
         if user_id and self.required_read_permission:
             user = await self._get_user(user_id)
@@ -279,7 +273,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"required_permission": self.required_read_permission},
                     status_code=403,
                 )
-                
+
         self.logger.debug(f"Found {self.model.__name__} with ID: {id}")
         return entity
 
@@ -327,7 +321,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         self.logger.debug(
             f"Getting entities with page={page}, page_size={page_size}, filters={filters}"
         )
-        
+
         # Check permissions if user_id is provided and permission is required
         if user_id and self.required_read_permission:
             user = await self._get_user(user_id)
@@ -341,12 +335,12 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"required_permission": self.required_read_permission},
                     status_code=403,
                 )
-                
+
         # Apply custom filters
         applied_filters = filters or {}
         if hasattr(self, "apply_filters"):
             applied_filters = await self.apply_filters(applied_filters, user_id)
-            
+
         try:
             # Get paginated results
             result = await self.repository.get_all(
@@ -355,7 +349,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                 order_by=order_by,
                 filters=applied_filters,
             )
-            
+
             self.logger.debug(
                 f"Found {result.get('total', 0)} {self.model.__name__} entities"
             )
@@ -365,9 +359,9 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             raise
 
     async def get_all(
-        self, 
-        page: int = 1, 
-        page_size: int = 20, 
+        self,
+        page: int = 1,
+        page_size: int = 20,
         filters: Optional[Dict[str, Any]] = None,
         user_id: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -385,8 +379,8 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         return await self.get_multi(user_id, page, page_size, filters)
 
     async def get_paginated(
-        self, 
-        user_id: Optional[str], 
+        self,
+        user_id: Optional[str],
         params: OffsetPaginationParams,
         filters: Optional[Dict[str, Any]] = None
     ) -> PaginationResult[R]:
@@ -416,20 +410,20 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"required_permission": self.required_read_permission},
                     status_code=403,
                 )
-                
+
         # Build query
         query = self.repository.build_query(filters)
-        
+
         # Get paginated results
         return await self.pagination_service.paginate_with_offset(
-            query, 
+            query,
             params,
             self.to_response
         )
 
     async def get_paginated_with_cursor(
-        self, 
-        user_id: Optional[str], 
+        self,
+        user_id: Optional[str],
         params: CursorPaginationParams,
         filters: Optional[Dict[str, Any]] = None
     ) -> PaginationResult[R]:
@@ -459,22 +453,22 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"required_permission": self.required_read_permission},
                     status_code=403,
                 )
-                
+
         # Build query
         query = self.repository.build_query(filters)
-        
+
         # Get paginated results
         return await self.pagination_service.paginate_with_cursor(
-            query, 
+            query,
             params,
             self.to_response
         )
 
     @transactional
     async def update(
-        self, 
-        id: ID, 
-        data: Dict[str, Any], 
+        self,
+        id: ID,
+        data: Dict[str, Any],
         user_id: Optional[str] = None
     ) -> T:
         """Update entity.
@@ -493,7 +487,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             PermissionDeniedException: If user doesn't have permission
         """
         self.logger.debug(f"Updating entity with ID: {id}, data: {data}")
-        
+
         # Get entity
         entity = await self.repository.get_by_id(id)
         if not entity:
@@ -504,7 +498,7 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                 details={"id": str(id)},
                 status_code=404,
             )
-            
+
         # Check permissions if user_id is provided and permission is required
         if user_id and self.required_update_permission:
             user = await self._get_user(user_id)
@@ -518,14 +512,14 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"required_permission": self.required_update_permission},
                     status_code=403,
                 )
-                
+
         # Validate update
         await self.validate_update(entity, data, user_id)
-        
+
         # Pre-update hook
         original_entity = entity
         await self.before_update(entity, data, user_id)
-        
+
         try:
             # Update entity
             updated_entity = await self.repository.update(id, data, user_id)
@@ -536,10 +530,10 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                     details={"id": str(id)},
                     status_code=404,
                 )
-                
+
             # Post-update hook
             await self.after_update(updated_entity, original_entity, user_id)
-            
+
             self.logger.info(f"Updated {self.model.__name__} with ID: {id}")
             return updated_entity
         except Exception as e:
@@ -547,9 +541,9 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             raise
 
     async def update_with_schema(
-        self, 
-        id: ID, 
-        schema: U, 
+        self,
+        id: ID,
+        schema: U,
         user_id: Optional[str] = None
     ) -> Optional[T]:
         """Update an existing entity using a Pydantic schema.
@@ -587,8 +581,8 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         return [await self.to_response(entity) for entity in entities]
 
     async def validate_create(
-        self, 
-        data: Dict[str, Any], 
+        self,
+        data: Dict[str, Any],
         user_id: Optional[str] = None
     ) -> None:
         """Validate data before creation.
@@ -601,13 +595,13 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             ValidationException: If validation fails
         """
         self.logger.debug(f"Validating create data: {data}")
-        
+
         # Override in subclasses for custom validation
         pass
 
     async def validate_delete(
-        self, 
-        entity: T, 
+        self,
+        entity: T,
         user_id: Optional[str] = None
     ) -> None:
         """Validate before deletion.
@@ -620,14 +614,14 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             ValidationException: If validation fails
         """
         self.logger.debug(f"Validating delete for entity: {entity}")
-        
+
         # Override in subclasses for custom validation
         pass
 
     async def validate_update(
-        self, 
-        entity: T, 
-        data: Dict[str, Any], 
+        self,
+        entity: T,
+        data: Dict[str, Any],
         user_id: Optional[str] = None
     ) -> None:
         """Validate data before update.
@@ -641,13 +635,13 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             ValidationException: If validation fails
         """
         self.logger.debug(f"Validating update data: {data} for entity: {entity}")
-        
+
         # Override in subclasses for custom validation
         pass
 
     async def before_create(
-        self, 
-        data: Dict[str, Any], 
+        self,
+        data: Dict[str, Any],
         user_id: Optional[str] = None
     ) -> None:
         """Hook before entity creation.
@@ -660,8 +654,8 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         pass
 
     async def after_create(
-        self, 
-        entity: T, 
+        self,
+        entity: T,
         user_id: Optional[str] = None
     ) -> None:
         """Hook after entity creation.
@@ -674,9 +668,9 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         pass
 
     async def before_update(
-        self, 
-        entity: T, 
-        data: Dict[str, Any], 
+        self,
+        entity: T,
+        data: Dict[str, Any],
         user_id: Optional[str] = None
     ) -> None:
         """Hook before entity update.
@@ -690,9 +684,9 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         pass
 
     async def after_update(
-        self, 
-        updated_entity: T, 
-        original_entity: T, 
+        self,
+        updated_entity: T,
+        original_entity: T,
         user_id: Optional[str] = None
     ) -> None:
         """Hook after entity update.
@@ -706,8 +700,8 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         pass
 
     async def before_delete(
-        self, 
-        entity: T, 
+        self,
+        entity: T,
         user_id: Optional[str] = None
     ) -> None:
         """Hook before entity deletion.
@@ -720,8 +714,8 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
         pass
 
     async def after_delete(
-        self, 
-        entity: T, 
+        self,
+        entity: T,
         user_id: Optional[str] = None
     ) -> None:
         """Hook after entity deletion.
@@ -746,12 +740,12 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
             AuthenticationException: If user not found
         """
         from app.models.user import User
-        
+
         result = await self.db.execute(
             select(User).where(User.id == user_id)
         )
         user = result.scalars().first()
-        
+
         if not user:
             self.logger.warning(f"User with ID {user_id} not found")
             raise AuthenticationException(
@@ -760,5 +754,5 @@ class BaseService(Generic[T, C, U, R, ID], CrudServiceInterface[T, ID, C, U, R])
                 details={"user_id": user_id},
                 status_code=401,
             )
-            
+
         return user

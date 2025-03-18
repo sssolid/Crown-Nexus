@@ -19,7 +19,7 @@ def cached(
     ttl: Optional[int] = 300,
     prefix: str = "cache",
     backend: Optional[str] = None,
-    skip_args: Optional[List[int]] = None,
+    skip_args: Optional[List[int, str]] = None,
     skip_kwargs: Optional[List[str]] = None,
     tags: Optional[List[str]] = None
 ) -> Callable[[F], F]:

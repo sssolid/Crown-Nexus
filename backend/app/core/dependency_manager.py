@@ -212,7 +212,7 @@ class DependencyManager:
         # Add core services that should be initialized first
         core_services = [
             "logging_service",
-            "error_handling_service",
+            "error_service",
             "validation_service",
             "metrics_service",
             "cache_service",

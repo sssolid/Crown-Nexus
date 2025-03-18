@@ -29,7 +29,7 @@ from app.api.deps import get_current_user
 from app.api.v1.router import api_router
 from app.core.config import Environment, settings
 from app.core.logging import get_logger, request_context, set_user_id
-from app.core.service_registry import register_services, initialize_services, shutdown_services
+from app.core.dependency_manager import register_services, initialize_services, shutdown_services
 from app.core.cache.manager import initialize_cache
 
 from app.fitment.api import router as fitment_router

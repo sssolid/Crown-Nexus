@@ -156,8 +156,8 @@ class RequestContextMiddleware:
             return response
 
 # Add middleware
-app.add_middleware(MetricsMiddleware)
 app.add_middleware(RequestContextMiddleware)
+app.add_middleware(MetricsMiddleware)
 app.add_middleware(ErrorHandlerMiddleware)
 app.add_middleware(ResponseFormatterMiddleware)
 

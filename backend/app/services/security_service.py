@@ -1,5 +1,20 @@
-# app/services/security_service.py
 from __future__ import annotations
+
+"""Security service providing high-level security features and policies.
+
+This service provides application-specific security functionality built on top of
+the core security primitives. It includes:
+- Password policy validation
+- Suspicious request detection
+- Host validation and IP checking
+- API key management
+- CSRF protection
+- Rate limiting
+- Validation of security-critical requests
+
+It maintains a clear separation of concerns with the core security module by focusing
+on application-specific security policies and features rather than primitives.
+"""
 
 import base64
 import binascii
@@ -7,7 +22,6 @@ import hashlib
 import hmac
 import ipaddress
 import json
-import os
 import re
 import secrets
 import time
@@ -15,14 +29,15 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Pattern, Set, Tuple, Union, TypedDict
+from functools import lru_cache
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Pattern, Set, Tuple, Union
 
 import bcrypt
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from fastapi import HTTPException, Request, Response, status
-from jose import jwt
 from pydantic import BaseModel, EmailStr, Field, SecretStr
 
 from app.core.config import settings
@@ -30,31 +45,26 @@ from app.core.exceptions import (
     AuthenticationException,
     ErrorCode,
     SecurityException,
-    ValidationException
+    ValidationException,
 )
 from app.core.logging import get_logger
+from app.core.security import (
+    TokenClaimsModel,
+    TokenType,
+    create_token,
+    create_token_pair,
+    decode_token,
+    get_password_hash,
+    verify_password,
+)
 from app.models.user import User
-from app.services.interfaces import ServiceInterface
 from app.utils.redis_manager import get_key, set_key, delete_key
 
 logger = get_logger("app.services.security_service")
 
 
-class TokenType(str, Enum):
-    """Enum for different types of tokens."""
-
-    ACCESS = "access"
-    REFRESH = "refresh"
-    RESET_PASSWORD = "reset_password"
-    EMAIL_VERIFICATION = "email_verification"
-    INVITATION = "invitation"
-    API_KEY = "api_key"
-    CSRF = "csrf"
-    SESSION = "session"
-
-
 class SecurityViolation(str, Enum):
-    """Enum for different types of security violations."""
+    """Types of security violations that can be detected."""
 
     INVALID_TOKEN = "invalid_token"
     EXPIRED_TOKEN = "expired_token"
@@ -70,7 +80,7 @@ class SecurityViolation(str, Enum):
 
 
 class PasswordPolicy(BaseModel):
-    """Model for password policy configuration."""
+    """Policy for password requirements and restrictions."""
 
     min_length: int = 8
     require_uppercase: bool = True
@@ -85,35 +95,9 @@ class PasswordPolicy(BaseModel):
     password_expiry_days: Optional[int] = 90
 
 
-class TokenClaimsModel(BaseModel):
-    """Model for token claims."""
-
-    sub: str
-    exp: datetime
-    iat: datetime
-    jti: str
-    type: TokenType
-    role: Optional[str] = None
-    permissions: Optional[List[str]] = None
-    user_data: Optional[Dict[str, Any]] = None
-
-
-class TokenPayload(TypedDict, total=False):
-    """TypedDict for token payload."""
-
-    sub: str
-    exp: int
-    iat: int
-    jti: str
-    type: str
-    role: str
-    permissions: List[str]
-    user_data: Dict[str, Any]
-
-
 @dataclass
 class TokenConfig:
-    """Configuration for token generation."""
+    """Configuration for token generation and validation."""
 
     secret_key: str
     algorithm: str = "HS256"
@@ -125,48 +109,40 @@ class TokenConfig:
 
 
 class SecurityService:
-    """Service for security-related operations.
-
-    Handles authentication, authorization, encryption, token management,
-    password policies, and security monitoring.
-    """
+    """Service providing high-level security features and policy enforcement."""
 
     def __init__(self) -> None:
         """Initialize the security service."""
-        # Configuration
         self.token_config = TokenConfig(
-            secret_key=settings.security.SECRET_KEY,
-            algorithm=settings.security.ALGORITHM,
-            access_token_expire_minutes=settings.security.ACCESS_TOKEN_EXPIRE_MINUTES
+            secret_key=settings.SECRET_KEY,
+            algorithm=settings.ALGORITHM,
+            access_token_expire_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
         )
-
+        
         self.password_policy = PasswordPolicy()
-
-        # Define common security patterns
+        
+        # Regular expression patterns for validation
         self.patterns = {
             "email": re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"),
             "phone": re.compile(r"^\+?[0-9]{10,15}$"),
             "username": re.compile(r"^[a-zA-Z0-9_-]{3,32}$"),
             "url": re.compile(
-                r"^(https?:\/\/)?"  # protocol
-                r"(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|"  # domain name
-                r"((\d{1,3}\.){3}\d{1,3}))"  # OR ip (v4) address
-                r"(\:\d+)?(\/[-a-z\d%_.~+]*)*"  # port and path
-                r"(\?[;&a-z\d%_.~+=-]*)?"  # query string
-                r"(\#[-a-z\d_]*)?$",  # fragment locator
+                r"^(https?:\/\/)?(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|"
+                r"((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-z\d%_.~+]*)*"
+                r"(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?$",
                 re.IGNORECASE,
             ),
         }
-
-        # Token blacklist cache prefix
+        
+        # Used for token blacklisting
         self.token_blacklist_prefix = "token:blacklist:"
-
-        # Security configurations
+        
+        # Security configuration
         self.allowed_hosts: Set[str] = set(settings.security.ALLOWED_HOSTS)
         self.trusted_proxies: Set[str] = set(settings.security.TRUSTED_PROXIES)
         self.csrf_token_expiry: int = settings.security.CSRF_TOKEN_EXPIRY
-
-        # Suspicious patterns for detecting potential attacks
+        
+        # Patterns for detecting suspicious content
         self.suspicious_patterns: List[str] = [
             r"<script.*?>",
             r"javascript:",
@@ -184,60 +160,53 @@ class SecurityService:
             r"1=1",
             r"../../",
             r"data:text/html",
-            r"file://"
+            r"file://",
         ]
         self.suspicious_regex = re.compile("|".join(self.suspicious_patterns), re.IGNORECASE)
-
-        # Set up encryption
+        
+        # Set up encryption for sensitive data
         self._setup_encryption()
-
+        
+        # Cache of common passwords for policy enforcement
+        self.common_passwords: Set[str] = set()
+        
         logger.info("SecurityService initialized")
 
     async def initialize(self) -> None:
-        """Initialize the security service."""
+        """Initialize the security service.
+        
+        Loads common passwords and performs other initialization tasks.
+        """
         logger.debug("Initializing security service")
-
-        # Load common passwords list for the password policy if enabled
         if self.password_policy.prevent_common_passwords:
             await self._load_common_passwords()
 
     async def shutdown(self) -> None:
-        """Shutdown the security service."""
+        """Shut down the security service."""
         logger.debug("Shutting down security service")
 
     def _setup_encryption(self) -> None:
-        """Set up encryption keys and utilities."""
-        # Use environment variable or settings for key
-        base_key = settings.security.SECRET_KEY.encode()
-
-        # Derive a proper key for Fernet
-        salt = b"security_service_salt"  # Fixed salt for consistency
+        """Set up encryption for sensitive data."""
+        base_key = settings.SECRET_KEY.encode()
+        salt = b"security_service_salt"
         kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt,
-            iterations=100000,
+            algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000
         )
         key = base64.urlsafe_b64encode(kdf.derive(base_key))
-
-        # Initialize Fernet cipher for encryption/decryption
         self.cipher = Fernet(key)
 
     async def _load_common_passwords(self) -> None:
-        """Load list of common passwords to check against."""
+        """Load list of common passwords for policy enforcement."""
         self.common_passwords = set()
         try:
-            # Check if passwords file exists
-            passwords_file = os.path.join(
-                settings.BASE_DIR, "app", "data", "common_passwords.txt"
-            )
-            if os.path.exists(passwords_file):
+            passwords_file = Path(settings.BASE_DIR) / "app" / "data" / "common_passwords.txt"
+            if passwords_file.exists():
                 with open(passwords_file, "r") as f:
                     for line in f:
                         self.common_passwords.add(line.strip())
                 logger.debug(f"Loaded {len(self.common_passwords)} common passwords")
             else:
-                # If file doesn't exist, add some most common passwords
+                # Fallback to a small set of common passwords
                 self.common_passwords = {
                     "password", "123456", "123456789", "qwerty", "12345678",
                     "111111", "1234567890", "1234567", "password1", "12345",
@@ -246,38 +215,35 @@ class SecurityService:
                 logger.debug(f"Using default list of {len(self.common_passwords)} common passwords")
         except Exception as e:
             logger.error(f"Error loading common passwords: {str(e)}")
-            # Add some most common as fallback
-            self.common_passwords = {
-                "password", "123456", "123456789", "qwerty", "12345678"
-            }
+            # Fallback to a minimal set
+            self.common_passwords = {"password", "123456", "123456789", "qwerty", "12345678"}
 
+    # Encryption methods
     def encrypt_data(self, data: Union[str, bytes, dict]) -> str:
         """Encrypt sensitive data.
-
+        
         Args:
-            data: Data to encrypt
-
+            data: The data to encrypt (string, bytes, or dict)
+            
         Returns:
-            Encrypted data as a string
+            Base64 encoded encrypted data
         """
         if isinstance(data, dict):
             data = json.dumps(data)
-
         if isinstance(data, str):
             data = data.encode()
-
         encrypted = self.cipher.encrypt(data)
         return base64.urlsafe_b64encode(encrypted).decode()
 
     def decrypt_data(self, encrypted_data: str) -> Union[str, dict]:
         """Decrypt encrypted data.
-
+        
         Args:
-            encrypted_data: Encrypted data string
-
+            encrypted_data: The encrypted data to decrypt
+            
         Returns:
-            Decrypted data
-
+            The decrypted data (string or dict)
+            
         Raises:
             SecurityException: If decryption fails
         """
@@ -285,8 +251,6 @@ class SecurityService:
             encrypted_bytes = base64.urlsafe_b64decode(encrypted_data)
             decrypted = self.cipher.decrypt(encrypted_bytes)
             result = decrypted.decode()
-
-            # Try to parse as JSON if possible
             try:
                 return json.loads(result)
             except json.JSONDecodeError:
@@ -297,10 +261,11 @@ class SecurityService:
                 message="Failed to decrypt data",
                 code=ErrorCode.SECURITY_ERROR,
                 details={"error": "Invalid encrypted data format"},
-                status_code=status.HTTP_400_BAD_REQUEST
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
-    def create_token(
+    # Advanced token methods
+    async def create_and_store_token(
         self,
         subject: Union[str, uuid.UUID],
         token_type: TokenType,
@@ -309,69 +274,34 @@ class SecurityService:
         permissions: Optional[List[str]] = None,
         user_data: Optional[Dict[str, Any]] = None,
     ) -> str:
-        """Create a JWT token.
-
+        """Create a token and store it in the database.
+        
         Args:
-            subject: Subject identifier (usually user ID)
-            token_type: Type of token to create
-            expires_delta: Optional custom expiration time
-            role: Optional user role
-            permissions: Optional list of permissions
-            user_data: Optional additional user data
-
+            subject: The subject identifier (usually user ID)
+            token_type: The type of token
+            expires_delta: How long the token should be valid
+            role: The role of the user
+            permissions: Specific permissions for the user
+            user_data: Additional user data to include in the token
+            
         Returns:
-            Generated JWT token
+            The encoded JWT token
         """
-        # Determine expiration based on token type
-        if expires_delta is None:
-            if token_type == TokenType.ACCESS:
-                expires_delta = timedelta(minutes=self.token_config.access_token_expire_minutes)
-            elif token_type == TokenType.REFRESH:
-                expires_delta = timedelta(days=self.token_config.refresh_token_expire_days)
-            elif token_type == TokenType.RESET_PASSWORD:
-                expires_delta = timedelta(minutes=self.token_config.reset_token_expire_minutes)
-            elif token_type == TokenType.EMAIL_VERIFICATION:
-                expires_delta = timedelta(days=self.token_config.verification_token_expire_days)
-            elif token_type == TokenType.INVITATION:
-                expires_delta = timedelta(days=self.token_config.invitation_token_expire_days)
-            else:
-                # Default expiration
-                expires_delta = timedelta(minutes=30)
-
-        # Get current time and calculate expiration
-        now = datetime.utcnow()
-        expire = now + expires_delta
-
-        # Generate a token ID
-        token_jti = str(uuid.uuid4())
-
-        # Prepare the payload
-        to_encode: TokenPayload = {
-            "sub": str(subject),
-            "exp": int(expire.timestamp()),
-            "iat": int(now.timestamp()),
-            "jti": token_jti,
-            "type": token_type.value
-        }
-
-        # Add optional fields if provided
-        if role:
-            to_encode["role"] = role
-
-        if permissions:
-            to_encode["permissions"] = permissions
-
-        if user_data:
-            to_encode["user_data"] = user_data
-
-        # Encode the token
-        token = jwt.encode(
-            to_encode,
-            self.token_config.secret_key,
-            algorithm=self.token_config.algorithm
+        # Create the JWT token using the core security module
+        token = create_token(
+            subject=str(subject),
+            token_type=token_type.value,
+            expires_delta=expires_delta,
+            role=role or "",
+            permissions=permissions,
+            user_data=user_data,
         )
-
-        logger.debug(f"Created {token_type.value} token for subject {subject}")
+        
+        # Additional security logic could be added here, such as:
+        # - Storing token in database for auditing
+        # - Limiting number of active tokens per user
+        # - Recording IP address or device information
+        
         return token
 
     async def validate_token(
@@ -381,258 +311,374 @@ class SecurityService:
         verify_exp: bool = True,
         check_blacklist: bool = True,
     ) -> TokenClaimsModel:
-        """Validate and decode a JWT token.
-
+        """Validate a token and apply additional security checks.
+        
         Args:
-            token: The JWT token to validate
-            expected_type: Optional expected token type
-            verify_exp: Whether to verify token expiration
-            check_blacklist: Whether to check if token is blacklisted
-
+            token: The token to validate
+            expected_type: The expected token type
+            verify_exp: Whether to verify expiration
+            check_blacklist: Whether to check the token blacklist
+            
         Returns:
-            Validated token claims
-
+            The decoded token claims
+            
         Raises:
-            AuthenticationException: If token validation fails
+            AuthenticationException: If validation fails
         """
         try:
-            # Decode the token
-            payload = jwt.decode(
-                token,
-                self.token_config.secret_key,
-                algorithms=[self.token_config.algorithm],
-                options={"verify_exp": verify_exp}
-            )
-
-            # Convert payload timestamps to datetime
-            payload["exp"] = datetime.fromtimestamp(payload["exp"])
-            payload["iat"] = datetime.fromtimestamp(payload["iat"])
-
-            # Parse into model
-            token_data = TokenClaimsModel(**payload)
-
-            # Check token type if specified
-            if expected_type and token_data.type != expected_type:
+            # Decode and validate the token using the core security module
+            token_data = await decode_token(token)
+            
+            # Apply additional token validations
+            if expected_type and token_data.type != expected_type.value:
                 logger.warning(
                     f"Token type mismatch: expected {expected_type}, got {token_data.type}",
-                    subject=token_data.sub
+                    subject=token_data.sub,
                 )
                 raise AuthenticationException(
                     message="Invalid token type",
                     code=ErrorCode.INVALID_TOKEN,
-                    details={"expected_type": expected_type.value, "actual_type": token_data.type}
+                    details={
+                        "expected_type": expected_type.value,
+                        "actual_type": token_data.type,
+                    },
                 )
-
-            # Check if token is blacklisted
-            if check_blacklist:
-                is_blacklisted = await self.is_token_blacklisted(token_data.jti)
-                if is_blacklisted:
-                    logger.warning(f"Blacklisted token used", jti=token_data.jti, subject=token_data.sub)
-                    raise AuthenticationException(
-                        message="Token has been revoked",
-                        code=ErrorCode.INVALID_TOKEN
-                    )
-
+                
+            # Additional security checks can be added here
+            # For example, verify the token against a whitelist of valid tokens
+            # or check for IP address restrictions
+            
             return token_data
-
-        except jwt.ExpiredSignatureError:
-            logger.warning("Expired token used")
-            raise AuthenticationException(
-                message="Token has expired",
-                code=ErrorCode.TOKEN_EXPIRED
-            )
-        except jwt.JWTError as e:
-            logger.warning(f"JWT validation error: {str(e)}")
-            raise AuthenticationException(
-                message="Could not validate credentials",
-                code=ErrorCode.INVALID_TOKEN,
-                details={"error": str(e)}
-            )
-        except ValidationException as e:
-            logger.warning(f"Token payload validation error: {str(e)}")
-            raise AuthenticationException(
-                message="Token has invalid format",
-                code=ErrorCode.INVALID_TOKEN,
-                details={"error": str(e)}
-            )
-
-    async def blacklist_token(self, token: str) -> None:
-        """Add a token to the blacklist.
-
-        Args:
-            token: The token to blacklist
-
-        Raises:
-            AuthenticationException: If token validation fails
-        """
-        try:
-            # Validate the token first
-            token_data = await self.validate_token(token, verify_exp=False, check_blacklist=False)
-
-            # Calculate TTL based on expiration
-            now = datetime.utcnow()
-            ttl = max(0, int((token_data.exp - now).total_seconds()))
-
-            # Add to blacklist with expiration
-            blacklist_key = f"{self.token_blacklist_prefix}{token_data.jti}"
-            await set_key(blacklist_key, "1", ttl)
-
-            logger.debug(f"Token blacklisted: {token_data.jti} for {ttl} seconds")
-
+            
         except AuthenticationException:
-            # If token is already invalid, no need to blacklist
-            logger.debug("Attempted to blacklist an already invalid token")
+            # Let core authentication exceptions pass through
             raise
-
-    async def is_token_blacklisted(self, token_jti: str) -> bool:
-        """Check if a token is blacklisted.
-
-        Args:
-            token_jti: Token ID to check
-
-        Returns:
-            True if token is blacklisted, False otherwise
-        """
-        blacklist_key = f"{self.token_blacklist_prefix}{token_jti}"
-        value = await get_key(blacklist_key, None)
-        return value is not None
-
-    async def refresh_token_pair(self, refresh_token: str) -> Dict[str, str]:
-        """Refresh access and refresh tokens using a refresh token.
-
-        Args:
-            refresh_token: The refresh token
-
-        Returns:
-            Dictionary with new access and refresh tokens
-
-        Raises:
-            AuthenticationException: If refresh token is invalid
-        """
-        # Validate the refresh token
-        token_data = await self.validate_token(refresh_token, expected_type=TokenType.REFRESH)
-
-        # Blacklist the used refresh token
-        await self.blacklist_token(refresh_token)
-
-        # Create new tokens
-        new_access_token = self.create_token(
-            subject=token_data.sub,
-            token_type=TokenType.ACCESS,
-            role=token_data.role,
-            permissions=token_data.permissions,
-            user_data=token_data.user_data
-        )
-
-        new_refresh_token = self.create_token(
-            subject=token_data.sub,
-            token_type=TokenType.REFRESH,
-            role=token_data.role,
-            permissions=token_data.permissions,
-            user_data=token_data.user_data
-        )
-
-        return {
-            "access_token": new_access_token,
-            "refresh_token": new_refresh_token,
-            "token_type": "bearer",
-            "expires_in": self.token_config.access_token_expire_minutes * 60
-        }
-
-    def hash_password(self, password: str) -> str:
-        """Hash a password securely.
-
-        Args:
-            password: Plain text password
-
-        Returns:
-            Hashed password
-        """
-        # Use bcrypt with appropriate work factor
-        salt = bcrypt.gensalt(rounds=12)
-        hashed = bcrypt.hashpw(password.encode(), salt)
-        return hashed.decode()
-
-    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        """Verify a password against its hash.
-
-        Args:
-            plain_password: Plain text password
-            hashed_password: Hashed password
-
-        Returns:
-            True if password matches, False otherwise
-        """
-        try:
-            return bcrypt.checkpw(
-                plain_password.encode(),
-                hashed_password.encode()
-            )
         except Exception as e:
-            logger.error(f"Password verification error: {str(e)}")
-            return False
+            logger.error(f"Token validation error: {str(e)}")
+            raise AuthenticationException(
+                message="Token validation failed",
+                code=ErrorCode.INVALID_TOKEN,
+                details={"error": str(e)},
+            )
 
-    async def validate_password_policy(self, password: str, user_id: Optional[str] = None) -> Tuple[bool, Optional[str]]:
+    # Password policy validation
+    async def validate_password_policy(
+        self, password: str, user_id: Optional[str] = None
+    ) -> Tuple[bool, Optional[str]]:
         """Validate a password against the password policy.
-
+        
         Args:
-            password: Password to validate
-            user_id: Optional user ID for password history check
-
+            password: The password to validate
+            user_id: Optional user ID for checking password history
+            
         Returns:
-            Tuple of (valid, error_message)
+            Tuple of (is_valid, error_message)
         """
-        # Check length
+        # Check length requirements
         if len(password) < self.password_policy.min_length:
-            return False, f"Password must be at least {self.password_policy.min_length} characters long"
-
+            return (
+                False,
+                f"Password must be at least {self.password_policy.min_length} characters long",
+            )
+            
         if len(password) > self.password_policy.max_length:
-            return False, f"Password cannot be longer than {self.password_policy.max_length} characters"
+            return (
+                False,
+                f"Password cannot be longer than {self.password_policy.max_length} characters",
+            )
 
-        # Check complexity requirements
+        # Check character requirements
         if self.password_policy.require_uppercase and not any(c.isupper() for c in password):
-            return False, "Password must contain at least one uppercase letter"
-
+            return (False, "Password must contain at least one uppercase letter")
+            
         if self.password_policy.require_lowercase and not any(c.islower() for c in password):
-            return False, "Password must contain at least one lowercase letter"
-
+            return (False, "Password must contain at least one lowercase letter")
+            
         if self.password_policy.require_digit and not any(c.isdigit() for c in password):
-            return False, "Password must contain at least one digit"
-
-        if self.password_policy.require_special_char and not any(not c.isalnum() for c in password):
-            return False, "Password must contain at least one special character"
+            return (False, "Password must contain at least one digit")
+            
+        if self.password_policy.require_special_char and not any(
+            not c.isalnum() for c in password
+        ):
+            return (False, "Password must contain at least one special character")
 
         # Check against common passwords
         if self.password_policy.prevent_common_passwords and password.lower() in self.common_passwords:
-            return False, "Password is too common and easily guessed"
+            return (False, "Password is too common and easily guessed")
 
-        # Check password history if user_id provided
+        # Check password history
         if user_id and self.password_policy.password_history_count > 0:
-            # This would normally check against stored password history
-            # For simplicity, we're assuming it passes
+            # This would normally check against a database of password history
+            # Implementation depends on your storage mechanism
             pass
 
-        return True, None
+        return (True, None)
 
-    def generate_secure_token(self, length: int = 32) -> str:
-        """Generate a cryptographically secure token.
-
+    # API key management
+    def generate_api_key(
+        self, user_id: str, name: str, permissions: Optional[List[str]] = None
+    ) -> Dict[str, str]:
+        """Generate a new API key.
+        
         Args:
-            length: Length of the token in bytes
-
+            user_id: The user ID the key belongs to
+            name: A name for the key
+            permissions: Specific permissions for this key
+            
         Returns:
-            Secure random token
+            Dictionary with API key details
         """
-        return secrets.token_urlsafe(length)
+        key_id = str(uuid.uuid4())
+        secret = secrets.token_urlsafe(32)
+        hashed_secret = hashlib.sha256(secret.encode()).hexdigest()
+        
+        api_key = f"{key_id}.{secret}"
+        
+        # Create a JWT token with API key information
+        token = create_token(
+            subject=user_id,
+            token_type=TokenType.API_KEY,
+            permissions=permissions,
+            user_data={"name": name, "key_id": key_id},
+        )
+        
+        return {
+            "api_key": api_key,
+            "key_id": key_id,
+            "hashed_secret": hashed_secret,
+            "token": token,
+            "name": name,
+            "created_at": datetime.utcnow().isoformat(),
+            "permissions": permissions or [],
+        }
 
-    def generate_csrf_token(self, session_id: str) -> str:
-        """Generate a CSRF token bound to a session.
-
+    def verify_api_key(self, api_key: str, stored_hash: str) -> bool:
+        """Verify an API key against a stored hash.
+        
         Args:
-            session_id: Session ID to bind the token to
-
+            api_key: The API key to verify
+            stored_hash: The stored hash to compare against
+            
         Returns:
-            CSRF token
+            True if the key is valid, False otherwise
+        """
+        try:
+            parts = api_key.split(".")
+            if len(parts) != 2:
+                return False
+                
+            _, secret = parts
+            hashed_secret = hashlib.sha256(secret.encode()).hexdigest()
+            
+            # Use constant-time comparison to prevent timing attacks
+            return hmac.compare_digest(hashed_secret, stored_hash)
+        except Exception as e:
+            logger.error(f"API key verification error: {str(e)}")
+            return False
+
+    # Request validation
+    def is_valid_hostname(self, hostname: str) -> bool:
+        """Check if a hostname is valid and allowed.
+        
+        Args:
+            hostname: The hostname to check
+            
+        Returns:
+            True if the hostname is valid, False otherwise
+        """
+        if not hostname or len(hostname) > 255:
+            return False
+            
+        if self.allowed_hosts and hostname not in self.allowed_hosts:
+            return False
+            
+        allowed_chars = re.compile(r"^[a-zA-Z0-9.-]+$")
+        if not allowed_chars.match(hostname):
+            return False
+            
+        return True
+
+    def is_trusted_ip(self, ip_address: str) -> bool:
+        """Check if an IP address is in the trusted list.
+        
+        Args:
+            ip_address: The IP address to check
+            
+        Returns:
+            True if the IP is trusted, False otherwise
+        """
+        try:
+            ip = ipaddress.ip_address(ip_address)
+            
+            for trusted_ip in self.trusted_proxies:
+                if "/" in trusted_ip:  # CIDR notation
+                    if ip in ipaddress.ip_network(trusted_ip):
+                        return True
+                elif ip == ipaddress.ip_address(trusted_ip):
+                    return True
+                    
+            return False
+        except ValueError:
+            logger.warning(f"Invalid IP address format: {ip_address}")
+            return False
+
+    def sanitize_input(self, input_str: str) -> str:
+        """Sanitize user input to prevent XSS attacks.
+        
+        Args:
+            input_str: The input string to sanitize
+            
+        Returns:
+            The sanitized string
+        """
+        if not input_str:
+            return ""
+            
+        sanitized = input_str
+        sanitized = sanitized.replace("&", "&amp;")
+        sanitized = sanitized.replace("<", "&lt;")
+        sanitized = sanitized.replace(">", "&gt;")
+        sanitized = sanitized.replace('"', "&quot;")
+        sanitized = sanitized.replace("'", "&#x27;")
+        sanitized = sanitized.replace("/", "&#x2F;")
+        
+        return sanitized
+
+    def detect_suspicious_content(self, content: str) -> bool:
+        """Detect potentially malicious content in user input.
+        
+        Args:
+            content: The content to check
+            
+        Returns:
+            True if suspicious content is detected, False otherwise
+        """
+        if not content:
+            return False
+            
+        return bool(self.suspicious_regex.search(content))
+
+    def validate_json_input(self, json_data: Any) -> bool:
+        """Validate JSON input for security issues.
+        
+        Args:
+            json_data: The JSON data to validate
+            
+        Returns:
+            True if the input is valid, False otherwise
+        """
+        try:
+            if not isinstance(json_data, (dict, list)):
+                return False
+                
+            json_str = json.dumps(json_data)
+            
+            if self.detect_suspicious_content(json_str):
+                logger.warning("Suspicious content detected in JSON input")
+                return False
+                
+            return True
+        except Exception as e:
+            logger.error(f"Error validating JSON input: {str(e)}")
+            return False
+
+    # Authorization helpers
+    def verify_access_policy(
+        self, user_roles: List[str], required_roles: List[str], required_all: bool = False
+    ) -> bool:
+        """Verify if a user has the required roles.
+        
+        Args:
+            user_roles: The user's roles
+            required_roles: The roles required for access
+            required_all: Whether all required roles are needed
+            
+        Returns:
+            True if the user has the required roles, False otherwise
+        """
+        if not required_roles:
+            return True
+            
+        if required_all:
+            return all(role in user_roles for role in required_roles)
+        else:
+            return any(role in user_roles for role in required_roles)
+
+    # Security event logging
+    async def log_security_event(
+        self,
+        violation_type: SecurityViolation,
+        user_id: Optional[str] = None,
+        ip_address: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Log a security event.
+        
+        Args:
+            violation_type: The type of violation
+            user_id: The user ID involved
+            ip_address: The IP address involved
+            details: Additional details about the event
+        """
+        log_data = {
+            "violation_type": violation_type,
+            "user_id": user_id,
+            "ip_address": ip_address,
+            "details": details or {},
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+        
+        logger.warning(f"Security violation: {violation_type.value}", **log_data)
+        
+        # Additional security event logging logic could be implemented here,
+        # such as:
+        # - Storing in a security events database
+        # - Sending alerts to administrators
+        # - Triggering automated responses
+
+    # Rate limiting
+    async def throttle_requests(
+        self, key: str, limit: int, window_seconds: int
+    ) -> Tuple[bool, int]:
+        """Apply rate limiting to requests.
+        
+        Args:
+            key: The key to rate limit on
+            limit: The maximum number of requests allowed
+            window_seconds: The time window in seconds
+            
+        Returns:
+            Tuple of (is_limited, current_count)
+        """
+        throttle_key = f"throttle:{key}:{int(time.time() / window_seconds)}"
+        
+        try:
+            current = await get_key(throttle_key, 0)
+            
+            if current is None:
+                await set_key(throttle_key, 1, window_seconds)
+                return (False, 1)
+                
+            count = current + 1
+            await set_key(throttle_key, count, window_seconds)
+            
+            if count > limit:
+                return (True, count)
+                
+            return (False, count)
+        except Exception as e:
+            logger.error(f"Throttling error: {str(e)}")
+            return (False, 0)
+
+    # CSRF protection
+    def generate_csrf_token(self, session_id: str) -> str:
+        """Generate a CSRF token for a session.
+        
+        Args:
+            session_id: The session ID to associate with the token
+            
+        Returns:
+            A CSRF token
         """
         timestamp = int(time.time())
         random_part = secrets.token_hex(8)
@@ -642,323 +688,129 @@ class SecurityService:
             message.encode(),
             digestmod="sha256"
         ).hexdigest()
-
+        
         return f"{message}:{signature}"
 
     def validate_csrf_token(self, token: str, session_id: str) -> bool:
         """Validate a CSRF token.
-
+        
         Args:
-            token: CSRF token to validate
-            session_id: Session ID the token should be bound to
-
+            token: The token to validate
+            session_id: The session ID to validate against
+            
         Returns:
-            True if token is valid, False otherwise
+            True if the token is valid, False otherwise
         """
         try:
-            # Split token into parts
             parts = token.split(":")
             if len(parts) != 4:
                 logger.warning(f"Invalid CSRF token format")
                 return False
-
-            # Extract parts
+                
             token_session_id, timestamp_str, random_part, provided_signature = parts
-
-            # Verify session ID
+            
             if token_session_id != session_id:
                 logger.warning(f"CSRF token session mismatch")
                 return False
-
-            # Verify signature
+                
             message = f"{token_session_id}:{timestamp_str}:{random_part}"
             expected_signature = hmac.new(
                 self.token_config.secret_key.encode(),
                 message.encode(),
                 digestmod="sha256"
             ).hexdigest()
-
+            
             if not hmac.compare_digest(provided_signature, expected_signature):
                 logger.warning(f"CSRF token signature mismatch")
                 return False
-
-            # Check expiration
+                
             timestamp = int(timestamp_str)
             if int(time.time()) - timestamp > self.csrf_token_expiry:
                 logger.warning(f"CSRF token expired")
                 return False
-
+                
             return True
-
         except Exception as e:
             logger.warning(f"CSRF token validation error: {str(e)}")
             return False
 
-    def is_valid_hostname(self, hostname: str) -> bool:
-        """Validate a hostname against allowed hosts.
-
-        Args:
-            hostname: Hostname to validate
-
+    # TLS/SSL and security headers
+    def get_security_headers(self) -> Dict[str, str]:
+        """Get recommended security headers for HTTP responses.
+        
         Returns:
-            True if hostname is valid, False otherwise
+            Dictionary of security headers
         """
-        if not hostname or len(hostname) > 255:
-            return False
-
-        if self.allowed_hosts and hostname not in self.allowed_hosts:
-            return False
-
-        allowed_chars = re.compile(r"^[a-zA-Z0-9.-]+$")
-        if not allowed_chars.match(hostname):
-            return False
-
-        return True
-
-    def is_trusted_ip(self, ip_address: str) -> bool:
-        """Check if an IP address is in the trusted proxies list.
-
-        Args:
-            ip_address: IP address to check
-
-        Returns:
-            True if IP is trusted, False otherwise
-        """
-        try:
-            ip = ipaddress.ip_address(ip_address)
-
-            for trusted_ip in self.trusted_proxies:
-                if "/" in trusted_ip:
-                    # It's a network
-                    if ip in ipaddress.ip_network(trusted_ip):
-                        return True
-                elif ip == ipaddress.ip_address(trusted_ip):
-                    # It's a specific IP
-                    return True
-
-            return False
-
-        except ValueError:
-            logger.warning(f"Invalid IP address format: {ip_address}")
-            return False
-
-    def sanitize_input(self, input_str: str) -> str:
-        """Sanitize user input to prevent XSS attacks.
-
-        Args:
-            input_str: User input string
-
-        Returns:
-            Sanitized string
-        """
-        if not input_str:
-            return ""
-
-        sanitized = input_str
-        sanitized = sanitized.replace("&", "&amp;")
-        sanitized = sanitized.replace("<", "&lt;")
-        sanitized = sanitized.replace(">", "&gt;")
-        sanitized = sanitized.replace('"', "&quot;")
-        sanitized = sanitized.replace("'", "&#x27;")
-        sanitized = sanitized.replace("/", "&#x2F;")
-
-        return sanitized
-
-    def detect_suspicious_content(self, content: str) -> bool:
-        """Detect potentially malicious content.
-
-        Args:
-            content: Content to check
-
-        Returns:
-            True if suspicious content is detected, False otherwise
-        """
-        if not content:
-            return False
-
-        return bool(self.suspicious_regex.search(content))
-
-    def validate_json_input(self, json_data: Any) -> bool:
-        """Validate JSON input for security issues.
-
-        Args:
-            json_data: JSON data to validate
-
-        Returns:
-            True if JSON is valid and safe, False otherwise
-        """
-        try:
-            if not isinstance(json_data, (dict, list)):
-                return False
-
-            # Convert to string to check for suspicious patterns
-            json_str = json.dumps(json_data)
-            if self.detect_suspicious_content(json_str):
-                logger.warning("Suspicious content detected in JSON input")
-                return False
-
-            return True
-
-        except Exception as e:
-            logger.error(f"Error validating JSON input: {str(e)}")
-            return False
-
-    def verify_access_policy(self, user_roles: List[str], required_roles: List[str], required_all: bool = False) -> bool:
-        """Verify if a user has the required roles.
-
-        Args:
-            user_roles: List of user roles
-            required_roles: List of required roles
-            required_all: Whether all required roles are needed
-
-        Returns:
-            True if user has required roles, False otherwise
-        """
-        if not required_roles:
-            return True
-
-        if required_all:
-            return all(role in user_roles for role in required_roles)
-        else:
-            return any(role in user_roles for role in required_roles)
-
-    async def log_security_event(
-        self,
-        violation_type: SecurityViolation,
-        user_id: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """Log a security event.
-
-        Args:
-            violation_type: Type of security violation
-            user_id: Optional user ID
-            ip_address: Optional IP address
-            details: Optional additional details
-        """
-        # This would typically use the AuditService
-        # For now, just log to the application logs
-        log_data = {
-            "violation_type": violation_type,
-            "user_id": user_id,
-            "ip_address": ip_address,
-            "details": details or {},
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-        logger.warning(
-            f"Security violation: {violation_type.value}",
-            **log_data
-        )
-
-    def generate_api_key(self, user_id: str, name: str, permissions: Optional[List[str]] = None) -> Dict[str, str]:
-        """Generate an API key for a user.
-
-        Args:
-            user_id: User ID
-            name: API key name
-            permissions: Optional list of permissions
-
-        Returns:
-            Dictionary with API key details
-        """
-        # Generate a unique key ID
-        key_id = str(uuid.uuid4())
-
-        # Generate the secret part
-        secret = secrets.token_urlsafe(32)
-
-        # Hash the secret for storage
-        hashed_secret = hashlib.sha256(secret.encode()).hexdigest()
-
-        # Generate the full API key (ID.SECRET)
-        api_key = f"{key_id}.{secret}"
-
-        # Create JWT token for permissions
-        token = self.create_token(
-            subject=user_id,
-            token_type=TokenType.API_KEY,
-            permissions=permissions,
-            user_data={"name": name, "key_id": key_id}
-        )
-
         return {
-            "api_key": api_key,
-            "key_id": key_id,
-            "hashed_secret": hashed_secret,
-            "token": token,
-            "name": name,
-            "created_at": datetime.utcnow().isoformat(),
-            "permissions": permissions or []
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+            "X-XSS-Protection": "1; mode=block",
+            "Content-Security-Policy": settings.security.CONTENT_SECURITY_POLICY,
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+            "Permissions-Policy": settings.security.PERMISSIONS_POLICY,
         }
 
-    def verify_api_key(self, api_key: str, stored_hash: str) -> bool:
-        """Verify an API key against a stored hash.
-
+    def hash_password(self, password: str) -> str:
+        """Hash a password using a cryptographically secure algorithm.
+        
+        This method uses bcrypt with a higher work factor than the core implementation,
+        providing a security-focused wrapper around the core function.
+        
         Args:
-            api_key: API key to verify
-            stored_hash: Stored hash to verify against
-
+            password: The password to hash
+            
         Returns:
-            True if API key is valid, False otherwise
+            The hashed password
+        """
+        # Use bcrypt with a higher work factor for better security
+        salt = bcrypt.gensalt(rounds=12)
+        hashed = bcrypt.hashpw(password.encode(), salt)
+        return hashed.decode()
+        
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        """Verify a password against a hash with additional security measures.
+        
+        Args:
+            plain_password: The plain text password
+            hashed_password: The hashed password to compare against
+            
+        Returns:
+            True if the password matches the hash, False otherwise
         """
         try:
-            # Split the API key into ID and secret
-            parts = api_key.split(".")
-            if len(parts) != 2:
-                return False
-
-            _, secret = parts
-
-            # Hash the secret
-            hashed_secret = hashlib.sha256(secret.encode()).hexdigest()
-
-            # Compare with stored hash
-            return hmac.compare_digest(hashed_secret, stored_hash)
-
+            return verify_password(plain_password, hashed_password)
         except Exception as e:
-            logger.error(f"API key verification error: {str(e)}")
+            logger.error(f"Password verification error: {str(e)}")
             return False
 
-    async def throttle_requests(
-        self,
-        key: str,
-        limit: int,
-        window_seconds: int
-    ) -> Tuple[bool, int]:
-        """Throttle requests to prevent abuse.
-
+    def generate_secure_token(self, length: int = 32) -> str:
+        """Generate a cryptographically secure random token.
+        
         Args:
-            key: Throttling key (e.g., IP address or user ID)
-            limit: Maximum number of requests
-            window_seconds: Time window in seconds
-
+            length: The desired token length
+            
         Returns:
-            Tuple of (throttled, current_count)
+            A secure random token
+            
+        Raises:
+            ValueError: If the requested length is too short
         """
-        # Normalize the key
-        throttle_key = f"throttle:{key}:{int(time.time() / window_seconds)}"
-
+        if length < 16:
+            error_msg = "Token length must be at least 16 bytes for security"
+            logger.warning(error_msg, length=length)
+            raise ValueError(error_msg)
+            
         try:
-            # Get current count
-            current = await get_key(throttle_key, 0)
-
-            if current is None:
-                # Key doesn't exist, create it
-                await set_key(throttle_key, 1, window_seconds)
-                return False, 1
-
-            # Increment count
-            count = current + 1
-            await set_key(throttle_key, count, window_seconds)
-
-            # Check if limit exceeded
-            if count > limit:
-                return True, count
-
-            return False, count
-
+            token = secrets.token_urlsafe(length)
+            logger.debug(f"Generated secure token of length {len(token)}")
+            return token
         except Exception as e:
-            logger.error(f"Throttling error: {str(e)}")
-            return False, 0
+            logger.error(f"Failed to generate secure token: {str(e)}")
+            raise SecurityException(
+                message="Failed to generate secure token",
+                code=ErrorCode.SECURITY_ERROR,
+                details={"error": str(e)},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                original_exception=e,
+            )

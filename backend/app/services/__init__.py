@@ -113,8 +113,3 @@ def register_services():
     # service_registry.register(UserService)
     service_registry.register(ProductService)
     service_registry.register(ChatService)
-
-# Only register services if this module is imported directly
-# This avoids registration during circular imports
-if __name__ != "__main__":
-    register_services()

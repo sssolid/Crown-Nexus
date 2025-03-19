@@ -14,8 +14,7 @@ making it easier to maintain and test the application.
 """
 
 import inspect
-import logging
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Optional, Type, TypeVar, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -319,52 +318,63 @@ def register_services() -> None:
     # Import services here to avoid circular imports
     # These would typically be your service imports
     try:
-        from app.services.audit_service import AuditService
-        from app.services.cache_service import CacheService
-        from app.services.chat import ChatService
-        from app.services.currency_service import ExchangeRateService
-        from app.services.error_service import ErrorService
-        from app.services.logging_service import LoggingService
-        from app.services.media_service import MediaService
-        from app.services.metrics_service import MetricsService
-        from app.services.product_service import ProductService
-        from app.services.search import SearchService
-        from app.services.user_service import UserService
-        from app.services.validation_service import ValidationService
-        from app.services.vehicle import VehicleDataService
-        from app.services.security_service import SecurityService
+        from app.services.audit import get_audit_service, AuditService
+        from app.services.cache import get_cache_service, CacheService
+        from app.services.error import get_error_service, ErrorService
+        from app.services.validation import get_validation_service, ValidationService
+        from app.services.security import get_security_service, SecurityService
+        from app.services.metrics import get_metrics_service, MetricsService
+        from app.services.search import get_search_service, SearchService
+        from app.services.pagination import get_pagination_service, PaginationService
+        from app.services.media import get_media_service, MediaService
+
+        # from app.services.logging_service import LoggingService
+        # from app.services.chat import ChatService
+        # from app.services.currency_service import ExchangeRateService
+        # from app.services.product_service import ProductService
+        # from app.services.user_service import UserService
+        # from app.services.vehicle import VehicleDataService
+
 
         # Register dependencies as factories
-        dependency_manager.register_factory("logging_service", lambda: LoggingService())
-        dependency_manager.register_factory("error_service", lambda: ErrorService())
-        dependency_manager.register_factory("validation_service", lambda: ValidationService())
-        dependency_manager.register_factory("metrics_service", lambda: MetricsService())
-        dependency_manager.register_factory("cache_service", lambda: CacheService())
-        dependency_manager.register_factory("security_service", lambda: SecurityService())
-        dependency_manager.register_factory("audit_service", lambda: AuditService())
-        dependency_manager.register_factory("user_service", lambda db: UserService(db) if db else None)
-        dependency_manager.register_factory("product_service", lambda db: ProductService(db) if db else None)
-        dependency_manager.register_factory("chat_service", lambda db: ChatService(db) if db else None)
-        dependency_manager.register_factory("search_service", lambda db: SearchService(db) if db else None)
-        dependency_manager.register_factory("vehicle_service", lambda db: VehicleDataService(db) if db else None)
-        dependency_manager.register_factory("media_service", lambda: MediaService())
-        dependency_manager.register_factory("exchange_rate_service", lambda db: ExchangeRateService(db) if db else None)
+        dependency_manager.register_factory("error_service", lambda: get_error_service())
+        dependency_manager.register_factory("validation_service", lambda: get_validation_service())
+        dependency_manager.register_factory("metrics_service", lambda: get_metrics_service())
+        dependency_manager.register_factory("cache_service", lambda: get_cache_service())
+        dependency_manager.register_factory("security_service", lambda: get_security_service())
+        dependency_manager.register_factory("audit_service", lambda db: get_audit_service(db) if db else None)
+        dependency_manager.register_factory("search_service", lambda db: get_search_service(db) if db else None)
+        dependency_manager.register_factory("media_service", lambda: get_media_service())
+        dependency_manager.register_factory(
+            "pagination_service",
+            lambda db=None, model_class=None, response_model=None:
+            get_pagination_service(db, model_class, response_model) if db and model_class else None
+        )
+
+        # dependency_manager.register_factory("logging_service", lambda: LoggingService())
+        # dependency_manager.register_factory("user_service", lambda db: UserService(db) if db else None)
+        # dependency_manager.register_factory("product_service", lambda db: ProductService(db) if db else None)
+        # dependency_manager.register_factory("chat_service", lambda db: ChatService(db) if db else None)
+        # dependency_manager.register_factory("vehicle_service", lambda db: VehicleDataService(db) if db else None)
+        # dependency_manager.register_factory("exchange_rate_service", lambda db: ExchangeRateService(db) if db else None)
 
         # Register service classes
-        dependency_manager.register_service(LoggingService, "LoggingService")
         dependency_manager.register_service(ErrorService, "ErrorService")
         dependency_manager.register_service(ValidationService, "ValidationService")
         dependency_manager.register_service(MetricsService, "MetricsService")
         dependency_manager.register_service(CacheService, "CacheService")
-        dependency_manager.register_service(SecurityService, "SecurityService")
+        dependency_manager.register_service(security_service, "SecurityService")
         dependency_manager.register_service(AuditService, "AuditService")
-        dependency_manager.register_service(UserService, "UserService")
-        dependency_manager.register_service(ProductService, "ProductService")
-        dependency_manager.register_service(ChatService, "ChatService")
-        dependency_manager.register_service(SearchService, "SearchService")
-        dependency_manager.register_service(VehicleDataService, "VehicleDataService")
+        dependency_manager.register_service(PaginationService, "PaginationService")
         dependency_manager.register_service(MediaService, "MediaService")
-        dependency_manager.register_service(ExchangeRateService, "ExchangeRateService")
+        dependency_manager.register_service(SearchService, "SearchService")
+
+        # dependency_manager.register_service(LoggingService, "LoggingService")
+        # dependency_manager.register_service(UserService, "UserService")
+        # dependency_manager.register_service(ProductService, "ProductService")
+        # dependency_manager.register_service(ChatService, "ChatService")
+        # dependency_manager.register_service(VehicleDataService, "VehicleDataService")
+        # dependency_manager.register_service(ExchangeRateService, "ExchangeRateService")
 
     except ImportError as e:
         logger.warning(f"Could not import all services: {str(e)}")

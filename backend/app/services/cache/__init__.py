@@ -7,13 +7,11 @@ and consistent interfaces across backends.
 """
 from __future__ import annotations
 
-from app.core.dependency_manager import dependency_manager
 from app.services.cache.service import CacheService
 
-# Create a singleton instance
-cache_service = CacheService()
+# Factory function for dependency injection
+def get_cache_service():
+    """Factory function to get CacheService"""
+    return CacheService()
 
-# Register with dependency manager
-dependency_manager.register_dependency("cache_service", cache_service)
-
-__all__ = ["cache_service", "CacheService"]
+__all__ = ["get_cache_service", "CacheService"]

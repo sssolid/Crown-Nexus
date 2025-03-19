@@ -1,76 +1,64 @@
+# /app/services/error/service.py
 from __future__ import annotations
-import inspect
-import sys
-import traceback
-from typing import Any, Callable, Dict, List, Optional, Protocol, Type, TypeVar, Union, cast
 
-from fastapi import HTTPException
-from pydantic import BaseModel
+"""Main error service implementation.
+
+This module provides the primary ErrorService that coordinates error
+handling, reporting, and creation of error types throughout the application.
+"""
+
+import asyncio
+import inspect
+from typing import Any, Dict, List, Optional, TypeVar
 
 from app.core.dependency_manager import dependency_manager
 from app.core.exceptions import (
-    AppException, AuthenticationException, BadRequestException,
-    BusinessLogicException, ErrorCode, PermissionDeniedException,
-    ResourceAlreadyExistsException, ResourceNotFoundException,
+    AppException,
+    AuthenticationException,
+    BusinessLogicException,
+    ErrorCode,
+    PermissionDeniedException,
+    ResourceAlreadyExistsException,
+    ResourceNotFoundException,
     ValidationException
 )
 from app.core.logging import get_logger
+from app.services.error.base import ErrorContext, ErrorReporter
+from app.services.error.factory import ErrorReporterFactory
 from app.services.interfaces import ServiceInterface
 
-logger = get_logger("app.services.error_service")
-F = TypeVar("F", bound=Callable[..., Any])
+logger = get_logger("app.services.error.service")
 T = TypeVar("T")
 
-class ErrorContext(BaseModel):
-    """Context information for error reporting."""
-    function: str
-    args: Optional[List[Any]] = None
-    kwargs: Optional[Dict[str, Any]] = None
-    user_id: Optional[str] = None
-    request_id: Optional[str] = None
-
-class ErrorReporter(Protocol):
-    """Base class for error reporting implementations."""
-
-    async def report_error(self, exception: Exception, context: ErrorContext) -> None:
-        """Report an error to the appropriate system."""
-        ...
-
-class DefaultErrorReporter:
-    """Default implementation of error reporting that logs errors."""
-
-    async def report_error(self, exception: Exception, context: ErrorContext) -> None:
-        """Report an error to the logging system."""
-        logger.error(
-            f"Error in {context.function}",
-            exc_info=exception,
-            extra={
-                "user_id": context.user_id,
-                "request_id": context.request_id,
-                "args": context.args,
-                "kwargs": context.kwargs,
-            }
-        )
 
 class ErrorService(ServiceInterface):
     """Service for handling, reporting, and creating errors in the application."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the error handling service."""
         self._reporters: List[ErrorReporter] = []
-        dependency_manager.register_dependency("error_service", self)
 
     def register_reporter(self, reporter: ErrorReporter) -> None:
-        """Register a new error reporter."""
+        """Register a new error reporter.
+
+        Args:
+            reporter: Error reporter to register
+        """
         self._reporters.append(reporter)
+        logger.debug(f"Registered error reporter: {reporter.__class__.__name__}")
 
     async def report_error(self, exception: Exception, context: ErrorContext) -> None:
-        """Report an error using all registered reporters."""
+        """Report an error using all registered reporters.
+
+        Args:
+            exception: Exception to report
+            context: Context information for the error
+        """
         for reporter in self._reporters:
             try:
                 await reporter.report_error(exception, context)
             except Exception as e:
-                logger.error(f"Error reporter failed: {e}", exc_info=e)
+                logger.error(f"Error reporter failed: {str(e)}", exc_info=e)
 
     def resource_not_found(
         self,
@@ -78,7 +66,16 @@ class ErrorService(ServiceInterface):
         resource_id: str,
         message: Optional[str] = None
     ) -> ResourceNotFoundException:
-        """Create a resource not found exception."""
+        """Create a resource not found exception.
+
+        Args:
+            resource_type: Type of resource
+            resource_id: ID of the resource
+            message: Optional custom error message
+
+        Returns:
+            ResourceNotFoundException
+        """
         if message is None:
             message = f"{resource_type} with ID {resource_id} not found"
 
@@ -100,7 +97,17 @@ class ErrorService(ServiceInterface):
         field: str,
         message: Optional[str] = None
     ) -> ResourceAlreadyExistsException:
-        """Create a resource already exists exception."""
+        """Create a resource already exists exception.
+
+        Args:
+            resource_type: Type of resource
+            identifier: Value of the identifier
+            field: Field name that must be unique
+            message: Optional custom error message
+
+        Returns:
+            ResourceAlreadyExistsException
+        """
         if message is None:
             message = f"{resource_type} with {field} {identifier} already exists"
 
@@ -122,7 +129,16 @@ class ErrorService(ServiceInterface):
         message: str,
         error_type: str = "invalid_value"
     ) -> ValidationException:
-        """Create a validation error exception."""
+        """Create a validation error exception.
+
+        Args:
+            field: Field with the validation error
+            message: Validation error message
+            error_type: Type of validation error
+
+        Returns:
+            ValidationException
+        """
         return ValidationException(
             message=f"Validation error: {message}",
             code=ErrorCode.VALIDATION_ERROR,
@@ -141,7 +157,16 @@ class ErrorService(ServiceInterface):
         resource_type: str,
         permission: str
     ) -> PermissionDeniedException:
-        """Create a permission denied exception."""
+        """Create a permission denied exception.
+
+        Args:
+            action: Action being attempted
+            resource_type: Type of resource
+            permission: Required permission
+
+        Returns:
+            PermissionDeniedException
+        """
         return PermissionDeniedException(
             message=f"Permission denied to {action} {resource_type}",
             code=ErrorCode.PERMISSION_DENIED,
@@ -159,7 +184,15 @@ class ErrorService(ServiceInterface):
         message: str,
         details: Optional[Dict[str, Any]] = None
     ) -> BusinessLogicException:
-        """Create a business logic error exception."""
+        """Create a business logic error exception.
+
+        Args:
+            message: Error message
+            details: Additional error details
+
+        Returns:
+            BusinessLogicException
+        """
         return BusinessLogicException(
             message=message,
             code=ErrorCode.BUSINESS_LOGIC_ERROR,
@@ -175,13 +208,31 @@ class ErrorService(ServiceInterface):
         resource_id: str,
         message: Optional[str] = None
     ) -> T:
-        """Ensure a value is not None or raise a resource not found exception."""
+        """Ensure a value is not None or raise a resource not found exception.
+
+        Args:
+            value: Value to check
+            resource_type: Type of resource
+            resource_id: ID of the resource
+            message: Optional custom error message
+
+        Returns:
+            The value if not None
+
+        Raises:
+            ResourceNotFoundException: If value is None
+        """
         if value is None:
             raise self.resource_not_found(resource_type, resource_id, message)
         return value
 
     def handle_exception(self, exception: Exception, request_id: Optional[str] = None) -> None:
-        """Handle an exception by logging and reporting it."""
+        """Handle an exception by logging and reporting it.
+
+        Args:
+            exception: Exception to handle
+            request_id: Optional request ID for tracking
+        """
         # Get caller frame information
         frame = inspect.currentframe()
         if frame is not None:
@@ -205,15 +256,21 @@ class ErrorService(ServiceInterface):
                 request_id=request_id,
             )
 
-            # Report error
+            # Report error asynchronously
             asyncio.create_task(self.report_error(exception, context))
 
     async def initialize(self) -> None:
         """Initialize the error handling service."""
-        # Register default reporter
-        self.register_reporter(DefaultErrorReporter())
+        logger.info("Initializing error service")
+
+        # Register default reporters from factory
+        default_reporters = ErrorReporterFactory.create_default_reporters()
+        for reporter in default_reporters:
+            self.register_reporter(reporter)
+
+        logger.info(f"Registered {len(default_reporters)} default error reporters")
 
     async def shutdown(self) -> None:
         """Shutdown the error handling service."""
-        # Nothing to shutdown
+        logger.info("Shutting down error service")
         self._reporters = []

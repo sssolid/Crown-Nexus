@@ -6,13 +6,11 @@ application metrics for monitoring and performance analysis.
 """
 from __future__ import annotations
 
-from app.core.dependency_manager import dependency_manager
 from app.services.metrics.service import MetricsService
 
-# Create a singleton instance
-metrics_service = MetricsService()
+# Factory function for dependency injection
+def get_metrics_service():
+    """Factory function to get MetricsService"""
+    return MetricsService()
 
-# Register with dependency manager
-dependency_manager.register_dependency("metrics_service", metrics_service)
-
-__all__ = ["metrics_service", "MetricsService"]
+__all__ = ["get_metrics_service", "MetricsService"]

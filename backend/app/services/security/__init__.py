@@ -6,13 +6,11 @@ API key handling, CSRF protection, rate limiting, and other security features.
 """
 from __future__ import annotations
 
-from app.core.dependency_manager import dependency_manager
 from app.services.security.service import SecurityService
 
-# Create a singleton instance
-security_service = SecurityService()
+# Factory function for dependency injection
+def get_security_service():
+    """Factory function to get SecurityService"""
+    return SecurityService()
 
-# Register with dependency manager
-dependency_manager.register_dependency("security_service", security_service)
-
-__all__ = ["security_service", "SecurityService"]
+__all__ = ["get_security_service", "SecurityService"]

@@ -1,106 +1,85 @@
+# /backend/app/core/exceptions/base.py
 from __future__ import annotations
+
+"""Base exception system for the application.
+
+This module defines the core exception types, error codes, and response models
+used throughout the application. It provides a consistent foundation for error
+handling and reporting.
+"""
+
 import logging
-import sys
 import traceback
 from enum import Enum
-from typing import Any, Dict, List, Optional, Type, Union, cast
-from pydantic import BaseModel, Field, validator
-from fastapi import HTTPException, Request, status
+from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 from app.core.logging import get_logger
 
 logger = get_logger("app.core.exceptions")
 
+
 class ErrorCategory(str, Enum):
-    """Categories for errors."""
-    VALIDATION = 'validation'
-    AUTHENTICATION = 'authentication'
-    AUTHORIZATION = 'authorization'
-    RESOURCE = 'resource'
-    DATABASE = 'database'
-    NETWORK = 'network'
-    EXTERNAL = 'external'
-    BUSINESS = 'business'
-    SECURITY = 'security'
-    DATA = 'data'
-    SYSTEM = 'system'
-    UNKNOWN = 'unknown'
+    """Categories for different types of errors."""
+
+    VALIDATION = "validation"  # Input validation errors
+    AUTH = "auth"  # Authentication and authorization errors
+    RESOURCE = "resource"  # Resource access and management errors
+    SYSTEM = "system"  # System-level errors (DB, network, services)
+    BUSINESS = "business"  # Business logic and domain rule errors
+
 
 class ErrorCode(str, Enum):
-    """Error codes for standardized error responses.
+    """Standardized error codes for application errors.
 
-    These codes provide standardized identifiers for error types,
-    allowing clients to handle errors consistently.
+    These codes provide a consistent way to identify error types across
+    the application, allowing clients to handle errors in a structured way.
     """
-    # General errors
-    UNKNOWN_ERROR = "UNKNOWN_ERROR"
-    VALIDATION_ERROR = "VALIDATION_ERROR"
-    PERMISSION_DENIED = "PERMISSION_DENIED"
+
+    # Resource errors
     RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND"
     RESOURCE_ALREADY_EXISTS = "RESOURCE_ALREADY_EXISTS"
-    BAD_REQUEST = "BAD_REQUEST"
 
-    # Authentication errors
+    # Auth errors
     AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED"
-    TOKEN_EXPIRED = "TOKEN_EXPIRED"
-    INVALID_TOKEN = "INVALID_TOKEN"
-    USER_NOT_ACTIVE = "USER_NOT_ACTIVE"
+    PERMISSION_DENIED = "PERMISSION_DENIED"
 
-    # Database errors
-    DATABASE_ERROR = "DATABASE_ERROR"
-    TRANSACTION_FAILED = "TRANSACTION_FAILED"
-    DATA_INTEGRITY_ERROR = "DATA_INTEGRITY_ERROR"
-
-    # Network errors
-    NETWORK_ERROR = "NETWORK_ERROR"
-    TIMEOUT_ERROR = "TIMEOUT_ERROR"
-    CONNECTION_ERROR = "CONNECTION_ERROR"
-
-    # External service errors
-    EXTERNAL_SERVICE_ERROR = "EXTERNAL_SERVICE_ERROR"
-    RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED"
-    SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE"
-    EXTERNAL_DEPENDENCY_ERROR = "EXTERNAL_DEPENDENCY_ERROR"
+    # Validation errors
+    VALIDATION_ERROR = "VALIDATION_ERROR"
+    BAD_REQUEST = "BAD_REQUEST"
 
     # Business logic errors
     BUSINESS_LOGIC_ERROR = "BUSINESS_LOGIC_ERROR"
-    INVALID_STATE_ERROR = "INVALID_STATE_ERROR"
+    INVALID_STATE = "INVALID_STATE"
     OPERATION_NOT_ALLOWED = "OPERATION_NOT_ALLOWED"
 
-    # Security errors
-    SECURITY_ERROR = "SECURITY_ERROR"
-    ACCESS_DENIED = "ACCESS_DENIED"
-    CSRF_ERROR = "CSRF_ERROR"
-
-    # Data errors
-    DATA_ERROR = "DATA_ERROR"
-    SERIALIZATION_ERROR = "SERIALIZATION_ERROR"
-    DESERIALIZATION_ERROR = "DESERIALIZATION_ERROR"
-
     # System errors
-    SYSTEM_ERROR = "SYSTEM_ERROR"
+    DATABASE_ERROR = "DATABASE_ERROR"
+    NETWORK_ERROR = "NETWORK_ERROR"
+    SERVICE_ERROR = "SERVICE_ERROR"
     CONFIGURATION_ERROR = "CONFIGURATION_ERROR"
-    DEPENDENCY_ERROR = "DEPENDENCY_ERROR"
+    SECURITY_ERROR = "SECURITY_ERROR"
+
+    # Generic errors
+    UNKNOWN_ERROR = "UNKNOWN_ERROR"
+
 
 class ErrorSeverity(str, Enum):
     """Severity levels for errors."""
-    DEBUG = 'debug'
-    INFO = 'info'
-    WARNING = 'warning'
-    ERROR = 'error'
-    CRITICAL = 'critical'
+
+    WARNING = "warning"  # Issues that need attention but aren't critical
+    ERROR = "error"      # Serious errors that impact functionality
+    CRITICAL = "critical"  # Critical failures requiring immediate attention
+
 
 class ErrorDetail(BaseModel):
-    """Detailed error information for API responses.
+    """Detailed error information for API responses."""
 
-    This model provides structured error details, including location,
-    message, and error type.
-    """
     loc: List[str] = Field(..., description="Error location (path to the error)")
     msg: str = Field(..., description="Error message")
     type: str = Field(..., description="Error type code")
+
 
 class ErrorResponse(BaseModel):
     """Standardized error response model.
@@ -108,6 +87,7 @@ class ErrorResponse(BaseModel):
     This model defines the structure of error responses returned by the API,
     providing consistent error information to clients.
     """
+
     success: bool = Field(False, description="Success flag (always False for errors)")
     message: str = Field(..., description="Human-readable error message")
     code: str = Field(..., description="Error code")
@@ -127,31 +107,33 @@ class ErrorResponse(BaseModel):
             return []
         return [{"loc": ["unknown"], "msg": str(v), "type": "unknown"}]
 
+
 class AppException(Exception):
     """Base exception for all application-specific exceptions.
 
-    This class provides the foundation for a structured exception hierarchy,
+    This class provides the foundation for the application's exception hierarchy,
     with standardized error codes, messages, and HTTP status codes.
     """
+
     def __init__(
         self,
         message: str,
-        code: Union[str, ErrorCode] = ErrorCode.UNKNOWN_ERROR,
-        details: Optional[Dict[str, Any]] = None,
-        status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR,
+        code: ErrorCode = ErrorCode.UNKNOWN_ERROR,
+        details: Any = None,
+        status_code: int = 500,
         severity: ErrorSeverity = ErrorSeverity.ERROR,
-        category: ErrorCategory = ErrorCategory.UNKNOWN,
+        category: ErrorCategory = ErrorCategory.SYSTEM,
         original_exception: Optional[Exception] = None
     ) -> None:
         """Initialize the exception with customizable properties.
 
         Args:
             message: Human-readable error message
-            code: Error code
-            details: Detailed error information
-            status_code: HTTP status code
+            code: Error code from ErrorCode enum
+            details: Additional error details or context
+            status_code: HTTP status code to return
             severity: Error severity level
-            category: Error category
+            category: Error category for classification
             original_exception: Original exception that caused this error
         """
         self.message = message
@@ -185,18 +167,22 @@ class AppException(Exception):
         # Prepare error details
         error_details = []
 
-        if "errors" in self.details:
-            # Use provided errors list
-            error_details = self.details["errors"]
-        elif self.details:
-            # Convert details to error detail format
-            for key, value in self.details.items():
-                if key not in ["original_error", "traceback"]:
-                    error_details.append({
-                        "loc": key.split("."),
-                        "msg": str(value),
-                        "type": str(self.code).lower()
-                    })
+        if isinstance(self.details, list):
+            # Already formatted as error details
+            error_details = self.details
+        elif isinstance(self.details, dict):
+            if "errors" in self.details:
+                # Use provided errors list
+                error_details = self.details["errors"]
+            else:
+                # Convert details to error detail format
+                for key, value in self.details.items():
+                    if key not in ["original_error", "traceback"]:
+                        error_details.append({
+                            "loc": key.split("."),
+                            "msg": str(value),
+                            "type": str(self.code).lower()
+                        })
         else:
             # Create default error detail
             error_details = [{
@@ -227,7 +213,7 @@ class AppException(Exception):
         Args:
             request_id: Request ID for tracking
         """
-        log_method = getattr(logger, self.severity.value, logger.error)
+        log_level = logging.WARNING if self.severity == ErrorSeverity.WARNING else logging.ERROR
 
         # Prepare log context
         context = {
@@ -241,10 +227,11 @@ class AppException(Exception):
 
         # Log the error
         if self.original_exception:
-            log_method(
+            logger.log(
+                log_level,
                 f"{self.message} (original error: {str(self.original_exception)})",
                 exc_info=self.original_exception,
-                **context
+                extra=context
             )
         else:
-            log_method(self.message, **context)
+            logger.log(log_level, self.message, extra=context)

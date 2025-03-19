@@ -1,22 +1,17 @@
 # app/api/deps.py
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Annotated, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Callable
 
-from fastapi import Depends, HTTPException, Query, WebSocket, status
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+from fastapi import Depends, Query, WebSocket, status
+from jose import JWTError
 from pydantic import ValidationError
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.websockets import WebSocketDisconnect
 
-from app.core.config import settings
 from app.core.exceptions import (
     AuthenticationException,
-    ErrorCode,
-    PermissionDeniedException,
+    PermissionDeniedException, RateLimitException,
 )
 from app.core.logging import get_logger, set_user_id
 from app.services.security_service import SecurityService
@@ -24,13 +19,12 @@ from app.services.audit_service import AuditService, AuditEventType
 from app.core.rate_limiter import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
 from app.core.security import (
-    TokenData,
     decode_token,
     oauth2_scheme,
 )
 from app.db.session import get_db
 from app.models.user import User, UserRole
-from app.repositories.user import UserRepository
+from app.repositories.user_repository import UserRepository
 
 logger = get_logger("app.api.deps")
 
@@ -107,8 +101,6 @@ def rate_limit(
             # Use the project's custom exception class
             raise RateLimitException(
                 message="Rate limit exceeded",
-                details={"limit": limit, "current": count},
-                headers=headers
             )
 
     return limit_requests
@@ -144,7 +136,6 @@ async def get_current_user(
             logger.warning(f"User not found: {token_data.sub}")
             raise AuthenticationException(
                 message="User not found",
-                code=ErrorCode.AUTHENTICATION_FAILED
             )
 
         # Set user ID in logging context
@@ -155,7 +146,6 @@ async def get_current_user(
         logger.warning(f"Token validation error: {str(e)}")
         raise AuthenticationException(
             message="Could not validate credentials",
-            code=ErrorCode.AUTHENTICATION_FAILED
         ) from e
 
 
@@ -180,7 +170,6 @@ async def get_current_active_user(
         logger.warning(f"Inactive user attempted login: {current_user.id}")
         raise AuthenticationException(
             message="Inactive user",
-            code=ErrorCode.USER_NOT_ACTIVE,
         )
     return current_user
 

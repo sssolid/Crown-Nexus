@@ -1,6 +1,13 @@
+# /backend/app/core/exceptions/__init__.py
 from __future__ import annotations
 
-# Re-export all exceptions
+"""Exception system for the application.
+
+This module exports a simplified exception hierarchy for use throughout the
+application, providing consistent error handling and reporting.
+"""
+
+# Base exceptions and types
 from app.core.exceptions.base import (
     AppException,
     ErrorCategory,
@@ -9,68 +16,75 @@ from app.core.exceptions.base import (
     ErrorResponse,
     ErrorSeverity,
 )
-from app.core.exceptions.http import (
-    BadRequestException,
-    PermissionDeniedException,
+
+# Domain exceptions
+from app.core.exceptions.domain import (
+    AuthException,
     AuthenticationException,
-    ResourceNotFoundException,
-    ResourceAlreadyExistsException,
-)
-from app.core.exceptions.database import (
-    DatabaseException,
-    DataIntegrityException,
-    TransactionException,
-)
-from app.core.exceptions.business import (
-    BusinessLogicException,
-    ValidationException,
-    OperationNotAllowedException,
+    BusinessException,
     InvalidStateException,
-)
-from app.core.exceptions.network import (
-    NetworkException,
-    TimeoutException,
-    ExternalServiceException,
-    ServiceUnavailableException,
-    RateLimitException,
-)
-from app.core.exceptions.security import (
-    SecurityException,
-    ConfigurationException,
+    OperationNotAllowedException,
+    PermissionDeniedException,
+    ResourceAlreadyExistsException,
+    ResourceException,
+    ResourceNotFoundException,
+    ValidationException,
 )
 
-# Export handler functions
+# System exceptions
+from app.core.exceptions.system import (
+    ConfigurationException,
+    DatabaseException,
+    DataIntegrityException,
+    NetworkException,
+    RateLimitException,
+    SecurityException,
+    ServiceException,
+    SystemException,
+    TransactionException,
+)
+
+# Exception handlers
 from app.core.exceptions.handlers import (
     app_exception_handler,
-    validation_exception_handler,
-    http_exception_handler,
     generic_exception_handler,
+    validation_exception_handler,
 )
 
 __all__ = [
     # Base
-    "AppException", "ErrorCategory", "ErrorCode", "ErrorDetail",
-    "ErrorResponse", "ErrorSeverity",
+    "AppException",
+    "ErrorCategory",
+    "ErrorCode",
+    "ErrorDetail",
+    "ErrorResponse",
+    "ErrorSeverity",
 
-    # HTTP
-    "BadRequestException", "PermissionDeniedException", "AuthenticationException",
-    "ResourceNotFoundException", "ResourceAlreadyExistsException",
+    # Domain
+    "AuthException",
+    "AuthenticationException",
+    "BusinessException",
+    "InvalidStateException",
+    "OperationNotAllowedException",
+    "PermissionDeniedException",
+    "ResourceAlreadyExistsException",
+    "ResourceException",
+    "ResourceNotFoundException",
+    "ValidationException",
 
-    # Database
-    "DatabaseException", "DataIntegrityException", "TransactionException",
-
-    # Business
-    "BusinessLogicException", "ValidationException",
-    "OperationNotAllowedException", "InvalidStateException",
-
-    # Network
-    "NetworkException", "TimeoutException", "ExternalServiceException",
-    "ServiceUnavailableException", "RateLimitException",
-
-    # Security
-    "SecurityException", "ConfigurationException",
+    # System
+    "ConfigurationException",
+    "DatabaseException",
+    "DataIntegrityException",
+    "NetworkException",
+    "RateLimitException",
+    "SecurityException",
+    "ServiceException",
+    "SystemException",
+    "TransactionException",
 
     # Handlers
-    "app_exception_handler", "validation_exception_handler",
-    "http_exception_handler", "generic_exception_handler",
+    "app_exception_handler",
+    "generic_exception_handler",
+    "validation_exception_handler",
 ]

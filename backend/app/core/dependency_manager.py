@@ -69,7 +69,9 @@ class DependencyManager:
         logger.debug(f"Registering factory: {name}")
         self._factories[name] = factory
 
-    def register_service(self, service_class: Type[Any], name: Optional[str] = None) -> None:
+    def register_service(
+        self, service_class: Type[Any], name: Optional[str] = None
+    ) -> None:
         """Register a service class with the manager.
 
         Args:
@@ -112,9 +114,10 @@ class DependencyManager:
         logger.error(f"Dependency not registered: {name}")
         raise ConfigurationException(
             message=f"Dependency not registered: {name}",
-            code=ErrorCode.CONFIGURATION_ERROR,
-            details={"dependency_name": name, "available_dependencies": list(self._dependencies.keys())},
-            status_code=500,
+            details={
+                "dependency_name": name,
+                "available_dependencies": list(self._dependencies.keys()),
+            }
         )
 
     def _create_service_instance(self, name: str, **kwargs: Any) -> Any:
@@ -130,7 +133,9 @@ class DependencyManager:
         service_class = self._services[name]
 
         # Handle function/method services
-        if isinstance(service_class, (staticmethod, classmethod)) or inspect.isfunction(service_class):
+        if isinstance(service_class, (staticmethod, classmethod)) or inspect.isfunction(
+            service_class
+        ):
             db = kwargs.get("db")
             return service_class(db) if db else service_class()
 
@@ -219,17 +224,23 @@ class DependencyManager:
         ]
 
         # Process core services first, then others
-        for service_name in core_services + [s for s in service_names if s not in core_services]:
+        for service_name in core_services + [
+            s for s in service_names if s not in core_services
+        ]:
             try:
                 if service_name not in self._services:
                     continue
 
                 service = self.get(service_name)
-                if hasattr(service, "initialize") and callable(getattr(service, "initialize")):
+                if hasattr(service, "initialize") and callable(
+                    getattr(service, "initialize")
+                ):
                     await service.initialize()
                     logger.info(f"Initialized {service_name}")
             except Exception as e:
-                logger.error(f"Error initializing {service_name}: {str(e)}", exc_info=True)
+                logger.error(
+                    f"Error initializing {service_name}: {str(e)}", exc_info=True
+                )
 
         self._initialized = True
         logger.info("Services initialized successfully")
@@ -247,11 +258,17 @@ class DependencyManager:
         for service_name in reversed(service_names):
             try:
                 service = self._dependencies.get(service_name)
-                if service and hasattr(service, "shutdown") and callable(getattr(service, "shutdown")):
+                if (
+                    service
+                    and hasattr(service, "shutdown")
+                    and callable(getattr(service, "shutdown"))
+                ):
                     await service.shutdown()
                     logger.info(f"Shut down {service_name}")
             except Exception as e:
-                logger.error(f"Error shutting down {service_name}: {str(e)}", exc_info=True)
+                logger.error(
+                    f"Error shutting down {service_name}: {str(e)}", exc_info=True
+                )
 
         logger.info("Services shut down successfully")
 
@@ -335,20 +352,38 @@ def register_services() -> None:
         # from app.services.user_service import UserService
         # from app.services.vehicle import VehicleDataService
 
-
         # Register dependencies as factories
-        dependency_manager.register_factory("error_service", lambda: get_error_service())
-        dependency_manager.register_factory("validation_service", lambda: get_validation_service())
-        dependency_manager.register_factory("metrics_service", lambda: get_metrics_service())
-        dependency_manager.register_factory("cache_service", lambda: get_cache_service())
-        dependency_manager.register_factory("security_service", lambda: get_security_service())
-        dependency_manager.register_factory("audit_service", lambda db: get_audit_service(db) if db else None)
-        dependency_manager.register_factory("search_service", lambda db: get_search_service(db) if db else None)
-        dependency_manager.register_factory("media_service", lambda: get_media_service())
+        dependency_manager.register_factory(
+            "error_service", lambda: get_error_service()
+        )
+        dependency_manager.register_factory(
+            "validation_service", lambda: get_validation_service()
+        )
+        dependency_manager.register_factory(
+            "metrics_service", lambda: get_metrics_service()
+        )
+        dependency_manager.register_factory(
+            "cache_service", lambda: get_cache_service()
+        )
+        dependency_manager.register_factory(
+            "security_service", lambda: get_security_service()
+        )
+        dependency_manager.register_factory(
+            "audit_service", lambda db: get_audit_service(db) if db else None
+        )
+        dependency_manager.register_factory(
+            "search_service", lambda db: get_search_service(db) if db else None
+        )
+        dependency_manager.register_factory(
+            "media_service", lambda: get_media_service()
+        )
         dependency_manager.register_factory(
             "pagination_service",
-            lambda db=None, model_class=None, response_model=None:
-            get_pagination_service(db, model_class, response_model) if db and model_class else None
+            lambda db=None, model_class=None, response_model=None: (
+                get_pagination_service(db, model_class, response_model)
+                if db and model_class
+                else None
+            ),
         )
 
         # dependency_manager.register_factory("logging_service", lambda: LoggingService())
@@ -363,7 +398,7 @@ def register_services() -> None:
         dependency_manager.register_service(ValidationService, "ValidationService")
         dependency_manager.register_service(MetricsService, "MetricsService")
         dependency_manager.register_service(CacheService, "CacheService")
-        dependency_manager.register_service(security_service, "SecurityService")
+        dependency_manager.register_service(SecurityService, "SecurityService")
         dependency_manager.register_service(AuditService, "AuditService")
         dependency_manager.register_service(PaginationService, "PaginationService")
         dependency_manager.register_service(MediaService, "MediaService")

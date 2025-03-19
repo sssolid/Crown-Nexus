@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 from typing import Any, Dict, Optional, Type, Union
 
 from app.core.cache.backends import get_backend
@@ -8,6 +7,7 @@ from app.core.config import settings
 from app.core.logging import get_logger
 
 logger = get_logger("app.core.cache.manager")
+
 
 class CacheManager:
     """Manager for cache backends."""
@@ -21,8 +21,9 @@ class CacheManager:
         if not self._initialized:
             # Auto-initialize if needed
             import asyncio
+
             asyncio.create_task(self.initialize())
-            return self._backends.get(name, self._backends.get('memory'))
+            return self._backends.get(name, self._backends.get("memory"))
 
         name = name or settings.CACHE_DEFAULT_BACKEND
         if name not in self._backends:
@@ -66,8 +67,10 @@ class CacheManager:
         self._backends = {}
         self._initialized = False
 
+
 # Singleton instance
 cache_manager = CacheManager()
+
 
 async def initialize_cache() -> None:
     """Initialize cache manager."""

@@ -8,9 +8,11 @@ from __future__ import annotations
 
 from app.services.security.service import SecurityService
 
+
 # Factory function for dependency injection
 def get_security_service():
     """Factory function to get SecurityService"""
     return SecurityService()
+
 
 __all__ = ["get_security_service", "SecurityService"]

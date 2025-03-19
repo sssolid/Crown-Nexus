@@ -21,7 +21,13 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination, get_optional_user
+from app.api.deps import (
+    get_admin_user,
+    get_current_active_user,
+    get_db,
+    get_pagination,
+    get_optional_user,
+)
 from app.core.config import settings
 from app.models.media import Media, MediaType, MediaVisibility
 from app.models.product import Product, product_media_association
@@ -43,7 +49,9 @@ from app.utils.file import (
 router = APIRouter()
 
 
-@router.post("/upload", response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload", response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED
+)
 async def upload_file(
     background_tasks: BackgroundTasks,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -92,7 +100,8 @@ async def upload_file(
             visibility=visibility,
             file_metadata=parsed_metadata,  # Using renamed field
             uploaded_by_id=current_user.id,
-            is_approved=current_user.role in ["admin", "manager"],  # Auto-approve for admins/managers
+            is_approved=current_user.role
+            in ["admin", "manager"],  # Auto-approve for admins/managers
         )
 
         if media.is_approved:
@@ -105,10 +114,7 @@ async def upload_file(
 
         # Now save the file with the media ID
         file_path, file_size, _ = save_upload_file(
-            file,
-            media.id,
-            determined_media_type,
-            is_image
+            file, media.id, determined_media_type, is_image
         )
 
         # Update the media record with the actual file path and size
@@ -124,8 +130,7 @@ async def upload_file(
             if product:
                 # Create association
                 stmt = product_media_association.insert().values(
-                    product_id=product_id,
-                    media_id=media.id
+                    product_id=product_id, media_id=media.id
                 )
                 await db.execute(stmt)
 
@@ -140,19 +145,16 @@ async def upload_file(
         if media.media_type == MediaType.IMAGE:
             response_media.thumbnail_url = f"/api/v1/media/thumbnail/{media.id}"
 
-        return {
-            "media": response_media,
-            "message": "File uploaded successfully"
-        }
+        return {"media": response_media, "message": "File uploaded successfully"}
     except HTTPException as e:
         # If we've already created the media record but encounter an error, delete it
-        if 'media' in locals() and hasattr(media, 'id'):
+        if "media" in locals() and hasattr(media, "id"):
             await db.delete(media)
             await db.commit()
         raise e
     except Exception as e:
         # For any other exception, roll back and re-raise
-        if 'media' in locals() and hasattr(media, 'id'):
+        if "media" in locals() and hasattr(media, "id"):
             await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -207,10 +209,8 @@ async def read_media(
 
     # Filter by product if provided
     if product_id:
-        query = (
-            query
-            .join(product_media_association)
-            .where(product_media_association.c.product_id == product_id)
+        query = query.join(product_media_association).where(
+            product_media_association.c.product_id == product_id
         )
 
     # Get total count
@@ -265,7 +265,11 @@ async def read_media_item(
         )
 
     # Check if user has access
-    if media.visibility == MediaVisibility.PRIVATE and media.uploaded_by_id != current_user.id and current_user.role not in ["admin", "manager"]:
+    if (
+        media.visibility == MediaVisibility.PRIVATE
+        and media.uploaded_by_id != current_user.id
+        and current_user.role not in ["admin", "manager"]
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You don't have permission to access this media",
@@ -306,7 +310,10 @@ async def update_media(
         )
 
     # Check if user has permission to update
-    if media.uploaded_by_id != current_user.id and current_user.role not in ["admin", "manager"]:
+    if media.uploaded_by_id != current_user.id and current_user.role not in [
+        "admin",
+        "manager",
+    ]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You don't have permission to update this media",
@@ -321,7 +328,11 @@ async def update_media(
         setattr(media, field, value)
 
     # Handle approval status change
-    if not was_approved and media.is_approved and current_user.role in ["admin", "manager"]:
+    if (
+        not was_approved
+        and media.is_approved
+        and current_user.role in ["admin", "manager"]
+    ):
         media.approved_by_id = current_user.id
         media.approved_at = datetime.now()
 
@@ -362,7 +373,10 @@ async def delete_media(
         )
 
     # Check if user has permission to delete
-    if media.uploaded_by_id != current_user.id and current_user.role not in ["admin", "manager"]:
+    if media.uploaded_by_id != current_user.id and current_user.role not in [
+        "admin",
+        "manager",
+    ]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You don't have permission to delete this media",
@@ -424,7 +438,10 @@ async def get_media_file(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Authentication required to access this file",
             )
-        if media.uploaded_by_id != current_user.id and current_user.role not in ["admin", "manager"]:
+        if media.uploaded_by_id != current_user.id and current_user.role not in [
+            "admin",
+            "manager",
+        ]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You don't have permission to access this file",
@@ -450,7 +467,9 @@ async def get_media_file(
 async def get_media_thumbnail(
     media_id: str,
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Optional[User] = Depends(get_optional_user),  # Changed to optional user
+    current_user: Optional[User] = Depends(
+        get_optional_user
+    ),  # Changed to optional user
 ) -> Any:
     """
     Get the thumbnail for an image.
@@ -488,7 +507,10 @@ async def get_media_thumbnail(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Authentication required to access this file",
             )
-        if media.uploaded_by_id != current_user.id and current_user.role not in ["admin", "manager"]:
+        if media.uploaded_by_id != current_user.id and current_user.role not in [
+            "admin",
+            "manager",
+        ]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You don't have permission to access this file",
@@ -559,8 +581,8 @@ async def associate_media_with_product(
 
     # Check if association already exists
     stmt = select(product_media_association).where(
-        (product_media_association.c.product_id == product_id) &
-        (product_media_association.c.media_id == media_id)
+        (product_media_association.c.product_id == product_id)
+        & (product_media_association.c.media_id == media_id)
     )
     result = await db.execute(stmt)
     if result.first():
@@ -568,8 +590,7 @@ async def associate_media_with_product(
 
     # Create association
     stmt = product_media_association.insert().values(
-        product_id=product_id,
-        media_id=media_id
+        product_id=product_id, media_id=media_id
     )
     await db.execute(stmt)
     await db.commit()
@@ -598,8 +619,8 @@ async def remove_media_from_product(
     """
     # Check if association exists
     stmt = select(product_media_association).where(
-        (product_media_association.c.product_id == product_id) &
-        (product_media_association.c.media_id == media_id)
+        (product_media_association.c.product_id == product_id)
+        & (product_media_association.c.media_id == media_id)
     )
     result = await db.execute(stmt)
     if not result.first():
@@ -610,8 +631,8 @@ async def remove_media_from_product(
 
     # Remove association
     stmt = product_media_association.delete().where(
-        (product_media_association.c.product_id == product_id) &
-        (product_media_association.c.media_id == media_id)
+        (product_media_association.c.product_id == product_id)
+        & (product_media_association.c.media_id == media_id)
     )
     await db.execute(stmt)
     await db.commit()

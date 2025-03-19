@@ -23,16 +23,7 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, TYPE_CHECKING
 
-from sqlalchemy import (
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-    func,
-    text
-)
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, func, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
@@ -56,6 +47,7 @@ class Color(Base):
         hex_code: Hex code for digital representation (optional)
         created_at: Creation timestamp
     """
+
     __tablename__ = "color"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -64,9 +56,7 @@ class Color(Base):
     name: Mapped[str] = mapped_column(
         String(50), nullable=False, unique=True, index=True
     )
-    hex_code: Mapped[Optional[str]] = mapped_column(
-        String(7), nullable=True
-    )
+    hex_code: Mapped[Optional[str]] = mapped_column(String(7), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -93,6 +83,7 @@ class ConstructionType(Base):
         description: Optional description
         created_at: Creation timestamp
     """
+
     __tablename__ = "construction_type"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -101,9 +92,7 @@ class ConstructionType(Base):
     name: Mapped[str] = mapped_column(
         String(100), nullable=False, unique=True, index=True
     )
-    description: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -130,6 +119,7 @@ class Texture(Base):
         description: Optional description
         created_at: Creation timestamp
     """
+
     __tablename__ = "texture"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -138,9 +128,7 @@ class Texture(Base):
     name: Mapped[str] = mapped_column(
         String(100), nullable=False, unique=True, index=True
     )
-    description: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -169,6 +157,7 @@ class PackagingType(Base):
         source: Source of the data
         created_at: Creation timestamp
     """
+
     __tablename__ = "packaging_type"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -180,9 +169,7 @@ class PackagingType(Base):
     name: Mapped[str] = mapped_column(
         String(100), nullable=False, unique=True, index=True
     )
-    description: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     source: Mapped[str] = mapped_column(
         String(20), nullable=False, default="Custom", server_default=text("'Custom'")
     )
@@ -213,6 +200,7 @@ class Hardware(Base):
         part_number: Optional part number for the hardware item
         created_at: Creation timestamp
     """
+
     __tablename__ = "hardware_item"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -221,9 +209,7 @@ class Hardware(Base):
     name: Mapped[str] = mapped_column(
         String(255), nullable=False, unique=True, index=True
     )
-    description: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     part_number: Mapped[Optional[str]] = mapped_column(
         String(100), nullable=True, index=True
     )
@@ -254,17 +240,14 @@ class TariffCode(Base):
         country_id: Country this code applies to (optional)
         created_at: Creation timestamp
     """
+
     __tablename__ = "tariff_code"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    code: Mapped[str] = mapped_column(
-        String(15), nullable=False, index=True
-    )
-    description: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
+    code: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     country_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("country.id"), nullable=True, index=True
     )
@@ -301,6 +284,7 @@ class UnspscCode(Base):
         commodity: Specific commodity category
         created_at: Creation timestamp
     """
+
     __tablename__ = "unspsc_code"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -309,21 +293,13 @@ class UnspscCode(Base):
     code: Mapped[str] = mapped_column(
         String(10), nullable=False, unique=True, index=True
     )
-    description: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
-    segment: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
-    family: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    segment: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    family: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     class_: Mapped[Optional[str]] = mapped_column(
         "class", String(255), nullable=True  # class is a reserved word
     )
-    commodity: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
+    commodity: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -351,19 +327,22 @@ class Warehouse(Base):
         is_active: Whether the warehouse is active
         created_at: Creation timestamp
     """
+
     __tablename__ = "warehouse"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(255), nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
     )
     is_active: Mapped[bool] = mapped_column(
-        Boolean, default=True, server_default=expression.true(), nullable=False, index=True
+        Boolean,
+        default=True,
+        server_default=expression.true(),
+        nullable=False,
+        index=True,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

@@ -33,7 +33,9 @@ def get_fitment_db_service() -> FitmentDBService:
 
     # For database URL, check for fitment-specific setting first,
     # then fall back to main app database
-    sqlalchemy_url = getattr(app_settings, "FITMENT_DB_URL", None) or str(app_settings.SQLALCHEMY_DATABASE_URI)
+    sqlalchemy_url = getattr(app_settings, "FITMENT_DB_URL", None) or str(
+        app_settings.SQLALCHEMY_DATABASE_URI
+    )
 
     if not vcdb_path or not pcdb_path:
         raise ConfigurationError(
@@ -118,6 +120,7 @@ async def initialize_mapping_engine() -> None:
     except Exception as e:
         # Log the error but continue to try file-based configuration
         import logging
+
         logger = logging.getLogger(__name__)
         logger.warning(f"Failed to load model mappings from database: {str(e)}")
 
@@ -132,14 +135,19 @@ async def initialize_mapping_engine() -> None:
             try:
                 await engine.db_service.import_mappings_from_json(engine.model_mappings)
                 import logging
+
                 logger = logging.getLogger(__name__)
                 logger.info("Successfully imported mappings from file to database")
             except Exception as e:
                 import logging
+
                 logger = logging.getLogger(__name__)
                 logger.warning(f"Failed to import mappings to database: {str(e)}")
         except Exception as e:
             import logging
+
             logger = logging.getLogger(__name__)
             logger.error(f"Failed to load model mappings from file: {str(e)}")
-            raise ConfigurationError(f"Failed to configure mapping engine: {str(e)}") from e
+            raise ConfigurationError(
+                f"Failed to configure mapping engine: {str(e)}"
+            ) from e

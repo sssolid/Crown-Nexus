@@ -35,10 +35,7 @@ class EncryptionService:
         base_key = settings.SECRET_KEY.encode()
         salt = b"security_service_salt"
         kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt,
-            iterations=100000
+            algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000
         )
         key = base64.urlsafe_b64encode(kdf.derive(base_key))
         self.cipher = Fernet(key)
@@ -86,7 +83,7 @@ class EncryptionService:
             raise SecurityException(
                 message="Failed to decrypt data",
                 code=ErrorCode.SECURITY_ERROR,
-                details={"error": "Invalid encrypted data format"}
+                details={"error": "Invalid encrypted data format"},
             ) from e
 
     def generate_secure_token(self, length: int = 32) -> str:
@@ -118,5 +115,5 @@ class EncryptionService:
             raise SecurityException(
                 message="Failed to generate secure token",
                 code=ErrorCode.SECURITY_ERROR,
-                details={"error": str(e)}
+                details={"error": str(e)},
             ) from e

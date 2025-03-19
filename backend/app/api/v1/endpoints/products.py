@@ -19,7 +19,7 @@ from app.models.product import (
     ProductMarketing,
     ProductMeasurement,
     ProductStock,
-    ProductSupersession
+    ProductSupersession,
 )
 from app.models.reference import Warehouse
 from app.models.user import User
@@ -101,9 +101,9 @@ async def read_products(
     if search:
         search_term = f"%{search}%"
         query = query.where(
-            (Product.part_number.ilike(search_term)) |
-            (Product.part_number_stripped.ilike(search_term)) |
-            (Product.application.ilike(search_term))
+            (Product.part_number.ilike(search_term))
+            | (Product.part_number_stripped.ilike(search_term))
+            | (Product.application.ilike(search_term))
         )
 
     if vintage is not None:
@@ -133,10 +133,12 @@ async def read_products(
         selectinload(Product.descriptions),
         selectinload(Product.marketing),
         selectinload(Product.activities).selectinload(ProductActivity.changed_by),
-        selectinload(Product.superseded_by).selectinload(ProductSupersession.new_product),
+        selectinload(Product.superseded_by).selectinload(
+            ProductSupersession.new_product
+        ),
         selectinload(Product.supersedes).selectinload(ProductSupersession.old_product),
         selectinload(Product.measurements),
-        selectinload(Product.stock)
+        selectinload(Product.stock),
     )
 
     result = await db.execute(query)
@@ -182,8 +184,7 @@ async def create_product(
 
     # Prepare main product data
     product_data = product_in.model_dump(
-        exclude={"descriptions", "marketing"},
-        exclude_unset=True
+        exclude={"descriptions", "marketing"}, exclude_unset=True
     )
 
     # Create new product
@@ -196,8 +197,7 @@ async def create_product(
     if product_in.descriptions:
         for desc_data in product_in.descriptions:
             description = ProductDescription(
-                product_id=product.id,
-                **desc_data.model_dump()
+                product_id=product.id, **desc_data.model_dump()
             )
             db.add(description)
 
@@ -207,8 +207,7 @@ async def create_product(
     if product_in.marketing:
         for marketing_data in product_in.marketing:
             marketing = ProductMarketing(
-                product_id=product.id,
-                **marketing_data.model_dump()
+                product_id=product.id, **marketing_data.model_dump()
             )
             db.add(marketing)
 
@@ -219,21 +218,24 @@ async def create_product(
         product_id=product.id,
         status=ProductStatus.ACTIVE,
         reason="Product created",
-        changed_by_id=current_user.id
+        changed_by_id=current_user.id,
     )
     db.add(activity)
     await db.commit()
 
     # Refresh product with all related data
-    await db.refresh(product, [
-        "descriptions",
-        "marketing",
-        "activities",
-        "superseded_by",
-        "supersedes",
-        "measurements",
-        "stock"
-    ])
+    await db.refresh(
+        product,
+        [
+            "descriptions",
+            "marketing",
+            "activities",
+            "superseded_by",
+            "supersedes",
+            "measurements",
+            "stock",
+        ],
+    )
 
     return product
 
@@ -256,14 +258,22 @@ async def read_product(
         Product: Product with specified ID
     """
     # Query with joined load for related data
-    stmt = select(Product).where(Product.id == product_id).options(
-        selectinload(Product.descriptions),
-        selectinload(Product.marketing),
-        selectinload(Product.activities).selectinload(ProductActivity.changed_by),
-        selectinload(Product.superseded_by).selectinload(ProductSupersession.new_product),
-        selectinload(Product.supersedes).selectinload(ProductSupersession.old_product),
-        selectinload(Product.measurements),
-        selectinload(Product.stock)
+    stmt = (
+        select(Product)
+        .where(Product.id == product_id)
+        .options(
+            selectinload(Product.descriptions),
+            selectinload(Product.marketing),
+            selectinload(Product.activities).selectinload(ProductActivity.changed_by),
+            selectinload(Product.superseded_by).selectinload(
+                ProductSupersession.new_product
+            ),
+            selectinload(Product.supersedes).selectinload(
+                ProductSupersession.old_product
+            ),
+            selectinload(Product.measurements),
+            selectinload(Product.stock),
+        )
     )
     result = await db.execute(stmt)
     product = result.scalar_one_or_none()
@@ -297,14 +307,18 @@ async def update_product(
         Product: Updated product
     """
     # Get existing product
-    stmt = select(Product).where(Product.id == product_id).options(
-        selectinload(Product.descriptions),
-        selectinload(Product.marketing),
-        selectinload(Product.activities),
-        selectinload(Product.superseded_by),
-        selectinload(Product.supersedes),
-        selectinload(Product.measurements),
-        selectinload(Product.stock)
+    stmt = (
+        select(Product)
+        .where(Product.id == product_id)
+        .options(
+            selectinload(Product.descriptions),
+            selectinload(Product.marketing),
+            selectinload(Product.activities),
+            selectinload(Product.superseded_by),
+            selectinload(Product.supersedes),
+            selectinload(Product.measurements),
+            selectinload(Product.stock),
+        )
     )
     result = await db.execute(stmt)
     product = result.scalar_one_or_none()
@@ -316,7 +330,10 @@ async def update_product(
         )
 
     # Check if part number is changed and already exists
-    if product_in.part_number is not None and product_in.part_number != product.part_number:
+    if (
+        product_in.part_number is not None
+        and product_in.part_number != product.part_number
+    ):
         stmt = select(Product).where(Product.part_number == product_in.part_number)
         result = await db.execute(stmt)
         if result.scalar_one_or_none():
@@ -327,7 +344,9 @@ async def update_product(
 
     # Track if is_active status changed
     was_active = product.is_active
-    will_be_active = product_in.is_active if product_in.is_active is not None else was_active
+    will_be_active = (
+        product_in.is_active if product_in.is_active is not None else was_active
+    )
 
     # Update product attributes
     update_data = product_in.model_dump(exclude_unset=True)
@@ -336,7 +355,7 @@ async def update_product(
 
     # If part_number was updated, also update part_number_stripped
     if "part_number" in update_data:
-        product.part_number_stripped = ''.join(
+        product.part_number_stripped = "".join(
             c for c in product.part_number if c.isalnum()
         ).upper()
 
@@ -350,21 +369,24 @@ async def update_product(
             product_id=product.id,
             status=ProductStatus.ACTIVE if will_be_active else ProductStatus.INACTIVE,
             reason=f"Product {'activated' if will_be_active else 'deactivated'}",
-            changed_by_id=current_user.id
+            changed_by_id=current_user.id,
         )
         db.add(activity)
         await db.commit()
 
     # Refresh product one more time to get all related data
-    await db.refresh(product, [
-        "activities",
-        "descriptions",
-        "marketing",
-        "superseded_by",
-        "supersedes",
-        "measurements",
-        "stock"
-    ])
+    await db.refresh(
+        product,
+        [
+            "activities",
+            "descriptions",
+            "marketing",
+            "superseded_by",
+            "supersedes",
+            "measurements",
+            "stock",
+        ],
+    )
 
     return product
 
@@ -437,8 +459,7 @@ async def create_product_description(
 
     # Create description
     description = ProductDescription(
-        product_id=product_id,
-        **description_in.model_dump()
+        product_id=product_id, **description_in.model_dump()
     )
 
     db.add(description)
@@ -448,7 +469,10 @@ async def create_product_description(
     return description
 
 
-@router.put("/{product_id}/descriptions/{description_id}", response_model=ProductDescriptionSchema)
+@router.put(
+    "/{product_id}/descriptions/{description_id}",
+    response_model=ProductDescriptionSchema,
+)
 async def update_product_description(
     product_id: str,
     description_id: str,
@@ -471,8 +495,8 @@ async def update_product_description(
     """
     # Check if description exists and belongs to the product
     stmt = select(ProductDescription).where(
-        (ProductDescription.id == description_id) &
-        (ProductDescription.product_id == product_id)
+        (ProductDescription.id == description_id)
+        & (ProductDescription.product_id == product_id)
     )
     result = await db.execute(stmt)
     description = result.scalar_one_or_none()
@@ -516,8 +540,8 @@ async def delete_product_description(
     """
     # Check if description exists and belongs to the product
     stmt = select(ProductDescription).where(
-        (ProductDescription.id == description_id) &
-        (ProductDescription.product_id == product_id)
+        (ProductDescription.id == description_id)
+        & (ProductDescription.product_id == product_id)
     )
     result = await db.execute(stmt)
     description = result.scalar_one_or_none()
@@ -567,10 +591,7 @@ async def create_product_marketing(
         )
 
     # Create marketing content
-    marketing = ProductMarketing(
-        product_id=product_id,
-        **marketing_in.model_dump()
-    )
+    marketing = ProductMarketing(product_id=product_id, **marketing_in.model_dump())
 
     db.add(marketing)
     await db.commit()
@@ -579,7 +600,9 @@ async def create_product_marketing(
     return marketing
 
 
-@router.put("/{product_id}/marketing/{marketing_id}", response_model=ProductMarketingSchema)
+@router.put(
+    "/{product_id}/marketing/{marketing_id}", response_model=ProductMarketingSchema
+)
 async def update_product_marketing(
     product_id: str,
     marketing_id: str,
@@ -602,8 +625,8 @@ async def update_product_marketing(
     """
     # Check if marketing content exists and belongs to the product
     stmt = select(ProductMarketing).where(
-        (ProductMarketing.id == marketing_id) &
-        (ProductMarketing.product_id == product_id)
+        (ProductMarketing.id == marketing_id)
+        & (ProductMarketing.product_id == product_id)
     )
     result = await db.execute(stmt)
     marketing = result.scalar_one_or_none()
@@ -647,8 +670,8 @@ async def delete_product_marketing(
     """
     # Check if marketing content exists and belongs to the product
     stmt = select(ProductMarketing).where(
-        (ProductMarketing.id == marketing_id) &
-        (ProductMarketing.product_id == product_id)
+        (ProductMarketing.id == marketing_id)
+        & (ProductMarketing.product_id == product_id)
     )
     result = await db.execute(stmt)
     marketing = result.scalar_one_or_none()
@@ -699,8 +722,7 @@ async def create_product_measurement(
 
     # Create measurement
     measurement = ProductMeasurement(
-        product_id=product_id,
-        **measurement_in.model_dump()
+        product_id=product_id, **measurement_in.model_dump()
     )
 
     db.add(measurement)
@@ -754,8 +776,8 @@ async def create_product_stock(
 
     # Check if stock already exists for this product and warehouse
     stmt = select(ProductStock).where(
-        (ProductStock.product_id == product_id) &
-        (ProductStock.warehouse_id == stock_in.warehouse_id)
+        (ProductStock.product_id == product_id)
+        & (ProductStock.warehouse_id == stock_in.warehouse_id)
     )
     result = await db.execute(stmt)
     existing_stock = result.scalar_one_or_none()
@@ -767,10 +789,7 @@ async def create_product_stock(
         )
 
     # Create stock information
-    stock = ProductStock(
-        product_id=product_id,
-        **stock_in.model_dump()
-    )
+    stock = ProductStock(product_id=product_id, **stock_in.model_dump())
 
     db.add(stock)
     await db.commit()
@@ -802,8 +821,7 @@ async def update_product_stock(
     """
     # Check if stock information exists and belongs to the product
     stmt = select(ProductStock).where(
-        (ProductStock.id == stock_id) &
-        (ProductStock.product_id == product_id)
+        (ProductStock.id == stock_id) & (ProductStock.product_id == product_id)
     )
     result = await db.execute(stmt)
     stock = result.scalar_one_or_none()
@@ -850,8 +868,7 @@ async def delete_product_stock(
     """
     # Check if stock information exists and belongs to the product
     stmt = select(ProductStock).where(
-        (ProductStock.id == stock_id) &
-        (ProductStock.product_id == product_id)
+        (ProductStock.id == stock_id) & (ProductStock.product_id == product_id)
     )
     result = await db.execute(stmt)
     stock = result.scalar_one_or_none()
@@ -920,8 +937,8 @@ async def create_product_supersession(
 
     # Check if supersession already exists
     stmt = select(ProductSupersession).where(
-        (ProductSupersession.old_product_id == product_id) &
-        (ProductSupersession.new_product_id == supersession_in.new_product_id)
+        (ProductSupersession.old_product_id == product_id)
+        & (ProductSupersession.new_product_id == supersession_in.new_product_id)
     )
     result = await db.execute(stmt)
     existing_supersession = result.scalar_one_or_none()
@@ -933,9 +950,7 @@ async def create_product_supersession(
         )
 
     # Create supersession
-    supersession = ProductSupersession(
-        **supersession_in.model_dump()
-    )
+    supersession = ProductSupersession(**supersession_in.model_dump())
 
     db.add(supersession)
     await db.commit()
@@ -965,8 +980,8 @@ async def delete_product_supersession(
     """
     # Check if supersession exists and belongs to the product
     stmt = select(ProductSupersession).where(
-        (ProductSupersession.id == supersession_id) &
-        (ProductSupersession.old_product_id == product_id)
+        (ProductSupersession.id == supersession_id)
+        & (ProductSupersession.old_product_id == product_id)
     )
     result = await db.execute(stmt)
     supersession = result.scalar_one_or_none()
@@ -1009,7 +1024,9 @@ async def read_brands(
     return result.scalars().all()
 
 
-@router.post("/brands/", response_model=BrandSchema, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/brands/", response_model=BrandSchema, status_code=status.HTTP_201_CREATED
+)
 async def create_brand(
     db: Annotated[AsyncSession, Depends(get_db)],
     brand_in: BrandCreate,
@@ -1029,6 +1046,7 @@ async def create_brand(
     # Check if company exists if provided
     if brand_in.parent_company_id:
         from app.models.user import Company
+
         stmt = select(Company).where(Company.id == brand_in.parent_company_id)
         result = await db.execute(stmt)
         if not result.scalar_one_or_none():
@@ -1109,6 +1127,7 @@ async def update_brand(
     # Check if company exists if provided
     if brand_in.parent_company_id is not None and brand_in.parent_company_id:
         from app.models.user import Company
+
         stmt = select(Company).where(Company.id == brand_in.parent_company_id)
         result = await db.execute(stmt)
         if not result.scalar_one_or_none():
@@ -1159,9 +1178,13 @@ async def delete_brand(
 
     # Check if brand has products associated with it
     # Note: This requires implementing ProductBrandHistory relationship
-    stmt = select(func.count()).select_from(ProductBrandHistory).where(
-        (ProductBrandHistory.old_brand_id == brand_id) |
-        (ProductBrandHistory.new_brand_id == brand_id)
+    stmt = (
+        select(func.count())
+        .select_from(ProductBrandHistory)
+        .where(
+            (ProductBrandHistory.old_brand_id == brand_id)
+            | (ProductBrandHistory.new_brand_id == brand_id)
+        )
     )
     result = await db.scalar(stmt)
     if result and result > 0:

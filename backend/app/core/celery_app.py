@@ -33,6 +33,7 @@ celery_app.conf.beat_schedule = {
     },
 }
 
+
 # Make celery app available at module level
 def get_celery_app() -> Celery:
     """Get the Celery application instance."""

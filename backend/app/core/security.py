@@ -13,7 +13,7 @@ It serves as the foundation for higher-level security services in the applicatio
 
 import secrets
 import uuid
-from datetime import datetime, timedelta
+import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 from fastapi import Depends, HTTPException, status
@@ -53,13 +53,15 @@ class TokenClaimsModel(BaseModel):
     """Model for JWT token claims."""
 
     sub: str = Field(..., description="Subject (user ID)")
-    exp: datetime = Field(..., description="Expiration time")
-    iat: datetime = Field(..., description="Issued at time")
+    exp: datetime.datetime = Field(..., description="Expiration time")
+    iat: datetime.datetime = Field(..., description="Issued at time")
     jti: str = Field(..., description="JWT ID (unique identifier)")
     type: str = Field(..., description="Token type")
     role: Optional[str] = Field(None, description="User role")
     permissions: Optional[List[str]] = Field(None, description="User permissions")
-    user_data: Optional[Dict[str, Any]] = Field(None, description="Additional user data")
+    user_data: Optional[Dict[str, Any]] = Field(
+        None, description="Additional user data"
+    )
 
 
 class TokenPayload(Dict[str, Any]):
@@ -136,23 +138,29 @@ def create_token(
     """
     if expires_delta is None:
         if token_type == TokenType.ACCESS:
-            expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+            expires_delta = datetime.timedelta(
+                minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            )
         elif token_type == TokenType.REFRESH:
-            expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+            expires_delta = datetime.timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
         elif token_type == TokenType.RESET_PASSWORD:
-            expires_delta = timedelta(hours=24)  # 24 hour expiry for password reset
+            expires_delta = datetime.timedelta(
+                hours=24
+            )  # 24 hour expiry for password reset
         elif token_type == TokenType.EMAIL_VERIFICATION:
-            expires_delta = timedelta(days=7)  # 7 day expiry for email verification
+            expires_delta = datetime.timedelta(
+                days=7
+            )  # 7 day expiry for email verification
         else:
-            expires_delta = timedelta(minutes=30)  # Default 30 minute expiry
+            expires_delta = datetime.timedelta(minutes=30)  # Default 30 minute expiry
 
-    expire = datetime.utcnow() + expires_delta
+    expire = datetime.datetime.now(datetime.UTC) + expires_delta
     token_jti = generate_token_jti()
 
     to_encode: Dict[str, Any] = {
         "sub": str(subject),
         "exp": expire,
-        "iat": datetime.utcnow(),
+        "iat": datetime.datetime.now(datetime.UTC),
         "type": token_type,
         "jti": token_jti,
     }
@@ -214,7 +222,7 @@ async def add_token_to_blacklist(token_jti: str, expires_at: datetime) -> None:
         token_jti: The JWT ID of the token
         expires_at: When the token expires
     """
-    now = datetime.utcnow()
+    now = datetime.datetime.now(datetime.UTC)
     ttl = int((expires_at - now).total_seconds())
     if ttl > 0:
         blacklist_key = f"token:blacklist:{token_jti}"
@@ -263,22 +271,17 @@ async def decode_token(token: str) -> TokenClaimsModel:
         # Check if token is blacklisted
         if await is_token_blacklisted(token_data.jti):
             logger.warning(f"Blacklisted token used: {token_data.jti}")
-            raise AuthenticationException(
-                message="Token has been revoked", code=ErrorCode.INVALID_TOKEN
-            )
+            raise AuthenticationException(message="Token has been revoked")
 
         return token_data
     except JWTError as e:
         logger.warning(f"JWT decode error: {str(e)}")
         raise AuthenticationException(
             message="Could not validate credentials",
-            code=ErrorCode.INVALID_TOKEN,
         ) from e
     except ValidationError as e:
         logger.warning(f"Token payload validation error: {str(e)}")
-        raise AuthenticationException(
-            message="Token has invalid format", code=ErrorCode.INVALID_TOKEN
-        ) from e
+        raise AuthenticationException(message="Token has invalid format") from e
 
 
 async def revoke_token(token: str) -> None:
@@ -312,16 +315,14 @@ async def refresh_tokens(refresh_token: str) -> TokenPair:
     """
     try:
         token_data = await decode_token(refresh_token)
-        
+
         # Verify this is a refresh token
         if token_data.type != TokenType.REFRESH:
-            raise AuthenticationException(
-                message="Invalid token type", code=ErrorCode.INVALID_TOKEN
-            )
-            
+            raise AuthenticationException(message="Invalid token type")
+
         # Blacklist the used refresh token
         await add_token_to_blacklist(token_data.jti, token_data.exp)
-        
+
         # Create new token pair
         return create_token_pair(
             user_id=token_data.sub,
@@ -333,9 +334,7 @@ async def refresh_tokens(refresh_token: str) -> TokenPair:
         raise
     except Exception as e:
         logger.error(f"Error refreshing tokens: {str(e)}")
-        raise AuthenticationException(
-            message="Token refresh failed", code=ErrorCode.INVALID_TOKEN
-        ) from e
+        raise AuthenticationException(message="Token refresh failed") from e
 
 
 def generate_random_token(length: int = 32) -> str:
@@ -360,7 +359,7 @@ def generate_csrf_token(session_id: str) -> str:
         A CSRF token
     """
     token = generate_random_token()
-    timestamp = int(datetime.utcnow().timestamp())
+    timestamp = int(datetime.datetime.now(datetime.UTC).timestamp())
     payload = f"{session_id}:{timestamp}:{token}"
     signature = jwt.encode(
         {"data": payload}, settings.SECRET_KEY, algorithm=settings.ALGORITHM
@@ -390,24 +389,24 @@ def verify_csrf_token(token: str, session_id: str, max_age: int = 3600) -> bool:
             return False
 
         token_session_id, timestamp_str, _ = payload_parts
-        
+
         # Verify session ID matches
         if token_session_id != session_id:
             return False
-            
+
         # Verify signature
         expected_signature = jwt.encode(
             {"data": payload}, settings.SECRET_KEY, algorithm=settings.ALGORITHM
         )
         if signature != expected_signature:
             return False
-            
+
         # Verify token age
         timestamp = int(timestamp_str)
-        now = int(datetime.utcnow().timestamp())
+        now = int(datetime.datetime.now(datetime.UTC).timestamp())
         if now - timestamp > max_age:
             return False
-            
+
         return True
     except (ValueError, JWTError):
         return False
@@ -445,6 +444,4 @@ async def get_current_user_id(token: str = Depends(get_token_from_header)) -> st
         raise
     except Exception as e:
         logger.error(f"Error getting user ID from token: {str(e)}")
-        raise AuthenticationException(
-            message="Could not authenticate user", code=ErrorCode.AUTHENTICATION_FAILED
-        ) from e
+        raise AuthenticationException(message="Could not authenticate user") from e

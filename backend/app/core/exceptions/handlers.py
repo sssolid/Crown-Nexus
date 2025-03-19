@@ -8,7 +8,7 @@ in the application, mapping them to appropriate HTTP responses.
 """
 
 import traceback
-from datetime import datetime
+import datetime
 from typing import Any, Dict, Optional
 
 from fastapi import Request, status
@@ -52,7 +52,7 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
     error_response = exc.to_response(request_id=request_id)
 
     # Add timestamp
-    error_response.timestamp = datetime.utcnow().isoformat()
+    error_response.timestamp = datetime.datetime.now(datetime.UTC).isoformat()
 
     # Return JSON response with appropriate status code
     return JSONResponse(
@@ -98,7 +98,7 @@ async def validation_exception_handler(
         code=ErrorCode.VALIDATION_ERROR,
         details=errors,
         meta={"request_id": request_id, "severity": ErrorSeverity.WARNING},
-        timestamp=datetime.utcnow().isoformat(),
+        timestamp=datetime.datetime.now(datetime.UTC).isoformat(),
     )
 
     # Log the error
@@ -108,8 +108,7 @@ async def validation_exception_handler(
             "request_id": request_id,
             "path": request.url.path,
             "validation_errors": [
-                {"loc": e.loc, "msg": e.msg, "type": e.type}
-                for e in errors
+                {"loc": e.loc, "msg": e.msg, "type": e.type} for e in errors
             ],
         },
     )
@@ -153,17 +152,17 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
     if settings.ENVIRONMENT != Environment.PRODUCTION:
         # In non-production environments, include more error details
         error_message = f"Unhandled error: {str(exc)}"
-        error_details = [{
-            "loc": ["server"],
-            "msg": str(exc),
-            "type": "unhandled_error",
-        }]
+        error_details = [
+            {
+                "loc": ["server"],
+                "msg": str(exc),
+                "type": "unhandled_error",
+            }
+        ]
 
         # Add traceback in development environment
         if settings.ENVIRONMENT == Environment.DEVELOPMENT:
-            trace = traceback.format_exception(
-                type(exc), exc, exc.__traceback__
-            )
+            trace = traceback.format_exception(type(exc), exc, exc.__traceback__)
             error_details[0]["traceback"] = trace
 
     # Create error response
@@ -176,7 +175,7 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
             "request_id": request_id,
             "severity": ErrorSeverity.ERROR,
         },
-        timestamp=datetime.utcnow().isoformat(),
+        timestamp=datetime.datetime.now(datetime.UTC).isoformat(),
     )
 
     # Return JSON response

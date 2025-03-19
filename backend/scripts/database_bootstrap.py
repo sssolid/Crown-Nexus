@@ -68,7 +68,7 @@ async def check_connection() -> bool:
         print(f"❌ Database connection failed: {e}")
         return False
     finally:
-        if 'engine' in locals():
+        if "engine" in locals():
             await engine.dispose()
 
 
@@ -98,10 +98,12 @@ async def create_tables() -> bool:
 
         # Print the tables created
         async with engine.connect() as conn:
-            result = await conn.execute(text(
-                "SELECT table_name FROM information_schema.tables "
-                "WHERE table_schema = 'public'"
-            ))
+            result = await conn.execute(
+                text(
+                    "SELECT table_name FROM information_schema.tables "
+                    "WHERE table_schema = 'public'"
+                )
+            )
             tables = result.fetchall()
 
             print("\nCreated the following tables:")
@@ -116,7 +118,9 @@ async def create_tables() -> bool:
         await engine.dispose()
 
 
-async def create_admin_user(email: str, password: str, full_name: str) -> Tuple[bool, Optional[str]]:
+async def create_admin_user(
+    email: str, password: str, full_name: str
+) -> Tuple[bool, Optional[str]]:
     """
     Create an admin user.
 
@@ -134,8 +138,7 @@ async def create_admin_user(email: str, password: str, full_name: str) -> Tuple[
         async with get_db_context() as db:
             # Check if user already exists
             result = await db.execute(
-                text("SELECT 1 FROM \"user\" WHERE email = :email"),
-                {"email": email}
+                text('SELECT 1 FROM "user" WHERE email = :email'), {"email": email}
             )
             exists = result.scalar() is not None
 
@@ -152,7 +155,7 @@ async def create_admin_user(email: str, password: str, full_name: str) -> Tuple[
             await db.execute(
                 text(
                     'INSERT INTO "user" (id, email, hashed_password, full_name, role, is_active, created_at, updated_at) '
-                    'VALUES (:id, :email, :hashed_password, :full_name, :role, :is_active, :created_at, :updated_at)'
+                    "VALUES (:id, :email, :hashed_password, :full_name, :role, :is_active, :created_at, :updated_at)"
                 ),
                 {
                     "id": user_id,
@@ -162,8 +165,8 @@ async def create_admin_user(email: str, password: str, full_name: str) -> Tuple[
                     "role": UserRole.ADMIN.value,
                     "is_active": True,
                     "created_at": now,
-                    "updated_at": now
-                }
+                    "updated_at": now,
+                },
             )
 
             print(f"✅ Admin user '{email}' created successfully with ID: {user_id}")
@@ -206,7 +209,7 @@ async def main() -> bool:
     if not await create_tables():
         print("Table creation failed. Cannot continue with bootstrap.")
         return False
-        
+
     # Add this section - populate country data
     print("Populating country reference data...")
     try:

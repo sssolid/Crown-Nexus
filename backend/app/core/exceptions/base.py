@@ -1,6 +1,8 @@
 # /backend/app/core/exceptions/base.py
 from __future__ import annotations
 
+import logging
+
 """Base exception system for the application.
 
 This module defines the core exception types, error codes, and response models
@@ -8,12 +10,11 @@ used throughout the application. It provides a consistent foundation for error
 handling and reporting.
 """
 
-import logging
 import traceback
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from app.core.logging import get_logger
 
@@ -69,7 +70,7 @@ class ErrorSeverity(str, Enum):
     """Severity levels for errors."""
 
     WARNING = "warning"  # Issues that need attention but aren't critical
-    ERROR = "error"      # Serious errors that impact functionality
+    ERROR = "error"  # Serious errors that impact functionality
     CRITICAL = "critical"  # Critical failures requiring immediate attention
 
 
@@ -96,7 +97,8 @@ class ErrorResponse(BaseModel):
     meta: Dict[str, Any] = Field(default_factory=dict, description="Metadata")
     timestamp: Optional[str] = Field(None, description="Error timestamp")
 
-    @validator("details", pre=True)
+    @field_validator("details", mode="before")
+    @classmethod
     def validate_details(cls, v: Any) -> List[ErrorDetail]:
         """Validate and convert error details to proper format."""
         if isinstance(v, dict) and "errors" in v:
@@ -123,7 +125,7 @@ class AppException(Exception):
         status_code: int = 500,
         severity: ErrorSeverity = ErrorSeverity.ERROR,
         category: ErrorCategory = ErrorCategory.SYSTEM,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize the exception with customizable properties.
 
@@ -150,7 +152,7 @@ class AppException(Exception):
             self.details["traceback"] = traceback.format_exception(
                 type(original_exception),
                 original_exception,
-                original_exception.__traceback__
+                original_exception.__traceback__,
             )
 
         super().__init__(self.message)
@@ -178,18 +180,18 @@ class AppException(Exception):
                 # Convert details to error detail format
                 for key, value in self.details.items():
                     if key not in ["original_error", "traceback"]:
-                        error_details.append({
-                            "loc": key.split("."),
-                            "msg": str(value),
-                            "type": str(self.code).lower()
-                        })
+                        error_details.append(
+                            {
+                                "loc": key.split("."),
+                                "msg": str(value),
+                                "type": str(self.code).lower(),
+                            }
+                        )
         else:
             # Create default error detail
-            error_details = [{
-                "loc": ["server"],
-                "msg": self.message,
-                "type": str(self.code).lower()
-            }]
+            error_details = [
+                {"loc": ["server"], "msg": self.message, "type": str(self.code).lower()}
+            ]
 
         # Create metadata
         meta = {"request_id": request_id} if request_id else {}
@@ -204,7 +206,7 @@ class AppException(Exception):
             data=None,
             details=error_details,
             meta=meta,
-            timestamp=None  # Will be filled by middleware
+            timestamp=None,  # Will be filled by middleware
         )
 
     def log(self, request_id: Optional[str] = None) -> None:
@@ -213,7 +215,9 @@ class AppException(Exception):
         Args:
             request_id: Request ID for tracking
         """
-        log_level = logging.WARNING if self.severity == ErrorSeverity.WARNING else logging.ERROR
+        log_level = (
+            logging.WARNING if self.severity == ErrorSeverity.WARNING else logging.ERROR
+        )
 
         # Prepare log context
         context = {
@@ -231,7 +235,7 @@ class AppException(Exception):
                 log_level,
                 f"{self.message} (original error: {str(self.original_exception)})",
                 exc_info=self.original_exception,
-                extra=context
+                extra=context,
             )
         else:
             logger.log(log_level, self.message, extra=context)

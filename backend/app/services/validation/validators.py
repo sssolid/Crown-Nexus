@@ -40,19 +40,24 @@ class EmailValidator(Validator):
         if not isinstance(value, str):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Email must be a string", "type": "type_error"}]
+                errors=[{"msg": "Email must be a string", "type": "type_error"}],
             )
 
         if not value or len(value) > 255:
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Email must be between 1 and 255 characters", "type": "length_error"}]
+                errors=[
+                    {
+                        "msg": "Email must be between 1 and 255 characters",
+                        "type": "length_error",
+                    }
+                ],
             )
 
         if not self.pattern.match(value):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid email format", "type": "format_error"}]
+                errors=[{"msg": "Invalid email format", "type": "format_error"}],
             )
 
         return ValidationResult(is_valid=True)
@@ -78,7 +83,7 @@ class PhoneValidator(Validator):
         if not isinstance(value, str):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Phone number must be a string", "type": "type_error"}]
+                errors=[{"msg": "Phone number must be a string", "type": "type_error"}],
             )
 
         # Clean the phone number
@@ -87,7 +92,7 @@ class PhoneValidator(Validator):
         if not self.pattern.match(cleaned):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid phone number format", "type": "format_error"}]
+                errors=[{"msg": "Invalid phone number format", "type": "format_error"}],
             )
 
         return ValidationResult(is_valid=True)
@@ -102,7 +107,7 @@ class DateValidator(Validator):
         min_date: Optional[Union[str, date, datetime]] = None,
         max_date: Optional[Union[str, date, datetime]] = None,
         format_str: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Validate a date.
 
@@ -126,20 +131,24 @@ class DateValidator(Validator):
             try:
                 date_value = datetime.strptime(value, format_str).date()
             except ValueError:
-                errors.append({
-                    "msg": f"Invalid date format, expected format: {format_str}",
-                    "type": "format_error"
-                })
+                errors.append(
+                    {
+                        "msg": f"Invalid date format, expected format: {format_str}",
+                        "type": "format_error",
+                    }
+                )
                 return ValidationResult(is_valid=False, errors=errors)
         elif isinstance(value, datetime):
             date_value = value.date()
         elif isinstance(value, date):
             date_value = value
         else:
-            errors.append({
-                "msg": "Value must be a string, date, or datetime",
-                "type": "type_error"
-            })
+            errors.append(
+                {
+                    "msg": "Value must be a string, date, or datetime",
+                    "type": "type_error",
+                }
+            )
             return ValidationResult(is_valid=False, errors=errors)
 
         # Process min_date if provided
@@ -151,10 +160,12 @@ class DateValidator(Validator):
                 try:
                     min_date_value = datetime.strptime(min_date, format_str).date()
                 except ValueError:
-                    errors.append({
-                        "msg": f"Invalid min_date format, expected format: {format_str}",
-                        "type": "format_error"
-                    })
+                    errors.append(
+                        {
+                            "msg": f"Invalid min_date format, expected format: {format_str}",
+                            "type": "format_error",
+                        }
+                    )
             elif isinstance(min_date, datetime):
                 min_date_value = min_date.date()
             elif isinstance(min_date, date):
@@ -169,10 +180,12 @@ class DateValidator(Validator):
                 try:
                     max_date_value = datetime.strptime(max_date, format_str).date()
                 except ValueError:
-                    errors.append({
-                        "msg": f"Invalid max_date format, expected format: {format_str}",
-                        "type": "format_error"
-                    })
+                    errors.append(
+                        {
+                            "msg": f"Invalid max_date format, expected format: {format_str}",
+                            "type": "format_error",
+                        }
+                    )
             elif isinstance(max_date, datetime):
                 max_date_value = max_date.date()
             elif isinstance(max_date, date):
@@ -180,16 +193,20 @@ class DateValidator(Validator):
 
         # Check constraints
         if min_date_value and date_value < min_date_value:
-            errors.append({
-                "msg": f"Date must be on or after {min_date_value.isoformat()}",
-                "type": "range_error"
-            })
+            errors.append(
+                {
+                    "msg": f"Date must be on or after {min_date_value.isoformat()}",
+                    "type": "range_error",
+                }
+            )
 
         if max_date_value and date_value > max_date_value:
-            errors.append({
-                "msg": f"Date must be on or before {max_date_value.isoformat()}",
-                "type": "range_error"
-            })
+            errors.append(
+                {
+                    "msg": f"Date must be on or before {max_date_value.isoformat()}",
+                    "type": "range_error",
+                }
+            )
 
         return ValidationResult(is_valid=len(errors) == 0, errors=errors)
 
@@ -202,7 +219,7 @@ class LengthValidator(Validator):
         value: Any,
         min_length: Optional[int] = None,
         max_length: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Validate the length of a string.
 
@@ -218,23 +235,24 @@ class LengthValidator(Validator):
         errors: List[Dict[str, Any]] = []
 
         if not isinstance(value, str):
-            errors.append({
-                "msg": "Value must be a string",
-                "type": "type_error"
-            })
+            errors.append({"msg": "Value must be a string", "type": "type_error"})
             return ValidationResult(is_valid=False, errors=errors)
 
         if min_length is not None and len(value) < min_length:
-            errors.append({
-                "msg": f"String length must be at least {min_length} characters",
-                "type": "min_length_error"
-            })
+            errors.append(
+                {
+                    "msg": f"String length must be at least {min_length} characters",
+                    "type": "min_length_error",
+                }
+            )
 
         if max_length is not None and len(value) > max_length:
-            errors.append({
-                "msg": f"String length must be at most {max_length} characters",
-                "type": "max_length_error"
-            })
+            errors.append(
+                {
+                    "msg": f"String length must be at most {max_length} characters",
+                    "type": "max_length_error",
+                }
+            )
 
         return ValidationResult(is_valid=len(errors) == 0, errors=errors)
 
@@ -247,7 +265,7 @@ class RangeValidator(Validator):
         value: Union[int, float],
         min_value: Optional[Union[int, float]] = None,
         max_value: Optional[Union[int, float]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Validate a numeric value against a range.
 
@@ -263,23 +281,24 @@ class RangeValidator(Validator):
         errors: List[Dict[str, Any]] = []
 
         if not isinstance(value, (int, float)):
-            errors.append({
-                "msg": "Value must be a number",
-                "type": "type_error"
-            })
+            errors.append({"msg": "Value must be a number", "type": "type_error"})
             return ValidationResult(is_valid=False, errors=errors)
 
         if min_value is not None and value < min_value:
-            errors.append({
-                "msg": f"Value must be greater than or equal to {min_value}",
-                "type": "min_value_error"
-            })
+            errors.append(
+                {
+                    "msg": f"Value must be greater than or equal to {min_value}",
+                    "type": "min_value_error",
+                }
+            )
 
         if max_value is not None and value > max_value:
-            errors.append({
-                "msg": f"Value must be less than or equal to {max_value}",
-                "type": "max_value_error"
-            })
+            errors.append(
+                {
+                    "msg": f"Value must be less than or equal to {max_value}",
+                    "type": "max_value_error",
+                }
+            )
 
         return ValidationResult(is_valid=len(errors) == 0, errors=errors)
 
@@ -287,12 +306,7 @@ class RangeValidator(Validator):
 class RegexValidator(Validator):
     """Validator for regex patterns."""
 
-    def validate(
-        self,
-        value: Any,
-        pattern: str,
-        **kwargs: Any
-    ) -> ValidationResult:
+    def validate(self, value: Any, pattern: str, **kwargs: Any) -> ValidationResult:
         """Validate a string against a regex pattern.
 
         Args:
@@ -306,24 +320,22 @@ class RegexValidator(Validator):
         errors: List[Dict[str, Any]] = []
 
         if not isinstance(value, str):
-            errors.append({
-                "msg": "Value must be a string",
-                "type": "type_error"
-            })
+            errors.append({"msg": "Value must be a string", "type": "type_error"})
             return ValidationResult(is_valid=False, errors=errors)
 
         try:
             compiled_pattern = re.compile(pattern)
             if not compiled_pattern.match(value):
-                errors.append({
-                    "msg": f"Value does not match pattern: {pattern}",
-                    "type": "pattern_mismatch"
-                })
+                errors.append(
+                    {
+                        "msg": f"Value does not match pattern: {pattern}",
+                        "type": "pattern_mismatch",
+                    }
+                )
         except re.error:
-            errors.append({
-                "msg": f"Invalid regex pattern: {pattern}",
-                "type": "invalid_pattern"
-            })
+            errors.append(
+                {"msg": f"Invalid regex pattern: {pattern}", "type": "invalid_pattern"}
+            )
 
         return ValidationResult(is_valid=len(errors) == 0, errors=errors)
 
@@ -344,19 +356,19 @@ class RequiredValidator(Validator):
         if value is None:
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Value is required", "type": "required_error"}]
+                errors=[{"msg": "Value is required", "type": "required_error"}],
             )
 
         if isinstance(value, str) and not value.strip():
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Value cannot be empty", "type": "required_error"}]
+                errors=[{"msg": "Value cannot be empty", "type": "required_error"}],
             )
 
         if isinstance(value, (list, dict, set)) and not value:
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Value cannot be empty", "type": "required_error"}]
+                errors=[{"msg": "Value cannot be empty", "type": "required_error"}],
             )
 
         return ValidationResult(is_valid=True)
@@ -370,7 +382,7 @@ class URLValidator(Validator):
         self.pattern = re.compile(
             r"^(https?:\/\/)?"  # protocol
             r"(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|"  # domain name
-            r"((\d{1,3}\.){3}\d{1,3}))"  # OR ip (v4) address
+            r"((\d{1,3}\.){3}\d{1,3})"  # OR ip (v4) address
             r"(\:\d+)?(\/[-a-z\d%_.~+]*)*"  # port and path
             r"(\?[;&a-z\d%_.~+=-]*)?"  # query string
             r"(\#[-a-z\d_]*)?$",  # fragment locator
@@ -390,19 +402,19 @@ class URLValidator(Validator):
         if not isinstance(value, str):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "URL must be a string", "type": "type_error"}]
+                errors=[{"msg": "URL must be a string", "type": "type_error"}],
             )
 
         if not value:
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "URL cannot be empty", "type": "empty_error"}]
+                errors=[{"msg": "URL cannot be empty", "type": "empty_error"}],
             )
 
         if not self.pattern.match(value):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid URL format", "type": "format_error"}]
+                errors=[{"msg": "Invalid URL format", "type": "format_error"}],
             )
 
         return ValidationResult(is_valid=True)
@@ -424,7 +436,7 @@ class UUIDValidator(Validator):
         if not isinstance(value, str):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "UUID must be a string", "type": "type_error"}]
+                errors=[{"msg": "UUID must be a string", "type": "type_error"}],
             )
 
         try:
@@ -434,12 +446,12 @@ class UUIDValidator(Validator):
             else:
                 return ValidationResult(
                     is_valid=False,
-                    errors=[{"msg": "UUID format is invalid", "type": "format_error"}]
+                    errors=[{"msg": "UUID format is invalid", "type": "format_error"}],
                 )
         except (ValueError, AttributeError, TypeError):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid UUID format", "type": "format_error"}]
+                errors=[{"msg": "Invalid UUID format", "type": "format_error"}],
             )
 
 
@@ -463,7 +475,9 @@ class CreditCardValidator(Validator):
         if not isinstance(value, str):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Credit card number must be a string", "type": "type_error"}]
+                errors=[
+                    {"msg": "Credit card number must be a string", "type": "type_error"}
+                ],
             )
 
         # Remove spaces and hyphens
@@ -473,7 +487,7 @@ class CreditCardValidator(Validator):
         if not self.pattern.match(card_number):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid credit card format", "type": "format_error"}]
+                errors=[{"msg": "Invalid credit card format", "type": "format_error"}],
             )
 
         # Luhn algorithm
@@ -489,7 +503,12 @@ class CreditCardValidator(Validator):
         if checksum % 10 != 0:
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid credit card number (failed Luhn check)", "type": "checksum_error"}]
+                errors=[
+                    {
+                        "msg": "Invalid credit card number (failed Luhn check)",
+                        "type": "checksum_error",
+                    }
+                ],
             )
 
         return ValidationResult(is_valid=True)
@@ -499,10 +518,7 @@ class IPAddressValidator(Validator):
     """Validator for IP addresses."""
 
     def validate(
-        self,
-        value: Any,
-        version: Optional[int] = None,
-        **kwargs: Any
+        self, value: Any, version: Optional[int] = None, **kwargs: Any
     ) -> ValidationResult:
         """Validate an IP address.
 
@@ -517,7 +533,7 @@ class IPAddressValidator(Validator):
         if not isinstance(value, str):
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "IP address must be a string", "type": "type_error"}]
+                errors=[{"msg": "IP address must be a string", "type": "type_error"}],
             )
 
         try:
@@ -526,20 +542,24 @@ class IPAddressValidator(Validator):
             if version == 4 and not isinstance(ip_obj, ipaddress.IPv4Address):
                 return ValidationResult(
                     is_valid=False,
-                    errors=[{"msg": "IP address must be IPv4", "type": "version_error"}]
+                    errors=[
+                        {"msg": "IP address must be IPv4", "type": "version_error"}
+                    ],
                 )
 
             if version == 6 and not isinstance(ip_obj, ipaddress.IPv6Address):
                 return ValidationResult(
                     is_valid=False,
-                    errors=[{"msg": "IP address must be IPv6", "type": "version_error"}]
+                    errors=[
+                        {"msg": "IP address must be IPv6", "type": "version_error"}
+                    ],
                 )
 
             return ValidationResult(is_valid=True)
         except ValueError:
             return ValidationResult(
                 is_valid=False,
-                errors=[{"msg": "Invalid IP address format", "type": "format_error"}]
+                errors=[{"msg": "Invalid IP address format", "type": "format_error"}],
             )
 
 
@@ -554,7 +574,7 @@ class PasswordValidator(Validator):
         require_uppercase: bool = True,
         require_digit: bool = True,
         require_special: bool = True,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Validate password strength.
 
@@ -573,41 +593,48 @@ class PasswordValidator(Validator):
         errors: List[Dict[str, Any]] = []
 
         if not isinstance(value, str):
-            errors.append({
-                "msg": "Password must be a string",
-                "type": "type_error"
-            })
+            errors.append({"msg": "Password must be a string", "type": "type_error"})
             return ValidationResult(is_valid=False, errors=errors)
 
         if len(value) < min_length:
-            errors.append({
-                "msg": f"Password must be at least {min_length} characters long",
-                "type": "length_error"
-            })
+            errors.append(
+                {
+                    "msg": f"Password must be at least {min_length} characters long",
+                    "type": "length_error",
+                }
+            )
 
         if require_lowercase and not any(c.islower() for c in value):
-            errors.append({
-                "msg": "Password must contain at least one lowercase letter",
-                "type": "complexity_error"
-            })
+            errors.append(
+                {
+                    "msg": "Password must contain at least one lowercase letter",
+                    "type": "complexity_error",
+                }
+            )
 
         if require_uppercase and not any(c.isupper() for c in value):
-            errors.append({
-                "msg": "Password must contain at least one uppercase letter",
-                "type": "complexity_error"
-            })
+            errors.append(
+                {
+                    "msg": "Password must contain at least one uppercase letter",
+                    "type": "complexity_error",
+                }
+            )
 
         if require_digit and not any(c.isdigit() for c in value):
-            errors.append({
-                "msg": "Password must contain at least one digit",
-                "type": "complexity_error"
-            })
+            errors.append(
+                {
+                    "msg": "Password must contain at least one digit",
+                    "type": "complexity_error",
+                }
+            )
 
         if require_special and not any(not c.isalnum() for c in value):
-            errors.append({
-                "msg": "Password must contain at least one special character",
-                "type": "complexity_error"
-            })
+            errors.append(
+                {
+                    "msg": "Password must contain at least one special character",
+                    "type": "complexity_error",
+                }
+            )
 
         return ValidationResult(is_valid=len(errors) == 0, errors=errors)
 
@@ -616,10 +643,7 @@ class EnumValidator(Validator):
     """Validator for enum values."""
 
     def validate(
-        self,
-        value: Any,
-        enum_class: Type[Enum],
-        **kwargs: Any
+        self, value: Any, enum_class: Type[Enum], **kwargs: Any
     ) -> ValidationResult:
         """Validate that a value is a valid enum member.
 
@@ -638,8 +662,10 @@ class EnumValidator(Validator):
             valid_values = ", ".join([f"{e.name} ({e.value})" for e in enum_class])
             return ValidationResult(
                 is_valid=False,
-                errors=[{
-                    "msg": f"Invalid enum value, must be one of: {valid_values}",
-                    "type": "enum_error"
-                }]
+                errors=[
+                    {
+                        "msg": f"Invalid enum value, must be one of: {valid_values}",
+                        "type": "enum_error",
+                    }
+                ],
             )

@@ -31,34 +31,47 @@ logger = get_logger(__name__)
 class LocalMediaStorage:
     """Local filesystem storage backend for development."""
 
-    ALLOWED_MIME_TYPES: Dict[MediaType, Set[str]] = field(default_factory=lambda: {
-        MediaType.IMAGE: {
-            "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
-        },
-        MediaType.DOCUMENT: {
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.ms-excel",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "text/plain",
-            "text/csv",
-        },
-        MediaType.VIDEO: {
-            "video/mp4", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv",
-        },
-        MediaType.OTHER: {
-            "application/zip", "application/x-zip-compressed", "application/octet-stream",
-        },
-    })
+    ALLOWED_MIME_TYPES: Dict[MediaType, Set[str]] = field(
+        default_factory=lambda: {
+            MediaType.IMAGE: {
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/webp",
+                "image/svg+xml",
+            },
+            MediaType.DOCUMENT: {
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "text/plain",
+                "text/csv",
+            },
+            MediaType.VIDEO: {
+                "video/mp4",
+                "video/quicktime",
+                "video/x-msvideo",
+                "video/x-ms-wmv",
+            },
+            MediaType.OTHER: {
+                "application/zip",
+                "application/x-zip-compressed",
+                "application/octet-stream",
+            },
+        }
+    )
 
     # Maximum file sizes by type (in bytes)
-    MAX_FILE_SIZES: Dict[MediaType, int] = field(default_factory=lambda: {
-        MediaType.IMAGE: 10 * 1024 * 1024,      # 10MB
-        MediaType.DOCUMENT: 50 * 1024 * 1024,   # 50MB
-        MediaType.VIDEO: 500 * 1024 * 1024,     # 500MB
-        MediaType.OTHER: 100 * 1024 * 1024,     # 100MB
-    })
+    MAX_FILE_SIZES: Dict[MediaType, int] = field(
+        default_factory=lambda: {
+            MediaType.IMAGE: 10 * 1024 * 1024,  # 10MB
+            MediaType.DOCUMENT: 50 * 1024 * 1024,  # 50MB
+            MediaType.VIDEO: 500 * 1024 * 1024,  # 500MB
+            MediaType.OTHER: 100 * 1024 * 1024,  # 100MB
+        }
+    )
 
     # Thumbnail dimensions
     DEFAULT_THUMBNAIL_SIZE: Tuple[int, int] = (300, 300)
@@ -121,7 +134,9 @@ class LocalMediaStorage:
         if file_content_type and media_type != MediaType.OTHER:
             # Check if the content type is allowed for this media type
             if file_content_type not in self.ALLOWED_MIME_TYPES.get(media_type, set()):
-                allowed_types = ", ".join(self.ALLOWED_MIME_TYPES.get(media_type, set()))
+                allowed_types = ", ".join(
+                    self.ALLOWED_MIME_TYPES.get(media_type, set())
+                )
                 raise ValueError(
                     f"Content type '{file_content_type}' not allowed for {media_type.value}. "
                     f"Allowed types: {allowed_types}"
@@ -144,7 +159,7 @@ class LocalMediaStorage:
                 # Handle file-like objects
                 content = file.read()
                 if not isinstance(content, bytes):
-                    content = content.encode('utf-8')
+                    content = content.encode("utf-8")
                 async with aiofiles.open(file_path, "wb") as f:
                     await f.write(content)
 
@@ -163,10 +178,7 @@ class LocalMediaStorage:
         except Exception as e:
             # Log error with structured logging
             logger.error(
-                "file_save_failed",
-                path=str(file_path),
-                error=str(e),
-                exc_info=True
+                "file_save_failed", path=str(file_path), error=str(e), exc_info=True
             )
             raise MediaStorageError(f"Failed to save file: {str(e)}") from e
 
@@ -219,10 +231,7 @@ class LocalMediaStorage:
             return True
         except Exception as e:
             logger.error(
-                "file_delete_failed",
-                path=str(full_path),
-                error=str(e),
-                exc_info=True
+                "file_delete_failed", path=str(full_path), error=str(e), exc_info=True
             )
             raise MediaStorageError(f"Failed to delete file: {str(e)}") from e
 
@@ -244,10 +253,7 @@ class LocalMediaStorage:
         return full_path.exists()
 
     async def generate_thumbnail(
-        self,
-        file_path: str,
-        width: int = 200,
-        height: int = 200
+        self, file_path: str, width: int = 200, height: int = 200
     ) -> Optional[str]:
         """
         Generate a thumbnail for an image file asynchronously.
@@ -274,16 +280,15 @@ class LocalMediaStorage:
 
         # Get paths
         original_path = self.media_root / file_path
-        thumbnail_rel_path = ThumbnailGenerator.get_thumbnail_path(file_path, width, height)
+        thumbnail_rel_path = ThumbnailGenerator.get_thumbnail_path(
+            file_path, width, height
+        )
         thumbnail_path = self.media_root / thumbnail_rel_path
 
         try:
             # Generate the thumbnail
             await ThumbnailGenerator.generate_thumbnail(
-                original_path,
-                thumbnail_path,
-                width,
-                height
+                original_path, thumbnail_path, width, height
             )
             return thumbnail_rel_path
         except Exception as e:
@@ -293,7 +298,7 @@ class LocalMediaStorage:
                 width=width,
                 height=height,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             if isinstance(e, FileNotFoundError):
                 raise

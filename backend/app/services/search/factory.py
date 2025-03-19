@@ -18,7 +18,7 @@ from app.models.product import Fitment, Product
 from app.services.search.base import SearchProvider
 from app.services.search.providers import (
     DatabaseSearchProvider,
-    ElasticsearchSearchProvider
+    ElasticsearchSearchProvider,
 )
 
 logger = get_logger("app.services.search.factory")
@@ -36,7 +36,7 @@ class SearchProviderFactory:
         provider_type: str,
         db: AsyncSession,
         model_class: Type[DeclarativeMeta],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SearchProvider:
         """Create a search provider of the specified type.
 
@@ -75,14 +75,14 @@ class SearchProviderFactory:
         # Cache the provider
         cls._provider_cache[cache_key] = provider
 
-        logger.debug(f"Created search provider: {provider_type} for {model_class.__name__}")
+        logger.debug(
+            f"Created search provider: {provider_type} for {model_class.__name__}"
+        )
         return provider
 
     @classmethod
     async def create_default_provider(
-        cls,
-        db: AsyncSession,
-        model_class: Type[DeclarativeMeta]
+        cls, db: AsyncSession, model_class: Type[DeclarativeMeta]
     ) -> SearchProvider:
         """Create the default search provider for a model.
 

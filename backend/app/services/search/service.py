@@ -13,11 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
 from app.core.dependency_manager import get_dependency
-from app.core.exceptions import (
-    BusinessLogicException,
-    DatabaseException,
-    ErrorCode
-)
+from app.core.exceptions import BusinessException, DatabaseException, ErrorCode
 from app.core.logging import get_logger
 from app.models.product import Fitment, Product
 from app.services.interfaces import ServiceInterface
@@ -59,7 +55,7 @@ class SearchService(ServiceInterface):
         is_active: Optional[bool] = None,
         page: int = 1,
         page_size: int = 20,
-        use_elasticsearch: bool = True
+        use_elasticsearch: bool = True,
     ) -> Dict[str, Any]:
         """Search for products matching the given criteria.
 
@@ -86,7 +82,9 @@ class SearchService(ServiceInterface):
                 filters["is_active"] = is_active
 
             # Determine which provider to use
-            provider_type = "elasticsearch" if use_elasticsearch and search_term else "database"
+            provider_type = (
+                "elasticsearch" if use_elasticsearch and search_term else "database"
+            )
 
             try:
                 # Create appropriate provider
@@ -99,7 +97,7 @@ class SearchService(ServiceInterface):
                     search_term=search_term,
                     filters=filters,
                     page=page,
-                    page_size=page_size
+                    page_size=page_size,
                 )
 
                 self.logger.info(
@@ -107,18 +105,20 @@ class SearchService(ServiceInterface):
                     provider=provider_type,
                     search_term=search_term,
                     results_count=len(results.get("items", [])),
-                    total=results.get("total", 0)
+                    total=results.get("total", 0),
                 )
 
                 return results
 
             except Exception as e:
-                if provider_type == "elasticsearch" and not isinstance(e, DatabaseException):
+                if provider_type == "elasticsearch" and not isinstance(
+                    e, DatabaseException
+                ):
                     # Fall back to database search
                     self.logger.warning(
                         "Elasticsearch search failed, falling back to database",
                         error=str(e),
-                        search_term=search_term
+                        search_term=search_term,
                     )
 
                     provider = await SearchProviderFactory.create_provider(
@@ -129,14 +129,14 @@ class SearchService(ServiceInterface):
                         search_term=search_term,
                         filters=filters,
                         page=page,
-                        page_size=page_size
+                        page_size=page_size,
                     )
 
                     self.logger.info(
                         "Database fallback search successful",
                         search_term=search_term,
                         results_count=len(results.get("items", [])),
-                        total=results.get("total", 0)
+                        total=results.get("total", 0),
                     )
 
                     return results
@@ -150,7 +150,7 @@ class SearchService(ServiceInterface):
                 search_term=search_term,
                 provider_type=provider_type,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
 
             if isinstance(e, DatabaseException):
@@ -159,7 +159,7 @@ class SearchService(ServiceInterface):
             raise DatabaseException(
                 message="Failed to search products",
                 code=ErrorCode.DATABASE_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     @cache_service.cache(prefix="search:fitments", ttl=300, backend="redis")
@@ -173,7 +173,7 @@ class SearchService(ServiceInterface):
         transmission: Optional[str] = None,
         page: int = 1,
         page_size: int = 20,
-        use_elasticsearch: bool = True
+        use_elasticsearch: bool = True,
     ) -> Dict[str, Any]:
         """Search for fitments matching the given criteria.
 
@@ -209,7 +209,9 @@ class SearchService(ServiceInterface):
                 filters["transmission"] = transmission.lower()
 
             # Determine which provider to use
-            provider_type = "elasticsearch" if use_elasticsearch and search_term else "database"
+            provider_type = (
+                "elasticsearch" if use_elasticsearch and search_term else "database"
+            )
 
             try:
                 # Create appropriate provider
@@ -222,7 +224,7 @@ class SearchService(ServiceInterface):
                     search_term=search_term,
                     filters=filters,
                     page=page,
-                    page_size=page_size
+                    page_size=page_size,
                 )
 
                 self.logger.info(
@@ -230,18 +232,20 @@ class SearchService(ServiceInterface):
                     provider=provider_type,
                     search_term=search_term,
                     results_count=len(results.get("items", [])),
-                    total=results.get("total", 0)
+                    total=results.get("total", 0),
                 )
 
                 return results
 
             except Exception as e:
-                if provider_type == "elasticsearch" and not isinstance(e, DatabaseException):
+                if provider_type == "elasticsearch" and not isinstance(
+                    e, DatabaseException
+                ):
                     # Fall back to database search
                     self.logger.warning(
                         "Elasticsearch search failed, falling back to database",
                         error=str(e),
-                        search_term=search_term
+                        search_term=search_term,
                     )
 
                     provider = await SearchProviderFactory.create_provider(
@@ -252,14 +256,14 @@ class SearchService(ServiceInterface):
                         search_term=search_term,
                         filters=filters,
                         page=page,
-                        page_size=page_size
+                        page_size=page_size,
                     )
 
                     self.logger.info(
                         "Database fallback search successful",
                         search_term=search_term,
                         results_count=len(results.get("items", [])),
-                        total=results.get("total", 0)
+                        total=results.get("total", 0),
                     )
 
                     return results
@@ -273,7 +277,7 @@ class SearchService(ServiceInterface):
                 search_term=search_term,
                 provider_type=provider_type,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
 
             if isinstance(e, DatabaseException):
@@ -282,7 +286,7 @@ class SearchService(ServiceInterface):
             raise DatabaseException(
                 message="Failed to search fitments",
                 code=ErrorCode.DATABASE_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def global_search(
@@ -290,7 +294,7 @@ class SearchService(ServiceInterface):
         search_term: str,
         entity_types: Optional[List[str]] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         """Search across multiple entity types.
 
@@ -319,40 +323,32 @@ class SearchService(ServiceInterface):
             if "products" in entity_types:
                 try:
                     product_results = await self.search_products(
-                        search_term=search_term,
-                        page=page,
-                        page_size=page_size
+                        search_term=search_term, page=page, page_size=page_size
                     )
                     results["products"] = product_results
                 except Exception as e:
                     self.logger.warning(
-                        "Product search failed during global search",
-                        error=str(e)
+                        "Product search failed during global search", error=str(e)
                     )
                     if error_service:
                         error_service.handle_exception(
-                            e,
-                            request_id=getattr(self.db, "request_id", None)
+                            e, request_id=getattr(self.db, "request_id", None)
                         )
                     # Continue with other entity types
 
             if "fitments" in entity_types:
                 try:
                     fitment_results = await self.search_fitments(
-                        search_term=search_term,
-                        page=page,
-                        page_size=page_size
+                        search_term=search_term, page=page, page_size=page_size
                     )
                     results["fitments"] = fitment_results
                 except Exception as e:
                     self.logger.warning(
-                        "Fitment search failed during global search",
-                        error=str(e)
+                        "Fitment search failed during global search", error=str(e)
                     )
                     if error_service:
                         error_service.handle_exception(
-                            e,
-                            request_id=getattr(self.db, "request_id", None)
+                            e, request_id=getattr(self.db, "request_id", None)
                         )
                     # Continue with other entity types
 
@@ -362,7 +358,7 @@ class SearchService(ServiceInterface):
                 "Global search completed",
                 search_term=search_term,
                 entity_types=entity_types,
-                results_counts={k: len(v.get("items", [])) for k, v in results.items()}
+                results_counts={k: len(v.get("items", [])) for k, v in results.items()},
             )
 
             return results
@@ -373,13 +369,13 @@ class SearchService(ServiceInterface):
                 search_term=search_term,
                 entity_types=entity_types,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             # Return partial results if any
             if not results:
                 raise DatabaseException(
                     message="Failed to perform global search",
                     code=ErrorCode.DATABASE_ERROR,
-                    original_exception=e
+                    original_exception=e,
                 ) from e
             return results

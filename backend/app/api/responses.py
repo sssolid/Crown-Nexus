@@ -21,7 +21,7 @@ def success_response(
     request_id: Optional[str] = None,
 ) -> JSONResponse:
     """Create a success response.
-    
+
     Args:
         data: Response data
         message: Success message
@@ -29,7 +29,7 @@ def success_response(
         meta: Additional metadata
         pagination: Pagination metadata
         request_id: Request ID for tracking
-        
+
     Returns:
         JSONResponse: Success response
     """
@@ -41,13 +41,13 @@ def success_response(
         pagination=pagination,
         request_id=request_id,
     )
-    
+
     json_response = JSONResponse(
         content=response.dict(),
         status_code=code,
     )
     setattr(json_response, "is_formatted", True)
-    
+
     return json_response
 
 
@@ -59,14 +59,14 @@ def error_response(
     request_id: Optional[str] = None,
 ) -> JSONResponse:
     """Create an error response.
-    
+
     Args:
         message: Error message
         code: HTTP status code
         data: Error data
         meta: Additional metadata
         request_id: Request ID for tracking
-        
+
     Returns:
         JSONResponse: Error response
     """
@@ -77,13 +77,13 @@ def error_response(
         meta=meta,
         request_id=request_id,
     )
-    
+
     json_response = JSONResponse(
         content=response.dict(),
         status_code=code,
     )
     setattr(json_response, "is_formatted", True)
-    
+
     return json_response
 
 
@@ -96,7 +96,7 @@ def paginated_response(
     request_id: Optional[str] = None,
 ) -> JSONResponse:
     """Create a paginated response.
-    
+
     Args:
         items: List of items
         pagination: Pagination metadata
@@ -104,7 +104,7 @@ def paginated_response(
         code: HTTP status code
         meta: Additional metadata
         request_id: Request ID for tracking
-        
+
     Returns:
         JSONResponse: Paginated response
     """
@@ -116,13 +116,13 @@ def paginated_response(
         meta=meta,
         request_id=request_id,
     )
-    
+
     json_response = JSONResponse(
         content=response.dict(),
         status_code=code,
     )
     setattr(json_response, "is_formatted", True)
-    
+
     return json_response
 
 
@@ -133,13 +133,13 @@ def created_response(
     request_id: Optional[str] = None,
 ) -> JSONResponse:
     """Create a 201 Created response.
-    
+
     Args:
         data: Response data
         message: Success message
         meta: Additional metadata
         request_id: Request ID for tracking
-        
+
     Returns:
         JSONResponse: Created response
     """
@@ -154,11 +154,11 @@ def created_response(
 
 def no_content_response() -> JSONResponse:
     """Create a 204 No Content response.
-    
+
     Returns:
         JSONResponse: No content response
     """
     return success_response(
         message="No content",
         code=status.HTTP_204_NO_CONTENT,
-  )
+    )

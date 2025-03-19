@@ -17,7 +17,7 @@ from .models import (
     PositionGroup,
     ValidationResult,
     ValidationStatus,
-    Vehicle
+    Vehicle,
 )
 from .exceptions import ParsingError
 
@@ -37,41 +37,51 @@ class FitmentParser:
         # Common position patterns
         self.position_patterns = {
             "left_right": {
-                re.compile(r'\b(?:left|driver[\'s]* side)\b', re.IGNORECASE): Position.LEFT,
-                re.compile(r'\b(?:right|passenger[\'s]* side)\b', re.IGNORECASE): Position.RIGHT,
-                re.compile(r'\b(?:left|driver[\'s]* side).+(?:right|passenger[\'s]* side)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:right|passenger[\'s]* side).+(?:left|driver[\'s]* side)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:left|right)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:left or right)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:left and right)\b', re.IGNORECASE): "BOTH",
+                re.compile(
+                    r"\b(?:left|driver[\'s]* side)\b", re.IGNORECASE
+                ): Position.LEFT,
+                re.compile(
+                    r"\b(?:right|passenger[\'s]* side)\b", re.IGNORECASE
+                ): Position.RIGHT,
+                re.compile(
+                    r"\b(?:left|driver[\'s]* side).+(?:right|passenger[\'s]* side)\b",
+                    re.IGNORECASE,
+                ): "BOTH",
+                re.compile(
+                    r"\b(?:right|passenger[\'s]* side).+(?:left|driver[\'s]* side)\b",
+                    re.IGNORECASE,
+                ): "BOTH",
+                re.compile(r"\b(?:left|right)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:left or right)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:left and right)\b", re.IGNORECASE): "BOTH",
             },
             "front_rear": {
-                re.compile(r'\bfront\b', re.IGNORECASE): Position.FRONT,
-                re.compile(r'\brear\b', re.IGNORECASE): Position.REAR,
-                re.compile(r'\bfront.+rear\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\brear.+front\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:front|rear)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:front or rear)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:front and rear)\b', re.IGNORECASE): "BOTH",
+                re.compile(r"\bfront\b", re.IGNORECASE): Position.FRONT,
+                re.compile(r"\brear\b", re.IGNORECASE): Position.REAR,
+                re.compile(r"\bfront.+rear\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\brear.+front\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:front|rear)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:front or rear)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:front and rear)\b", re.IGNORECASE): "BOTH",
             },
             "upper_lower": {
-                re.compile(r'\bupper\b', re.IGNORECASE): Position.UPPER,
-                re.compile(r'\blower\b', re.IGNORECASE): Position.LOWER,
-                re.compile(r'\bupper.+lower\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\blower.+upper\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:upper|lower)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:upper or lower)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:upper and lower)\b', re.IGNORECASE): "BOTH",
+                re.compile(r"\bupper\b", re.IGNORECASE): Position.UPPER,
+                re.compile(r"\blower\b", re.IGNORECASE): Position.LOWER,
+                re.compile(r"\bupper.+lower\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\blower.+upper\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:upper|lower)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:upper or lower)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:upper and lower)\b", re.IGNORECASE): "BOTH",
             },
             "inner_outer": {
-                re.compile(r'\binner\b', re.IGNORECASE): Position.INNER,
-                re.compile(r'\bouter\b', re.IGNORECASE): Position.OUTER,
-                re.compile(r'\binner.+outer\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\bouter.+inner\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:inner|outer)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:inner or outer)\b', re.IGNORECASE): "BOTH",
-                re.compile(r'\b(?:inner and outer)\b', re.IGNORECASE): "BOTH",
-            }
+                re.compile(r"\binner\b", re.IGNORECASE): Position.INNER,
+                re.compile(r"\bouter\b", re.IGNORECASE): Position.OUTER,
+                re.compile(r"\binner.+outer\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\bouter.+inner\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:inner|outer)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:inner or outer)\b", re.IGNORECASE): "BOTH",
+                re.compile(r"\b(?:inner and outer)\b", re.IGNORECASE): "BOTH",
+            },
         }
 
     def parse_application(self, application_text: str) -> PartApplication:
@@ -88,7 +98,7 @@ class FitmentParser:
             ParsingError: If the application text cannot be parsed
         """
         # Remove trailing semicolon if present
-        if application_text.endswith(';'):
+        if application_text.endswith(";"):
             application_text = application_text[:-1]
 
         try:
@@ -109,7 +119,7 @@ class FitmentParser:
         Raises:
             ParsingError: If the year range cannot be parsed
         """
-        pattern = r'(\d{4})-(\d{4})'
+        pattern = r"(\d{4})-(\d{4})"
         match = re.match(pattern, year_text)
 
         if not match:
@@ -158,7 +168,7 @@ class FitmentParser:
                 result = []
 
                 for mapping in mappings:
-                    parts = mapping.split('|')
+                    parts = mapping.split("|")
                     if len(parts) != 3:
                         # Skip invalid format
                         continue
@@ -214,7 +224,7 @@ class FitmentParser:
             "left_right": Position.NA,
             "front_rear": Position.NA,
             "upper_lower": Position.NA,
-            "inner_outer": Position.NA
+            "inner_outer": Position.NA,
         }
 
         multiple_positions = []
@@ -225,25 +235,35 @@ class FitmentParser:
                 if pattern.search(position_text):
                     if value == "BOTH":
                         if position_type == "left_right":
-                            multiple_positions.append(("left_right", [Position.LEFT, Position.RIGHT]))
+                            multiple_positions.append(
+                                ("left_right", [Position.LEFT, Position.RIGHT])
+                            )
                         elif position_type == "front_rear":
-                            multiple_positions.append(("front_rear", [Position.FRONT, Position.REAR]))
+                            multiple_positions.append(
+                                ("front_rear", [Position.FRONT, Position.REAR])
+                            )
                         elif position_type == "upper_lower":
-                            multiple_positions.append(("upper_lower", [Position.UPPER, Position.LOWER]))
+                            multiple_positions.append(
+                                ("upper_lower", [Position.UPPER, Position.LOWER])
+                            )
                         elif position_type == "inner_outer":
-                            multiple_positions.append(("inner_outer", [Position.INNER, Position.OUTER]))
+                            multiple_positions.append(
+                                ("inner_outer", [Position.INNER, Position.OUTER])
+                            )
                     else:
                         position_values[position_type] = value
                     break
 
         # If no multiple positions, return a single PositionGroup
         if not multiple_positions:
-            return [PositionGroup(
-                front_rear=position_values["front_rear"],
-                left_right=position_values["left_right"],
-                upper_lower=position_values["upper_lower"],
-                inner_outer=position_values["inner_outer"]
-            )]
+            return [
+                PositionGroup(
+                    front_rear=position_values["front_rear"],
+                    left_right=position_values["left_right"],
+                    upper_lower=position_values["upper_lower"],
+                    inner_outer=position_values["inner_outer"],
+                )
+            ]
 
         # Handle multiple positions by generating all combinations
         position_groups = []
@@ -251,10 +271,12 @@ class FitmentParser:
             front_rear=position_values["front_rear"],
             left_right=position_values["left_right"],
             upper_lower=position_values["upper_lower"],
-            inner_outer=position_values["inner_outer"]
+            inner_outer=position_values["inner_outer"],
         )
 
-        self._expand_position_combinations(position_groups, current_group, multiple_positions, 0)
+        self._expand_position_combinations(
+            position_groups, current_group, multiple_positions, 0
+        )
         return position_groups
 
     def _expand_position_combinations(
@@ -262,7 +284,7 @@ class FitmentParser:
         result: List[PositionGroup],
         current_group: PositionGroup,
         multiple_positions: List[Tuple[str, List[Position]]],
-        index: int
+        index: int,
     ) -> None:
         """
         Recursively expand all position combinations.
@@ -275,12 +297,14 @@ class FitmentParser:
         """
         if index >= len(multiple_positions):
             # Add a copy of the current group to results
-            result.append(PositionGroup(
-                front_rear=current_group.front_rear,
-                left_right=current_group.left_right,
-                upper_lower=current_group.upper_lower,
-                inner_outer=current_group.inner_outer
-            ))
+            result.append(
+                PositionGroup(
+                    front_rear=current_group.front_rear,
+                    left_right=current_group.left_right,
+                    upper_lower=current_group.upper_lower,
+                    inner_outer=current_group.inner_outer,
+                )
+            )
             return
 
         position_type, values = multiple_positions[index]
@@ -291,7 +315,7 @@ class FitmentParser:
                 front_rear=current_group.front_rear,
                 left_right=current_group.left_right,
                 upper_lower=current_group.upper_lower,
-                inner_outer=current_group.inner_outer
+                inner_outer=current_group.inner_outer,
             )
 
             # Update the specific position
@@ -305,7 +329,9 @@ class FitmentParser:
                 new_group.inner_outer = value
 
             # Recursive call to handle the next position type
-            self._expand_position_combinations(result, new_group, multiple_positions, index + 1)
+            self._expand_position_combinations(
+                result, new_group, multiple_positions, index + 1
+            )
 
     def process_application(self, part_app: PartApplication) -> List[PartFitment]:
         """
@@ -344,15 +370,10 @@ class FitmentParser:
             for model_map in model_mappings:
                 for position_group in position_groups:
                     vehicle = Vehicle(
-                        year=year,
-                        make=model_map["make"],
-                        model=model_map["model"]
+                        year=year, make=model_map["make"], model=model_map["model"]
                     )
 
-                    fitment = PartFitment(
-                        vehicle=vehicle,
-                        positions=position_group
-                    )
+                    fitment = PartFitment(vehicle=vehicle, positions=position_group)
 
                     fitments.append(fitment)
 

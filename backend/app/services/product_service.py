@@ -12,6 +12,7 @@ from app.schemas.product import ProductCreate, ProductUpdate
 # Get error service
 error_service = get_dependency("error_service")
 
+
 class ProductService:
     """Service for product operations."""
 
@@ -26,9 +27,7 @@ class ProductService:
 
         # Use error service instead of direct exception
         return error_service.ensure_not_none(
-            product,
-            resource_type="Product",
-            resource_id=str(product_id)
+            product, resource_type="Product", resource_id=str(product_id)
         )
 
     async def create_product(self, data: ProductCreate) -> Product:
@@ -43,11 +42,11 @@ class ProductService:
             raise error_service.resource_already_exists(
                 resource_type="Product",
                 identifier=data.part_number,
-                field="part_number"
+                field="part_number",
             )
 
         # Create product
-        product = Product(**data.dict())
+        product = Product(**data.model_dump())
         self.db.add(product)
         await self.db.commit()
         await self.db.refresh(product)

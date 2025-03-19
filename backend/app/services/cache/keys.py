@@ -90,7 +90,7 @@ def process_args(
     parameters = list(sig.parameters.values())
 
     # Handle self/cls for methods
-    if args and parameters and parameters[0].name in ('self', 'cls'):
+    if args and parameters and parameters[0].name in ("self", "cls"):
         # For methods, skip the first argument (self/cls)
         args_list = args_list[1:]
         parameters = parameters[1:]
@@ -129,16 +129,12 @@ def serialize_for_key(value: Any) -> str:
         if callable(value):
             # For callables, use the qualified name
             return f"func:{value.__module__}.{value.__qualname__}"
-        elif hasattr(value, '__dict__'):
+        elif hasattr(value, "__dict__"):
             # For objects with __dict__, use a stable representation
             return f"obj:{value.__class__.__name__}:{id(value)}"
 
         # Try to serialize to JSON for everything else
-        return json.dumps(
-            value,
-            sort_keys=True,
-            default=_json_default
-        )
+        return json.dumps(value, sort_keys=True, default=_json_default)
     except (TypeError, ValueError):
         # Fall back to string representation and ID
         return f"{str(value)}:{id(value)}"
@@ -154,10 +150,10 @@ def _json_default(obj: Any) -> Any:
     Returns:
         A serializable representation
     """
-    if hasattr(obj, '__dict__'):
+    if hasattr(obj, "__dict__"):
         # For objects, use their class name and id
         return f"obj:{obj.__class__.__name__}:{id(obj)}"
-    elif hasattr(obj, '__str__'):
+    elif hasattr(obj, "__str__"):
         # For objects with string representation
         return str(obj)
     else:
@@ -190,6 +186,6 @@ def make_prefixed_key(prefix: str, key: str) -> str:
     Returns:
         Prefixed cache key
     """
-    if not prefix.endswith(':'):
+    if not prefix.endswith(":"):
         prefix = f"{prefix}:"
     return f"{prefix}{key}"

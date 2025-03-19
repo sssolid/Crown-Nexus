@@ -26,7 +26,7 @@ from app.services.pagination.base import (
     PaginationProvider,
     PaginationResult,
     SortDirection,
-    SortField
+    SortField,
 )
 
 logger = get_logger("app.services.pagination.providers.cursor")
@@ -38,11 +38,7 @@ R = TypeVar("R")  # Result type
 class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
     """Provider for cursor-based pagination."""
 
-    def __init__(
-        self,
-        db: AsyncSession,
-        model_class: type[DeclarativeMeta]
-    ) -> None:
+    def __init__(self, db: AsyncSession, model_class: type[DeclarativeMeta]) -> None:
         """Initialize the cursor pagination provider.
 
         Args:
@@ -57,7 +53,7 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
         self,
         query: Select,
         params: Any,
-        transform_func: Optional[Callable[[T], R]] = None
+        transform_func: Optional[Callable[[T], R]] = None,
     ) -> PaginationResult[R]:
         """Not supported by this provider - use OffsetPaginationProvider instead.
 
@@ -73,7 +69,7 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
         self,
         query: Select,
         params: CursorPaginationParams,
-        transform_func: Optional[Callable[[T], R]] = None
+        transform_func: Optional[Callable[[T], R]] = None,
     ) -> PaginationResult[R]:
         """Paginate query results using cursor-based pagination.
 
@@ -89,7 +85,9 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
             ValidationException: If pagination parameters are invalid
         """
         # Ensure we have at least one sort field
-        sort_fields = params.sort or [SortField(field="id", direction=SortDirection.ASC)]
+        sort_fields = params.sort or [
+            SortField(field="id", direction=SortDirection.ASC)
+        ]
 
         # Decode cursor if provided
         cursor_values = None
@@ -101,11 +99,13 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
                 raise ValidationException(
                     message="Invalid cursor format",
                     code="VALIDATION_ERROR",
-                    details=[{
-                        "loc": ["cursor"],
-                        "msg": "Invalid cursor format",
-                        "type": "value_error.cursor_format"
-                    }]
+                    details=[
+                        {
+                            "loc": ["cursor"],
+                            "msg": "Invalid cursor format",
+                            "type": "value_error.cursor_format",
+                        }
+                    ],
                 )
 
         # Store original query for counting if needed
@@ -133,7 +133,7 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
         # Check if there are more items
         has_next = len(items) > params.limit
         if has_next:
-            items = items[:params.limit]  # Remove the extra item
+            items = items[: params.limit]  # Remove the extra item
 
         # Generate next cursor
         next_cursor = None
@@ -175,11 +175,13 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
                 raise ValidationException(
                     message=f"Invalid sort field: {field_name}",
                     code="VALIDATION_ERROR",
-                    details=[{
-                        "loc": ["sort", "field"],
-                        "msg": f"Invalid sort field: {field_name}",
-                        "type": "value_error.sort_field"
-                    }]
+                    details=[
+                        {
+                            "loc": ["sort", "field"],
+                            "msg": f"Invalid sort field: {field_name}",
+                            "type": "value_error.sort_field",
+                        }
+                    ],
                 )
 
             column = getattr(self.model_class, field_name)
@@ -225,11 +227,13 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
                 raise ValidationException(
                     message=f"Invalid cursor field: {field_name}",
                     code="VALIDATION_ERROR",
-                    details=[{
-                        "loc": ["cursor", "field"],
-                        "msg": f"Invalid cursor field: {field_name}",
-                        "type": "value_error.cursor_field"
-                    }]
+                    details=[
+                        {
+                            "loc": ["cursor", "field"],
+                            "msg": f"Invalid cursor field: {field_name}",
+                            "type": "value_error.cursor_field",
+                        }
+                    ],
                 )
 
             column = getattr(self.model_class, field_name)
@@ -244,7 +248,7 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
                     conditions.append(column < value)
             else:
                 # Subsequent fields use equality for previous fields
-                previous_field = sort_fields[i-1].field
+                previous_field = sort_fields[i - 1].field
                 previous_column = getattr(self.model_class, previous_field)
                 previous_value = cursor_values[previous_field]
 
@@ -291,7 +295,7 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
 
         # Encode cursor as base64
         cursor_json = json.dumps(cursor_data)
-        return base64.b64encode(cursor_json.encode('utf-8')).decode('utf-8')
+        return base64.b64encode(cursor_json.encode("utf-8")).decode("utf-8")
 
     def _decode_cursor(self, cursor: str) -> Dict[str, Any]:
         """Decode a cursor into values.
@@ -306,7 +310,7 @@ class CursorPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
             ValueError: If cursor format is invalid
         """
         try:
-            cursor_json = base64.b64decode(cursor.encode('utf-8')).decode('utf-8')
+            cursor_json = base64.b64decode(cursor.encode("utf-8")).decode("utf-8")
             return json.loads(cursor_json)
         except Exception as e:
             raise ValueError(f"Invalid cursor format: {str(e)}")

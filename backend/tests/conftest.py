@@ -5,7 +5,17 @@ import asyncio
 import os
 import uuid
 from datetime import datetime
-from typing import Any, AsyncGenerator, Callable, Dict, Generator, List, Optional, Type, TypeVar
+from typing import (
+    Any,
+    AsyncGenerator,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+)
 
 import pytest
 import pytest_asyncio
@@ -45,6 +55,7 @@ TestingSessionLocal = sessionmaker(
     autoflush=False,
 )
 
+
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     """Create an instance of the default event loop for each test case.
@@ -57,6 +68,7 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
 
 @pytest_asyncio.fixture(scope="session")
 async def setup_db() -> AsyncGenerator[None, None]:
@@ -79,6 +91,7 @@ async def setup_db() -> AsyncGenerator[None, None]:
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
+
 @pytest_asyncio.fixture(scope="function")
 async def db(setup_db) -> AsyncGenerator[AsyncSession, None]:
     """Create a fresh database session for a test.
@@ -100,6 +113,7 @@ async def db(setup_db) -> AsyncGenerator[AsyncSession, None]:
             # Rollback the transaction after test
             await session.rollback()
 
+
 @pytest_asyncio.fixture(scope="function")
 async def client(db) -> AsyncGenerator[AsyncClient, None]:
     """Create a test client with the database session.
@@ -113,6 +127,7 @@ async def client(db) -> AsyncGenerator[AsyncClient, None]:
     Yields:
         AsyncClient: Test client for async API requests
     """
+
     # Override the get_db dependency
     async def override_get_db():
         yield db
@@ -125,6 +140,7 @@ async def client(db) -> AsyncGenerator[AsyncClient, None]:
 
     # Clear dependency overrides
     app.dependency_overrides.clear()
+
 
 @pytest_asyncio.fixture(scope="function")
 async def normal_user(db) -> User:
@@ -152,6 +168,7 @@ async def normal_user(db) -> User:
     await db.refresh(user)
     return user
 
+
 @pytest_asyncio.fixture(scope="function")
 async def admin_user(db) -> User:
     """Create a test admin user.
@@ -178,6 +195,7 @@ async def admin_user(db) -> User:
     await db.refresh(user)
     return user
 
+
 @pytest_asyncio.fixture(scope="function")
 async def user_token(normal_user) -> str:
     """Create an authentication token for normal user.
@@ -196,8 +214,9 @@ async def user_token(normal_user) -> str:
         "access",
         expires_delta=None,
         role=normal_user.role.value,
-        user_data={"email": normal_user.email}
+        user_data={"email": normal_user.email},
     )
+
 
 @pytest_asyncio.fixture(scope="function")
 async def admin_token(admin_user) -> str:
@@ -217,8 +236,9 @@ async def admin_token(admin_user) -> str:
         "access",
         expires_delta=None,
         role=admin_user.role.value,
-        user_data={"email": admin_user.email}
+        user_data={"email": admin_user.email},
     )
+
 
 @pytest_asyncio.fixture(scope="function")
 async def auth_headers(user_token: str) -> Dict[str, str]:
@@ -234,6 +254,7 @@ async def auth_headers(user_token: str) -> Dict[str, str]:
     """
     return {"Authorization": f"Bearer {user_token}"}
 
+
 @pytest_asyncio.fixture(scope="function")
 async def admin_headers(admin_token: str) -> Dict[str, str]:
     """Create headers with admin authentication token.
@@ -247,6 +268,7 @@ async def admin_headers(admin_token: str) -> Dict[str, str]:
         Dict[str, str]: Headers with admin authentication token
     """
     return {"Authorization": f"Bearer {admin_token}"}
+
 
 @pytest_asyncio.fixture(scope="function")
 async def test_company(db) -> Company:
@@ -272,6 +294,7 @@ async def test_company(db) -> Company:
     await db.refresh(company)
     return company
 
+
 @pytest_asyncio.fixture(scope="function")
 async def test_brand(db) -> Brand:
     """Create a test brand.
@@ -292,6 +315,7 @@ async def test_brand(db) -> Brand:
     await db.commit()
     await db.refresh(brand)
     return brand
+
 
 @pytest_asyncio.fixture(scope="function")
 async def test_product(db, test_brand) -> Product:
@@ -321,6 +345,7 @@ async def test_product(db, test_brand) -> Product:
     await db.commit()
     await db.refresh(product)
     return product
+
 
 @pytest_asyncio.fixture(scope="function")
 async def test_fitment(db) -> Fitment:

@@ -44,7 +44,9 @@ class ValidationService(ServiceInterface):
         """Shutdown the validation service."""
         self.logger.debug("Shutting down validation service")
 
-    def validate_data(self, data: Dict[str, Any], schema_class: Type[BaseModel]) -> BaseModel:
+    def validate_data(
+        self, data: Dict[str, Any], schema_class: Type[BaseModel]
+    ) -> BaseModel:
         """Validate data against a Pydantic schema.
 
         Args:
@@ -66,16 +68,22 @@ class ValidationService(ServiceInterface):
             errors = []
             for error in e.errors():
                 errors.append(
-                    {"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]}
+                    {
+                        "loc": list(error["loc"]),
+                        "msg": error["msg"],
+                        "type": error["type"],
+                    }
                 )
             raise ValidationException(
                 "Validation error",
-                code=ErrorCode.VALIDATION_ERROR,
-                details={"errors": errors}
+                details={"errors": errors},
             )
 
     def validate_model(
-        self, model: BaseModel, include: Optional[Set[str]] = None, exclude: Optional[Set[str]] = None
+        self,
+        model: BaseModel,
+        include: Optional[Set[str]] = None,
+        exclude: Optional[Set[str]] = None,
     ) -> None:
         """Validate a Pydantic model instance.
 
@@ -89,19 +97,22 @@ class ValidationService(ServiceInterface):
         """
         try:
             # Use Pydantic's validate method with potential field filtering
-            model_dict = model.dict(include=include, exclude=exclude)
+            model_dict = model.model_dump(include=include, exclude=exclude)
             model.__class__(**model_dict)
         except ValidationError as e:
             self.logger.warning(f"Model validation error: {str(e)}")
             errors = []
             for error in e.errors():
                 errors.append(
-                    {"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]}
+                    {
+                        "loc": list(error["loc"]),
+                        "msg": error["msg"],
+                        "type": error["type"],
+                    }
                 )
             raise ValidationException(
                 "Model validation error",
-                code=ErrorCode.VALIDATION_ERROR,
-                details={"errors": errors}
+                details={"errors": errors},
             )
 
     def validate_email(self, email: str) -> bool:
@@ -155,7 +166,10 @@ class ValidationService(ServiceInterface):
         return result.is_valid
 
     def validate_length(
-        self, value: str, min_length: Optional[int] = None, max_length: Optional[int] = None
+        self,
+        value: str,
+        min_length: Optional[int] = None,
+        max_length: Optional[int] = None,
     ) -> bool:
         """Validate the length of a string.
 
@@ -219,7 +233,12 @@ class ValidationService(ServiceInterface):
         return result.is_valid
 
     async def validate_unique(
-        self, field: str, value: Any, model: Any, db: AsyncSession, exclude_id: Optional[str] = None
+        self,
+        field: str,
+        value: Any,
+        model: Any,
+        db: AsyncSession,
+        exclude_id: Optional[str] = None,
     ) -> bool:
         """Validate that a value is unique in the database.
 
@@ -299,7 +318,7 @@ class ValidationService(ServiceInterface):
         require_lowercase: bool = True,
         require_uppercase: bool = True,
         require_digit: bool = True,
-        require_special: bool = True
+        require_special: bool = True,
     ) -> bool:
         """Validate password strength.
 
@@ -321,7 +340,7 @@ class ValidationService(ServiceInterface):
             require_lowercase=require_lowercase,
             require_uppercase=require_uppercase,
             require_digit=require_digit,
-            require_special=require_special
+            require_special=require_special,
         )
         return result.is_valid
 
@@ -357,11 +376,13 @@ class ValidationService(ServiceInterface):
             # Skip validation if field is not in data and not required
             if field not in data:
                 if field_rules.get("required", False):
-                    all_errors.append({
-                        "loc": [field],
-                        "msg": "Field is required",
-                        "type": "value_error.missing"
-                    })
+                    all_errors.append(
+                        {
+                            "loc": [field],
+                            "msg": "Field is required",
+                            "type": "value_error.missing",
+                        }
+                    )
                 continue
 
             value = data[field]
@@ -389,11 +410,7 @@ class ValidationService(ServiceInterface):
 
         return len(all_errors) == 0, all_errors
 
-    def create_validator(
-        self,
-        rule_type: str,
-        **params: Any
-    ) -> Callable[[Any], bool]:
+    def create_validator(self, rule_type: str, **params: Any) -> Callable[[Any], bool]:
         """Create a validator function based on a rule type and parameters.
 
         Args:
@@ -420,6 +437,7 @@ class ValidationService(ServiceInterface):
         """
         ValidatorFactory.register_validator(name, validator_class)
         self.logger.debug(f"Registered custom validator: {name}")
+
 
 # Fix imports for methods in the class
 from datetime import date, datetime

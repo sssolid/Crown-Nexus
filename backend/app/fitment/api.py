@@ -7,29 +7,35 @@ This module provides the FastAPI endpoints for the fitment module.
 from __future__ import annotations
 
 import json
-import logging
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Body, Depends, File, HTTPException, Path, Query, UploadFile, status
-from fastapi.responses import JSONResponse
+from fastapi import (
+    APIRouter,
+    Body,
+    Depends,
+    File,
+    HTTPException,
+    Path,
+    Query,
+    UploadFile,
+    status,
+)
 from pydantic import BaseModel, Field
 
 from app.schemas.model_mapping import ModelMapping as ModelMappingSchema
-from app.schemas.model_mapping import ModelMappingCreate, ModelMappingList, ModelMappingUpdate
-
-from .exceptions import (
-    ConfigurationError,
-    DatabaseError,
-    FitmentError,
-    MappingError,
-    ParsingError,
-    ValidationError
+from app.schemas.model_mapping import (
+    ModelMappingCreate,
+    ModelMappingList,
+    ModelMappingUpdate,
 )
+
+from .exceptions import ConfigurationError, FitmentError
 from .mapper import FitmentMappingEngine
 from .models import ValidationStatus
 
+from app.core.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.fitment.api")
 
 router = APIRouter(prefix="/api/v1/fitment", tags=["fitment"])
 
@@ -112,14 +118,14 @@ def get_mapping_engine():
         logger.error(f"Failed to get mapping engine: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Fitment mapping engine not available"
+            detail="Fitment mapping engine not available",
         ) from e
 
 
 @router.post("/process", response_model=ProcessFitmentResponse)
 async def process_fitment(
     request: ProcessFitmentRequest = Body(...),
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Process fitment application texts.
@@ -137,8 +143,7 @@ async def process_fitment(
     try:
         # Process the applications
         results = mapping_engine.batch_process_applications(
-            request.application_texts,
-            request.part_terminology_id
+            request.application_texts, request.part_terminology_id
         )
 
         # Count results by status
@@ -174,26 +179,26 @@ async def process_fitment(
             "results": serialized_results,
             "valid_count": valid_count,
             "warning_count": warning_count,
-            "error_count": error_count
+            "error_count": error_count,
         }
     except FitmentError as e:
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
 
 
 @router.post("/upload-model-mappings", response_model=UploadModelMappingsResponse)
 async def upload_model_mappings(
     file: UploadFile = File(...),
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Upload model mappings JSON file.
@@ -213,7 +218,7 @@ async def upload_model_mappings(
         if not file.filename or not file.filename.endswith(".json"):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid file format. Please upload a JSON file (.json)"
+                detail="Invalid file format. Please upload a JSON file (.json)",
             )
 
         # Read the file content
@@ -221,36 +226,39 @@ async def upload_model_mappings(
 
         try:
             # Parse JSON
-            json_data = json.loads(content.decode('utf-8'))
+            json_data = json.loads(content.decode("utf-8"))
 
             # Import mappings to database
-            mapping_count = await mapping_engine.db_service.import_mappings_from_json(json_data)
+            mapping_count = await mapping_engine.db_service.import_mappings_from_json(
+                json_data
+            )
 
             # Refresh mappings in the engine
             await mapping_engine.refresh_mappings()
 
             return {
                 "message": "Model mappings uploaded and configured successfully",
-                "mapping_count": mapping_count
+                "mapping_count": mapping_count,
             }
         except json.JSONDecodeError as e:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Invalid JSON format: {str(e)}"
+                detail=f"Invalid JSON format: {str(e)}",
             )
 
     except FitmentError as e:
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
+
 
 @router.get("/model-mappings", response_model=ModelMappingList)
 async def list_model_mappings(
@@ -259,7 +267,7 @@ async def list_model_mappings(
     limit: int = Query(100, gt=0, le=1000),
     pattern: Optional[str] = None,
     sort_by: Optional[str] = None,
-    sort_order: Optional[str] = None
+    sort_order: Optional[str] = None,
 ):
     """
     List model mappings from database.
@@ -303,19 +311,21 @@ async def list_model_mappings(
                     "priority": ModelMapping.priority,
                     "active": ModelMapping.active,
                     "created_at": ModelMapping.created_at,
-                    "updated_at": ModelMapping.updated_at
+                    "updated_at": ModelMapping.updated_at,
                 }
 
                 sort_field = column_map.get(sort_by, ModelMapping.pattern)
 
                 # Apply sort direction
-                if sort_order and sort_order.lower() == 'desc':
+                if sort_order and sort_order.lower() == "desc":
                     query = query.order_by(desc(sort_field))
                 else:
                     query = query.order_by(asc(sort_field))
             else:
                 # Default sorting
-                query = query.order_by(ModelMapping.pattern, desc(ModelMapping.priority))
+                query = query.order_by(
+                    ModelMapping.pattern, desc(ModelMapping.priority)
+                )
 
             # Add pagination
             query = query.offset(skip).limit(limit)
@@ -324,22 +334,23 @@ async def list_model_mappings(
             result = await session.execute(query)
             items = result.scalars().all()
 
-            return {
-                "items": items,
-                "total": total
-            }
+            return {"items": items, "total": total}
     except Exception as e:
         logger.error(f"Error listing model mappings: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list model mappings: {str(e)}"
+            detail=f"Failed to list model mappings: {str(e)}",
         ) from e
 
 
-@router.post("/model-mappings", response_model=ModelMappingSchema, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/model-mappings",
+    response_model=ModelMappingSchema,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_model_mapping(
     mapping_data: ModelMappingCreate,
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Create a new model mapping.
@@ -357,9 +368,7 @@ async def create_model_mapping(
     try:
         # Create mapping in database
         mapping_id = await mapping_engine.db_service.add_model_mapping(
-            mapping_data.pattern,
-            mapping_data.mapping,
-            mapping_data.priority
+            mapping_data.pattern, mapping_data.mapping, mapping_data.priority
         )
 
         # Refresh mappings in the engine
@@ -373,7 +382,7 @@ async def create_model_mapping(
             if not mapping:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Mapping not found after creation"
+                    detail="Mapping not found after creation",
                 )
 
             return mapping
@@ -383,13 +392,13 @@ async def create_model_mapping(
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
 
 
@@ -397,7 +406,7 @@ async def create_model_mapping(
 async def update_model_mapping(
     mapping_id: int,
     mapping_data: ModelMappingUpdate,
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Update an existing model mapping.
@@ -419,20 +428,17 @@ async def update_model_mapping(
 
         if not update_data:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No fields to update"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update"
             )
 
         # Update mapping in database
         success = await mapping_engine.db_service.update_model_mapping(
-            mapping_id,
-            **update_data
+            mapping_id, **update_data
         )
 
         if not success:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Mapping not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail="Mapping not found"
             )
 
         # Refresh mappings in the engine
@@ -446,7 +452,7 @@ async def update_model_mapping(
             if not mapping:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Mapping not found after update"
+                    detail="Mapping not found after update",
                 )
 
             return mapping
@@ -456,20 +462,19 @@ async def update_model_mapping(
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
 
 
 @router.delete("/model-mappings/{mapping_id}", status_code=status.HTTP_200_OK)
 async def delete_model_mapping(
-    mapping_id: int,
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_id: int, mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
 ):
     """
     Delete a model mapping.
@@ -490,8 +495,7 @@ async def delete_model_mapping(
 
         if not success:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Mapping not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail="Mapping not found"
             )
 
         # Refresh mappings in the engine
@@ -504,19 +508,19 @@ async def delete_model_mapping(
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
 
 
 @router.post("/refresh-mappings", status_code=status.HTTP_200_OK)
 async def refresh_mappings(
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Refresh model mappings from the database.
@@ -541,20 +545,20 @@ async def refresh_mappings(
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
 
 
 @router.get("/pcdb-positions/{terminology_id}", response_model=List[Dict[str, Any]])
 async def get_pcdb_positions(
     terminology_id: int = Path(...),
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Get PCDB positions for a part terminology.
@@ -575,34 +579,36 @@ async def get_pcdb_positions(
         # Convert to dictionaries
         serialized = []
         for pos in positions:
-            serialized.append({
-                "id": pos.id,
-                "name": pos.name,
-                "front_rear": pos.front_rear,
-                "left_right": pos.left_right,
-                "upper_lower": pos.upper_lower,
-                "inner_outer": pos.inner_outer
-            })
+            serialized.append(
+                {
+                    "id": pos.id,
+                    "name": pos.name,
+                    "front_rear": pos.front_rear,
+                    "left_right": pos.left_right,
+                    "upper_lower": pos.upper_lower,
+                    "inner_outer": pos.inner_outer,
+                }
+            )
 
         return serialized
     except FitmentError as e:
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e
 
 
 @router.post("/parse-application", response_model=Dict[str, Any])
 async def parse_application(
     application_text: str = Body(..., embed=True),
-    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine)
+    mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
 ):
     """
     Parse a part application text.
@@ -628,17 +634,17 @@ async def parse_application(
             "year_range": part_app.year_range,
             "vehicle_text": part_app.vehicle_text,
             "position_text": part_app.position_text,
-            "additional_notes": part_app.additional_notes
+            "additional_notes": part_app.additional_notes,
         }
     except FitmentError as e:
         logger.error(f"Fitment error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "details": e.details}
+            detail={"message": str(e), "details": e.details},
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
+            detail=f"An unexpected error occurred: {str(e)}",
         ) from e

@@ -29,7 +29,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
-    func
+    func,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -50,6 +50,7 @@ class ChemicalType(str, Enum):
     Defines the categories of chemical hazards recognized by
     California's Proposition 65.
     """
+
     CARCINOGEN = "Carcinogen"
     REPRODUCTIVE_TOXICANT = "Reproductive Toxicant"
     BOTH = "Both"
@@ -62,6 +63,7 @@ class ExposureScenario(str, Enum):
     Defines the different contexts in which chemical exposure
     might occur.
     """
+
     CONSUMER = "Consumer"
     OCCUPATIONAL = "Occupational"
     ENVIRONMENTAL = "Environmental"
@@ -73,6 +75,7 @@ class ApprovalStatus(str, Enum):
 
     Defines the possible states of a regulatory approval.
     """
+
     APPROVED = "Approved"
     PENDING = "Pending"
     REVOKED = "Revoked"
@@ -86,6 +89,7 @@ class TransportRestriction(str, Enum):
     Defines the possible transportation restrictions for
     hazardous materials.
     """
+
     NONE = "NONE"
     AIR = "AIR"
     GROUND = "GROUND"
@@ -107,14 +111,13 @@ class Prop65Chemical(Base):
         exposure_limit: Exposure limit if applicable
         updated_at: Last update timestamp
     """
+
     __tablename__ = "prop65_chemical"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(255), nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     cas_number: Mapped[str] = mapped_column(
         String(20), nullable=False, unique=True, index=True
     )
@@ -129,8 +132,12 @@ class Prop65Chemical(Base):
     )
 
     # Relationships
-    warnings: Mapped[List["Warning"]] = relationship("Warning", back_populates="chemical")
-    products: Mapped[List["ProductChemical"]] = relationship("ProductChemical", back_populates="chemical")
+    warnings: Mapped[List["Warning"]] = relationship(
+        "Warning", back_populates="chemical"
+    )
+    products: Mapped[List["ProductChemical"]] = relationship(
+        "ProductChemical", back_populates="chemical"
+    )
 
     def __repr__(self) -> str:
         """
@@ -155,6 +162,7 @@ class Warning(Base):
         warning_text: Warning text
         last_updated: Last update timestamp
     """
+
     __tablename__ = "warning"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -166,16 +174,16 @@ class Warning(Base):
     chemical_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("prop65_chemical.id"), nullable=False, index=True
     )
-    warning_text: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
+    warning_text: Mapped[str] = mapped_column(Text, nullable=False)
     last_updated: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     # Relationships
     product: Mapped["Product"] = relationship("Product")
-    chemical: Mapped["Prop65Chemical"] = relationship("Prop65Chemical", back_populates="warnings")
+    chemical: Mapped["Prop65Chemical"] = relationship(
+        "Prop65Chemical", back_populates="warnings"
+    )
 
     def __repr__(self) -> str:
         """
@@ -184,7 +192,9 @@ class Warning(Base):
         Returns:
             str: Warning representation
         """
-        return f"<Warning for Product {self.product_id} and Chemical {self.chemical_id}>"
+        return (
+            f"<Warning for Product {self.product_id} and Chemical {self.chemical_id}>"
+        )
 
 
 class ProductChemical(Base):
@@ -202,6 +212,7 @@ class ProductChemical(Base):
         warning_required: Whether a warning is required
         warning_label: Warning text for label
     """
+
     __tablename__ = "product_chemical"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -219,13 +230,13 @@ class ProductChemical(Base):
     warning_required: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=expression.false(), nullable=False
     )
-    warning_label: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    warning_label: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Relationships
     product: Mapped["Product"] = relationship("Product")
-    chemical: Mapped["Prop65Chemical"] = relationship("Prop65Chemical", back_populates="products")
+    chemical: Mapped["Prop65Chemical"] = relationship(
+        "Prop65Chemical", back_populates="products"
+    )
 
     def __repr__(self) -> str:
         """
@@ -255,6 +266,7 @@ class ProductDOTApproval(Base):
         changed_by_id: User who made the change
         changed_at: When the change occurred
     """
+
     __tablename__ = "product_dot_approval"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -269,18 +281,10 @@ class ProductDOTApproval(Base):
     approval_number: Mapped[Optional[str]] = mapped_column(
         String(100), nullable=True, index=True
     )
-    approved_by: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
-    approval_date: Mapped[Optional[date]] = mapped_column(
-        Date, nullable=True
-    )
-    expiration_date: Mapped[Optional[date]] = mapped_column(
-        Date, nullable=True
-    )
-    reason: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    approved_by: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    approval_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    expiration_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
     )
@@ -318,6 +322,7 @@ class HazardousMaterial(Base):
         restricted_transport: Restrictions (Air, Ground, Sea, None)
         created_at: Creation timestamp
     """
+
     __tablename__ = "hazardous_material"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -332,15 +337,13 @@ class HazardousMaterial(Base):
     hazard_class: Mapped[Optional[str]] = mapped_column(
         String(50), nullable=True, index=True
     )
-    packing_group: Mapped[Optional[str]] = mapped_column(
-        String(10), nullable=True
-    )
-    handling_instructions: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    packing_group: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    handling_instructions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     restricted_transport: Mapped[TransportRestriction] = mapped_column(
-        SQLAEnum(TransportRestriction), default=TransportRestriction.NONE,
-        server_default=TransportRestriction.NONE.value, nullable=False
+        SQLAEnum(TransportRestriction),
+        default=TransportRestriction.NONE,
+        server_default=TransportRestriction.NONE.value,
+        nullable=False,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

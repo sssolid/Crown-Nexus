@@ -40,7 +40,7 @@ class CryptoError(SecurityException):
         message: str,
         code: ErrorCode = ErrorCode.SECURITY_ERROR,
         details: Optional[dict] = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize CryptoError.
 
@@ -76,7 +76,7 @@ def _get_encryption_key() -> bytes:
         salt = settings.CHAT_ENCRYPTION_SALT.encode()
         if not salt:
             logger.warning("Encryption salt not configured, using default")
-            salt = b'crown_nexus_chat_salt'
+            salt = b"crown_nexus_chat_salt"
 
         if not settings.SECRET_KEY:
             error_msg = "SECRET_KEY not configured"
@@ -84,7 +84,7 @@ def _get_encryption_key() -> bytes:
             raise ConfigurationException(
                 message=error_msg,
                 code=ErrorCode.CONFIGURATION_ERROR,
-                details={"missing_setting": "SECRET_KEY"}
+                details={"missing_setting": "SECRET_KEY"},
             )
 
         kdf = PBKDF2HMAC(
@@ -99,8 +99,7 @@ def _get_encryption_key() -> bytes:
     except Exception as e:
         logger.error(f"Failed to derive encryption key: {str(e)}", exc_info=True)
         raise CryptoError(
-            message="Failed to derive encryption key",
-            original_exception=e
+            message="Failed to derive encryption key", original_exception=e
         ) from e
 
 
@@ -111,8 +110,7 @@ try:
 except Exception as e:
     logger.critical("Failed to initialize Fernet encryption", exc_info=True)
     raise CryptoError(
-        message="Failed to initialize encryption system",
-        original_exception=e
+        message="Failed to initialize encryption system", original_exception=e
     ) from e
 
 
@@ -138,8 +136,7 @@ def encrypt_message(message: str) -> str:
     except Exception as e:
         logger.error(f"Encryption failed: {str(e)}", exc_info=True)
         raise CryptoError(
-            message="Failed to encrypt message",
-            original_exception=e
+            message="Failed to encrypt message", original_exception=e
         ) from e
 
 
@@ -168,13 +165,12 @@ def decrypt_message(encrypted_message: str) -> str:
             message="Invalid encryption token",
             code=ErrorCode.SECURITY_ERROR,
             details={"error_type": "invalid_token"},
-            original_exception=e
+            original_exception=e,
         ) from e
     except Exception as e:
         logger.error(f"Decryption failed: {str(e)}", exc_info=True)
         raise CryptoError(
-            message="Failed to decrypt message",
-            original_exception=e
+            message="Failed to decrypt message", original_exception=e
         ) from e
 
 
@@ -203,6 +199,5 @@ def generate_secure_token(length: int = 32) -> str:
     except Exception as e:
         logger.error(f"Failed to generate secure token: {str(e)}", exc_info=True)
         raise CryptoError(
-            message="Failed to generate secure token",
-            original_exception=e
+            message="Failed to generate secure token", original_exception=e
         ) from e

@@ -141,10 +141,7 @@ class MediaService(ServiceInterface):
 
             # Save the file
             file_url = await self.storage.save_file(
-                file,
-                destination,
-                media_type,
-                content_type
+                file, destination, media_type, content_type
             )
 
             # Generate thumbnail for images if requested
@@ -152,7 +149,8 @@ class MediaService(ServiceInterface):
             if (
                 generate_thumbnail
                 and media_type == MediaType.IMAGE
-                and content_type in ["image/jpeg", "image/png", "image/gif", "image/webp"]
+                and content_type
+                in ["image/jpeg", "image/png", "image/gif", "image/webp"]
                 and not content_type.endswith("svg+xml")  # Skip SVG thumbnails
             ):
                 # Calculate path relative to media root
@@ -168,11 +166,10 @@ class MediaService(ServiceInterface):
             logger.warning(
                 "file_upload_validation_failed",
                 filename=getattr(file, "filename", "unknown"),
-                error=str(e)
+                error=str(e),
             )
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=str(e)
+                status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
             ) from e
 
         except MediaStorageError as e:
@@ -181,11 +178,11 @@ class MediaService(ServiceInterface):
                 "file_upload_storage_failed",
                 filename=getattr(file, "filename", "unknown"),
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Storage error: {str(e)}"
+                detail=f"Storage error: {str(e)}",
             ) from e
 
         except Exception as e:
@@ -194,11 +191,11 @@ class MediaService(ServiceInterface):
                 "file_upload_unexpected_error",
                 filename=getattr(file, "filename", "unknown"),
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Unexpected error: {str(e)}"
+                detail=f"Unexpected error: {str(e)}",
             ) from e
 
     async def delete_file(self, file_url: str) -> bool:
@@ -220,19 +217,20 @@ class MediaService(ServiceInterface):
             # Extract relative path from URL
             media_url = settings.media_base_url
             if file_url.startswith(media_url):
-                rel_path = file_url[len(media_url):]
+                rel_path = file_url[len(media_url) :]
             else:
                 # Try to extract path from any URL format
                 from urllib.parse import urlparse
+
                 parsed_url = urlparse(file_url)
                 rel_path = parsed_url.path
 
                 # Remove any leading media path
                 if rel_path.startswith(settings.MEDIA_URL):
-                    rel_path = rel_path[len(settings.MEDIA_URL):]
+                    rel_path = rel_path[len(settings.MEDIA_URL) :]
 
                 # Remove any leading slash
-                if rel_path.startswith('/'):
+                if rel_path.startswith("/"):
                     rel_path = rel_path[1:]
 
             # Check if file exists
@@ -246,7 +244,10 @@ class MediaService(ServiceInterface):
             # Try to delete thumbnail if it exists
             try:
                 # Check if this is an image that might have a thumbnail
-                if any(ext in rel_path.lower() for ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']):
+                if any(
+                    ext in rel_path.lower()
+                    for ext in [".jpg", ".jpeg", ".png", ".gif", ".webp"]
+                ):
                     # Extract filename
                     filename = Path(rel_path).name
 
@@ -263,9 +264,7 @@ class MediaService(ServiceInterface):
             except Exception as e:
                 # Log but don't fail if thumbnail deletion fails
                 logger.warning(
-                    "thumbnail_deletion_failed",
-                    original_path=rel_path,
-                    error=str(e)
+                    "thumbnail_deletion_failed", original_path=rel_path, error=str(e)
                 )
 
             return result
@@ -280,11 +279,11 @@ class MediaService(ServiceInterface):
                 "file_deletion_storage_failed",
                 url=file_url,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Storage error: {str(e)}"
+                detail=f"Storage error: {str(e)}",
             ) from e
 
         except Exception as e:
@@ -293,11 +292,11 @@ class MediaService(ServiceInterface):
                 "file_deletion_unexpected_error",
                 url=file_url,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Unexpected error: {str(e)}"
+                detail=f"Unexpected error: {str(e)}",
             ) from e
 
     def _sanitize_filename(self, filename: str) -> str:
@@ -317,7 +316,7 @@ class MediaService(ServiceInterface):
         name, ext = os.path.splitext(filename)
 
         # Sanitize the name part
-        safe_name = ''.join(c for c in name if c in safe_chars)
+        safe_name = "".join(c for c in name if c in safe_chars)
 
         # If the name becomes empty, use a default
         if not safe_name:

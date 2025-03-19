@@ -24,13 +24,13 @@ R = TypeVar("R", bound=BaseModel)  # Response schema type
 ID = TypeVar("ID")  # ID type
 
 
-class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C, U, R]):
+class BaseServiceProtocol(
+    CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C, U, R]
+):
     """Protocol defining the interface for base service functionality."""
 
     async def validate_create(
-        self,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Validate data before creation.
 
@@ -44,10 +44,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         ...
 
     async def validate_update(
-        self,
-        entity: T,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, entity: T, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Validate data before update.
 
@@ -61,11 +58,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         """
         ...
 
-    async def validate_delete(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def validate_delete(self, entity: T, user_id: Optional[str] = None) -> None:
         """Validate before deletion.
 
         Args:
@@ -78,9 +71,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         ...
 
     async def before_create(
-        self,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Hook before entity creation.
 
@@ -90,11 +81,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         """
         ...
 
-    async def after_create(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def after_create(self, entity: T, user_id: Optional[str] = None) -> None:
         """Hook after entity creation.
 
         Args:
@@ -104,10 +91,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         ...
 
     async def before_update(
-        self,
-        entity: T,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, entity: T, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Hook before entity update.
 
@@ -119,10 +103,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         ...
 
     async def after_update(
-        self,
-        updated_entity: T,
-        original_entity: T,
-        user_id: Optional[str] = None
+        self, updated_entity: T, original_entity: T, user_id: Optional[str] = None
     ) -> None:
         """Hook after entity update.
 
@@ -133,11 +114,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         """
         ...
 
-    async def before_delete(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def before_delete(self, entity: T, user_id: Optional[str] = None) -> None:
         """Hook before entity deletion.
 
         Args:
@@ -146,11 +123,7 @@ class BaseServiceProtocol(CrudServiceInterface[T, ID, C, U, R], Generic[T, ID, C
         """
         ...
 
-    async def after_delete(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def after_delete(self, entity: T, user_id: Optional[str] = None) -> None:
         """Hook after entity deletion.
 
         Args:

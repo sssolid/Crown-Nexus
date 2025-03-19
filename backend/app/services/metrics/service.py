@@ -77,26 +77,19 @@ class MetricsService(ServiceInterface):
         """Initialize specialized metric trackers."""
         # Create trackers with references to metric methods
         self.http_tracker = HttpTracker(
-            self.increment_counter,
-            self.observe_histogram,
-            self.increment_counter
+            self.increment_counter, self.observe_histogram, self.increment_counter
         )
 
         self.db_tracker = DatabaseTracker(
-            self.increment_counter,
-            self.observe_histogram,
-            self.increment_counter
+            self.increment_counter, self.observe_histogram, self.increment_counter
         )
 
         self.service_tracker = ServiceTracker(
-            self.increment_counter,
-            self.observe_histogram,
-            self.increment_counter
+            self.increment_counter, self.observe_histogram, self.increment_counter
         )
 
         self.cache_tracker = CacheTracker(
-            self.increment_counter,
-            self.observe_histogram
+            self.increment_counter, self.observe_histogram
         )
 
     async def initialize(self) -> None:
@@ -131,82 +124,82 @@ class MetricsService(ServiceInterface):
         self.create_counter(
             MetricName.HTTP_REQUESTS_TOTAL,
             "Total number of HTTP requests",
-            [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE]
+            [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE],
         )
 
         self.create_histogram(
             MetricName.HTTP_REQUEST_DURATION_SECONDS,
             "HTTP request duration in seconds",
-            [MetricTag.METHOD, MetricTag.ENDPOINT]
+            [MetricTag.METHOD, MetricTag.ENDPOINT],
         )
 
         self.create_gauge(
             MetricName.HTTP_IN_PROGRESS,
             "Number of HTTP requests in progress",
-            [MetricTag.METHOD, MetricTag.ENDPOINT]
+            [MetricTag.METHOD, MetricTag.ENDPOINT],
         )
 
         self.create_counter(
             MetricName.HTTP_ERRORS_TOTAL,
             "Total number of HTTP errors",
-            [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.ERROR_CODE]
+            [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.ERROR_CODE],
         )
 
         # Database metrics
         self.create_counter(
             MetricName.DB_QUERIES_TOTAL,
             "Total number of database queries",
-            [MetricTag.OPERATION, MetricTag.ENTITY]
+            [MetricTag.OPERATION, MetricTag.ENTITY],
         )
 
         self.create_histogram(
             MetricName.DB_QUERY_DURATION_SECONDS,
             "Database query duration in seconds",
-            [MetricTag.OPERATION, MetricTag.ENTITY]
+            [MetricTag.OPERATION, MetricTag.ENTITY],
         )
 
         self.create_counter(
             MetricName.DB_ERRORS_TOTAL,
             "Total number of database errors",
-            [MetricTag.OPERATION, MetricTag.ENTITY, MetricTag.ERROR_TYPE]
+            [MetricTag.OPERATION, MetricTag.ENTITY, MetricTag.ERROR_TYPE],
         )
 
         # Service metrics
         self.create_counter(
             MetricName.SERVICE_CALLS_TOTAL,
             "Total number of service calls",
-            [MetricTag.COMPONENT, MetricTag.ACTION]
+            [MetricTag.COMPONENT, MetricTag.ACTION],
         )
 
         self.create_histogram(
             MetricName.SERVICE_CALL_DURATION_SECONDS,
             "Service call duration in seconds",
-            [MetricTag.COMPONENT, MetricTag.ACTION]
+            [MetricTag.COMPONENT, MetricTag.ACTION],
         )
 
         self.create_counter(
             MetricName.SERVICE_ERRORS_TOTAL,
             "Total number of service errors",
-            [MetricTag.COMPONENT, MetricTag.ACTION, MetricTag.ERROR_TYPE]
+            [MetricTag.COMPONENT, MetricTag.ACTION, MetricTag.ERROR_TYPE],
         )
 
         # Cache metrics
         self.create_counter(
             MetricName.CACHE_HIT_TOTAL,
             "Total number of cache hits",
-            [MetricTag.CACHE_BACKEND, MetricTag.COMPONENT]
+            [MetricTag.CACHE_BACKEND, MetricTag.COMPONENT],
         )
 
         self.create_counter(
             MetricName.CACHE_MISS_TOTAL,
             "Total number of cache misses",
-            [MetricTag.CACHE_BACKEND, MetricTag.COMPONENT]
+            [MetricTag.CACHE_BACKEND, MetricTag.COMPONENT],
         )
 
         self.create_histogram(
             MetricName.CACHE_OPERATION_DURATION_SECONDS,
             "Cache operation duration in seconds",
-            [MetricTag.CACHE_BACKEND, MetricTag.OPERATION]
+            [MetricTag.CACHE_BACKEND, MetricTag.OPERATION],
         )
 
         # System metrics if process metrics enabled
@@ -214,25 +207,23 @@ class MetricsService(ServiceInterface):
             self.create_gauge(
                 MetricName.PROCESS_RESIDENT_MEMORY_BYTES,
                 "Resident memory size in bytes",
-                []
+                [],
             )
 
             self.create_gauge(
                 MetricName.PROCESS_VIRTUAL_MEMORY_BYTES,
                 "Virtual memory size in bytes",
-                []
+                [],
             )
 
             self.create_counter(
                 MetricName.PROCESS_CPU_SECONDS_TOTAL,
                 "Total user and system CPU time spent in seconds",
-                []
+                [],
             )
 
             self.create_gauge(
-                MetricName.PROCESS_OPEN_FDS,
-                "Number of open file descriptors",
-                []
+                MetricName.PROCESS_OPEN_FDS, "Number of open file descriptors", []
             )
 
     def create_counter(
@@ -265,7 +256,7 @@ class MetricsService(ServiceInterface):
                 description=description,
                 labelnames=labelnames or [],
                 namespace=namespace,
-                subsystem=subsystem
+                subsystem=subsystem,
             )
 
         return self.counters[name]
@@ -300,7 +291,7 @@ class MetricsService(ServiceInterface):
                 description=description,
                 labelnames=labelnames or [],
                 namespace=namespace,
-                subsystem=subsystem
+                subsystem=subsystem,
             )
 
         return self.gauges[name]
@@ -339,7 +330,7 @@ class MetricsService(ServiceInterface):
                 labelnames=labelnames or [],
                 buckets=buckets,
                 namespace=namespace,
-                subsystem=subsystem
+                subsystem=subsystem,
             )
 
         return self.histograms[name]
@@ -374,7 +365,7 @@ class MetricsService(ServiceInterface):
                 description=description,
                 labelnames=labelnames or [],
                 namespace=namespace,
-                subsystem=subsystem
+                subsystem=subsystem,
             )
 
         return self.summaries[name]
@@ -474,7 +465,9 @@ class MetricsService(ServiceInterface):
             count: Number to adjust the gauge by (1 for start, -1 for end)
         """
         if metric_name not in self.gauges:
-            logger.warning(f"Gauge {metric_name} not found, skipping in-progress tracking")
+            logger.warning(
+                f"Gauge {metric_name} not found, skipping in-progress tracking"
+            )
             return
 
         # Create a tuple of label values to use as a dictionary key
@@ -511,7 +504,9 @@ class MetricsService(ServiceInterface):
             duration: Request duration in seconds
             error_code: Optional error code if request failed
         """
-        self.http_tracker.track_request(method, endpoint, status_code, duration, error_code)
+        self.http_tracker.track_request(
+            method, endpoint, status_code, duration, error_code
+        )
 
     def track_db_query(
         self,
@@ -606,7 +601,7 @@ class MetricsService(ServiceInterface):
             labels_func,
             track_in_progress,
             self.track_in_progress if track_in_progress else None,
-            in_progress_metric
+            in_progress_metric,
         )
 
     def async_timed(
@@ -645,7 +640,7 @@ class MetricsService(ServiceInterface):
             labels_func,
             track_in_progress,
             self.track_in_progress if track_in_progress else None,
-            in_progress_metric
+            in_progress_metric,
         )
 
     def get_current_metrics(self) -> Dict[str, Dict[str, Any]]:
@@ -664,7 +659,7 @@ class MetricsService(ServiceInterface):
                 "description": counter.description,
                 # We don't have direct access to values in this refactoring
                 # In real implementation, we'd expose a get_values method on collectors
-                "values": {}
+                "values": {},
             }
 
         # Get gauge values
@@ -672,7 +667,7 @@ class MetricsService(ServiceInterface):
             result[name] = {
                 "type": "gauge",
                 "description": gauge.description,
-                "values": {}
+                "values": {},
             }
 
         # Get histogram values
@@ -680,7 +675,7 @@ class MetricsService(ServiceInterface):
             result[name] = {
                 "type": "histogram",
                 "description": histogram.description,
-                "values": {}
+                "values": {},
             }
 
         # Get summary values
@@ -688,7 +683,7 @@ class MetricsService(ServiceInterface):
             result[name] = {
                 "type": "summary",
                 "description": summary.description,
-                "values": {}
+                "values": {},
             }
 
         return result

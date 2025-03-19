@@ -33,7 +33,7 @@ class LoggingErrorReporter(ErrorReporter):
                 "request_id": context.request_id,
                 "args": context.args,
                 "kwargs": context.kwargs,
-            }
+            },
         )
 
 
@@ -49,9 +49,7 @@ class DatabaseErrorReporter(ErrorReporter):
         """
         # Placeholder for database error reporting implementation
         # This would typically save the error to a database table
-        logger.debug(
-            f"Database error reporter: {str(exception)} in {context.function}"
-        )
+        logger.debug(f"Database error reporter: {str(exception)} in {context.function}")
 
 
 class ExternalServiceReporter(ErrorReporter):

@@ -11,9 +11,10 @@ from app.services.audit.base import (
     AuditContext,
     AuditEventType,
     AuditLogLevel,
-    AuditOptions
+    AuditOptions,
 )
 from app.services.audit.service import AuditService
+
 
 # Factory function for dependency injection
 def get_audit_service(db=None):
@@ -27,11 +28,12 @@ def get_audit_service(db=None):
     """
     return AuditService(db)
 
+
 __all__ = [
     "get_audit_service",
     "AuditService",
     "AuditEventType",
     "AuditLogLevel",
     "AuditContext",
-    "AuditOptions"
+    "AuditOptions",
 ]

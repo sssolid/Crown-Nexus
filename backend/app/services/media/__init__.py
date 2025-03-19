@@ -8,9 +8,11 @@ from __future__ import annotations
 
 from app.services.media.service import MediaService
 
+
 # Factory function for dependency injection
 def get_media_service():
     """Factory function to get MediaService"""
     return MediaService()
+
 
 __all__ = ["get_media_service", "MediaService"]

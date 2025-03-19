@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from datetime import datetime
+import datetime
 from typing import Any, Dict, Optional, cast
 
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, status
@@ -17,7 +17,7 @@ from app.chat.schemas import (
     CommandType,
     MessageType,
     WebSocketCommand,
-    WebSocketResponse
+    WebSocketResponse,
 )
 from app.chat.service import ChatService
 from app.core.exceptions import (
@@ -39,21 +39,26 @@ from app.utils.redis_manager import rate_limit_check
 logger = get_logger("app.chat.websocket")
 router = APIRouter()
 
+
 async def get_audit_service() -> AuditService:
     """Get the audit service instance."""
     return cast(AuditService, get_service("audit_service"))
+
 
 async def get_metrics_service() -> MetricsService:
     """Get the metrics service instance."""
     return cast(MetricsService, get_service("metrics_service"))
 
+
 async def get_security_service() -> SecurityService:
     """Get the security service instance."""
     return cast(SecurityService, get_service("security_service"))
 
+
 async def get_validation_service() -> ValidationService:
     """Get the validation service instance."""
     return cast(ValidationService, get_service("validation_service"))
+
 
 @router.websocket("/ws/chat")
 async def websocket_endpoint(
@@ -84,15 +89,12 @@ async def websocket_endpoint(
 
     # Initialize metrics
     metrics_service.increment_counter(
-        "websocket_connections_total",
-        labels={"user_id": user_id}
+        "websocket_connections_total", labels={"user_id": user_id}
     )
 
     # Log connection
     logger.info(
-        "WebSocket connection initiated",
-        connection_id=connection_id,
-        user_id=user_id
+        "WebSocket connection initiated", connection_id=connection_id, user_id=user_id
     )
 
     # Audit log connection
@@ -119,18 +121,15 @@ async def websocket_endpoint(
                 data={
                     "user_id": user_id,
                     "connection_id": connection_id,
-                    "timestamp": datetime.utcnow().isoformat(),
-                }
+                    "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
+                },
             ).dict()
         )
 
         # Send the user's room list
         user_rooms = await chat_service.get_user_rooms(user_id)
         await websocket.send_json(
-            WebSocketResponse(
-                type="room_list",
-                data={"rooms": user_rooms}
-            ).dict()
+            WebSocketResponse(type="room_list", data={"rooms": user_rooms}).dict()
         )
 
         # Main WebSocket loop
@@ -146,17 +145,16 @@ async def websocket_endpoint(
                 logger.warning(
                     "Rate limit exceeded for WebSocket user",
                     user_id=user_id,
-                    count=count
+                    count=count,
                 )
                 metrics_service.increment_counter(
-                    "websocket_rate_limit_exceeded",
-                    labels={"user_id": user_id}
+                    "websocket_rate_limit_exceeded", labels={"user_id": user_id}
                 )
                 await websocket.send_json(
                     WebSocketResponse(
                         type="error",
                         success=False,
-                        error="Rate limit exceeded. Please slow down."
+                        error="Rate limit exceeded. Please slow down.",
                     ).dict()
                 )
                 continue
@@ -170,13 +168,13 @@ async def websocket_endpoint(
                     logger.warning(
                         "Suspicious WebSocket input rejected",
                         user_id=user_id,
-                        connection_id=connection_id
+                        connection_id=connection_id,
                     )
                     await websocket.send_json(
                         WebSocketResponse(
                             type="error",
                             success=False,
-                            error="Invalid or suspicious input detected"
+                            error="Invalid or suspicious input detected",
                         ).dict()
                     )
                     continue
@@ -187,7 +185,7 @@ async def websocket_endpoint(
                 with metrics_service.timer(
                     "histogram",
                     "websocket_command_processing_seconds",
-                    {"command": command.command}
+                    {"command": command.command},
                 ):
                     await process_command(
                         command=command,
@@ -202,19 +200,16 @@ async def websocket_endpoint(
                 # Increment command counter
                 metrics_service.increment_counter(
                     "websocket_commands_processed",
-                    labels={"command": command.command, "user_id": user_id}
+                    labels={"command": command.command, "user_id": user_id},
                 )
 
             except json.JSONDecodeError:
                 logger.error(
-                    "Invalid JSON received from client",
-                    connection_id=connection_id
+                    "Invalid JSON received from client", connection_id=connection_id
                 )
                 await websocket.send_json(
                     WebSocketResponse(
-                        type="error",
-                        success=False,
-                        error="Invalid JSON message format"
+                        type="error", success=False, error="Invalid JSON message format"
                     ).dict()
                 )
 
@@ -227,9 +222,7 @@ async def websocket_endpoint(
                 )
                 await websocket.send_json(
                     WebSocketResponse(
-                        type="error",
-                        success=False,
-                        error=f"Validation error: {str(e)}"
+                        type="error", success=False, error=f"Validation error: {str(e)}"
                     ).dict()
                 )
 
@@ -242,9 +235,7 @@ async def websocket_endpoint(
                 )
                 await websocket.send_json(
                     WebSocketResponse(
-                        type="error",
-                        success=False,
-                        error="Internal server error"
+                        type="error", success=False, error="Internal server error"
                     ).dict()
                 )
 
@@ -269,7 +260,7 @@ async def websocket_endpoint(
 
         # Update last seen time
         last_seen_key = f"user:last_seen:{user_id}"
-        current_time = datetime.utcnow().isoformat()
+        current_time = datetime.datetime.now(datetime.UTC).isoformat()
 
         # Log disconnection
         logger.info(
@@ -323,10 +314,7 @@ async def process_command(
     if command.command == CommandType.JOIN_ROOM:
         room_id = command.data.get("room_id") or command.room_id
         if not room_id:
-            raise ValidationException(
-                message="Room ID is required",
-                code=ErrorCode.VALIDATION_ERROR,
-            )
+            raise ValidationException(message="Room ID is required")
 
         # Sanitize input
         room_id = security_service.sanitize_input(room_id)
@@ -341,7 +329,6 @@ async def process_command(
             )
             raise PermissionDeniedException(
                 message="Access denied to room",
-                code=ErrorCode.PERMISSION_DENIED,
                 details={"room_id": room_id},
             )
 
@@ -381,10 +368,7 @@ async def process_command(
     elif command.command == CommandType.LEAVE_ROOM:
         room_id = command.data.get("room_id") or command.room_id
         if not room_id:
-            raise ValidationException(
-                message="Room ID is required",
-                code=ErrorCode.VALIDATION_ERROR,
-            )
+            raise ValidationException(message="Room ID is required")
 
         # Sanitize input
         room_id = security_service.sanitize_input(room_id)
@@ -394,10 +378,7 @@ async def process_command(
 
         # Send response
         await websocket.send_json(
-            WebSocketResponse(
-                type="room_left",
-                data={"room_id": room_id}
-            ).dict()
+            WebSocketResponse(type="room_left", data={"room_id": room_id}).dict()
         )
 
         # Broadcast to other room members
@@ -428,19 +409,13 @@ async def process_command(
 
         # Validate required fields
         if not room_id or not content:
-            raise ValidationException(
-                message="Room ID and content are required",
-                code=ErrorCode.VALIDATION_ERROR,
-            )
+            raise ValidationException(message="Room ID and content are required")
 
         # Sanitize inputs
         room_id = security_service.sanitize_input(room_id)
         # We don't sanitize content to preserve message formatting, but we do validate message type
         if not security_service.is_valid_enum_value(message_type, MessageType):
-            raise ValidationException(
-                message=f"Invalid message type: {message_type}",
-                code=ErrorCode.VALIDATION_ERROR,
-            )
+            raise ValidationException(message=f"Invalid message type: {message_type}")
 
         # Check access permission
         has_access = await chat_service.check_room_access(user_id, room_id)
@@ -452,7 +427,6 @@ async def process_command(
             )
             raise PermissionDeniedException(
                 message="Access denied to room",
-                code=ErrorCode.PERMISSION_DENIED,
                 details={"room_id": room_id},
             )
 
@@ -488,9 +462,7 @@ async def process_command(
 
         # Broadcast to other room members
         await redis_manager.broadcast_to_room(
-            message=WebSocketResponse(
-                type="new_message", data=message_data
-            ).dict(),
+            message=WebSocketResponse(type="new_message", data=message_data).dict(),
             room_id=room_id,
             exclude=connection_id,
         )
@@ -517,7 +489,6 @@ async def process_command(
         if not room_id or not last_read_id:
             raise ValidationException(
                 message="Room ID and last_read_id are required",
-                code=ErrorCode.VALIDATION_ERROR,
             )
 
         # Sanitize inputs
@@ -550,7 +521,6 @@ async def process_command(
         if not room_id:
             raise ValidationException(
                 message="Room ID is required",
-                code=ErrorCode.VALIDATION_ERROR,
             )
 
         # Sanitize input
@@ -576,10 +546,7 @@ async def process_command(
 
         # Validate required fields
         if not room_id:
-            raise ValidationException(
-                message="Room ID is required",
-                code=ErrorCode.VALIDATION_ERROR,
-            )
+            raise ValidationException(message="Room ID is required")
 
         # Sanitize input
         room_id = security_service.sanitize_input(room_id)
@@ -602,10 +569,7 @@ async def process_command(
 
         # Validate required fields
         if not room_id:
-            raise ValidationException(
-                message="Room ID is required",
-                code=ErrorCode.VALIDATION_ERROR,
-            )
+            raise ValidationException(message="Room ID is required")
 
         # Sanitize inputs
         room_id = security_service.sanitize_input(room_id)
@@ -626,7 +590,6 @@ async def process_command(
             )
             raise PermissionDeniedException(
                 message="Access denied to room",
-                code=ErrorCode.PERMISSION_DENIED,
                 details={"room_id": room_id},
             )
 
@@ -650,8 +613,7 @@ async def process_command(
         # Validate required fields
         if not room_id or not message_id or not reaction:
             raise ValidationException(
-                message="Room ID, message ID, and reaction are required",
-                code=ErrorCode.VALIDATION_ERROR,
+                message="Room ID, message ID, and reaction are required"
             )
 
         # Sanitize inputs
@@ -714,8 +676,7 @@ async def process_command(
         # Validate required fields
         if not room_id or not message_id or not reaction:
             raise ValidationException(
-                message="Room ID, message ID, and reaction are required",
-                code=ErrorCode.VALIDATION_ERROR,
+                message="Room ID, message ID, and reaction are required"
             )
 
         # Sanitize inputs
@@ -777,8 +738,7 @@ async def process_command(
         # Validate required fields
         if not room_id or not message_id or not content:
             raise ValidationException(
-                message="Room ID, message ID, and content are required",
-                code=ErrorCode.VALIDATION_ERROR,
+                message="Room ID, message ID, and content are required"
             )
 
         # Sanitize inputs
@@ -799,7 +759,6 @@ async def process_command(
             )
             raise PermissionDeniedException(
                 message="Permission denied to edit message",
-                code=ErrorCode.PERMISSION_DENIED,
                 details={"message_id": message_id},
             )
 
@@ -838,9 +797,7 @@ async def process_command(
 
         # Broadcast to other room members
         await redis_manager.broadcast_to_room(
-            message=WebSocketResponse(
-                type="message_edited", data=message_data
-            ).dict(),
+            message=WebSocketResponse(type="message_edited", data=message_data).dict(),
             room_id=room_id,
             exclude=connection_id,
         )
@@ -864,7 +821,6 @@ async def process_command(
         if not room_id or not message_id:
             raise ValidationException(
                 message="Room ID and message ID are required",
-                code=ErrorCode.VALIDATION_ERROR,
             )
 
         # Sanitize inputs
@@ -884,7 +840,6 @@ async def process_command(
             )
             raise PermissionDeniedException(
                 message="Permission denied to delete message",
-                code=ErrorCode.PERMISSION_DENIED,
                 details={"message_id": message_id},
             )
 
@@ -939,5 +894,4 @@ async def process_command(
         )
         raise ValidationException(
             message=f"Unknown command: {command.command}",
-            code=ErrorCode.VALIDATION_ERROR,
         )

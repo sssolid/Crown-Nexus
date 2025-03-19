@@ -11,9 +11,7 @@ This module provides service functions for:
 
 from __future__ import annotations
 
-import asyncio
-import logging
-from datetime import datetime, timedelta
+import datetime
 from typing import Dict, List, Optional, Union
 
 import httpx
@@ -28,7 +26,9 @@ from app.models.currency import Currency, ExchangeRate
 
 cache_service = get_dependency("cache_service")
 
-logger = logging.getLogger(__name__)
+from app.core.logging import get_logger
+
+logger = get_logger("app.services.currency_service")
 
 
 class ExchangeRateService:
@@ -125,7 +125,7 @@ class ExchangeRateService:
         base_currency_id = base_currency_id.id
 
         # Prepare rate records
-        now = datetime.utcnow()
+        now = datetime.datetime.now(datetime.UTC)
         count = 0
 
         # Insert new rates
@@ -209,8 +209,8 @@ class ExchangeRateService:
             return True
 
         # Check if enough time has passed since last update
-        time_since_update = datetime.utcnow() - latest_rate.fetched_at
-        return time_since_update > timedelta(hours=update_frequency)
+        time_since_update = datetime.datetime.now(datetime.UTC) - latest_rate.fetched_at
+        return time_since_update > datetime.timedelta(hours=update_frequency)
 
     @classmethod
     async def _get_base_currency_code(cls, db: AsyncSession) -> str:
@@ -235,7 +235,9 @@ class ExchangeRateService:
         return "USD"
 
     @classmethod
-    @cache_service.cache(prefix="currency", ttl=3600, backend="redis")  # Cache for 1 hour
+    @cache_service.cache(
+        prefix="currency", ttl=3600, backend="redis"
+    )  # Cache for 1 hour
     async def get_latest_exchange_rate(
         cls, db: AsyncSession, source_code: str, target_code: str
     ) -> Optional[float]:
@@ -260,10 +262,15 @@ class ExchangeRateService:
             return None
 
         # Get the latest exchange rate
-        stmt = select(ExchangeRate).where(
-            ExchangeRate.source_currency_id == currencies[source_code],
-            ExchangeRate.target_currency_id == currencies[target_code]
-        ).order_by(desc(ExchangeRate.effective_date)).limit(1)
+        stmt = (
+            select(ExchangeRate)
+            .where(
+                ExchangeRate.source_currency_id == currencies[source_code],
+                ExchangeRate.target_currency_id == currencies[target_code],
+            )
+            .order_by(desc(ExchangeRate.effective_date))
+            .limit(1)
+        )
 
         result = await db.execute(stmt)
         rate = result.scalar_one_or_none()
@@ -272,10 +279,15 @@ class ExchangeRateService:
             return rate.rate
 
         # Try to find inverse rate and calculate
-        stmt = select(ExchangeRate).where(
-            ExchangeRate.source_currency_id == currencies[target_code],
-            ExchangeRate.target_currency_id == currencies[source_code]
-        ).order_by(desc(ExchangeRate.effective_date)).limit(1)
+        stmt = (
+            select(ExchangeRate)
+            .where(
+                ExchangeRate.source_currency_id == currencies[target_code],
+                ExchangeRate.target_currency_id == currencies[source_code],
+            )
+            .order_by(desc(ExchangeRate.effective_date))
+            .limit(1)
+        )
 
         result = await db.execute(stmt)
         inverse_rate = result.scalar_one_or_none()

@@ -10,15 +10,14 @@ from __future__ import annotations
 import abc
 from enum import Enum
 from pathlib import Path
-from typing import (
-    Any, BinaryIO, Dict, Optional, Protocol, Set, Tuple, TypedDict, Union
-)
+from typing import Any, BinaryIO, Dict, Optional, Protocol, Set, Tuple, TypedDict, Union
 
 from fastapi import UploadFile
 
 
 class StorageBackendType(str, Enum):
     """Enumeration of supported storage backend types."""
+
     LOCAL = "local"
     S3 = "s3"
     AZURE = "azure"  # Future implementation
@@ -26,6 +25,7 @@ class StorageBackendType(str, Enum):
 
 class FileMetadata(TypedDict, total=False):
     """File metadata type definition."""
+
     width: Optional[int]
     height: Optional[int]
     content_type: str
@@ -36,16 +36,19 @@ class FileMetadata(TypedDict, total=False):
 
 class MediaStorageError(Exception):
     """Base exception for media storage errors."""
+
     pass
 
 
 class FileNotFoundError(MediaStorageError):
     """Exception raised when a file is not found."""
+
     pass
 
 
 class StorageConnectionError(MediaStorageError):
     """Exception raised when connection to storage fails."""
+
     pass
 
 
@@ -120,10 +123,7 @@ class MediaStorageBackend(Protocol):
         ...
 
     async def generate_thumbnail(
-        self,
-        file_path: str,
-        width: int = 200,
-        height: int = 200
+        self, file_path: str, width: int = 200, height: int = 200
     ) -> Optional[str]:
         """
         Generate a thumbnail for an image file.

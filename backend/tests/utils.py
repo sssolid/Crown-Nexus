@@ -11,7 +11,8 @@ from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 from pydantic import BaseModel
 
-M = TypeVar('M', bound=BaseModel)
+M = TypeVar("M", bound=BaseModel)
+
 
 def create_random_string(length: int = 10) -> str:
     """Create a random string for test data.
@@ -22,7 +23,8 @@ def create_random_string(length: int = 10) -> str:
     Returns:
         str: Random string
     """
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+    return "".join(random.choices(string.ascii_letters + string.digits, k=length))
+
 
 def create_random_email() -> str:
     """Create a random email for test data.
@@ -32,12 +34,9 @@ def create_random_email() -> str:
     """
     return f"{create_random_string(8)}@{create_random_string(6)}.com"
 
+
 async def make_authenticated_request(
-    client: AsyncClient,
-    method: str,
-    url: str,
-    token: str,
-    **kwargs: Any
+    client: AsyncClient, method: str, url: str, token: str, **kwargs: Any
 ) -> Any:
     """Make an authenticated request to the API.
 
@@ -69,6 +68,7 @@ async def make_authenticated_request(
     else:
         raise ValueError(f"Unsupported HTTP method: {method}")
 
+
 def assert_model_data_matches(model: Any, data: Dict[str, Any]) -> None:
     """Assert that a model instance data matches the provided data.
 
@@ -80,12 +80,15 @@ def assert_model_data_matches(model: Any, data: Dict[str, Any]) -> None:
         AssertionError: If model data doesn't match expected data
     """
     for key, value in data.items():
-        assert getattr(model, key) == value, f"Model {key} doesn't match: {getattr(model, key)} != {value}"
+        assert (
+            getattr(model, key) == value
+        ), f"Model {key} doesn't match: {getattr(model, key)} != {value}"
+
 
 def validate_model_response(
     response_data: Dict[str, Any],
     model_type: Type[M],
-    exclude_fields: Optional[List[str]] = None
+    exclude_fields: Optional[List[str]] = None,
 ) -> M:
     """Validate that an API response matches a model schema.
 
@@ -107,6 +110,8 @@ def validate_model_response(
 
     try:
         # Try to parse the data using the model
-        return model_type.parse_obj(filtered_data)
+        return model_type.model_validate(filtered_data)
     except Exception as e:
-        raise ValueError(f"Response doesn't match {model_type.__name__} schema: {str(e)}") from e
+        raise ValueError(
+            f"Response doesn't match {model_type.__name__} schema: {str(e)}"
+        ) from e

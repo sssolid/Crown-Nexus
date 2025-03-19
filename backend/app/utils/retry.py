@@ -21,16 +21,25 @@ from __future__ import annotations
 
 import asyncio
 import functools
-import logging
 import random
 import time
-from typing import Any, Callable, List, Optional, Protocol, Type, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    Callable,
+    List,
+    Optional,
+    Protocol,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 
 from app.core.exceptions import (
     NetworkException,
     RateLimitException,
-    ServiceUnavailableException,
-    TimeoutException,
+    ServiceException,
     ErrorCode,
 )
 from app.core.logging import get_logger
@@ -57,16 +66,12 @@ def retry(
     delay: float = ...,
     backoff_factor: float = ...,
     jitter: bool = ...,
-    exceptions: Union[Type[Exception], List[Type[Exception]]] = ...
-) -> Callable[[F], F]:
-    ...
+    exceptions: Union[Type[Exception], List[Type[Exception]]] = ...,
+) -> Callable[[F], F]: ...
 
 
 @overload
-def retry(
-    func: F
-) -> F:
-    ...
+def retry(func: F) -> F: ...
 
 
 def retry(
@@ -76,7 +81,7 @@ def retry(
     delay: float = 0.1,
     backoff_factor: float = 2.0,
     jitter: bool = True,
-    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
+    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception,
 ) -> Union[Callable[[F], F], F]:
     """Decorator to retry synchronous functions with exponential backoff.
 
@@ -123,7 +128,7 @@ def retry(
                     if attempt >= retries:
                         logger.warning(
                             f"Function {fn.__name__} failed after {retries + 1} attempts",
-                            exc_info=e
+                            exc_info=e,
                         )
                         raise
 
@@ -135,7 +140,7 @@ def retry(
                         raise
 
                     # Calculate retry delay with exponential backoff
-                    retry_delay = delay * (backoff_factor ** attempt)
+                    retry_delay = delay * (backoff_factor**attempt)
 
                     # Add jitter to prevent thundering herd
                     if jitter:
@@ -171,7 +176,7 @@ async def async_retry(
     delay: float = 0.1,
     backoff_factor: float = 2.0,
     jitter: bool = True,
-    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
+    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception,
 ) -> Union[Callable[[F], F], F]:
     """Decorator to retry asynchronous functions with exponential backoff.
 
@@ -218,7 +223,7 @@ async def async_retry(
                     if attempt >= retries:
                         logger.warning(
                             f"Function {fn.__name__} failed after {retries + 1} attempts",
-                            exc_info=e
+                            exc_info=e,
                         )
                         raise
 
@@ -230,7 +235,7 @@ async def async_retry(
                         raise
 
                     # Calculate retry delay with exponential backoff
-                    retry_delay = delay * (backoff_factor ** attempt)
+                    retry_delay = delay * (backoff_factor**attempt)
 
                     # Add jitter to prevent thundering herd
                     if jitter:
@@ -263,7 +268,7 @@ def retry_on_network_errors(
     retries: int = 3,
     delay: float = 0.5,
     backoff_factor: float = 2.0,
-    jitter: bool = True
+    jitter: bool = True,
 ) -> Callable[[F], F]:
     """Decorator to retry functions specifically on network-related errors.
 
@@ -286,19 +291,18 @@ def retry_on_network_errors(
         jitter=jitter,
         exceptions=[
             NetworkException,
-            TimeoutException,
-            ServiceUnavailableException,
+            ServiceException,
             ConnectionError,
             TimeoutError,
-        ]
+        ],
     )
 
 
-async def async_retry_on_network_errors(
+def async_retry_on_network_errors(
     retries: int = 3,
     delay: float = 0.5,
     backoff_factor: float = 2.0,
-    jitter: bool = True
+    jitter: bool = True,
 ) -> Callable[[F], F]:
     """Decorator to retry async functions specifically on network-related errors.
 
@@ -314,20 +318,25 @@ async def async_retry_on_network_errors(
     Returns:
         Callable: Decorator function
     """
-    return await async_retry(
-        retries=retries,
-        delay=delay,
-        backoff_factor=backoff_factor,
-        jitter=jitter,
-        exceptions=[
-            NetworkException,
-            TimeoutException,
-            ServiceUnavailableException,
-            ConnectionError,
-            TimeoutError,
-            asyncio.TimeoutError,
-        ]
-    )
+    def decorator(func: F) -> F:
+        @functools.wraps(func)
+        async def wrapper(*args, **kwargs):
+            retry_decorator = await async_retry(
+                retries=retries,
+                delay=delay,
+                backoff_factor=backoff_factor,
+                jitter=jitter,
+                exceptions=[
+                    NetworkException,
+                    ServiceException,
+                    ConnectionError,
+                    TimeoutError,
+                    asyncio.TimeoutError,
+                ],
+            )
+            return await retry_decorator(func)(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 def retry_with_timeout(
@@ -336,7 +345,7 @@ def retry_with_timeout(
     timeout: float = 5.0,
     backoff_factor: float = 2.0,
     jitter: bool = True,
-    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
+    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception,
 ) -> Callable[[F], F]:
     """Decorator to retry functions with timeout.
 
@@ -353,6 +362,7 @@ def retry_with_timeout(
     Returns:
         Callable: Decorator function
     """
+
     def decorator(func: F) -> F:
         # Create retry decorator
         retry_wrapper = retry(
@@ -360,7 +370,7 @@ def retry_with_timeout(
             delay=delay,
             backoff_factor=backoff_factor,
             jitter=jitter,
-            exceptions=[*exceptions, TimeoutError]
+            exceptions=[*exceptions, TimeoutError],
         )
 
         @functools.wraps(func)
@@ -371,9 +381,8 @@ def retry_with_timeout(
 
                 def timeout_handler(signum: int, frame: Any) -> None:
                     """Handle timeout signal."""
-                    raise TimeoutException(
-                        message=f"Function {func.__name__} timed out after {timeout} seconds",
-                        code=ErrorCode.TIMEOUT_ERROR
+                    raise NetworkException(
+                        message=f"Function {func.__name__} timed out after {timeout} seconds"
                     )
 
                 # Set timeout handler
@@ -401,7 +410,7 @@ async def async_retry_with_timeout(
     timeout: float = 5.0,
     backoff_factor: float = 2.0,
     jitter: bool = True,
-    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception
+    exceptions: Union[Type[Exception], List[Type[Exception]]] = Exception,
 ) -> Callable[[F], F]:
     """Decorator to retry async functions with timeout.
 
@@ -418,14 +427,15 @@ async def async_retry_with_timeout(
     Returns:
         Callable: Decorator function
     """
-    def decorator(func: F) -> F:
+
+    async def decorator(func: F) -> F:
         # Create retry decorator
         retry_wrapper = await async_retry(
             retries=retries,
             delay=delay,
             backoff_factor=backoff_factor,
             jitter=jitter,
-            exceptions=[*exceptions, asyncio.TimeoutError]
+            exceptions=[*exceptions, asyncio.TimeoutError],
         )
 
         @functools.wraps(func)
@@ -433,11 +443,12 @@ async def async_retry_with_timeout(
             async def timeout_wrapper() -> Any:
                 """Execute async function with timeout."""
                 try:
-                    return await asyncio.wait_for(func(*args, **kwargs), timeout=timeout)
+                    return await asyncio.wait_for(
+                        func(*args, **kwargs), timeout=timeout
+                    )
                 except asyncio.TimeoutError:
-                    raise TimeoutException(
-                        message=f"Function {func.__name__} timed out after {timeout} seconds",
-                        code=ErrorCode.TIMEOUT_ERROR
+                    raise NetworkException(
+                        message=f"Function {func.__name__} timed out after {timeout} seconds"
                     )
 
             # Apply both timeout and retry

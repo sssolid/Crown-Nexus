@@ -33,7 +33,9 @@ class CacheService(ServiceInterface):
         """
         self.default_backend = default_backend
         self.initialized = False
-        logger.debug(f"CacheService initialized with default backend: {default_backend}")
+        logger.debug(
+            f"CacheService initialized with default backend: {default_backend}"
+        )
 
     async def initialize(self) -> None:
         """Initialize the cache service."""
@@ -53,7 +55,9 @@ class CacheService(ServiceInterface):
         logger.debug("Shutting down cache service")
         await CacheBackendFactory.close_all()
 
-    async def get(self, key: str, default: Any = None, backend: Optional[str] = None) -> Any:
+    async def get(
+        self, key: str, default: Any = None, backend: Optional[str] = None
+    ) -> Any:
         """
         Get a value from the cache.
 
@@ -68,13 +72,17 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.get(key, default)
         except Exception as e:
             logger.error(f"Cache get error for key {key}: {str(e)}")
             return default
 
-    async def set(self, key: str, value: Any, ttl: int = 300, backend: Optional[str] = None) -> bool:
+    async def set(
+        self, key: str, value: Any, ttl: int = 300, backend: Optional[str] = None
+    ) -> bool:
         """
         Set a value in the cache.
 
@@ -90,7 +98,9 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.set(key, value, ttl)
         except Exception as e:
             logger.error(f"Cache set error for key {key}: {str(e)}")
@@ -110,7 +120,9 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.delete(key)
         except Exception as e:
             logger.error(f"Cache delete error for key {key}: {str(e)}")
@@ -130,7 +142,9 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.exists(key)
         except Exception as e:
             logger.error(f"Cache exists error for key {key}: {str(e)}")
@@ -149,7 +163,9 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.clear()
         except Exception as e:
             logger.error(f"Cache clear error: {str(e)}")
@@ -161,7 +177,7 @@ class CacheService(ServiceInterface):
         value_func: Callable[[], Any],
         ttl: int = 300,
         backend: Optional[str] = None,
-        force_refresh: bool = False
+        force_refresh: bool = False,
     ) -> Any:
         """
         Get a value from cache or compute and store it.
@@ -198,7 +214,7 @@ class CacheService(ServiceInterface):
         value_func: Callable[[], Any],
         ttl: int = 300,
         backend: Optional[str] = None,
-        force_refresh: bool = False
+        force_refresh: bool = False,
     ) -> Any:
         """
         Get a value from cache or compute and store it asynchronously.
@@ -229,7 +245,9 @@ class CacheService(ServiceInterface):
 
         return computed_value
 
-    async def get_many(self, keys: List[str], backend: Optional[str] = None) -> Dict[str, Any]:
+    async def get_many(
+        self, keys: List[str], backend: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Get multiple values from cache.
 
@@ -243,17 +261,16 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.get_many(keys)
         except Exception as e:
             logger.error(f"Cache get_many error: {str(e)}")
             return {}
 
     async def set_many(
-        self,
-        mapping: Dict[str, Any],
-        ttl: int = 300,
-        backend: Optional[str] = None
+        self, mapping: Dict[str, Any], ttl: int = 300, backend: Optional[str] = None
     ) -> bool:
         """
         Set multiple values in cache.
@@ -269,7 +286,9 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.set_many(mapping, ttl)
         except Exception as e:
             logger.error(f"Cache set_many error: {str(e)}")
@@ -289,7 +308,9 @@ class CacheService(ServiceInterface):
         await self.ensure_initialized()
 
         try:
-            cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+            cache_backend = CacheBackendFactory.get_backend(
+                backend or self.default_backend
+            )
             return await cache_backend.delete_many(keys)
         except Exception as e:
             logger.error(f"Cache delete_many error: {str(e)}")
@@ -326,7 +347,9 @@ class CacheService(ServiceInterface):
                 deleted_keys = []
 
                 while True:
-                    cursor, keys = await redis_conn.scan(cursor=cursor, match=pattern, count=100)
+                    cursor, keys = await redis_conn.scan(
+                        cursor=cursor, match=pattern, count=100
+                    )
                     if keys:
                         deleted_keys.extend(keys)
                         await redis_conn.delete(*keys)
@@ -334,7 +357,9 @@ class CacheService(ServiceInterface):
                     if cursor == b"0":
                         break
 
-                logger.debug(f"Cleared {len(deleted_keys)} keys with prefix '{prefix}' from Redis")
+                logger.debug(
+                    f"Cleared {len(deleted_keys)} keys with prefix '{prefix}' from Redis"
+                )
                 return True
             except Exception as e:
                 logger.error(f"Redis clear_prefix error: {str(e)}")
@@ -343,20 +368,28 @@ class CacheService(ServiceInterface):
             # Generic implementation for other backends
             # This is less efficient but works for any backend
             try:
-                cache_backend = CacheBackendFactory.get_backend(backend or self.default_backend)
+                cache_backend = CacheBackendFactory.get_backend(
+                    backend or self.default_backend
+                )
 
                 # For memory backend, we'd need a method to get all keys
                 # Since this is not part of the CacheBackend protocol, we'll use a simplified approach
                 if isinstance(cache_backend, "MemoryCacheBackend"):
                     # Direct access to cache dictionary
-                    keys_to_delete = [k for k in cache_backend.cache.keys() if k.startswith(prefix)]
+                    keys_to_delete = [
+                        k for k in cache_backend.cache.keys() if k.startswith(prefix)
+                    ]
                     for key in keys_to_delete:
                         await cache_backend.delete(key)
-                    logger.debug(f"Cleared {len(keys_to_delete)} keys with prefix '{prefix}' from memory cache")
+                    logger.debug(
+                        f"Cleared {len(keys_to_delete)} keys with prefix '{prefix}' from memory cache"
+                    )
                     return True
                 else:
                     # Fallback for other backends: we can't efficiently clear by prefix
-                    logger.warning(f"clear_prefix not efficiently supported for backend: {backend or self.default_backend}")
+                    logger.warning(
+                        f"clear_prefix not efficiently supported for backend: {backend or self.default_backend}"
+                    )
                     return False
             except Exception as e:
                 logger.error(f"Cache clear_prefix error: {str(e)}")

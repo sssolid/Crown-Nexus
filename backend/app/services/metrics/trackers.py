@@ -60,18 +60,15 @@ class HttpTracker:
             {
                 MetricTag.METHOD: method,
                 MetricTag.ENDPOINT: endpoint,
-                MetricTag.STATUS_CODE: str(status_code)
-            }
+                MetricTag.STATUS_CODE: str(status_code),
+            },
         )
 
         # Track request duration
         self.observe_histogram(
             MetricName.HTTP_REQUEST_DURATION_SECONDS,
             duration,
-            {
-                MetricTag.METHOD: method,
-                MetricTag.ENDPOINT: endpoint
-            }
+            {MetricTag.METHOD: method, MetricTag.ENDPOINT: endpoint},
         )
 
         # Track errors if status code indicates an error
@@ -82,8 +79,8 @@ class HttpTracker:
                 {
                     MetricTag.METHOD: method,
                     MetricTag.ENDPOINT: endpoint,
-                    MetricTag.ERROR_CODE: error_code or f"http_{status_code}"
-                }
+                    MetricTag.ERROR_CODE: error_code or f"http_{status_code}",
+                },
             )
 
 
@@ -128,20 +125,14 @@ class DatabaseTracker:
         self.increment_counter(
             MetricName.DB_QUERIES_TOTAL,
             1,
-            {
-                MetricTag.OPERATION: operation,
-                MetricTag.ENTITY: entity
-            }
+            {MetricTag.OPERATION: operation, MetricTag.ENTITY: entity},
         )
 
         # Track query duration
         self.observe_histogram(
             MetricName.DB_QUERY_DURATION_SECONDS,
             duration,
-            {
-                MetricTag.OPERATION: operation,
-                MetricTag.ENTITY: entity
-            }
+            {MetricTag.OPERATION: operation, MetricTag.ENTITY: entity},
         )
 
         # Track errors if an error occurred
@@ -152,8 +143,8 @@ class DatabaseTracker:
                 {
                     MetricTag.OPERATION: operation,
                     MetricTag.ENTITY: entity,
-                    MetricTag.ERROR_TYPE: error
-                }
+                    MetricTag.ERROR_TYPE: error,
+                },
             )
 
 
@@ -198,20 +189,14 @@ class ServiceTracker:
         self.increment_counter(
             MetricName.SERVICE_CALLS_TOTAL,
             1,
-            {
-                MetricTag.COMPONENT: component,
-                MetricTag.ACTION: action
-            }
+            {MetricTag.COMPONENT: component, MetricTag.ACTION: action},
         )
 
         # Track call duration
         self.observe_histogram(
             MetricName.SERVICE_CALL_DURATION_SECONDS,
             duration,
-            {
-                MetricTag.COMPONENT: component,
-                MetricTag.ACTION: action
-            }
+            {MetricTag.COMPONENT: component, MetricTag.ACTION: action},
         )
 
         # Track errors if an error occurred
@@ -222,8 +207,8 @@ class ServiceTracker:
                 {
                     MetricTag.COMPONENT: component,
                     MetricTag.ACTION: action,
-                    MetricTag.ERROR_TYPE: error
-                }
+                    MetricTag.ERROR_TYPE: error,
+                },
             )
 
 
@@ -270,8 +255,8 @@ class CacheTracker:
             {
                 MetricTag.OPERATION: operation,
                 MetricTag.CACHE_BACKEND: backend,
-                MetricTag.COMPONENT: component
-            }
+                MetricTag.COMPONENT: component,
+            },
         )
 
         # Track hits/misses
@@ -280,27 +265,18 @@ class CacheTracker:
                 self.increment_counter(
                     MetricName.CACHE_HIT_TOTAL,
                     1,
-                    {
-                        MetricTag.CACHE_BACKEND: backend,
-                        MetricTag.COMPONENT: component
-                    }
+                    {MetricTag.CACHE_BACKEND: backend, MetricTag.COMPONENT: component},
                 )
             else:
                 self.increment_counter(
                     MetricName.CACHE_MISS_TOTAL,
                     1,
-                    {
-                        MetricTag.CACHE_BACKEND: backend,
-                        MetricTag.COMPONENT: component
-                    }
+                    {MetricTag.CACHE_BACKEND: backend, MetricTag.COMPONENT: component},
                 )
 
         # Track operation duration
         self.observe_histogram(
             MetricName.CACHE_OPERATION_DURATION_SECONDS,
             duration,
-            {
-                MetricTag.CACHE_BACKEND: backend,
-                MetricTag.OPERATION: operation
-            }
+            {MetricTag.CACHE_BACKEND: backend, MetricTag.OPERATION: operation},
         )

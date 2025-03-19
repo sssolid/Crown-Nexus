@@ -15,12 +15,12 @@ from app.core.dependency_manager import dependency_manager
 from app.core.exceptions import (
     AppException,
     AuthenticationException,
-    BusinessLogicException,
+    BusinessException,
     ErrorCode,
     PermissionDeniedException,
     ResourceAlreadyExistsException,
     ResourceNotFoundException,
-    ValidationException
+    ValidationException,
 )
 from app.core.logging import get_logger
 from app.services.error.base import ErrorContext, ErrorReporter
@@ -61,10 +61,7 @@ class ErrorService(ServiceInterface):
                 logger.error(f"Error reporter failed: {str(e)}", exc_info=e)
 
     def resource_not_found(
-        self,
-        resource_type: str,
-        resource_id: str,
-        message: Optional[str] = None
+        self, resource_type: str, resource_id: str, message: Optional[str] = None
     ) -> ResourceNotFoundException:
         """Create a resource not found exception.
 
@@ -81,12 +78,10 @@ class ErrorService(ServiceInterface):
 
         return ResourceNotFoundException(
             message=message,
-            code=ErrorCode.RESOURCE_NOT_FOUND,
             details={
                 "resource_type": resource_type,
                 "resource_id": resource_id,
             },
-            status_code=404,
             original_exception=None,
         )
 
@@ -95,7 +90,7 @@ class ErrorService(ServiceInterface):
         resource_type: str,
         identifier: str,
         field: str,
-        message: Optional[str] = None
+        message: Optional[str] = None,
     ) -> ResourceAlreadyExistsException:
         """Create a resource already exists exception.
 
@@ -113,21 +108,16 @@ class ErrorService(ServiceInterface):
 
         return ResourceAlreadyExistsException(
             message=message,
-            code=ErrorCode.RESOURCE_ALREADY_EXISTS,
             details={
                 "resource_type": resource_type,
                 "field": field,
                 "identifier": identifier,
             },
-            status_code=409,
             original_exception=None,
         )
 
     def validation_error(
-        self,
-        field: str,
-        message: str,
-        error_type: str = "invalid_value"
+        self, field: str, message: str, error_type: str = "invalid_value"
     ) -> ValidationException:
         """Create a validation error exception.
 
@@ -141,21 +131,18 @@ class ErrorService(ServiceInterface):
         """
         return ValidationException(
             message=f"Validation error: {message}",
-            code=ErrorCode.VALIDATION_ERROR,
-            details=[{
-                "loc": [field],
-                "msg": message,
-                "type": error_type,
-            }],
-            status_code=422,
+            details=[
+                {
+                    "loc": [field],
+                    "msg": message,
+                    "type": error_type,
+                }
+            ],
             original_exception=None,
         )
 
     def permission_denied(
-        self,
-        action: str,
-        resource_type: str,
-        permission: str
+        self, action: str, resource_type: str, permission: str
     ) -> PermissionDeniedException:
         """Create a permission denied exception.
 
@@ -169,21 +156,17 @@ class ErrorService(ServiceInterface):
         """
         return PermissionDeniedException(
             message=f"Permission denied to {action} {resource_type}",
-            code=ErrorCode.PERMISSION_DENIED,
             details={
                 "action": action,
                 "resource_type": resource_type,
                 "permission": permission,
             },
-            status_code=403,
             original_exception=None,
         )
 
     def business_logic_error(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> BusinessLogicException:
+        self, message: str, details: Optional[Dict[str, Any]] = None
+    ) -> BusinessException:
         """Create a business logic error exception.
 
         Args:
@@ -191,9 +174,9 @@ class ErrorService(ServiceInterface):
             details: Additional error details
 
         Returns:
-            BusinessLogicException
+            BusinessException
         """
-        return BusinessLogicException(
+        return BusinessException(
             message=message,
             code=ErrorCode.BUSINESS_LOGIC_ERROR,
             details=details or {},
@@ -206,7 +189,7 @@ class ErrorService(ServiceInterface):
         value: Optional[T],
         resource_type: str,
         resource_id: str,
-        message: Optional[str] = None
+        message: Optional[str] = None,
     ) -> T:
         """Ensure a value is not None or raise a resource not found exception.
 
@@ -226,7 +209,9 @@ class ErrorService(ServiceInterface):
             raise self.resource_not_found(resource_type, resource_id, message)
         return value
 
-    def handle_exception(self, exception: Exception, request_id: Optional[str] = None) -> None:
+    def handle_exception(
+        self, exception: Exception, request_id: Optional[str] = None
+    ) -> None:
         """Handle an exception by logging and reporting it.
 
         Args:
@@ -245,8 +230,11 @@ class ErrorService(ServiceInterface):
 
             # Extract arguments
             args_values = [locals_dict[arg] for arg in args if arg in locals_dict]
-            kwargs_values = {k: v for k, v in locals_dict.items()
-                             if k not in args and not k.startswith('__')}
+            kwargs_values = {
+                k: v
+                for k, v in locals_dict.items()
+                if k not in args and not k.startswith("__")
+            }
 
             # Create context
             context = ErrorContext(

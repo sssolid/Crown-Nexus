@@ -21,7 +21,7 @@ def cached(
     backend: Optional[str] = None,
     skip_args: Optional[List[int, str]] = None,
     skip_kwargs: Optional[List[str]] = None,
-    tags: Optional[List[str]] = None
+    tags: Optional[List[str]] = None,
 ) -> Callable[[F], F]:
     """Decorator for caching function results.
 
@@ -36,13 +36,17 @@ def cached(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         is_coroutine = asyncio.iscoroutinefunction(func)
 
         if is_coroutine:
+
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-                key = generate_cache_key(prefix, func, args, kwargs, skip_args, skip_kwargs)
+                key = generate_cache_key(
+                    prefix, func, args, kwargs, skip_args, skip_kwargs
+                )
                 cached_value = await cache_manager.get(key, backend)
 
                 if cached_value is not None:
@@ -67,11 +71,18 @@ def cached(
 
             return cast(F, async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                loop = asyncio.get_event_loop() if asyncio.get_event_loop_policy().get_event_loop().is_running() else asyncio.new_event_loop()
+                loop = (
+                    asyncio.get_event_loop()
+                    if asyncio.get_event_loop_policy().get_event_loop().is_running()
+                    else asyncio.new_event_loop()
+                )
 
-                key = generate_cache_key(prefix, func, args, kwargs, skip_args, skip_kwargs)
+                key = generate_cache_key(
+                    prefix, func, args, kwargs, skip_args, skip_kwargs
+                )
 
                 # Check cache
                 cached_value = loop.run_until_complete(cache_manager.get(key, backend))
@@ -83,7 +94,9 @@ def cached(
                 result = func(*args, **kwargs)
 
                 if result is not None:
-                    loop.run_until_complete(cache_manager.set(key, result, ttl, backend))
+                    loop.run_until_complete(
+                        cache_manager.set(key, result, ttl, backend)
+                    )
 
                     # Add tags if Redis backend is available
                     if tags and "redis" in cache_manager.backends:
@@ -91,7 +104,9 @@ def cached(
                             tag_key = f"cache:tag:{tag}"
                             redis_backend = cache_manager.backends["redis"]
                             if hasattr(redis_backend, "add_to_set"):
-                                loop.run_until_complete(redis_backend.add_to_set(tag_key, key))
+                                loop.run_until_complete(
+                                    redis_backend.add_to_set(tag_key, key)
+                                )
 
                 return result
 
@@ -104,7 +119,7 @@ def invalidate_cache(
     pattern: str,
     prefix: str = "cache",
     backend: Optional[str] = None,
-    tags: Optional[List[str]] = None
+    tags: Optional[List[str]] = None,
 ) -> Callable[[F], F]:
     """Decorator to invalidate cache after function execution.
 
@@ -117,10 +132,12 @@ def invalidate_cache(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         is_coroutine = asyncio.iscoroutinefunction(func)
 
         if is_coroutine:
+
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 result = await func(*args, **kwargs)
@@ -128,7 +145,9 @@ def invalidate_cache(
                 # Invalidate by pattern
                 pattern_key = f"{prefix}:{pattern}"
                 count = await cache_manager.invalidate_pattern(pattern_key, backend)
-                logger.debug(f"Invalidated {count} cache entries matching pattern: {pattern_key}")
+                logger.debug(
+                    f"Invalidated {count} cache entries matching pattern: {pattern_key}"
+                )
 
                 # Invalidate by tags if Redis backend is available
                 if tags and "redis" in cache_manager.backends:
@@ -140,22 +159,33 @@ def invalidate_cache(
                             if keys:
                                 await cache_manager.delete_many(keys)
                                 await redis_backend.delete(tag_key)
-                                logger.debug(f"Invalidated tag: {tag} with {len(keys)} keys")
+                                logger.debug(
+                                    f"Invalidated tag: {tag} with {len(keys)} keys"
+                                )
 
                 return result
 
             return cast(F, async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                loop = asyncio.get_event_loop() if asyncio.get_event_loop_policy().get_event_loop().is_running() else asyncio.new_event_loop()
+                loop = (
+                    asyncio.get_event_loop()
+                    if asyncio.get_event_loop_policy().get_event_loop().is_running()
+                    else asyncio.new_event_loop()
+                )
 
                 result = func(*args, **kwargs)
 
                 # Invalidate by pattern
                 pattern_key = f"{prefix}:{pattern}"
-                count = loop.run_until_complete(cache_manager.invalidate_pattern(pattern_key, backend))
-                logger.debug(f"Invalidated {count} cache entries matching pattern: {pattern_key}")
+                count = loop.run_until_complete(
+                    cache_manager.invalidate_pattern(pattern_key, backend)
+                )
+                logger.debug(
+                    f"Invalidated {count} cache entries matching pattern: {pattern_key}"
+                )
 
                 # Invalidate by tags if Redis backend is available
                 if tags and "redis" in cache_manager.backends:
@@ -163,11 +193,15 @@ def invalidate_cache(
                         tag_key = f"cache:tag:{tag}"
                         redis_backend = cache_manager.backends["redis"]
                         if hasattr(redis_backend, "get_set_members"):
-                            keys = loop.run_until_complete(redis_backend.get_set_members(tag_key))
+                            keys = loop.run_until_complete(
+                                redis_backend.get_set_members(tag_key)
+                            )
                             if keys:
                                 loop.run_until_complete(cache_manager.delete_many(keys))
                                 loop.run_until_complete(redis_backend.delete(tag_key))
-                                logger.debug(f"Invalidated tag: {tag} with {len(keys)} keys")
+                                logger.debug(
+                                    f"Invalidated tag: {tag} with {len(keys)} keys"
+                                )
 
                 return result
 
@@ -180,7 +214,7 @@ def cache_aside(
     key_func: Callable[..., str],
     ttl: Optional[int] = 300,
     backend: Optional[str] = None,
-    tags: Optional[List[str]] = None
+    tags: Optional[List[str]] = None,
 ) -> Callable[[F], F]:
     """Decorator for implementing the cache-aside pattern.
 
@@ -193,10 +227,12 @@ def cache_aside(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         is_coroutine = asyncio.iscoroutinefunction(func)
 
         if is_coroutine:
+
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 key = key_func(*args, **kwargs)
@@ -224,9 +260,14 @@ def cache_aside(
 
             return cast(F, async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                loop = asyncio.get_event_loop() if asyncio.get_event_loop_policy().get_event_loop().is_running() else asyncio.new_event_loop()
+                loop = (
+                    asyncio.get_event_loop()
+                    if asyncio.get_event_loop_policy().get_event_loop().is_running()
+                    else asyncio.new_event_loop()
+                )
 
                 key = key_func(*args, **kwargs)
                 cached_value = loop.run_until_complete(cache_manager.get(key, backend))
@@ -239,7 +280,9 @@ def cache_aside(
                 result = func(*args, **kwargs)
 
                 if result is not None:
-                    loop.run_until_complete(cache_manager.set(key, result, ttl, backend))
+                    loop.run_until_complete(
+                        cache_manager.set(key, result, ttl, backend)
+                    )
 
                     # Add tags if Redis backend is available
                     if tags and "redis" in cache_manager.backends:
@@ -247,7 +290,9 @@ def cache_aside(
                             tag_key = f"cache:tag:{tag}"
                             redis_backend = cache_manager.backends["redis"]
                             if hasattr(redis_backend, "add_to_set"):
-                                loop.run_until_complete(redis_backend.add_to_set(tag_key, key))
+                                loop.run_until_complete(
+                                    redis_backend.add_to_set(tag_key, key)
+                                )
 
                 return result
 
@@ -266,8 +311,4 @@ def memoize(ttl: Optional[int] = None, max_size: int = 128) -> Callable[[F], F]:
     Returns:
         Decorator function
     """
-    return cached(
-        ttl=ttl,
-        prefix=f"memoize",
-        backend="memory"
-    )
+    return cached(ttl=ttl, prefix=f"memoize", backend="memory")

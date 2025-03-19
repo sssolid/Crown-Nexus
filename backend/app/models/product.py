@@ -34,7 +34,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
-    text
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
@@ -46,12 +46,12 @@ from app.db.base_class import Base
 if TYPE_CHECKING:
     from app.models.associations import (
         product_fitment_association,
-        product_media_association
+        product_media_association,
     )
 else:
     from app.models.associations import (
         product_fitment_association,
-        product_media_association
+        product_media_association,
     )
 
 # For type hints only, not runtime imports
@@ -83,6 +83,7 @@ class Product(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "product"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -94,9 +95,7 @@ class Product(Base):
     part_number_stripped: Mapped[str] = mapped_column(
         String(50), index=True, nullable=False
     )
-    application: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    application: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     vintage: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=expression.false(), nullable=False
     )
@@ -109,9 +108,7 @@ class Product(Base):
     universal: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=expression.false(), nullable=False
     )
-    search_vector: Mapped[Optional[Any]] = mapped_column(
-        TSVECTOR, nullable=True
-    )
+    search_vector: Mapped[Optional[Any]] = mapped_column(TSVECTOR, nullable=True)
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
@@ -134,14 +131,14 @@ class Product(Base):
         "ProductSupersession",
         foreign_keys="ProductSupersession.old_product_id",
         back_populates="old_product",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     supersedes: Mapped[List["ProductSupersession"]] = relationship(
         "ProductSupersession",
         foreign_keys="ProductSupersession.new_product_id",
         back_populates="new_product",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     # Attributes
@@ -164,21 +161,19 @@ class Product(Base):
         "ProductBrandHistory",
         foreign_keys="ProductBrandHistory.product_id",
         back_populates="product",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     # Media relationship - using fully qualified string to avoid circular imports
     media: Mapped[List["Media"]] = relationship(
         "app.models.media.Media",
         secondary=product_media_association,
-        back_populates="products"
+        back_populates="products",
     )
 
     # Fitment relationship
     fitments: Mapped[List["Fitment"]] = relationship(
-        "Fitment",
-        secondary=product_fitment_association,
-        back_populates="products"
+        "Fitment", secondary=product_fitment_association, back_populates="products"
     )
 
     # Stock relationship
@@ -194,7 +189,7 @@ class Product(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     def __repr__(self) -> str:
@@ -220,6 +215,7 @@ class ProductDescription(Base):
         description: Description content
         created_at: Creation timestamp
     """
+
     __tablename__ = "product_description"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -231,17 +227,13 @@ class ProductDescription(Base):
     description_type: Mapped[str] = mapped_column(
         String(20), nullable=False, index=True
     )
-    description: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="descriptions"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="descriptions")
 
     def __repr__(self) -> str:
         """
@@ -267,6 +259,7 @@ class ProductMarketing(Base):
         position: Order for display
         created_at: Creation timestamp
     """
+
     __tablename__ = "product_marketing"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -275,23 +268,15 @@ class ProductMarketing(Base):
     product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("product.id"), nullable=False
     )
-    marketing_type: Mapped[str] = mapped_column(
-        String(20), nullable=False
-    )
-    content: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
-    position: Mapped[Optional[int]] = mapped_column(
-        Integer, nullable=True, index=True
-    )
+    marketing_type: Mapped[str] = mapped_column(String(20), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    position: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="marketing"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="marketing")
 
     def __repr__(self) -> str:
         """
@@ -317,6 +302,7 @@ class ProductActivity(Base):
         changed_by: User who made the change
         changed_at: When the change occurred
     """
+
     __tablename__ = "product_activity"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -325,12 +311,8 @@ class ProductActivity(Base):
     product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("product.id"), nullable=False
     )
-    status: Mapped[str] = mapped_column(
-        String(20), nullable=False, index=True
-    )
-    reason: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    status: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
     )
@@ -339,9 +321,7 @@ class ProductActivity(Base):
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="activities"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="activities")
     changed_by: Mapped[Optional["User"]] = relationship(
         "User", foreign_keys=[changed_by_id]
     )
@@ -369,6 +349,7 @@ class ProductSupersession(Base):
         reason: Explanation of why the product was superseded
         changed_at: When the change occurred
     """
+
     __tablename__ = "product_supersession"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -380,9 +361,7 @@ class ProductSupersession(Base):
     new_product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
     )
-    reason: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     changed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
     )
@@ -417,14 +396,13 @@ class Brand(Base):
         parent_company_id: Reference to parent company
         created_at: Creation timestamp
     """
+
     __tablename__ = "brand"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     parent_company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("company.id"), nullable=True
     )
@@ -440,8 +418,8 @@ class Brand(Base):
         "ProductBrandHistory",
         foreign_keys="[ProductBrandHistory.new_brand_id, ProductBrandHistory.old_brand_id]",
         primaryjoin="or_(Brand.id==ProductBrandHistory.new_brand_id, "
-                    "Brand.id==ProductBrandHistory.old_brand_id)",
-        viewonly=True
+        "Brand.id==ProductBrandHistory.old_brand_id)",
+        viewonly=True,
     )
 
     def __repr__(self) -> str:
@@ -468,6 +446,7 @@ class ProductBrandHistory(Base):
         changed_by_id: User who made the change
         changed_at: When the change occurred
     """
+
     __tablename__ = "product_brand_history"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -496,9 +475,7 @@ class ProductBrandHistory(Base):
     old_brand: Mapped[Optional["Brand"]] = relationship(
         "Brand", foreign_keys=[old_brand_id]
     )
-    new_brand: Mapped["Brand"] = relationship(
-        "Brand", foreign_keys=[new_brand_id]
-    )
+    new_brand: Mapped["Brand"] = relationship("Brand", foreign_keys=[new_brand_id])
     changed_by: Mapped[Optional["User"]] = relationship(
         "User", foreign_keys=[changed_by_id]
     )
@@ -535,41 +512,26 @@ class AttributeDefinition(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "attribute_definition"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False
-    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
     code: Mapped[str] = mapped_column(
         String(100), nullable=False, unique=True, index=True
     )
-    description: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
-    data_type: Mapped[str] = mapped_column(
-        String(20), nullable=False, index=True
-    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    data_type: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     is_required: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=expression.false(), nullable=False
     )
-    default_value: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
-    validation_regex: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
-    min_value: Mapped[Optional[float]] = mapped_column(
-        Numeric, nullable=True
-    )
-    max_value: Mapped[Optional[float]] = mapped_column(
-        Numeric, nullable=True
-    )
-    options: Mapped[Optional[Dict[str, Any]]] = mapped_column(
-        JSONB, nullable=True
-    )
+    default_value: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    validation_regex: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    min_value: Mapped[Optional[float]] = mapped_column(Numeric, nullable=True)
+    max_value: Mapped[Optional[float]] = mapped_column(Numeric, nullable=True)
+    options: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
     display_order: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False, index=True
     )
@@ -580,7 +542,7 @@ class AttributeDefinition(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     # Relationships
@@ -616,6 +578,7 @@ class ProductAttribute(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "product_attribute"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -625,11 +588,12 @@ class ProductAttribute(Base):
         UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
     )
     attribute_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("attribute_definition.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("attribute_definition.id"),
+        nullable=False,
+        index=True,
     )
-    value_string: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True, index=True
-    )
+    value_string: Mapped[Optional[str]] = mapped_column(Text, nullable=True, index=True)
     value_number: Mapped[Optional[float]] = mapped_column(
         Numeric, nullable=True, index=True
     )
@@ -639,9 +603,7 @@ class ProductAttribute(Base):
     value_date: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True, index=True
     )
-    value_json: Mapped[Optional[Dict[str, Any]]] = mapped_column(
-        JSONB, nullable=True
-    )
+    value_json: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -649,20 +611,18 @@ class ProductAttribute(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="attributes"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="attributes")
     attribute: Mapped["AttributeDefinition"] = relationship(
         "AttributeDefinition", back_populates="attributes"
     )
 
     __table_args__ = (
         # Ensure a product can't have the same attribute twice
-        UniqueConstraint('product_id', 'attribute_id', name='uix_product_attribute'),
+        UniqueConstraint("product_id", "attribute_id", name="uix_product_attribute"),
     )
 
     def __repr__(self) -> str:
@@ -687,6 +647,7 @@ class PriceType(Base):
         description: Description of price type
         created_at: Creation timestamp
     """
+
     __tablename__ = "price_type"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -695,9 +656,7 @@ class PriceType(Base):
     name: Mapped[str] = mapped_column(
         String(50), nullable=False, unique=True, index=True
     )
-    description: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -732,6 +691,7 @@ class ProductPricing(Base):
         currency: Currency code
         last_updated: Last update timestamp
     """
+
     __tablename__ = "product_pricing"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -746,9 +706,7 @@ class ProductPricing(Base):
     manufacturer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("manufacturer.id"), nullable=True, index=True
     )
-    price: Mapped[float] = mapped_column(
-        Numeric(10, 2), nullable=False
-    )
+    price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     currency: Mapped[str] = mapped_column(
         String(3), default="USD", server_default=text("'USD'"), nullable=False
     )
@@ -757,9 +715,7 @@ class ProductPricing(Base):
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="pricing"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="pricing")
     pricing_type: Mapped["PriceType"] = relationship(
         "PriceType", back_populates="pricing"
     )
@@ -793,14 +749,13 @@ class Manufacturer(Base):
         country_id: Manufacturing location
         created_at: Creation timestamp
     """
+
     __tablename__ = "manufacturer"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(255), nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("company.id"), nullable=True, index=True
     )
@@ -865,6 +820,7 @@ class ProductMeasurement(Base):
         dimensional_weight: DIM weight calculation
         effective_date: When measurements become effective
     """
+
     __tablename__ = "product_measurement"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -876,21 +832,11 @@ class ProductMeasurement(Base):
     manufacturer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("manufacturer.id"), nullable=True, index=True
     )
-    length: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 3), nullable=True
-    )
-    width: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 3), nullable=True
-    )
-    height: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 3), nullable=True
-    )
-    weight: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 3), nullable=True
-    )
-    volume: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 3), nullable=True
-    )
+    length: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
+    width: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
+    height: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
+    weight: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
+    volume: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
     dimensional_weight: Mapped[Optional[float]] = mapped_column(
         Numeric(10, 3), nullable=True
     )
@@ -899,9 +845,7 @@ class ProductMeasurement(Base):
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="measurements"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="measurements")
     manufacturer: Mapped[Optional["Manufacturer"]] = relationship(
         "Manufacturer", back_populates="product_measurements"
     )
@@ -929,6 +873,7 @@ class ProductStock(Base):
         quantity: Quantity in stock
         last_updated: Last stock update timestamp
     """
+
     __tablename__ = "product_stock"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -948,12 +893,8 @@ class ProductStock(Base):
     )
 
     # Relationships
-    product: Mapped["Product"] = relationship(
-        "Product", back_populates="stock"
-    )
-    warehouse: Mapped["Warehouse"] = relationship(
-        "Warehouse", back_populates="stock"
-    )
+    product: Mapped["Product"] = relationship("Product", back_populates="stock")
+    warehouse: Mapped["Warehouse"] = relationship("Warehouse", back_populates="stock")
 
     def __repr__(self) -> str:
         """
@@ -962,7 +903,9 @@ class ProductStock(Base):
         Returns:
             str: Product stock representation
         """
-        return f"<ProductStock {self.product_id} @ {self.warehouse_id}: {self.quantity}>"
+        return (
+            f"<ProductStock {self.product_id} @ {self.warehouse_id}: {self.quantity}>"
+        )
 
 
 class Fitment(Base):
@@ -986,20 +929,15 @@ class Fitment(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "fitment"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    year: Mapped[int] = mapped_column(
-        Integer, nullable=False, index=True
-    )
-    make: Mapped[str] = mapped_column(
-        String(100), nullable=False, index=True
-    )
-    model: Mapped[str] = mapped_column(
-        String(100), nullable=False, index=True
-    )
+    year: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    make: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    model: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     engine: Mapped[Optional[str]] = mapped_column(
         String(100), nullable=True, index=True
     )
@@ -1012,9 +950,7 @@ class Fitment(Base):
 
     # Relationships
     products: Mapped[List[Product]] = relationship(
-        "Product",
-        secondary=product_fitment_association,
-        back_populates="fitments"
+        "Product", secondary=product_fitment_association, back_populates="fitments"
     )
 
     # Audit timestamps
@@ -1025,7 +961,7 @@ class Fitment(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     def __repr__(self) -> str:

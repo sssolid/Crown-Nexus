@@ -31,6 +31,7 @@ class DescriptionType(str, Enum):
     Defines the different categories of descriptions that can be associated
     with a product.
     """
+
     SHORT = "Short"
     LONG = "Long"
     KEYWORDS = "Keywords"
@@ -45,6 +46,7 @@ class MarketingType(str, Enum):
     Defines the different categories of marketing content that can be
     associated with a product.
     """
+
     BULLET_POINT = "Bullet Point"
     AD_COPY = "Ad Copy"
 
@@ -55,6 +57,7 @@ class ProductStatus(str, Enum):
 
     Defines the possible status values for product activities.
     """
+
     ACTIVE = "active"
     INACTIVE = "inactive"
     DISCONTINUED = "discontinued"
@@ -73,6 +76,7 @@ class ProductDescriptionBase(BaseModel):
         description_type: Type of description
         description: Description content
     """
+
     description_type: DescriptionType
     description: str
 
@@ -83,6 +87,7 @@ class ProductDescriptionCreate(ProductDescriptionBase):
 
     Extends the base product description schema for creation requests.
     """
+
     pass
 
 
@@ -96,6 +101,7 @@ class ProductDescriptionUpdate(BaseModel):
         description_type: Type of description (optional)
         description: Description content (optional)
     """
+
     description_type: Optional[DescriptionType] = None
     description: Optional[str] = None
 
@@ -111,6 +117,7 @@ class ProductDescriptionInDB(ProductDescriptionBase):
         product_id: Product UUID
         created_at: Creation timestamp
     """
+
     id: uuid.UUID
     product_id: uuid.UUID
     created_at: datetime
@@ -124,6 +131,7 @@ class ProductDescription(ProductDescriptionInDB):
 
     This schema is used for API responses returning product description data.
     """
+
     pass
 
 
@@ -139,6 +147,7 @@ class ProductMarketingBase(BaseModel):
         content: Marketing content
         position: Order for display (optional)
     """
+
     marketing_type: MarketingType
     content: str
     position: Optional[int] = None
@@ -150,6 +159,7 @@ class ProductMarketingCreate(ProductMarketingBase):
 
     Extends the base product marketing schema for creation requests.
     """
+
     pass
 
 
@@ -164,6 +174,7 @@ class ProductMarketingUpdate(BaseModel):
         content: Marketing content (optional)
         position: Order for display (optional)
     """
+
     marketing_type: Optional[MarketingType] = None
     content: Optional[str] = None
     position: Optional[int] = None
@@ -180,6 +191,7 @@ class ProductMarketingInDB(ProductMarketingBase):
         product_id: Product UUID
         created_at: Creation timestamp
     """
+
     id: uuid.UUID
     product_id: uuid.UUID
     created_at: datetime
@@ -193,6 +205,7 @@ class ProductMarketing(ProductMarketingInDB):
 
     This schema is used for API responses returning product marketing data.
     """
+
     pass
 
 
@@ -207,6 +220,7 @@ class ProductActivityBase(BaseModel):
         status: Product status
         reason: Reason for status change (optional)
     """
+
     status: ProductStatus
     reason: Optional[str] = None
 
@@ -217,6 +231,7 @@ class ProductActivityCreate(ProductActivityBase):
 
     Extends the base product activity schema for creation requests.
     """
+
     pass
 
 
@@ -232,6 +247,7 @@ class ProductActivityInDB(ProductActivityBase):
         changed_by_id: User UUID who made the change (optional)
         changed_at: When the change occurred
     """
+
     id: uuid.UUID
     product_id: uuid.UUID
     changed_by_id: Optional[uuid.UUID] = None
@@ -249,6 +265,7 @@ class ProductActivity(ProductActivityInDB):
     Attributes:
         changed_by: User who made the change (optional)
     """
+
     changed_by: Optional[Dict[str, Any]] = None
 
 
@@ -263,6 +280,7 @@ class BrandBase(BaseModel):
         name: Brand name
         parent_company_id: Parent company ID (optional)
     """
+
     name: str
     parent_company_id: Optional[uuid.UUID] = None
 
@@ -273,6 +291,7 @@ class BrandCreate(BrandBase):
 
     Extends the base brand schema for creation requests.
     """
+
     pass
 
 
@@ -286,6 +305,7 @@ class BrandUpdate(BaseModel):
         name: Brand name (optional)
         parent_company_id: Parent company ID (optional)
     """
+
     name: Optional[str] = None
     parent_company_id: Optional[Union[uuid.UUID, None]] = Field(
         default=..., description="Parent company ID, can be null"
@@ -302,6 +322,7 @@ class BrandInDB(BrandBase):
         id: Brand UUID
         created_at: Creation timestamp
     """
+
     id: uuid.UUID
     created_at: datetime
 
@@ -317,6 +338,7 @@ class Brand(BrandInDB):
     Attributes:
         parent_company: Parent company information (optional)
     """
+
     parent_company: Optional[Dict[str, Any]] = None
 
 
@@ -332,6 +354,7 @@ class ProductSupersessionBase(BaseModel):
         new_product_id: Replacement product
         reason: Explanation of why the product was superseded (optional)
     """
+
     old_product_id: uuid.UUID
     new_product_id: uuid.UUID
     reason: Optional[str] = None
@@ -343,6 +366,7 @@ class ProductSupersessionCreate(ProductSupersessionBase):
 
     Extends the base product supersession schema for creation requests.
     """
+
     pass
 
 
@@ -355,6 +379,7 @@ class ProductSupersessionUpdate(BaseModel):
     Attributes:
         reason: Explanation of why the product was superseded (optional)
     """
+
     reason: Optional[str] = None
 
 
@@ -368,6 +393,7 @@ class ProductSupersessionInDB(ProductSupersessionBase):
         id: Supersession UUID
         changed_at: When the change occurred
     """
+
     id: uuid.UUID
     changed_at: datetime
 
@@ -384,6 +410,7 @@ class ProductSupersession(ProductSupersessionInDB):
         old_product: Basic information about the product being replaced
         new_product: Basic information about the replacement product
     """
+
     old_product: Optional[Dict[str, Any]] = None
     new_product: Optional[Dict[str, Any]] = None
 
@@ -404,6 +431,7 @@ class ProductMeasurementBase(BaseModel):
         volume: Volume in cubic inches (optional)
         dimensional_weight: DIM weight calculation (optional)
     """
+
     manufacturer_id: Optional[uuid.UUID] = None
     length: Optional[float] = None
     width: Optional[float] = None
@@ -419,6 +447,7 @@ class ProductMeasurementCreate(ProductMeasurementBase):
 
     Extends the base product measurement schema for creation requests.
     """
+
     pass
 
 
@@ -428,6 +457,7 @@ class ProductMeasurementUpdate(ProductMeasurementBase):
 
     Fields are the same as the base schema since all are optional.
     """
+
     pass
 
 
@@ -442,6 +472,7 @@ class ProductMeasurementInDB(ProductMeasurementBase):
         product_id: Product UUID
         effective_date: When measurements become effective
     """
+
     id: uuid.UUID
     product_id: uuid.UUID
     effective_date: datetime
@@ -458,6 +489,7 @@ class ProductMeasurement(ProductMeasurementInDB):
     Attributes:
         manufacturer: Manufacturer information (optional)
     """
+
     manufacturer: Optional[Dict[str, Any]] = None
 
 
@@ -472,6 +504,7 @@ class ProductStockBase(BaseModel):
         warehouse_id: Warehouse UUID
         quantity: Quantity in stock
     """
+
     warehouse_id: uuid.UUID
     quantity: int = Field(ge=0, default=0)
 
@@ -482,6 +515,7 @@ class ProductStockCreate(ProductStockBase):
 
     Extends the base product stock schema for creation requests.
     """
+
     pass
 
 
@@ -494,6 +528,7 @@ class ProductStockUpdate(BaseModel):
     Attributes:
         quantity: Quantity in stock (optional)
     """
+
     quantity: Optional[int] = Field(ge=0, default=None)
 
 
@@ -508,6 +543,7 @@ class ProductStockInDB(ProductStockBase):
         product_id: Product UUID
         last_updated: Last stock update timestamp
     """
+
     id: uuid.UUID
     product_id: uuid.UUID
     last_updated: datetime
@@ -524,6 +560,7 @@ class ProductStock(ProductStockInDB):
     Attributes:
         warehouse: Warehouse information
     """
+
     warehouse: Dict[str, Any]
 
 
@@ -544,6 +581,7 @@ class ProductBase(BaseModel):
         universal: Universal fit flag
         is_active: Whether the product is active
     """
+
     part_number: str
     part_number_stripped: Optional[str] = None
     application: Optional[str] = None
@@ -553,8 +591,8 @@ class ProductBase(BaseModel):
     universal: bool = False
     is_active: bool = True
 
-    @model_validator(mode='after')
-    def generate_part_number_stripped(self) -> 'ProductBase':
+    @model_validator(mode="after")
+    def generate_part_number_stripped(self) -> "ProductBase":
         """
         Generate the stripped part number if not provided.
 
@@ -562,7 +600,7 @@ class ProductBase(BaseModel):
             ProductBase: Validated model instance
         """
         if not self.part_number_stripped and self.part_number:
-            self.part_number_stripped = ''.join(
+            self.part_number_stripped = "".join(
                 c for c in self.part_number if c.isalnum()
             ).upper()
         return self
@@ -578,6 +616,7 @@ class ProductCreate(ProductBase):
         descriptions: List of product descriptions (optional)
         marketing: List of marketing content (optional)
     """
+
     descriptions: Optional[List[ProductDescriptionCreate]] = None
     marketing: Optional[List[ProductMarketingCreate]] = None
 
@@ -598,6 +637,7 @@ class ProductUpdate(BaseModel):
         universal: Universal fit flag (optional)
         is_active: Whether the product is active (optional)
     """
+
     part_number: Optional[str] = None
     application: Optional[str] = None
     vintage: Optional[bool] = None
@@ -618,6 +658,7 @@ class ProductInDB(ProductBase):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -641,6 +682,7 @@ class Product(ProductInDB):
         measurements: List of product measurements
         stock: List of product stock information
     """
+
     descriptions: List[ProductDescription] = []
     marketing: List[ProductMarketing] = []
     activities: List[ProductActivity] = []
@@ -665,6 +707,7 @@ class FitmentBase(BaseModel):
         transmission: Transmission type (optional)
         attributes: Additional fitment attributes
     """
+
     year: int
     make: str
     model: str
@@ -688,7 +731,9 @@ class FitmentBase(BaseModel):
             ValueError: If year is outside reasonable range
         """
         current_year = datetime.now().year
-        if v < 1900 or v > current_year + 2:  # Allow up to 2 years in the future for new models
+        if (
+            v < 1900 or v > current_year + 2
+        ):  # Allow up to 2 years in the future for new models
             raise ValueError(f"Year must be between 1900 and {current_year + 2}")
         return v
 
@@ -699,6 +744,7 @@ class FitmentCreate(FitmentBase):
 
     Extends the base fitment schema for creation requests.
     """
+
     pass
 
 
@@ -717,6 +763,7 @@ class FitmentUpdate(BaseModel):
         transmission: Transmission type (optional)
         attributes: Additional fitment attributes (optional)
     """
+
     year: Optional[int] = None
     make: Optional[str] = None
     model: Optional[str] = None
@@ -759,6 +806,7 @@ class FitmentInDB(FitmentBase):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -772,6 +820,7 @@ class Fitment(FitmentInDB):
 
     This schema is used for API responses returning fitment data.
     """
+
     pass
 
 
@@ -790,6 +839,7 @@ class PaginatedResponse(BaseModel):
         page_size: Number of items per page
         pages: Total number of pages
     """
+
     items: List[Any]
     total: int
     page: int
@@ -806,6 +856,7 @@ class ProductListResponse(PaginatedResponse):
     Attributes:
         items: List of products
     """
+
     items: List[Product]
 
 
@@ -818,4 +869,5 @@ class FitmentListResponse(PaginatedResponse):
     Attributes:
         items: List of fitments
     """
+
     items: List[Fitment]

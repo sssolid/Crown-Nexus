@@ -5,6 +5,7 @@ from app.core.cache.base import CacheBackend
 
 T = TypeVar("T")
 
+
 class NullCacheBackend(CacheBackend):
     """No-op cache backend for testing or disabling cache."""
 

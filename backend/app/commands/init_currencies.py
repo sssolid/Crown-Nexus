@@ -69,9 +69,11 @@ async def _init_currencies_sync(force: bool, base_currency: str) -> None:
             stmt = select(Currency)
             result = await db.execute(stmt)
             existing = list(result.scalars().all())
-            
+
             if existing:
-                typer.echo(f"Found {len(existing)} existing currencies. Use --force to reinitialize.")
+                typer.echo(
+                    f"Found {len(existing)} existing currencies. Use --force to reinitialize."
+                )
                 return
 
         # Delete existing currencies if forcing
@@ -92,6 +94,7 @@ async def _init_currencies_sync(force: bool, base_currency: str) -> None:
 
         # Trigger initial exchange rate update
         from app.services.currency_service import ExchangeRateService
+
         try:
             count = await ExchangeRateService.update_exchange_rates(db, force=True)
             typer.echo(f"Updated {count} exchange rates.")

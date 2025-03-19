@@ -23,10 +23,7 @@ class PermissionHelper:
     """Helper for permission-related operations."""
 
     @staticmethod
-    async def get_user(
-        db: AsyncSession,
-        user_id: str
-    ) -> User:
+    async def get_user(db: AsyncSession, user_id: str) -> User:
         """Get user by ID.
 
         Args:
@@ -39,9 +36,7 @@ class PermissionHelper:
         Raises:
             AuthenticationException: If user not found
         """
-        result = await db.execute(
-            select(User).where(User.id == user_id)
-        )
+        result = await db.execute(select(User).where(User.id == user_id))
         user = result.scalars().first()
 
         if not user:
@@ -59,7 +54,7 @@ class PermissionHelper:
     def check_owner_permission(
         user_id: str,
         entity_user_id: Optional[Union[str, Any]],
-        owner_field: str = "user_id"
+        owner_field: str = "user_id",
     ) -> bool:
         """Check if a user is the owner of an entity.
 
@@ -81,10 +76,7 @@ class PermissionHelper:
         return entity_user_id == user_id
 
     @staticmethod
-    def has_any_permission(
-        user: User,
-        permissions: list
-    ) -> bool:
+    def has_any_permission(user: User, permissions: list) -> bool:
         """Check if a user has any of the specified permissions.
 
         Args:
@@ -115,10 +107,7 @@ class PermissionHelper:
         return False
 
     @staticmethod
-    def has_all_permissions(
-        user: User,
-        permissions: list
-    ) -> bool:
+    def has_all_permissions(user: User, permissions: list) -> bool:
         """Check if a user has all specified permissions.
 
         Args:

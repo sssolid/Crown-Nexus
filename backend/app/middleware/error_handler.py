@@ -9,12 +9,18 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.dependency_manager import get_dependency
 from app.core.exceptions import (
-    AppException, ErrorCategory, ErrorCode, ErrorResponse,
-    ErrorSeverity, app_exception_handler, generic_exception_handler
+    AppException,
+    ErrorCategory,
+    ErrorCode,
+    ErrorResponse,
+    ErrorSeverity,
+    app_exception_handler,
+    generic_exception_handler,
 )
 from app.core.logging import get_logger
 
 logger = get_logger("app.middleware.error_handler")
+
 
 class ErrorHandlerMiddleware(BaseHTTPMiddleware):
     """Middleware for handling exceptions across the application."""

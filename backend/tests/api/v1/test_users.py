@@ -80,9 +80,7 @@ async def test_read_users_non_admin(
     assert "Insufficient permissions" in data["detail"]
 
 
-async def test_create_user_admin(
-    client: AsyncClient, admin_token: str
-) -> None:
+async def test_create_user_admin(client: AsyncClient, admin_token: str) -> None:
     """
     Test user creation by admin.
 

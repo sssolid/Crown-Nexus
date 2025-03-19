@@ -12,9 +12,10 @@ from app.services.pagination.base import (
     OffsetPaginationParams,
     PaginationResult,
     SortDirection,
-    SortField
+    SortField,
 )
 from app.services.pagination.service import PaginationService
+
 
 # Factory function for dependency injection
 def get_pagination_service(db, model_class, response_model=None):
@@ -38,5 +39,5 @@ __all__ = [
     "OffsetPaginationParams",
     "CursorPaginationParams",
     "SortDirection",
-    "SortField"
+    "SortField",
 ]

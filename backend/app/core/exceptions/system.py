@@ -26,7 +26,7 @@ class SystemException(AppException):
         code: ErrorCode = ErrorCode.UNKNOWN_ERROR,
         details: Any = None,
         status_code: int = 500,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a system exception.
 
@@ -44,7 +44,7 @@ class SystemException(AppException):
             status_code=status_code,
             severity=ErrorSeverity.ERROR,
             category=ErrorCategory.SYSTEM,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -57,7 +57,7 @@ class DatabaseException(SystemException):
         code: ErrorCode = ErrorCode.DATABASE_ERROR,
         details: Any = None,
         status_code: int = 500,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a database exception.
 
@@ -73,7 +73,7 @@ class DatabaseException(SystemException):
             code=code,
             details=details,
             status_code=status_code,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -84,7 +84,7 @@ class DataIntegrityException(DatabaseException):
         self,
         message: str,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a data integrity exception.
 
@@ -98,7 +98,7 @@ class DataIntegrityException(DatabaseException):
             code=ErrorCode.DATABASE_ERROR,
             details=details,
             status_code=409,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -109,7 +109,7 @@ class TransactionException(DatabaseException):
         self,
         message: str,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a transaction exception.
 
@@ -123,7 +123,7 @@ class TransactionException(DatabaseException):
             code=ErrorCode.DATABASE_ERROR,
             details=details,
             status_code=500,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -135,7 +135,7 @@ class NetworkException(SystemException):
         message: str,
         details: Any = None,
         status_code: int = 503,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a network exception.
 
@@ -150,7 +150,7 @@ class NetworkException(SystemException):
             code=ErrorCode.NETWORK_ERROR,
             details=details,
             status_code=status_code,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -163,7 +163,7 @@ class ServiceException(SystemException):
         service_name: Optional[str] = None,
         details: Any = None,
         status_code: int = 502,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a service exception.
 
@@ -183,7 +183,7 @@ class ServiceException(SystemException):
             code=ErrorCode.SERVICE_ERROR,
             details=error_details,
             status_code=status_code,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -195,7 +195,7 @@ class ConfigurationException(SystemException):
         message: str,
         component: Optional[str] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a configuration exception.
 
@@ -214,7 +214,7 @@ class ConfigurationException(SystemException):
             code=ErrorCode.CONFIGURATION_ERROR,
             details=error_details,
             status_code=500,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -226,7 +226,7 @@ class SecurityException(SystemException):
         message: str,
         details: Any = None,
         status_code: int = 403,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a security exception.
 
@@ -241,7 +241,7 @@ class SecurityException(SystemException):
             code=ErrorCode.SECURITY_ERROR,
             details=details,
             status_code=status_code,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -253,7 +253,7 @@ class RateLimitException(SecurityException):
         message: str = "Rate limit exceeded",
         details: Any = None,
         headers: Optional[Dict[str, str]] = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a rate limit exception.
 
@@ -270,5 +270,5 @@ class RateLimitException(SecurityException):
             message=message,
             details=error_details,
             status_code=429,
-            original_exception=original_exception
+            original_exception=original_exception,
         )

@@ -9,7 +9,7 @@ for logging audit events to various destinations.
 
 import json
 import uuid
-from datetime import datetime
+import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +20,7 @@ from app.services.audit.base import (
     AuditEventType,
     AuditLogLevel,
     AuditLogger,
-    AuditOptions
+    AuditOptions,
 )
 
 logger = get_logger("app.services.audit.loggers")
@@ -41,13 +41,13 @@ class BaseAuditLogger:
             "credit_card",
             "ssn",
             "social_security",
-            "api_key"
+            "api_key",
         ]
 
         # Event types that should be anonymized by default
         self.anonymize_events: List[AuditEventType] = [
             AuditEventType.GDPR_DATA_EXPORT,
-            AuditEventType.GDPR_DATA_DELETED
+            AuditEventType.GDPR_DATA_DELETED,
         ]
 
         # Map event types to log levels
@@ -64,7 +64,9 @@ class BaseAuditLogger:
             AuditEventType.MAINTENANCE_MODE_ENABLED: AuditLogLevel.WARNING,
         }
 
-    def _get_log_level(self, event_type: AuditEventType, level: Optional[AuditLogLevel] = None) -> AuditLogLevel:
+    def _get_log_level(
+        self, event_type: AuditEventType, level: Optional[AuditLogLevel] = None
+    ) -> AuditLogLevel:
         """Get the appropriate log level for an event type.
 
         Args:
@@ -79,7 +81,9 @@ class BaseAuditLogger:
 
         return self.event_level_mapping.get(event_type, AuditLogLevel.INFO)
 
-    def _anonymize_data(self, data: Dict[str, Any], sensitive_fields: List[str]) -> Dict[str, Any]:
+    def _anonymize_data(
+        self, data: Dict[str, Any], sensitive_fields: List[str]
+    ) -> Dict[str, Any]:
         """Anonymize sensitive data in audit logs.
 
         Args:
@@ -96,7 +100,9 @@ class BaseAuditLogger:
 
         for key, value in data.items():
             # Check if field name contains any sensitive keywords
-            is_sensitive = any(sensitive in key.lower() for sensitive in sensitive_fields)
+            is_sensitive = any(
+                sensitive in key.lower() for sensitive in sensitive_fields
+            )
 
             if is_sensitive:
                 if isinstance(value, str):
@@ -115,7 +121,11 @@ class BaseAuditLogger:
             elif isinstance(value, list) and value and isinstance(value[0], dict):
                 # Recursively process lists of dictionaries
                 anonymized[key] = [
-                    self._anonymize_data(item, sensitive_fields) if isinstance(item, dict) else item
+                    (
+                        self._anonymize_data(item, sensitive_fields)
+                        if isinstance(item, dict)
+                        else item
+                    )
                     for item in value
                 ]
             else:
@@ -135,7 +145,7 @@ class BaseAuditLogger:
         resource_type: Optional[str],
         details: Optional[Dict[str, Any]],
         context: Optional[AuditContext],
-        options: Optional[AuditOptions]
+        options: Optional[AuditOptions],
     ) -> Dict[str, Any]:
         """Prepare a standardized log entry.
 
@@ -154,7 +164,7 @@ class BaseAuditLogger:
         Returns:
             Dict[str, Any]: Standardized log entry
         """
-        timestamp = datetime.utcnow().isoformat() + "Z"
+        timestamp = datetime.datetime.now(datetime.UTC).isoformat() + "Z"
 
         # Use context values if provided, otherwise use direct parameters
         ctx = context or AuditContext()
@@ -190,8 +200,13 @@ class BaseAuditLogger:
 
         # Add additional context if provided
         if context:
-            for key, value in context.dict(exclude_none=True).items():
-                if key not in log_entry and key not in ["user_id", "ip_address", "resource_id", "resource_type"]:
+            for key, value in context.model_dump(exclude_none=True).items():
+                if key not in log_entry and key not in [
+                    "user_id",
+                    "ip_address",
+                    "resource_id",
+                    "resource_type",
+                ]:
                     log_entry[key] = value
 
         return log_entry
@@ -245,7 +260,7 @@ class LoggingAuditLogger(BaseAuditLogger, AuditLogger):
             resource_type,
             details,
             context,
-            options
+            options,
         )
 
         # Create log message
@@ -279,6 +294,7 @@ class FileAuditLogger(BaseAuditLogger, AuditLogger):
         # Ensure log directory exists
         import os
         from pathlib import Path
+
         log_dir = Path(file_path).parent
         os.makedirs(log_dir, exist_ok=True)
 
@@ -327,7 +343,7 @@ class FileAuditLogger(BaseAuditLogger, AuditLogger):
             resource_type,
             details,
             context,
-            options
+            options,
         )
 
         try:
@@ -388,7 +404,9 @@ class DatabaseAuditLogger(BaseAuditLogger, AuditLogger):
         """
         # If no DB session, return early
         if not self.db:
-            self.logger.warning("No database session provided for database audit logger")
+            self.logger.warning(
+                "No database session provided for database audit logger"
+            )
             return str(uuid.uuid4())
 
         # Generate event ID
@@ -408,7 +426,7 @@ class DatabaseAuditLogger(BaseAuditLogger, AuditLogger):
             resource_type,
             details,
             context,
-            options
+            options,
         )
 
         try:
@@ -421,15 +439,27 @@ class DatabaseAuditLogger(BaseAuditLogger, AuditLogger):
                 timestamp=datetime.fromisoformat(log_entry["timestamp"].rstrip("Z")),
                 event_type=log_entry["event_type"],
                 level=log_entry["level"],
-                user_id=uuid.UUID(log_entry["user_id"]) if log_entry.get("user_id") else None,
+                user_id=(
+                    uuid.UUID(log_entry["user_id"])
+                    if log_entry.get("user_id")
+                    else None
+                ),
                 ip_address=log_entry.get("ip_address"),
-                resource_id=uuid.UUID(log_entry["resource_id"]) if log_entry.get("resource_id") else None,
+                resource_id=(
+                    uuid.UUID(log_entry["resource_id"])
+                    if log_entry.get("resource_id")
+                    else None
+                ),
                 resource_type=log_entry.get("resource_type"),
                 details=log_entry.get("details", {}),
                 request_id=log_entry.get("request_id"),
                 user_agent=log_entry.get("user_agent"),
                 session_id=log_entry.get("session_id"),
-                company_id=uuid.UUID(log_entry["company_id"]) if log_entry.get("company_id") else None,
+                company_id=(
+                    uuid.UUID(log_entry["company_id"])
+                    if log_entry.get("company_id")
+                    else None
+                ),
             )
 
             # Add to session and commit

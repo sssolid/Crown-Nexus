@@ -117,9 +117,25 @@ class MetricsConfig:
     namespace: str = "crown_nexus"
     subsystem: str = "api"
     default_labels: Dict[str, str] = field(default_factory=dict)
-    default_buckets: List[float] = field(default_factory=lambda: [
-        0.001, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0
-    ])
+    default_buckets: List[float] = field(
+        default_factory=lambda: [
+            0.001,
+            0.005,
+            0.01,
+            0.025,
+            0.05,
+            0.075,
+            0.1,
+            0.25,
+            0.5,
+            0.75,
+            1.0,
+            2.5,
+            5.0,
+            7.5,
+            10.0,
+        ]
+    )
     enable_prometheus: bool = True
     enable_endpoint: bool = True
     endpoint_port: int = 9090

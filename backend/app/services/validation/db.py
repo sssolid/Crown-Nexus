@@ -35,7 +35,7 @@ class UniqueValidator(Validator):
         field: str,
         model: Any,
         exclude_id: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Validate that a value is unique in the database.
 
@@ -62,12 +62,14 @@ class UniqueValidator(Validator):
         if existing:
             return ValidationResult(
                 is_valid=False,
-                errors=[{
-                    "msg": f"Value '{value}' already exists for field '{field}'",
-                    "type": "unique_error",
-                    "field": field,
-                    "value": value
-                }]
+                errors=[
+                    {
+                        "msg": f"Value '{value}' already exists for field '{field}'",
+                        "type": "unique_error",
+                        "field": field,
+                        "value": value,
+                    }
+                ],
             )
 
         return ValidationResult(is_valid=True)
@@ -78,7 +80,7 @@ class UniqueValidator(Validator):
         field: str = "",
         model: Any = None,
         exclude_id: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Non-async interface that's part of the Validator protocol.
 
@@ -96,6 +98,5 @@ class UniqueValidator(Validator):
             RuntimeError: Always, as this validator requires async operations
         """
         raise RuntimeError(
-            "UniqueValidator requires async operations. "
-            "Use validate_async instead."
+            "UniqueValidator requires async operations. " "Use validate_async instead."
         )

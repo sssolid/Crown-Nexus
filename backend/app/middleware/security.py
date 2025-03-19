@@ -8,14 +8,14 @@ common web vulnerabilities like XSS, CSRF, and clickjacking.
 
 from __future__ import annotations
 
-import logging
-import re
-from typing import Callable, Optional, Pattern
+import json
+from typing import Callable, Optional, Dict, Any
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, status
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.config import settings
+from app.core.exceptions import SecurityException
 from app.core.logging import get_logger
 
 logger = get_logger("app.middleware.security")
@@ -49,8 +49,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             expect_ct: Certificate Transparency policy, defaults to None
         """
         super().__init__(app)
-        self.content_security_policy: str = content_security_policy or settings.security.CONTENT_SECURITY_POLICY
-        self.permissions_policy: str = permissions_policy or settings.security.PERMISSIONS_POLICY
+        self.content_security_policy: str = (
+            content_security_policy or settings.CONTENT_SECURITY_POLICY
+        )
+        self.permissions_policy: str = (
+            permissions_policy or settings.PERMISSIONS_POLICY
+        )
         self.expect_ct: Optional[str] = expect_ct
 
         logger.info("SecurityHeadersMiddleware initialized")
@@ -78,7 +82,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             response.headers["X-Frame-Options"] = "DENY"
             response.headers["X-XSS-Protection"] = "1; mode=block"
             response.headers["Content-Security-Policy"] = self.content_security_policy
-            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains"
+            )
             response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
             # Add optional headers
@@ -122,7 +128,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
         self.suspicious_patterns: list[str] = [
             "../../",  # Path traversal
             "<script",  # Basic XSS
-            "eval(",    # Code injection
+            "eval(",  # Code injection
             "SELECT ",  # SQL injection
         ]
         logger.info("SecureRequestMiddleware initialized")
@@ -151,9 +157,59 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
             # Use custom exception from app's hierarchy
             raise SecurityException(
                 message="Forbidden - Suspicious request detected",
-                code=ErrorCode.SECURITY_ERROR,
                 details={"ip": request.client.host},
-                status_code=status.HTTP_403_FORBIDDEN
+                status_code=status.HTTP_403_FORBIDDEN,
             )
 
         return await call_next(request)
+
+    def _is_suspicious_request(self, request: Request) -> bool:
+        """Check if the request contains suspicious patterns.
+
+        Args:
+            request: The incoming HTTP request
+
+        Returns:
+            bool: True if the request appears suspicious, False otherwise
+        """
+        # Check URL path for suspicious patterns
+        path = request.url.path
+        for pattern in self.suspicious_patterns:
+            if pattern.lower() in path.lower():
+                logger.warning(f"Suspicious pattern '{pattern}' found in path: {path}")
+                return True
+
+        # Check query parameters
+        query_string = str(request.url.query)
+        for pattern in self.suspicious_patterns:
+            if pattern.lower() in query_string.lower():
+                logger.warning(f"Suspicious pattern '{pattern}' found in query: {query_string}")
+                return True
+
+        # Check headers for suspicious patterns
+        for header_name, header_value in request.headers.items():
+            for pattern in self.suspicious_patterns:
+                if pattern.lower() in header_value.lower():
+                    logger.warning(f"Suspicious pattern '{pattern}' found in header {header_name}")
+                    return True
+
+        # Check request body if available
+        async def check_body() -> bool:
+            try:
+                body = await request.body()
+                if body:
+                    body_str = body.decode("utf-8", errors="ignore")
+                    for pattern in self.suspicious_patterns:
+                        if pattern.lower() in body_str.lower():
+                            logger.warning(f"Suspicious pattern '{pattern}' found in request body")
+                            return True
+            except Exception as e:
+                logger.debug(f"Error checking request body: {str(e)}")
+            return False
+
+        # We can't check the body here as it would consume it
+        # The body check would need to be implemented differently for production
+        # potentially using a custom request object that allows multiple body reads
+
+        # Request appears safe
+        return False

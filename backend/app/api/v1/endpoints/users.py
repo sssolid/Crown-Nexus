@@ -112,7 +112,9 @@ async def create_user(
 
     # Check if company exists if provided
     if user_in.company_id:
-        result = await db.execute(select(Company).where(Company.id == user_in.company_id))
+        result = await db.execute(
+            select(Company).where(Company.id == user_in.company_id)
+        )
         if not result.first():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -235,7 +237,9 @@ async def update_user(
 
     # Check if company exists if provided
     if user_in.company_id is not None and user_in.company_id:
-        result = await db.execute(select(Company).where(Company.id == user_in.company_id))
+        result = await db.execute(
+            select(Company).where(Company.id == user_in.company_id)
+        )
         if not result.first():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -340,7 +344,9 @@ async def read_companies(
     return companies
 
 
-@router.post("/companies/", response_model=CompanySchema, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/companies/", response_model=CompanySchema, status_code=status.HTTP_201_CREATED
+)
 async def create_company(
     company_in: CompanyCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -447,7 +453,10 @@ async def update_company(
         )
 
     # Check if account number is taken by another company
-    if company_in.account_number is not None and company_in.account_number != company.account_number:
+    if (
+        company_in.account_number is not None
+        and company_in.account_number != company.account_number
+    ):
         result = await db.execute(
             select(Company).where(Company.account_number == company_in.account_number)
         )

@@ -6,7 +6,7 @@ including JWT tokens, refresh tokens, and special-purpose tokens.
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from app.core.config import settings
@@ -17,7 +17,7 @@ from app.core.security import (
     TokenType,
     create_token,
     create_token_pair,
-    decode_token
+    decode_token,
 )
 from app.services.security.base import TokenConfig
 from app.utils.redis_manager import get_key, set_key, delete_key
@@ -42,7 +42,7 @@ class TokenService:
     async def create_access_token(
         self,
         subject: Union[str, int],
-        expires_delta: Optional[timedelta] = None,
+        expires_delta: Optional[datetime.timedelta] = None,
         role: Optional[str] = None,
         permissions: Optional[List[str]] = None,
         user_data: Optional[Dict[str, Any]] = None,
@@ -61,7 +61,9 @@ class TokenService:
             JWT access token
         """
         if expires_delta is None:
-            expires_delta = timedelta(minutes=self.config.access_token_expire_minutes)
+            expires_delta = datetime.timedelta(
+                minutes=self.config.access_token_expire_minutes
+            )
 
         return create_token(
             subject=str(subject),
@@ -75,7 +77,7 @@ class TokenService:
     async def create_refresh_token(
         self,
         subject: Union[str, int],
-        expires_delta: Optional[timedelta] = None
+        expires_delta: Optional[datetime.timedelta] = None,
     ) -> str:
         """
         Create a refresh token.
@@ -88,12 +90,14 @@ class TokenService:
             JWT refresh token
         """
         if expires_delta is None:
-            expires_delta = timedelta(days=self.config.refresh_token_expire_days)
+            expires_delta = datetime.timedelta(
+                days=self.config.refresh_token_expire_days
+            )
 
         return create_token(
             subject=str(subject),
             token_type=TokenType.REFRESH.value,
-            expires_delta=expires_delta
+            expires_delta=expires_delta,
         )
 
     async def create_token_pair(
@@ -117,19 +121,16 @@ class TokenService:
         """
         return {
             "access_token": await self.create_access_token(
-                subject,
-                role=role,
-                permissions=permissions,
-                user_data=user_data
+                subject, role=role, permissions=permissions, user_data=user_data
             ),
-            "refresh_token": await self.create_refresh_token(subject)
+            "refresh_token": await self.create_refresh_token(subject),
         }
 
     async def create_verification_token(
         self,
         subject: Union[str, int],
         purpose: str,
-        expires_delta: Optional[timedelta] = None,
+        expires_delta: Optional[datetime.timedelta] = None,
         user_data: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
@@ -145,7 +146,9 @@ class TokenService:
             JWT verification token
         """
         if expires_delta is None:
-            expires_delta = timedelta(days=self.config.verification_token_expire_days)
+            expires_delta = datetime.timedelta(
+                days=self.config.verification_token_expire_days
+            )
 
         data = user_data or {}
         data["purpose"] = purpose
@@ -154,7 +157,7 @@ class TokenService:
             subject=str(subject),
             token_type=TokenType.VERIFICATION.value,
             expires_delta=expires_delta,
-            user_data=data
+            user_data=data,
         )
 
     async def validate_token(
@@ -185,8 +188,7 @@ class TokenService:
                 logger.warning("Attempted use of blacklisted token")
                 raise AuthenticationException(
                     message="Token has been revoked",
-                    code=ErrorCode.INVALID_TOKEN,
-                    details={"reason": "blacklisted"}
+                    details={"reason": "blacklisted"},
                 )
 
             # Decode and validate the token
@@ -200,7 +202,6 @@ class TokenService:
                 )
                 raise AuthenticationException(
                     message="Invalid token type",
-                    code=ErrorCode.INVALID_TOKEN,
                     details={
                         "expected_type": expected_type.value,
                         "actual_type": token_data.type,
@@ -216,14 +217,10 @@ class TokenService:
             logger.error(f"Token validation error: {str(e)}")
             raise AuthenticationException(
                 message="Token validation failed",
-                code=ErrorCode.INVALID_TOKEN,
                 details={"error": str(e)},
             )
 
-    async def refresh_access_token(
-        self,
-        refresh_token: str
-    ) -> str:
+    async def refresh_access_token(self, refresh_token: str) -> str:
         """
         Generate a new access token using a refresh token.
 
@@ -238,8 +235,7 @@ class TokenService:
         """
         # Validate the refresh token
         token_data = await self.validate_token(
-            refresh_token,
-            expected_type=TokenType.REFRESH
+            refresh_token, expected_type=TokenType.REFRESH
         )
 
         # Create a new access token
@@ -247,14 +243,10 @@ class TokenService:
             subject=token_data.sub,
             role=getattr(token_data, "role", None),
             permissions=getattr(token_data, "permissions", None),
-            user_data=getattr(token_data, "user_data", None)
+            user_data=getattr(token_data, "user_data", None),
         )
 
-    async def blacklist_token(
-        self,
-        token: str,
-        reason: str = "revoked"
-    ) -> None:
+    async def blacklist_token(self, token: str, reason: str = "revoked") -> None:
         """
         Add a token to the blacklist.
 
@@ -264,11 +256,11 @@ class TokenService:
         """
         try:
             # Get token claims without validation
-            token_data = await decode_token(token, verify_exp=False)
+            token_data = await decode_token(token)
 
             # Calculate seconds until expiration
-            exp_time = datetime.fromtimestamp(token_data.exp)
-            now = datetime.utcnow()
+            exp_time = datetime.datetime.fromtimestamp(token_data.exp)
+            now = datetime.datetime.now(datetime.UTC)
 
             # If token is already expired, no need to blacklist
             if exp_time <= now:
@@ -285,7 +277,7 @@ class TokenService:
                 f"Token blacklisted",
                 subject=token_data.sub,
                 token_type=token_data.type,
-                reason=reason
+                reason=reason,
             )
         except Exception as e:
             logger.error(f"Error blacklisting token: {str(e)}")

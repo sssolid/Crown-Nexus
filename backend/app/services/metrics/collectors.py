@@ -70,10 +70,12 @@ class CounterCollector(MetricCollector):
             documentation=description,
             labelnames=labelnames or [],
             namespace=namespace,
-            subsystem=subsystem
+            subsystem=subsystem,
         )
 
-    def increment(self, amount: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+    def increment(
+        self, amount: float = 1.0, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         """
         Increment the counter.
 
@@ -117,7 +119,7 @@ class GaugeCollector(MetricCollector):
             documentation=description,
             labelnames=labelnames or [],
             namespace=namespace,
-            subsystem=subsystem
+            subsystem=subsystem,
         )
 
     def set(self, value: float, labels: Optional[Dict[str, str]] = None) -> None:
@@ -136,7 +138,9 @@ class GaugeCollector(MetricCollector):
         except Exception as e:
             logger.error(f"Error setting gauge {self.name}: {str(e)}")
 
-    def increment(self, amount: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+    def increment(
+        self, amount: float = 1.0, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         """
         Increment the gauge.
 
@@ -152,7 +156,9 @@ class GaugeCollector(MetricCollector):
         except Exception as e:
             logger.error(f"Error incrementing gauge {self.name}: {str(e)}")
 
-    def decrement(self, amount: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+    def decrement(
+        self, amount: float = 1.0, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         """
         Decrement the gauge.
 
@@ -199,7 +205,7 @@ class HistogramCollector(MetricCollector):
             labelnames=labelnames or [],
             buckets=buckets or Histogram.DEFAULT_BUCKETS,
             namespace=namespace,
-            subsystem=subsystem
+            subsystem=subsystem,
         )
 
     def observe(self, value: float, labels: Optional[Dict[str, str]] = None) -> None:
@@ -246,7 +252,7 @@ class SummaryCollector(MetricCollector):
             documentation=description,
             labelnames=labelnames or [],
             namespace=namespace,
-            subsystem=subsystem
+            subsystem=subsystem,
         )
 
     def observe(self, value: float, labels: Optional[Dict[str, str]] = None) -> None:

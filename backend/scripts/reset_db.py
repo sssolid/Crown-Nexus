@@ -36,20 +36,24 @@ async def reset_database():
         user=USER,
         password=PASSWORD,
         host=HOST,
-        database="postgres"  # Connect to default postgres database
+        database="postgres",  # Connect to default postgres database
     )
 
     try:
         # Drop database if it exists
-        await conn.execute(f"""
+        await conn.execute(
+            f"""
             DROP DATABASE IF EXISTS {DATABASE_NAME};
-        """)
+        """
+        )
         print(f"Dropped database '{DATABASE_NAME}' if it existed.")
 
         # Create fresh database
-        await conn.execute(f"""
+        await conn.execute(
+            f"""
             CREATE DATABASE {DATABASE_NAME};
-        """)
+        """
+        )
         print(f"Created fresh database '{DATABASE_NAME}'.")
     finally:
         await conn.close()
@@ -63,17 +67,16 @@ async def test_connection():
     try:
         # Try direct asyncpg connection
         conn = await asyncpg.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            database=DATABASE_NAME
+            user=USER, password=PASSWORD, host=HOST, database=DATABASE_NAME
         )
         await conn.execute("SELECT 1")
         await conn.close()
         print("✅ Direct asyncpg connection successful!")
 
         # Try SQLAlchemy connection
-        engine = create_async_engine(f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}/{DATABASE_NAME}")
+        engine = create_async_engine(
+            f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}/{DATABASE_NAME}"
+        )
         async with engine.begin() as conn:
             # Use text() for raw SQL
             await conn.execute(text("SELECT 1"))
@@ -102,15 +105,12 @@ def run_alembic_migrations():
         # Generate migration
         subprocess.run(
             ["alembic", "revision", "--autogenerate", "-m", "Initial migration"],
-            check=True
+            check=True,
         )
         print("✅ Migration generated successfully!")
 
         # Apply migration
-        subprocess.run(
-            ["alembic", "upgrade", "head"],
-            check=True
-        )
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
         print("✅ Migration applied successfully!")
 
         # Change back to original directory
@@ -119,7 +119,7 @@ def run_alembic_migrations():
     except subprocess.CalledProcessError as e:
         print(f"❌ Migration failed: {e}")
         # Change back to original directory if error occurs
-        if 'original_dir' in locals():
+        if "original_dir" in locals():
             os.chdir(original_dir)
         return False
 

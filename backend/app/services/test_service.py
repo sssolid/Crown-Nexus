@@ -1,14 +1,14 @@
 # /backend/app/services/test_service.py
 from __future__ import annotations
 
-import logging
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, cast
 
 from app.core.logging import get_logger
 
 logger = get_logger("app.services.test_service")
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class TestService(Generic[T]):
     """Service for test-related functionality.
@@ -36,22 +36,23 @@ class TestService(Generic[T]):
         # This is a placeholder
         return []
 
-    async def teardown_test_data(self, model_class: Type[T], instances: List[T]) -> None:
+    async def teardown_test_data(
+        self, model_class: Type[T], instances: List[T]
+    ) -> None:
         """Clean up test data.
 
         Args:
             model_class: Model class of the instances
             instances: List of model instances to clean up
         """
-        self.logger.info(f"Tearing down {len(instances)} test instances of {model_class.__name__}")
+        self.logger.info(
+            f"Tearing down {len(instances)} test instances of {model_class.__name__}"
+        )
         # Implementation would depend on the model
         # This is a placeholder
 
     async def validate_test_result(
-        self,
-        actual: Any,
-        expected: Any,
-        ignore_fields: Optional[List[str]] = None
+        self, actual: Any, expected: Any, ignore_fields: Optional[List[str]] = None
     ) -> bool:
         """Validate that a test result matches the expected value.
 
@@ -69,10 +70,7 @@ class TestService(Generic[T]):
         return True
 
     async def create_test_token(
-        self,
-        user_id: str,
-        role: str,
-        expires_in: Optional[int] = None
+        self, user_id: str, role: str, expires_in: Optional[int] = None
     ) -> str:
         """Create a test JWT token.
 

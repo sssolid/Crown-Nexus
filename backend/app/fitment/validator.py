@@ -17,7 +17,7 @@ from .models import (
     Position,
     ValidationResult,
     ValidationStatus,
-    VCDBVehicle
+    VCDBVehicle,
 )
 from .exceptions import ValidationError
 
@@ -29,9 +29,7 @@ class FitmentValidator:
     """Validator for fitment data against VCDB and PCDB databases."""
 
     def __init__(
-        self,
-        part_terminology_id: int,
-        pcdb_positions: List[PCDBPosition]
+        self, part_terminology_id: int, pcdb_positions: List[PCDBPosition]
     ) -> None:
         """
         Initialize the validator.
@@ -48,7 +46,7 @@ class FitmentValidator:
             "front_rear": {},
             "left_right": {},
             "upper_lower": {},
-            "inner_outer": {}
+            "inner_outer": {},
         }
 
         for pos in pcdb_positions:
@@ -90,9 +88,7 @@ class FitmentValidator:
             self.position_index["inner_outer"][pos_value].add(position.id)
 
     def validate_fitment(
-        self,
-        fitment: PartFitment,
-        available_vehicles: List[VCDBVehicle]
+        self, fitment: PartFitment, available_vehicles: List[VCDBVehicle]
     ) -> ValidationResult:
         """
         Validate a fitment against VCDB and PCDB data.
@@ -127,7 +123,7 @@ class FitmentValidator:
                 status=ValidationStatus.WARNING,
                 message="; ".join(issues),
                 fitment=fitment,
-                original_text=fitment.vehicle.full_name
+                original_text=fitment.vehicle.full_name,
             )
 
         # Everything is valid
@@ -135,13 +131,11 @@ class FitmentValidator:
             status=ValidationStatus.VALID,
             message="Fitment is valid",
             fitment=fitment,
-            original_text=fitment.vehicle.full_name
+            original_text=fitment.vehicle.full_name,
         )
 
     def _validate_vehicle(
-        self,
-        fitment: PartFitment,
-        available_vehicles: List[VCDBVehicle]
+        self, fitment: PartFitment, available_vehicles: List[VCDBVehicle]
     ) -> ValidationResult:
         """
         Validate a vehicle against VCDB data.
@@ -158,9 +152,11 @@ class FitmentValidator:
         partial_matches = []
 
         for vehicle in available_vehicles:
-            if (vehicle.year == fitment.vehicle.year and
-                vehicle.make.lower() == fitment.vehicle.make.lower() and
-                vehicle.model.lower() == fitment.vehicle.model.lower()):
+            if (
+                vehicle.year == fitment.vehicle.year
+                and vehicle.make.lower() == fitment.vehicle.make.lower()
+                and vehicle.model.lower() == fitment.vehicle.model.lower()
+            ):
 
                 # Check submodel if both have it
                 if fitment.vehicle.submodel and vehicle.submodel:
@@ -180,7 +176,7 @@ class FitmentValidator:
                 status=ValidationStatus.VALID,
                 message="Exact vehicle match found",
                 fitment=fitment,
-                original_text=fitment.vehicle.full_name
+                original_text=fitment.vehicle.full_name,
             )
 
         # If we have partial matches, use the first one but warn
@@ -192,7 +188,7 @@ class FitmentValidator:
                 message=f"No exact vehicle match found. Possible submodels: {submodels}",
                 fitment=fitment,
                 original_text=fitment.vehicle.full_name,
-                suggestions=[v.submodel for v in partial_matches if v.submodel]
+                suggestions=[v.submodel for v in partial_matches if v.submodel],
             )
 
         # No matches found
@@ -200,7 +196,7 @@ class FitmentValidator:
             status=ValidationStatus.ERROR,
             message="No matching vehicle found in VCDB",
             fitment=fitment,
-            original_text=fitment.vehicle.full_name
+            original_text=fitment.vehicle.full_name,
         )
 
     def _validate_positions(self, fitment: PartFitment) -> ValidationResult:
@@ -228,17 +224,19 @@ class FitmentValidator:
                         status=ValidationStatus.WARNING,
                         message="Front/Rear position varies with application - manual review needed",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
                 else:
                     return ValidationResult(
                         status=ValidationStatus.ERROR,
                         message=f"Invalid Front/Rear position: {positions.front_rear}",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
             else:
-                valid_position_ids.update(self.position_index["front_rear"][positions.front_rear])
+                valid_position_ids.update(
+                    self.position_index["front_rear"][positions.front_rear]
+                )
 
         # Check left_right
         if positions.left_right != Position.NA:
@@ -249,17 +247,19 @@ class FitmentValidator:
                         status=ValidationStatus.WARNING,
                         message="Left/Right position varies with application - manual review needed",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
                 else:
                     return ValidationResult(
                         status=ValidationStatus.ERROR,
                         message=f"Invalid Left/Right position: {positions.left_right}",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
             else:
-                valid_position_ids.update(self.position_index["left_right"][positions.left_right])
+                valid_position_ids.update(
+                    self.position_index["left_right"][positions.left_right]
+                )
 
         # Check upper_lower
         if positions.upper_lower != Position.NA:
@@ -270,17 +270,19 @@ class FitmentValidator:
                         status=ValidationStatus.WARNING,
                         message="Upper/Lower position varies with application - manual review needed",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
                 else:
                     return ValidationResult(
                         status=ValidationStatus.ERROR,
                         message=f"Invalid Upper/Lower position: {positions.upper_lower}",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
             else:
-                valid_position_ids.update(self.position_index["upper_lower"][positions.upper_lower])
+                valid_position_ids.update(
+                    self.position_index["upper_lower"][positions.upper_lower]
+                )
 
         # Check inner_outer
         if positions.inner_outer != Position.NA:
@@ -291,30 +293,34 @@ class FitmentValidator:
                         status=ValidationStatus.WARNING,
                         message="Inner/Outer position varies with application - manual review needed",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
                 else:
                     return ValidationResult(
                         status=ValidationStatus.ERROR,
                         message=f"Invalid Inner/Outer position: {positions.inner_outer}",
                         fitment=fitment,
-                        original_text=fitment.vehicle.full_name
+                        original_text=fitment.vehicle.full_name,
                     )
             else:
-                valid_position_ids.update(self.position_index["inner_outer"][positions.inner_outer])
+                valid_position_ids.update(
+                    self.position_index["inner_outer"][positions.inner_outer]
+                )
 
         # If no valid position IDs found and we have non-N/A positions
-        if not valid_position_ids and any([
-            positions.front_rear != Position.NA,
-            positions.left_right != Position.NA,
-            positions.upper_lower != Position.NA,
-            positions.inner_outer != Position.NA
-        ]):
+        if not valid_position_ids and any(
+            [
+                positions.front_rear != Position.NA,
+                positions.left_right != Position.NA,
+                positions.upper_lower != Position.NA,
+                positions.inner_outer != Position.NA,
+            ]
+        ):
             return ValidationResult(
                 status=ValidationStatus.ERROR,
                 message="No valid positions found for this part terminology",
                 fitment=fitment,
-                original_text=fitment.vehicle.full_name
+                original_text=fitment.vehicle.full_name,
             )
 
         # Set the valid position IDs on the fitment
@@ -324,5 +330,5 @@ class FitmentValidator:
             status=ValidationStatus.VALID,
             message="Positions are valid",
             fitment=fitment,
-            original_text=fitment.vehicle.full_name
+            original_text=fitment.vehicle.full_name,
         )

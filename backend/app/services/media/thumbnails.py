@@ -25,7 +25,7 @@ class ThumbnailGenerator:
         output_path: Path,
         width: int = 200,
         height: int = 200,
-        quality: int = 90
+        quality: int = 90,
     ) -> None:
         """
         Generate a thumbnail for an image file.
@@ -52,16 +52,12 @@ class ThumbnailGenerator:
             output_path,
             width,
             height,
-            quality
+            quality,
         )
 
     @staticmethod
     def _generate_thumbnail_sync(
-        file_path: Path,
-        output_path: Path,
-        width: int,
-        height: int,
-        quality: int
+        file_path: Path, output_path: Path, width: int, height: int, quality: int
     ) -> None:
         """
         Generate a thumbnail synchronously (to be run in a thread pool).
@@ -91,24 +87,27 @@ class ThumbnailGenerator:
             # Generate thumbnail
             with Image.open(file_path) as img:
                 # Handle different image modes
-                if img.mode in ['RGBA', 'LA']:
+                if img.mode in ["RGBA", "LA"]:
                     # Convert transparent images to RGB with white background
-                    background = Image.new('RGB', img.size, (255, 255, 255))
-                    background.paste(img, mask=img.split()[3] if img.mode == 'RGBA' else img.split()[1])
+                    background = Image.new("RGB", img.size, (255, 255, 255))
+                    background.paste(
+                        img,
+                        mask=img.split()[3] if img.mode == "RGBA" else img.split()[1],
+                    )
                     img = background
-                elif img.mode != 'RGB':
-                    img = img.convert('RGB')
+                elif img.mode != "RGB":
+                    img = img.convert("RGB")
 
                 # Create thumbnail with high quality
                 img.thumbnail((width, height), Image.LANCZOS)
-                img.save(output_path, format='JPEG', quality=quality, optimize=True)
+                img.save(output_path, format="JPEG", quality=quality, optimize=True)
 
             logger.info(
                 "thumbnail_generated",
                 original=str(file_path),
                 thumbnail=str(output_path),
                 width=width,
-                height=height
+                height=height,
             )
 
         except UnidentifiedImageError:
@@ -124,7 +123,7 @@ class ThumbnailGenerator:
         Returns:
             Tuple of supported file extensions (lowercase, with dot)
         """
-        return ('.jpg', '.jpeg', '.png', '.gif', '.webp')
+        return (".jpg", ".jpeg", ".png", ".gif", ".webp")
 
     @staticmethod
     def can_generate_thumbnail(file_path: str) -> bool:
@@ -137,14 +136,17 @@ class ThumbnailGenerator:
         Returns:
             bool: True if a thumbnail can be generated, False otherwise
         """
-        return any(file_path.lower().endswith(ext) for ext in ThumbnailGenerator.get_supported_formats())
+        return any(
+            file_path.lower().endswith(ext)
+            for ext in ThumbnailGenerator.get_supported_formats()
+        )
 
     @staticmethod
     def get_thumbnail_path(
         original_path: str,
         width: int = 200,
         height: int = 200,
-        thumbnails_dir: str = "thumbnails"
+        thumbnails_dir: str = "thumbnails",
     ) -> str:
         """
         Get the path where a thumbnail should be stored.

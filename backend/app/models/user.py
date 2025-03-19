@@ -16,7 +16,7 @@ The models support:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta
+import datetime
 from enum import Enum
 from typing import Any, Dict, Optional, Union
 
@@ -43,6 +43,7 @@ class UserRole(str, Enum):
     - DISTRIBUTOR: B2B partner access
     - READ_ONLY: Limited view-only access
     """
+
     ADMIN = "admin"
     MANAGER = "manager"
     CLIENT = "client"
@@ -73,6 +74,7 @@ class User(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "user"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -81,15 +83,16 @@ class User(Base):
     email: Mapped[str] = mapped_column(
         String(255), unique=True, index=True, nullable=False
     )
-    hashed_password: Mapped[str] = mapped_column(
-        String(255), nullable=False
-    )
-    full_name: Mapped[str] = mapped_column(
-        String(255), nullable=False
-    )
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(
-        sa.Enum(UserRole, values_callable=lambda enum: [e.value for e in enum], name="userrole"),
-        default=UserRole.CLIENT, nullable=False
+        sa.Enum(
+            UserRole,
+            values_callable=lambda enum: [e.value for e in enum],
+            name="userrole",
+        ),
+        default=UserRole.CLIENT,
+        nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
@@ -109,7 +112,7 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     def __repr__(self) -> str:
@@ -147,14 +150,13 @@ class Company(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "company"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(255), nullable=False
-    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
     # Address relationships
     headquarters_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
@@ -169,13 +171,9 @@ class Company(Base):
     account_number: Mapped[Optional[str]] = mapped_column(
         String(50), unique=True, index=True, nullable=True
     )
-    account_type: Mapped[str] = mapped_column(
-        String(50), nullable=False
-    )
+    account_type: Mapped[str] = mapped_column(String(50), nullable=False)
     # New industry field
-    industry: Mapped[Optional[str]] = mapped_column(
-        String(100), nullable=True
-    )
+    industry: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
@@ -188,11 +186,13 @@ class Company(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     # Relationships
-    headquarters_address = relationship("Address", foreign_keys=[headquarters_address_id])
+    headquarters_address = relationship(
+        "Address", foreign_keys=[headquarters_address_id]
+    )
     billing_address = relationship("Address", foreign_keys=[billing_address_id])
     shipping_address = relationship("Address", foreign_keys=[shipping_address_id])
 
@@ -240,7 +240,7 @@ def get_password_hash(password: str) -> str:
 def create_access_token(
     subject: Union[str, uuid.UUID],
     role: UserRole,
-    expires_delta: Optional[timedelta] = None
+    expires_delta: Optional[datetime.timedelta] = None,
 ) -> str:
     """
     Create a JWT access token.
@@ -259,9 +259,9 @@ def create_access_token(
 
     # Set expiration time
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.datetime.now(datetime.UTC) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(
+        expire = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
@@ -270,12 +270,8 @@ def create_access_token(
         "sub": subject,
         "exp": expire,
         "role": role,
-        "iat": datetime.utcnow(),  # Issued at time
+        "iat": datetime.datetime.now(datetime.UTC),  # Issued at time
     }
 
     # Encode and return token
-    return jwt.encode(
-        to_encode,
-        settings.SECRET_KEY,
-        algorithm="HS256"
-    )
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")

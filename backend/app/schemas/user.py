@@ -21,7 +21,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional, Union
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class UserRole(str, Enum):
@@ -31,6 +31,7 @@ class UserRole(str, Enum):
     Defines the possible roles a user can have in the system,
     determining their access privileges.
     """
+
     ADMIN = "admin"
     MANAGER = "manager"
     CLIENT = "client"
@@ -49,6 +50,7 @@ class Token(BaseModel):
         access_token: JWT access token
         token_type: Token type (usually "bearer")
     """
+
     access_token: str
     token_type: str = "bearer"
 
@@ -66,6 +68,7 @@ class TokenPayload(BaseModel):
         role: User role
         iat: Issued at timestamp (optional)
     """
+
     sub: str  # User ID
     exp: int  # Expiration timestamp
     role: UserRole  # User role
@@ -84,6 +87,7 @@ class CompanyBase(BaseModel):
         account_type: Type of account
         is_active: Whether the account is active
     """
+
     name: str
     account_number: Optional[str] = None
     account_type: str
@@ -96,6 +100,7 @@ class CompanyCreate(CompanyBase):
 
     Extends the base company schema for creation requests.
     """
+
     pass
 
 
@@ -112,6 +117,7 @@ class CompanyUpdate(BaseModel):
         account_type: Type of account (optional)
         is_active: Whether the account is active (optional)
     """
+
     name: Optional[str] = None
     account_number: Optional[str] = None
     account_type: Optional[str] = None
@@ -129,6 +135,7 @@ class CompanyInDB(CompanyBase):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -143,6 +150,7 @@ class Company(CompanyInDB):
     This schema is used for API responses returning company data.
     It extends the database schema with any additional computed fields.
     """
+
     pass
 
 
@@ -159,6 +167,7 @@ class UserBase(BaseModel):
         is_active: Whether the user account is active
         company_id: Reference to associated company (optional)
     """
+
     email: EmailStr
     full_name: str
     role: UserRole = UserRole.CLIENT
@@ -175,6 +184,7 @@ class UserCreate(UserBase):
     Attributes:
         password: User password (min length: 8)
     """
+
     password: str = Field(..., min_length=8, description="User password")
 
 
@@ -193,6 +203,7 @@ class UserUpdate(BaseModel):
         is_active: Whether the user account is active (optional)
         company_id: Reference to associated company (optional, can be set to None)
     """
+
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
     password: Optional[str] = Field(None, min_length=8, description="User password")
@@ -202,7 +213,8 @@ class UserUpdate(BaseModel):
         default=..., description="Company ID, can be null to remove company association"
     )
 
-    @validator("password")
+    @field_validator("password", mode="before")
+    @classmethod
     def password_strength(cls, v: Optional[str]) -> Optional[str]:
         """
         Validate password strength.
@@ -239,6 +251,7 @@ class UserInDB(UserBase):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -256,6 +269,7 @@ class User(UserInDB):
     Attributes:
         company: Associated company information (optional)
     """
+
     company: Optional[Company] = None
 
 

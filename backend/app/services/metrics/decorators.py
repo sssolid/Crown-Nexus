@@ -55,7 +55,12 @@ def timer(
         observe_func(name, duration, labels)
 
         # Track end of operation if requested
-        if track_in_progress and track_in_progress_func and in_progress_metric and labels:
+        if (
+            track_in_progress
+            and track_in_progress_func
+            and in_progress_metric
+            and labels
+        ):
             track_in_progress_func(in_progress_metric, labels, -1)
 
 
@@ -83,6 +88,7 @@ def timed(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -99,7 +105,7 @@ def timed(
                 labels,
                 track_in_progress,
                 track_in_progress_func,
-                in_progress_metric
+                in_progress_metric,
             ):
                 return func(*args, **kwargs)
 
@@ -132,6 +138,7 @@ def async_timed(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -144,7 +151,12 @@ def async_timed(
             start_time = time.monotonic()
 
             # Track start of operation if requested
-            if track_in_progress and track_in_progress_func and in_progress_metric and labels:
+            if (
+                track_in_progress
+                and track_in_progress_func
+                and in_progress_metric
+                and labels
+            ):
                 track_in_progress_func(in_progress_metric, labels, 1)
 
             try:
@@ -158,7 +170,12 @@ def async_timed(
                 observe_func(name, duration, labels)
 
                 # Track end of operation if requested
-                if track_in_progress and track_in_progress_func and in_progress_metric and labels:
+                if (
+                    track_in_progress
+                    and track_in_progress_func
+                    and in_progress_metric
+                    and labels
+                ):
                     track_in_progress_func(in_progress_metric, labels, -1)
 
         return cast(F, wrapper)

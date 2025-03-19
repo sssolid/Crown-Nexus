@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import (
     ErrorCode,
     PermissionDeniedException,
-    ResourceNotFoundException
+    ResourceNotFoundException,
 )
 from app.core.logging import get_logger
 from app.core.permissions import Permission, PermissionChecker
@@ -73,9 +73,7 @@ class CreateUpdateOperations(Generic[T, C, U, ID]):
         if user_id and required_permission and get_user_func:
             user = await get_user_func(user_id)
             if not PermissionChecker.has_permission(user, required_permission):
-                logger.warning(
-                    f"Permission denied for user {user_id} to create entity"
-                )
+                logger.warning(f"Permission denied for user {user_id} to create entity")
                 raise PermissionDeniedException(
                     f"You don't have permission to create this entity",
                     code=ErrorCode.PERMISSION_DENIED,
@@ -99,9 +97,7 @@ class CreateUpdateOperations(Generic[T, C, U, ID]):
             if after_func:
                 await after_func(entity, user_id)
 
-            logger.info(
-                f"Created entity with ID: {getattr(entity, 'id', None)}"
-            )
+            logger.info(f"Created entity with ID: {getattr(entity, 'id', None)}")
             return entity
         except Exception as e:
             logger.error(f"Error creating entity: {str(e)}")
@@ -138,7 +134,7 @@ class CreateUpdateOperations(Generic[T, C, U, ID]):
         return await self.create(
             db=db,
             repository=repository,
-            data=schema.dict(),
+            data=schema.model_dump(),
             user_id=user_id,
             required_permission=required_permission,
             validate_func=validate_func,
@@ -200,9 +196,7 @@ class CreateUpdateOperations(Generic[T, C, U, ID]):
         if user_id and required_permission and get_user_func:
             user = await get_user_func(user_id)
             if not PermissionChecker.has_permission(user, required_permission):
-                logger.warning(
-                    f"Permission denied for user {user_id} to update entity"
-                )
+                logger.warning(f"Permission denied for user {user_id} to update entity")
                 raise PermissionDeniedException(
                     f"You don't have permission to update this entity",
                     code=ErrorCode.PERMISSION_DENIED,
@@ -274,7 +268,7 @@ class CreateUpdateOperations(Generic[T, C, U, ID]):
             db=db,
             repository=repository,
             id=id,
-            data=schema.dict(exclude_unset=True),
+            data=schema.model_dump(exclude_unset=True),
             user_id=user_id,
             required_permission=required_permission,
             validate_func=validate_func,

@@ -24,10 +24,7 @@ class RateLimitService:
         self.rate_limit_prefix = "rate_limit:"
 
     async def check_rate_limit(
-        self,
-        key: str,
-        max_requests: int,
-        window_seconds: int
+        self, key: str, max_requests: int, window_seconds: int
     ) -> Tuple[bool, int, int]:
         """
         Check if a request should be rate limited.
@@ -77,7 +74,7 @@ class RateLimitService:
                 key=key,
                 count=count,
                 max_requests=max_requests,
-                reset_seconds=reset_seconds
+                reset_seconds=reset_seconds,
             )
 
         return is_limited, count, reset_seconds

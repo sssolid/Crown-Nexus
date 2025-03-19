@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from sqlalchemy import Column, DateTime, String, JSON, ForeignKey, Index, Boolean
 from sqlalchemy.dialects.postgresql import UUID
@@ -27,7 +26,12 @@ class ApiKey(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # User who owns this API key
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     user = relationship("User", back_populates="api_keys")
 
     # Key identifier (public part)
@@ -55,9 +59,7 @@ class ApiKey(Base):
     metadata = Column(JSON, nullable=True)
 
     # Indexes
-    __table_args__ = (
-        Index("ix_api_keys_user_id_name", user_id, name, unique=True),
-    )
+    __table_args__ = (Index("ix_api_keys_user_id_name", user_id, name, unique=True),)
 
     def __repr__(self) -> str:
         """String representation of API key."""
@@ -73,7 +75,9 @@ class ApiKey(Base):
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-            "last_used_at": self.last_used_at.isoformat() if self.last_used_at else None,
+            "last_used_at": (
+                self.last_used_at.isoformat() if self.last_used_at else None
+            ),
             "expires_at": self.expires_at.isoformat() if self.expires_at else None,
             "permissions": self.permissions or [],
             "metadata": self.metadata or {},

@@ -8,7 +8,6 @@ fitment data with VCDB and PCDB records.
 from __future__ import annotations
 
 import json
-import logging
 from dataclasses import asdict
 from functools import lru_cache
 from typing import Any, Dict, List, Optional, Set, Tuple, Union, cast
@@ -22,13 +21,14 @@ from .models import (
     PCDBPosition,
     ValidationResult,
     ValidationStatus,
-    VCDBVehicle
+    VCDBVehicle,
 )
 from .parser import FitmentParser
 from .validator import FitmentValidator
 
+from app.core.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.fitment.mapper")
 
 
 class FitmentMappingEngine:
@@ -52,7 +52,9 @@ class FitmentMappingEngine:
         Args:
             model_mappings_path: Path to the model mappings Excel file
         """
-        self.model_mappings = self.db_service.load_model_mappings_from_excel(model_mappings_path)
+        self.model_mappings = self.db_service.load_model_mappings_from_excel(
+            model_mappings_path
+        )
         self.parser = FitmentParser(self.model_mappings)
 
     @lru_cache(maxsize=100)
@@ -98,7 +100,7 @@ class FitmentMappingEngine:
         self,
         year: Optional[int] = None,
         make: Optional[str] = None,
-        model: Optional[str] = None
+        model: Optional[str] = None,
     ) -> List[VCDBVehicle]:
         """
         Get VCDB vehicles matching criteria.
@@ -120,9 +122,7 @@ class FitmentMappingEngine:
             raise MappingError(f"Failed to get VCDB vehicles: {str(e)}") from e
 
     def process_application(
-        self,
-        application_text: str,
-        terminology_id: int
+        self, application_text: str, terminology_id: int
     ) -> List[ValidationResult]:
         """
         Process a part application string and validate against databases.
@@ -161,7 +161,7 @@ class FitmentMappingEngine:
                 vehicles = self.get_vcdb_vehicles(
                     year=fitment.vehicle.year,
                     make=fitment.vehicle.make,
-                    model=fitment.vehicle.model
+                    model=fitment.vehicle.model,
                 )
 
                 # Validate the fitment
@@ -174,9 +174,7 @@ class FitmentMappingEngine:
             raise MappingError(f"Failed to process application: {str(e)}") from e
 
     def batch_process_applications(
-        self,
-        application_texts: List[str],
-        terminology_id: int
+        self, application_texts: List[str], terminology_id: int
     ) -> Dict[str, List[ValidationResult]]:
         """
         Process a batch of part application strings.
@@ -203,13 +201,15 @@ class FitmentMappingEngine:
                         status=ValidationStatus.ERROR,
                         message=f"Processing error: {str(e)}",
                         original_text=text,
-                        fitment=None
+                        fitment=None,
                     )
                 ]
 
         return results
 
-    def serialize_validation_results(self, results: List[ValidationResult]) -> List[Dict[str, Any]]:
+    def serialize_validation_results(
+        self, results: List[ValidationResult]
+    ) -> List[Dict[str, Any]]:
         """
         Serialize validation results to JSON-compatible dictionaries.
 
@@ -236,16 +236,16 @@ class FitmentMappingEngine:
                         "submodel": result.fitment.vehicle.submodel,
                         "engine": result.fitment.vehicle.engine,
                         "transmission": result.fitment.vehicle.transmission,
-                        "attributes": result.fitment.vehicle.attributes
+                        "attributes": result.fitment.vehicle.attributes,
                     },
                     "positions": {
                         "front_rear": result.fitment.positions.front_rear.value,
                         "left_right": result.fitment.positions.left_right.value,
                         "upper_lower": result.fitment.positions.upper_lower.value,
-                        "inner_outer": result.fitment.positions.inner_outer.value
+                        "inner_outer": result.fitment.positions.inner_outer.value,
                     },
                     "vcdb_vehicle_id": result.fitment.vcdb_vehicle_id,
-                    "pcdb_position_ids": result.fitment.pcdb_position_ids
+                    "pcdb_position_ids": result.fitment.pcdb_position_ids,
                 }
 
             # Create serialized result
@@ -254,7 +254,7 @@ class FitmentMappingEngine:
                 "message": result.message,
                 "original_text": result.original_text,
                 "suggestions": result.suggestions,
-                "fitment": fitment_dict
+                "fitment": fitment_dict,
             }
 
             serialized.append(serialized_result)
@@ -262,9 +262,7 @@ class FitmentMappingEngine:
         return serialized
 
     async def save_mapping_results(
-        self,
-        product_id: str,
-        results: List[ValidationResult]
+        self, product_id: str, results: List[ValidationResult]
     ) -> bool:
         """
         Save mapping results to the database.
@@ -282,7 +280,8 @@ class FitmentMappingEngine:
         try:
             # Filter for valid and warning results only
             valid_results = [
-                r for r in results
+                r
+                for r in results
                 if r.status != ValidationStatus.ERROR and r.fitment is not None
             ]
 
@@ -299,7 +298,11 @@ class FitmentMappingEngine:
                     "make": result.fitment.vehicle.make,
                     "model": result.fitment.vehicle.model,
                     "submodel": result.fitment.vehicle.submodel,
-                    "notes": result.message if result.status == ValidationStatus.WARNING else None
+                    "notes": (
+                        result.message
+                        if result.status == ValidationStatus.WARNING
+                        else None
+                    ),
                 }
 
                 fitments.append(fitment_dict)
@@ -317,7 +320,9 @@ class FitmentMappingEngine:
         Args:
             model_mappings_path: Path to the model mappings JSON file
         """
-        self.model_mappings = self.db_service.load_model_mappings_from_json(model_mappings_path)
+        self.model_mappings = self.db_service.load_model_mappings_from_json(
+            model_mappings_path
+        )
         self.parser = FitmentParser(self.model_mappings)
 
     async def configure_from_database(self) -> None:

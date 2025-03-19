@@ -52,7 +52,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "4",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "AFN"
+            "currency": "AFN",
         },
         {
             "id": uuid.uuid4(),
@@ -62,7 +62,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "248",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -72,7 +72,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "8",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "ALL"
+            "currency": "ALL",
         },
         {
             "id": uuid.uuid4(),
@@ -82,7 +82,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "12",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "DZD"
+            "currency": "DZD",
         },
         {
             "id": uuid.uuid4(),
@@ -92,7 +92,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "16",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -102,7 +102,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "20",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -112,7 +112,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "24",
             "region": "Africa",
             "subregion": "Sub-Saharan Africa",
-            "currency": "AOA"
+            "currency": "AOA",
         },
         {
             "id": uuid.uuid4(),
@@ -122,7 +122,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "660",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -132,7 +132,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "10",
             "region": None,
             "subregion": None,
-            "currency": None
+            "currency": None,
         },
         {
             "id": uuid.uuid4(),
@@ -142,7 +142,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "28",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -152,7 +152,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "32",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "ARS"
+            "currency": "ARS",
         },
         {
             "id": uuid.uuid4(),
@@ -162,7 +162,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "51",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "AMD"
+            "currency": "AMD",
         },
         {
             "id": uuid.uuid4(),
@@ -172,7 +172,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "533",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "AWG"
+            "currency": "AWG",
         },
         {
             "id": uuid.uuid4(),
@@ -182,7 +182,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "36",
             "region": "Oceania",
             "subregion": "Australia and New Zealand",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -192,7 +192,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "40",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -202,7 +202,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "31",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "AZN"
+            "currency": "AZN",
         },
         {
             "id": uuid.uuid4(),
@@ -212,7 +212,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "44",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "BSD"
+            "currency": "BSD",
         },
         {
             "id": uuid.uuid4(),
@@ -222,7 +222,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "48",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "BHD"
+            "currency": "BHD",
         },
         {
             "id": uuid.uuid4(),
@@ -232,7 +232,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "50",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "BDT"
+            "currency": "BDT",
         },
         {
             "id": uuid.uuid4(),
@@ -242,7 +242,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "52",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "BBD"
+            "currency": "BBD",
         },
         {
             "id": uuid.uuid4(),
@@ -252,7 +252,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "112",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "BYR"
+            "currency": "BYR",
         },
         {
             "id": uuid.uuid4(),
@@ -262,7 +262,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "56",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -272,7 +272,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "84",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "BZD"
+            "currency": "BZD",
         },
         {
             "id": uuid.uuid4(),
@@ -282,7 +282,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "204",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -292,7 +292,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "60",
             "region": "Americas",
             "subregion": "Northern America",
-            "currency": "BMD"
+            "currency": "BMD",
         },
         {
             "id": uuid.uuid4(),
@@ -302,7 +302,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "64",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "BTN"
+            "currency": "BTN",
         },
         {
             "id": uuid.uuid4(),
@@ -312,7 +312,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "68",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "BOB"
+            "currency": "BOB",
         },
         {
             "id": uuid.uuid4(),
@@ -322,7 +322,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "535",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -332,7 +332,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "70",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "BAM"
+            "currency": "BAM",
         },
         {
             "id": uuid.uuid4(),
@@ -342,7 +342,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "72",
             "region": "Africa",
             "subregion": "Southern Africa",
-            "currency": "BWP"
+            "currency": "BWP",
         },
         {
             "id": uuid.uuid4(),
@@ -352,7 +352,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "74",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "NOK"
+            "currency": "NOK",
         },
         {
             "id": uuid.uuid4(),
@@ -362,7 +362,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "76",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "BRL"
+            "currency": "BRL",
         },
         {
             "id": uuid.uuid4(),
@@ -372,7 +372,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "86",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -382,7 +382,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "96",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "BND"
+            "currency": "BND",
         },
         {
             "id": uuid.uuid4(),
@@ -392,7 +392,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "100",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "BGN"
+            "currency": "BGN",
         },
         {
             "id": uuid.uuid4(),
@@ -402,7 +402,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "854",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -412,7 +412,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "108",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "BIF"
+            "currency": "BIF",
         },
         {
             "id": uuid.uuid4(),
@@ -422,7 +422,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "132",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "CVE"
+            "currency": "CVE",
         },
         {
             "id": uuid.uuid4(),
@@ -432,7 +432,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "116",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "KHR"
+            "currency": "KHR",
         },
         {
             "id": uuid.uuid4(),
@@ -442,7 +442,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "120",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "XAF"
+            "currency": "XAF",
         },
         {
             "id": uuid.uuid4(),
@@ -452,7 +452,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "124",
             "region": "Americas",
             "subregion": "Northern America",
-            "currency": "CAD"
+            "currency": "CAD",
         },
         {
             "id": uuid.uuid4(),
@@ -462,7 +462,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "136",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "KYD"
+            "currency": "KYD",
         },
         {
             "id": uuid.uuid4(),
@@ -472,7 +472,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "140",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "XAF"
+            "currency": "XAF",
         },
         {
             "id": uuid.uuid4(),
@@ -482,7 +482,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "148",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "XAF"
+            "currency": "XAF",
         },
         {
             "id": uuid.uuid4(),
@@ -492,7 +492,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "152",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "CLP"
+            "currency": "CLP",
         },
         {
             "id": uuid.uuid4(),
@@ -502,7 +502,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "156",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "CNY"
+            "currency": "CNY",
         },
         {
             "id": uuid.uuid4(),
@@ -512,7 +512,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "162",
             "region": "Oceania",
             "subregion": "Australia and New Zealand",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -522,7 +522,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "166",
             "region": "Oceania",
             "subregion": "Australia and New Zealand",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -532,7 +532,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "170",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "COP"
+            "currency": "COP",
         },
         {
             "id": uuid.uuid4(),
@@ -542,7 +542,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "174",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "KMF"
+            "currency": "KMF",
         },
         {
             "id": uuid.uuid4(),
@@ -552,7 +552,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "178",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "XAF"
+            "currency": "XAF",
         },
         {
             "id": uuid.uuid4(),
@@ -562,7 +562,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "180",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "CDF"
+            "currency": "CDF",
         },
         {
             "id": uuid.uuid4(),
@@ -572,7 +572,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "184",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "NZD"
+            "currency": "NZD",
         },
         {
             "id": uuid.uuid4(),
@@ -582,7 +582,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "188",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "CRC"
+            "currency": "CRC",
         },
         {
             "id": uuid.uuid4(),
@@ -592,7 +592,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "384",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -602,7 +602,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "191",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "HRK"
+            "currency": "HRK",
         },
         {
             "id": uuid.uuid4(),
@@ -612,7 +612,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "192",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "CUP"
+            "currency": "CUP",
         },
         {
             "id": uuid.uuid4(),
@@ -622,7 +622,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "531",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "ANG"
+            "currency": "ANG",
         },
         {
             "id": uuid.uuid4(),
@@ -632,7 +632,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "196",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "CYP"
+            "currency": "CYP",
         },
         {
             "id": uuid.uuid4(),
@@ -642,7 +642,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "203",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "CZK"
+            "currency": "CZK",
         },
         {
             "id": uuid.uuid4(),
@@ -652,7 +652,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "208",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "DKK"
+            "currency": "DKK",
         },
         {
             "id": uuid.uuid4(),
@@ -662,7 +662,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "262",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "DJF"
+            "currency": "DJF",
         },
         {
             "id": uuid.uuid4(),
@@ -672,7 +672,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "212",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -682,7 +682,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "214",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "DOP"
+            "currency": "DOP",
         },
         {
             "id": uuid.uuid4(),
@@ -692,7 +692,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "218",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -702,7 +702,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "818",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "EGP"
+            "currency": "EGP",
         },
         {
             "id": uuid.uuid4(),
@@ -712,7 +712,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "222",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "SVC"
+            "currency": "SVC",
         },
         {
             "id": uuid.uuid4(),
@@ -722,7 +722,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "226",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "XAF"
+            "currency": "XAF",
         },
         {
             "id": uuid.uuid4(),
@@ -732,7 +732,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "232",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "ERN"
+            "currency": "ERN",
         },
         {
             "id": uuid.uuid4(),
@@ -742,7 +742,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "233",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "EEK"
+            "currency": "EEK",
         },
         {
             "id": uuid.uuid4(),
@@ -752,7 +752,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "748",
             "region": "Africa",
             "subregion": "Southern Africa",
-            "currency": "SZL"
+            "currency": "SZL",
         },
         {
             "id": uuid.uuid4(),
@@ -762,7 +762,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "231",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "ETB"
+            "currency": "ETB",
         },
         {
             "id": uuid.uuid4(),
@@ -772,7 +772,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "238",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "FKP"
+            "currency": "FKP",
         },
         {
             "id": uuid.uuid4(),
@@ -782,7 +782,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "234",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "DKK"
+            "currency": "DKK",
         },
         {
             "id": uuid.uuid4(),
@@ -792,7 +792,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "242",
             "region": "Oceania",
             "subregion": "Melanesia",
-            "currency": "FJD"
+            "currency": "FJD",
         },
         {
             "id": uuid.uuid4(),
@@ -802,7 +802,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "246",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -812,7 +812,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "250",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -822,7 +822,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "254",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -832,7 +832,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "258",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "XPF"
+            "currency": "XPF",
         },
         {
             "id": uuid.uuid4(),
@@ -842,7 +842,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "260",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -852,7 +852,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "266",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "XAF"
+            "currency": "XAF",
         },
         {
             "id": uuid.uuid4(),
@@ -862,7 +862,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "270",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "GMD"
+            "currency": "GMD",
         },
         {
             "id": uuid.uuid4(),
@@ -872,7 +872,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "268",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "GEL"
+            "currency": "GEL",
         },
         {
             "id": uuid.uuid4(),
@@ -882,7 +882,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "276",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -892,7 +892,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "288",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "GHC"
+            "currency": "GHC",
         },
         {
             "id": uuid.uuid4(),
@@ -902,7 +902,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "292",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "GIP"
+            "currency": "GIP",
         },
         {
             "id": uuid.uuid4(),
@@ -912,7 +912,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "300",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -922,7 +922,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "304",
             "region": "Americas",
             "subregion": "Northern America",
-            "currency": "DKK"
+            "currency": "DKK",
         },
         {
             "id": uuid.uuid4(),
@@ -932,7 +932,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "308",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -942,7 +942,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "312",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -952,7 +952,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "316",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -962,7 +962,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "320",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "GTQ"
+            "currency": "GTQ",
         },
         {
             "id": uuid.uuid4(),
@@ -972,7 +972,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "831",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "GBP"
+            "currency": "GBP",
         },
         {
             "id": uuid.uuid4(),
@@ -982,7 +982,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "324",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "GNF"
+            "currency": "GNF",
         },
         {
             "id": uuid.uuid4(),
@@ -992,7 +992,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "624",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -1002,7 +1002,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "328",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "GYD"
+            "currency": "GYD",
         },
         {
             "id": uuid.uuid4(),
@@ -1012,7 +1012,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "332",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "HTG"
+            "currency": "HTG",
         },
         {
             "id": uuid.uuid4(),
@@ -1022,7 +1022,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "334",
             "region": "Oceania",
             "subregion": "Australia and New Zealand",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -1032,7 +1032,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "336",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1042,7 +1042,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "340",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "HNL"
+            "currency": "HNL",
         },
         {
             "id": uuid.uuid4(),
@@ -1052,7 +1052,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "344",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "HKD"
+            "currency": "HKD",
         },
         {
             "id": uuid.uuid4(),
@@ -1062,7 +1062,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "348",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "HUF"
+            "currency": "HUF",
         },
         {
             "id": uuid.uuid4(),
@@ -1072,7 +1072,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "352",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "ISK"
+            "currency": "ISK",
         },
         {
             "id": uuid.uuid4(),
@@ -1082,7 +1082,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "356",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "INR"
+            "currency": "INR",
         },
         {
             "id": uuid.uuid4(),
@@ -1092,7 +1092,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "360",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "IDR"
+            "currency": "IDR",
         },
         {
             "id": uuid.uuid4(),
@@ -1102,7 +1102,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "364",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "IRR"
+            "currency": "IRR",
         },
         {
             "id": uuid.uuid4(),
@@ -1112,7 +1112,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "368",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "IQD"
+            "currency": "IQD",
         },
         {
             "id": uuid.uuid4(),
@@ -1122,7 +1122,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "372",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1132,7 +1132,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "833",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "GBP"
+            "currency": "GBP",
         },
         {
             "id": uuid.uuid4(),
@@ -1142,7 +1142,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "376",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "ILS"
+            "currency": "ILS",
         },
         {
             "id": uuid.uuid4(),
@@ -1152,7 +1152,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "380",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1162,7 +1162,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "388",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "JMD"
+            "currency": "JMD",
         },
         {
             "id": uuid.uuid4(),
@@ -1172,7 +1172,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "392",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "JPY"
+            "currency": "JPY",
         },
         {
             "id": uuid.uuid4(),
@@ -1182,7 +1182,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "832",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "GBP"
+            "currency": "GBP",
         },
         {
             "id": uuid.uuid4(),
@@ -1192,7 +1192,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "400",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "JOD"
+            "currency": "JOD",
         },
         {
             "id": uuid.uuid4(),
@@ -1202,7 +1202,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "398",
             "region": "Asia",
             "subregion": "Central Asia",
-            "currency": "KZT"
+            "currency": "KZT",
         },
         {
             "id": uuid.uuid4(),
@@ -1212,7 +1212,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "404",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "KES"
+            "currency": "KES",
         },
         {
             "id": uuid.uuid4(),
@@ -1222,7 +1222,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "296",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -1232,7 +1232,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "408",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "KPW"
+            "currency": "KPW",
         },
         {
             "id": uuid.uuid4(),
@@ -1242,7 +1242,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "410",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "KRW"
+            "currency": "KRW",
         },
         {
             "id": uuid.uuid4(),
@@ -1252,7 +1252,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "414",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "KWD"
+            "currency": "KWD",
         },
         {
             "id": uuid.uuid4(),
@@ -1262,7 +1262,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "417",
             "region": "Asia",
             "subregion": "Central Asia",
-            "currency": "KGS"
+            "currency": "KGS",
         },
         {
             "id": uuid.uuid4(),
@@ -1272,7 +1272,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "418",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "LAK"
+            "currency": "LAK",
         },
         {
             "id": uuid.uuid4(),
@@ -1282,7 +1282,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "428",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "LVL"
+            "currency": "LVL",
         },
         {
             "id": uuid.uuid4(),
@@ -1292,7 +1292,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "422",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "LBP"
+            "currency": "LBP",
         },
         {
             "id": uuid.uuid4(),
@@ -1302,7 +1302,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "426",
             "region": "Africa",
             "subregion": "Southern Africa",
-            "currency": "LSL"
+            "currency": "LSL",
         },
         {
             "id": uuid.uuid4(),
@@ -1312,7 +1312,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "430",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "LRD"
+            "currency": "LRD",
         },
         {
             "id": uuid.uuid4(),
@@ -1322,7 +1322,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "434",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "LYD"
+            "currency": "LYD",
         },
         {
             "id": uuid.uuid4(),
@@ -1332,7 +1332,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "438",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "CHF"
+            "currency": "CHF",
         },
         {
             "id": uuid.uuid4(),
@@ -1342,7 +1342,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "440",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "LTL"
+            "currency": "LTL",
         },
         {
             "id": uuid.uuid4(),
@@ -1352,7 +1352,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "442",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1362,7 +1362,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "446",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "MOP"
+            "currency": "MOP",
         },
         {
             "id": uuid.uuid4(),
@@ -1372,7 +1372,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "807",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "MKD"
+            "currency": "MKD",
         },
         {
             "id": uuid.uuid4(),
@@ -1382,7 +1382,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "450",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "MGA"
+            "currency": "MGA",
         },
         {
             "id": uuid.uuid4(),
@@ -1392,7 +1392,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "454",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "MWK"
+            "currency": "MWK",
         },
         {
             "id": uuid.uuid4(),
@@ -1402,7 +1402,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "458",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "MYR"
+            "currency": "MYR",
         },
         {
             "id": uuid.uuid4(),
@@ -1412,7 +1412,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "462",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "MVR"
+            "currency": "MVR",
         },
         {
             "id": uuid.uuid4(),
@@ -1422,7 +1422,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "466",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -1432,7 +1432,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "470",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "MTL"
+            "currency": "MTL",
         },
         {
             "id": uuid.uuid4(),
@@ -1442,7 +1442,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "584",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -1452,7 +1452,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "474",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1462,7 +1462,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "478",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "MRO"
+            "currency": "MRO",
         },
         {
             "id": uuid.uuid4(),
@@ -1472,7 +1472,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "480",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "MUR"
+            "currency": "MUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1482,7 +1482,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "175",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1492,7 +1492,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "484",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "MXN"
+            "currency": "MXN",
         },
         {
             "id": uuid.uuid4(),
@@ -1502,7 +1502,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "583",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -1512,7 +1512,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "498",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "MDL"
+            "currency": "MDL",
         },
         {
             "id": uuid.uuid4(),
@@ -1522,7 +1522,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "492",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1532,7 +1532,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "496",
             "region": "Asia",
             "subregion": "Eastern Asia",
-            "currency": "MNT"
+            "currency": "MNT",
         },
         {
             "id": uuid.uuid4(),
@@ -1542,7 +1542,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "499",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1552,7 +1552,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "500",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -1562,7 +1562,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "504",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "MAD"
+            "currency": "MAD",
         },
         {
             "id": uuid.uuid4(),
@@ -1572,7 +1572,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "508",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "MZN"
+            "currency": "MZN",
         },
         {
             "id": uuid.uuid4(),
@@ -1582,7 +1582,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "104",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "MMK"
+            "currency": "MMK",
         },
         {
             "id": uuid.uuid4(),
@@ -1592,7 +1592,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "516",
             "region": "Africa",
             "subregion": "Southern Africa",
-            "currency": "NAD"
+            "currency": "NAD",
         },
         {
             "id": uuid.uuid4(),
@@ -1602,7 +1602,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "520",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -1612,7 +1612,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "524",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "NPR"
+            "currency": "NPR",
         },
         {
             "id": uuid.uuid4(),
@@ -1622,7 +1622,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "528",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1632,7 +1632,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "540",
             "region": "Oceania",
             "subregion": "Melanesia",
-            "currency": "XPF"
+            "currency": "XPF",
         },
         {
             "id": uuid.uuid4(),
@@ -1642,7 +1642,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "554",
             "region": "Oceania",
             "subregion": "Australia and New Zealand",
-            "currency": "NZD"
+            "currency": "NZD",
         },
         {
             "id": uuid.uuid4(),
@@ -1652,7 +1652,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "558",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "NIO"
+            "currency": "NIO",
         },
         {
             "id": uuid.uuid4(),
@@ -1662,7 +1662,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "562",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -1672,7 +1672,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "566",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "NGN"
+            "currency": "NGN",
         },
         {
             "id": uuid.uuid4(),
@@ -1682,7 +1682,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "570",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "NZD"
+            "currency": "NZD",
         },
         {
             "id": uuid.uuid4(),
@@ -1692,7 +1692,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "574",
             "region": "Oceania",
             "subregion": "Australia and New Zealand",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -1702,7 +1702,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "580",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -1712,7 +1712,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "578",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "NOK"
+            "currency": "NOK",
         },
         {
             "id": uuid.uuid4(),
@@ -1722,7 +1722,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "512",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "OMR"
+            "currency": "OMR",
         },
         {
             "id": uuid.uuid4(),
@@ -1732,7 +1732,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "586",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "PKR"
+            "currency": "PKR",
         },
         {
             "id": uuid.uuid4(),
@@ -1742,7 +1742,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "585",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -1752,7 +1752,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "275",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "ILS"
+            "currency": "ILS",
         },
         {
             "id": uuid.uuid4(),
@@ -1762,7 +1762,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "591",
             "region": "Americas",
             "subregion": "Central America",
-            "currency": "PAB"
+            "currency": "PAB",
         },
         {
             "id": uuid.uuid4(),
@@ -1772,7 +1772,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "598",
             "region": "Oceania",
             "subregion": "Melanesia",
-            "currency": "PGK"
+            "currency": "PGK",
         },
         {
             "id": uuid.uuid4(),
@@ -1782,7 +1782,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "600",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "PYG"
+            "currency": "PYG",
         },
         {
             "id": uuid.uuid4(),
@@ -1792,7 +1792,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "604",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "PEN"
+            "currency": "PEN",
         },
         {
             "id": uuid.uuid4(),
@@ -1802,7 +1802,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "608",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "PHP"
+            "currency": "PHP",
         },
         {
             "id": uuid.uuid4(),
@@ -1812,7 +1812,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "612",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "NZD"
+            "currency": "NZD",
         },
         {
             "id": uuid.uuid4(),
@@ -1822,7 +1822,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "616",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "PLN"
+            "currency": "PLN",
         },
         {
             "id": uuid.uuid4(),
@@ -1832,7 +1832,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "620",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1842,7 +1842,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "630",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -1852,7 +1852,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "634",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "QAR"
+            "currency": "QAR",
         },
         {
             "id": uuid.uuid4(),
@@ -1862,7 +1862,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "638",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1872,7 +1872,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "642",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "RON"
+            "currency": "RON",
         },
         {
             "id": uuid.uuid4(),
@@ -1882,7 +1882,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "643",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "RUB"
+            "currency": "RUB",
         },
         {
             "id": uuid.uuid4(),
@@ -1892,7 +1892,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "646",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "RWF"
+            "currency": "RWF",
         },
         {
             "id": uuid.uuid4(),
@@ -1902,7 +1902,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "652",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1912,7 +1912,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "654",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "SHP"
+            "currency": "SHP",
         },
         {
             "id": uuid.uuid4(),
@@ -1922,7 +1922,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "659",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -1932,7 +1932,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "662",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -1942,7 +1942,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "663",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1952,7 +1952,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "666",
             "region": "Americas",
             "subregion": "Northern America",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1962,7 +1962,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "670",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "XCD"
+            "currency": "XCD",
         },
         {
             "id": uuid.uuid4(),
@@ -1972,7 +1972,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "882",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "WST"
+            "currency": "WST",
         },
         {
             "id": uuid.uuid4(),
@@ -1982,7 +1982,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "674",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -1992,7 +1992,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "678",
             "region": "Africa",
             "subregion": "Middle Africa",
-            "currency": "STD"
+            "currency": "STD",
         },
         {
             "id": uuid.uuid4(),
@@ -2002,7 +2002,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "682",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "SAR"
+            "currency": "SAR",
         },
         {
             "id": uuid.uuid4(),
@@ -2012,7 +2012,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "686",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -2022,7 +2022,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "688",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "RSD"
+            "currency": "RSD",
         },
         {
             "id": uuid.uuid4(),
@@ -2032,7 +2032,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "690",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "SCR"
+            "currency": "SCR",
         },
         {
             "id": uuid.uuid4(),
@@ -2042,7 +2042,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "694",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "SLL"
+            "currency": "SLL",
         },
         {
             "id": uuid.uuid4(),
@@ -2052,7 +2052,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "702",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "SGD"
+            "currency": "SGD",
         },
         {
             "id": uuid.uuid4(),
@@ -2062,7 +2062,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "534",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "ANG"
+            "currency": "ANG",
         },
         {
             "id": uuid.uuid4(),
@@ -2072,7 +2072,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "703",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "SKK"
+            "currency": "SKK",
         },
         {
             "id": uuid.uuid4(),
@@ -2082,7 +2082,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "705",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -2092,7 +2092,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "90",
             "region": "Oceania",
             "subregion": "Melanesia",
-            "currency": "SBD"
+            "currency": "SBD",
         },
         {
             "id": uuid.uuid4(),
@@ -2102,7 +2102,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "706",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "SOS"
+            "currency": "SOS",
         },
         {
             "id": uuid.uuid4(),
@@ -2112,7 +2112,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "710",
             "region": "Africa",
             "subregion": "Southern Africa",
-            "currency": "ZAR"
+            "currency": "ZAR",
         },
         {
             "id": uuid.uuid4(),
@@ -2122,7 +2122,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "239",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "GBP"
+            "currency": "GBP",
         },
         {
             "id": uuid.uuid4(),
@@ -2132,7 +2132,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "728",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "SSP"
+            "currency": "SSP",
         },
         {
             "id": uuid.uuid4(),
@@ -2142,7 +2142,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "724",
             "region": "Europe",
             "subregion": "Southern Europe",
-            "currency": "EUR"
+            "currency": "EUR",
         },
         {
             "id": uuid.uuid4(),
@@ -2152,7 +2152,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "144",
             "region": "Asia",
             "subregion": "Southern Asia",
-            "currency": "LKR"
+            "currency": "LKR",
         },
         {
             "id": uuid.uuid4(),
@@ -2162,7 +2162,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "729",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "SDD"
+            "currency": "SDD",
         },
         {
             "id": uuid.uuid4(),
@@ -2172,7 +2172,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "740",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "SRD"
+            "currency": "SRD",
         },
         {
             "id": uuid.uuid4(),
@@ -2182,7 +2182,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "744",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "NOK"
+            "currency": "NOK",
         },
         {
             "id": uuid.uuid4(),
@@ -2192,7 +2192,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "752",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "SEK"
+            "currency": "SEK",
         },
         {
             "id": uuid.uuid4(),
@@ -2202,7 +2202,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "756",
             "region": "Europe",
             "subregion": "Western Europe",
-            "currency": "CHF"
+            "currency": "CHF",
         },
         {
             "id": uuid.uuid4(),
@@ -2212,7 +2212,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "760",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "SYP"
+            "currency": "SYP",
         },
         {
             "id": uuid.uuid4(),
@@ -2222,7 +2222,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "158",
             "region": None,
             "subregion": None,
-            "currency": "TWD"
+            "currency": "TWD",
         },
         {
             "id": uuid.uuid4(),
@@ -2232,7 +2232,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "762",
             "region": "Asia",
             "subregion": "Central Asia",
-            "currency": "TJS"
+            "currency": "TJS",
         },
         {
             "id": uuid.uuid4(),
@@ -2242,7 +2242,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "834",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "TZS"
+            "currency": "TZS",
         },
         {
             "id": uuid.uuid4(),
@@ -2252,7 +2252,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "764",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "THB"
+            "currency": "THB",
         },
         {
             "id": uuid.uuid4(),
@@ -2262,7 +2262,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "626",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -2272,7 +2272,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "768",
             "region": "Africa",
             "subregion": "Western Africa",
-            "currency": "XOF"
+            "currency": "XOF",
         },
         {
             "id": uuid.uuid4(),
@@ -2282,7 +2282,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "772",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "NZD"
+            "currency": "NZD",
         },
         {
             "id": uuid.uuid4(),
@@ -2292,7 +2292,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "776",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "TOP"
+            "currency": "TOP",
         },
         {
             "id": uuid.uuid4(),
@@ -2302,7 +2302,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "780",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "TTD"
+            "currency": "TTD",
         },
         {
             "id": uuid.uuid4(),
@@ -2312,7 +2312,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "788",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "TND"
+            "currency": "TND",
         },
         {
             "id": uuid.uuid4(),
@@ -2322,7 +2322,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "792",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "TRY"
+            "currency": "TRY",
         },
         {
             "id": uuid.uuid4(),
@@ -2332,7 +2332,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "795",
             "region": "Asia",
             "subregion": "Central Asia",
-            "currency": "TMM"
+            "currency": "TMM",
         },
         {
             "id": uuid.uuid4(),
@@ -2342,7 +2342,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "796",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -2352,7 +2352,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "798",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "AUD"
+            "currency": "AUD",
         },
         {
             "id": uuid.uuid4(),
@@ -2362,7 +2362,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "800",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "UGX"
+            "currency": "UGX",
         },
         {
             "id": uuid.uuid4(),
@@ -2372,7 +2372,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "804",
             "region": "Europe",
             "subregion": "Eastern Europe",
-            "currency": "UAH"
+            "currency": "UAH",
         },
         {
             "id": uuid.uuid4(),
@@ -2382,7 +2382,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "784",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "AED"
+            "currency": "AED",
         },
         {
             "id": uuid.uuid4(),
@@ -2392,7 +2392,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "826",
             "region": "Europe",
             "subregion": "Northern Europe",
-            "currency": "GBP"
+            "currency": "GBP",
         },
         {
             "id": uuid.uuid4(),
@@ -2402,7 +2402,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "840",
             "region": "Americas",
             "subregion": "Northern America",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -2412,7 +2412,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "581",
             "region": "Oceania",
             "subregion": "Micronesia",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -2422,7 +2422,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "858",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "UYU"
+            "currency": "UYU",
         },
         {
             "id": uuid.uuid4(),
@@ -2432,7 +2432,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "860",
             "region": "Asia",
             "subregion": "Central Asia",
-            "currency": "UZS"
+            "currency": "UZS",
         },
         {
             "id": uuid.uuid4(),
@@ -2442,7 +2442,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "548",
             "region": "Oceania",
             "subregion": "Melanesia",
-            "currency": "VUV"
+            "currency": "VUV",
         },
         {
             "id": uuid.uuid4(),
@@ -2452,7 +2452,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "862",
             "region": "Americas",
             "subregion": "South America",
-            "currency": "VEF"
+            "currency": "VEF",
         },
         {
             "id": uuid.uuid4(),
@@ -2462,7 +2462,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "704",
             "region": "Asia",
             "subregion": "South-eastern Asia",
-            "currency": "VND"
+            "currency": "VND",
         },
         {
             "id": uuid.uuid4(),
@@ -2472,7 +2472,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "92",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -2482,7 +2482,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "850",
             "region": "Americas",
             "subregion": "Caribbean",
-            "currency": "USD"
+            "currency": "USD",
         },
         {
             "id": uuid.uuid4(),
@@ -2492,7 +2492,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "876",
             "region": "Oceania",
             "subregion": "Polynesia",
-            "currency": "XPF"
+            "currency": "XPF",
         },
         {
             "id": uuid.uuid4(),
@@ -2502,7 +2502,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "732",
             "region": "Africa",
             "subregion": "Northern Africa",
-            "currency": "MAD"
+            "currency": "MAD",
         },
         {
             "id": uuid.uuid4(),
@@ -2512,7 +2512,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "887",
             "region": "Asia",
             "subregion": "Western Asia",
-            "currency": "YER"
+            "currency": "YER",
         },
         {
             "id": uuid.uuid4(),
@@ -2522,7 +2522,7 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "894",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "ZMK"
+            "currency": "ZMK",
         },
         {
             "id": uuid.uuid4(),
@@ -2532,8 +2532,8 @@ async def insert_countries(session: AsyncSession) -> None:
             "iso_numeric": "716",
             "region": "Africa",
             "subregion": "Eastern Africa",
-            "currency": "ZWD"
-        }
+            "currency": "ZWD",
+        },
     ]
 
     # Use a statement that upserts/merges data to avoid conflicts
@@ -2549,7 +2549,7 @@ async def insert_countries(session: AsyncSession) -> None:
                 "region": Country.region,
                 "subregion": Country.subregion,
                 "currency": Country.currency,
-            }
+            },
         )
     )
 

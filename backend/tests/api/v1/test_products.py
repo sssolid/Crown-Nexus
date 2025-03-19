@@ -92,9 +92,7 @@ async def test_read_products_with_filters(
 
 
 @pytest.mark.asyncio
-async def test_create_product_admin(
-    client: AsyncClient, admin_token: str
-) -> None:
+async def test_create_product_admin(client: AsyncClient, admin_token: str) -> None:
     """
     Test creating a product as admin.
 
@@ -136,9 +134,7 @@ async def test_create_product_admin(
 
 
 @pytest.mark.asyncio
-async def test_create_product_non_admin(
-    client: AsyncClient, user_token: str
-) -> None:
+async def test_create_product_non_admin(client: AsyncClient, user_token: str) -> None:
     """
     Test that non-admin users cannot create products.
 
@@ -236,9 +232,7 @@ async def test_read_product(
 
 
 @pytest.mark.asyncio
-async def test_read_product_not_found(
-    client: AsyncClient, user_token: str
-) -> None:
+async def test_read_product_not_found(client: AsyncClient, user_token: str) -> None:
     """
     Test retrieving a non-existent product.
 

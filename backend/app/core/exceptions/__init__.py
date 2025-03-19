@@ -59,7 +59,6 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "ErrorSeverity",
-
     # Domain
     "AuthException",
     "AuthenticationException",
@@ -71,7 +70,6 @@ __all__ = [
     "ResourceException",
     "ResourceNotFoundException",
     "ValidationException",
-
     # System
     "ConfigurationException",
     "DatabaseException",
@@ -82,7 +80,6 @@ __all__ = [
     "ServiceException",
     "SystemException",
     "TransactionException",
-
     # Handlers
     "app_exception_handler",
     "generic_exception_handler",

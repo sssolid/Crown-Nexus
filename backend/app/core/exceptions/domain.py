@@ -26,7 +26,7 @@ class ResourceException(AppException):
         code: ErrorCode = ErrorCode.RESOURCE_NOT_FOUND,
         details: Any = None,
         status_code: int = 404,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a resource exception.
 
@@ -44,7 +44,7 @@ class ResourceException(AppException):
             status_code=status_code,
             severity=ErrorSeverity.WARNING,
             category=ErrorCategory.RESOURCE,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -57,7 +57,7 @@ class ResourceNotFoundException(ResourceException):
         resource_id: str,
         message: Optional[str] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a resource not found exception.
 
@@ -81,7 +81,7 @@ class ResourceNotFoundException(ResourceException):
             code=ErrorCode.RESOURCE_NOT_FOUND,
             details=error_details,
             status_code=404,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -95,7 +95,7 @@ class ResourceAlreadyExistsException(ResourceException):
         field: str = "id",
         message: Optional[str] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a resource already exists exception.
 
@@ -121,7 +121,7 @@ class ResourceAlreadyExistsException(ResourceException):
             code=ErrorCode.RESOURCE_ALREADY_EXISTS,
             details=error_details,
             status_code=409,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -134,7 +134,7 @@ class AuthException(AppException):
         code: ErrorCode,
         details: Any = None,
         status_code: int = 401,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize an authentication/authorization exception.
 
@@ -152,7 +152,7 @@ class AuthException(AppException):
             status_code=status_code,
             severity=ErrorSeverity.WARNING,
             category=ErrorCategory.AUTH,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -163,7 +163,7 @@ class AuthenticationException(AuthException):
         self,
         message: str = "Authentication failed",
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize an authentication exception.
 
@@ -177,7 +177,7 @@ class AuthenticationException(AuthException):
             code=ErrorCode.AUTHENTICATION_FAILED,
             details=details,
             status_code=401,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -191,7 +191,7 @@ class PermissionDeniedException(AuthException):
         resource_type: Optional[str] = None,
         permission: Optional[str] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a permission denied exception.
 
@@ -219,7 +219,7 @@ class PermissionDeniedException(AuthException):
             code=ErrorCode.PERMISSION_DENIED,
             details=error_details,
             status_code=403,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -231,7 +231,7 @@ class ValidationException(AppException):
         message: str = "Validation error",
         errors: Optional[List[Dict[str, Any]]] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a validation exception.
 
@@ -250,7 +250,7 @@ class ValidationException(AppException):
             status_code=422,
             severity=ErrorSeverity.WARNING,
             category=ErrorCategory.VALIDATION,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -263,7 +263,7 @@ class BusinessException(AppException):
         code: ErrorCode = ErrorCode.BUSINESS_LOGIC_ERROR,
         details: Any = None,
         status_code: int = 400,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize a business logic exception.
 
@@ -281,7 +281,7 @@ class BusinessException(AppException):
             status_code=status_code,
             severity=ErrorSeverity.WARNING,
             category=ErrorCategory.BUSINESS,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -294,7 +294,7 @@ class InvalidStateException(BusinessException):
         current_state: Optional[str] = None,
         expected_state: Optional[str] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize an invalid state exception.
 
@@ -316,7 +316,7 @@ class InvalidStateException(BusinessException):
             code=ErrorCode.INVALID_STATE,
             details=error_details,
             status_code=409,
-            original_exception=original_exception
+            original_exception=original_exception,
         )
 
 
@@ -329,7 +329,7 @@ class OperationNotAllowedException(BusinessException):
         operation: Optional[str] = None,
         reason: Optional[str] = None,
         details: Any = None,
-        original_exception: Optional[Exception] = None
+        original_exception: Optional[Exception] = None,
     ) -> None:
         """Initialize an operation not allowed exception.
 
@@ -351,5 +351,5 @@ class OperationNotAllowedException(BusinessException):
             code=ErrorCode.OPERATION_NOT_ALLOWED,
             details=error_details,
             status_code=403,
-            original_exception=original_exception
+            original_exception=original_exception,
         )

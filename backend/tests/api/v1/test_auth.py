@@ -43,7 +43,9 @@ async def test_login_success(client: AsyncClient, normal_user: User) -> None:
     assert data["token_type"] == "bearer"
 
 
-async def test_login_invalid_credentials(client: AsyncClient, normal_user: User) -> None:
+async def test_login_invalid_credentials(
+    client: AsyncClient, normal_user: User
+) -> None:
     """
     Test login with invalid credentials.
 

@@ -6,7 +6,6 @@ This module provides configuration settings and utilities.
 
 from __future__ import annotations
 
-import logging
 import os
 from functools import lru_cache
 from typing import Dict, List, Optional, Union
@@ -19,9 +18,7 @@ class FitmentSettings(BaseSettings):
     """Settings for the fitment module."""
 
     model_config = SettingsConfigDict(
-        env_prefix="FITMENT_",
-        case_sensitive=False,
-        extra="ignore"
+        env_prefix="FITMENT_", case_sensitive=False, extra="ignore"
     )
 
     # Database paths
@@ -43,14 +40,14 @@ class FitmentSettings(BaseSettings):
     cache_size: int = Field(100, description="Maximum size for LRU caches")
 
     @validator("vcdb_path", "pcdb_path")
-    def validate_file_path(cls, v: str) -> str:
+    def validate_file_path(self, v: str) -> str:
         """Validate that a file path exists."""
         if not os.path.isfile(v):
             raise ValueError(f"File not found: {v}")
         return v
 
     @validator("model_mappings_path")
-    def validate_optional_file_path(cls, v: Optional[str]) -> Optional[str]:
+    def validate_optional_file_path(self, v: Optional[str]) -> Optional[str]:
         """Validate that an optional file path exists if provided."""
         if v is not None and not os.path.isfile(v):
             raise ValueError(f"File not found: {v}")
@@ -66,14 +63,3 @@ def get_settings() -> FitmentSettings:
         FitmentSettings instance
     """
     return FitmentSettings()
-
-
-def configure_logging() -> None:
-    """Configure logging for the fitment module."""
-    settings = get_settings()
-
-    # Set up logging
-    logging.basicConfig(
-        level=getattr(logging, settings.log_level.upper()),
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )

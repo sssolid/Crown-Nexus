@@ -27,7 +27,7 @@ class RedisCacheBackend(CacheBackend[T]):
         redis_url: Optional[str] = None,
         serializer: str = "pickle",
         prefix: str = "cache:",
-        **redis_options: Any
+        **redis_options: Any,
     ) -> None:
         """Initialize the Redis cache backend.
 
@@ -197,9 +197,7 @@ class RedisCacheBackend(CacheBackend[T]):
             logger.error(f"Error getting multiple keys from Redis: {str(e)}")
             return {key: None for key in keys}
 
-    async def set_many(
-        self, mapping: Dict[str, T], ttl: Optional[int] = None
-    ) -> bool:
+    async def set_many(self, mapping: Dict[str, T], ttl: Optional[int] = None) -> bool:
         """Set multiple values in the cache.
 
         Args:

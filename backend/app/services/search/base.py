@@ -24,7 +24,7 @@ class SearchProvider(Protocol):
         filters: Dict[str, Any],
         page: int,
         page_size: int,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Search for entities matching the criteria.
 
@@ -51,4 +51,5 @@ class SearchProvider(Protocol):
 
 class SearchResult(Dict[str, Any]):
     """Type for search results."""
+
     pass

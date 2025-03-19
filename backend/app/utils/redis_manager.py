@@ -4,9 +4,9 @@ Core Redis utility functions with proper error handling and structured logging.
 This module provides functions for interacting with Redis, including connection management,
 caching operations, and utility functions to simplify common Redis operations.
 """
+
 from __future__ import annotations
 import json
-import logging
 from typing import Any, Dict, List, Optional, TypeVar, cast
 
 import redis.asyncio as redis
@@ -14,13 +14,14 @@ from redis.asyncio.client import Redis
 from redis.asyncio.connection import ConnectionPool
 
 from app.core.config import settings
-from app.core.exceptions import ExternalServiceException, ErrorCode
+from app.core.exceptions import ServiceException, ErrorCode
 from app.core.logging import get_logger
 
-logger = get_logger('app.utils.redis_manager')
+logger = get_logger("app.utils.redis_manager")
 
-T = TypeVar('T')
+T = TypeVar("T")
 _redis_pool: Optional[ConnectionPool] = None
+
 
 async def get_redis_pool() -> ConnectionPool:
     """Get or create a Redis connection pool.
@@ -29,7 +30,7 @@ async def get_redis_pool() -> ConnectionPool:
         ConnectionPool: A Redis connection pool instance.
 
     Raises:
-        ExternalServiceException: If unable to connect to Redis.
+        ServiceException: If unable to connect to Redis.
     """
     global _redis_pool
     if _redis_pool is None:
@@ -40,13 +41,13 @@ async def get_redis_pool() -> ConnectionPool:
                 db=settings.REDIS_DB,
                 password=settings.REDIS_PASSWORD,
                 decode_responses=True,
-                max_connections=settings.REDIS_MAX_CONNECTIONS
+                max_connections=settings.REDIS_MAX_CONNECTIONS,
             )
             logger.info(
                 "Created Redis connection pool",
                 host=settings.REDIS_HOST,
                 port=settings.REDIS_PORT,
-                db=settings.REDIS_DB
+                db=settings.REDIS_DB,
             )
         except Exception as e:
             logger.error(
@@ -54,19 +55,20 @@ async def get_redis_pool() -> ConnectionPool:
                 error=str(e),
                 host=settings.REDIS_HOST,
                 port=settings.REDIS_PORT,
-                exc_info=True
+                exc_info=True,
             )
-            raise ExternalServiceException(
+            raise ServiceException(
                 message="Failed to connect to Redis",
                 code=ErrorCode.EXTERNAL_SERVICE_ERROR,
                 details={
                     "service": "redis",
                     "host": settings.REDIS_HOST,
-                    "port": settings.REDIS_PORT
+                    "port": settings.REDIS_PORT,
                 },
-                original_exception=e
+                original_exception=e,
             ) from e
     return _redis_pool
+
 
 async def get_redis_client() -> Redis:
     """Get a Redis client from the connection pool.
@@ -75,23 +77,24 @@ async def get_redis_client() -> Redis:
         Redis: A Redis client instance.
 
     Raises:
-        ExternalServiceException: If unable to connect to Redis.
+        ServiceException: If unable to connect to Redis.
     """
     try:
         pool = await get_redis_pool()
         return redis.Redis(connection_pool=pool)
-    except ExternalServiceException:
+    except ServiceException:
         raise
     except Exception as e:
         logger.error("Failed to get Redis client", error=str(e), exc_info=True)
-        raise ExternalServiceException(
+        raise ServiceException(
             message="Failed to get Redis client",
             code=ErrorCode.EXTERNAL_SERVICE_ERROR,
             details={"service": "redis"},
-            original_exception=e
+            original_exception=e,
         ) from e
 
-async def set_key(key: str, value: Any, ttl: Optional[int]=None) -> bool:
+
+async def set_key(key: str, value: Any, ttl: Optional[int] = None) -> bool:
     """Set a key in Redis with optional TTL.
 
     Args:
@@ -115,7 +118,8 @@ async def set_key(key: str, value: Any, ttl: Optional[int]=None) -> bool:
         logger.error("Redis set error", key=key, error=str(e), exc_info=True)
         return False
 
-async def get_key(key: str, default: Optional[T]=None) -> Optional[T]:
+
+async def get_key(key: str, default: Optional[T] = None) -> Optional[T]:
     """Get a key from Redis.
 
     Args:
@@ -137,6 +141,7 @@ async def get_key(key: str, default: Optional[T]=None) -> Optional[T]:
     except Exception as e:
         logger.error("Redis get error", key=key, error=str(e), exc_info=True)
         return default
+
 
 async def delete_key(key: str) -> bool:
     """Delete a key from Redis.
@@ -160,7 +165,10 @@ async def delete_key(key: str) -> bool:
         logger.error("Redis delete error", key=key, error=str(e), exc_info=True)
         return False
 
-async def increment_counter(key: str, amount: int=1, ttl: Optional[int]=None) -> Optional[int]:
+
+async def increment_counter(
+    key: str, amount: int = 1, ttl: Optional[int] = None
+) -> Optional[int]:
     """Increment a counter in Redis.
 
     Args:
@@ -176,11 +184,14 @@ async def increment_counter(key: str, amount: int=1, ttl: Optional[int]=None) ->
         value = await client.incrby(key, amount)
         if ttl:
             await client.expire(key, ttl)
-        logger.debug("Redis counter incremented", key=key, amount=amount, new_value=value)
+        logger.debug(
+            "Redis counter incremented", key=key, amount=amount, new_value=value
+        )
         return value
     except Exception as e:
         logger.error("Redis increment error", key=key, error=str(e), exc_info=True)
         return None
+
 
 async def rate_limit_check(key: str, limit: int, window: int) -> tuple[bool, int]:
     """Check if a rate limit has been exceeded.
@@ -212,6 +223,7 @@ async def rate_limit_check(key: str, limit: int, window: int) -> tuple[bool, int
         logger.error("Redis rate limit error", key=key, error=str(e), exc_info=True)
         return (False, 0)
 
+
 async def publish_message(channel: str, message: Dict[str, Any]) -> bool:
     """Publish a message to a Redis channel.
 
@@ -226,15 +238,22 @@ async def publish_message(channel: str, message: Dict[str, Any]) -> bool:
         client = await get_redis_client()
         receivers = await client.publish(channel, json.dumps(message))
         if receivers > 0:
-            logger.debug("Redis message published", channel=channel, receivers=receivers)
+            logger.debug(
+                "Redis message published", channel=channel, receivers=receivers
+            )
         else:
             logger.warning("Redis message published but no receivers", channel=channel)
         return receivers > 0
     except Exception as e:
-        logger.error("Redis publish error", channel=channel, error=str(e), exc_info=True)
+        logger.error(
+            "Redis publish error", channel=channel, error=str(e), exc_info=True
+        )
         return False
 
-async def cache_get_or_set(key: str, callback: callable, ttl: int=3600, force_refresh: bool=False) -> Any:
+
+async def cache_get_or_set(
+    key: str, callback: callable, ttl: int = 3600, force_refresh: bool = False
+) -> Any:
     """Get a value from Redis or set it using the callback.
 
     Args:

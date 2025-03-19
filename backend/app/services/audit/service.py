@@ -7,7 +7,7 @@ This module provides the primary AuditService that coordinates audit logging
 and querying operations.
 """
 
-from datetime import datetime, timedelta
+import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,7 +19,7 @@ from app.services.audit.base import (
     AuditEventType,
     AuditLogLevel,
     AuditLogger,
-    AuditOptions
+    AuditOptions,
 )
 from app.services.audit.factory import AuditLoggerFactory
 from app.services.audit.query import AuditQuery
@@ -53,13 +53,13 @@ class AuditService(ServiceInterface):
             "credit_card",
             "ssn",
             "social_security",
-            "api_key"
+            "api_key",
         ]
 
         # Event types that should be anonymized by default
         self.anonymize_events: List[AuditEventType] = [
             AuditEventType.GDPR_DATA_EXPORT,
-            AuditEventType.GDPR_DATA_DELETED
+            AuditEventType.GDPR_DATA_DELETED,
         ]
 
         # Default event level mapping
@@ -92,7 +92,7 @@ class AuditService(ServiceInterface):
         if self.enabled:
             await self.log_event(
                 event_type=AuditEventType.SYSTEM_STARTED,
-                details={"service": "AuditService", "action": "initialize"}
+                details={"service": "AuditService", "action": "initialize"},
             )
 
     async def shutdown(self) -> None:
@@ -102,7 +102,7 @@ class AuditService(ServiceInterface):
         if self.enabled:
             await self.log_event(
                 event_type=AuditEventType.SYSTEM_STOPPED,
-                details={"service": "AuditService", "action": "shutdown"}
+                details={"service": "AuditService", "action": "shutdown"},
             )
 
     def add_logger(self, logger: AuditLogger) -> None:
@@ -157,7 +157,7 @@ class AuditService(ServiceInterface):
         if options is None:
             options = AuditOptions(
                 sensitive_fields=self.sensitive_fields,
-                anonymize_data=event_type in self.anonymize_events
+                anonymize_data=event_type in self.anonymize_events,
             )
 
         # Log through all registered loggers
@@ -174,7 +174,7 @@ class AuditService(ServiceInterface):
                     details=details,
                     context=context,
                     level=level,
-                    options=options
+                    options=options,
                 )
 
                 # Use the first logger's event ID as the return value
@@ -235,7 +235,7 @@ class AuditService(ServiceInterface):
             limit=limit,
             offset=offset,
             sort_field=sort_field,
-            sort_order=sort_order
+            sort_order=sort_order,
         )
 
     async def get_event_by_id(self, event_id: str) -> Optional[Dict[str, Any]]:
@@ -260,7 +260,7 @@ class AuditService(ServiceInterface):
         user_id: str,
         start_time: Optional[datetime] = None,
         end_time: Optional[datetime] = None,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Dict[str, Any]]:
         """Get recent activity for a specific user.
 
@@ -280,17 +280,11 @@ class AuditService(ServiceInterface):
             return []
 
         return await self.query.get_user_activity(
-            user_id=user_id,
-            start_time=start_time,
-            end_time=end_time,
-            limit=limit
+            user_id=user_id, start_time=start_time, end_time=end_time, limit=limit
         )
 
     async def get_resource_history(
-        self,
-        resource_type: str,
-        resource_id: str,
-        limit: int = 100
+        self, resource_type: str, resource_id: str, limit: int = 100
     ) -> List[Dict[str, Any]]:
         """Get history of actions performed on a specific resource.
 
@@ -309,9 +303,7 @@ class AuditService(ServiceInterface):
             return []
 
         return await self.query.get_resource_history(
-            resource_type=resource_type,
-            resource_id=resource_id,
-            limit=limit
+            resource_type=resource_type, resource_id=resource_id, limit=limit
         )
 
     async def purge_old_logs(self, days_to_keep: int = 90) -> int:
@@ -337,10 +329,13 @@ class AuditService(ServiceInterface):
             details={
                 "action": "purge_old_logs",
                 "days_kept": days_to_keep,
-                "cutoff_date": (datetime.utcnow() - timedelta(days=days_to_keep)).isoformat(),
-                "records_deleted": deleted_count
+                "cutoff_date": (
+                    datetime.datetime.now(datetime.UTC)
+                    - datetime.timedelta(days=days_to_keep)
+                ).isoformat(),
+                "records_deleted": deleted_count,
             },
-            level=AuditLogLevel.WARNING
+            level=AuditLogLevel.WARNING,
         )
 
         return deleted_count

@@ -37,7 +37,7 @@
                 @click:append-inner="applyFilters"
               ></v-text-field>
             </v-col>
-            
+
             <!-- Date Range -->
             <v-col cols="12" md="5">
               <div class="d-flex gap-2">
@@ -49,7 +49,7 @@
                   type="date"
                   hide-details
                 ></v-text-field>
-                
+
                 <v-text-field
                   v-model="dateRange.to"
                   label="To Date"
@@ -60,7 +60,7 @@
                 ></v-text-field>
               </div>
             </v-col>
-            
+
             <!-- Status Filter -->
             <v-col cols="12" md="3">
               <v-select
@@ -74,7 +74,7 @@
               ></v-select>
             </v-col>
           </v-row>
-          
+
           <!-- Advanced Filters Toggle -->
           <v-row class="mt-2">
             <v-col cols="12" class="d-flex justify-end">
@@ -87,7 +87,7 @@
               >
                 {{ showAdvancedFilters ? 'Hide' : 'Show' }} Advanced Filters
               </v-btn>
-              
+
               <v-btn
                 variant="text"
                 size="small"
@@ -97,7 +97,7 @@
               >
                 Reset Filters
               </v-btn>
-              
+
               <v-btn
                 color="primary"
                 variant="tonal"
@@ -109,7 +109,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          
+
           <!-- Advanced Filters Panel -->
           <v-expand-transition>
             <div v-if="showAdvancedFilters" class="mt-4">
@@ -127,7 +127,7 @@
                     clearable
                   ></v-select>
                 </v-col>
-                
+
                 <!-- Order Type -->
                 <v-col cols="12" md="4">
                   <v-select
@@ -140,7 +140,7 @@
                     clearable
                   ></v-select>
                 </v-col>
-                
+
                 <!-- Amount Range -->
                 <v-col cols="12" md="4">
                   <div class="d-flex gap-2">
@@ -153,7 +153,7 @@
                       prefix="$"
                       hide-details
                     ></v-text-field>
-                    
+
                     <v-text-field
                       v-model="advancedFilters.maxAmount"
                       label="Max Amount"
@@ -179,7 +179,7 @@
           size="64"
         ></v-progress-circular>
       </div>
-      
+
       <template v-else>
         <div v-if="filteredOrders.length === 0" class="text-center my-12">
           <v-icon
@@ -197,7 +197,7 @@
             Clear Filters
           </v-btn>
         </div>
-        
+
         <template v-else>
           <!-- Orders Table for Desktop -->
           <v-card class="d-none d-md-block mb-6">
@@ -213,50 +213,50 @@
               <!-- Order Number Column -->
               <template v-slot:item.order_number="{ item }">
                 <router-link
-                  :to="`/account/orders/${item.raw.id}`"
+                  :to="`/account/orders/${item.id}`"
                   class="text-decoration-none font-weight-medium text-primary"
                 >
-                  {{ item.raw.order_number }}
+                  {{ item.order_number }}
                 </router-link>
                 <div class="text-caption">
-                  {{ item.raw.po_number ? `PO: ${item.raw.po_number}` : '' }}
+                  {{ item.po_number ? `PO: ${item.po_number}` : '' }}
                 </div>
               </template>
-              
+
               <!-- Date Column -->
               <template v-slot:item.order_date="{ item }">
-                {{ formatDate(item.raw.order_date) }}
+                {{ formatDate(item.order_date) }}
                 <div class="text-caption">
-                  {{ formatTime(item.raw.order_date) }}
+                  {{ formatDateTime(item.order_date) }}
                 </div>
               </template>
-              
+
               <!-- Total Column -->
               <template v-slot:item.total="{ item }">
-                {{ formatCurrency(item.raw.total) }}
+                {{ formatCurrency(item.total) }}
               </template>
-              
+
               <!-- Status Column -->
               <template v-slot:item.status="{ item }">
                 <v-chip
                   size="small"
-                  :color="getStatusColor(item.raw.status)"
+                  :color="getStatusColor(item.status)"
                   variant="tonal"
                 >
-                  {{ item.raw.status }}
+                  {{ item.status }}
                 </v-chip>
               </template>
-              
+
               <!-- Shipping Column -->
               <template v-slot:item.shipping="{ item }">
-                <div v-if="item.raw.tracking_number">
-                  <span class="text-caption">{{ item.raw.shipping_carrier }}</span>
+                <div v-if="item.tracking_number">
+                  <span class="text-caption">{{ item.shipping_carrier }}</span>
                   <div>
                     <v-btn
                       size="x-small"
                       variant="text"
                       color="primary"
-                      :href="getTrackingUrl(item.raw.shipping_carrier, item.raw.tracking_number)"
+                      :href="getTrackingUrl(item.shipping_carrier, item.tracking_number)"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -267,7 +267,7 @@
                 </div>
                 <span v-else class="text-caption">Not shipped yet</span>
               </template>
-              
+
               <!-- Actions Column -->
               <template v-slot:item.actions="{ item }">
                 <v-menu>
@@ -282,42 +282,42 @@
                   </template>
                   <v-list density="compact">
                     <v-list-item
-                      :to="`/account/orders/${item.raw.id}`"
+                      :to="`/account/orders/${item.id}`"
                       prepend-icon="mdi-eye"
                       title="View Details"
                     ></v-list-item>
-                    
+
                     <v-list-item
                       prepend-icon="mdi-file-pdf-box"
                       title="Download Invoice"
-                      @click="downloadInvoice(item.raw.id)"
+                      @click="downloadInvoice(item.id)"
                     ></v-list-item>
-                    
+
                     <v-list-item
                       prepend-icon="mdi-refresh"
                       title="Reorder"
-                      @click="reorder(item.raw.id)"
+                      @click="reorder(item.id)"
                     ></v-list-item>
-                    
+
                     <v-list-item
-                      v-if="canCancel(item.raw.status)"
+                      v-if="canCancel(item.status)"
                       prepend-icon="mdi-cancel"
                       title="Cancel Order"
-                      @click="cancelOrder(item.raw.id)"
+                      @click="cancelOrder(item.id)"
                     ></v-list-item>
-                    
+
                     <v-list-item
-                      v-if="canReturn(item.raw.status)"
+                      v-if="canReturn(item.status)"
                       prepend-icon="mdi-keyboard-return"
                       title="Return Items"
-                      :to="`/account/returns/new?order=${item.raw.id}`"
+                      :to="`/account/returns/new?order=${item.id}`"
                     ></v-list-item>
                   </v-list>
                 </v-menu>
               </template>
             </v-data-table>
           </v-card>
-          
+
           <!-- Order Cards for Mobile -->
           <div class="d-block d-md-none">
             <v-card
@@ -340,7 +340,7 @@
                 <v-card-subtitle>
                   {{ formatDate(order.order_date) }}
                 </v-card-subtitle>
-                
+
                 <template v-slot:append>
                   <v-chip
                     size="small"
@@ -351,20 +351,20 @@
                   </v-chip>
                 </template>
               </v-card-item>
-              
+
               <v-divider></v-divider>
-              
+
               <v-card-text>
                 <div class="d-flex justify-space-between mb-2">
                   <span class="text-subtitle-2">Total:</span>
                   <span class="font-weight-medium">{{ formatCurrency(order.total) }}</span>
                 </div>
-                
+
                 <div class="d-flex justify-space-between mb-2">
                   <span class="text-subtitle-2">Items:</span>
                   <span>{{ order.item_count }}</span>
                 </div>
-                
+
                 <div class="d-flex justify-space-between" v-if="order.tracking_number">
                   <span class="text-subtitle-2">Shipping:</span>
                   <v-btn
@@ -381,12 +381,12 @@
                   </v-btn>
                 </div>
               </v-card-text>
-              
+
               <v-divider></v-divider>
-              
+
               <v-card-actions>
                 <v-spacer></v-spacer>
-                
+
                 <v-btn
                   variant="text"
                   color="primary"
@@ -396,7 +396,7 @@
                 >
                   Reorder
                 </v-btn>
-                
+
                 <v-btn
                   v-if="canReturn(order.status)"
                   variant="text"
@@ -410,7 +410,7 @@
                 </v-btn>
               </v-card-actions>
             </v-card>
-            
+
             <!-- Mobile Pagination -->
             <div class="text-center mt-4">
               <v-pagination
@@ -522,7 +522,7 @@
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { formatDate, formatTime, formatCurrency } from '@/utils/formatters';
+import { formatDate, formatDateTime, formatCurrency } from '@/utils/formatters';
 import { notificationService } from '@/utils/notification';
 
 // Order interface
@@ -564,14 +564,14 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const authStore = useAuthStore();
-    
+
     // Loading state
     const loading = ref(true);
-    
+
     // Pagination
     const page = ref(1);
     const itemsPerPage = ref(10);
-    
+
     // Search and filters
     const search = ref('');
     const dateRange = ref({
@@ -586,7 +586,7 @@ export default defineComponent({
       minAmount: null,
       maxAmount: null
     });
-    
+
     // Cancel order dialog
     const cancelDialog = ref<CancelDialog>({
       show: false,
@@ -595,7 +595,7 @@ export default defineComponent({
       comments: '',
       loading: false
     });
-    
+
     // Filter options
     const orderStatuses = ref([
       'Pending',
@@ -606,7 +606,7 @@ export default defineComponent({
       'On Hold',
       'Backordered'
     ]);
-    
+
     const paymentMethods = ref([
       'Credit Card',
       'Purchase Order',
@@ -614,7 +614,7 @@ export default defineComponent({
       'ACH Transfer',
       'Wire Transfer'
     ]);
-    
+
     const orderTypes = ref([
       'Standard',
       'Rush',
@@ -622,7 +622,7 @@ export default defineComponent({
       'Backorder',
       'Will Call'
     ]);
-    
+
     const cancellationReasons = ref([
       'Ordered by mistake',
       'Found better price elsewhere',
@@ -631,7 +631,7 @@ export default defineComponent({
       'Incorrect item(s)',
       'Other'
     ]);
-    
+
     // Table headers
     const tableHeaders = ref([
       { title: 'Order #', key: 'order_number', sortable: true },
@@ -641,21 +641,21 @@ export default defineComponent({
       { title: 'Shipping', key: 'shipping', sortable: false },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
     ]);
-    
+
     // Orders data
     const orders = ref<Order[]>([]);
-    
+
     // Fetch orders from API
     const fetchOrders = async () => {
       loading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const response = await api.get('/account/orders');
-        
+
         // Mock data for demonstration
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Sample orders
         orders.value = [
           {
@@ -789,15 +789,15 @@ export default defineComponent({
             order_type: 'Standard'
           }
         ];
-        
+
         // Set initial date range to last 30 days
         const today = new Date();
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(today.getDate() - 30);
-        
+
         dateRange.value.to = today.toISOString().split('T')[0];
         dateRange.value.from = thirtyDaysAgo.toISOString().split('T')[0];
-        
+
         // Check if there's a status filter in the URL
         const statusParam = route.query.status as string;
         if (statusParam) {
@@ -810,20 +810,20 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    
+
     // Apply filters to orders
     const filteredOrders = computed(() => {
       let filtered = [...orders.value];
-      
+
       // Apply search filter
       if (search.value) {
         const searchLower = search.value.toLowerCase();
-        filtered = filtered.filter(order => 
+        filtered = filtered.filter(order =>
           order.order_number.toLowerCase().includes(searchLower) ||
           (order.po_number && order.po_number.toLowerCase().includes(searchLower))
         );
       }
-      
+
       // Apply date range filter
       if (dateRange.value.from) {
         const fromDate = new Date(dateRange.value.from);
@@ -834,12 +834,12 @@ export default defineComponent({
         toDate.setHours(23, 59, 59); // Set to end of day
         filtered = filtered.filter(order => new Date(order.order_date) <= toDate);
       }
-      
+
       // Apply status filter
       if (selectedStatus.value) {
         filtered = filtered.filter(order => order.status === selectedStatus.value);
       }
-      
+
       // Apply advanced filters
       if (advancedFilters.value.paymentMethod) {
         filtered = filtered.filter(order => order.payment_method === advancedFilters.value.paymentMethod);
@@ -853,36 +853,36 @@ export default defineComponent({
       if (advancedFilters.value.maxAmount) {
         filtered = filtered.filter(order => order.total <= (advancedFilters.value.maxAmount as number));
       }
-      
+
       // Sort by order date (newest first)
       return filtered.sort((a, b) => new Date(b.order_date).getTime() - new Date(a.order_date).getTime());
     });
-    
+
     // Get paginated orders for mobile view
     const paginatedMobileOrders = computed(() => {
       const startIndex = (page.value - 1) * itemsPerPage.value;
       const endIndex = startIndex + itemsPerPage.value;
       return filteredOrders.value.slice(startIndex, endIndex);
     });
-    
+
     // Apply filters
     const applyFilters = () => {
       page.value = 1; // Reset to first page when filtering
     };
-    
+
     // Reset all filters
     const resetFilters = () => {
       search.value = '';
       selectedStatus.value = null;
-      
+
       // Reset date range to last 30 days
       const today = new Date();
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(today.getDate() - 30);
-      
+
       dateRange.value.to = today.toISOString().split('T')[0];
       dateRange.value.from = thirtyDaysAgo.toISOString().split('T')[0];
-      
+
       // Reset advanced filters
       advancedFilters.value = {
         paymentMethod: null,
@@ -890,10 +890,10 @@ export default defineComponent({
         minAmount: null,
         maxAmount: null
       };
-      
+
       page.value = 1; // Reset to first page
     };
-    
+
     // Get status color
     const getStatusColor = (status: string) => {
       switch (status.toLowerCase()) {
@@ -915,11 +915,11 @@ export default defineComponent({
           return 'grey';
       }
     };
-    
+
     // Get tracking URL
     const getTrackingUrl = (carrier: string | undefined, trackingNumber: string | undefined) => {
       if (!carrier || !trackingNumber) return '#';
-      
+
       switch (carrier.toLowerCase()) {
         case 'ups':
           return `https://www.ups.com/track?tracknum=${trackingNumber}`;
@@ -933,32 +933,32 @@ export default defineComponent({
           return '#';
       }
     };
-    
+
     // Check if order can be cancelled
     const canCancel = (status: string) => {
       const cancelableStatuses = ['pending', 'processing', 'on hold'];
       return cancelableStatuses.includes(status.toLowerCase());
     };
-    
+
     // Check if order can be returned
     const canReturn = (status: string) => {
       const returnableStatuses = ['delivered'];
       return returnableStatuses.includes(status.toLowerCase());
     };
-    
+
     // Download invoice
     const downloadInvoice = (orderId: string) => {
       // In a real implementation, this would make an API call to generate and download the invoice
       console.log(`Downloading invoice for order ${orderId}`);
       notificationService.info('Invoice download started.');
     };
-    
+
     // Reorder
     const reorder = async (orderId: string) => {
       try {
         // In a real implementation, this would make an API call to create a new order with the same items
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         notificationService.success('Items added to cart. Ready to reorder!');
         router.push('/cart');
       } catch (error) {
@@ -966,7 +966,7 @@ export default defineComponent({
         notificationService.error('Failed to reorder. Please try again later.');
       }
     };
-    
+
     // Cancel order
     const cancelOrder = (orderId: string) => {
       cancelDialog.value = {
@@ -977,26 +977,26 @@ export default defineComponent({
         loading: false
       };
     };
-    
+
     // Confirm cancel order
     const confirmCancelOrder = async () => {
       if (!cancelDialog.value.reason) {
         notificationService.warning('Please select a cancellation reason');
         return;
       }
-      
+
       cancelDialog.value.loading = true;
-      
+
       try {
         // In a real implementation, this would make an API call to cancel the order
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Update the order status locally
         const orderIndex = orders.value.findIndex(o => o.id === cancelDialog.value.orderId);
         if (orderIndex !== -1) {
           orders.value[orderIndex].status = 'Cancelled';
         }
-        
+
         cancelDialog.value.show = false;
         notificationService.success('Order cancelled successfully');
       } catch (error) {
@@ -1006,31 +1006,31 @@ export default defineComponent({
         cancelDialog.value.loading = false;
       }
     };
-    
+
     // Export to Excel
     const exportToExcel = () => {
       // In a real implementation, this would generate and download an Excel file
       notificationService.info('Exporting orders to Excel...');
     };
-    
+
     // Export to PDF
     const exportToPdf = () => {
       // In a real implementation, this would generate and download a PDF file
       notificationService.info('Exporting orders to PDF...');
     };
-    
+
     // Print orders
     const printOrders = () => {
       // In a real implementation, this would open a print dialog with formatted order data
       notificationService.info('Preparing orders for printing...');
       window.print();
     };
-    
+
     // Initialize component
     onMounted(() => {
       fetchOrders();
     });
-    
+
     return {
       loading,
       page,
@@ -1063,7 +1063,7 @@ export default defineComponent({
       exportToPdf,
       printOrders,
       formatDate,
-      formatTime,
+      formatDateTime,
       formatCurrency
     };
   }
@@ -1079,12 +1079,12 @@ export default defineComponent({
   .v-toolbar {
     display: none !important;
   }
-  
+
   .v-table {
     width: 100%;
     border-collapse: collapse;
   }
-  
+
   .v-table th,
   .v-table td {
     border: 1px solid #ddd;

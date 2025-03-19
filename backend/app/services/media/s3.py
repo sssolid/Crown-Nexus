@@ -37,9 +37,15 @@ class S3MediaStorage:
 
     bucket_name: str = field(default_factory=lambda: settings.AWS_STORAGE_BUCKET_NAME)
     region_name: str = field(default_factory=lambda: settings.AWS_REGION)
-    access_key_id: Optional[str] = field(default_factory=lambda: settings.AWS_ACCESS_KEY_ID)
-    secret_access_key: Optional[str] = field(default_factory=lambda: settings.AWS_SECRET_ACCESS_KEY)
-    endpoint_url: Optional[str] = field(default_factory=lambda: settings.AWS_S3_ENDPOINT_URL)
+    access_key_id: Optional[str] = field(
+        default_factory=lambda: settings.AWS_ACCESS_KEY_ID
+    )
+    secret_access_key: Optional[str] = field(
+        default_factory=lambda: settings.AWS_SECRET_ACCESS_KEY
+    )
+    endpoint_url: Optional[str] = field(
+        default_factory=lambda: settings.AWS_S3_ENDPOINT_URL
+    )
     cdn_url: Optional[str] = field(default_factory=lambda: settings.MEDIA_CDN_URL)
 
     # S3 client - will be initialized in initialize()
@@ -47,34 +53,47 @@ class S3MediaStorage:
     _client: Optional[Any] = None
     _resource: Optional[Any] = None
 
-    ALLOWED_MIME_TYPES: Dict[MediaType, Set[str]] = field(default_factory=lambda: {
-        MediaType.IMAGE: {
-            "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
-        },
-        MediaType.DOCUMENT: {
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.ms-excel",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "text/plain",
-            "text/csv",
-        },
-        MediaType.VIDEO: {
-            "video/mp4", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv",
-        },
-        MediaType.OTHER: {
-            "application/zip", "application/x-zip-compressed", "application/octet-stream",
-        },
-    })
+    ALLOWED_MIME_TYPES: Dict[MediaType, Set[str]] = field(
+        default_factory=lambda: {
+            MediaType.IMAGE: {
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/webp",
+                "image/svg+xml",
+            },
+            MediaType.DOCUMENT: {
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "text/plain",
+                "text/csv",
+            },
+            MediaType.VIDEO: {
+                "video/mp4",
+                "video/quicktime",
+                "video/x-msvideo",
+                "video/x-ms-wmv",
+            },
+            MediaType.OTHER: {
+                "application/zip",
+                "application/x-zip-compressed",
+                "application/octet-stream",
+            },
+        }
+    )
 
     # Maximum file sizes by type (in bytes)
-    MAX_FILE_SIZES: Dict[MediaType, int] = field(default_factory=lambda: {
-        MediaType.IMAGE: 10 * 1024 * 1024,      # 10MB
-        MediaType.DOCUMENT: 50 * 1024 * 1024,   # 50MB
-        MediaType.VIDEO: 500 * 1024 * 1024,     # 500MB
-        MediaType.OTHER: 100 * 1024 * 1024,     # 100MB
-    })
+    MAX_FILE_SIZES: Dict[MediaType, int] = field(
+        default_factory=lambda: {
+            MediaType.IMAGE: 10 * 1024 * 1024,  # 10MB
+            MediaType.DOCUMENT: 50 * 1024 * 1024,  # 50MB
+            MediaType.VIDEO: 500 * 1024 * 1024,  # 500MB
+            MediaType.OTHER: 100 * 1024 * 1024,  # 100MB
+        }
+    )
 
     async def initialize(self) -> None:
         """
@@ -93,13 +112,13 @@ class S3MediaStorage:
 
             # Initialize S3 client
             self._client = self._session.client(
-                's3',
+                "s3",
                 endpoint_url=self.endpoint_url,
             )
 
             # Initialize S3 resource
             self._resource = self._session.resource(
-                's3',
+                "s3",
                 endpoint_url=self.endpoint_url,
             )
 
@@ -113,15 +132,15 @@ class S3MediaStorage:
                     await client.create_bucket(
                         Bucket=self.bucket_name,
                         CreateBucketConfiguration={
-                            'LocationConstraint': self.region_name
-                        }
+                            "LocationConstraint": self.region_name
+                        },
                     )
                     logger.info("s3_bucket_created", bucket=self.bucket_name)
 
             logger.info(
                 "s3_storage_initialized",
                 bucket=self.bucket_name,
-                region=self.region_name
+                region=self.region_name,
             )
 
         except Exception as e:
@@ -129,9 +148,11 @@ class S3MediaStorage:
                 "s3_initialization_failed",
                 bucket=self.bucket_name,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
-            raise StorageConnectionError(f"Failed to initialize S3 storage: {str(e)}") from e
+            raise StorageConnectionError(
+                f"Failed to initialize S3 storage: {str(e)}"
+            ) from e
 
     async def save_file(
         self,
@@ -175,7 +196,9 @@ class S3MediaStorage:
         if file_content_type and media_type != MediaType.OTHER:
             # Check if the content type is allowed for this media type
             if file_content_type not in self.ALLOWED_MIME_TYPES.get(media_type, set()):
-                allowed_types = ", ".join(self.ALLOWED_MIME_TYPES.get(media_type, set()))
+                allowed_types = ", ".join(
+                    self.ALLOWED_MIME_TYPES.get(media_type, set())
+                )
                 raise ValueError(
                     f"Content type '{file_content_type}' not allowed for {media_type.value}. "
                     f"Allowed types: {allowed_types}"
@@ -191,19 +214,16 @@ class S3MediaStorage:
                 # Handle file-like objects
                 content = file.read()
                 if not isinstance(content, bytes):
-                    content = content.encode('utf-8')
+                    content = content.encode("utf-8")
 
             # Upload to S3
             extra_args = {}
             if file_content_type:
-                extra_args['ContentType'] = file_content_type
+                extra_args["ContentType"] = file_content_type
 
             async with self._client as client:
                 await client.put_object(
-                    Bucket=self.bucket_name,
-                    Key=s3_key,
-                    Body=content,
-                    **extra_args
+                    Bucket=self.bucket_name, Key=s3_key, Body=content, **extra_args
                 )
 
             logger.info(
@@ -224,7 +244,7 @@ class S3MediaStorage:
                 bucket=self.bucket_name,
                 key=s3_key,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             raise MediaStorageError(f"Failed to save file to S3: {str(e)}") from e
 
@@ -274,24 +294,15 @@ class S3MediaStorage:
             # Check if file exists first
             if not await self.file_exists(file_path):
                 logger.warning(
-                    "s3_file_not_found",
-                    bucket=self.bucket_name,
-                    key=file_path
+                    "s3_file_not_found", bucket=self.bucket_name, key=file_path
                 )
                 raise FileNotFoundError(f"File not found in S3: {file_path}")
 
             # Delete the file
             async with self._client as client:
-                await client.delete_object(
-                    Bucket=self.bucket_name,
-                    Key=file_path
-                )
+                await client.delete_object(Bucket=self.bucket_name, Key=file_path)
 
-            logger.info(
-                "s3_file_deleted",
-                bucket=self.bucket_name,
-                key=file_path
-            )
+            logger.info("s3_file_deleted", bucket=self.bucket_name, key=file_path)
             return True
 
         except Exception as e:
@@ -303,7 +314,7 @@ class S3MediaStorage:
                 bucket=self.bucket_name,
                 key=file_path,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             raise MediaStorageError(f"Failed to delete file from S3: {str(e)}") from e
 
@@ -326,19 +337,13 @@ class S3MediaStorage:
 
         try:
             async with self._client as client:
-                await client.head_object(
-                    Bucket=self.bucket_name,
-                    Key=file_path
-                )
+                await client.head_object(Bucket=self.bucket_name, Key=file_path)
             return True
         except Exception:
             return False
 
     async def generate_thumbnail(
-        self,
-        file_path: str,
-        width: int = 200,
-        height: int = 200
+        self, file_path: str, width: int = 200, height: int = 200
     ) -> Optional[str]:
         """
         Generate a thumbnail for an image file in S3.
@@ -371,7 +376,9 @@ class S3MediaStorage:
 
         try:
             # Define thumbnail key in S3
-            thumbnail_key = ThumbnailGenerator.get_thumbnail_path(file_path, width, height)
+            thumbnail_key = ThumbnailGenerator.get_thumbnail_path(
+                file_path, width, height
+            )
 
             # Check if thumbnail already exists
             if await self.file_exists(thumbnail_key):
@@ -391,27 +398,23 @@ class S3MediaStorage:
             # Download original image
             async with self._client as client:
                 response = await client.get_object(
-                    Bucket=self.bucket_name,
-                    Key=file_path
+                    Bucket=self.bucket_name, Key=file_path
                 )
-                body = await response['Body'].read()
+                body = await response["Body"].read()
 
             # Process image locally
             async with temp_file() as original_path, temp_file() as thumbnail_path:
                 # Save original image to temp file
-                async with aiofiles.open(original_path, 'wb') as f:
+                async with aiofiles.open(original_path, "wb") as f:
                     await f.write(body)
 
                 # Generate thumbnail
                 await ThumbnailGenerator.generate_thumbnail(
-                    original_path,
-                    thumbnail_path,
-                    width,
-                    height
+                    original_path, thumbnail_path, width, height
                 )
 
                 # Read the thumbnail file
-                async with aiofiles.open(thumbnail_path, 'rb') as f:
+                async with aiofiles.open(thumbnail_path, "rb") as f:
                     thumbnail_data = await f.read()
 
                 # Upload thumbnail to S3
@@ -420,7 +423,7 @@ class S3MediaStorage:
                         Bucket=self.bucket_name,
                         Key=thumbnail_key,
                         Body=thumbnail_data,
-                        ContentType='image/jpeg'
+                        ContentType="image/jpeg",
                     )
 
             logger.info(
@@ -429,7 +432,7 @@ class S3MediaStorage:
                 original_key=file_path,
                 thumbnail_key=thumbnail_key,
                 width=width,
-                height=height
+                height=height,
             )
             return thumbnail_key
 
@@ -439,7 +442,7 @@ class S3MediaStorage:
                 bucket=self.bucket_name,
                 original_key=file_path,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             if isinstance(e, (FileNotFoundError, MediaStorageError)):
                 raise

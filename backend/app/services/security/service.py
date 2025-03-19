@@ -59,7 +59,9 @@ class SecurityService(ServiceInterface):
     # Convenience methods that delegate to component services
 
     # Password methods
-    async def validate_password_policy(self, password: str, user_id: Optional[str] = None):
+    async def validate_password_policy(
+        self, password: str, user_id: Optional[str] = None
+    ):
         """Validate a password against the password policy."""
         return await self.password_service.validate_password_policy(password, user_id)
 
@@ -93,7 +95,9 @@ class SecurityService(ServiceInterface):
         return await self.token_service.blacklist_token(token, reason)
 
     # API key methods
-    def generate_api_key(self, user_id: str, name: str, permissions: Optional[List[str]] = None):
+    def generate_api_key(
+        self, user_id: str, name: str, permissions: Optional[List[str]] = None
+    ):
         """Generate a new API key."""
         return self.api_key_service.generate_api_key(user_id, name, permissions)
 
@@ -134,7 +138,9 @@ class SecurityService(ServiceInterface):
     # Rate limiting methods
     async def check_rate_limit(self, key: str, max_requests: int, window_seconds: int):
         """Check if a request should be rate limited."""
-        return await self.rate_limit_service.check_rate_limit(key, max_requests, window_seconds)
+        return await self.rate_limit_service.check_rate_limit(
+            key, max_requests, window_seconds
+        )
 
     # Encryption methods
     def encrypt_data(self, data: Union[str, bytes, dict]) -> str:

@@ -1,9 +1,10 @@
 from __future__ import annotations
-from typing import Any, Dict, Optional, Protocol, TypeVar, Union
+from typing import Any, Optional, Protocol, TypeVar, Generic
 
 T = TypeVar("T")
 
-class CacheBackend(Protocol):
+
+class CacheBackend(Protocol, Generic[T]):
     """Protocol defining cache backend interface."""
 
     async def get(self, key: str, default: Optional[T] = None) -> Optional[T]:

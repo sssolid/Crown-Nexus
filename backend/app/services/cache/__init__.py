@@ -9,9 +9,11 @@ from __future__ import annotations
 
 from app.services.cache.service import CacheService
 
+
 # Factory function for dependency injection
 def get_cache_service():
     """Factory function to get CacheService"""
     return CacheService()
+
 
 __all__ = ["get_cache_service", "CacheService"]

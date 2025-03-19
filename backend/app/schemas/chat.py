@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field
 
 class CommandType(str, Enum):
     """WebSocket command types."""
+
     JOIN_ROOM = "join_room"
     LEAVE_ROOM = "leave_room"
     SEND_MESSAGE = "send_message"
@@ -37,6 +38,7 @@ class CommandType(str, Enum):
 
 class MessageType(str, Enum):
     """Message content types."""
+
     TEXT = "text"
     IMAGE = "image"
     FILE = "file"
@@ -53,6 +55,7 @@ class WebSocketCommand(BaseModel):
     - Optional room identifier
     - Command data with type-specific content
     """
+
     command: CommandType
     room_id: Optional[str] = None
     data: Dict[str, Any] = Field(default_factory=dict)
@@ -65,6 +68,7 @@ class JoinRoomCommand(BaseModel):
     Attributes:
         room_id: Room identifier
     """
+
     room_id: str
 
 
@@ -75,6 +79,7 @@ class LeaveRoomCommand(BaseModel):
     Attributes:
         room_id: Room identifier
     """
+
     room_id: str
 
 
@@ -88,6 +93,7 @@ class SendMessageCommand(BaseModel):
         message_type: Type of message (text, image, etc.)
         metadata: Additional message data
     """
+
     room_id: str
     content: str
     message_type: MessageType = MessageType.TEXT
@@ -102,6 +108,7 @@ class ReadMessagesCommand(BaseModel):
         room_id: Room identifier
         last_read_id: ID of the last read message
     """
+
     room_id: str
     last_read_id: str
 
@@ -113,6 +120,7 @@ class TypingCommand(BaseModel):
     Attributes:
         room_id: Room identifier
     """
+
     room_id: str
 
 
@@ -125,6 +133,7 @@ class FetchHistoryCommand(BaseModel):
         before_id: Fetch messages before this ID
         limit: Maximum number of messages to return
     """
+
     room_id: str
     before_id: Optional[str] = None
     limit: int = 50
@@ -139,6 +148,7 @@ class ReactionCommand(BaseModel):
         message_id: Message identifier
         reaction: Reaction content
     """
+
     room_id: str
     message_id: str
     reaction: str
@@ -153,6 +163,7 @@ class EditMessageCommand(BaseModel):
         message_id: Message identifier
         content: New message content
     """
+
     room_id: str
     message_id: str
     content: str
@@ -166,6 +177,7 @@ class DeleteMessageCommand(BaseModel):
         room_id: Room identifier
         message_id: Message identifier
     """
+
     room_id: str
     message_id: str
 
@@ -179,6 +191,7 @@ class WebSocketResponse(BaseModel):
     - Optional error information
     - Response data with type-specific content
     """
+
     type: str
     success: bool = True
     error: Optional[str] = None
@@ -197,6 +210,7 @@ class ChatRoomSchema(BaseModel):
         member_count: Number of members in the room
         last_message: Last message information (optional)
     """
+
     id: str
     name: Optional[str] = None
     type: str
@@ -222,6 +236,7 @@ class ChatMessageSchema(BaseModel):
         is_edited: Whether the message has been edited
         is_deleted: Whether the message has been deleted
     """
+
     id: str
     room_id: str
     sender_id: Optional[str] = None
@@ -247,6 +262,7 @@ class ChatMemberSchema(BaseModel):
         is_online: Whether the user is currently online
         last_seen_at: When the user was last active
     """
+
     user_id: str
     user_name: str
     role: str
@@ -264,6 +280,7 @@ class UserPresenceSchema(BaseModel):
         last_seen_at: When the user was last active
         status: Custom status message
     """
+
     user_id: str
     is_online: bool
     last_seen_at: Optional[datetime] = None

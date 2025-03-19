@@ -33,7 +33,7 @@ class ValidationService:
             "email": re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"),
             "url": re.compile(
                 r"^(https?:\/\/)?(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|"
-                r"((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-z\d%_.~+]*)*"
+                r"((\d{1,3}\.){3}\d{1,3})(:\d+)?(\/[-a-z\d%_.~+]*)*"
                 r"(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?$",
                 re.IGNORECASE,
             ),
@@ -60,7 +60,9 @@ class ValidationService:
             r"data:text/html",
             r"file://",
         ]
-        self.suspicious_regex = re.compile("|".join(self.suspicious_patterns), re.IGNORECASE)
+        self.suspicious_regex = re.compile(
+            "|".join(self.suspicious_patterns), re.IGNORECASE
+        )
 
     def is_valid_hostname(self, hostname: str) -> bool:
         """

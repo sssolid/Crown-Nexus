@@ -8,50 +8,52 @@ from typing import Any, Dict, List, Optional, Type
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import Company, User, UserRole, get_password_hash
-from app.models.product import Brand, Fitment, Product, ProductDescription, ProductStatus
+from app.models.product import (
+    Brand,
+    Fitment,
+    Product,
+    ProductDescription,
+    ProductStatus,
+)
 from app.models.media import Media, MediaType, MediaVisibility
 
 from tests.utils import create_random_email, create_random_string
 
+
 class BaseFactory:
     """Base factory for test models.
-    
+
     Provides utility methods for all factory classes.
     """
-    
+
     @classmethod
     async def create_batch(
-        cls, 
-        db_session: AsyncSession,
-        count: int = 3,
-        **kwargs: Any
+        cls, db_session: AsyncSession, count: int = 3, **kwargs: Any
     ) -> List[Any]:
         """Create multiple instances of a model.
-        
+
         Args:
             db_session: Database session
             count: Number of instances to create
             **kwargs: Attributes to set on each instance
-            
+
         Returns:
             List[Any]: List of created model instances
         """
         return [await cls.create(db_session, **kwargs) for _ in range(count)]
 
+
 class UserFactory(BaseFactory):
     """Factory for User models."""
-    
+
     @staticmethod
-    async def create(
-        db_session: AsyncSession,
-        **kwargs: Any
-    ) -> User:
+    async def create(db_session: AsyncSession, **kwargs: Any) -> User:
         """Create a user instance.
-        
+
         Args:
             db_session: Database session
             **kwargs: User attributes
-            
+
         Returns:
             User: Created user
         """
@@ -63,30 +65,28 @@ class UserFactory(BaseFactory):
             "role": UserRole.CLIENT,
             "is_active": True,
         }
-        
+
         # Override defaults with provided values
         defaults.update(kwargs)
-        
+
         user = User(**defaults)
         db_session.add(user)
         await db_session.commit()
         await db_session.refresh(user)
         return user
 
+
 class CompanyFactory(BaseFactory):
     """Factory for Company models."""
-    
+
     @staticmethod
-    async def create(
-        db_session: AsyncSession,
-        **kwargs: Any
-    ) -> Company:
+    async def create(db_session: AsyncSession, **kwargs: Any) -> Company:
         """Create a company instance.
-        
+
         Args:
             db_session: Database session
             **kwargs: Company attributes
-            
+
         Returns:
             Company: Created company
         """
@@ -97,30 +97,28 @@ class CompanyFactory(BaseFactory):
             "account_type": "client",
             "is_active": True,
         }
-        
+
         # Override defaults with provided values
         defaults.update(kwargs)
-        
+
         company = Company(**defaults)
         db_session.add(company)
         await db_session.commit()
         await db_session.refresh(company)
         return company
 
+
 class BrandFactory(BaseFactory):
     """Factory for Brand models."""
-    
+
     @staticmethod
-    async def create(
-        db_session: AsyncSession,
-        **kwargs: Any
-    ) -> Brand:
+    async def create(db_session: AsyncSession, **kwargs: Any) -> Brand:
         """Create a brand instance.
-        
+
         Args:
             db_session: Database session
             **kwargs: Brand attributes
-            
+
         Returns:
             Brand: Created brand
         """
@@ -128,35 +126,33 @@ class BrandFactory(BaseFactory):
             "id": uuid.uuid4(),
             "name": f"Brand {create_random_string(8)}",
         }
-        
+
         # Override defaults with provided values
         defaults.update(kwargs)
-        
+
         brand = Brand(**defaults)
         db_session.add(brand)
         await db_session.commit()
         await db_session.refresh(brand)
         return brand
 
+
 class ProductFactory(BaseFactory):
     """Factory for Product models."""
-    
+
     @staticmethod
-    async def create(
-        db_session: AsyncSession,
-        **kwargs: Any
-    ) -> Product:
+    async def create(db_session: AsyncSession, **kwargs: Any) -> Product:
         """Create a product instance.
-        
+
         Args:
             db_session: Database session
             **kwargs: Product attributes
-            
+
         Returns:
             Product: Created product
         """
         part_number = f"P{create_random_string(5, digits_only=True)}"
-        
+
         defaults = {
             "id": uuid.uuid4(),
             "part_number": part_number,
@@ -168,35 +164,33 @@ class ProductFactory(BaseFactory):
             "universal": False,
             "is_active": True,
         }
-        
+
         # Override defaults with provided values
         defaults.update(kwargs)
-        
+
         product = Product(**defaults)
         db_session.add(product)
         await db_session.commit()
         await db_session.refresh(product)
         return product
 
+
 class FitmentFactory(BaseFactory):
     """Factory for Fitment models."""
-    
+
     @staticmethod
-    async def create(
-        db_session: AsyncSession,
-        **kwargs: Any
-    ) -> Fitment:
+    async def create(db_session: AsyncSession, **kwargs: Any) -> Fitment:
         """Create a fitment instance.
-        
+
         Args:
             db_session: Database session
             **kwargs: Fitment attributes
-            
+
         Returns:
             Fitment: Created fitment
         """
         current_year = datetime.now().year
-        
+
         defaults = {
             "id": uuid.uuid4(),
             "year": random.randint(current_year - 10, current_year),
@@ -205,30 +199,28 @@ class FitmentFactory(BaseFactory):
             "engine": random.choice(["V6", "V8", "I4", "I6", "H4"]),
             "transmission": random.choice(["Manual", "Automatic", "CVT", "DCT"]),
         }
-        
+
         # Override defaults with provided values
         defaults.update(kwargs)
-        
+
         fitment = Fitment(**defaults)
         db_session.add(fitment)
         await db_session.commit()
         await db_session.refresh(fitment)
         return fitment
 
+
 class MediaFactory(BaseFactory):
     """Factory for Media models."""
-    
+
     @staticmethod
-    async def create(
-        db_session: AsyncSession,
-        **kwargs: Any
-    ) -> Media:
+    async def create(db_session: AsyncSession, **kwargs: Any) -> Media:
         """Create a media instance.
-        
+
         Args:
             db_session: Database session
             **kwargs: Media attributes
-            
+
         Returns:
             Media: Created media
         """
@@ -243,10 +235,10 @@ class MediaFactory(BaseFactory):
             "uploaded_by_id": None,
             "is_approved": True,
         }
-        
+
         # Override defaults with provided values
         defaults.update(kwargs)
-        
+
         media = Media(**defaults)
         db_session.add(media)
         await db_session.commit()

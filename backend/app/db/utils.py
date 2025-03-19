@@ -22,18 +22,18 @@ import time
 import uuid
 from datetime import datetime
 from typing import (
-    Any, 
-    AsyncGenerator, 
-    Callable, 
-    Dict, 
-    Generic, 
-    List, 
-    Optional, 
-    Sequence, 
-    Tuple, 
-    Type, 
-    TypeVar, 
-    Union, 
+    Any,
+    AsyncGenerator,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
     cast,
     overload,
 )
@@ -47,9 +47,9 @@ from sqlalchemy.sql.expression import Delete, Insert, Update
 
 from app.core.dependency_manager import get_dependency
 from app.core.exceptions import (
-    DataIntegrityException, 
-    DatabaseException, 
-    ErrorCode, 
+    DataIntegrityException,
+    DatabaseException,
+    ErrorCode,
     TransactionException,
 )
 from app.core.logging import get_logger
@@ -90,14 +90,12 @@ async def transaction(db: AsyncSession) -> AsyncGenerator[AsyncSession, None]:
         logger.error(f"Transaction error: {str(e)}", exc_info=True)
         raise TransactionException(
             message=f"Database transaction failed: {str(e)}",
-            code=ErrorCode.TRANSACTION_FAILED,
             original_exception=e,
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error in transaction: {str(e)}", exc_info=True)
         raise TransactionException(
             message=f"Unexpected error in transaction: {str(e)}",
-            code=ErrorCode.TRANSACTION_FAILED,
             original_exception=e,
         ) from e
 
@@ -156,7 +154,7 @@ async def execute_query(
         start_time = time.time()
         result = await db.execute(query)
         duration = time.time() - start_time
-        
+
         # Log query duration for performance monitoring
         if duration > 1.0:  # Log slow queries
             logger.warning(f"Slow query took {duration:.2f}s: {query}")
@@ -164,7 +162,7 @@ async def execute_query(
             logger.info(f"Query took {duration:.2f}s: {query}")
         else:
             logger.debug(f"Query completed in {duration:.4f}s")
-            
+
         return result
     except SQLAlchemyError as e:
         logger.error(f"Query execution error: {str(e)}", exc_info=True)
@@ -194,12 +192,12 @@ async def get_by_id(db: AsyncSession, model: Type[T], id_value: Any) -> Optional
         query = model.filter_by_id(id_value)
         result = await db.execute(query)
         instance = result.scalars().first()
-        
+
         if instance:
             logger.debug(f"Found {model.__name__} with ID: {id_value}")
         else:
             logger.debug(f"No {model.__name__} found with ID: {id_value}")
-            
+
         return instance
     except SQLAlchemyError as e:
         logger.error(f"Error fetching {model.__name__} by ID: {str(e)}", exc_info=True)
@@ -233,7 +231,7 @@ async def get_by_ids(db: AsyncSession, model: Type[T], ids: List[Any]) -> List[T
         query = select(model).where(model.id.in_(ids), model.is_deleted == False)
         result = await db.execute(query)
         instances = list(result.scalars().all())
-        
+
         logger.debug(f"Found {len(instances)} {model.__name__} instances")
         return instances
     except SQLAlchemyError as e:
@@ -266,21 +264,20 @@ async def create_object(db: AsyncSession, model: Type[T], obj_in: Dict[str, Any]
         db.add(db_obj)
         await db.flush()
         await db.refresh(db_obj)
-        
+
         logger.info(f"Created {model.__name__} with ID: {getattr(db_obj, 'id', None)}")
         return db_obj
     except SQLAlchemyError as e:
         logger.error(f"Error creating {model.__name__}: {str(e)}", exc_info=True)
-        
+
         # Check for unique constraint violations
         error_text = str(e).lower()
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Failed to create {model.__name__}: A record with these attributes already exists",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
-            
+
         raise DatabaseException(
             message=f"Failed to create {model.__name__}: {str(e)}",
             code=ErrorCode.DATABASE_ERROR,
@@ -314,9 +311,11 @@ async def update_object(
     try:
         logger.debug(f"Updating {model.__name__} with ID: {id_value}")
         db_obj = await get_by_id(db, model, id_value)
-        
+
         if not db_obj:
-            logger.warning(f"Update failed: No {model.__name__} found with ID: {id_value}")
+            logger.warning(
+                f"Update failed: No {model.__name__} found with ID: {id_value}"
+            )
             return None
 
         # Add user ID for tracking changes
@@ -328,21 +327,20 @@ async def update_object(
         db.add(db_obj)
         await db.flush()
         await db.refresh(db_obj)
-        
+
         logger.info(f"Updated {model.__name__} with ID: {id_value}")
         return db_obj
     except SQLAlchemyError as e:
         logger.error(f"Error updating {model.__name__}: {str(e)}", exc_info=True)
-        
+
         # Check for unique constraint violations
         error_text = str(e).lower()
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Cannot update {model.__name__}: A record with these attributes already exists",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
-            
+
         raise DatabaseException(
             message=f"Failed to update {model.__name__}: {str(e)}",
             code=ErrorCode.DATABASE_ERROR,
@@ -378,9 +376,11 @@ async def delete_object(
             f"Deleting {model.__name__} with ID: {id_value} (hard_delete={hard_delete})"
         )
         db_obj = await get_by_id(db, model, id_value)
-        
+
         if not db_obj:
-            logger.warning(f"Delete failed: No {model.__name__} found with ID: {id_value}")
+            logger.warning(
+                f"Delete failed: No {model.__name__} found with ID: {id_value}"
+            )
             return False
 
         if hard_delete:
@@ -390,21 +390,20 @@ async def delete_object(
             db_obj.soft_delete(user_id)
             db.add(db_obj)
             logger.info(f"Soft deleted {model.__name__} with ID: {id_value}")
-            
+
         await db.flush()
         return True
     except SQLAlchemyError as e:
         logger.error(f"Error deleting {model.__name__}: {str(e)}", exc_info=True)
-        
+
         # Check for foreign key constraint violations
         error_text = str(e).lower()
         if "foreign key constraint" in error_text:
             raise DataIntegrityException(
                 message=f"Cannot delete {model.__name__}: It is referenced by other records",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
-            
+
         raise DatabaseException(
             message=f"Failed to delete {model.__name__}: {str(e)}",
             code=ErrorCode.DATABASE_ERROR,
@@ -429,7 +428,7 @@ async def count_query(db: AsyncSession, query: Select) -> int:
         count_query = select(func.count()).select_from(query.subquery())
         result = await db.execute(count_query)
         count = result.scalar() or 0
-        
+
         logger.debug(f"Query count result: {count}")
         return count
     except SQLAlchemyError as e:
@@ -467,11 +466,11 @@ async def paginate(
     if page < 1:
         logger.warning(f"Invalid page number: {page}, using page 1")
         page = 1
-        
+
     if page_size < 1:
         logger.warning(f"Invalid page size: {page_size}, using page size 20")
         page_size = 20
-        
+
     if page_size > 100:
         logger.warning(f"Page size too large: {page_size}, using maximum 100")
         page_size = 100
@@ -479,16 +478,16 @@ async def paginate(
     try:
         # Get total count
         total = await count_query(db, query)
-        
+
         # Calculate pagination values
         pages = (total + page_size - 1) // page_size if total > 0 else 0
-        
-        if page > pages and pages > 0:
+
+        if page > pages > 0:
             logger.warning(f"Page {page} out of range, using page {pages}")
             page = pages
-            
+
         offset = (page - 1) * page_size
-        
+
         # Load items if requested
         items = []
         if load_items and total > 0:
@@ -504,12 +503,12 @@ async def paginate(
                     code=ErrorCode.DATABASE_ERROR,
                     original_exception=e,
                 ) from e
-                
+
         logger.debug(
             f"Pagination results: page={page}, page_size={page_size}, "
             f"total={total}, pages={pages}, items_loaded={len(items)}"
         )
-        
+
         return {
             "items": items,
             "total": total,
@@ -554,24 +553,23 @@ async def bulk_create(
         instances = [model(**obj) for obj in objects]
         db.add_all(instances)
         await db.flush()
-        
+
         for instance in instances:
             await db.refresh(instance)
-            
+
         logger.info(f"Bulk created {len(instances)} {model.__name__} instances")
         return instances
     except SQLAlchemyError as e:
         logger.error(f"Error bulk creating {model.__name__}: {str(e)}", exc_info=True)
-        
+
         # Check for unique constraint violations
         error_text = str(e).lower()
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Bulk create failed: One or more {model.__name__} instances violate uniqueness constraints",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
-            
+
         raise DatabaseException(
             message=f"Failed to bulk create {model.__name__}: {str(e)}",
             code=ErrorCode.DATABASE_ERROR,
@@ -603,22 +601,22 @@ async def bulk_update(
 
     try:
         logger.debug(f"Bulk updating {len(objects)} {model.__name__} instances")
-        
+
         # Extract IDs
         ids = [obj[id_field] for obj in objects if id_field in obj]
-        
+
         # Get existing instances
         query = select(model).where(getattr(model, id_field).in_(ids))
         result = await db.execute(query)
         instances = {getattr(obj, id_field): obj for obj in result.scalars().all()}
-        
+
         # Update instances
         updated_count = 0
         for obj_data in objects:
             if id_field not in obj_data:
                 logger.warning(f"Skipping update: {id_field} not found in object data")
                 continue
-                
+
             obj_id = obj_data[id_field]
             if obj_id in instances:
                 instance = instances[obj_id]
@@ -629,22 +627,21 @@ async def bulk_update(
                 logger.warning(
                     f"Skipping update: No {model.__name__} found with {id_field}={obj_id}"
                 )
-                
+
         await db.flush()
         logger.info(f"Bulk updated {updated_count} {model.__name__} instances")
         return updated_count
     except SQLAlchemyError as e:
         logger.error(f"Error bulk updating {model.__name__}: {str(e)}", exc_info=True)
-        
+
         # Check for unique constraint violations
         error_text = str(e).lower()
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Bulk update failed: One or more {model.__name__} updates violate uniqueness constraints",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
-            
+
         raise DatabaseException(
             message=f"Failed to bulk update {model.__name__}: {str(e)}",
             code=ErrorCode.DATABASE_ERROR,
@@ -671,11 +668,13 @@ async def upsert(
     """
     try:
         logger.debug(f"Upserting {model.__name__} with data: {data}")
-        
+
         if not unique_fields:
-            logger.warning(f"No unique fields provided for {model.__name__}, creating new instance")
+            logger.warning(
+                f"No unique fields provided for {model.__name__}, creating new instance"
+            )
             return await create_object(db, model, data)
-            
+
         # Build conditions to find existing object
         conditions = []
         for field in unique_fields:
@@ -683,23 +682,25 @@ async def upsert(
                 conditions.append(getattr(model, field) == data[field])
             else:
                 logger.warning(f"Unique field {field} not in data, skipping condition")
-                
+
         if not conditions:
             logger.warning(f"No valid unique field values found, creating new instance")
             return await create_object(db, model, data)
-            
+
         # Check for existing object
         query = select(model).where(*conditions)
         result = await db.execute(query)
         existing = result.scalars().first()
-        
+
         if existing:
             logger.debug(f"Found existing {model.__name__}, updating")
             existing.update_from_dict(data)
             db.add(existing)
             await db.flush()
             await db.refresh(existing)
-            logger.info(f"Updated existing {model.__name__} with ID: {getattr(existing, 'id', None)}")
+            logger.info(
+                f"Updated existing {model.__name__} with ID: {getattr(existing, 'id', None)}"
+            )
             return existing
         else:
             logger.debug(f"No existing {model.__name__} found, creating new")
@@ -714,9 +715,7 @@ async def upsert(
 
 
 # Database metrics tracking
-def track_db_query(
-    operation: str, entity: Optional[str] = None
-) -> Callable[[F], F]:
+def track_db_query(operation: str, entity: Optional[str] = None) -> Callable[[F], F]:
     """Decorator to track database query performance.
 
     Args:

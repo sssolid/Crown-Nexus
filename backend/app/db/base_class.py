@@ -3,7 +3,19 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Type, TypeVar, cast, ClassVar, get_args, get_origin, get_type_hints
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    cast,
+    ClassVar,
+    get_args,
+    get_origin,
+    get_type_hints,
+)
 
 from sqlalchemy import Column, DateTime, Boolean, String, inspect, func, select
 from sqlalchemy.dialects.postgresql import UUID
@@ -15,10 +27,9 @@ from app.core.logging import get_logger
 
 logger = get_logger("app.db.base_class")
 
-T = TypeVar('T', bound='Base')
+T = TypeVar("T", bound="Base")
 
 
-@as_declarative()
 class Base(DeclarativeBase):
     """Enhanced base class for all database models.
 
@@ -31,35 +42,45 @@ class Base(DeclarativeBase):
     """
 
     # Common columns for all models
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
-    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
-    created_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
-    updated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), nullable=True)
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, index=True
+    )
+    created_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), nullable=True
+    )
+    updated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), nullable=True
+    )
 
     # Class variables for configuration
     __exclude_from_dict__: ClassVar[List[str]] = ["is_deleted"]
     __include_relationships__: ClassVar[bool] = False
 
     @declared_attr
-    def __tablename__(cls) -> str:
+    def __tablename__(self) -> str:
         """Generate table name automatically from class name.
 
         Returns:
             str: Table name as lowercase class name
         """
-        return cls.__name__.lower()
+        return self.__name__.lower()
 
     def to_dict(
         self,
         exclude: Optional[List[str]] = None,
-        include_relationships: Optional[bool] = None
+        include_relationships: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """Convert model instance to dictionary.
 
@@ -77,7 +98,11 @@ class Base(DeclarativeBase):
         if exclude:
             exclude_fields.update(exclude)
 
-        include_rels = self.__include_relationships__ if include_relationships is None else include_relationships
+        include_rels = (
+            self.__include_relationships__
+            if include_relationships is None
+            else include_relationships
+        )
 
         result = {}
         for key, value in inspect(self).dict.items():
@@ -86,7 +111,7 @@ class Base(DeclarativeBase):
                 continue
 
             # Handle relationships
-            if key.startswith('_'):
+            if key.startswith("_"):
                 # Skip private attributes and SQLAlchemy internals
                 continue
 
@@ -175,7 +200,7 @@ class Base(DeclarativeBase):
         self,
         data: Dict[str, Any],
         user_id: Optional[uuid.UUID] = None,
-        exclude: Optional[List[str]] = None
+        exclude: Optional[List[str]] = None,
     ) -> None:
         """Update model attributes from dictionary.
 

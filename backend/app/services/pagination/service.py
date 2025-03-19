@@ -7,7 +7,18 @@ This module provides the primary PaginationService that coordinates pagination
 operations for different entity types and pagination strategies.
 """
 
-from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,17 +33,18 @@ from app.services.pagination.base import (
     CursorPaginationParams,
     OffsetPaginationParams,
     PaginationProvider,
-    PaginationResult
+    PaginationResult,
 )
 from app.services.pagination.factory import PaginationProviderFactory
 
 logger = get_logger("app.services.pagination.service")
 
 T = TypeVar("T", bound=Base)  # SQLAlchemy model type
+ID = TypeVar("ID")
 R = TypeVar("R", bound=BaseModel)  # Pydantic response type
 
 
-class PaginationService(Generic[T, R], ServiceInterface):
+class PaginationService(ServiceInterface[T, ID], Generic[T, ID, R]):
     """Service for handling pagination of query results.
 
     This service supports both offset-based and cursor-based pagination
@@ -43,7 +55,7 @@ class PaginationService(Generic[T, R], ServiceInterface):
         self,
         db: AsyncSession,
         model_class: Type[T],
-        response_model: Optional[Type[R]] = None
+        response_model: Optional[Type[R]] = None,
     ) -> None:
         """Initialize the pagination service.
 
@@ -70,7 +82,7 @@ class PaginationService(Generic[T, R], ServiceInterface):
         self,
         query: Select,
         params: OffsetPaginationParams,
-        transform_func: Optional[Callable[[T], R]] = None
+        transform_func: Optional[Callable[[T], R]] = None,
     ) -> PaginationResult[R]:
         """Paginate query results using offset-based pagination.
 
@@ -88,10 +100,7 @@ class PaginationService(Generic[T, R], ServiceInterface):
         try:
             # Create offset pagination provider
             provider = self.factory.create_provider(
-                "offset",
-                self.db,
-                self.model_class,
-                self.response_model
+                "offset", self.db, self.model_class, self.response_model
             )
 
             # Determine transform function
@@ -107,7 +116,7 @@ class PaginationService(Generic[T, R], ServiceInterface):
                 page=params.page,
                 page_size=params.page_size,
                 total=result.total,
-                items_count=len(result.items)
+                items_count=len(result.items),
             )
 
             return result
@@ -119,25 +128,22 @@ class PaginationService(Generic[T, R], ServiceInterface):
             self.logger.error(
                 f"Offset pagination failed: {str(e)}",
                 model=self.model_class.__name__,
-                params=params.dict(),
-                exc_info=True
+                params=params.model_dump(),
+                exc_info=True,
             )
 
             raise ValidationException(
                 message=f"Pagination failed: {str(e)}",
-                code="PAGINATION_ERROR",
-                details=[{
-                    "loc": ["pagination"],
-                    "msg": str(e),
-                    "type": "pagination_error"
-                }]
+                details=[
+                    {"loc": ["pagination"], "msg": str(e), "type": "pagination_error"}
+                ],
             )
 
     async def paginate_with_cursor(
         self,
         query: Select,
         params: CursorPaginationParams,
-        transform_func: Optional[Callable[[T], R]] = None
+        transform_func: Optional[Callable[[T], R]] = None,
     ) -> PaginationResult[R]:
         """Paginate query results using cursor-based pagination.
 
@@ -155,10 +161,7 @@ class PaginationService(Generic[T, R], ServiceInterface):
         try:
             # Create cursor pagination provider
             provider = self.factory.create_provider(
-                "cursor",
-                self.db,
-                self.model_class,
-                self.response_model
+                "cursor", self.db, self.model_class, self.response_model
             )
 
             # Determine transform function
@@ -175,7 +178,7 @@ class PaginationService(Generic[T, R], ServiceInterface):
                 limit=params.limit,
                 total=result.total,
                 items_count=len(result.items),
-                has_next=result.has_next
+                has_next=result.has_next,
             )
 
             return result
@@ -187,18 +190,15 @@ class PaginationService(Generic[T, R], ServiceInterface):
             self.logger.error(
                 f"Cursor pagination failed: {str(e)}",
                 model=self.model_class.__name__,
-                params=params.dict(),
-                exc_info=True
+                params=params.model_dump(),
+                exc_info=True,
             )
 
             raise ValidationException(
                 message=f"Pagination failed: {str(e)}",
-                code="PAGINATION_ERROR",
-                details=[{
-                    "loc": ["pagination"],
-                    "msg": str(e),
-                    "type": "pagination_error"
-                }]
+                details=[
+                    {"loc": ["pagination"], "msg": str(e), "type": "pagination_error"}
+                ],
             )
 
     def _create_default_transform_func(self) -> Callable[[T], R]:
@@ -208,7 +208,9 @@ class PaginationService(Generic[T, R], ServiceInterface):
             Function to transform database models to response models
         """
         if self.response_model is None:
-            raise ValueError("Response model is required for default transform function")
+            raise ValueError(
+                "Response model is required for default transform function"
+            )
 
         def transform(item: T) -> R:
             # Check if the response model has a from_orm method

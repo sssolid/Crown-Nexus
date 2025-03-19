@@ -18,6 +18,7 @@ from pydantic_core.core_schema import ValidationInfo
 
 class Position(str, Enum):
     """Automotive part position enumeration."""
+
     FRONT = "Front"
     REAR = "Rear"
     LEFT = "Left"
@@ -33,6 +34,7 @@ class Position(str, Enum):
 
 class PositionGroup(BaseModel):
     """Group of positions for a part."""
+
     front_rear: Position = Position.NA
     left_right: Position = Position.NA
     upper_lower: Position = Position.NA
@@ -41,6 +43,7 @@ class PositionGroup(BaseModel):
 
 class Vehicle(BaseModel):
     """Vehicle information model."""
+
     model_config = ConfigDict(populate_by_name=True)
 
     year: int
@@ -62,6 +65,7 @@ class Vehicle(BaseModel):
 
 class PartFitment(BaseModel):
     """Represents a vehicle fitment for a specific part."""
+
     vehicle: Vehicle
     positions: PositionGroup
     additional_attributes: Dict[str, str] = Field(default_factory=dict)
@@ -72,36 +76,37 @@ class PartFitment(BaseModel):
 
 class PartApplication(BaseModel):
     """Raw part application string with parsing capabilities."""
+
     raw_text: str
     year_range: Optional[tuple[int, int]] = None
     vehicle_text: Optional[str] = None
     position_text: Optional[str] = None
     additional_notes: Optional[str] = None
 
-    @model_validator(mode='after')
-    def parse_application(self) -> 'PartApplication':
+    @model_validator(mode="after")
+    def parse_application(self) -> "PartApplication":
         """Parse the raw application text into structured components."""
         # Simple parsing of year range pattern like "2005-2010"
-        year_pattern = r'^(\d{4})-(\d{4})'
+        year_pattern = r"^(\d{4})-(\d{4})"
         year_match = re.match(year_pattern, self.raw_text)
 
         if year_match:
             self.year_range = (int(year_match.group(1)), int(year_match.group(2)))
 
             # Extract the rest after year range
-            rest = self.raw_text[year_match.end():].strip()
+            rest = self.raw_text[year_match.end() :].strip()
 
             # Check for position information in parentheses
-            position_pattern = r'\((.*?)\)'
+            position_pattern = r"\((.*?)\)"
             position_match = re.search(position_pattern, rest)
 
             if position_match:
                 self.position_text = position_match.group(1).strip()
                 # Get vehicle text (everything before the position)
-                self.vehicle_text = rest[:position_match.start()].strip()
+                self.vehicle_text = rest[: position_match.start()].strip()
                 # Get any additional text after the position
                 if position_match.end() < len(rest):
-                    self.additional_notes = rest[position_match.end():].strip()
+                    self.additional_notes = rest[position_match.end() :].strip()
             else:
                 # No position found, assume everything is vehicle text
                 self.vehicle_text = rest
@@ -111,6 +116,7 @@ class PartApplication(BaseModel):
 
 class ModelMapping(BaseModel):
     """Database model mapping rule."""
+
     id: Optional[int] = None
     pattern: str
     mapping: str
@@ -122,24 +128,25 @@ class ModelMapping(BaseModel):
     @property
     def make(self) -> str:
         """Extract make from mapping string."""
-        parts = self.mapping.split('|')
+        parts = self.mapping.split("|")
         return parts[0] if len(parts) > 0 else ""
 
     @property
     def vehicle_code(self) -> str:
         """Extract vehicle code from mapping string."""
-        parts = self.mapping.split('|')
+        parts = self.mapping.split("|")
         return parts[1] if len(parts) > 1 else ""
 
     @property
     def model(self) -> str:
         """Extract model from mapping string."""
-        parts = self.mapping.split('|')
+        parts = self.mapping.split("|")
         return parts[2] if len(parts) > 2 else ""
 
 
 class MappingRule(BaseModel):
     """Rule for mapping vehicle model text to structured data."""
+
     pattern: str
     make: str
     models: List[Dict[str, str]]
@@ -148,6 +155,7 @@ class MappingRule(BaseModel):
 
 class ValidationStatus(Enum):
     """Status of a validation result."""
+
     VALID = auto()
     WARNING = auto()
     ERROR = auto()
@@ -155,6 +163,7 @@ class ValidationStatus(Enum):
 
 class ValidationResult(BaseModel):
     """Result of validating a part fitment."""
+
     status: ValidationStatus
     message: str
     fitment: Optional[PartFitment] = None
@@ -164,6 +173,7 @@ class ValidationResult(BaseModel):
 
 class PartTerminology(BaseModel):
     """PCDB part terminology information."""
+
     id: int
     name: str
     category_id: int
@@ -173,6 +183,7 @@ class PartTerminology(BaseModel):
 
 class PCDBPosition(BaseModel):
     """PCDB position information."""
+
     id: int
     name: str
     front_rear: Optional[Literal["Front", "Rear", "N/A"]] = None
@@ -183,6 +194,7 @@ class PCDBPosition(BaseModel):
 
 class VCDBVehicle(BaseModel):
     """VCDB vehicle information."""
+
     id: int
     base_vehicle_id: int
     submodel_id: Optional[int] = None

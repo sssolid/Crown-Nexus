@@ -61,7 +61,9 @@ class RedisCacheBackend:
         # Client will be initialized in connect()
         self.client: Optional[Redis] = None
 
-        logger.debug(f"RedisCacheBackend initialized (host={host}, port={port}, db={db})")
+        logger.debug(
+            f"RedisCacheBackend initialized (host={host}, port={port}, db={db})"
+        )
 
     async def connect(self) -> None:
         """Connect to Redis server and initialize client."""

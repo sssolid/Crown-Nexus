@@ -21,14 +21,24 @@ import secrets
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import BinaryIO, Dict, List, Literal, Optional, Protocol, Set, Tuple, Union, cast
+from typing import (
+    BinaryIO,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Protocol,
+    Set,
+    Tuple,
+    Union,
+    cast,
+)
 
 from fastapi import HTTPException, UploadFile, status
 from PIL import Image, UnidentifiedImageError
 
-from app.core.config import Environment, settings
+from app.core.config import settings
 from app.core.exceptions import (
-    BadRequestException,
     ErrorCode,
     SecurityException,
     ValidationException,
@@ -96,10 +106,10 @@ ALLOWED_MIME_TYPES: MediaConstraints = {
 
 # Define maximum file sizes for each media type (in bytes)
 MAX_FILE_SIZES: SizeConstraints = {
-    MediaType.IMAGE: 5 * 1024 * 1024,      # 5MB
+    MediaType.IMAGE: 5 * 1024 * 1024,  # 5MB
     MediaType.DOCUMENT: 20 * 1024 * 1024,  # 20MB
-    MediaType.VIDEO: 100 * 1024 * 1024,    # 100MB
-    MediaType.OTHER: 50 * 1024 * 1024,     # 50MB
+    MediaType.VIDEO: 100 * 1024 * 1024,  # 100MB
+    MediaType.OTHER: 50 * 1024 * 1024,  # 50MB
 }
 
 # Define thumbnail size
@@ -113,7 +123,7 @@ class FileSecurityError(SecurityException):
         self,
         message: str,
         code: ErrorCode = ErrorCode.SECURITY_ERROR,
-        details: Optional[Dict[str, Any]] = None
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Initialize FileSecurityError.
 
@@ -137,7 +147,7 @@ class FileValidationError(ValidationException):
         self,
         message: str,
         code: ErrorCode = ErrorCode.VALIDATION_ERROR,
-        details: Optional[Dict[str, Any]] = None
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Initialize FileValidationError.
 
@@ -172,8 +182,7 @@ def get_media_type_from_mime(mime_type: str) -> MediaType:
 
 
 def validate_file(
-    file: UploadFile,
-    allowed_types: Optional[Set[MediaType]] = None
+    file: UploadFile, allowed_types: Optional[Set[MediaType]] = None
 ) -> Tuple[MediaType, bool]:
     """Validate file type, size, and content.
 
@@ -199,8 +208,7 @@ def validate_file(
         if not file.filename:
             logger.warning("Upload rejected: No filename provided")
             raise FileValidationError(
-                message="No filename provided",
-                details={"reason": "missing_filename"}
+                message="No filename provided", details={"reason": "missing_filename"}
             )
 
         # Check if filename is safe (basic security check)
@@ -208,7 +216,7 @@ def validate_file(
             logger.warning(f"Upload rejected: Unsafe filename: {file.filename}")
             raise FileSecurityError(
                 message="Filename contains unsafe characters",
-                details={"filename": file.filename}
+                details={"filename": file.filename},
             )
 
         # Get file size
@@ -225,14 +233,14 @@ def validate_file(
             allowed_types_str = ", ".join([t.value for t in allowed_types])
             logger.warning(
                 f"Upload rejected: Media type {media_type.value} not allowed",
-                allowed_types=allowed_types_str
+                allowed_types=allowed_types_str,
             )
             raise FileValidationError(
                 message=f"File type not allowed. Allowed types: {allowed_types_str}",
                 details={
                     "detected_type": media_type.value,
-                    "allowed_types": allowed_types_str
-                }
+                    "allowed_types": allowed_types_str,
+                },
             )
 
         # Check if MIME type is allowed for the media type
@@ -240,15 +248,15 @@ def validate_file(
             allowed_mimes = ", ".join(ALLOWED_MIME_TYPES[media_type])
             logger.warning(
                 f"Upload rejected: MIME type {mime_type} not allowed for {media_type.value}",
-                allowed_mimes=allowed_mimes
+                allowed_mimes=allowed_mimes,
             )
             raise FileValidationError(
                 message=f"MIME type {mime_type} not allowed for {media_type.value}",
                 details={
                     "mime_type": mime_type,
                     "media_type": media_type.value,
-                    "allowed_mimes": allowed_mimes
-                }
+                    "allowed_mimes": allowed_mimes,
+                },
             )
 
         # Check file size
@@ -258,15 +266,15 @@ def validate_file(
             logger.warning(
                 f"Upload rejected: File too large ({file_size} bytes)",
                 max_size=max_size,
-                media_type=media_type.value
+                media_type=media_type.value,
             )
             raise FileValidationError(
                 message=f"File too large. Maximum size for {media_type.value} is {max_size_mb}MB",
                 details={
                     "file_size": file_size,
                     "max_size": max_size,
-                    "media_type": media_type.value
-                }
+                    "media_type": media_type.value,
+                },
             )
 
         # Additional validation for images
@@ -280,30 +288,29 @@ def validate_file(
                 logger.debug(
                     f"Image verified successfully: {file.filename}",
                     size=file_size,
-                    mime=mime_type
+                    mime=mime_type,
                 )
             except UnidentifiedImageError:
                 logger.warning(f"Upload rejected: Invalid image file: {file.filename}")
                 raise FileValidationError(
-                    message="Invalid image file",
-                    details={"filename": file.filename}
+                    message="Invalid image file", details={"filename": file.filename}
                 )
             except Exception as e:
                 logger.error(
                     f"Image validation error: {str(e)}",
                     filename=file.filename,
-                    exc_info=True
+                    exc_info=True,
                 )
                 raise FileValidationError(
                     message=f"Error validating image: {str(e)}",
-                    details={"filename": file.filename, "error": str(e)}
+                    details={"filename": file.filename, "error": str(e)},
                 ) from e
 
         logger.info(
             f"File validated successfully: {file.filename}",
             media_type=media_type.value,
             size=file_size,
-            mime=mime_type
+            mime=mime_type,
         )
         return (media_type, is_image)
 
@@ -314,16 +321,12 @@ def validate_file(
         # Log and convert other exceptions to validation errors
         logger.error(f"Unexpected error validating file: {str(e)}", exc_info=True)
         raise FileValidationError(
-            message=f"File validation failed: {str(e)}",
-            details={"error": str(e)}
+            message=f"File validation failed: {str(e)}", details={"error": str(e)}
         ) from e
 
 
 def save_upload_file(
-    file: UploadFile,
-    media_id: uuid.UUID,
-    media_type: MediaType,
-    is_image: bool
+    file: UploadFile, media_id: uuid.UUID, media_type: MediaType, is_image: bool
 ) -> Tuple[str, int, str]:
     """Save uploaded file to disk with secure naming.
 
@@ -344,7 +347,11 @@ def save_upload_file(
     """
     try:
         # Create date-based directory structure
-        upload_dir = Path(settings.MEDIA_ROOT) / str(media_type.value) / datetime.now().strftime("%Y/%m/%d")
+        upload_dir = (
+            Path(settings.MEDIA_ROOT)
+            / str(media_type.value)
+            / datetime.now().strftime("%Y/%m/%d")
+        )
         upload_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate secure filename using media_id
@@ -364,7 +371,11 @@ def save_upload_file(
 
         # Create thumbnail if it's an image
         if is_image:
-            thumbnail_dir = Path(settings.MEDIA_ROOT) / "thumbnails" / datetime.now().strftime("%Y/%m/%d")
+            thumbnail_dir = (
+                Path(settings.MEDIA_ROOT)
+                / "thumbnails"
+                / datetime.now().strftime("%Y/%m/%d")
+            )
             thumbnail_dir.mkdir(parents=True, exist_ok=True)
 
             try:
@@ -372,7 +383,12 @@ def save_upload_file(
                     # Handle transparency
                     if img.mode in ["RGBA", "LA"]:
                         rgb_img = Image.new("RGB", img.size, (255, 255, 255))
-                        rgb_img.paste(img, mask=img.split()[3] if img.mode == "RGBA" else img.split()[1])
+                        rgb_img.paste(
+                            img,
+                            mask=(
+                                img.split()[3] if img.mode == "RGBA" else img.split()[1]
+                            ),
+                        )
                         img = rgb_img
                     elif img.mode != "RGB":
                         img = img.convert("RGB")
@@ -384,14 +400,14 @@ def save_upload_file(
 
                     logger.debug(
                         f"Created thumbnail for {file_path}",
-                        thumbnail_path=str(thumbnail_path)
+                        thumbnail_path=str(thumbnail_path),
                     )
             except Exception as e:
                 # Log but don't fail if thumbnail creation fails
                 logger.error(
                     f"Error creating thumbnail: {str(e)}",
                     file_path=str(file_path),
-                    exc_info=True
+                    exc_info=True,
                 )
 
         relative_path = str(file_path.relative_to(settings.MEDIA_ROOT))
@@ -399,7 +415,7 @@ def save_upload_file(
             f"File saved successfully: {relative_path}",
             size=file_size,
             media_id=str(media_id),
-            media_type=media_type.value
+            media_type=media_type.value,
         )
 
         return (relative_path, file_size, media_hash)
@@ -409,11 +425,11 @@ def save_upload_file(
             f"Error saving file: {str(e)}",
             media_id=str(media_id),
             filename=file.filename,
-            exc_info=True
+            exc_info=True,
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error saving file: {str(e)}"
+            detail=f"Error saving file: {str(e)}",
         ) from e
 
 
@@ -429,14 +445,15 @@ def get_file_path(file_path: str) -> Path:
     # Handle URL paths
     if file_path.startswith(("http://", "https://")):
         from urllib.parse import urlparse
+
         parsed_url = urlparse(file_path)
         file_path = parsed_url.path
 
     # Remove media URL prefix if present
     if file_path.startswith(settings.MEDIA_URL):
-        file_path = file_path[len(settings.MEDIA_URL):]
+        file_path = file_path[len(settings.MEDIA_URL) :]
     elif settings.MEDIA_CDN_URL and file_path.startswith(settings.MEDIA_CDN_URL):
-        file_path = file_path[len(settings.MEDIA_CDN_URL):]
+        file_path = file_path[len(settings.MEDIA_CDN_URL) :]
 
     # Remove leading slash if present
     if file_path.startswith("/"):

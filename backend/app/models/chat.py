@@ -42,6 +42,7 @@ class ChatRoomType(str, Enum):
     - COMPANY: Company-wide chat room
     - SUPPORT: Customer support chat
     """
+
     DIRECT = "direct"
     GROUP = "group"
     COMPANY = "company"
@@ -68,17 +69,14 @@ class ChatRoom(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "chat_room"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
-    type: Mapped[ChatRoomType] = mapped_column(
-        String(20), nullable=False, index=True
-    )
+    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    type: Mapped[ChatRoomType] = mapped_column(String(20), nullable=False, index=True)
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("company.id"), nullable=True, index=True
     )
@@ -86,7 +84,10 @@ class ChatRoom(Base):
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
     metadata: Mapped[Dict] = mapped_column(
-        JSONB, nullable=False, default=dict, server_default=expression.text("'{}'::jsonb")
+        JSONB,
+        nullable=False,
+        default=dict,
+        server_default=expression.text("'{}'::jsonb"),
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -95,7 +96,7 @@ class ChatRoom(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     # Relationships
@@ -122,6 +123,7 @@ class ChatMemberRole(str, Enum):
     - MEMBER: Regular participant
     - GUEST: Temporary participant with limited rights
     """
+
     OWNER = "owner"
     ADMIN = "admin"
     MEMBER = "member"
@@ -147,6 +149,7 @@ class ChatMember(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "chat_member"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -174,7 +177,7 @@ class ChatMember(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     # Relationships
@@ -182,9 +185,7 @@ class ChatMember(Base):
     user: Mapped["User"] = relationship("User", back_populates="chat_memberships")
 
     # Ensure a user can only be a member of a specific room once
-    __table_args__ = (
-        Index('idx_unique_room_user', 'room_id', 'user_id', unique=True),
-    )
+    __table_args__ = (Index("idx_unique_room_user", "room_id", "user_id", unique=True),)
 
     def __repr__(self) -> str:
         """String representation of the chat member."""
@@ -202,6 +203,7 @@ class MessageType(str, Enum):
     - SYSTEM: System-generated message
     - ACTION: User action notification
     """
+
     TEXT = "text"
     IMAGE = "image"
     FILE = "file"
@@ -230,6 +232,7 @@ class ChatMessage(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "chat_message"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -244,11 +247,12 @@ class ChatMessage(Base):
     message_type: Mapped[MessageType] = mapped_column(
         String(20), nullable=False, default=MessageType.TEXT
     )
-    content_encrypted: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
+    content_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
     metadata: Mapped[Dict] = mapped_column(
-        JSONB, nullable=False, default=dict, server_default=expression.text("'{}'::jsonb")
+        JSONB,
+        nullable=False,
+        default=dict,
+        server_default=expression.text("'{}'::jsonb"),
     )
     is_deleted: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=expression.false(), nullable=False
@@ -263,7 +267,7 @@ class ChatMessage(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     # Relationships
@@ -304,6 +308,7 @@ class MessageReaction(Base):
         reaction: Reaction content (emoji or predefined reaction)
         created_at: Creation timestamp
     """
+
     __tablename__ = "message_reaction"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -315,20 +320,26 @@ class MessageReaction(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
     )
-    reaction: Mapped[str] = mapped_column(
-        String(20), nullable=False
-    )
+    reaction: Mapped[str] = mapped_column(String(20), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     # Relationships
-    message: Mapped["ChatMessage"] = relationship("ChatMessage", back_populates="reactions")
+    message: Mapped["ChatMessage"] = relationship(
+        "ChatMessage", back_populates="reactions"
+    )
     user: Mapped["User"] = relationship("User")
 
     # Ensure a user can only react once with the same reaction to a message
     __table_args__ = (
-        Index('idx_unique_message_user_reaction', 'message_id', 'user_id', 'reaction', unique=True),
+        Index(
+            "idx_unique_message_user_reaction",
+            "message_id",
+            "user_id",
+            "reaction",
+            unique=True,
+        ),
     )
 
     def __repr__(self) -> str:
@@ -353,6 +364,7 @@ class RateLimitLog(Base):
         timestamp: When the event occurred
         count: Number of events in the current period
     """
+
     __tablename__ = "rate_limit_log"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -364,15 +376,11 @@ class RateLimitLog(Base):
     room_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("chat_room.id"), nullable=True, index=True
     )
-    event_type: Mapped[str] = mapped_column(
-        String(50), nullable=False, index=True
-    )
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
     )
-    count: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=1
-    )
+    count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
 
     # Relationships
     user: Mapped["User"] = relationship("User")

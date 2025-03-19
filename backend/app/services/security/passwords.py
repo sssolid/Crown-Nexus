@@ -39,7 +39,9 @@ class PasswordService:
     def _load_common_passwords_sync(self) -> None:
         """Load list of common passwords from file."""
         try:
-            passwords_file = Path(settings.BASE_DIR) / "app" / "data" / "common_passwords.txt"
+            passwords_file = (
+                Path(settings.BASE_DIR) / "app" / "data" / "common_passwords.txt"
+            )
             if passwords_file.exists():
                 with open(passwords_file, "r") as f:
                     for line in f:
@@ -48,15 +50,36 @@ class PasswordService:
             else:
                 # Fallback to a small set of common passwords
                 self.common_passwords = {
-                    "password", "123456", "123456789", "qwerty", "12345678",
-                    "111111", "1234567890", "1234567", "password1", "12345",
-                    "123123", "000000", "iloveyou", "1234", "1q2w3e4r", "admin"
+                    "password",
+                    "123456",
+                    "123456789",
+                    "qwerty",
+                    "12345678",
+                    "111111",
+                    "1234567890",
+                    "1234567",
+                    "password1",
+                    "12345",
+                    "123123",
+                    "000000",
+                    "iloveyou",
+                    "1234",
+                    "1q2w3e4r",
+                    "admin",
                 }
-                logger.debug(f"Using default list of {len(self.common_passwords)} common passwords")
+                logger.debug(
+                    f"Using default list of {len(self.common_passwords)} common passwords"
+                )
         except Exception as e:
             logger.error(f"Error loading common passwords: {str(e)}")
             # Fallback to a minimal set
-            self.common_passwords = {"password", "123456", "123456789", "qwerty", "12345678"}
+            self.common_passwords = {
+                "password",
+                "123456",
+                "123456789",
+                "qwerty",
+                "12345678",
+            }
 
     async def validate_password_policy(
         self, password: str, user_id: Optional[str] = None
@@ -100,7 +123,10 @@ class PasswordService:
             return (False, "Password must contain at least one special character")
 
         # Check against common passwords
-        if self.policy.prevent_common_passwords and password.lower() in self.common_passwords:
+        if (
+            self.policy.prevent_common_passwords
+            and password.lower() in self.common_passwords
+        ):
             return (False, "Password is too common and easily guessed")
 
         # Check password history

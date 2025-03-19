@@ -13,6 +13,7 @@ from app.models.product import Product
 from app.models.user import User
 from tests.utils import make_authenticated_request, create_random_string
 
+
 @pytest.mark.asyncio
 async def test_create_product_admin(client: AsyncClient, admin_token: str) -> None:
     """Test creating a product as admin."""
@@ -25,7 +26,7 @@ async def test_create_product_admin(client: AsyncClient, admin_token: str) -> No
         "universal": False,
         "is_active": True,
     }
-    
+
     response = await make_authenticated_request(
         client,
         "post",
@@ -33,12 +34,13 @@ async def test_create_product_admin(client: AsyncClient, admin_token: str) -> No
         admin_token,
         json=product_data,
     )
-    
+
     # Verify successful response
     assert response.status_code == 201
     data = response.json()
     assert data["part_number"] == product_data["part_number"]
     assert "id" in data
+
 
 @pytest.mark.asyncio
 async def test_create_product_non_admin(client: AsyncClient, user_token: str) -> None:
@@ -52,7 +54,7 @@ async def test_create_product_non_admin(client: AsyncClient, user_token: str) ->
         "universal": False,
         "is_active": True,
     }
-    
+
     response = await make_authenticated_request(
         client,
         "post",
@@ -60,18 +62,16 @@ async def test_create_product_non_admin(client: AsyncClient, user_token: str) ->
         user_token,
         json=product_data,
     )
-    
+
     # Verify permission denied response
     assert response.status_code == 403
     data = response.json()
     assert "detail" in data
 
+
 @pytest.mark.asyncio
 async def test_read_products(
-    client: AsyncClient, 
-    normal_user: User, 
-    user_token: str, 
-    test_product: Product
+    client: AsyncClient, normal_user: User, user_token: str, test_product: Product
 ) -> None:
     """Test retrieving a list of products."""
     response = await make_authenticated_request(
@@ -80,7 +80,7 @@ async def test_read_products(
         "/api/v1/products/",
         user_token,
     )
-    
+
     # Verify successful response
     assert response.status_code == 200
     data = response.json()
@@ -89,11 +89,10 @@ async def test_read_products(
     assert len(data["items"]) > 0
     assert "total" in data
 
+
 @pytest.mark.asyncio
 async def test_read_product(
-    client: AsyncClient, 
-    user_token: str, 
-    test_product: Product
+    client: AsyncClient, user_token: str, test_product: Product
 ) -> None:
     """Test retrieving a single product."""
     response = await make_authenticated_request(
@@ -102,12 +101,13 @@ async def test_read_product(
         f"/api/v1/products/{test_product.id}",
         user_token,
     )
-    
+
     # Verify successful response
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == str(test_product.id)
     assert data["part_number"] == test_product.part_number
+
 
 @pytest.mark.asyncio
 async def test_read_product_not_found(client: AsyncClient, user_token: str) -> None:
@@ -119,17 +119,16 @@ async def test_read_product_not_found(client: AsyncClient, user_token: str) -> N
         f"/api/v1/products/{non_existent_id}",
         user_token,
     )
-    
+
     # Verify not found response
     assert response.status_code == 404
     data = response.json()
     assert "detail" in data
 
+
 @pytest.mark.asyncio
 async def test_update_product_admin(
-    client: AsyncClient, 
-    admin_token: str, 
-    test_product: Product
+    client: AsyncClient, admin_token: str, test_product: Product
 ) -> None:
     """Test updating a product as admin."""
     update_data = {
@@ -137,7 +136,7 @@ async def test_update_product_admin(
         "application": "Updated application",
         "is_active": False,
     }
-    
+
     response = await make_authenticated_request(
         client,
         "put",
@@ -145,7 +144,7 @@ async def test_update_product_admin(
         admin_token,
         json=update_data,
     )
-    
+
     # Verify successful response
     assert response.status_code == 200
     data = response.json()
@@ -154,8 +153,11 @@ async def test_update_product_admin(
     assert data["application"] == update_data["application"]
     assert data["is_active"] == update_data["is_active"]
 
+
 @pytest.mark.asyncio
-async def test_delete_product_admin(client: AsyncClient, admin_token: str, db: AsyncSession) -> None:
+async def test_delete_product_admin(
+    client: AsyncClient, admin_token: str, db: AsyncSession
+) -> None:
     """Test deleting a product as admin."""
     # Create a product to delete
     new_product = Product(
@@ -172,19 +174,19 @@ async def test_delete_product_admin(client: AsyncClient, admin_token: str, db: A
     db.add(new_product)
     await db.commit()
     await db.refresh(new_product)
-    
+
     response = await make_authenticated_request(
         client,
         "delete",
         f"/api/v1/products/{new_product.id}",
         admin_token,
     )
-    
+
     # Verify successful response
     assert response.status_code == 200
     data = response.json()
     assert "success" in data
-    
+
     # Verify product was deleted
     result = await db.execute(select(Product).where(Product.id == new_product.id))
     db_product = result.scalars().first()

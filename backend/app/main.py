@@ -1,6 +1,5 @@
 # /backend/app/main.py to use the service registry
 from __future__ import annotations
-import logging
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -9,7 +8,6 @@ from typing import AsyncGenerator, Callable, Optional
 
 from fastapi import FastAPI, Request, Response, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 
@@ -17,8 +15,7 @@ from app.core.exceptions import (
     AppException,
     app_exception_handler,
     validation_exception_handler,
-    http_exception_handler,
-    generic_exception_handler
+    generic_exception_handler,
 )
 from app.middleware.metrics import MetricsMiddleware
 from app.middleware.error_handler import ErrorHandlerMiddleware
@@ -26,10 +23,13 @@ from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
 from app.core.rate_limiter import RateLimitMiddleware, RateLimitRule, RateLimitStrategy
 from app.api.deps import get_current_user
-from app.api.v1.router import api_router
 from app.core.config import Environment, settings
 from app.core.logging import get_logger, request_context, set_user_id
-from app.core.dependency_manager import register_services, initialize_services, shutdown_services
+from app.core.dependency_manager import (
+    register_services,
+    initialize_services,
+    shutdown_services,
+)
 from app.core.cache.manager import initialize_cache
 
 from app.fitment.api import router as fitment_router
@@ -40,6 +40,7 @@ import uvicorn
 
 # Logger
 logger = get_logger("app.main")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -54,11 +55,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Yields:
         None
     """
-    # Initialize cache backends
-    initialize_cache()
-
     # Register services
     register_services()
+
+    # Initialize cache backends
+    await initialize_cache()
 
     # Initialize services
     await initialize_services()
@@ -67,12 +68,25 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await initialize_mapping_engine()
 
     logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
+
+    # Include API router
+    from app.api.v1.router import api_router
+    app.include_router(api_router, prefix=settings.API_V1_STR)
+
+    # Include fitment router
+    app.include_router(
+        fitment_router,
+        prefix=f"{settings.API_V1_STR}/fitment",
+        tags=["fitment"],
+    )
+
     yield
 
     # Shutdown services
     await shutdown_services()
 
     logger.info("Application shutdown complete")
+
 
 # Create FastAPI app
 app = FastAPI(
@@ -84,6 +98,7 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
     lifespan=lifespan,
 )
+
 
 # Request context middleware
 class RequestContextMiddleware:
@@ -145,6 +160,7 @@ class RequestContextMiddleware:
 
             return response
 
+
 # CORS configuration
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
@@ -164,33 +180,36 @@ app.add_middleware(ResponseFormatterMiddleware)
 # Add security middleware
 app.add_middleware(
     SecurityHeadersMiddleware,
-    content_security_policy=settings.security.CONTENT_SECURITY_POLICY,
-    permissions_policy=settings.security.PERMISSIONS_POLICY
+    content_security_policy=settings.CONTENT_SECURITY_POLICY,
+    permissions_policy=settings.PERMISSIONS_POLICY,
 )
 
 # Add secure request validation
 app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
 
 # Add rate limiting middleware
-if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.security.RATE_LIMIT_ENABLED:
+if (
+    settings.ENVIRONMENT != Environment.DEVELOPMENT
+    or settings.RATE_LIMIT_ENABLED
+):
     app.add_middleware(
         RateLimitMiddleware,
         rules=[
             RateLimitRule(
-                requests_per_window=settings.security.RATE_LIMIT_REQUESTS_PER_MINUTE,
+                requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
                 window_seconds=60,
                 strategy=RateLimitStrategy.IP,
-                exclude_paths=["/api/v1/health", "/static/"]
+                exclude_paths=["/api/v1/health", "/static/"],
             ),
             # Stricter limits for auth endpoints
             RateLimitRule(
                 requests_per_window=10,
                 window_seconds=60,
                 strategy=RateLimitStrategy.IP,
-                path_pattern="/api/v1/auth/"
-            )
+                path_pattern="/api/v1/auth/",
+            ),
         ],
-        use_redis=settings.security.RATE_LIMIT_STORAGE == "redis",
+        use_redis=settings.RATE_LIMIT_STORAGE == "redis",
         enable_headers=True,
         block_exceeding_requests=True,
     )
@@ -198,25 +217,17 @@ if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.security.RATE_LIM
 # Exception handlers
 app.add_exception_handler(AppException, app_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
-app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
-
-# Include API router
-app.include_router(api_router, prefix=settings.API_V1_STR)
-
-# Include fitment router
-app.include_router(
-    fitment_router,
-    prefix=f"{settings.API_V1_STR}/fitment",
-    tags=["fitment"],
-)
 
 # Static files for media
 media_path = Path(settings.MEDIA_ROOT).resolve()
 app.mount("/media", StaticFiles(directory=media_path), name="media")
 
+
 # Log current user
-async def log_current_user(current_user: User = Depends(get_current_user)) -> Optional[User]:
+async def log_current_user(
+    current_user: User = Depends(get_current_user),
+) -> Optional[User]:
     """Log the current user ID in the request context.
 
     Args:
@@ -229,8 +240,9 @@ async def log_current_user(current_user: User = Depends(get_current_user)) -> Op
         set_user_id(str(current_user.id))
     return current_user
 
+
 # Health check endpoint
-@app.get('/health')
+@app.get("/health")
 async def health_check() -> dict:
     """Health check endpoint.
 
@@ -246,9 +258,10 @@ async def health_check() -> dict:
         "version": settings.VERSION,
     }
 
+
 # Main entry point for running the application directly
 if __name__ == "__main__":
-    host = '0.0.0.0'
+    host = "0.0.0.0"
     port = 8000
 
     uvicorn.run(

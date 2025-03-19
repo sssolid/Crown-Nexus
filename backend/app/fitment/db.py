@@ -7,9 +7,6 @@ VCDB and PCDB databases for fitment data.
 
 from __future__ import annotations
 
-import asyncio
-import logging
-import os
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union
 
@@ -22,8 +19,9 @@ from sqlalchemy.orm import sessionmaker
 from .models import PCDBPosition, PartTerminology, VCDBVehicle
 from .exceptions import DatabaseError
 
+from app.core.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.fitment.db")
 
 
 class AccessDBClient:
@@ -38,8 +36,7 @@ class AccessDBClient:
         """
         self.db_path = db_path
         self.connection_string = (
-            f"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};"
-            f"DBQ={db_path};"
+            f"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};" f"DBQ={db_path};"
         )
 
     def connect(self) -> pyodbc.Connection:
@@ -96,10 +93,7 @@ class FitmentDBService:
     """Service for database operations related to fitment data."""
 
     def __init__(
-        self,
-        vcdb_path: str,
-        pcdb_path: str,
-        sqlalchemy_url: Optional[str] = None
+        self, vcdb_path: str, pcdb_path: str, sqlalchemy_url: Optional[str] = None
     ) -> None:
         """
         Initialize the fitment database service.
@@ -146,7 +140,7 @@ class FitmentDBService:
         self,
         year: Optional[int] = None,
         make: Optional[str] = None,
-        model: Optional[str] = None
+        model: Optional[str] = None,
     ) -> List[VCDBVehicle]:
         """
         Get vehicles from VCDB matching the specified criteria.
@@ -238,7 +232,9 @@ class FitmentDBService:
             rows = self.pcdb_client.query(sql, (terminology_id,))
 
             if not rows:
-                raise DatabaseError(f"Part terminology with ID {terminology_id} not found")
+                raise DatabaseError(
+                    f"Part terminology with ID {terminology_id} not found"
+                )
 
             # Also get valid positions
             positions_sql = """
@@ -254,17 +250,16 @@ class FitmentDBService:
             valid_positions = [row["position_id"] for row in position_rows]
 
             # Create and return PartTerminology
-            terminology = PartTerminology(
-                **rows[0],
-                valid_positions=valid_positions
-            )
+            terminology = PartTerminology(**rows[0], valid_positions=valid_positions)
 
             return terminology
         except Exception as e:
             logger.error(f"Error getting PCDB part terminology: {str(e)}")
             raise DatabaseError(f"Failed to get PCDB part terminology: {str(e)}") from e
 
-    def get_pcdb_positions(self, position_ids: Optional[List[int]] = None) -> List[PCDBPosition]:
+    def get_pcdb_positions(
+        self, position_ids: Optional[List[int]] = None
+    ) -> List[PCDBPosition]:
         """
         Get position information from PCDB.
 
@@ -331,7 +326,7 @@ class FitmentDBService:
         """
         try:
             # Read the JSON file
-            with open(json_path, 'r') as f:
+            with open(json_path, "r") as f:
                 mappings = json.load(f)
 
             return mappings
@@ -357,11 +352,10 @@ class FitmentDBService:
                 from app.models.model_mapping import ModelMapping
 
                 # Get all active mappings ordered by priority
-                query = select(ModelMapping).where(
-                    ModelMapping.active == True
-                ).order_by(
-                    ModelMapping.priority.desc(),
-                    ModelMapping.pattern
+                query = (
+                    select(ModelMapping)
+                    .where(ModelMapping.active == True)
+                    .order_by(ModelMapping.priority.desc(), ModelMapping.pattern)
                 )
 
                 result = await session.execute(query)
@@ -380,7 +374,9 @@ class FitmentDBService:
                 logger.error(f"Error getting model mappings: {str(e)}")
                 raise DatabaseError(f"Failed to get model mappings: {str(e)}") from e
 
-    async def add_model_mapping(self, pattern: str, mapping: str, priority: int = 0) -> int:
+    async def add_model_mapping(
+        self, pattern: str, mapping: str, priority: int = 0
+    ) -> int:
         """
         Add a new model mapping to the database.
 
@@ -404,9 +400,7 @@ class FitmentDBService:
 
                 # Create new mapping
                 mapping_obj = ModelMapping(
-                    pattern=pattern,
-                    mapping=mapping,
-                    priority=priority
+                    pattern=pattern, mapping=mapping, priority=priority
                 )
 
                 session.add(mapping_obj)
@@ -527,7 +521,7 @@ class FitmentDBService:
                             # Check if mapping already exists
                             query = select(ModelMapping).where(
                                 ModelMapping.pattern == pattern,
-                                ModelMapping.mapping == mapping
+                                ModelMapping.mapping == mapping,
                             )
                             result = await session.execute(query)
                             existing = result.scalar_one_or_none()
@@ -535,14 +529,15 @@ class FitmentDBService:
                             if not existing:
                                 # Create new mapping
                                 mapping_obj = ModelMapping(
-                                    pattern=pattern,
-                                    mapping=mapping
+                                    pattern=pattern, mapping=mapping
                                 )
 
                                 session.add(mapping_obj)
                                 count += 1
                         except Exception as e:
-                            logger.warning(f"Error importing mapping {pattern}:{mapping}: {str(e)}")
+                            logger.warning(
+                                f"Error importing mapping {pattern}:{mapping}: {str(e)}"
+                            )
 
                 await session.commit()
                 return count
@@ -552,9 +547,7 @@ class FitmentDBService:
                 raise DatabaseError(f"Failed to import mappings: {str(e)}") from e
 
     async def save_fitment_results(
-        self,
-        product_id: str,
-        fitments: List[Dict[str, Any]]
+        self, product_id: str, fitments: List[Dict[str, Any]]
     ) -> bool:
         """
         Save fitment results to the database.
@@ -577,13 +570,14 @@ class FitmentDBService:
                 # First delete any existing fitments for this product
                 await session.execute(
                     text("DELETE FROM product_fitments WHERE product_id = :product_id"),
-                    {"product_id": product_id}
+                    {"product_id": product_id},
                 )
 
                 # Then insert the new fitments
                 for fitment in fitments:
                     await session.execute(
-                        text("""
+                        text(
+                            """
                         INSERT INTO product_fitments (
                             product_id, vcdb_vehicle_id, pcdb_position_ids,
                             year, make, model, submodel, notes
@@ -591,17 +585,20 @@ class FitmentDBService:
                             :product_id, :vcdb_vehicle_id, :pcdb_position_ids,
                             :year, :make, :model, :submodel, :notes
                         )
-                        """),
+                        """
+                        ),
                         {
                             "product_id": product_id,
                             "vcdb_vehicle_id": fitment.get("vcdb_vehicle_id"),
-                            "pcdb_position_ids": ",".join(map(str, fitment.get("pcdb_position_ids", []))),
+                            "pcdb_position_ids": ",".join(
+                                map(str, fitment.get("pcdb_position_ids", []))
+                            ),
                             "year": fitment.get("year"),
                             "make": fitment.get("make"),
                             "model": fitment.get("model"),
                             "submodel": fitment.get("submodel"),
-                            "notes": fitment.get("notes")
-                        }
+                            "notes": fitment.get("notes"),
+                        },
                     )
 
                 await session.commit()

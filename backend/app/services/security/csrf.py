@@ -22,7 +22,9 @@ class CsrfService:
     def __init__(self) -> None:
         """Initialize the CSRF service."""
         self.secret_key = settings.SECRET_KEY
-        self.token_expiry = settings.security.CSRF_TOKEN_EXPIRY or 3600  # 1 hour default
+        self.token_expiry = (
+            settings.security.CSRF_TOKEN_EXPIRY or 3600
+        )  # 1 hour default
 
     def generate_token(self, session_id: str) -> str:
         """
@@ -38,9 +40,7 @@ class CsrfService:
         random_part = secrets.token_hex(8)
         message = f"{session_id}:{timestamp}:{random_part}"
         signature = hmac.new(
-            self.secret_key.encode(),
-            message.encode(),
-            digestmod="sha256"
+            self.secret_key.encode(), message.encode(), digestmod="sha256"
         ).hexdigest()
 
         return f"{message}:{signature}"
@@ -101,9 +101,7 @@ class CsrfService:
         # Verify signature
         message = f"{token_session_id}:{timestamp}:{random_part}"
         expected_signature = hmac.new(
-            self.secret_key.encode(),
-            message.encode(),
-            digestmod="sha256"
+            self.secret_key.encode(), message.encode(), digestmod="sha256"
         ).hexdigest()
 
         if not hmac.compare_digest(provided_signature, expected_signature):
@@ -111,5 +109,6 @@ class CsrfService:
             return False
 
         return True
+
 
 import secrets

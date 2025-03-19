@@ -22,14 +22,26 @@ from __future__ import annotations
 import asyncio
 import enum
 import functools
-import logging
 import time
 from dataclasses import dataclass, field
 from threading import RLock
-from typing import Any, Callable, Dict, Generic, List, Literal, Optional, Protocol, Type, TypeVar, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Literal,
+    Optional,
+    Protocol,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from app.core.exceptions import (
-    ServiceUnavailableException,
+    ServiceException,
     ErrorCode,
 )
 from app.core.logging import get_logger
@@ -45,8 +57,8 @@ T = TypeVar("T")
 class CircuitState(enum.Enum):
     """Possible states of a circuit breaker."""
 
-    CLOSED = "closed"        # Normal operation, requests are allowed
-    OPEN = "open"            # Failed state, requests are blocked
+    CLOSED = "closed"  # Normal operation, requests are allowed
+    OPEN = "open"  # Failed state, requests are blocked
     HALF_OPEN = "half_open"  # Testing state, limited requests to check recovery
 
 
@@ -64,9 +76,7 @@ class CircuitBreakerConfig:
     timeout: float = 60.0
 
     # Types of exceptions that should trigger the circuit breaker
-    exception_types: List[Type[Exception]] = field(
-        default_factory=lambda: [Exception]
-    )
+    exception_types: List[Type[Exception]] = field(default_factory=lambda: [Exception])
 
     # Optional fallback function to call when circuit is open
     fallback: Optional[Callable] = None
@@ -81,7 +91,9 @@ class CircuitBreaker:
     # Thread-safe lock for registry access
     _lock = RLock()
 
-    def __init__(self, name: str, config: Optional[CircuitBreakerConfig] = None) -> None:
+    def __init__(
+        self, name: str, config: Optional[CircuitBreakerConfig] = None
+    ) -> None:
         """Initialize a new circuit breaker.
 
         Args:
@@ -104,7 +116,7 @@ class CircuitBreaker:
                 state=self.state.value,
                 failure_threshold=self.config.failure_threshold,
                 success_threshold=self.config.success_threshold,
-                timeout=self.config.timeout
+                timeout=self.config.timeout,
             )
 
     @classmethod
@@ -128,7 +140,9 @@ class CircuitBreaker:
             return cls._breakers[name]
 
     @classmethod
-    def get_or_create(cls, name: str, config: Optional[CircuitBreakerConfig] = None) -> CircuitBreaker:
+    def get_or_create(
+        cls, name: str, config: Optional[CircuitBreakerConfig] = None
+    ) -> CircuitBreaker:
         """Get an existing circuit breaker or create a new one.
 
         Args:
@@ -176,7 +190,7 @@ class CircuitBreaker:
             logger.info(
                 f"Circuit breaker '{self.name}' reset",
                 old_state=old_state.value,
-                new_state=self.state.value
+                new_state=self.state.value,
             )
 
     def check_state(self) -> None:
@@ -191,7 +205,7 @@ class CircuitBreaker:
                     logger.info(
                         f"Circuit breaker '{self.name}' timeout elapsed ({elapsed:.2f}s)",
                         old_state=self.state.value,
-                        timeout=self.config.timeout
+                        timeout=self.config.timeout,
                     )
                     self._transition_to(CircuitState.HALF_OPEN)
 
@@ -205,7 +219,7 @@ class CircuitBreaker:
             logger.info(
                 f"Circuit breaker '{self.name}' transitioning from {self.state.value} to {new_state.value}",
                 old_state=self.state.value,
-                new_state=new_state.value
+                new_state=new_state.value,
             )
             self.state = new_state
             self.last_state_change_time = time.time()
@@ -230,7 +244,7 @@ class CircuitBreaker:
                 logger.debug(
                     f"Circuit breaker '{self.name}' success in HALF_OPEN state",
                     success_count=self.success_count,
-                    threshold=self.config.success_threshold
+                    threshold=self.config.success_threshold,
                 )
 
                 # Check if success threshold reached to close circuit
@@ -252,7 +266,10 @@ class CircuitBreaker:
             self.last_failure_time = time.time()
 
             # Check if exception type should trigger circuit breaker
-            if not any(isinstance(exception, exc_type) for exc_type in self.config.exception_types):
+            if not any(
+                isinstance(exception, exc_type)
+                for exc_type in self.config.exception_types
+            ):
                 logger.debug(
                     f"Circuit breaker '{self.name}' ignoring exception type: {type(exception).__name__}"
                 )
@@ -263,7 +280,7 @@ class CircuitBreaker:
                 logger.debug(
                     f"Circuit breaker '{self.name}' failure in CLOSED state",
                     failure_count=self.failure_count,
-                    threshold=self.config.failure_threshold
+                    threshold=self.config.failure_threshold,
                 )
 
                 # Check if failure threshold reached to open circuit
@@ -273,7 +290,7 @@ class CircuitBreaker:
                 # Any failure in HALF_OPEN state opens the circuit again
                 logger.info(
                     f"Circuit breaker '{self.name}' failure in HALF_OPEN state",
-                    error=str(exception)
+                    error=str(exception),
                 )
                 self._transition_to(CircuitState.OPEN)
 
@@ -286,6 +303,7 @@ class CircuitBreaker:
         Returns:
             F: Wrapped function
         """
+
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Check if state should change based on elapsed time
@@ -300,9 +318,9 @@ class CircuitBreaker:
                     return self.config.fallback(*args, **kwargs)
 
                 # Otherwise raise service unavailable exception
-                raise ServiceUnavailableException(
+                raise ServiceException(
                     message=f"Service is unavailable (circuit breaker '{self.name}' is OPEN)",
-                    code=ErrorCode.SERVICE_UNAVAILABLE
+                    code=ErrorCode.SERVICE_UNAVAILABLE,
                 )
 
             try:
@@ -328,6 +346,7 @@ class CircuitBreaker:
         Returns:
             F: Wrapped async function
         """
+
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Check if state should change based on elapsed time
@@ -344,9 +363,9 @@ class CircuitBreaker:
                     return self.config.fallback(*args, **kwargs)
 
                 # Otherwise raise service unavailable exception
-                raise ServiceUnavailableException(
+                raise ServiceException(
                     message=f"Service is unavailable (circuit breaker '{self.name}' is OPEN)",
-                    code=ErrorCode.SERVICE_UNAVAILABLE
+                    code=ErrorCode.SERVICE_UNAVAILABLE,
                 )
 
             try:
@@ -370,7 +389,7 @@ def circuit_breaker(
     success_threshold: int = 3,
     timeout: float = 60.0,
     exception_types: Optional[List[Type[Exception]]] = None,
-    fallback: Optional[Callable] = None
+    fallback: Optional[Callable] = None,
 ) -> Callable[[F], F]:
     """Decorator factory for applying circuit breaker pattern.
 
@@ -403,7 +422,7 @@ def circuit_breaker(
         success_threshold=success_threshold,
         timeout=timeout,
         exception_types=exception_types,
-        fallback=fallback
+        fallback=fallback,
     )
 
     # Get or create circuit breaker

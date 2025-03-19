@@ -22,7 +22,7 @@ from app.services.pagination.base import (
     PaginationProvider,
     PaginationResult,
     SortDirection,
-    SortField
+    SortField,
 )
 
 logger = get_logger("app.services.pagination.providers.offset")
@@ -34,11 +34,7 @@ R = TypeVar("R")  # Result type
 class OffsetPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
     """Provider for offset-based pagination."""
 
-    def __init__(
-        self,
-        db: AsyncSession,
-        model_class: type[DeclarativeMeta]
-    ) -> None:
+    def __init__(self, db: AsyncSession, model_class: type[DeclarativeMeta]) -> None:
         """Initialize the offset pagination provider.
 
         Args:
@@ -53,7 +49,7 @@ class OffsetPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
         self,
         query: Select,
         params: OffsetPaginationParams,
-        transform_func: Optional[Callable[[T], R]] = None
+        transform_func: Optional[Callable[[T], R]] = None,
     ) -> PaginationResult[R]:
         """Paginate query results using offset-based pagination.
 
@@ -76,7 +72,7 @@ class OffsetPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
         page_size = params.page_size
         pages = (total + page_size - 1) // page_size if total > 0 else 0
 
-        if page > pages and pages > 0:
+        if page > pages > 0:
             page = pages
 
         # Apply sorting
@@ -111,7 +107,7 @@ class OffsetPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
         self,
         query: Select,
         params: Any,
-        transform_func: Optional[Callable[[T], R]] = None
+        transform_func: Optional[Callable[[T], R]] = None,
     ) -> PaginationResult[R]:
         """Not supported by this provider - use CursorPaginationProvider instead.
 
@@ -144,11 +140,13 @@ class OffsetPaginationProvider(Generic[T, R], PaginationProvider[T, R]):
                 raise ValidationException(
                     message=f"Invalid sort field: {field_name}",
                     code="VALIDATION_ERROR",
-                    details=[{
-                        "loc": ["sort", "field"],
-                        "msg": f"Invalid sort field: {field_name}",
-                        "type": "value_error.sort_field"
-                    }]
+                    details=[
+                        {
+                            "loc": ["sort", "field"],
+                            "msg": f"Invalid sort field: {field_name}",
+                            "type": "value_error.sort_field",
+                        }
+                    ],
                 )
 
             column = getattr(self.model_class, field_name)

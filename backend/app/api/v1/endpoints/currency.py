@@ -11,7 +11,7 @@ This module provides API endpoints for:
 
 from __future__ import annotations
 
-from datetime import datetime
+import datetime
 from typing import Annotated, Any, Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
@@ -22,7 +22,7 @@ from app.api.deps import get_admin_user, get_current_active_user, get_db
 from app.models.currency import Currency, ExchangeRate
 from app.models.user import User
 from app.schemas.currency import (
-    ConversionRequest, 
+    ConversionRequest,
     ConversionResponse,
     CurrencyCreate,
     CurrencyRead,
@@ -53,10 +53,10 @@ async def read_currencies(
         List[CurrencyRead]: List of currencies
     """
     query = select(Currency)
-    
+
     if active_only:
         query = query.where(Currency.is_active == True)
-        
+
     result = await db.execute(query)
     return result.scalars().all()
 
@@ -83,24 +83,25 @@ async def read_exchange_rates(
         List[ExchangeRateRead]: List of exchange rates
     """
     # Build query
-    query = select(ExchangeRate).join(
-        Currency, ExchangeRate.source_currency_id == Currency.id
-    ).join(
-        Currency, ExchangeRate.target_currency_id == Currency.id
-    ).order_by(desc(ExchangeRate.effective_date))
-    
+    query = (
+        select(ExchangeRate)
+        .join(Currency, ExchangeRate.source_currency_id == Currency.id)
+        .join(Currency, ExchangeRate.target_currency_id == Currency.id)
+        .order_by(desc(ExchangeRate.effective_date))
+    )
+
     # Apply filters
     if source_code:
         subquery = select(Currency.id).where(Currency.code == source_code)
         query = query.where(ExchangeRate.source_currency_id.in_(subquery))
-        
+
     if target_code:
         subquery = select(Currency.id).where(Currency.code == target_code)
         query = query.where(ExchangeRate.target_currency_id.in_(subquery))
-    
+
     # Apply limit
     query = query.limit(limit)
-    
+
     # Execute query
     result = await db.execute(query)
     return result.scalars().all()
@@ -132,34 +133,29 @@ async def convert_currency(
     )
     result = await db.execute(query)
     found_currencies = result.scalars().all()
-    
+
     if len(found_currencies) != 2:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="One or both specified currencies not found",
         )
-    
+
     # Perform conversion
     converted_amount = await ExchangeRateService.convert_amount(
-        db, 
-        conversion.amount, 
-        conversion.source_currency, 
-        conversion.target_currency
+        db, conversion.amount, conversion.source_currency, conversion.target_currency
     )
-    
+
     if converted_amount is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Exchange rate not found for specified currencies",
         )
-    
+
     # Get rate for reference
     rate = await ExchangeRateService.get_latest_exchange_rate(
-        db,
-        conversion.source_currency,
-        conversion.target_currency
+        db, conversion.source_currency, conversion.target_currency
     )
-    
+
     # Return response
     return {
         "source_currency": conversion.source_currency,
@@ -167,7 +163,7 @@ async def convert_currency(
         "source_amount": conversion.amount,
         "converted_amount": converted_amount,
         "exchange_rate": rate,
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.datetime.now(datetime.UTC),
     }
 
 

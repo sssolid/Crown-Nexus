@@ -41,11 +41,13 @@ def cached(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         """Decorator that caches function results."""
         is_async = asyncio.iscoroutinefunction(func)
 
         if is_async:
+
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Only import here to avoid circular imports
@@ -56,7 +58,9 @@ def cached(
                 await cache_service.ensure_initialized()
 
                 # Generate cache key
-                key = generate_cache_key(prefix or func.__name__, func, args, kwargs, skip_args)
+                key = generate_cache_key(
+                    prefix or func.__name__, func, args, kwargs, skip_args
+                )
 
                 if force_refresh:
                     # Bypass cache
@@ -78,8 +82,10 @@ def cached(
                     await cache_service.set(key, result, ttl, backend=backend)
 
                 return result
+
             return cast(F, async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
                 # For sync functions, we still need to run this in an event loop
@@ -92,7 +98,9 @@ def cached(
                     await cache_service.ensure_initialized()
 
                     # Generate cache key
-                    key = generate_cache_key(prefix or func.__name__, func, args, kwargs, skip_args)
+                    key = generate_cache_key(
+                        prefix or func.__name__, func, args, kwargs, skip_args
+                    )
 
                     if force_refresh:
                         # Bypass cache
@@ -118,6 +126,7 @@ def cached(
                 # Run in event loop
                 loop = asyncio.get_event_loop()
                 return loop.run_until_complete(_get_cached())
+
             return cast(F, sync_wrapper)
 
     return decorator
@@ -139,11 +148,13 @@ def cache_invalidate(
     Returns:
         Decorator function
     """
+
     def decorator(func: F) -> F:
         """Decorator that invalidates cache entries."""
         is_async = asyncio.iscoroutinefunction(func)
 
         if is_async:
+
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Call the wrapped function first
@@ -153,8 +164,10 @@ def cache_invalidate(
                 await _invalidate_cache(prefix, backends, key_func, args, kwargs)
 
                 return result
+
             return cast(F, async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Call the wrapped function first
@@ -162,9 +175,12 @@ def cache_invalidate(
 
                 # Then invalidate cache
                 loop = asyncio.get_event_loop()
-                loop.run_until_complete(_invalidate_cache(prefix, backends, key_func, args, kwargs))
+                loop.run_until_complete(
+                    _invalidate_cache(prefix, backends, key_func, args, kwargs)
+                )
 
                 return result
+
             return cast(F, sync_wrapper)
 
     return decorator

@@ -21,12 +21,12 @@ from app.repositories.base import BaseRepository
 from app.schemas.pagination import (
     CursorPaginationParams,
     OffsetPaginationParams,
-    PaginationResult
+    PaginationResult,
 )
 from app.services.base_service.contracts import BaseServiceProtocol
 from app.services.base_service.operations import (
     CreateUpdateOperations,
-    ReadDeleteOperations
+    ReadDeleteOperations,
 )
 from app.services.base_service.permissions import PermissionHelper
 from app.services.interfaces import CrudServiceInterface
@@ -166,7 +166,9 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
             get_user_func=lambda user_id: PermissionHelper.get_user(self.db, user_id),
         )
 
-    async def delete(self, id: ID, user_id: Optional[str] = None, hard_delete: bool = False) -> bool:
+    async def delete(
+        self, id: ID, user_id: Optional[str] = None, hard_delete: bool = False
+    ) -> bool:
         """Delete entity.
 
         Args:
@@ -277,7 +279,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         page: int = 1,
         page_size: int = 20,
         filters: Optional[Dict[str, Any]] = None,
-        user_id: Optional[str] = None
+        user_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Get all entities with pagination.
 
@@ -291,17 +293,11 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
             Dict[str, Any]: Paginated results
         """
         return await self.get_multi(
-            user_id=user_id,
-            page=page,
-            page_size=page_size,
-            filters=filters
+            user_id=user_id, page=page, page_size=page_size, filters=filters
         )
 
     async def update(
-        self,
-        id: ID,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, id: ID, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> T:
         """Update entity.
 
@@ -332,10 +328,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         )
 
     async def update_with_schema(
-        self,
-        id: ID,
-        schema: U,
-        user_id: Optional[str] = None
+        self, id: ID, schema: U, user_id: Optional[str] = None
     ) -> Optional[T]:
         """Update an existing entity using a Pydantic schema.
 
@@ -364,7 +357,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         self,
         user_id: Optional[str],
         params: OffsetPaginationParams,
-        filters: Optional[Dict[str, Any]] = None
+        filters: Optional[Dict[str, Any]] = None,
     ) -> PaginationResult[R]:
         """Get paginated entities using offset-based pagination.
 
@@ -382,7 +375,9 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         # Check permissions
         if user_id and self.required_read_permission:
             user = await PermissionHelper.get_user(self.db, user_id)
-            if not hasattr(user, "has_permission") or not user.has_permission(self.required_read_permission):
+            if not hasattr(user, "has_permission") or not user.has_permission(
+                self.required_read_permission
+            ):
                 self.logger.warning(
                     f"Permission denied for user {user_id} to list {self.model.__name__}"
                 )
@@ -402,16 +397,14 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
 
         # Get paginated results
         return await self.pagination_service.paginate_with_offset(
-            query,
-            params,
-            self.to_response
+            query, params, self.to_response
         )
 
     async def get_paginated_with_cursor(
         self,
         user_id: Optional[str],
         params: CursorPaginationParams,
-        filters: Optional[Dict[str, Any]] = None
+        filters: Optional[Dict[str, Any]] = None,
     ) -> PaginationResult[R]:
         """Get paginated entities using cursor-based pagination.
 
@@ -429,7 +422,9 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         # Check permissions
         if user_id and self.required_read_permission:
             user = await PermissionHelper.get_user(self.db, user_id)
-            if not hasattr(user, "has_permission") or not user.has_permission(self.required_read_permission):
+            if not hasattr(user, "has_permission") or not user.has_permission(
+                self.required_read_permission
+            ):
                 self.logger.warning(
                     f"Permission denied for user {user_id} to list {self.model.__name__}"
                 )
@@ -449,9 +444,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
 
         # Get paginated results
         return await self.pagination_service.paginate_with_cursor(
-            query,
-            params,
-            self.to_response
+            query, params, self.to_response
         )
 
     async def to_response(self, entity: T) -> R:
@@ -474,12 +467,12 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         Returns:
             List[R]: Response models
         """
-        return await self.read_delete_ops.to_response_multi(entities, self.response_schema)
+        return await self.read_delete_ops.to_response_multi(
+            entities, self.response_schema
+        )
 
     async def apply_filters(
-        self,
-        filters: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, filters: Dict[str, Any], user_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """Apply custom filters based on business logic.
 
@@ -499,9 +492,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
     # Validation hooks - override in subclasses
 
     async def validate_create(
-        self,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Validate data before creation.
 
@@ -516,10 +507,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         pass
 
     async def validate_update(
-        self,
-        entity: T,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, entity: T, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Validate data before update.
 
@@ -534,11 +522,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         # Override in subclasses for custom validation
         pass
 
-    async def validate_delete(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def validate_delete(self, entity: T, user_id: Optional[str] = None) -> None:
         """Validate before deletion.
 
         Args:
@@ -554,9 +538,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
     # Lifecycle hooks - override in subclasses
 
     async def before_create(
-        self,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Hook before entity creation.
 
@@ -567,11 +549,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         # Override in subclasses for custom logic
         pass
 
-    async def after_create(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def after_create(self, entity: T, user_id: Optional[str] = None) -> None:
         """Hook after entity creation.
 
         Args:
@@ -582,10 +560,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         pass
 
     async def before_update(
-        self,
-        entity: T,
-        data: Dict[str, Any],
-        user_id: Optional[str] = None
+        self, entity: T, data: Dict[str, Any], user_id: Optional[str] = None
     ) -> None:
         """Hook before entity update.
 
@@ -598,10 +573,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         pass
 
     async def after_update(
-        self,
-        updated_entity: T,
-        original_entity: T,
-        user_id: Optional[str] = None
+        self, updated_entity: T, original_entity: T, user_id: Optional[str] = None
     ) -> None:
         """Hook after entity update.
 
@@ -613,11 +585,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         # Override in subclasses for custom logic
         pass
 
-    async def before_delete(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def before_delete(self, entity: T, user_id: Optional[str] = None) -> None:
         """Hook before entity deletion.
 
         Args:
@@ -627,11 +595,7 @@ class BaseService(Generic[T, C, U, R, ID], BaseServiceProtocol[T, ID, C, U, R]):
         # Override in subclasses for custom logic
         pass
 
-    async def after_delete(
-        self,
-        entity: T,
-        user_id: Optional[str] = None
-    ) -> None:
+    async def after_delete(self, entity: T, user_id: Optional[str] = None) -> None:
         """Hook after entity deletion.
 
         Args:

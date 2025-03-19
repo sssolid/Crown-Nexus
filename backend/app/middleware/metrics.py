@@ -10,7 +10,8 @@ from starlette.routing import Route, Match
 
 from app.core.dependency_manager import get_dependency
 from app.core.logging import get_logger
-from app.services.metrics_service import MetricsService, MetricName, MetricTag
+from app.services.metrics import MetricsService
+from app.services.metrics.base import MetricName, MetricTag
 
 logger = get_logger("app.middleware.metrics")
 
@@ -42,13 +43,18 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             metrics_service = get_dependency("metrics_service")
 
             # Track in-progress request
-            if metrics_service and MetricName.HTTP_IN_PROGRESS in metrics_service.gauges:
+            if (
+                metrics_service
+                and MetricName.HTTP_IN_PROGRESS in metrics_service.gauges
+            ):
                 endpoint = self._get_endpoint_name(request)
                 labels = {
                     MetricTag.METHOD: request.method,
-                    MetricTag.ENDPOINT: endpoint
+                    MetricTag.ENDPOINT: endpoint,
                 }
-                metrics_service.track_in_progress(MetricName.HTTP_IN_PROGRESS, labels, 1)
+                metrics_service.track_in_progress(
+                    MetricName.HTTP_IN_PROGRESS, labels, 1
+                )
         except Exception as e:
             logger.error(f"Error getting metrics service: {str(e)}")
             metrics_service = None
@@ -87,16 +93,18 @@ class MetricsMiddleware(BaseHTTPMiddleware):
                     endpoint=endpoint,
                     status_code=status_code,
                     duration=duration,
-                    error_code=error_code
+                    error_code=error_code,
                 )
 
                 # Update in-progress count
                 if MetricName.HTTP_IN_PROGRESS in metrics_service.gauges:
                     labels = {
                         MetricTag.METHOD: request.method,
-                        MetricTag.ENDPOINT: endpoint
+                        MetricTag.ENDPOINT: endpoint,
                     }
-                    metrics_service.track_in_progress(MetricName.HTTP_IN_PROGRESS, labels, -1)
+                    metrics_service.track_in_progress(
+                        MetricName.HTTP_IN_PROGRESS, labels, -1
+                    )
 
     def _get_endpoint_name(self, request: Request) -> str:
         """Extract the endpoint name from the request.

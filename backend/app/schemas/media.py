@@ -37,6 +37,7 @@ class MediaBase(BaseModel):
         visibility: Visibility level
         file_metadata: Additional file metadata
     """
+
     filename: str
     media_type: MediaType = MediaType.IMAGE
     visibility: MediaVisibility = MediaVisibility.PRIVATE
@@ -55,6 +56,7 @@ class MediaCreate(BaseModel):
         visibility: Visibility level
         file_metadata: Additional file metadata
     """
+
     media_type: MediaType = MediaType.IMAGE
     visibility: MediaVisibility = MediaVisibility.PRIVATE
     file_metadata: Dict[str, Any] = Field(default_factory=dict)
@@ -74,6 +76,7 @@ class MediaUpdate(BaseModel):
         file_metadata: Additional file metadata (optional)
         is_approved: Whether the media is approved (optional)
     """
+
     filename: Optional[str] = None
     media_type: Optional[MediaType] = None
     visibility: Optional[MediaVisibility] = None
@@ -99,6 +102,7 @@ class MediaInDB(MediaBase):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     id: uuid.UUID
     file_path: str
     file_size: int
@@ -124,6 +128,7 @@ class Media(MediaInDB):
         url: URL to access the file
         thumbnail_url: URL to access the thumbnail (optional)
     """
+
     url: str = ""
     thumbnail_url: Optional[str] = None
 
@@ -162,6 +167,7 @@ class MediaListResponse(BaseModel):
         page_size: Number of items per page
         pages: Total number of pages
     """
+
     items: List[Media]
     total: int
     page: int
@@ -179,6 +185,7 @@ class FileUploadResponse(BaseModel):
         media: Media information
         message: Success message
     """
+
     media: Media
     message: str = "File uploaded successfully"
 
@@ -193,5 +200,6 @@ class FileUploadError(BaseModel):
         error: Error type
         detail: Detailed error information (optional)
     """
+
     error: str
     detail: Optional[str] = None

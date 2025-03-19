@@ -10,8 +10,8 @@ import hashlib
 import hmac
 import secrets
 import uuid
-from datetime import datetime
-from typing import Dict, List, Optional
+import datetime
+from typing import List, Optional
 
 from app.core.logging import get_logger
 from app.core.security import TokenType, create_token
@@ -24,10 +24,7 @@ class ApiKeyService:
     """Service for API key management."""
 
     def generate_api_key(
-        self,
-        user_id: str,
-        name: str,
-        permissions: Optional[List[str]] = None
+        self, user_id: str, name: str, permissions: Optional[List[str]] = None
     ) -> ApiKeyData:
         """
         Generate a new API key.
@@ -60,7 +57,7 @@ class ApiKeyService:
             hashed_secret=hashed_secret,
             token=token,
             name=name,
-            created_at=datetime.utcnow().isoformat(),
+            created_at=datetime.datetime.now(datetime.UTC).isoformat(),
             permissions=permissions or [],
         )
 

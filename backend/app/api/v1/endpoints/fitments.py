@@ -110,9 +110,9 @@ async def create_fitment(
     """
     # Check if identical fitment already exists
     stmt = select(Fitment).where(
-        (Fitment.year == fitment_in.year) &
-        (Fitment.make == fitment_in.make) &
-        (Fitment.model == fitment_in.model)
+        (Fitment.year == fitment_in.year)
+        & (Fitment.make == fitment_in.make)
+        & (Fitment.model == fitment_in.model)
     )
 
     if fitment_in.engine:
@@ -197,23 +197,44 @@ async def update_fitment(
         )
 
     # Check if update would create a duplicate
-    if any(field is not None for field in [
-        fitment_in.year, fitment_in.make, fitment_in.model,
-        fitment_in.engine, fitment_in.transmission
-    ]):
+    if any(
+        field is not None
+        for field in [
+            fitment_in.year,
+            fitment_in.make,
+            fitment_in.model,
+            fitment_in.engine,
+            fitment_in.transmission,
+        ]
+    ):
         # Build query to check for duplicates
         stmt = select(Fitment).where(
-            (Fitment.id != fitment_id) &
-            (Fitment.year == (fitment_in.year if fitment_in.year is not None else fitment.year)) &
-            (Fitment.make == (fitment_in.make if fitment_in.make is not None else fitment.make)) &
-            (Fitment.model == (fitment_in.model if fitment_in.model is not None else fitment.model))
+            (Fitment.id != fitment_id)
+            & (
+                Fitment.year
+                == (fitment_in.year if fitment_in.year is not None else fitment.year)
+            )
+            & (
+                Fitment.make
+                == (fitment_in.make if fitment_in.make is not None else fitment.make)
+            )
+            & (
+                Fitment.model
+                == (fitment_in.model if fitment_in.model is not None else fitment.model)
+            )
         )
 
-        engine_value = fitment_in.engine if fitment_in.engine is not None else fitment.engine
+        engine_value = (
+            fitment_in.engine if fitment_in.engine is not None else fitment.engine
+        )
         if engine_value:
             stmt = stmt.where(Fitment.engine == engine_value)
 
-        transmission_value = fitment_in.transmission if fitment_in.transmission is not None else fitment.transmission
+        transmission_value = (
+            fitment_in.transmission
+            if fitment_in.transmission is not None
+            else fitment.transmission
+        )
         if transmission_value:
             stmt = stmt.where(Fitment.transmission == transmission_value)
 
@@ -265,8 +286,10 @@ async def delete_fitment(
         )
 
     # Check if fitment is associated with products
-    stmt = select(func.count()).select_from(product_fitment_association).where(
-        product_fitment_association.c.fitment_id == fitment_id
+    stmt = (
+        select(func.count())
+        .select_from(product_fitment_association)
+        .where(product_fitment_association.c.fitment_id == fitment_id)
     )
     count = await db.scalar(stmt)
 
@@ -368,8 +391,8 @@ async def associate_product_with_fitment(
 
     # Check if association already exists
     stmt = select(product_fitment_association).where(
-        (product_fitment_association.c.product_id == product_id) &
-        (product_fitment_association.c.fitment_id == fitment_id)
+        (product_fitment_association.c.product_id == product_id)
+        & (product_fitment_association.c.fitment_id == fitment_id)
     )
     result = await db.execute(stmt)
     if result.first():
@@ -377,8 +400,7 @@ async def associate_product_with_fitment(
 
     # Create association
     stmt = product_fitment_association.insert().values(
-        product_id=product_id,
-        fitment_id=fitment_id
+        product_id=product_id, fitment_id=fitment_id
     )
     await db.execute(stmt)
     await db.commit()
@@ -407,8 +429,8 @@ async def remove_product_from_fitment(
     """
     # Check if association exists
     stmt = select(product_fitment_association).where(
-        (product_fitment_association.c.product_id == product_id) &
-        (product_fitment_association.c.fitment_id == fitment_id)
+        (product_fitment_association.c.product_id == product_id)
+        & (product_fitment_association.c.fitment_id == fitment_id)
     )
     result = await db.execute(stmt)
     if not result.first():
@@ -419,8 +441,8 @@ async def remove_product_from_fitment(
 
     # Remove association
     stmt = product_fitment_association.delete().where(
-        (product_fitment_association.c.product_id == product_id) &
-        (product_fitment_association.c.fitment_id == fitment_id)
+        (product_fitment_association.c.product_id == product_id)
+        & (product_fitment_association.c.fitment_id == fitment_id)
     )
     await db.execute(stmt)
     await db.commit()

@@ -16,11 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
 from app.core.config import settings
-from app.core.exceptions import (
-    DatabaseException,
-    ErrorCode,
-    ExternalServiceException
-)
+from app.core.exceptions import DatabaseException, ErrorCode, ServiceException
 from app.core.logging import get_logger
 from app.services.search.base import SearchProvider, SearchResult
 from app.utils.retry import async_retry_on_network_errors
@@ -35,7 +31,7 @@ class ElasticsearchSearchProvider(SearchProvider):
         self,
         db: AsyncSession,
         model_class: Type[DeclarativeMeta],
-        index_name: Optional[str] = None
+        index_name: Optional[str] = None,
     ) -> None:
         """Initialize the Elasticsearch search provider.
 
@@ -54,7 +50,9 @@ class ElasticsearchSearchProvider(SearchProvider):
     async def initialize(self) -> None:
         """Initialize the Elasticsearch search provider."""
         if not settings.ELASTICSEARCH_HOST:
-            self.logger.warning("Elasticsearch host not configured, provider will not be available")
+            self.logger.warning(
+                "Elasticsearch host not configured, provider will not be available"
+            )
             return
 
         try:
@@ -67,13 +65,13 @@ class ElasticsearchSearchProvider(SearchProvider):
                 self.logger.info(
                     "Connected to Elasticsearch",
                     host=settings.ELASTICSEARCH_HOST,
-                    port=settings.ELASTICSEARCH_PORT
+                    port=settings.ELASTICSEARCH_PORT,
                 )
             else:
                 self.logger.warning(
                     "Elasticsearch ping failed",
                     host=settings.ELASTICSEARCH_HOST,
-                    port=settings.ELASTICSEARCH_PORT
+                    port=settings.ELASTICSEARCH_PORT,
                 )
 
             # Set up search fields based on model type
@@ -97,7 +95,7 @@ class ElasticsearchSearchProvider(SearchProvider):
                 host=settings.ELASTICSEARCH_HOST,
                 port=settings.ELASTICSEARCH_PORT,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
             self.es_client = None
 
@@ -114,7 +112,7 @@ class ElasticsearchSearchProvider(SearchProvider):
         filters: Optional[Dict[str, Any]] = None,
         page: int = 1,
         page_size: int = 20,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SearchResult:
         """Search for entities using Elasticsearch.
 
@@ -129,14 +127,14 @@ class ElasticsearchSearchProvider(SearchProvider):
             Dict containing search results and pagination info
 
         Raises:
-            ExternalServiceException: If the Elasticsearch query fails
+            ServiceException: If the Elasticsearch query fails
             DatabaseException: If fetching entities from database fails
         """
         if not self.es_client:
-            raise ExternalServiceException(
+            raise ServiceException(
                 message="Elasticsearch client not initialized",
                 code=ErrorCode.EXTERNAL_SERVICE_ERROR,
-                details={"service": "elasticsearch"}
+                details={"service": "elasticsearch"},
             )
 
         try:
@@ -145,29 +143,24 @@ class ElasticsearchSearchProvider(SearchProvider):
 
             # Build Elasticsearch query
             query: Dict[str, Any] = {
-                "query": {
-                    "bool": {
-                        "must": [],
-                        "filter": []
-                    }
-                },
+                "query": {"bool": {"must": [], "filter": []}},
                 "from": from_index,
                 "size": page_size,
-                "highlight": {
-                    "fields": {}
-                }
+                "highlight": {"fields": {}},
             }
 
             # Add search term if provided
             if search_term:
-                query["query"]["bool"]["must"].append({
-                    "multi_match": {
-                        "query": search_term,
-                        "fields": self.search_fields,
-                        "type": "best_fields",
-                        "fuzziness": "AUTO"
+                query["query"]["bool"]["must"].append(
+                    {
+                        "multi_match": {
+                            "query": search_term,
+                            "fields": self.search_fields,
+                            "type": "best_fields",
+                            "fuzziness": "AUTO",
+                        }
                     }
-                })
+                )
 
                 # Add highlight fields
                 for field in self.search_fields:
@@ -188,15 +181,13 @@ class ElasticsearchSearchProvider(SearchProvider):
                                 {"term": {f"attributes.{attr_key}": attr_value}}
                             )
                     else:
-                        query["query"]["bool"]["filter"].append(
-                            {"term": {key: value}}
-                        )
+                        query["query"]["bool"]["filter"].append({"term": {key: value}})
 
             self.logger.debug(
                 "Elasticsearch query built",
                 search_term=search_term,
                 filters=filters,
-                query=json.dumps(query)
+                query=json.dumps(query),
             )
 
             # Execute Elasticsearch query
@@ -205,9 +196,7 @@ class ElasticsearchSearchProvider(SearchProvider):
             total = result["hits"]["total"]["value"]
 
             self.logger.debug(
-                "Elasticsearch search results",
-                hits_count=len(hits),
-                total=total
+                "Elasticsearch search results", hits_count=len(hits), total=total
             )
 
             # Fetch actual database objects using IDs
@@ -222,13 +211,15 @@ class ElasticsearchSearchProvider(SearchProvider):
                     db_entities = {str(e.id): e for e in db_result.scalars().all()}
 
                     # Preserve Elasticsearch order
-                    entities = [db_entities[eid] for eid in entity_ids if eid in db_entities]
+                    entities = [
+                        db_entities[eid] for eid in entity_ids if eid in db_entities
+                    ]
 
                     self.logger.debug(
                         "Retrieved entities from database after ES search",
                         entity_count=len(entities),
                         found_ids=len(db_entities),
-                        total_ids=len(entity_ids)
+                        total_ids=len(entity_ids),
                     )
 
                 except SQLAlchemyError as e:
@@ -236,33 +227,39 @@ class ElasticsearchSearchProvider(SearchProvider):
                         "Failed to fetch entities from database after ES search",
                         error=str(e),
                         entity_ids=entity_ids,
-                        exc_info=True
+                        exc_info=True,
                     )
                     raise DatabaseException(
                         message="Failed to fetch entities after Elasticsearch search",
                         code=ErrorCode.DATABASE_ERROR,
-                        original_exception=e
+                        original_exception=e,
                     ) from e
 
             # Calculate pagination info
             pages = (total + page_size - 1) // page_size if page_size > 0 else 0
 
             # Create search result
-            search_result = SearchResult({
-                "items": entities,
-                "total": total,
-                "page": page,
-                "page_size": page_size,
-                "pages": pages,
-                "has_next": page < pages,
-                "has_prev": page > 1
-            })
+            search_result = SearchResult(
+                {
+                    "items": entities,
+                    "total": total,
+                    "page": page,
+                    "page_size": page_size,
+                    "pages": pages,
+                    "has_next": page < pages,
+                    "has_prev": page > 1,
+                }
+            )
 
             # Add highlights if available
             if search_term:
                 highlights = {}
                 for hit in hits:
-                    if "_source" in hit and "id" in hit["_source"] and "highlight" in hit:
+                    if (
+                        "_source" in hit
+                        and "id" in hit["_source"]
+                        and "highlight" in hit
+                    ):
                         highlights[hit["_source"]["id"]] = hit["highlight"]
 
                 search_result["highlights"] = highlights
@@ -271,7 +268,7 @@ class ElasticsearchSearchProvider(SearchProvider):
                 "Elasticsearch search successful",
                 search_term=search_term,
                 results_count=len(entities),
-                total=total
+                total=total,
             )
 
             return search_result
@@ -284,11 +281,10 @@ class ElasticsearchSearchProvider(SearchProvider):
                 "Elasticsearch search failed",
                 search_term=search_term,
                 error=str(e),
-                exc_info=True
+                exc_info=True,
             )
-            raise ExternalServiceException(
+            raise ServiceException(
                 message="Failed to search with Elasticsearch",
-                code=ErrorCode.EXTERNAL_SERVICE_ERROR,
                 details={"service": "elasticsearch"},
-                original_exception=e
+                original_exception=e,
             ) from e

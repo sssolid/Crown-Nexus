@@ -13,11 +13,7 @@ from typing import Any, Dict, Optional
 class FitmentError(Exception):
     """Base class for all fitment module exceptions."""
 
-    def __init__(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize a fitment error.
 
@@ -33,11 +29,7 @@ class FitmentError(Exception):
 class ParsingError(FitmentError):
     """Exception raised when parsing a fitment string fails."""
 
-    def __init__(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize a parsing error.
 
@@ -51,11 +43,7 @@ class ParsingError(FitmentError):
 class ValidationError(FitmentError):
     """Exception raised when validating a fitment fails."""
 
-    def __init__(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize a validation error.
 
@@ -69,11 +57,7 @@ class ValidationError(FitmentError):
 class MappingError(FitmentError):
     """Exception raised when mapping a fitment fails."""
 
-    def __init__(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize a mapping error.
 
@@ -87,11 +71,7 @@ class MappingError(FitmentError):
 class DatabaseError(FitmentError):
     """Exception raised when a database operation fails."""
 
-    def __init__(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize a database error.
 
@@ -105,11 +85,7 @@ class DatabaseError(FitmentError):
 class ConfigurationError(FitmentError):
     """Exception raised when configuration is invalid or missing."""
 
-    def __init__(
-        self,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize a configuration error.
 

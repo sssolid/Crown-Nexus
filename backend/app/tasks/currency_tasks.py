@@ -10,7 +10,6 @@ This module defines Celery tasks for:
 
 from __future__ import annotations
 
-import logging
 from typing import Dict, Optional, List
 
 from celery import shared_task
@@ -20,7 +19,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.db.session import get_db_context
 from app.services.currency_service import ExchangeRateService
 
-logger = logging.getLogger(__name__)
+from app.core.logging import get_logger
+
+logger = get_logger("app.tasks.currency_tasks")
 
 
 @shared_task(
@@ -46,8 +47,9 @@ def update_exchange_rates(self) -> Dict[str, Optional[int]]:
 
         # Use asyncio.run in a synchronous task
         import asyncio
+
         count = asyncio.run(_update_rates())
-        
+
         return {"status": "success", "updated_count": count}
     except SQLAlchemyError as e:
         logger.error(f"Database error during exchange rate update: {str(e)}")
@@ -76,17 +78,17 @@ def init_currencies() -> Dict[str, Optional[int]]:
         {"code": "CHF", "name": "Swiss Franc", "symbol": "CHF", "is_base": False},
         {"code": "CNY", "name": "Chinese Yuan", "symbol": "¥", "is_base": False},
     ]
-    
+
     async def _init_currencies():
         from app.models.currency import Currency
         from sqlalchemy import select
-        
+
         async with get_db_context() as db:
             # Check existing currencies
             stmt = select(Currency.code)
             result = await db.execute(stmt)
             existing_codes = {code for code, in result}
-            
+
             # Add missing currencies
             count = 0
             for currency_data in currencies:
@@ -94,14 +96,15 @@ def init_currencies() -> Dict[str, Optional[int]]:
                     currency = Currency(**currency_data)
                     db.add(currency)
                     count += 1
-            
+
             if count > 0:
                 await db.commit()
-            
+
             return count
-    
+
     try:
         import asyncio
+
         count = asyncio.run(_init_currencies())
         return {"status": "success", "added_count": count}
     except Exception as e:

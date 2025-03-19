@@ -33,7 +33,7 @@ from app.models.associations import (
     product_packaging_association,
     product_color_association,
     product_construction_type_association,
-    product_texture_association
+    product_texture_association,
 )  # noqa
 
 # Location models
@@ -48,7 +48,7 @@ from app.models.reference import (
     TariffCode,
     Texture,
     UnspscCode,
-    Warehouse
+    Warehouse,
 )  # noqa
 
 # Product models
@@ -67,7 +67,7 @@ from app.models.product import (
     ProductMeasurement,
     ProductPricing,
     ProductStock,
-    ProductSupersession
+    ProductSupersession,
 )  # noqa
 
 # Media models

@@ -20,7 +20,16 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum as SQLAEnum, ForeignKey, Integer, String, func, text, Boolean
+from sqlalchemy import (
+    DateTime,
+    Enum as SQLAEnum,
+    ForeignKey,
+    Integer,
+    String,
+    func,
+    text,
+    Boolean,
+)
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
@@ -41,6 +50,7 @@ class MediaType(str, Enum):
     Defines the different categories of files that can be uploaded
     and helps determine appropriate handling and validation rules.
     """
+
     IMAGE = "image"
     DOCUMENT = "document"
     VIDEO = "video"
@@ -58,6 +68,7 @@ class MediaVisibility(str, Enum):
     - PRIVATE: Requires authentication
     - RESTRICTED: Requires specific permissions
     """
+
     PUBLIC = "public"
     PRIVATE = "private"
     RESTRICTED = "restricted"
@@ -91,26 +102,19 @@ class Media(Base):
         created_at: Creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "media"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    filename: Mapped[str] = mapped_column(
-        String(255), nullable=False
-    )
-    file_path: Mapped[str] = mapped_column(
-        String(512), nullable=False, unique=True
-    )
-    file_size: Mapped[int] = mapped_column(
-        Integer, nullable=False
-    )
+    filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    file_path: Mapped[str] = mapped_column(String(512), nullable=False, unique=True)
+    file_size: Mapped[int] = mapped_column(Integer, nullable=False)
     media_type: Mapped[MediaType] = mapped_column(
         SQLAEnum(MediaType), default=MediaType.IMAGE, nullable=False
     )
-    mime_type: Mapped[str] = mapped_column(
-        String(127), nullable=False
-    )
+    mime_type: Mapped[str] = mapped_column(String(127), nullable=False)
     visibility: Mapped[MediaVisibility] = mapped_column(
         SQLAEnum(MediaVisibility), default=MediaVisibility.PRIVATE, nullable=False
     )
@@ -137,17 +141,13 @@ class Media(Base):
     products: Mapped[List["Product"]] = relationship(
         "app.models.product.Product",
         secondary=product_media_association,
-        back_populates="media"
+        back_populates="media",
     )
     uploaded_by: Mapped["User"] = relationship(
-        "User",
-        foreign_keys=[uploaded_by_id],
-        backref="uploaded_media"
+        "User", foreign_keys=[uploaded_by_id], backref="uploaded_media"
     )
     approved_by: Mapped[Optional["User"]] = relationship(
-        "User",
-        foreign_keys=[approved_by_id],
-        backref="approved_media"
+        "User", foreign_keys=[approved_by_id], backref="approved_media"
     )
 
     # Audit timestamps
@@ -158,7 +158,7 @@ class Media(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False
+        nullable=False,
     )
 
     def __repr__(self) -> str:
@@ -178,10 +178,10 @@ class Media(Base):
         Returns:
             str: File extension (lowercase, without leading period)
         """
-        if not self.filename or '.' not in self.filename:
+        if not self.filename or "." not in self.filename:
             return ""
 
-        return self.filename.rsplit('.', 1)[1].lower()
+        return self.filename.rsplit(".", 1)[1].lower()
 
     @property
     def is_image(self) -> bool:

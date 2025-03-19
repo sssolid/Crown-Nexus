@@ -86,14 +86,18 @@ class RateLimiter:
             prefix: Key prefix for Redis storage
             default_rule: Default rate limit rule
         """
-        self.use_redis: bool = use_redis if use_redis is not None else (
-            settings.security.RATE_LIMIT_STORAGE == "redis" and
-            settings.redis.REDIS_HOST is not None
+        self.use_redis: bool = (
+            use_redis
+            if use_redis is not None
+            else (
+                settings.RATE_LIMIT_STORAGE == "redis"
+                and settings.REDIS_HOST is not None
+            )
         )
         self.prefix: str = prefix
         self.default_rule: RateLimitRule = default_rule or RateLimitRule(
-            requests_per_window=settings.security.RATE_LIMIT_REQUESTS_PER_MINUTE,
-            window_seconds=60
+            requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
+            window_seconds=60,
         )
 
         # In-memory storage for rate limiting when Redis is not available
@@ -106,9 +110,7 @@ class RateLimiter:
         )
 
     async def is_rate_limited(
-        self,
-        key: str,
-        rule: Optional[RateLimitRule] = None
+        self, key: str, rule: Optional[RateLimitRule] = None
     ) -> Tuple[bool, int, int]:
         """Check if a key is rate limited.
 
@@ -127,14 +129,14 @@ class RateLimiter:
             try:
                 redis_client = await get_redis_client()
                 current_count = await increment_counter(
-                    window_key,
-                    1,
-                    rule.window_seconds
+                    window_key, 1, rule.window_seconds
                 )
 
                 if current_count is None:
                     # Redis operation failed, fallback to in-memory
-                    logger.warning("Redis rate limiting failed, using in-memory fallback")
+                    logger.warning(
+                        "Redis rate limiting failed, using in-memory fallback"
+                    )
                     return await self._check_in_memory(key, rule)
 
                 is_limited = current_count > rule.requests_per_window
@@ -147,9 +149,7 @@ class RateLimiter:
         return await self._check_in_memory(key, rule)
 
     async def _check_in_memory(
-        self,
-        key: str,
-        rule: RateLimitRule
+        self, key: str, rule: RateLimitRule
     ) -> Tuple[bool, int, int]:
         """Check rate limits using in-memory storage.
 
@@ -169,8 +169,7 @@ class RateLimiter:
 
         # Clean up old timestamps
         self._counters[key] = {
-            ts: count for ts, count in self._counters[key].items()
-            if ts > window_start
+            ts: count for ts, count in self._counters[key].items() if ts > window_start
         }
 
         # Add current request
@@ -186,11 +185,7 @@ class RateLimiter:
 
         return is_limited, current_count, rule.requests_per_window
 
-    def get_key_for_request(
-        self,
-        request: Request,
-        rule: RateLimitRule
-    ) -> str:
+    def get_key_for_request(self, request: Request, rule: RateLimitRule) -> str:
         """Generate a rate limiting key for a request.
 
         Args:
@@ -263,7 +258,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.rules: List[RateLimitRule] = rules or [
             RateLimitRule(
                 requests_per_window=settings.security.RATE_LIMIT_REQUESTS_PER_MINUTE,
-                window_seconds=60
+                window_seconds=60,
             )
         ]
         self.rate_limiter: RateLimiter = RateLimiter(use_redis=use_redis)
@@ -291,12 +286,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         """
         # Skip rate limiting for excluded paths
         path: str = request.url.path
-        if any(path.startswith(excluded) for rule in self.rules for excluded in rule.exclude_paths):
+        if any(
+            path.startswith(excluded)
+            for rule in self.rules
+            for excluded in rule.exclude_paths
+        ):
             return await call_next(request)
 
         # Find applicable rules
         applicable_rules: List[RateLimitRule] = [
-            rule for rule in self.rules
+            rule
+            for rule in self.rules
             if rule.path_pattern is None or path.startswith(rule.path_pattern)
         ]
 
@@ -329,7 +329,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             raise RateLimitException(
                 message="Rate limit exceeded",
                 details={"ip": request.client.host},
-                headers=headers
+                headers=headers,
             )
 
         # Process the request

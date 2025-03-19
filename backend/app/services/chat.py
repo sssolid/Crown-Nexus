@@ -4,9 +4,10 @@ Chat service for managing chat rooms, messages, and members.
 This module provides the ChatService for creating and managing chat rooms,
 sending and receiving messages, and controlling member access.
 """
+
 from __future__ import annotations
 import uuid
-from datetime import datetime
+import datetime
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from sqlalchemy import and_, desc, func, or_, select, update
@@ -16,10 +17,10 @@ from sqlalchemy.orm import joinedload
 
 from app.core.exceptions import (
     AuthenticationException,
-    BusinessLogicException,
+    BusinessException,
     ResourceNotFoundException,
     ValidationException,
-    ErrorCode
+    ErrorCode,
 )
 from app.core.dependency_manager import get_dependency
 from app.core.logging import get_logger
@@ -31,14 +32,15 @@ from app.models.chat import (
     ChatRoom,
     ChatRoomType,
     MessageReaction,
-    MessageType
+    MessageType,
 )
 from app.models.user import User
 from app.utils.crypto import decrypt_message, encrypt_message
 
 cache_service = get_dependency("cache_service")
 
-logger = get_logger('app.services.chat')
+logger = get_logger("app.services.chat")
+
 
 class ChatService:
     """Service for managing chat rooms and messages."""
@@ -56,8 +58,8 @@ class ChatService:
         name: Optional[str],
         room_type: str,
         creator_id: str,
-        company_id: Optional[str]=None,
-        members: Optional[List[Dict[str, Any]]]=None
+        company_id: Optional[str] = None,
+        members: Optional[List[Dict[str, Any]]] = None,
     ) -> ChatRoom:
         """Create a new chat room.
 
@@ -73,38 +75,39 @@ class ChatService:
 
         Raises:
             ValidationException: If the room type or member data is invalid.
-            BusinessLogicException: If there's an error creating the room.
+            BusinessException: If there's an error creating the room.
         """
         try:
             try:
                 chat_room_type = ChatRoomType(room_type)
             except ValueError:
-                valid_types = ', '.join((t.value for t in ChatRoomType))
+                valid_types = ", ".join((t.value for t in ChatRoomType))
                 logger.warning(
                     "Invalid chat room type",
                     room_type=room_type,
-                    valid_types=valid_types
+                    valid_types=valid_types,
                 )
                 raise ValidationException(
-                    message=f'Invalid room type. Must be one of: {valid_types}',
-                    code=ErrorCode.VALIDATION_ERROR
+                    message=f"Invalid room type. Must be one of: {valid_types}"
                 )
 
-            if chat_room_type == ChatRoomType.DIRECT and members and (len(members) != 2):
+            if (
+                chat_room_type == ChatRoomType.DIRECT
+                and members
+                and (len(members) != 2)
+            ):
                 logger.warning(
                     "Direct chat room requires exactly 2 members",
-                    members_count=len(members) if members else 0
+                    members_count=len(members) if members else 0,
                 )
                 raise ValidationException(
-                    message='Direct chat rooms must have exactly 2 members',
-                    code=ErrorCode.VALIDATION_ERROR
+                    message="Direct chat rooms must have exactly 2 members"
                 )
 
             if chat_room_type == ChatRoomType.COMPANY and (not company_id):
                 logger.warning("Company chat room missing company_id")
                 raise ValidationException(
-                    message='Company rooms must have a company_id',
-                    code=ErrorCode.VALIDATION_ERROR
+                    message="Company rooms must have a company_id",
                 )
 
             room = ChatRoom(
@@ -112,7 +115,7 @@ class ChatService:
                 type=chat_room_type,
                 company_id=uuid.UUID(company_id) if company_id else None,
                 is_active=True,
-                metadata={}
+                metadata={},
             )
             self.db.add(room)
             await self.db.flush()
@@ -121,36 +124,35 @@ class ChatService:
                 room_id=room.id,
                 user_id=uuid.UUID(creator_id),
                 role=ChatMemberRole.OWNER,
-                is_active=True
+                is_active=True,
             )
             self.db.add(creator_member)
 
             if members:
                 for member_data in members:
-                    if member_data.get('user_id') == creator_id:
+                    if member_data.get("user_id") == creator_id:
                         continue
 
-                    member_role = member_data.get('role', ChatMemberRole.MEMBER)
+                    member_role = member_data.get("role", ChatMemberRole.MEMBER)
                     if not isinstance(member_role, ChatMemberRole):
                         try:
                             member_role = ChatMemberRole(member_role)
                         except ValueError:
-                            valid_roles = ', '.join((r.value for r in ChatMemberRole))
+                            valid_roles = ", ".join((r.value for r in ChatMemberRole))
                             logger.warning(
                                 "Invalid member role",
                                 role=member_role,
-                                valid_roles=valid_roles
+                                valid_roles=valid_roles,
                             )
                             raise ValidationException(
-                                message=f'Invalid member role. Must be one of: {valid_roles}',
-                                code=ErrorCode.VALIDATION_ERROR
+                                message=f"Invalid member role. Must be one of: {valid_roles}"
                             )
 
                     member = ChatMember(
                         room_id=room.id,
-                        user_id=uuid.UUID(member_data['user_id']),
+                        user_id=uuid.UUID(member_data["user_id"]),
                         role=member_role,
-                        is_active=True
+                        is_active=True,
                     )
                     self.db.add(member)
 
@@ -162,7 +164,7 @@ class ChatService:
                 room_id=str(room.id),
                 room_type=room_type,
                 creator_id=creator_id,
-                members_count=len(members) if members else 1
+                members_count=len(members) if members else 1,
             )
             return room
 
@@ -176,15 +178,15 @@ class ChatService:
                 error=str(e),
                 room_type=room_type,
                 creator_id=creator_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to create chat room: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to create chat room: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix='chat:room', ttl=300, backend="redis")
+    @cache_service.cache(prefix="chat:room", ttl=300, backend="redis")
     async def get_room(self, room_id: str) -> Optional[ChatRoom]:
         """Get a chat room by ID.
 
@@ -195,7 +197,7 @@ class ChatService:
             The chat room, or None if not found.
 
         Raises:
-            BusinessLogicException: If there's an error retrieving the room.
+            BusinessException: If there's an error retrieving the room.
         """
         try:
             query = select(ChatRoom).where(ChatRoom.id == uuid.UUID(room_id))
@@ -209,11 +211,13 @@ class ChatService:
 
             return room
         except Exception as e:
-            logger.error("Error getting chat room", error=str(e), room_id=room_id, exc_info=True)
-            raise BusinessLogicException(
-                message=f'Failed to get chat room: {str(e)}',
+            logger.error(
+                "Error getting chat room", error=str(e), room_id=room_id, exc_info=True
+            )
+            raise BusinessException(
+                message=f"Failed to get chat room: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def get_room_with_members(self, room_id: str) -> Optional[ChatRoom]:
@@ -226,12 +230,14 @@ class ChatService:
             The chat room with members loaded, or None if not found.
 
         Raises:
-            BusinessLogicException: If there's an error retrieving the room.
+            BusinessException: If there's an error retrieving the room.
         """
         try:
-            query = select(ChatRoom).options(
-                joinedload(ChatRoom.members).joinedload(ChatMember.user)
-            ).where(ChatRoom.id == uuid.UUID(room_id))
+            query = (
+                select(ChatRoom)
+                .options(joinedload(ChatRoom.members).joinedload(ChatMember.user))
+                .where(ChatRoom.id == uuid.UUID(room_id))
+            )
 
             result = await self.db.execute(query)
             room = result.scalar_one_or_none()
@@ -240,7 +246,7 @@ class ChatService:
                 logger.debug(
                     "Chat room with members retrieved",
                     room_id=room_id,
-                    members_count=len(room.members)
+                    members_count=len(room.members),
                 )
             else:
                 logger.debug("Chat room not found", room_id=room_id)
@@ -251,12 +257,12 @@ class ChatService:
                 "Error getting chat room with members",
                 error=str(e),
                 room_id=room_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to get chat room with members: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to get chat room with members: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def check_room_access(self, user_id: str, room_id: str) -> bool:
@@ -270,14 +276,14 @@ class ChatService:
             True if the user has access, False otherwise.
 
         Raises:
-            BusinessLogicException: If there's an error checking access.
+            BusinessException: If there's an error checking access.
         """
         try:
             query = select(ChatMember).where(
                 and_(
                     ChatMember.room_id == uuid.UUID(room_id),
                     ChatMember.user_id == uuid.UUID(user_id),
-                    ChatMember.is_active == True
+                    ChatMember.is_active == True,
                 )
             )
             result = await self.db.execute(query)
@@ -288,7 +294,7 @@ class ChatService:
                 "Checked room access",
                 user_id=user_id,
                 room_id=room_id,
-                has_access=has_access
+                has_access=has_access,
             )
 
             return has_access
@@ -298,12 +304,12 @@ class ChatService:
                 error=str(e),
                 user_id=user_id,
                 room_id=room_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to check room access: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to check room access: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def create_message(
@@ -311,8 +317,8 @@ class ChatService:
         room_id: str,
         sender_id: str,
         content: str,
-        message_type: str='text',
-        metadata: Optional[Dict[str, Any]]=None
+        message_type: str = "text",
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> ChatMessage:
         """Create a new chat message.
 
@@ -328,21 +334,20 @@ class ChatService:
 
         Raises:
             ValidationException: If the message type is invalid.
-            BusinessLogicException: If there's an error creating the message.
+            BusinessException: If there's an error creating the message.
         """
         try:
             try:
                 msg_type = MessageType(message_type)
             except ValueError:
-                valid_types = ', '.join((t.value for t in MessageType))
+                valid_types = ", ".join((t.value for t in MessageType))
                 logger.warning(
                     "Invalid message type",
                     message_type=message_type,
-                    valid_types=valid_types
+                    valid_types=valid_types,
                 )
                 raise ValidationException(
-                    message=f'Invalid message type. Must be one of: {valid_types}',
-                    code=ErrorCode.VALIDATION_ERROR
+                    message=f"Invalid message type. Must be one of: {valid_types}"
                 )
 
             # Check access first
@@ -351,15 +356,12 @@ class ChatService:
                 logger.warning(
                     "User doesn't have access to room",
                     user_id=sender_id,
-                    room_id=room_id
+                    room_id=room_id,
                 )
-                raise BusinessLogicException(
+                raise BusinessException(
                     message="User doesn't have access to this chat room",
                     code=ErrorCode.PERMISSION_DENIED,
-                    details={
-                        "user_id": sender_id,
-                        "room_id": room_id
-                    }
+                    details={"user_id": sender_id, "room_id": room_id},
                 )
 
             message = ChatMessage(
@@ -367,11 +369,11 @@ class ChatService:
                 sender_id=uuid.UUID(sender_id),
                 message_type=msg_type,
                 metadata=metadata or {},
-                is_deleted=False
+                is_deleted=False,
             )
 
             # Encrypt content if it's not already encrypted
-            if not content.startswith('enc:'):
+            if not content.startswith("enc:"):
                 message.content = encrypt_message(content)
             else:
                 message.content = content
@@ -385,11 +387,11 @@ class ChatService:
                 message_id=str(message.id),
                 room_id=room_id,
                 sender_id=sender_id,
-                message_type=message_type
+                message_type=message_type,
             )
 
             return message
-        except (ValidationException, BusinessLogicException):
+        except (ValidationException, BusinessException):
             await self.db.rollback()
             raise
         except Exception as e:
@@ -399,15 +401,17 @@ class ChatService:
                 error=str(e),
                 room_id=room_id,
                 sender_id=sender_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to create chat message: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to create chat message: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
-    async def edit_message(self, message_id: str, content: str) -> Tuple[bool, Optional[ChatMessage]]:
+    async def edit_message(
+        self, message_id: str, content: str
+    ) -> Tuple[bool, Optional[ChatMessage]]:
         """Edit a chat message.
 
         Args:
@@ -418,7 +422,7 @@ class ChatService:
             Tuple of (success, updated_message).
 
         Raises:
-            BusinessLogicException: If there's an error editing the message.
+            BusinessException: If there's an error editing the message.
         """
         try:
             query = select(ChatMessage).where(ChatMessage.id == uuid.UUID(message_id))
@@ -430,7 +434,7 @@ class ChatService:
                 return (False, None)
 
             # Encrypt content if it's not already encrypted
-            if not content.startswith('enc:'):
+            if not content.startswith("enc:"):
                 message.content = encrypt_message(content)
             else:
                 message.content = content
@@ -446,12 +450,12 @@ class ChatService:
                 "Chat message edit failed",
                 error=str(e),
                 message_id=message_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to edit chat message: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to edit chat message: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def delete_message(self, message_id: str) -> bool:
@@ -464,14 +468,13 @@ class ChatService:
             True if successful, False otherwise.
 
         Raises:
-            BusinessLogicException: If there's an error deleting the message.
+            BusinessException: If there's an error deleting the message.
         """
         try:
-            query = update(ChatMessage).where(
-                ChatMessage.id == uuid.UUID(message_id)
-            ).values(
-                is_deleted=True,
-                deleted_at=datetime.utcnow()
+            query = (
+                update(ChatMessage)
+                .where(ChatMessage.id == uuid.UUID(message_id))
+                .values(is_deleted=True, deleted_at=datetime.datetime.now(datetime.UTC))
             )
 
             result = await self.db.execute(query)
@@ -490,19 +493,16 @@ class ChatService:
                 "Chat message deletion failed",
                 error=str(e),
                 message_id=message_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to delete chat message: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to delete chat message: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def check_message_permission(
-        self,
-        message_id: str,
-        user_id: str,
-        require_admin: bool=False
+        self, message_id: str, user_id: str, require_admin: bool = False
     ) -> bool:
         """Check if a user has permission to manage a message.
 
@@ -515,16 +515,20 @@ class ChatService:
             True if the user has permission, False otherwise.
 
         Raises:
-            BusinessLogicException: If there's an error checking permission.
+            BusinessException: If there's an error checking permission.
         """
         try:
             # Get the message
-            message_query = select(ChatMessage).where(ChatMessage.id == uuid.UUID(message_id))
+            message_query = select(ChatMessage).where(
+                ChatMessage.id == uuid.UUID(message_id)
+            )
             message_result = await self.db.execute(message_query)
             message = message_result.scalar_one_or_none()
 
             if not message:
-                logger.warning("Message not found for permission check", message_id=message_id)
+                logger.warning(
+                    "Message not found for permission check", message_id=message_id
+                )
                 return False
 
             # Message sender always has permission
@@ -532,7 +536,7 @@ class ChatService:
                 logger.debug(
                     "User is message sender, permission granted",
                     user_id=user_id,
-                    message_id=message_id
+                    message_id=message_id,
                 )
                 return True
 
@@ -545,8 +549,8 @@ class ChatService:
                         ChatMember.is_active == True,
                         or_(
                             ChatMember.role == ChatMemberRole.ADMIN,
-                            ChatMember.role == ChatMemberRole.OWNER
-                        )
+                            ChatMember.role == ChatMemberRole.OWNER,
+                        ),
                     )
                 )
 
@@ -558,7 +562,7 @@ class ChatService:
                     "Admin permission check",
                     user_id=user_id,
                     message_id=message_id,
-                    has_permission=has_permission
+                    has_permission=has_permission,
                 )
 
                 return has_permission
@@ -570,20 +574,17 @@ class ChatService:
                 error=str(e),
                 message_id=message_id,
                 user_id=user_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to check message permissions: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to check message permissions: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix='chat:messages', ttl=60, backend="redis")
+    @cache_service.cache(prefix="chat:messages", ttl=60, backend="redis")
     async def get_message_history(
-        self,
-        room_id: str,
-        before_id: Optional[str]=None,
-        limit: int=50
+        self, room_id: str, before_id: Optional[str] = None, limit: int = 50
     ) -> List[Dict[str, Any]]:
         """Get chat message history for a room.
 
@@ -596,7 +597,7 @@ class ChatService:
             List of formatted message dictionaries.
 
         Raises:
-            BusinessLogicException: If there's an error retrieving messages.
+            BusinessException: If there's an error retrieving messages.
         """
         try:
             # Build the query
@@ -608,20 +609,31 @@ class ChatService:
                 before_time = before_result.scalar_one_or_none()
 
                 if before_time:
-                    query = select(ChatMessage).where(
-                        and_(
-                            ChatMessage.room_id == uuid.UUID(room_id),
-                            ChatMessage.created_at < before_time
+                    query = (
+                        select(ChatMessage)
+                        .where(
+                            and_(
+                                ChatMessage.room_id == uuid.UUID(room_id),
+                                ChatMessage.created_at < before_time,
+                            )
                         )
-                    ).order_by(desc(ChatMessage.created_at)).limit(limit)
+                        .order_by(desc(ChatMessage.created_at))
+                        .limit(limit)
+                    )
                 else:
-                    query = select(ChatMessage).where(
-                        ChatMessage.room_id == uuid.UUID(room_id)
-                    ).order_by(desc(ChatMessage.created_at)).limit(limit)
+                    query = (
+                        select(ChatMessage)
+                        .where(ChatMessage.room_id == uuid.UUID(room_id))
+                        .order_by(desc(ChatMessage.created_at))
+                        .limit(limit)
+                    )
             else:
-                query = select(ChatMessage).where(
-                    ChatMessage.room_id == uuid.UUID(room_id)
-                ).order_by(desc(ChatMessage.created_at)).limit(limit)
+                query = (
+                    select(ChatMessage)
+                    .where(ChatMessage.room_id == uuid.UUID(room_id))
+                    .order_by(desc(ChatMessage.created_at))
+                    .limit(limit)
+                )
 
             # Execute the query
             result = await self.db.execute(query)
@@ -633,7 +645,7 @@ class ChatService:
             logger.debug(
                 "Retrieved message history",
                 room_id=room_id,
-                message_count=len(messages)
+                message_count=len(messages),
             )
 
             # Format the messages
@@ -642,7 +654,9 @@ class ChatService:
                 # Get sender name
                 sender_name = None
                 if message.sender_id:
-                    sender_query = select(User.full_name).where(User.id == message.sender_id)
+                    sender_query = select(User.full_name).where(
+                        User.id == message.sender_id
+                    )
                     sender_result = await self.db.execute(sender_query)
                     sender_name = sender_result.scalar_one_or_none()
 
@@ -661,31 +675,35 @@ class ChatService:
 
                 # Decrypt message content if it's encrypted
                 content = message.content
-                if content and content.startswith('enc:'):
+                if content and content.startswith("enc:"):
                     try:
                         content = decrypt_message(content[4:])
                     except Exception as e:
                         logger.warning(
                             "Failed to decrypt message",
                             message_id=str(message.id),
-                            error=str(e)
+                            error=str(e),
                         )
                         # Leave as is if decryption fails
 
                 # Format the message
-                formatted_messages.append({
-                    'id': str(message.id),
-                    'room_id': str(message.room_id),
-                    'sender_id': str(message.sender_id) if message.sender_id else None,
-                    'sender_name': sender_name,
-                    'message_type': message.message_type,
-                    'content': content,
-                    'created_at': message.created_at.isoformat(),
-                    'updated_at': message.updated_at.isoformat(),
-                    'is_deleted': message.is_deleted,
-                    'reactions': reaction_data,
-                    'metadata': message.metadata
-                })
+                formatted_messages.append(
+                    {
+                        "id": str(message.id),
+                        "room_id": str(message.room_id),
+                        "sender_id": (
+                            str(message.sender_id) if message.sender_id else None
+                        ),
+                        "sender_name": sender_name,
+                        "message_type": message.message_type,
+                        "content": content,
+                        "created_at": message.created_at.isoformat(),
+                        "updated_at": message.updated_at.isoformat(),
+                        "is_deleted": message.is_deleted,
+                        "reactions": reaction_data,
+                        "metadata": message.metadata,
+                    }
+                )
 
             return formatted_messages
         except Exception as e:
@@ -693,19 +711,21 @@ class ChatService:
                 "Error getting message history",
                 error=str(e),
                 room_id=room_id,
-                exc_info=True
+                exc_info=True,
             )
-            raise BusinessLogicException(
-                message=f'Failed to get message history: {str(e)}',
+            raise BusinessException(
+                message=f"Failed to get message history: {str(e)}",
                 code=ErrorCode.BUSINESS_LOGIC_ERROR,
-                original_exception=e
+                original_exception=e,
             ) from e
 
     @classmethod
     def register(cls) -> None:
         """Register this service with the service registry."""
         from app.services import service_registry
-        service_registry.register(cls, 'chat_service')
+
+        service_registry.register(cls, "chat_service")
+
 
 # Register the service
 ChatService.register()

@@ -2,7 +2,19 @@
 from __future__ import annotations
 
 import enum
-from typing import Any, Callable, Dict, List, Optional, Set, Type, TypeVar, Union, cast, TYPE_CHECKING
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Set,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    TYPE_CHECKING,
+)
 
 from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
@@ -21,6 +33,7 @@ else:
         CLIENT = "client"
         DISTRIBUTOR = "distributor"
         READ_ONLY = "read_only"
+
 
 logger = get_logger("app.core.permissions")
 
@@ -77,32 +90,29 @@ class Permission(str, enum.Enum):
 ROLE_PERMISSIONS = {
     UserRole.ADMIN: {
         # Admin has all permissions
-        p for p in Permission
+        p
+        for p in Permission
     },
     UserRole.MANAGER: {
         # Managers have most permissions except for system administration
         Permission.USER_READ,
         Permission.USER_CREATE,
         Permission.USER_UPDATE,
-
         Permission.PRODUCT_READ,
         Permission.PRODUCT_CREATE,
         Permission.PRODUCT_UPDATE,
         Permission.PRODUCT_DELETE,
         Permission.PRODUCT_ADMIN,
-
         Permission.MEDIA_READ,
         Permission.MEDIA_CREATE,
         Permission.MEDIA_UPDATE,
         Permission.MEDIA_DELETE,
         Permission.MEDIA_ADMIN,
-
         Permission.FITMENT_READ,
         Permission.FITMENT_CREATE,
         Permission.FITMENT_UPDATE,
         Permission.FITMENT_DELETE,
         Permission.FITMENT_ADMIN,
-
         Permission.COMPANY_READ,
     },
     UserRole.CLIENT: {
@@ -158,7 +168,9 @@ class PermissionChecker:
         return permission in role_permissions
 
     @staticmethod
-    def has_permissions(user: User, permissions: List[Permission], require_all: bool = True) -> bool:
+    def has_permissions(
+        user: User, permissions: List[Permission], require_all: bool = True
+    ) -> bool:
         """Check if a user has multiple permissions.
 
         Args:
@@ -189,6 +201,7 @@ class PermissionChecker:
         Returns:
             Callable: Decorator function
         """
+
         def decorator(func: T) -> T:
             async def wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Find current_user in kwargs
@@ -243,6 +256,7 @@ class PermissionChecker:
         Returns:
             Callable: Decorator function
         """
+
         def decorator(func: T) -> T:
             async def wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Find current_user in kwargs
@@ -260,8 +274,14 @@ class PermissionChecker:
                         message="Authentication required",
                     )
 
-                if not PermissionChecker.has_permissions(current_user, permissions, require_all):
-                    permission_str = " and ".join(p for p in permissions) if require_all else " or ".join(p for p in permissions)
+                if not PermissionChecker.has_permissions(
+                    current_user, permissions, require_all
+                ):
+                    permission_str = (
+                        " and ".join(p for p in permissions)
+                        if require_all
+                        else " or ".join(p for p in permissions)
+                    )
 
                     logger.warning(
                         f"Permission denied: {current_user.email} missing required permissions: {permission_str}",
@@ -342,7 +362,9 @@ class PermissionChecker:
         Raises:
             PermissionDeniedException: If user doesn't have permission
         """
-        if not PermissionChecker.check_object_permission(user, obj, permission, owner_field):
+        if not PermissionChecker.check_object_permission(
+            user, obj, permission, owner_field
+        ):
             action = permission.split(":")[-1]
             resource = permission.split(":")[0]
 

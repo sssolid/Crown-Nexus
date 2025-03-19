@@ -17,7 +17,7 @@ from app.services.audit.base import AuditLogger
 from app.services.audit.loggers import (
     DatabaseAuditLogger,
     FileAuditLogger,
-    LoggingAuditLogger
+    LoggingAuditLogger,
 )
 
 logger = get_logger("app.services.audit.factory")
@@ -55,10 +55,7 @@ class AuditLoggerFactory:
 
     @classmethod
     def create_logger(
-        cls,
-        logger_type: str,
-        db: Optional[AsyncSession] = None,
-        **kwargs: Any
+        cls, logger_type: str, db: Optional[AsyncSession] = None, **kwargs: Any
     ) -> AuditLogger:
         """Create an audit logger of the specified type.
 
@@ -105,8 +102,7 @@ class AuditLoggerFactory:
 
     @classmethod
     def create_default_loggers(
-        cls,
-        db: Optional[AsyncSession] = None
+        cls, db: Optional[AsyncSession] = None
     ) -> List[AuditLogger]:
         """Create the default set of audit loggers based on application settings.
 
@@ -122,11 +118,18 @@ class AuditLoggerFactory:
         loggers.append(cls.create_logger("logging"))
 
         # Add file logger if configured
-        if hasattr(settings.security, "AUDIT_LOG_TO_FILE") and settings.security.AUDIT_LOG_TO_FILE:
+        if (
+            hasattr(settings.security, "AUDIT_LOG_TO_FILE")
+            and settings.security.AUDIT_LOG_TO_FILE
+        ):
             loggers.append(cls.create_logger("file"))
 
         # Add database logger if configured and session provided
-        if db and hasattr(settings.security, "AUDIT_LOG_TO_DB") and settings.security.AUDIT_LOG_TO_DB:
+        if (
+            db
+            and hasattr(settings.security, "AUDIT_LOG_TO_DB")
+            and settings.security.AUDIT_LOG_TO_DB
+        ):
             loggers.append(cls.create_logger("database", db=db))
 
         return loggers

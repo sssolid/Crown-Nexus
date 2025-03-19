@@ -48,14 +48,13 @@ class Country(Base):
         currency: Currency code (USD, etc.)
         created_at: Creation timestamp
     """
+
     __tablename__ = "country"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     iso_alpha_2: Mapped[str] = mapped_column(
         String(2), nullable=False, unique=True, index=True
     )
@@ -65,23 +64,23 @@ class Country(Base):
     iso_numeric: Mapped[Optional[str]] = mapped_column(
         String(3), nullable=True, unique=True
     )
-    region: Mapped[Optional[str]] = mapped_column(
-        String(50), nullable=True
-    )
-    subregion: Mapped[Optional[str]] = mapped_column(
-        String(50), nullable=True
-    )
-    currency: Mapped[Optional[str]] = mapped_column(
-        String(3), nullable=True
-    )
+    region: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    subregion: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    currency: Mapped[Optional[str]] = mapped_column(String(3), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     # Relationships
-    addresses: Mapped[List["Address"]] = relationship("Address", back_populates="country")
-    manufacturers: Mapped[List["Manufacturer"]] = relationship("Manufacturer", back_populates="country")
-    tariff_codes: Mapped[List["TariffCode"]] = relationship("TariffCode", back_populates="country")
+    addresses: Mapped[List["Address"]] = relationship(
+        "Address", back_populates="country"
+    )
+    manufacturers: Mapped[List["Manufacturer"]] = relationship(
+        "Manufacturer", back_populates="country"
+    )
+    tariff_codes: Mapped[List["TariffCode"]] = relationship(
+        "TariffCode", back_populates="country"
+    )
 
     def __repr__(self) -> str:
         """
@@ -110,23 +109,16 @@ class Address(Base):
         longitude: Geographical longitude
         created_at: Creation timestamp
     """
+
     __tablename__ = "address"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    street: Mapped[str] = mapped_column(
-        String(255), nullable=False
-    )
-    city: Mapped[str] = mapped_column(
-        String(100), nullable=False
-    )
-    state: Mapped[Optional[str]] = mapped_column(
-        String(100), nullable=True
-    )
-    postal_code: Mapped[str] = mapped_column(
-        String(20), nullable=False, index=True
-    )
+    street: Mapped[str] = mapped_column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(100), nullable=False)
+    state: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    postal_code: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     country_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("country.id"), nullable=False, index=True
     )
@@ -142,13 +134,27 @@ class Address(Base):
 
     # Relationships
     country: Mapped["Country"] = relationship("Country", back_populates="addresses")
-    warehouses: Mapped[List["Warehouse"]] = relationship("Warehouse", foreign_keys="[Warehouse.address_id]")
-    manufacturers_primary: Mapped[List["Manufacturer"]] = relationship("Manufacturer", foreign_keys="[Manufacturer.address_id]")
-    manufacturers_billing: Mapped[List["Manufacturer"]] = relationship("Manufacturer", foreign_keys="[Manufacturer.billing_address_id]")
-    manufacturers_shipping: Mapped[List["Manufacturer"]] = relationship("Manufacturer", foreign_keys="[Manufacturer.shipping_address_id]")
-    companies_headquarters: Mapped[List["Company"]] = relationship("Company", foreign_keys="[Company.headquarters_address_id]")
-    companies_billing: Mapped[List["Company"]] = relationship("Company", foreign_keys="[Company.billing_address_id]")
-    companies_shipping: Mapped[List["Company"]] = relationship("Company", foreign_keys="[Company.shipping_address_id]")
+    warehouses: Mapped[List["Warehouse"]] = relationship(
+        "Warehouse", foreign_keys="[Warehouse.address_id]"
+    )
+    manufacturers_primary: Mapped[List["Manufacturer"]] = relationship(
+        "Manufacturer", foreign_keys="[Manufacturer.address_id]"
+    )
+    manufacturers_billing: Mapped[List["Manufacturer"]] = relationship(
+        "Manufacturer", foreign_keys="[Manufacturer.billing_address_id]"
+    )
+    manufacturers_shipping: Mapped[List["Manufacturer"]] = relationship(
+        "Manufacturer", foreign_keys="[Manufacturer.shipping_address_id]"
+    )
+    companies_headquarters: Mapped[List["Company"]] = relationship(
+        "Company", foreign_keys="[Company.headquarters_address_id]"
+    )
+    companies_billing: Mapped[List["Company"]] = relationship(
+        "Company", foreign_keys="[Company.billing_address_id]"
+    )
+    companies_shipping: Mapped[List["Company"]] = relationship(
+        "Company", foreign_keys="[Company.shipping_address_id]"
+    )
 
     def __repr__(self) -> str:
         """

@@ -62,13 +62,17 @@ class PrometheusManager:
         try:
             start_http_server(self.config.endpoint_port)
             self.server_started = True
-            logger.info(f"Prometheus metrics endpoint started on port {self.config.endpoint_port}")
+            logger.info(
+                f"Prometheus metrics endpoint started on port {self.config.endpoint_port}"
+            )
         except Exception as e:
             logger.error(f"Failed to start Prometheus HTTP server: {str(e)}")
 
     async def _start_push_loop(self) -> None:
         """Start loop to periodically push metrics to gateway."""
-        logger.info(f"Starting metrics push loop (interval: {self.config.push_interval}s)")
+        logger.info(
+            f"Starting metrics push loop (interval: {self.config.push_interval}s)"
+        )
 
         while True:
             try:
@@ -92,9 +96,7 @@ class PrometheusManager:
 
             # Push metrics to gateway
             push_to_gateway(
-                self.config.push_gateway,
-                job=self.config.namespace,
-                registry=REGISTRY
+                self.config.push_gateway, job=self.config.namespace, registry=REGISTRY
             )
         except Exception as e:
             logger.error(f"Metrics push error: {str(e)}")
@@ -135,6 +137,8 @@ class PrometheusManager:
         if self.config.enable_prometheus and self.config.push_gateway:
             try:
                 self._push_metrics()
-                logger.info(f"Final metrics push to gateway: {self.config.push_gateway}")
+                logger.info(
+                    f"Final metrics push to gateway: {self.config.push_gateway}"
+                )
             except Exception as e:
                 logger.error(f"Failed to push metrics to gateway: {str(e)}")

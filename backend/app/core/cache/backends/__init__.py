@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 
 from app.core.cache.backends.memory import MemoryCacheBackend
 from app.core.cache.backends.redis import RedisCacheBackend
@@ -14,6 +14,7 @@ _backends: Dict[str, Any] = {
     "redis": RedisCacheBackend,
     "null": NullCacheBackend,
 }
+
 
 def get_backend(name: str) -> Any:
     """Get cache backend by name."""

@@ -11,11 +11,12 @@ from starlette.websockets import WebSocketDisconnect
 
 from app.core.exceptions import (
     AuthenticationException,
-    PermissionDeniedException, RateLimitException,
+    PermissionDeniedException,
+    RateLimitException,
 )
 from app.core.logging import get_logger, set_user_id
-from app.services.security_service import SecurityService
-from app.services.audit_service import AuditService, AuditEventType
+from app.services.security import SecurityService
+from app.services.audit import AuditService
 from app.core.rate_limiter import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
 from app.core.security import (
@@ -31,18 +32,14 @@ logger = get_logger("app.api.deps")
 PaginationParams = Dict[str, Union[int, float]]
 
 
-def get_security_service(
-    error_handling_service: ErrorHandlingService = Depends(get_error_handling_service)
-) -> SecurityService:
+def get_security_service() -> SecurityService:
     """Get an instance of the security service.
-
-    Args:
-        error_handling_service: Error handling service for security errors
 
     Returns:
         SecurityService: The security service instance
     """
-    return SecurityService(error_handling_service=error_handling_service)
+    return SecurityService()
+
 
 async def get_audit_service(db: AsyncSession = Depends(get_db)) -> AuditService:
     """Get an instance of the audit service.
@@ -54,6 +51,7 @@ async def get_audit_service(db: AsyncSession = Depends(get_db)) -> AuditService:
         AuditService: The audit service instance
     """
     return AuditService(db)
+
 
 def rate_limit(
     requests_per_window: int = 10,
@@ -70,13 +68,14 @@ def rate_limit(
     """
     limiter = RateLimiter()
     rule = RateLimitRule(
-        requests_per_window=requests_per_window,
-        window_seconds=window_seconds
+        requests_per_window=requests_per_window, window_seconds=window_seconds
     )
 
     async def limit_requests(
         request: Request,
-        error_handling_service: ErrorHandlingService = Depends(get_error_handling_service)
+        error_handling_service: ErrorHandlingService = Depends(
+            get_error_handling_service
+        ),
     ) -> None:
         """Apply rate limiting to the request.
 
@@ -95,7 +94,7 @@ def rate_limit(
                 "Retry-After": str(window_seconds),
                 "X-RateLimit-Limit": str(limit),
                 "X-RateLimit-Remaining": "0",
-                "X-RateLimit-Reset": str(window_seconds)
+                "X-RateLimit-Reset": str(window_seconds),
             }
 
             # Use the project's custom exception class
@@ -104,6 +103,7 @@ def rate_limit(
             )
 
     return limit_requests
+
 
 async def get_current_user(
     db: AsyncSession = Depends(get_db),
@@ -292,7 +292,9 @@ async def get_current_user_ws(
         user = await user_repo.get_by_id(token_data.sub)
 
         if user is None or not user.is_active:
-            logger.warning(f"WebSocket auth failed: User not found or inactive: {token_data.sub}")
+            logger.warning(
+                f"WebSocket auth failed: User not found or inactive: {token_data.sub}"
+            )
             raise WebSocketDisconnect(code=status.WS_1008_POLICY_VIOLATION)
 
         return user
@@ -314,9 +316,16 @@ def require_permissions(
     Returns:
         Callable: Dependency function
     """
+
     async def dependency(current_user: User = Depends(get_current_active_user)):
-        if not PermissionChecker.has_permissions(current_user, permissions, require_all):
-            permission_str = " and ".join(p.value for p in permissions) if require_all else " or ".join(p.value for p in permissions)
+        if not PermissionChecker.has_permissions(
+            current_user, permissions, require_all
+        ):
+            permission_str = (
+                " and ".join(p.value for p in permissions)
+                if require_all
+                else " or ".join(p.value for p in permissions)
+            )
             logger.warning(
                 f"Permission denied: {current_user.email} missing required permissions: {permission_str}",
                 extra={

@@ -14,8 +14,10 @@ from pydantic import BaseModel
 F = TypeVar("F")  # Function type
 T = TypeVar("T")  # Generic type
 
+
 class ErrorContext(BaseModel):
     """Context information for error reporting."""
+
     function: str
     args: Optional[List[Any]] = None
     kwargs: Optional[Dict[str, Any]] = None

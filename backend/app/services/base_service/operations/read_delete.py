@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import (
     ErrorCode,
     PermissionDeniedException,
-    ResourceNotFoundException
+    ResourceNotFoundException,
 )
 from app.core.logging import get_logger
 from app.core.permissions import Permission, PermissionChecker
@@ -77,9 +77,7 @@ class ReadDeleteOperations(Generic[T, R, ID]):
         if user_id and required_permission and get_user_func:
             user = await get_user_func(user_id)
             if not PermissionChecker.has_permission(user, required_permission):
-                logger.warning(
-                    f"Permission denied for user {user_id} to read entity"
-                )
+                logger.warning(f"Permission denied for user {user_id} to read entity")
                 raise PermissionDeniedException(
                     f"You don't have permission to read this entity",
                     code=ErrorCode.PERMISSION_DENIED,
@@ -168,9 +166,7 @@ class ReadDeleteOperations(Generic[T, R, ID]):
         if user_id and required_permission and get_user_func:
             user = await get_user_func(user_id)
             if not PermissionChecker.has_permission(user, required_permission):
-                logger.warning(
-                    f"Permission denied for user {user_id} to list entities"
-                )
+                logger.warning(f"Permission denied for user {user_id} to list entities")
                 raise PermissionDeniedException(
                     f"You don't have permission to list entities",
                     code=ErrorCode.PERMISSION_DENIED,
@@ -192,9 +188,7 @@ class ReadDeleteOperations(Generic[T, R, ID]):
                 filters=applied_filters,
             )
 
-            logger.debug(
-                f"Found {result.get('total', 0)} entities"
-            )
+            logger.debug(f"Found {result.get('total', 0)} entities")
             return result
         except Exception as e:
             logger.error(f"Error getting entities: {str(e)}")
@@ -240,11 +234,7 @@ class ReadDeleteOperations(Generic[T, R, ID]):
             apply_filters_func=apply_filters_func,
         )
 
-    async def to_response(
-        self,
-        entity: T,
-        response_model: Type[R]
-    ) -> R:
+    async def to_response(self, entity: T, response_model: Type[R]) -> R:
         """Convert entity to response model.
 
         Args:
@@ -257,9 +247,7 @@ class ReadDeleteOperations(Generic[T, R, ID]):
         return response_model.from_orm(entity)
 
     async def to_response_multi(
-        self,
-        entities: List[T],
-        response_model: Type[R]
+        self, entities: List[T], response_model: Type[R]
     ) -> List[R]:
         """Convert multiple entities to response models.
 
@@ -324,9 +312,7 @@ class ReadDeleteOperations(Generic[T, R, ID]):
         if user_id and required_permission and get_user_func:
             user = await get_user_func(user_id)
             if not PermissionChecker.has_permission(user, required_permission):
-                logger.warning(
-                    f"Permission denied for user {user_id} to delete entity"
-                )
+                logger.warning(f"Permission denied for user {user_id} to delete entity")
                 raise PermissionDeniedException(
                     f"You don't have permission to delete this entity",
                     code=ErrorCode.PERMISSION_DENIED,

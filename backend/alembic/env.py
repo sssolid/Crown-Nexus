@@ -141,8 +141,9 @@ async def run_migrations_online() -> None:
         print(f"❌ Migration failed: {e}")
         # Show more detailed error information
         import traceback
+
         traceback.print_exc()
-        raise from e
+        raise
     finally:
         await connectable.dispose()
 

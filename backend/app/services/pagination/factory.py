@@ -16,7 +16,7 @@ from app.core.logging import get_logger
 from app.services.pagination.base import PaginationProvider
 from app.services.pagination.providers import (
     CursorPaginationProvider,
-    OffsetPaginationProvider
+    OffsetPaginationProvider,
 )
 
 logger = get_logger("app.services.pagination.factory")
@@ -39,9 +39,7 @@ class PaginationProviderFactory(Generic[T, R]):
 
     @classmethod
     def register_provider(
-        cls,
-        name: str,
-        provider_class: Type[PaginationProvider]
+        cls, name: str, provider_class: Type[PaginationProvider]
     ) -> None:
         """Register a new pagination provider type.
 
@@ -65,7 +63,7 @@ class PaginationProviderFactory(Generic[T, R]):
         db: AsyncSession,
         model_class: Type[DeclarativeMeta],
         response_model: Optional[Type[Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> PaginationProvider[T, R]:
         """Create a pagination provider of the specified type.
 
@@ -104,5 +102,7 @@ class PaginationProviderFactory(Generic[T, R]):
         # Cache the provider
         cls._provider_cache[cache_key] = provider
 
-        logger.debug(f"Created pagination provider: {provider_type} for {model_class.__name__}")
+        logger.debug(
+            f"Created pagination provider: {provider_type} for {model_class.__name__}"
+        )
         return cast(PaginationProvider[T, R], provider)

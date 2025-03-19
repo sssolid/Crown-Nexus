@@ -7,7 +7,7 @@ This module provides functionality for querying and retrieving audit logs
 from the database.
 """
 
-from datetime import datetime, timedelta
+import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 from sqlalchemy import and_, delete, desc, func, select
@@ -151,7 +151,7 @@ class AuditQuery:
         user_id: str,
         start_time: Optional[datetime] = None,
         end_time: Optional[datetime] = None,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Dict[str, Any]]:
         """Get recent activity for a specific user.
 
@@ -170,15 +170,12 @@ class AuditQuery:
             end_time=end_time,
             limit=limit,
             sort_field="timestamp",
-            sort_order="desc"
+            sort_order="desc",
         )
         return result.get("items", [])
 
     async def get_resource_history(
-        self,
-        resource_type: str,
-        resource_id: str,
-        limit: int = 100
+        self, resource_type: str, resource_id: str, limit: int = 100
     ) -> List[Dict[str, Any]]:
         """Get history of actions performed on a specific resource.
 
@@ -195,7 +192,7 @@ class AuditQuery:
             resource_type=resource_type,
             limit=limit,
             sort_field="timestamp",
-            sort_order="desc"
+            sort_order="desc",
         )
         return result.get("items", [])
 
@@ -212,7 +209,9 @@ class AuditQuery:
             # Import the AuditLog model here to avoid circular imports
             from app.models.audit import AuditLog
 
-            cutoff_date = datetime.utcnow() - timedelta(days=days_to_keep)
+            cutoff_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
+                days=days_to_keep
+            )
 
             # Create delete query
             delete_stmt = delete(AuditLog).where(AuditLog.timestamp < cutoff_date)
@@ -222,7 +221,9 @@ class AuditQuery:
             await self.db.commit()
 
             deleted_count = result.rowcount
-            self.logger.info(f"Purged {deleted_count} audit logs older than {cutoff_date}")
+            self.logger.info(
+                f"Purged {deleted_count} audit logs older than {cutoff_date}"
+            )
 
             return deleted_count
 

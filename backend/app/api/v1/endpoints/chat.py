@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field, validator
 from app.api.deps import get_current_active_user, get_db
 from app.api.responses import created_response, error_response, success_response
 from app.core.exceptions import (
-    BusinessLogicException,
+    BusinessException,
     ValidationException,
 )
 from app.core.logging import get_logger, log_execution_time
@@ -36,13 +36,15 @@ class CreateRoomRequest(BaseModel):
 
     name: Optional[str] = Field(None, description="Name of the chat room")
     type: str = Field(..., description="Type of chat room (direct, group, company)")
-    company_id: Optional[str] = Field(None, description="Company ID (required for company rooms)")
+    company_id: Optional[str] = Field(
+        None, description="Company ID (required for company rooms)"
+    )
     members: Optional[List[Dict[str, Any]]] = Field(
         None, description="List of members to add to the room"
     )
 
     @validator("type")
-    def validate_type(cls, v: str) -> str:
+    def validate_type(self, v: str) -> str:
         """Validate that the room type is valid.
 
         Args:
@@ -56,7 +58,9 @@ class CreateRoomRequest(BaseModel):
         """
         valid_types = [t.value for t in ChatRoomType]
         if v not in valid_types:
-            raise ValueError(f"Invalid room type. Must be one of: {', '.join(valid_types)}")
+            raise ValueError(
+                f"Invalid room type. Must be one of: {', '.join(valid_types)}"
+            )
         return v
 
 
@@ -69,7 +73,7 @@ class AddMemberRequest(BaseModel):
     )
 
     @validator("role")
-    def validate_role(cls, v: str) -> str:
+    def validate_role(self, v: str) -> str:
         """Validate that the member role is valid.
 
         Args:
@@ -93,7 +97,7 @@ class UpdateMemberRequest(BaseModel):
     role: str = Field(..., description="New role for the member")
 
     @validator("role")
-    def validate_role(cls, v: str) -> str:
+    def validate_role(self, v: str) -> str:
         """Validate that the member role is valid.
 
         Args:
@@ -129,7 +133,7 @@ class CreateMessageRequest(BaseModel):
     )
 
     @validator("message_type")
-    def validate_message_type(cls, v: str) -> str:
+    def validate_message_type(self, v: str) -> str:
         """Validate that the message type is valid.
 
         Args:
@@ -143,7 +147,9 @@ class CreateMessageRequest(BaseModel):
         """
         valid_types = [t.value for t in MessageType]
         if v not in valid_types:
-            raise ValueError(f"Invalid message type. Must be one of: {', '.join(valid_types)}")
+            raise ValueError(
+                f"Invalid message type. Must be one of: {', '.join(valid_types)}"
+            )
         return v
 
 
@@ -164,7 +170,7 @@ class ReactionRequest(BaseModel):
 async def create_room(
     request: CreateRoomRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Create a new chat room.
 
@@ -193,7 +199,7 @@ async def create_room(
             room_type=request.type,
             creator_id=str(current_user.id),
             company_id=request.company_id,
-            members=request.members
+            members=request.members,
         )
         room_info = await chat_service.get_room_info(str(room.id))
 
@@ -205,8 +211,7 @@ async def create_room(
         )
 
         return created_response(
-            data={"room": room_info},
-            message="Chat room created successfully"
+            data={"room": room_info}, message="Chat room created successfully"
         )
     except ValidationException as e:
         logger.warning(
@@ -215,11 +220,8 @@ async def create_room(
             error=str(e),
             room_type=request.type,
         )
-        return error_response(
-            message=str(e),
-            code=status.HTTP_400_BAD_REQUEST
-        )
-    except BusinessLogicException as e:
+        return error_response(message=str(e), code=status.HTTP_400_BAD_REQUEST)
+    except BusinessException as e:
         logger.error(
             "Chat room creation failed",
             user_id=str(current_user.id),
@@ -229,7 +231,7 @@ async def create_room(
         )
         return error_response(
             message="Failed to create chat room",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -237,7 +239,7 @@ async def create_room(
 @log_execution_time(logger)
 async def get_rooms(
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Get all chat rooms for the current user.
 
@@ -267,10 +269,9 @@ async def get_rooms(
         )
 
         return success_response(
-            data={"rooms": rooms},
-            message="Rooms retrieved successfully"
+            data={"rooms": rooms}, message="Rooms retrieved successfully"
         )
-    except BusinessLogicException as e:
+    except BusinessException as e:
         logger.error(
             "Failed to get user rooms",
             user_id=str(current_user.id),
@@ -279,7 +280,7 @@ async def get_rooms(
         )
         return error_response(
             message="Failed to retrieve chat rooms",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -288,7 +289,7 @@ async def get_rooms(
 async def get_room(
     room_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Get a specific chat room by ID.
 
@@ -320,8 +321,7 @@ async def get_room(
                 room_id=room_id,
             )
             return error_response(
-                message="Access denied to room",
-                code=status.HTTP_403_FORBIDDEN
+                message="Access denied to room", code=status.HTTP_403_FORBIDDEN
             )
 
         # Get room info
@@ -333,8 +333,7 @@ async def get_room(
                 room_id=room_id,
             )
             return error_response(
-                message="Room not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="Room not found", code=status.HTTP_404_NOT_FOUND
             )
 
         logger.info(
@@ -344,10 +343,9 @@ async def get_room(
         )
 
         return success_response(
-            data={"room": room_info},
-            message="Room retrieved successfully"
+            data={"room": room_info}, message="Room retrieved successfully"
         )
-    except BusinessLogicException as e:
+    except BusinessException as e:
         logger.error(
             "Failed to get room details",
             user_id=str(current_user.id),
@@ -357,7 +355,7 @@ async def get_room(
         )
         return error_response(
             message="Failed to retrieve room details",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -367,7 +365,7 @@ async def add_room_member(
     room_id: str,
     request: AddMemberRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Add a member to a chat room.
 
@@ -402,8 +400,7 @@ async def add_room_member(
                 room_id=room_id,
             )
             return error_response(
-                message="Access denied to room",
-                code=status.HTTP_403_FORBIDDEN
+                message="Access denied to room", code=status.HTTP_403_FORBIDDEN
             )
 
         # Get room with members
@@ -415,8 +412,7 @@ async def add_room_member(
                 room_id=room_id,
             )
             return error_response(
-                message="Room not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="Room not found", code=status.HTTP_404_NOT_FOUND
             )
 
         # Check admin permission
@@ -434,15 +430,12 @@ async def add_room_member(
                 room_id=room_id,
             )
             return error_response(
-                message="Only admins can add members",
-                code=status.HTTP_403_FORBIDDEN
+                message="Only admins can add members", code=status.HTTP_403_FORBIDDEN
             )
 
         # Add member
         success = await chat_service.add_member(
-            room_id=room_id,
-            user_id=request.user_id,
-            role=ChatMemberRole(request.role)
+            room_id=room_id, user_id=request.user_id, role=ChatMemberRole(request.role)
         )
 
         if not success:
@@ -453,8 +446,7 @@ async def add_room_member(
                 target_user_id=request.user_id,
             )
             return error_response(
-                message="Failed to add member",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to add member", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -465,9 +457,7 @@ async def add_room_member(
             role=request.role,
         )
 
-        return success_response(
-            message="Member added successfully"
-        )
+        return success_response(message="Member added successfully")
     except ValidationException as e:
         logger.warning(
             "Member addition validation failed",
@@ -476,11 +466,8 @@ async def add_room_member(
             target_user_id=request.user_id,
             error=str(e),
         )
-        return error_response(
-            message=str(e),
-            code=status.HTTP_400_BAD_REQUEST
-        )
-    except BusinessLogicException as e:
+        return error_response(message=str(e), code=status.HTTP_400_BAD_REQUEST)
+    except BusinessException as e:
         logger.error(
             "Member addition failed",
             user_id=str(current_user.id),
@@ -490,8 +477,7 @@ async def add_room_member(
             exc_info=True,
         )
         return error_response(
-            message="Failed to add member",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            message="Failed to add member", code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -502,7 +488,7 @@ async def update_room_member(
     user_id: str,
     request: UpdateMemberRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Update a member's role in a chat room.
 
@@ -538,8 +524,7 @@ async def update_room_member(
                 room_id=room_id,
             )
             return error_response(
-                message="Room not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="Room not found", code=status.HTTP_404_NOT_FOUND
             )
 
         # Check admin permission and get current user's role
@@ -560,7 +545,7 @@ async def update_room_member(
             )
             return error_response(
                 message="Only admins can update member roles",
-                code=status.HTTP_403_FORBIDDEN
+                code=status.HTTP_403_FORBIDDEN,
             )
 
         # Check if target member exists
@@ -578,12 +563,14 @@ async def update_room_member(
                 target_user_id=user_id,
             )
             return error_response(
-                message="Member not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="Member not found", code=status.HTTP_404_NOT_FOUND
             )
 
         # Special case: only owners can create new owners
-        if request.role == ChatMemberRole.OWNER.value and current_user_role != ChatMemberRole.OWNER:
+        if (
+            request.role == ChatMemberRole.OWNER.value
+            and current_user_role != ChatMemberRole.OWNER
+        ):
             logger.warning(
                 "Permission denied - only owners can create new owners",
                 user_id=str(current_user.id),
@@ -592,14 +579,12 @@ async def update_room_member(
             )
             return error_response(
                 message="Only owners can create new owners",
-                code=status.HTTP_403_FORBIDDEN
+                code=status.HTTP_403_FORBIDDEN,
             )
 
         # Update member role
         success = await chat_service.update_member_role(
-            room_id=room_id,
-            user_id=user_id,
-            role=ChatMemberRole(request.role)
+            room_id=room_id, user_id=user_id, role=ChatMemberRole(request.role)
         )
 
         if not success:
@@ -610,8 +595,7 @@ async def update_room_member(
                 target_user_id=user_id,
             )
             return error_response(
-                message="Failed to update member role",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to update member role", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -622,9 +606,7 @@ async def update_room_member(
             new_role=request.role,
         )
 
-        return success_response(
-            message="Member role updated successfully"
-        )
+        return success_response(message="Member role updated successfully")
     except ValidationException as e:
         logger.warning(
             "Member role update validation failed",
@@ -633,11 +615,8 @@ async def update_room_member(
             target_user_id=user_id,
             error=str(e),
         )
-        return error_response(
-            message=str(e),
-            code=status.HTTP_400_BAD_REQUEST
-        )
-    except BusinessLogicException as e:
+        return error_response(message=str(e), code=status.HTTP_400_BAD_REQUEST)
+    except BusinessException as e:
         logger.error(
             "Member role update failed",
             user_id=str(current_user.id),
@@ -648,7 +627,7 @@ async def update_room_member(
         )
         return error_response(
             message="Failed to update member role",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -658,7 +637,7 @@ async def remove_room_member(
     room_id: str,
     user_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Remove a member from a chat room.
 
@@ -695,8 +674,7 @@ async def remove_room_member(
                 room_id=room_id,
             )
             return error_response(
-                message="Room not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="Room not found", code=status.HTTP_404_NOT_FOUND
             )
 
         # Users can remove themselves (leave the room)
@@ -716,8 +694,7 @@ async def remove_room_member(
                     room_id=room_id,
                 )
                 return error_response(
-                    message="Failed to leave room",
-                    code=status.HTTP_400_BAD_REQUEST
+                    message="Failed to leave room", code=status.HTTP_400_BAD_REQUEST
                 )
 
             logger.info(
@@ -726,9 +703,7 @@ async def remove_room_member(
                 room_id=room_id,
             )
 
-            return success_response(
-                message="Left room successfully"
-            )
+            return success_response(message="Left room successfully")
 
         # For removing other members, must be an admin
         is_admin = False
@@ -746,8 +721,7 @@ async def remove_room_member(
                 target_user_id=user_id,
             )
             return error_response(
-                message="Only admins can remove members",
-                code=status.HTTP_403_FORBIDDEN
+                message="Only admins can remove members", code=status.HTTP_403_FORBIDDEN
             )
 
         # Check if target member exists
@@ -765,15 +739,17 @@ async def remove_room_member(
                 target_user_id=user_id,
             )
             return error_response(
-                message="Member not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="Member not found", code=status.HTTP_404_NOT_FOUND
             )
 
         # Special case: only owners can remove other owners
         if target_member.role == ChatMemberRole.OWNER:
             current_is_owner = False
             for member in room.members:
-                if member.user_id == current_user.id and member.role == ChatMemberRole.OWNER:
+                if (
+                    member.user_id == current_user.id
+                    and member.role == ChatMemberRole.OWNER
+                ):
                     current_is_owner = True
                     break
 
@@ -786,7 +762,7 @@ async def remove_room_member(
                 )
                 return error_response(
                     message="Only owners can remove other owners",
-                    code=status.HTTP_403_FORBIDDEN
+                    code=status.HTTP_403_FORBIDDEN,
                 )
 
         # Remove member
@@ -800,8 +776,7 @@ async def remove_room_member(
                 target_user_id=user_id,
             )
             return error_response(
-                message="Failed to remove member",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to remove member", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -811,10 +786,8 @@ async def remove_room_member(
             target_user_id=user_id,
         )
 
-        return success_response(
-            message="Member removed successfully"
-        )
-    except BusinessLogicException as e:
+        return success_response(message="Member removed successfully")
+    except BusinessException as e:
         logger.error(
             "Member removal failed",
             user_id=str(current_user.id),
@@ -825,7 +798,7 @@ async def remove_room_member(
         )
         return error_response(
             message="Failed to remove member",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -836,7 +809,7 @@ async def get_room_messages(
     before_id: Optional[str] = None,
     limit: int = Query(50, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Get messages for a chat room.
 
@@ -872,15 +845,12 @@ async def get_room_messages(
                 room_id=room_id,
             )
             return error_response(
-                message="Access denied to room",
-                code=status.HTTP_403_FORBIDDEN
+                message="Access denied to room", code=status.HTTP_403_FORBIDDEN
             )
 
         # Get messages
         messages = await chat_service.get_message_history(
-            room_id=room_id,
-            before_id=before_id,
-            limit=limit
+            room_id=room_id, before_id=before_id, limit=limit
         )
 
         logger.info(
@@ -891,10 +861,9 @@ async def get_room_messages(
         )
 
         return success_response(
-            data={"messages": messages},
-            message="Messages retrieved successfully"
+            data={"messages": messages}, message="Messages retrieved successfully"
         )
-    except BusinessLogicException as e:
+    except BusinessException as e:
         logger.error(
             "Failed to get room messages",
             user_id=str(current_user.id),
@@ -904,7 +873,7 @@ async def get_room_messages(
         )
         return error_response(
             message="Failed to retrieve messages",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -914,7 +883,7 @@ async def create_message(
     room_id: str,
     request: CreateMessageRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Create a new message in a chat room.
 
@@ -948,8 +917,7 @@ async def create_message(
                 room_id=room_id,
             )
             return error_response(
-                message="Access denied to room",
-                code=status.HTTP_403_FORBIDDEN
+                message="Access denied to room", code=status.HTTP_403_FORBIDDEN
             )
 
         # Create message
@@ -958,7 +926,7 @@ async def create_message(
             sender_id=str(current_user.id),
             content=request.content,
             message_type=request.message_type,
-            metadata=request.metadata
+            metadata=request.metadata,
         )
 
         logger.info(
@@ -980,12 +948,11 @@ async def create_message(
             "updated_at": message.updated_at.isoformat(),
             "metadata": message.metadata,
             "reactions": {},
-            "is_deleted": False
+            "is_deleted": False,
         }
 
         return created_response(
-            data={"message": message_data},
-            message="Message sent successfully"
+            data={"message": message_data}, message="Message sent successfully"
         )
     except ValidationException as e:
         logger.warning(
@@ -994,11 +961,8 @@ async def create_message(
             room_id=room_id,
             error=str(e),
         )
-        return error_response(
-            message=str(e),
-            code=status.HTTP_400_BAD_REQUEST
-        )
-    except BusinessLogicException as e:
+        return error_response(message=str(e), code=status.HTTP_400_BAD_REQUEST)
+    except BusinessException as e:
         logger.error(
             "Message creation failed",
             user_id=str(current_user.id),
@@ -1007,8 +971,7 @@ async def create_message(
             exc_info=True,
         )
         return error_response(
-            message="Failed to send message",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            message="Failed to send message", code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -1019,7 +982,7 @@ async def edit_message(
     message_id: str,
     request: EditMessageRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Edit an existing message.
 
@@ -1047,8 +1010,7 @@ async def edit_message(
 
         # Check message permission
         can_edit = await chat_service.check_message_permission(
-            message_id=message_id,
-            user_id=str(current_user.id)
+            message_id=message_id, user_id=str(current_user.id)
         )
 
         if not can_edit:
@@ -1059,13 +1021,12 @@ async def edit_message(
             )
             return error_response(
                 message="Permission denied to edit message",
-                code=status.HTTP_403_FORBIDDEN
+                code=status.HTTP_403_FORBIDDEN,
             )
 
         # Edit message
         success, updated_message = await chat_service.edit_message(
-            message_id=message_id,
-            content=request.content
+            message_id=message_id, content=request.content
         )
 
         if not success or not updated_message:
@@ -1075,8 +1036,7 @@ async def edit_message(
                 message_id=message_id,
             )
             return error_response(
-                message="Failed to edit message",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to edit message", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -1091,12 +1051,11 @@ async def edit_message(
             "room_id": room_id,
             "content": updated_message.content,
             "updated_at": updated_message.updated_at.isoformat(),
-            "is_edited": True
+            "is_edited": True,
         }
 
         return success_response(
-            data={"message": message_data},
-            message="Message edited successfully"
+            data={"message": message_data}, message="Message edited successfully"
         )
     except ValidationException as e:
         logger.warning(
@@ -1105,11 +1064,8 @@ async def edit_message(
             message_id=message_id,
             error=str(e),
         )
-        return error_response(
-            message=str(e),
-            code=status.HTTP_400_BAD_REQUEST
-        )
-    except BusinessLogicException as e:
+        return error_response(message=str(e), code=status.HTTP_400_BAD_REQUEST)
+    except BusinessException as e:
         logger.error(
             "Message edit failed",
             user_id=str(current_user.id),
@@ -1118,8 +1074,7 @@ async def edit_message(
             exc_info=True,
         )
         return error_response(
-            message="Failed to edit message",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            message="Failed to edit message", code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -1129,7 +1084,7 @@ async def delete_message(
     room_id: str,
     message_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Delete a message.
 
@@ -1156,9 +1111,7 @@ async def delete_message(
 
         # Check message permission
         can_delete = await chat_service.check_message_permission(
-            message_id=message_id,
-            user_id=str(current_user.id),
-            require_admin=False
+            message_id=message_id, user_id=str(current_user.id), require_admin=False
         )
 
         if not can_delete:
@@ -1169,7 +1122,7 @@ async def delete_message(
             )
             return error_response(
                 message="Permission denied to delete message",
-                code=status.HTTP_403_FORBIDDEN
+                code=status.HTTP_403_FORBIDDEN,
             )
 
         # Delete message
@@ -1182,8 +1135,7 @@ async def delete_message(
                 message_id=message_id,
             )
             return error_response(
-                message="Failed to delete message",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to delete message", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -1192,10 +1144,8 @@ async def delete_message(
             message_id=message_id,
         )
 
-        return success_response(
-            message="Message deleted successfully"
-        )
-    except BusinessLogicException as e:
+        return success_response(message="Message deleted successfully")
+    except BusinessException as e:
         logger.error(
             "Message deletion failed",
             user_id=str(current_user.id),
@@ -1205,7 +1155,7 @@ async def delete_message(
         )
         return error_response(
             message="Failed to delete message",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -1216,7 +1166,7 @@ async def add_reaction(
     message_id: str,
     request: ReactionRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Add a reaction to a message.
 
@@ -1252,15 +1202,14 @@ async def add_reaction(
                 room_id=room_id,
             )
             return error_response(
-                message="Access denied to room",
-                code=status.HTTP_403_FORBIDDEN
+                message="Access denied to room", code=status.HTTP_403_FORBIDDEN
             )
 
         # Add reaction
         success = await chat_service.add_reaction(
             message_id=message_id,
             user_id=str(current_user.id),
-            reaction=request.reaction
+            reaction=request.reaction,
         )
 
         if not success:
@@ -1271,8 +1220,7 @@ async def add_reaction(
                 reaction=request.reaction,
             )
             return error_response(
-                message="Failed to add reaction",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to add reaction", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -1286,11 +1234,11 @@ async def add_reaction(
             data={
                 "message_id": message_id,
                 "reaction": request.reaction,
-                "user_id": str(current_user.id)
+                "user_id": str(current_user.id),
             },
-            message="Reaction added successfully"
+            message="Reaction added successfully",
         )
-    except BusinessLogicException as e:
+    except BusinessException as e:
         logger.error(
             "Adding reaction failed",
             user_id=str(current_user.id),
@@ -1300,8 +1248,7 @@ async def add_reaction(
             exc_info=True,
         )
         return error_response(
-            message="Failed to add reaction",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            message="Failed to add reaction", code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -1312,7 +1259,7 @@ async def remove_reaction(
     message_id: str,
     reaction: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Remove a reaction from a message.
 
@@ -1348,15 +1295,12 @@ async def remove_reaction(
                 room_id=room_id,
             )
             return error_response(
-                message="Access denied to room",
-                code=status.HTTP_403_FORBIDDEN
+                message="Access denied to room", code=status.HTTP_403_FORBIDDEN
             )
 
         # Remove reaction
         success = await chat_service.remove_reaction(
-            message_id=message_id,
-            user_id=str(current_user.id),
-            reaction=reaction
+            message_id=message_id, user_id=str(current_user.id), reaction=reaction
         )
 
         if not success:
@@ -1367,8 +1311,7 @@ async def remove_reaction(
                 reaction=reaction,
             )
             return error_response(
-                message="Failed to remove reaction",
-                code=status.HTTP_400_BAD_REQUEST
+                message="Failed to remove reaction", code=status.HTTP_400_BAD_REQUEST
             )
 
         logger.info(
@@ -1378,10 +1321,8 @@ async def remove_reaction(
             reaction=reaction,
         )
 
-        return success_response(
-            message="Reaction removed successfully"
-        )
-    except BusinessLogicException as e:
+        return success_response(message="Reaction removed successfully")
+    except BusinessException as e:
         logger.error(
             "Removing reaction failed",
             user_id=str(current_user.id),
@@ -1392,7 +1333,7 @@ async def remove_reaction(
         )
         return error_response(
             message="Failed to remove reaction",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -1401,7 +1342,7 @@ async def remove_reaction(
 async def create_direct_chat(
     request: CreateDirectChatRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ) -> Response:
     """Create or get a direct chat between two users.
 
@@ -1443,20 +1384,17 @@ async def create_direct_chat(
                 target_user_id=request.user_id,
             )
             return error_response(
-                message="User not found",
-                code=status.HTTP_404_NOT_FOUND
+                message="User not found", code=status.HTTP_404_NOT_FOUND
             )
 
         # Find or create the direct chat
         room_id = await chat_service.find_direct_chat(
-            user_id1=str(current_user.id),
-            user_id2=request.user_id
+            user_id1=str(current_user.id), user_id2=request.user_id
         )
 
         if not room_id:
             room_id = await chat_service.create_direct_chat(
-                user_id1=str(current_user.id),
-                user_id2=request.user_id
+                user_id1=str(current_user.id), user_id2=request.user_id
             )
 
         room_info = await chat_service.get_room_info(room_id)
@@ -1469,10 +1407,9 @@ async def create_direct_chat(
         )
 
         return success_response(
-            data={"room": room_info},
-            message="Direct chat retrieved successfully"
+            data={"room": room_info}, message="Direct chat retrieved successfully"
         )
-    except BusinessLogicException as e:
+    except BusinessException as e:
         logger.error(
             "Direct chat creation/retrieval failed",
             user_id=str(current_user.id),
@@ -1482,5 +1419,5 @@ async def create_direct_chat(
         )
         return error_response(
             message="Failed to create/get direct chat",
-            code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

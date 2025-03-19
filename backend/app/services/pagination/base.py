@@ -44,7 +44,9 @@ class CursorPaginationParams(BaseModel):
     """Parameters for cursor-based pagination."""
 
     cursor: Optional[str] = Field(None, description="Pagination cursor")
-    limit: int = Field(20, ge=1, le=100, description="Maximum number of items to return")
+    limit: int = Field(
+        20, ge=1, le=100, description="Maximum number of items to return"
+    )
     sort: Optional[List[SortField]] = Field(None, description="Fields to sort by")
 
 
@@ -60,7 +62,7 @@ class PaginationResult(Generic[R]):
         pages: Optional[int] = None,
         next_cursor: Optional[str] = None,
         has_next: bool = False,
-        has_prev: bool = False
+        has_prev: bool = False,
     ) -> None:
         """Initialize the pagination result.
 
@@ -93,7 +95,7 @@ class PaginationResult(Generic[R]):
             "items": self.items,
             "total": self.total,
             "has_next": self.has_next,
-            "has_prev": self.has_prev
+            "has_prev": self.has_prev,
         }
 
         # Add offset pagination fields
@@ -118,7 +120,7 @@ class PaginationProvider(Protocol, Generic[T, R]):
         self,
         query: Select,
         params: OffsetPaginationParams,
-        transform_func: Optional[callable] = None
+        transform_func: Optional[callable] = None,
     ) -> PaginationResult[R]:
         """Paginate query results using offset-based pagination.
 
@@ -136,7 +138,7 @@ class PaginationProvider(Protocol, Generic[T, R]):
         self,
         query: Select,
         params: CursorPaginationParams,
-        transform_func: Optional[callable] = None
+        transform_func: Optional[callable] = None,
     ) -> PaginationResult[R]:
         """Paginate query results using cursor-based pagination.
 

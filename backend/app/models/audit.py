@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from sqlalchemy import Column, DateTime, String, JSON, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import UUID
@@ -36,7 +35,12 @@ class AuditLog(Base):
     level = Column(String, nullable=False, index=True)
 
     # User who performed the action
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     user = relationship("User", back_populates="audit_logs")
 
     # IP address of the user
@@ -53,14 +57,24 @@ class AuditLog(Base):
     request_id = Column(String, nullable=True)
     user_agent = Column(String, nullable=True)
     session_id = Column(String, nullable=True)
-    company_id = Column(UUID(as_uuid=True), ForeignKey("companies.id", ondelete="SET NULL"), nullable=True, index=True)
+    company_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("companies.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     company = relationship("Company", back_populates="audit_logs")
 
     # Create indexes for common query patterns
     __table_args__ = (
         Index("ix_audit_logs_timestamp_desc", timestamp.desc()),
         Index("ix_audit_logs_user_id_timestamp", user_id, timestamp.desc()),
-        Index("ix_audit_logs_resource_timestamp", resource_type, resource_id, timestamp.desc()),
+        Index(
+            "ix_audit_logs_resource_timestamp",
+            resource_type,
+            resource_id,
+            timestamp.desc(),
+        ),
         Index("ix_audit_logs_event_type_timestamp", event_type, timestamp.desc()),
     )
 

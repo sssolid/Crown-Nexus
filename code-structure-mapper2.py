@@ -4,7 +4,8 @@ Code Structure Mapper - Generate comprehensive code structure representations fo
 
 This tool analyzes Python projects and generates detailed structural representations that
 include directory structure, modules, classes, methods, functions, and their signatures.
-The output can be in various formats suitable for AI analysis.
+The output can be in various formats suitable for AI analysis, including a directory-based
+structure that mirrors the original project for selective sharing.
 """
 from __future__ import annotations
 
@@ -15,8 +16,9 @@ import json
 import argparse
 import importlib
 import inspect
+import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, Callable
+from typing import Any, Dict, List, Optional, Set, Tuple, Union, Callable, Literal
 from dataclasses import dataclass, field
 from enum import Enum, auto
 import logging
@@ -38,6 +40,7 @@ class OutputFormat(Enum):
     MARKDOWN = auto()
     MERMAID = auto()
     TEXT = auto()
+    DIRECTORY = auto()  # New format for directory-based output
 
 
 @dataclass
@@ -933,6 +936,561 @@ class CodeStructureMapper:
         else:
             return text_str
 
+    def export_directory(self, output_dir: Path) -> None:
+        """
+        Export the project structure as separate markdown files in a directory.
+
+        Args:
+            output_dir: Directory where the processed project will be created
+        """
+        logger.info(f"Exporting project structure to directory: {output_dir}")
+
+        # Create the output directory if it doesn't exist
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Create the project index file
+        self._create_project_index(output_dir)
+
+        # Create directories for modules
+        modules_dir = output_dir / "modules"
+        modules_dir.mkdir(exist_ok=True)
+
+        # Export top-level modules
+        for module_name, module_info in self.project_info.modules.items():
+            module_path = modules_dir / f"{module_name}.md"
+            self._export_module_to_file(module_info, module_path, relative_path=Path("modules"))
+
+        # Export packages
+        packages_dir = output_dir / "packages"
+        packages_dir.mkdir(exist_ok=True)
+
+        for package_name, package_info in self.project_info.packages.items():
+            package_dir = packages_dir / package_name
+            package_dir.mkdir(exist_ok=True)
+            self._export_package_to_directory(package_info, package_dir, relative_path=Path("packages") / package_name)
+
+        # Create a metadata file with information about the processing
+        self._create_metadata_file(output_dir)
+
+        # Create a tree view of the project structure
+        self._create_tree_view_file(output_dir)
+
+        logger.info(f"Project structure exported successfully to {output_dir}")
+
+    def _create_project_index(self, output_dir: Path) -> None:
+        """
+        Create the main index file for the processed project.
+
+        Args:
+            output_dir: The output directory
+        """
+        index_path = output_dir / "index.md"
+
+        lines = [
+            f"# {self.project_name} Project Structure",
+            f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            "",
+            "## Project Overview",
+            f"- **Project Name:** {self.project_name}",
+            f"- **Original Path:** {self.project_info.root_path}",
+            f"- **Packages:** {len(self.project_info.packages)}",
+            f"- **Top-level Modules:** {len(self.project_info.modules)}",
+            "",
+            "## Navigation",
+            "",
+            "### Project Structure",
+            "- [Tree View](tree_view.md) - Visual representation of the project structure",
+            "",
+        ]
+
+        # Add top-level modules to the index
+        if self.project_info.modules:
+            lines.append("### Top-level Modules")
+            for module_name in sorted(self.project_info.modules.keys()):
+                lines.append(f"- [modules/{module_name}.md](modules/{module_name}.md)")
+            lines.append("")
+
+        # Add packages to the index
+        if self.project_info.packages:
+            lines.append("### Packages")
+            for package_name in sorted(self.project_info.packages.keys()):
+                lines.append(f"- [packages/{package_name}/index.md](packages/{package_name}/index.md)")
+            lines.append("")
+
+        # Add non-Python files section
+        if self.project_info.non_python_files:
+            lines.append("### Non-Python Files")
+            for dir_path, files in sorted(self.project_info.non_python_files.items()):
+                if not dir_path:
+                    dir_display = "Root Directory"
+                else:
+                    dir_display = dir_path
+                lines.append(f"- **{dir_display}**: {', '.join(sorted(files))}")
+            lines.append("")
+
+        # Write the index file
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
+    def _export_module_to_file(
+        self,
+        module_info: ModuleInfo,
+        output_path: Path,
+        relative_path: Optional[Path] = None,
+        package_path: Optional[str] = None
+    ) -> None:
+        """
+        Export a module's information to a markdown file.
+
+        Args:
+            module_info: The module information
+            output_path: Path where the markdown file will be saved
+            relative_path: Relative path for navigation links
+            package_path: Dot-separated package path for the module (if in a package)
+        """
+        # Get fully qualified module name
+        if package_path:
+            if module_info.name == "__init__":
+                full_module_name = package_path
+            else:
+                full_module_name = f"{package_path}.{module_info.name}"
+        else:
+            full_module_name = module_info.name
+
+        # Prepare the markdown content
+        lines = [
+            f"# Module: {full_module_name}",
+            "",
+            f"**Path:** `{module_info.path.relative_to(self.project_info.root_path)}`",
+            "",
+        ]
+
+        # Add navigation link back
+        if relative_path:
+            back_link = "../" * (len(relative_path.parts))
+            lines.append(f"[Back to Project Index]({back_link}index.md)")
+            lines.append("")
+
+        # Add module docstring if available
+        if module_info.docstring and self.include_docstrings:
+            lines.append("## Description")
+            lines.append(f"{module_info.docstring}")
+            lines.append("")
+
+        # Add imports section
+        if module_info.imports:
+            lines.append("## Imports")
+            lines.append("```python")
+            for imp in module_info.imports:
+                lines.append(imp)
+            lines.append("```")
+            lines.append("")
+
+        # Add global variables section
+        if module_info.global_variables:
+            lines.append("## Global Variables")
+            lines.append("```python")
+            for var_name, var_value in module_info.global_variables.items():
+                lines.append(f"{var_name} = {var_value}")
+            lines.append("```")
+            lines.append("")
+
+        # Add functions section
+        if module_info.functions:
+            lines.append("## Functions")
+            lines.append("")
+
+            # Add a function summary table
+            lines.append("| Function | Description |")
+            lines.append("| --- | --- |")
+
+            for func_name, func_info in sorted(module_info.functions.items()):
+                brief_desc = ""
+                if func_info.docstring:
+                    # Extract first sentence from docstring for the summary
+                    brief_desc = func_info.docstring.split(".")[0] + "."
+                lines.append(f"| `{func_name}` | {brief_desc} |")
+
+            lines.append("")
+
+            # Add detailed function information
+            for func_name, func_info in sorted(module_info.functions.items()):
+                lines.append(f"### `{func_name}`")
+
+                # Add function signature
+                async_prefix = "async " if func_info.is_async else ""
+                decorators = [f"@{decorator}" for decorator in func_info.decorators]
+
+                # Add decorators
+                if decorators:
+                    lines.append("```python")
+                    for decorator in decorators:
+                        lines.append(decorator)
+
+                    # Add signature
+                    signature = f"{async_prefix}def {func_name}({', '.join(func_info.args)})"
+                    if func_info.return_annotation:
+                        signature += f" -> {func_info.return_annotation}"
+                    signature += ":"
+                    lines.append(signature)
+                    lines.append("```")
+                else:
+                    lines.append("```python")
+                    signature = f"{async_prefix}def {func_name}({', '.join(func_info.args)})"
+                    if func_info.return_annotation:
+                        signature += f" -> {func_info.return_annotation}"
+                    signature += ":"
+                    lines.append(signature)
+                    lines.append("```")
+
+                # Add function docstring
+                if func_info.docstring and self.include_docstrings:
+                    lines.append(f"{func_info.docstring}")
+
+                # Add source code if included
+                if func_info.source_code and self.include_source:
+                    lines.append("**Source Code:**")
+                    lines.append("```python")
+                    lines.append(func_info.source_code)
+                    lines.append("```")
+
+                lines.append("")
+
+        # Add classes section
+        if module_info.classes:
+            lines.append("## Classes")
+            lines.append("")
+
+            # Add a class summary table
+            lines.append("| Class | Description |")
+            lines.append("| --- | --- |")
+
+            for class_name, class_info in sorted(module_info.classes.items()):
+                brief_desc = ""
+                if class_info.docstring:
+                    brief_desc = class_info.docstring.split(".")[0] + "."
+                lines.append(f"| `{class_name}` | {brief_desc} |")
+
+            lines.append("")
+
+            # Add detailed class information
+            for class_name, class_info in sorted(module_info.classes.items()):
+                lines.append(f"### Class: `{class_name}`")
+
+                # Add class inheritance
+                if class_info.bases:
+                    lines.append(f"**Inherits from:** {', '.join(class_info.bases)}")
+
+                # Add class decorators
+                if class_info.decorators:
+                    lines.append("**Decorators:**")
+                    for decorator in class_info.decorators:
+                        lines.append(f"- `@{decorator}`")
+
+                # Add class docstring
+                if class_info.docstring and self.include_docstrings:
+                    lines.append("")
+                    lines.append(class_info.docstring)
+
+                lines.append("")
+
+                # Add class attributes
+                if class_info.class_attributes:
+                    lines.append("#### Attributes")
+                    lines.append("")
+                    lines.append("| Name | Value |")
+                    lines.append("| --- | --- |")
+                    for attr_name, attr_value in class_info.class_attributes.items():
+                        lines.append(f"| `{attr_name}` | `{attr_value}` |")
+                    lines.append("")
+
+                # Add class methods
+                if class_info.methods:
+                    lines.append("#### Methods")
+                    lines.append("")
+
+                    # Add a method summary table
+                    lines.append("| Method | Description |")
+                    lines.append("| --- | --- |")
+
+                    for method_name, method_info in sorted(class_info.methods.items()):
+                        brief_desc = ""
+                        if method_info.docstring:
+                            brief_desc = method_info.docstring.split(".")[0] + "."
+                        prop_tag = " `@property`" if method_info.is_property else ""
+                        async_tag = " `async`" if method_info.is_async else ""
+                        lines.append(f"| `{method_name}`{prop_tag}{async_tag} | {brief_desc} |")
+
+                    lines.append("")
+
+                    # Add detailed method information
+                    for method_name, method_info in sorted(class_info.methods.items()):
+                        lines.append(f"##### `{method_name}`")
+
+                        # Add method signature
+                        async_prefix = "async " if method_info.is_async else ""
+
+                        # Add decorators
+                        decorator_lines = []
+                        if method_info.is_property:
+                            decorator_lines.append("@property")
+
+                        other_decorators = [d for d in method_info.decorators if d != "property"]
+                        decorator_lines.extend([f"@{d}" for d in other_decorators])
+
+                        if decorator_lines:
+                            lines.append("```python")
+                            for dec in decorator_lines:
+                                lines.append(dec)
+
+                            # Add signature
+                            signature = f"{async_prefix}def {method_name}({', '.join(method_info.args)})"
+                            if method_info.return_annotation:
+                                signature += f" -> {method_info.return_annotation}"
+                            signature += ":"
+                            lines.append(signature)
+                            lines.append("```")
+                        else:
+                            lines.append("```python")
+                            signature = f"{async_prefix}def {method_name}({', '.join(method_info.args)})"
+                            if method_info.return_annotation:
+                                signature += f" -> {method_info.return_annotation}"
+                            signature += ":"
+                            lines.append(signature)
+                            lines.append("```")
+
+                        # Add method docstring
+                        if method_info.docstring and self.include_docstrings:
+                            lines.append(f"{method_info.docstring}")
+
+                        # Add source code if included
+                        if method_info.source_code and self.include_source:
+                            lines.append("**Source Code:**")
+                            lines.append("```python")
+                            lines.append(method_info.source_code)
+                            lines.append("```")
+
+                        lines.append("")
+
+        # Write the markdown content to the file
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
+    def _export_package_to_directory(
+        self,
+        package_info: PackageInfo,
+        output_dir: Path,
+        relative_path: Path,
+        parent_package: Optional[str] = None
+    ) -> None:
+        """
+        Export a package's information to a directory with markdown files.
+
+        Args:
+            package_info: The package information
+            output_dir: Directory where the package files will be saved
+            relative_path: Relative path for navigation links
+            parent_package: Parent package path (dot-separated) if this is a subpackage
+        """
+        # Create the package directory if it doesn't exist
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Determine the package path
+        if parent_package:
+            package_path = f"{parent_package}.{package_info.name}"
+        else:
+            package_path = package_info.name
+
+        # Create the package index file
+        index_path = output_dir / "index.md"
+        self._create_package_index(package_info, index_path, relative_path, package_path)
+
+        # Export the __init__.py module if it exists
+        if package_info.init_module:
+            init_path = output_dir / "init.md"
+            self._export_module_to_file(package_info.init_module, init_path, relative_path, package_path)
+
+        # Export all modules in the package
+        for module_name, module_info in package_info.modules.items():
+            module_path = output_dir / f"{module_name}.md"
+            self._export_module_to_file(module_info, module_path, relative_path, package_path)
+
+        # Export all subpackages
+        for subpackage_name, subpackage_info in package_info.subpackages.items():
+            subpackage_dir = output_dir / subpackage_name
+            subpackage_rel_path = relative_path / subpackage_name
+            self._export_package_to_directory(subpackage_info, subpackage_dir, subpackage_rel_path, package_path)
+
+    def _create_package_index(
+        self,
+        package_info: PackageInfo,
+        index_path: Path,
+        relative_path: Path,
+        package_path: str
+    ) -> None:
+        """
+        Create an index file for a package directory.
+
+        Args:
+            package_info: The package information
+            index_path: Path where the index file will be saved
+            relative_path: Relative path for navigation links
+            package_path: Dot-separated package path
+        """
+        # Prepare the markdown content
+        lines = [
+            f"# Package: {package_path}",
+            "",
+            f"**Path:** `{package_info.path.relative_to(self.project_info.root_path)}`",
+            "",
+        ]
+
+        # Add navigation link back
+        back_link = "../" * len(relative_path.parts)
+        lines.append(f"[Back to Project Index]({back_link}index.md)")
+        if len(relative_path.parts) > 1:
+            # Add link to parent package if this is a subpackage
+            parent_path = "../index.md"
+            parent_name = relative_path.parts[-2]
+            lines.append(f"[Back to Parent Package {parent_name}]({parent_path})")
+        lines.append("")
+
+        # Add package description from __init__ docstring
+        if package_info.init_module and package_info.init_module.docstring and self.include_docstrings:
+            lines.append("## Description")
+            lines.append(package_info.init_module.docstring)
+            lines.append("")
+
+        # Add __init__ module link
+        if package_info.init_module:
+            lines.append("## Package Initialization")
+            lines.append("- [__init__.py](init.md)")
+            lines.append("")
+
+        # Add modules section
+        if package_info.modules:
+            lines.append("## Modules")
+            lines.append("")
+
+            # Add a module summary table
+            lines.append("| Module | Description |")
+            lines.append("| --- | --- |")
+
+            for module_name, module_info in sorted(package_info.modules.items()):
+                brief_desc = ""
+                if module_info.docstring:
+                    brief_desc = module_info.docstring.split(".")[0] + "."
+                lines.append(f"| [`{module_name}`]({module_name}.md) | {brief_desc} |")
+
+            lines.append("")
+
+        # Add subpackages section
+        if package_info.subpackages:
+            lines.append("## Subpackages")
+            lines.append("")
+
+            # Add a subpackage summary table
+            lines.append("| Subpackage | Description |")
+            lines.append("| --- | --- |")
+
+            for subpackage_name, subpackage_info in sorted(package_info.subpackages.items()):
+                brief_desc = ""
+                if (subpackage_info.init_module and
+                    subpackage_info.init_module.docstring and
+                    self.include_docstrings):
+                    brief_desc = subpackage_info.init_module.docstring.split(".")[0] + "."
+                lines.append(f"| [`{subpackage_name}`]({subpackage_name}/index.md) | {brief_desc} |")
+
+            lines.append("")
+
+        # Write the markdown content to the file
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
+    def _create_metadata_file(self, output_dir: Path) -> None:
+        """
+        Create a metadata file with information about the processing.
+
+        Args:
+            output_dir: The output directory
+        """
+        metadata_path = output_dir / "metadata.md"
+
+        lines = [
+            "# Project Processing Metadata",
+            "",
+            f"- **Original Project:** {self.project_name}",
+            f"- **Original Path:** {self.project_info.root_path}",
+            f"- **Processing Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"- **Include Docstrings:** {self.include_docstrings}",
+            f"- **Include Source Code:** {self.include_source}",
+            f"- **Include Private Members:** {self.include_private}",
+            f"- **Preserve Docstring Format:** {self.preserve_docstring_format}",
+            "",
+            "## Ignored Patterns",
+            "",
+        ]
+
+        # Add ignored patterns
+        for pattern in self.ignore_patterns:
+            lines.append(f"- `{pattern}`")
+
+        # Add default ignored patterns if not explicitly specified
+        default_ignores = [
+            r"__pycache__",
+            r"\.git",
+            r"\.venv",
+            r"venv",
+            r"\.env",
+            r"\.idea",
+            r"\.vscode",
+            r"\.pytest_cache",
+            r"\.tox",
+            r"\.eggs",
+            r"\.mypy_cache",
+            r"build",
+            r"dist",
+            r"\.coverage",
+            r"htmlcov",
+        ]
+
+        for pattern in default_ignores:
+            if not any(re.search(pattern, ignore) for ignore in self.ignore_patterns):
+                lines.append(f"- `{pattern}` (default)")
+
+        # Write the metadata file
+        with open(metadata_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
+    def _create_tree_view_file(self, output_dir: Path) -> None:
+        """
+        Create a tree view file to visualize the project structure.
+
+        Args:
+            output_dir: The output directory
+        """
+        tree_path = output_dir / "tree_view.md"
+
+        lines = [
+            "# Project Structure Tree View",
+            "",
+            f"Project: {self.project_name}",
+            "",
+            "```",
+        ]
+
+        # Generate directory tree
+        lines.extend(self._generate_directory_tree())
+        lines.append("```")
+        lines.append("")
+
+        # Add navigation link back to index
+        lines.append("[Back to Project Index](index.md)")
+
+        # Write the tree view file
+        with open(tree_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
     def _project_info_to_dict(self) -> Dict[str, Any]:
         """
         Convert ProjectInfo to a dictionary for JSON serialization.
@@ -1180,7 +1738,7 @@ class CodeStructureMapper:
                         async_prefix = "async " if method_info.is_async else ""
                         property_prefix = "@property\n" if method_info.is_property else ""
                         other_decorators = "\n".join([f"@{decorator}" for decorator in method_info.decorators
-                                                  if decorator != "property"])
+                                                      if decorator != "property"])
                         if other_decorators:
                             other_decorators += "\n"
 
@@ -1422,13 +1980,13 @@ def main() -> None:
     )
     parser.add_argument(
         "--output",
-        help="Output file (default: standard output)"
+        help="Output file or directory (for directory format)"
     )
     parser.add_argument(
         "--format",
-        choices=["json", "markdown", "mermaid", "text"],
+        choices=["json", "markdown", "mermaid", "text", "directory"],
         default="markdown",
-        help="Output format (default: markdown)"
+        help="Output format (default: markdown; use 'directory' for file-based structure)"
     )
     parser.add_argument(
         "--project-name",
@@ -1463,6 +2021,11 @@ def main() -> None:
         action="store_true",
         help="Enable verbose output"
     )
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help="Clean the output directory before exporting (only for directory format)"
+    )
 
     args = parser.parse_args()
 
@@ -1489,24 +2052,39 @@ def main() -> None:
     # Analyze the project
     mapper.analyze_project()
 
-    # Export in the requested format
-    output_path = Path(args.output) if args.output else None
+    # Handle output based on format
+    if args.format == "directory":
+        if args.output:
+            output_dir = Path(args.output)
+        else:
+            output_dir = Path("processed_project")
 
-    if args.format == "json":
-        result = mapper.export_json(output_path)
-    elif args.format == "markdown":
-        result = mapper.export_markdown(output_path)
-    elif args.format == "mermaid":
-        result = mapper.export_mermaid(output_path)
-    elif args.format == "text":
-        result = mapper.export_text(output_path)
+        # Clean the output directory if requested
+        if args.clean and output_dir.exists():
+            logger.info(f"Cleaning output directory: {output_dir}")
+            shutil.rmtree(output_dir)
+
+        # Export in directory format
+        mapper.export_directory(output_dir)
     else:
-        parser.error(f"Unsupported format: {args.format}")
-        return
+        # Handle other formats as before
+        output_path = Path(args.output) if args.output else None
 
-    # Print to stdout if no output file specified
-    if result:
-        print(result)
+        if args.format == "json":
+            result = mapper.export_json(output_path)
+        elif args.format == "markdown":
+            result = mapper.export_markdown(output_path)
+        elif args.format == "mermaid":
+            result = mapper.export_mermaid(output_path)
+        elif args.format == "text":
+            result = mapper.export_text(output_path)
+        else:
+            parser.error(f"Unsupported format: {args.format}")
+            return
+
+        # Print to stdout if no output file specified
+        if result:
+            print(result)
 
 
 if __name__ == "__main__":

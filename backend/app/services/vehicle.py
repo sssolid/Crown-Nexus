@@ -15,12 +15,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
-from app.core.dependency_manager import get_dependency
+from app.core.cache.decorators import cached
 from app.core.exceptions import DatabaseException, ErrorCode, ValidationException
 from app.core.logging import get_logger
 from app.models.product import Fitment
-
-cache_service = get_dependency("cache_service")
 
 logger = get_logger("app.services.vehicle")
 
@@ -36,7 +34,7 @@ class VehicleDataService:
         """
         self.db = db
 
-    @cache_service.cached(prefix="vehicle:years", ttl=3600, backend="resis")
+    @cached(prefix="vehicle:years", ttl=3600, backend="redis")
     async def get_years(self) -> List[int]:
         """Get all available vehicle years.
 
@@ -63,7 +61,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="vehicle:makes", ttl=3600, backend="redis")
+    @cached(ttl=3600, backend="redis", prefix="vehicle:makes")
     async def get_makes(self, year: Optional[int] = None) -> List[str]:
         """Get vehicle makes, optionally filtered by year.
 
@@ -97,7 +95,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="vehicle:models", ttl=3600, backend="redis")
+    @cached(prefix="vehicle:models", ttl=3600, backend="redis")
     async def get_models(
         self, make: Optional[str] = None, year: Optional[int] = None
     ) -> List[str]:
@@ -139,7 +137,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="vehicle:engines", ttl=3600, backend="redis")
+    @cached(prefix="vehicle:engines", ttl=3600, backend="redis")
     async def get_engines(
         self,
         make: Optional[str] = None,
@@ -196,7 +194,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="vehicle:transmissions", ttl=3600, backend="redis")
+    @cached(prefix="vehicle:transmissions", ttl=3600, backend="redis")
     async def get_transmissions(
         self,
         make: Optional[str] = None,
@@ -259,7 +257,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(maxsize=100, ttl=3600, backend="redis")
+    @cached(maxsize=100, ttl=3600, backend="redis")
     async def validate_fitment(
         self,
         year: int,
@@ -322,7 +320,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(maxsize=1000, ttl=86400, backend="redis")
+    @cached(maxsize=1000, ttl=86400, backend="redis")
     async def decode_vin(self, vin: str) -> Optional[Dict[str, Any]]:
         """Decode a Vehicle Identification Number (VIN).
 
@@ -366,7 +364,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(maxsize=100, ttl=3600, backend="redis")
+    @cached(ttl=3600, backend="redis")
     async def standardize_make(self, make: str) -> str:
         """Standardize a vehicle make name.
 

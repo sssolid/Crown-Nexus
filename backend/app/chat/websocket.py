@@ -29,10 +29,11 @@ from app.core.exceptions import (
 )
 from app.core.logging import get_logger
 from app.core.service_registry import get_service
+
+from app.core.security import sanitize_input, moderate_content
 from app.models.user import User
 from app.services.audit_service import AuditEventType, AuditLogLevel, AuditService
 from app.services.metrics_service import MetricsService
-from app.services.security_service import SecurityService
 from app.services.validation_service import ValidationService
 from app.utils.redis_manager import rate_limit_check
 
@@ -48,11 +49,6 @@ async def get_audit_service() -> AuditService:
 async def get_metrics_service() -> MetricsService:
     """Get the metrics service instance."""
     return cast(MetricsService, get_service("metrics_service"))
-
-
-async def get_security_service() -> SecurityService:
-    """Get the security service instance."""
-    return cast(SecurityService, get_service("security_service"))
 
 
 async def get_validation_service() -> ValidationService:
@@ -84,7 +80,6 @@ async def websocket_endpoint(
     chat_service = ChatService(db)
     audit_service = await get_audit_service()
     metrics_service = await get_metrics_service()
-    security_service = await get_security_service()
     validation_service = await get_validation_service()
 
     # Initialize metrics
@@ -164,7 +159,7 @@ async def websocket_endpoint(
                 command_data = json.loads(data)
 
                 # Security check for suspicious input
-                if not security_service.validate_json_input(command_data):
+                if not validate_json_input(command_data):
                     logger.warning(
                         "Suspicious WebSocket input rejected",
                         user_id=user_id,
@@ -194,7 +189,6 @@ async def websocket_endpoint(
                         user=current_user,
                         chat_service=chat_service,
                         audit_service=audit_service,
-                        security_service=security_service,
                     )
 
                 # Increment command counter
@@ -288,7 +282,6 @@ async def process_command(
     user: User,
     chat_service: ChatService,
     audit_service: AuditService,
-    security_service: SecurityService,
 ) -> None:
     """
     Process a WebSocket command.
@@ -300,7 +293,6 @@ async def process_command(
         user: The authenticated user
         chat_service: Chat service for chat operations
         audit_service: Audit service for logging events
-        security_service: Security service for input validation
 
     Raises:
         ValidationException: If the command data is invalid
@@ -317,7 +309,7 @@ async def process_command(
             raise ValidationException(message="Room ID is required")
 
         # Sanitize input
-        room_id = security_service.sanitize_input(room_id)
+        room_id = sanitize_input(room_id)
 
         # Check access permission
         has_access = await chat_service.check_room_access(user_id, room_id)
@@ -371,7 +363,7 @@ async def process_command(
             raise ValidationException(message="Room ID is required")
 
         # Sanitize input
-        room_id = security_service.sanitize_input(room_id)
+        room_id = sanitize_input(room_id)
 
         # Leave the room
         manager.leave_room(connection_id, room_id)
@@ -412,9 +404,9 @@ async def process_command(
             raise ValidationException(message="Room ID and content are required")
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
+        room_id = sanitize_input(room_id)
         # We don't sanitize content to preserve message formatting, but we do validate message type
-        if not security_service.is_valid_enum_value(message_type, MessageType):
+        if not is_valid_enum_value(message_type, MessageType):
             raise ValidationException(message=f"Invalid message type: {message_type}")
 
         # Check access permission
@@ -431,7 +423,7 @@ async def process_command(
             )
 
         # Content moderation
-        filtered_content = await security_service.moderate_content(content)
+        filtered_content = await moderate_content(content)
 
         # Create message
         message = await chat_service.create_message(
@@ -492,8 +484,8 @@ async def process_command(
             )
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
-        last_read_id = security_service.sanitize_input(last_read_id)
+        room_id = sanitize_input(room_id)
+        last_read_id = sanitize_input(last_read_id)
 
         # Mark messages as read
         success = await chat_service.mark_as_read(user_id, room_id, last_read_id)
@@ -524,7 +516,7 @@ async def process_command(
             )
 
         # Sanitize input
-        room_id = security_service.sanitize_input(room_id)
+        room_id = sanitize_input(room_id)
 
         # Broadcast typing status to room
         await redis_manager.broadcast_to_room(
@@ -549,7 +541,7 @@ async def process_command(
             raise ValidationException(message="Room ID is required")
 
         # Sanitize input
-        room_id = security_service.sanitize_input(room_id)
+        room_id = sanitize_input(room_id)
 
         # Broadcast typing stopped status to room
         await redis_manager.broadcast_to_room(
@@ -572,9 +564,9 @@ async def process_command(
             raise ValidationException(message="Room ID is required")
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
+        room_id = sanitize_input(room_id)
         if before_id:
-            before_id = security_service.sanitize_input(before_id)
+            before_id = sanitize_input(before_id)
 
         # Validate limit range
         if limit < 1 or limit > 100:
@@ -617,8 +609,8 @@ async def process_command(
             )
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
-        message_id = security_service.sanitize_input(message_id)
+        room_id = sanitize_input(room_id)
+        message_id = sanitize_input(message_id)
         # Don't sanitize reaction to preserve emoji
 
         # Add reaction
@@ -680,8 +672,8 @@ async def process_command(
             )
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
-        message_id = security_service.sanitize_input(message_id)
+        room_id = sanitize_input(room_id)
+        message_id = sanitize_input(message_id)
         # Don't sanitize reaction to preserve emoji
 
         # Remove reaction
@@ -742,8 +734,8 @@ async def process_command(
             )
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
-        message_id = security_service.sanitize_input(message_id)
+        room_id = sanitize_input(room_id)
+        message_id = sanitize_input(message_id)
         # Don't sanitize content to preserve message formatting
 
         # Check permission to edit message
@@ -763,7 +755,7 @@ async def process_command(
             )
 
         # Content moderation
-        filtered_content = await security_service.moderate_content(content)
+        filtered_content = await moderate_content(content)
 
         # Edit message
         success, updated_message = await chat_service.edit_message(
@@ -824,8 +816,8 @@ async def process_command(
             )
 
         # Sanitize inputs
-        room_id = security_service.sanitize_input(room_id)
-        message_id = security_service.sanitize_input(message_id)
+        room_id = sanitize_input(room_id)
+        message_id = sanitize_input(message_id)
 
         # Check permission to delete message
         can_delete = await chat_service.check_message_permission(

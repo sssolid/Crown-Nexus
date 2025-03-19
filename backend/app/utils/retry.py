@@ -318,6 +318,7 @@ def async_retry_on_network_errors(
     Returns:
         Callable: Decorator function
     """
+
     def decorator(func: F) -> F:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
@@ -335,7 +336,9 @@ def async_retry_on_network_errors(
                 ],
             )
             return await retry_decorator(func)(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 

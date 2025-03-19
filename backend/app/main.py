@@ -71,6 +71,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Include API router
     from app.api.v1.router import api_router
+
     app.include_router(api_router, prefix=settings.API_V1_STR)
 
     # Include fitment router
@@ -188,10 +189,7 @@ app.add_middleware(
 app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
 
 # Add rate limiting middleware
-if (
-    settings.ENVIRONMENT != Environment.DEVELOPMENT
-    or settings.RATE_LIMIT_ENABLED
-):
+if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLED:
     app.add_middleware(
         RateLimitMiddleware,
         rules=[

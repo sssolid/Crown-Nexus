@@ -15,6 +15,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
+from app.core.cache.decorators import cached
 from app.core.exceptions import (
     AuthenticationException,
     BusinessException,
@@ -22,7 +23,6 @@ from app.core.exceptions import (
     ValidationException,
     ErrorCode,
 )
-from app.core.dependency_manager import get_dependency
 from app.core.logging import get_logger
 from app.db.session import get_db_context
 from app.models.chat import (
@@ -36,8 +36,6 @@ from app.models.chat import (
 )
 from app.models.user import User
 from app.utils.crypto import decrypt_message, encrypt_message
-
-cache_service = get_dependency("cache_service")
 
 logger = get_logger("app.services.chat")
 
@@ -186,7 +184,7 @@ class ChatService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="chat:room", ttl=300, backend="redis")
+    @cached(prefix="chat:room", ttl=300, backend="redis")
     async def get_room(self, room_id: str) -> Optional[ChatRoom]:
         """Get a chat room by ID.
 
@@ -582,7 +580,7 @@ class ChatService:
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="chat:messages", ttl=60, backend="redis")
+    @cached(prefix="chat:messages", ttl=60, backend="redis")
     async def get_message_history(
         self, room_id: str, before_id: Optional[str] = None, limit: int = 50
     ) -> List[Dict[str, Any]]:

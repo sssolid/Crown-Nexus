@@ -139,7 +139,9 @@ class DatabaseSearchProvider(SearchProvider):
             )
 
             # Execute paginated query
-            paginate_service = cast(PaginationService, get_dependency("paginate_service", db=self.db))
+            paginate_service = cast(
+                PaginationService, get_dependency("paginate_service", db=self.db)
+            )
             params = OffsetPaginationParams(page=page, page_size=page_size)
             result = await paginate_service.paginate_with_offset(query, params)
 

@@ -15,7 +15,6 @@ from app.core.exceptions import (
     RateLimitException,
 )
 from app.core.logging import get_logger, set_user_id
-from app.services.security import SecurityService
 from app.services.audit import AuditService
 from app.core.rate_limiter import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
@@ -30,15 +29,6 @@ from app.repositories.user_repository import UserRepository
 logger = get_logger("app.api.deps")
 
 PaginationParams = Dict[str, Union[int, float]]
-
-
-def get_security_service() -> SecurityService:
-    """Get an instance of the security service.
-
-    Returns:
-        SecurityService: The security service instance
-    """
-    return SecurityService()
 
 
 async def get_audit_service(db: AsyncSession = Depends(get_db)) -> AuditService:

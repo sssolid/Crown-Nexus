@@ -52,9 +52,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         self.content_security_policy: str = (
             content_security_policy or settings.CONTENT_SECURITY_POLICY
         )
-        self.permissions_policy: str = (
-            permissions_policy or settings.PERMISSIONS_POLICY
-        )
+        self.permissions_policy: str = permissions_policy or settings.PERMISSIONS_POLICY
         self.expect_ct: Optional[str] = expect_ct
 
         logger.info("SecurityHeadersMiddleware initialized")
@@ -183,14 +181,18 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
         query_string = str(request.url.query)
         for pattern in self.suspicious_patterns:
             if pattern.lower() in query_string.lower():
-                logger.warning(f"Suspicious pattern '{pattern}' found in query: {query_string}")
+                logger.warning(
+                    f"Suspicious pattern '{pattern}' found in query: {query_string}"
+                )
                 return True
 
         # Check headers for suspicious patterns
         for header_name, header_value in request.headers.items():
             for pattern in self.suspicious_patterns:
                 if pattern.lower() in header_value.lower():
-                    logger.warning(f"Suspicious pattern '{pattern}' found in header {header_name}")
+                    logger.warning(
+                        f"Suspicious pattern '{pattern}' found in header {header_name}"
+                    )
                     return True
 
         # Check request body if available
@@ -201,7 +203,9 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                     body_str = body.decode("utf-8", errors="ignore")
                     for pattern in self.suspicious_patterns:
                         if pattern.lower() in body_str.lower():
-                            logger.warning(f"Suspicious pattern '{pattern}' found in request body")
+                            logger.warning(
+                                f"Suspicious pattern '{pattern}' found in request body"
+                            )
                             return True
             except Exception as e:
                 logger.debug(f"Error checking request body: {str(e)}")

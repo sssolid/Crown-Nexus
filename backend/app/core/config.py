@@ -23,6 +23,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Environment(str, Enum):
     """Application environment enumeration."""
+
     DEVELOPMENT = "development"
     STAGING = "staging"
     PRODUCTION = "production"
@@ -30,6 +31,7 @@ class Environment(str, Enum):
 
 class LogLevel(str, Enum):
     """Log level enumeration."""
+
     DEBUG = "DEBUG"
     INFO = "INFO"
     WARNING = "WARNING"
@@ -39,13 +41,16 @@ class LogLevel(str, Enum):
 
 class Settings(BaseSettings):
     """Application settings."""
+
     # Basic info
     PROJECT_NAME: str = Field("Crown Nexus")
     DESCRIPTION: str = Field("B2B platform for automotive aftermarket industry")
     VERSION: str = Field("0.1.0")
     API_V1_STR: str = Field("/api/v1")
     ENVIRONMENT: Environment = Field(Environment.DEVELOPMENT)
-    BASE_DIR: Path = Field(default_factory=lambda: Path(__file__).resolve().parent.parent.parent)
+    BASE_DIR: Path = Field(
+        default_factory=lambda: Path(__file__).resolve().parent.parent.parent
+    )
 
     # Database settings
     POSTGRES_SERVER: str = Field("localhost")
@@ -244,8 +249,12 @@ class Settings(BaseSettings):
             if not os.path.exists(self.PCDB_PATH):
                 raise ValueError(f"PCDB_PATH does not exist: {self.PCDB_PATH}")
 
-            if self.MODEL_MAPPINGS_PATH and not os.path.exists(self.MODEL_MAPPINGS_PATH):
-                raise ValueError(f"MODEL_MAPPINGS_PATH does not exist: {self.MODEL_MAPPINGS_PATH}")
+            if self.MODEL_MAPPINGS_PATH and not os.path.exists(
+                self.MODEL_MAPPINGS_PATH
+            ):
+                raise ValueError(
+                    f"MODEL_MAPPINGS_PATH does not exist: {self.MODEL_MAPPINGS_PATH}"
+                )
 
         return self
 

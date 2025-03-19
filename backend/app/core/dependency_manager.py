@@ -117,7 +117,7 @@ class DependencyManager:
             details={
                 "dependency_name": name,
                 "available_dependencies": list(self._dependencies.keys()),
-            }
+            },
         )
 
     def _create_service_instance(self, name: str, **kwargs: Any) -> Any:
@@ -219,8 +219,6 @@ class DependencyManager:
             "error_service",
             "validation_service",
             "metrics_service",
-            "cache_service",
-            "security_service",
         ]
 
         # Process core services first, then others
@@ -336,10 +334,8 @@ def register_services() -> None:
     # These would typically be your service imports
     try:
         from app.services.audit import get_audit_service, AuditService
-        from app.services.cache import get_cache_service, CacheService
         from app.services.error import get_error_service, ErrorService
         from app.services.validation import get_validation_service, ValidationService
-        from app.services.security import get_security_service, SecurityService
         from app.services.metrics import get_metrics_service, MetricsService
         from app.services.search import get_search_service, SearchService
         from app.services.pagination import get_pagination_service, PaginationService
@@ -361,12 +357,6 @@ def register_services() -> None:
         )
         dependency_manager.register_factory(
             "metrics_service", lambda: get_metrics_service()
-        )
-        dependency_manager.register_factory(
-            "cache_service", lambda: get_cache_service()
-        )
-        dependency_manager.register_factory(
-            "security_service", lambda: get_security_service()
         )
         dependency_manager.register_factory(
             "audit_service", lambda db: get_audit_service(db) if db else None
@@ -397,7 +387,6 @@ def register_services() -> None:
         dependency_manager.register_service(ErrorService, "ErrorService")
         dependency_manager.register_service(ValidationService, "ValidationService")
         dependency_manager.register_service(MetricsService, "MetricsService")
-        dependency_manager.register_service(CacheService, "CacheService")
         dependency_manager.register_service(SecurityService, "SecurityService")
         dependency_manager.register_service(AuditService, "AuditService")
         dependency_manager.register_service(PaginationService, "PaginationService")

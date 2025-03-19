@@ -1,6 +1,8 @@
 # /app/services/search/service.py
 from __future__ import annotations
 
+from app.core.cache.decorators import cached
+
 """Main search service implementation.
 
 This module provides the primary SearchService that coordinates search
@@ -19,9 +21,6 @@ from app.models.product import Fitment, Product
 from app.services.interfaces import ServiceInterface
 from app.services.search.base import SearchProvider, SearchResult
 from app.services.search.factory import SearchProviderFactory
-
-# Get cache service
-cache_service = get_dependency("cache_service")
 
 logger = get_logger("app.services.search.service")
 
@@ -47,7 +46,7 @@ class SearchService(ServiceInterface):
         self.logger.debug("Shutting down search service")
         await SearchProviderFactory.shutdown_all()
 
-    @cache_service.cache(prefix="search:products", ttl=300, backend="redis")
+    @cached(prefix="search:products", ttl=300, backend="redis")
     async def search_products(
         self,
         search_term: Optional[str] = None,
@@ -162,7 +161,7 @@ class SearchService(ServiceInterface):
                 original_exception=e,
             ) from e
 
-    @cache_service.cache(prefix="search:fitments", ttl=300, backend="redis")
+    @cached(prefix="search:fitments", ttl=300, backend="redis")
     async def search_fitments(
         self,
         search_term: Optional[str] = None,

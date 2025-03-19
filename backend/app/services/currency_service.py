@@ -19,12 +19,10 @@ from sqlalchemy import desc, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache.decorators import cached
 from app.core.config import settings
-from app.core.dependency_manager import get_dependency
 from app.db.session import get_db_context
 from app.models.currency import Currency, ExchangeRate
-
-cache_service = get_dependency("cache_service")
 
 from app.core.logging import get_logger
 
@@ -235,9 +233,7 @@ class ExchangeRateService:
         return "USD"
 
     @classmethod
-    @cache_service.cache(
-        prefix="currency", ttl=3600, backend="redis"
-    )  # Cache for 1 hour
+    @cached(prefix="currency", ttl=3600, backend="redis")  # Cache for 1 hour
     async def get_latest_exchange_rate(
         cls, db: AsyncSession, source_code: str, target_code: str
     ) -> Optional[float]:

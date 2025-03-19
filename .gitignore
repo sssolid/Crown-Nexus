@@ -8,8 +8,8 @@ processed_project/*
 # Keep the folder even when empty
 !processed_project/.gitkeep
 
-backend/data
-media/
+/backend/data
+/backend/media/
 *.iso
 crown_deploy/test-output
 

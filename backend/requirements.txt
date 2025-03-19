@@ -11,7 +11,7 @@ aiohttp==3.11.13
 aiosignal==1.3.2
     # via aiohttp
 alembic==1.12.1
-    # via -r requirements.in
+    # via -r backend/requirements.in
 annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
@@ -21,7 +21,7 @@ anyio==3.7.1
     #   starlette
     #   watchfiles
 asyncpg==0.28.0
-    # via -r requirements.in
+    # via -r backend/requirements.in
 attrs==25.1.0
     # via aiohttp
 bcrypt==4.3.0
@@ -35,10 +35,6 @@ cffi==1.17.1
     # via cryptography
 click==8.1.8
     # via uvicorn
-colorama==0.4.6
-    # via
-    #   click
-    #   uvicorn
 cryptography==44.0.2
     # via
     #   python-jose
@@ -51,11 +47,11 @@ ecdsa==0.19.0
 elastic-transport==8.17.0
     # via elasticsearch
 elasticsearch[async]==8.10.1
-    # via -r requirements.in
+    # via -r backend/requirements.in
 email-validator==2.2.0
     # via pydantic
 fastapi==0.104.1
-    # via -r requirements.in
+    # via -r backend/requirements.in
 frozenlist==1.5.0
     # via
     #   aiohttp
@@ -70,8 +66,8 @@ httpcore==1.0.7
     # via httpx
 httptools==0.6.4
     # via uvicorn
-httpx==0.25.2
-    # via -r requirements.in
+httpx==0.28.1
+    # via -r backend/requirements.in
 idna==3.10
     # via
     #   anyio
@@ -87,7 +83,9 @@ multidict==6.1.0
     #   aiohttp
     #   yarl
 passlib[bcrypt]==1.7.4
-    # via -r requirements.in
+    # via -r backend/requirements.in
+pillow==10.0.1
+    # via -r backend/requirements.in
 propcache==0.3.0
     # via
     #   aiohttp
@@ -100,53 +98,51 @@ pycparser==2.22
     # via cffi
 pydantic[email]==2.4.2
     # via
-    #   -r requirements.in
+    #   -r backend/requirements.in
     #   fastapi
     #   pydantic-settings
 pydantic-core==2.10.1
     # via pydantic
 pydantic-settings==2.0.3
-    # via -r requirements.in
+    # via -r backend/requirements.in
 python-dotenv==1.0.1
     # via
     #   pydantic-settings
     #   uvicorn
 python-jose[cryptography]==3.3.0
-    # via -r requirements.in
+    # via -r backend/requirements.in
 python-multipart==0.0.20
-    # via -r requirements.in
+    # via -r backend/requirements.in
 pyyaml==6.0.2
     # via uvicorn
 redis==5.0.8
-    # via -r requirements.in
+    # via -r backend/requirements.in
 rsa==4.9
     # via python-jose
 six==1.17.0
     # via ecdsa
 sniffio==1.3.1
-    # via
-    #   anyio
-    #   httpx
+    # via anyio
 sqlalchemy[asyncio]==2.0.38
     # via
-    #   -r requirements.in
+    #   -r backend/requirements.in
     #   alembic
 starlette==0.27.0
     # via fastapi
 tenacity==8.2.3
-    # via -r requirements.in
+    # via -r backend/requirements.in
 types-cffi==1.16.0.20241221
     # via types-pyopenssl
 types-passlib==1.7.7.20241221
-    # via -r requirements.in
+    # via -r backend/requirements.in
 types-pyasn1==0.6.0.20250208
     # via types-python-jose
 types-pyopenssl==24.1.0.20240722
     # via types-redis
 types-python-jose==3.3.4.20240106
-    # via -r requirements.in
+    # via -r backend/requirements.in
 types-redis==4.6.0.20241004
-    # via -r requirements.in
+    # via -r backend/requirements.in
 types-setuptools==75.8.2.20250305
     # via types-cffi
 typing-extensions==4.12.2
@@ -159,7 +155,9 @@ typing-extensions==4.12.2
 urllib3==2.3.0
     # via elastic-transport
 uvicorn[standard]==0.23.2
-    # via -r requirements.in
+    # via -r backend/requirements.in
+uvloop==0.21.0
+    # via uvicorn
 watchfiles==1.0.4
     # via uvicorn
 websockets==15.0

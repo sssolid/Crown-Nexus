@@ -16,12 +16,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
+from app.models.location import Address
+from app.models.chat import ChatRoom
+from app.models.audit import AuditLog
 
 if TYPE_CHECKING:
-    from app.models.location import Address
     from app.models.user import User
-    from app.models.chat import ChatRoom
     from app.models.audit import AuditLog
+    from app.models.product import Brand
 
 
 class Company(Base):
@@ -81,6 +83,11 @@ class Company(Base):
     billing_address = relationship("Address", foreign_keys=[billing_address_id])
     shipping_address = relationship("Address", foreign_keys=[shipping_address_id])
     users: Mapped[List["User"]] = relationship("User", back_populates="company")
+    brands: Mapped[List["Brand"]] = relationship(
+        "Brand",
+        foreign_keys="[Brand.parent_company_id]",
+        back_populates="parent_company",
+    )
     chat_rooms: Mapped[List["ChatRoom"]] = relationship(
         "ChatRoom", back_populates="company"
     )

@@ -154,8 +154,8 @@ async def create_admin_user(
             # Insert user
             await db.execute(
                 text(
-                    'INSERT INTO "user" (id, email, hashed_password, full_name, role, is_active, created_at, updated_at) '
-                    "VALUES (:id, :email, :hashed_password, :full_name, :role, :is_active, :created_at, :updated_at)"
+                    'INSERT INTO "user" (id, email, hashed_password, full_name, role, is_active, is_deleted, created_at, updated_at) '
+                    "VALUES (:id, :email, :hashed_password, :full_name, :role, :is_active, :is_deleted, :created_at, :updated_at)"
                 ),
                 {
                     "id": user_id,
@@ -164,6 +164,7 @@ async def create_admin_user(
                     "full_name": full_name,
                     "role": UserRole.ADMIN.value,
                     "is_active": True,
+                    "is_deleted": False,
                     "created_at": now,
                     "updated_at": now,
                 },

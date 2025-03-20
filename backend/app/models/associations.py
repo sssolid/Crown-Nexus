@@ -1,34 +1,28 @@
-# backend/app/models/associations.py
-"""
-Association tables for many-to-many relationships.
-
-This module defines SQLAlchemy association tables that establish
-many-to-many relationships between different entities in the application:
-- Products and fitments (vehicle compatibility)
-- Products and media assets
-- Products and warehouses (stock levels)
-- And other many-to-many relationships as needed
-
-These tables don't have their own identity beyond connecting related entities
-and should not contain business logic.
-"""
-
+# app/models/associations.py
 from __future__ import annotations
+
+"""
+Many-to-many relationship tables for the application.
+
+This module defines association tables that connect entities through
+many-to-many relationships without creating separate model classes.
+"""
 
 from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
     Integer,
+    String,
     Table,
+    Text,
     UniqueConstraint,
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
-
 from app.db.base_class import Base
 
-# Association table for products and fitments
+# Product to Fitment relationship
 product_fitment_association = Table(
     "product_fitment",
     Base.metadata,
@@ -44,13 +38,15 @@ product_fitment_association = Table(
         ForeignKey("fitment.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
 )
 
-# Association table for products and media
+# Product to Media relationship
 product_media_association = Table(
     "product_media",
     Base.metadata,
@@ -66,17 +62,17 @@ product_media_association = Table(
         ForeignKey("media.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Optional sequence for ordering media items
     Column("display_order", Integer, nullable=False, default=0),
-    # Is this the primary/featured media for the product
     Column("is_primary", Integer, nullable=False, default=0),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
 )
 
-# Association table for products and tariff codes
+# Product to TariffCode relationship
 product_tariff_code_association = Table(
     "product_tariff_code",
     Base.metadata,
@@ -92,7 +88,6 @@ product_tariff_code_association = Table(
         ForeignKey("tariff_code.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
         "assigned_at",
         DateTime(timezone=True),
@@ -101,7 +96,7 @@ product_tariff_code_association = Table(
     ),
 )
 
-# Association table for products and UNSPSC codes
+# Product to UnspscCode relationship
 product_unspsc_association = Table(
     "product_unspsc",
     Base.metadata,
@@ -117,7 +112,6 @@ product_unspsc_association = Table(
         ForeignKey("unspsc_code.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
         "assigned_at",
         DateTime(timezone=True),
@@ -126,7 +120,7 @@ product_unspsc_association = Table(
     ),
 )
 
-# Association table for products and countries of origin
+# Product to Country relationship (for origin information)
 product_country_origin_association = Table(
     "product_country_origin",
     Base.metadata,
@@ -148,19 +142,18 @@ product_country_origin_association = Table(
         ForeignKey("manufacturer.id", ondelete="SET NULL"),
         nullable=True,
     ),
-    # Type of origin (Origin, Assembly, etc.)
     Column("origin_type", Integer, nullable=False, default=0),
-    # Order for organizing countries
     Column("origin_order", Integer, nullable=False, default=0),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
-    # Add a unique constraint for product_id and country_id
     UniqueConstraint("product_id", "country_id", name="uix_product_country"),
 )
 
-# Association table for products and hardware items
+# Product to Hardware relationship
 product_hardware_association = Table(
     "product_hardware",
     Base.metadata,
@@ -176,19 +169,18 @@ product_hardware_association = Table(
         ForeignKey("hardware_item.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Number of hardware pieces included
     Column("quantity", Integer, nullable=False, default=1),
-    # Is the hardware required
     Column("is_optional", Integer, nullable=False, default=0),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
-    # Add a unique constraint for product_id and hardware_id
     UniqueConstraint("product_id", "hardware_id", name="uix_product_hardware"),
 )
 
-# Association table for products and interchanges
+# Product interchange information
 product_interchange_association = Table(
     "product_interchange",
     Base.metadata,
@@ -198,28 +190,27 @@ product_interchange_association = Table(
         ForeignKey("product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Interchange number (part number from another brand/supplier)
     Column("interchange_number", Integer, nullable=False),
-    # Optional brand reference
     Column(
         "brand_id",
         UUID(as_uuid=True),
         ForeignKey("brand.id", ondelete="SET NULL"),
         nullable=True,
     ),
-    # Optional compatibility notes
-    Column("notes", Integer, nullable=True),
-    # Metadata
+    # CORRECTION: Changed from Integer to Text for notes
+    Column("notes", Text, nullable=True),
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
-    # Primary key is product_id and interchange_number
     UniqueConstraint(
         "product_id", "interchange_number", "brand_id", name="uix_product_interchange"
     ),
 )
 
-# Association table for products and packaging types
+# Product to PackagingType relationship
 product_packaging_association = Table(
     "product_packaging",
     Base.metadata,
@@ -235,13 +226,15 @@ product_packaging_association = Table(
         ForeignKey("packaging_type.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
 )
 
-# Association table for products and colors
+# Product to Color relationship
 product_color_association = Table(
     "product_color",
     Base.metadata,
@@ -257,13 +250,15 @@ product_color_association = Table(
         ForeignKey("color.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
 )
 
-# Association table for products and construction types
+# Product to ConstructionType relationship
 product_construction_type_association = Table(
     "product_construction_type",
     Base.metadata,
@@ -279,13 +274,15 @@ product_construction_type_association = Table(
         ForeignKey("construction_type.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
 )
 
-# Association table for products and textures
+# Product to Texture relationship
 product_texture_association = Table(
     "product_texture",
     Base.metadata,
@@ -301,8 +298,10 @@ product_texture_association = Table(
         ForeignKey("texture.id", ondelete="CASCADE"),
         primary_key=True,
     ),
-    # Metadata
     Column(
-        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     ),
 )

@@ -21,11 +21,11 @@ from sqlalchemy.sql import expression
 
 from app.core.config import settings
 from app.db.base_class import Base
+from app.models.company import Company
+from app.models.api_key import ApiKey
 
 if TYPE_CHECKING:
-    from app.models.company import Company
     from app.models.chat import ChatMember
-    from app.models.api_key import ApiKey
 
 
 class UserRole(str, Enum):
@@ -179,6 +179,8 @@ def create_access_token(
 
     to_encode: Dict[str, Any] = {
         "sub": subject,
+        "jti": str(uuid.uuid4()),
+        "type": "access",
         "exp": expire,
         "role": role,
         "iat": datetime.datetime.now(datetime.UTC),

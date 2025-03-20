@@ -25,7 +25,9 @@ class ApiKeyBase(BaseModel):
 
     name: str = Field(..., min_length=1, max_length=100, description="API key name")
     permissions: Optional[List[str]] = Field(None, description="Granted permissions")
-    extra_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    extra_metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional metadata"
+    )
     expires_at: Optional[datetime] = Field(None, description="Expiration date")
 
     @field_validator("name")
@@ -63,7 +65,9 @@ class ApiKeyUpdate(BaseModel):
     )
     is_active: Optional[bool] = Field(None, description="Whether the key is active")
     permissions: Optional[List[str]] = Field(None, description="Granted permissions")
-    extra_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    extra_metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional metadata"
+    )
     expires_at: Optional[datetime] = Field(None, description="Expiration date")
 
     @field_validator("name")

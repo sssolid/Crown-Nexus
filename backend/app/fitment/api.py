@@ -25,7 +25,6 @@ from pydantic import BaseModel, Field
 from app.schemas.model_mapping import ModelMapping as ModelMappingSchema
 from app.schemas.model_mapping import (
     ModelMappingCreate,
-    ModelMappingList,
     ModelMappingUpdate,
 )
 
@@ -260,7 +259,7 @@ async def upload_model_mappings(
         ) from e
 
 
-@router.get("/model-mappings", response_model=ModelMappingList)
+@router.get("/model-mappings", response_model=ModelMappingsListResponse)
 async def list_model_mappings(
     mapping_engine: FitmentMappingEngine = Depends(get_mapping_engine),
     skip: int = Query(0, ge=0),

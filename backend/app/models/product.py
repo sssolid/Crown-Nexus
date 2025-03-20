@@ -18,13 +18,34 @@ from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 
+# Avoid circular imports
 if TYPE_CHECKING:
     from app.models.media import Media
-    from app.models.user import User
+    from app.models.company import Company
+    from app.models.reference import (
+        Color,
+        ConstructionType,
+        Hardware,
+        PackagingType,
+        TariffCode,
+        Texture,
+        UnspscCode,
+    )
+    from app.models.location import Country
 else:
+    # Import association tables
     from app.models.associations import (
+        product_color_association,
+        product_construction_type_association,
+        product_country_origin_association,
         product_fitment_association,
+        product_hardware_association,
+        product_interchange_association,
         product_media_association,
+        product_packaging_association,
+        product_tariff_code_association,
+        product_texture_association,
+        product_unspsc_association,
     )
 
 
@@ -84,7 +105,7 @@ class Product(Base):
         nullable=False,
     )
 
-    # Relationships
+    # Foreign Key relationships
     descriptions: Mapped[List["ProductDescription"]] = relationship(
         "ProductDescription", back_populates="product", cascade="all, delete-orphan"
     )
@@ -121,16 +142,67 @@ class Product(Base):
         back_populates="product",
         cascade="all, delete-orphan",
     )
+    stock: Mapped[List["ProductStock"]] = relationship(
+        "ProductStock", back_populates="product", cascade="all, delete-orphan"
+    )
+
+    # Many-to-many relationships using association tables
     media: Mapped[List["Media"]] = relationship(
         "app.models.media.Media",
         secondary=product_media_association,
         back_populates="products",
     )
+
     fitments: Mapped[List["Fitment"]] = relationship(
         "Fitment", secondary=product_fitment_association, back_populates="products"
     )
-    stock: Mapped[List["ProductStock"]] = relationship(
-        "ProductStock", back_populates="product", cascade="all, delete-orphan"
+
+    tariff_codes: Mapped[List["TariffCode"]] = relationship(
+        "app.models.reference.TariffCode",
+        secondary=product_tariff_code_association,
+        backref="products",  # Simpler than back_populates if TariffCode doesn't define the relationship
+    )
+
+    unspsc_codes: Mapped[List["UnspscCode"]] = relationship(
+        "app.models.reference.UnspscCode",
+        secondary=product_unspsc_association,
+        backref="products",
+    )
+
+    countries_of_origin: Mapped[List["Country"]] = relationship(
+        "app.models.location.Country",
+        secondary=product_country_origin_association,
+        backref="products_as_origin",
+    )
+
+    hardware_items: Mapped[List["Hardware"]] = relationship(
+        "app.models.reference.Hardware",
+        secondary=product_hardware_association,
+        backref="products",
+    )
+
+    colors: Mapped[List["Color"]] = relationship(
+        "app.models.reference.Color",
+        secondary=product_color_association,
+        backref="products",
+    )
+
+    construction_types: Mapped[List["ConstructionType"]] = relationship(
+        "app.models.reference.ConstructionType",
+        secondary=product_construction_type_association,
+        backref="products",
+    )
+
+    textures: Mapped[List["Texture"]] = relationship(
+        "app.models.reference.Texture",
+        secondary=product_texture_association,
+        backref="products",
+    )
+
+    packaging_types: Mapped[List["PackagingType"]] = relationship(
+        "app.models.reference.PackagingType",
+        secondary=product_packaging_association,
+        backref="products",
     )
 
     def __repr__(self) -> str:

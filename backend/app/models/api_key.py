@@ -61,7 +61,9 @@ class ApiKey(Base):
         DateTime(timezone=True), nullable=True
     )
     permissions: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
-    extra_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    extra_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON, nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.now, nullable=False
     )

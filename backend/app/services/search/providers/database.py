@@ -1,8 +1,7 @@
 # /app/services/search/providers/database.py
 from __future__ import annotations
 
-from app.core.pagination import paginate_with_offset
-from app.schemas.pagination import OffsetPaginationParams
+from app.core.pagination import paginate_with_offset, OffsetPaginationParams
 
 """Database search provider implementation.
 

@@ -225,7 +225,9 @@ class ChatRoomUpdate(BaseModel):
 
     name: Optional[str] = Field(None, description="Room name")
     is_active: Optional[bool] = Field(None, description="Whether the room is active")
-    extra_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    extra_metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional metadata"
+    )
 
 
 class ChatRoomInDB(ChatRoomBase):
@@ -348,7 +350,9 @@ class ChatMessageUpdate(BaseModel):
     """
 
     content: Optional[str] = Field(None, description="Message content")
-    extra_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    extra_metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional metadata"
+    )
 
 
 class ChatMessageInDB(ChatMessageBase):

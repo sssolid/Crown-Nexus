@@ -94,7 +94,13 @@ class Settings(BaseSettings):
         description="Storage backend for rate limiting ('redis' or 'memory')",
     )
     CONTENT_SECURITY_POLICY: str = Field(
-        default="default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self'; connect-src 'self'",
+        default=(
+            "default-src 'self'; "
+            "img-src 'self' data: https://fastapi.tiangolo.com; "
+            "script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; "
+            "style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; "
+            "connect-src 'self';"
+        ),
         description="Content Security Policy header value",
     )
     PERMISSIONS_POLICY: str = Field(
@@ -136,6 +142,7 @@ class Settings(BaseSettings):
     REDIS_PORT: int = Field(6379)
     REDIS_PASSWORD: Optional[SecretStr] = None
     REDIS_DB: int = Field(0)
+    REDIS_MAX_CONNECTIONS: int = Field(5000)
 
     # Elasticsearch settings
     ELASTICSEARCH_HOST: str = Field("localhost")

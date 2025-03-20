@@ -22,15 +22,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
-from app.models.user import Company, User, UserRole, get_password_hash
+from app.models.user import User, UserRole, get_password_hash
 from app.schemas.user import (
     Company as CompanySchema,
-    CompanyCreate,
-    CompanyUpdate,
     User as UserSchema,
     UserCreate,
     UserUpdate,
 )
+from app.schemas.company import CompanyCreate, CompanyUpdate
 
 router = APIRouter()
 

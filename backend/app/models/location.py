@@ -15,9 +15,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
+from app.models.reference import Warehouse, TariffCode
 
 if TYPE_CHECKING:
-    from app.models.reference import Warehouse, TariffCode
     from app.models.product import Manufacturer
     from app.models.company import Company
 

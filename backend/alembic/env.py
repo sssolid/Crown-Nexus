@@ -30,17 +30,6 @@ from app.core.config import settings
 # Import the Base class directly - don't import all models here
 from app.db.base_class import Base
 
-# Import models individually to register them with SQLAlchemy
-# This avoids the circular imports caused by importing base.py
-# This section is crucial for Alembic to detect model changes
-import app.models.user  # noqa
-import app.models.associations  # noqa
-import app.models.location  # noqa
-import app.models.reference  # noqa
-import app.models.product  # noqa
-import app.models.media  # noqa
-import app.models.compliance  # noqa
-
 # This is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

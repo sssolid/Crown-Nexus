@@ -1,18 +1,10 @@
-# backend/app/models/location.py
-"""
-Location models.
-
-This module defines models for geographical locations used throughout
-the application:
-- Countries with their ISO codes
-- Physical addresses
-- Geolocation data
-
-These models support international shipping, taxation, regulatory compliance,
-and other location-dependent functionality.
-"""
-
 from __future__ import annotations
+
+"""Location model definition.
+
+This module defines the models for geographic locations including
+countries and addresses.
+"""
 
 import uuid
 from datetime import datetime
@@ -24,29 +16,25 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 
-# For type hints only, not runtime imports
 if TYPE_CHECKING:
     from app.models.reference import Warehouse, TariffCode
     from app.models.product import Manufacturer
-    from app.models.user import Company
+    from app.models.company import Company
 
 
 class Country(Base):
-    """
-    Country model.
-
-    Represents countries with ISO codes and related information.
+    """Country entity representing a geographic country or territory.
 
     Attributes:
-        id: Primary key UUID
-        name: Full country name
-        iso_alpha_2: 2-letter country code (US, etc.)
-        iso_alpha_3: 3-letter country code (USA, etc.)
-        iso_numeric: Numeric country code (840, etc.)
-        region: Region name (North America, etc.)
-        subregion: Subregion name (Northern America, etc.)
-        currency: Currency code (USD, etc.)
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Country name.
+        iso_alpha_2: ISO 3166-1 alpha-2 code (2 letters).
+        iso_alpha_3: ISO 3166-1 alpha-3 code (3 letters).
+        iso_numeric: ISO 3166-1 numeric code (3 digits).
+        region: Geographic region.
+        subregion: Geographic subregion.
+        currency: ISO 4217 currency code.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "country"
@@ -83,31 +71,27 @@ class Country(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the country.
+        """Return string representation of Country instance.
 
         Returns:
-            str: Country representation
+            String representation including name and ISO code.
         """
         return f"<Country {self.name} ({self.iso_alpha_2})>"
 
 
 class Address(Base):
-    """
-    Address model.
-
-    Represents physical addresses for companies, warehouses, etc.
+    """Address entity representing a physical location.
 
     Attributes:
-        id: Primary key UUID
-        street: Street address
-        city: City name
-        state: State or province
-        postal_code: Postal or ZIP code
-        country_id: Reference to country
-        latitude: Geographical latitude
-        longitude: Geographical longitude
-        created_at: Creation timestamp
+        id: Unique identifier.
+        street: Street address.
+        city: City name.
+        state: State or province.
+        postal_code: Postal or ZIP code.
+        country_id: ID of the associated country.
+        latitude: Geographic latitude.
+        longitude: Geographic longitude.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "address"
@@ -157,10 +141,9 @@ class Address(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the address.
+        """Return string representation of Address instance.
 
         Returns:
-            str: Address representation
+            String representation including street, city, and postal code.
         """
         return f"<Address {self.street}, {self.city}, {self.postal_code}>"

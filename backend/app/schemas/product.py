@@ -1,20 +1,10 @@
-# backend/app/schemas/product.py
-"""
-Product catalog schemas.
-
-This module provides Pydantic schemas for product-related data validation
-and serialization. The schemas support:
-- Request validation for products, categories, and related entities
-- Response serialization with properly structured data
-- Pagination for list responses
-- Validation rules for specific fields
-- Support for the enhanced data model
-
-These schemas ensure data integrity throughout the application's
-product catalog functionality.
-"""
-
 from __future__ import annotations
+
+"""Product schema definitions.
+
+This module defines Pydantic schemas for product-related objects,
+including products, descriptions, prices, and inventory.
+"""
 
 import uuid
 from datetime import datetime
@@ -25,11 +15,14 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 class DescriptionType(str, Enum):
-    """
-    Types of product descriptions.
+    """Types of product descriptions.
 
-    Defines the different categories of descriptions that can be associated
-    with a product.
+    Attributes:
+        SHORT: Brief product description.
+        LONG: Detailed product description.
+        KEYWORDS: Keywords for search.
+        SLANG: Colloquial terms for the product.
+        NOTES: Internal notes about the product.
     """
 
     SHORT = "Short"
@@ -40,11 +33,11 @@ class DescriptionType(str, Enum):
 
 
 class MarketingType(str, Enum):
-    """
-    Types of product marketing content.
+    """Types of product marketing content.
 
-    Defines the different categories of marketing content that can be
-    associated with a product.
+    Attributes:
+        BULLET_POINT: Bullet point features.
+        AD_COPY: Advertising copy.
     """
 
     BULLET_POINT = "Bullet Point"
@@ -52,10 +45,14 @@ class MarketingType(str, Enum):
 
 
 class ProductStatus(str, Enum):
-    """
-    Product status options.
+    """Product status values.
 
-    Defines the possible status values for product activities.
+    Attributes:
+        ACTIVE: Product is active and available.
+        INACTIVE: Product is temporarily inactive.
+        DISCONTINUED: Product is permanently discontinued.
+        OUT_OF_STOCK: Product is out of stock.
+        PENDING: Product is pending approval or release.
     """
 
     ACTIVE = "active"
@@ -65,726 +62,560 @@ class ProductStatus(str, Enum):
     PENDING = "pending"
 
 
-# Description Schemas
 class ProductDescriptionBase(BaseModel):
-    """
-    Base schema for Product Description data.
-
-    Defines common fields used across product description schemas.
+    """Base schema for ProductDescription data.
 
     Attributes:
-        description_type: Type of description
-        description: Description content
+        description_type: Type of description.
+        description: The description text.
     """
 
-    description_type: DescriptionType
-    description: str
+    description_type: DescriptionType = Field(..., description="Type of description")
+    description: str = Field(..., description="Description text")
 
 
 class ProductDescriptionCreate(ProductDescriptionBase):
-    """
-    Schema for creating a new Product Description.
-
-    Extends the base product description schema for creation requests.
-    """
+    """Schema for creating a new ProductDescription."""
 
     pass
 
 
 class ProductDescriptionUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Description.
+    """Schema for updating an existing ProductDescription.
 
-    Defines fields that can be updated on a product description.
-
-    Attributes:
-        description_type: Type of description (optional)
-        description: Description content (optional)
+    All fields are optional to allow partial updates.
     """
 
-    description_type: Optional[DescriptionType] = None
-    description: Optional[str] = None
+    description_type: Optional[DescriptionType] = Field(
+        None, description="Type of description"
+    )
+    description: Optional[str] = Field(None, description="Description text")
 
 
 class ProductDescriptionInDB(ProductDescriptionBase):
-    """
-    Schema for Product Description as stored in the database.
+    """Schema for ProductDescription data as stored in the database.
 
-    Extends the base product description schema with database-specific fields.
-
-    Attributes:
-        id: Description UUID
-        product_id: Product UUID
-        created_at: Creation timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    product_id: uuid.UUID
-    created_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    product_id: uuid.UUID = Field(..., description="Product ID")
+    created_at: datetime = Field(..., description="Creation timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ProductDescription(ProductDescriptionInDB):
-    """
-    Schema for Product Description responses.
-
-    This schema is used for API responses returning product description data.
-    """
+    """Schema for complete ProductDescription data in API responses."""
 
     pass
 
 
-# Marketing Schemas
 class ProductMarketingBase(BaseModel):
-    """
-    Base schema for Product Marketing data.
-
-    Defines common fields used across product marketing schemas.
+    """Base schema for ProductMarketing data.
 
     Attributes:
-        marketing_type: Type of marketing content
-        content: Marketing content
-        position: Order for display (optional)
+        marketing_type: Type of marketing content.
+        content: The marketing content.
+        position: Display order position.
     """
 
-    marketing_type: MarketingType
-    content: str
-    position: Optional[int] = None
+    marketing_type: MarketingType = Field(..., description="Type of marketing content")
+    content: str = Field(..., description="Marketing content")
+    position: Optional[int] = Field(None, description="Display order position")
 
 
 class ProductMarketingCreate(ProductMarketingBase):
-    """
-    Schema for creating a new Product Marketing.
-
-    Extends the base product marketing schema for creation requests.
-    """
+    """Schema for creating a new ProductMarketing."""
 
     pass
 
 
 class ProductMarketingUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Marketing.
+    """Schema for updating an existing ProductMarketing.
 
-    Defines fields that can be updated on product marketing content.
-
-    Attributes:
-        marketing_type: Type of marketing content (optional)
-        content: Marketing content (optional)
-        position: Order for display (optional)
+    All fields are optional to allow partial updates.
     """
 
-    marketing_type: Optional[MarketingType] = None
-    content: Optional[str] = None
-    position: Optional[int] = None
+    marketing_type: Optional[MarketingType] = Field(
+        None, description="Type of marketing content"
+    )
+    content: Optional[str] = Field(None, description="Marketing content")
+    position: Optional[int] = Field(None, description="Display order position")
 
 
 class ProductMarketingInDB(ProductMarketingBase):
-    """
-    Schema for Product Marketing as stored in the database.
+    """Schema for ProductMarketing data as stored in the database.
 
-    Extends the base product marketing schema with database-specific fields.
-
-    Attributes:
-        id: Marketing UUID
-        product_id: Product UUID
-        created_at: Creation timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    product_id: uuid.UUID
-    created_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    product_id: uuid.UUID = Field(..., description="Product ID")
+    created_at: datetime = Field(..., description="Creation timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ProductMarketing(ProductMarketingInDB):
-    """
-    Schema for Product Marketing responses.
-
-    This schema is used for API responses returning product marketing data.
-    """
+    """Schema for complete ProductMarketing data in API responses."""
 
     pass
 
 
-# Activity Schemas
 class ProductActivityBase(BaseModel):
-    """
-    Base schema for Product Activity data.
-
-    Defines common fields used across product activity schemas.
+    """Base schema for ProductActivity data.
 
     Attributes:
-        status: Product status
-        reason: Reason for status change (optional)
+        status: Product status.
+        reason: Reason for the status change.
     """
 
-    status: ProductStatus
-    reason: Optional[str] = None
+    status: ProductStatus = Field(..., description="Product status")
+    reason: Optional[str] = Field(None, description="Reason for status change")
 
 
 class ProductActivityCreate(ProductActivityBase):
-    """
-    Schema for creating a new Product Activity.
-
-    Extends the base product activity schema for creation requests.
-    """
+    """Schema for creating a new ProductActivity."""
 
     pass
 
 
 class ProductActivityInDB(ProductActivityBase):
-    """
-    Schema for Product Activity as stored in the database.
+    """Schema for ProductActivity data as stored in the database.
 
-    Extends the base product activity schema with database-specific fields.
-
-    Attributes:
-        id: Activity UUID
-        product_id: Product UUID
-        changed_by_id: User UUID who made the change (optional)
-        changed_at: When the change occurred
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    product_id: uuid.UUID
-    changed_by_id: Optional[uuid.UUID] = None
-    changed_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    product_id: uuid.UUID = Field(..., description="Product ID")
+    changed_by_id: Optional[uuid.UUID] = Field(
+        None, description="User who changed the status"
+    )
+    changed_at: datetime = Field(..., description="When the status was changed")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ProductActivity(ProductActivityInDB):
-    """
-    Schema for Product Activity responses.
+    """Schema for complete ProductActivity data in API responses.
 
-    This schema is used for API responses returning product activity data.
-
-    Attributes:
-        changed_by: User who made the change (optional)
+    Includes related entities like user details.
     """
 
-    changed_by: Optional[Dict[str, Any]] = None
+    changed_by: Optional[Dict[str, Any]] = Field(
+        None, description="User who changed the status"
+    )
 
 
-# Brand Schemas
 class BrandBase(BaseModel):
-    """
-    Base schema for Brand data.
-
-    Defines common fields used across brand schemas.
+    """Base schema for Brand data.
 
     Attributes:
-        name: Brand name
-        parent_company_id: Parent company ID (optional)
+        name: Brand name.
+        parent_company_id: ID of the parent company.
     """
 
-    name: str
-    parent_company_id: Optional[uuid.UUID] = None
+    name: str = Field(..., description="Brand name")
+    parent_company_id: Optional[uuid.UUID] = Field(
+        None, description="Parent company ID"
+    )
 
 
 class BrandCreate(BrandBase):
-    """
-    Schema for creating a new Brand.
-
-    Extends the base brand schema for creation requests.
-    """
+    """Schema for creating a new Brand."""
 
     pass
 
 
 class BrandUpdate(BaseModel):
-    """
-    Schema for updating an existing Brand.
+    """Schema for updating an existing Brand.
 
-    Defines fields that can be updated on a brand.
-
-    Attributes:
-        name: Brand name (optional)
-        parent_company_id: Parent company ID (optional)
+    All fields are optional to allow partial updates.
     """
 
-    name: Optional[str] = None
+    name: Optional[str] = Field(None, description="Brand name")
     parent_company_id: Optional[Union[uuid.UUID, None]] = Field(
-        default=..., description="Parent company ID, can be null"
+        default=...,
+        description="Parent company ID, can be null to remove company association",
     )
 
 
 class BrandInDB(BrandBase):
-    """
-    Schema for Brand as stored in the database.
+    """Schema for Brand data as stored in the database.
 
-    Extends the base brand schema with database-specific fields.
-
-    Attributes:
-        id: Brand UUID
-        created_at: Creation timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    created_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    created_at: datetime = Field(..., description="Creation timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class Brand(BrandInDB):
-    """
-    Schema for Brand responses.
+    """Schema for complete Brand data in API responses.
 
-    This schema is used for API responses returning brand data.
-
-    Attributes:
-        parent_company: Parent company information (optional)
+    Includes related entities like parent company details.
     """
 
-    parent_company: Optional[Dict[str, Any]] = None
+    parent_company: Optional[Dict[str, Any]] = Field(
+        None, description="Parent company details"
+    )
 
 
-# Supersession Schemas
 class ProductSupersessionBase(BaseModel):
-    """
-    Base schema for Product Supersession data.
-
-    Defines common fields used across product supersession schemas.
+    """Base schema for ProductSupersession data.
 
     Attributes:
-        old_product_id: Product being replaced
-        new_product_id: Replacement product
-        reason: Explanation of why the product was superseded (optional)
+        old_product_id: ID of the product being replaced.
+        new_product_id: ID of the replacement product.
+        reason: Reason for the supersession.
     """
 
-    old_product_id: uuid.UUID
-    new_product_id: uuid.UUID
-    reason: Optional[str] = None
+    old_product_id: uuid.UUID = Field(..., description="ID of replaced product")
+    new_product_id: uuid.UUID = Field(..., description="ID of replacement product")
+    reason: Optional[str] = Field(None, description="Reason for supersession")
 
 
 class ProductSupersessionCreate(ProductSupersessionBase):
-    """
-    Schema for creating a new Product Supersession.
-
-    Extends the base product supersession schema for creation requests.
-    """
+    """Schema for creating a new ProductSupersession."""
 
     pass
 
 
 class ProductSupersessionUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Supersession.
+    """Schema for updating an existing ProductSupersession.
 
-    Defines fields that can be updated on a product supersession.
-
-    Attributes:
-        reason: Explanation of why the product was superseded (optional)
+    All fields are optional to allow partial updates.
     """
 
-    reason: Optional[str] = None
+    reason: Optional[str] = Field(None, description="Reason for supersession")
 
 
 class ProductSupersessionInDB(ProductSupersessionBase):
-    """
-    Schema for Product Supersession as stored in the database.
+    """Schema for ProductSupersession data as stored in the database.
 
-    Extends the base product supersession schema with database-specific fields.
-
-    Attributes:
-        id: Supersession UUID
-        changed_at: When the change occurred
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    changed_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    changed_at: datetime = Field(..., description="When the supersession was created")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ProductSupersession(ProductSupersessionInDB):
-    """
-    Schema for Product Supersession responses.
+    """Schema for complete ProductSupersession data in API responses.
 
-    This schema is used for API responses returning product supersession data.
-
-    Attributes:
-        old_product: Basic information about the product being replaced
-        new_product: Basic information about the replacement product
+    Includes related entities like product details.
     """
 
-    old_product: Optional[Dict[str, Any]] = None
-    new_product: Optional[Dict[str, Any]] = None
+    old_product: Optional[Dict[str, Any]] = Field(
+        None, description="Old product details"
+    )
+    new_product: Optional[Dict[str, Any]] = Field(
+        None, description="New product details"
+    )
 
 
-# Measurement Schemas
 class ProductMeasurementBase(BaseModel):
-    """
-    Base schema for Product Measurement data.
-
-    Defines common fields used across product measurement schemas.
+    """Base schema for ProductMeasurement data.
 
     Attributes:
-        manufacturer_id: Manufacturer UUID (optional)
-        length: Length in inches (optional)
-        width: Width in inches (optional)
-        height: Height in inches (optional)
-        weight: Weight in pounds (optional)
-        volume: Volume in cubic inches (optional)
-        dimensional_weight: DIM weight calculation (optional)
+        manufacturer_id: ID of the manufacturer.
+        length: Length measurement.
+        width: Width measurement.
+        height: Height measurement.
+        weight: Weight measurement.
+        volume: Volume measurement.
+        dimensional_weight: Dimensional weight for shipping calculations.
     """
 
-    manufacturer_id: Optional[uuid.UUID] = None
-    length: Optional[float] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
-    weight: Optional[float] = None
-    volume: Optional[float] = None
-    dimensional_weight: Optional[float] = None
+    manufacturer_id: Optional[uuid.UUID] = Field(None, description="Manufacturer ID")
+    length: Optional[float] = Field(None, description="Length measurement")
+    width: Optional[float] = Field(None, description="Width measurement")
+    height: Optional[float] = Field(None, description="Height measurement")
+    weight: Optional[float] = Field(None, description="Weight measurement")
+    volume: Optional[float] = Field(None, description="Volume measurement")
+    dimensional_weight: Optional[float] = Field(None, description="Dimensional weight")
 
 
 class ProductMeasurementCreate(ProductMeasurementBase):
-    """
-    Schema for creating a new Product Measurement.
-
-    Extends the base product measurement schema for creation requests.
-    """
+    """Schema for creating a new ProductMeasurement."""
 
     pass
 
 
 class ProductMeasurementUpdate(ProductMeasurementBase):
-    """
-    Schema for updating an existing Product Measurement.
+    """Schema for updating an existing ProductMeasurement.
 
-    Fields are the same as the base schema since all are optional.
+    All fields are optional to allow partial updates.
     """
 
     pass
 
 
 class ProductMeasurementInDB(ProductMeasurementBase):
-    """
-    Schema for Product Measurement as stored in the database.
+    """Schema for ProductMeasurement data as stored in the database.
 
-    Extends the base product measurement schema with database-specific fields.
-
-    Attributes:
-        id: Measurement UUID
-        product_id: Product UUID
-        effective_date: When measurements become effective
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    product_id: uuid.UUID
-    effective_date: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    product_id: uuid.UUID = Field(..., description="Product ID")
+    effective_date: datetime = Field(
+        ..., description="When measurements became effective"
+    )
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ProductMeasurement(ProductMeasurementInDB):
-    """
-    Schema for Product Measurement responses.
+    """Schema for complete ProductMeasurement data in API responses.
 
-    This schema is used for API responses returning product measurement data.
-
-    Attributes:
-        manufacturer: Manufacturer information (optional)
+    Includes related entities like manufacturer details.
     """
 
-    manufacturer: Optional[Dict[str, Any]] = None
+    manufacturer: Optional[Dict[str, Any]] = Field(
+        None, description="Manufacturer details"
+    )
 
 
-# Stock Schemas
 class ProductStockBase(BaseModel):
-    """
-    Base schema for Product Stock data.
-
-    Defines common fields used across product stock schemas.
+    """Base schema for ProductStock data.
 
     Attributes:
-        warehouse_id: Warehouse UUID
-        quantity: Quantity in stock
+        warehouse_id: ID of the warehouse.
+        quantity: Stock quantity.
     """
 
-    warehouse_id: uuid.UUID
-    quantity: int = Field(ge=0, default=0)
+    warehouse_id: uuid.UUID = Field(..., description="Warehouse ID")
+    quantity: int = Field(0, ge=0, description="Stock quantity")
 
 
 class ProductStockCreate(ProductStockBase):
-    """
-    Schema for creating a new Product Stock.
-
-    Extends the base product stock schema for creation requests.
-    """
+    """Schema for creating new ProductStock."""
 
     pass
 
 
 class ProductStockUpdate(BaseModel):
-    """
-    Schema for updating an existing Product Stock.
+    """Schema for updating an existing ProductStock.
 
-    Defines fields that can be updated on product stock.
-
-    Attributes:
-        quantity: Quantity in stock (optional)
+    All fields are optional to allow partial updates.
     """
 
-    quantity: Optional[int] = Field(ge=0, default=None)
+    quantity: Optional[int] = Field(None, ge=0, description="Stock quantity")
 
 
 class ProductStockInDB(ProductStockBase):
-    """
-    Schema for Product Stock as stored in the database.
+    """Schema for ProductStock data as stored in the database.
 
-    Extends the base product stock schema with database-specific fields.
-
-    Attributes:
-        id: Stock UUID
-        product_id: Product UUID
-        last_updated: Last stock update timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    product_id: uuid.UUID
-    last_updated: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    product_id: uuid.UUID = Field(..., description="Product ID")
+    last_updated: datetime = Field(..., description="When stock was last updated")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ProductStock(ProductStockInDB):
-    """
-    Schema for Product Stock responses.
+    """Schema for complete ProductStock data in API responses.
 
-    This schema is used for API responses returning product stock data.
-
-    Attributes:
-        warehouse: Warehouse information
+    Includes related entities like warehouse details.
     """
 
-    warehouse: Dict[str, Any]
+    warehouse: Dict[str, Any] = Field(..., description="Warehouse details")
 
 
-# Product Base Schema
 class ProductBase(BaseModel):
-    """
-    Base schema for Product data.
-
-    Defines common fields used across product schemas.
+    """Base schema for Product data.
 
     Attributes:
-        part_number: Unique identifier for the product
-        part_number_stripped: Alphanumeric version of part_number (auto-generated)
-        application: Unformatted data for vehicle fitment applications (optional)
-        vintage: Vintage fitments flag
-        late_model: Late model fitments flag
-        soft: Soft good flag
-        universal: Universal fit flag
-        is_active: Whether the product is active
+        part_number: Product part number.
+        part_number_stripped: Normalized version of part number for searching.
+        application: Product application or use case description.
+        vintage: Whether the product is for vintage vehicles.
+        late_model: Whether the product is for late model vehicles.
+        soft: Whether the product is soft (e.g., fabric vs metal).
+        universal: Whether the product is universal (fits multiple applications).
+        is_active: Whether the product is active in the catalog.
     """
 
-    part_number: str
-    part_number_stripped: Optional[str] = None
-    application: Optional[str] = None
-    vintage: bool = False
-    late_model: bool = False
-    soft: bool = False
-    universal: bool = False
-    is_active: bool = True
+    part_number: str = Field(..., description="Product part number")
+    part_number_stripped: Optional[str] = Field(
+        None, description="Normalized part number"
+    )
+    application: Optional[str] = Field(None, description="Product application/use case")
+    vintage: bool = Field(False, description="Whether for vintage vehicles")
+    late_model: bool = Field(False, description="Whether for late model vehicles")
+    soft: bool = Field(False, description="Whether product is soft")
+    universal: bool = Field(False, description="Whether product is universal")
+    is_active: bool = Field(True, description="Whether product is active")
 
     @model_validator(mode="after")
     def generate_part_number_stripped(self) -> "ProductBase":
-        """
-        Generate the stripped part number if not provided.
+        """Generate normalized part number if not provided.
 
         Returns:
-            ProductBase: Validated model instance
+            Self with normalized part number.
         """
         if not self.part_number_stripped and self.part_number:
             self.part_number_stripped = "".join(
-                c for c in self.part_number if c.isalnum()
+                (c for c in self.part_number if c.isalnum())
             ).upper()
         return self
 
 
 class ProductCreate(ProductBase):
-    """
-    Schema for creating a new Product.
+    """Schema for creating a new Product.
 
-    Extends the base product schema for creation requests.
-
-    Attributes:
-        descriptions: List of product descriptions (optional)
-        marketing: List of marketing content (optional)
+    Includes nested creation of related entities.
     """
 
-    descriptions: Optional[List[ProductDescriptionCreate]] = None
-    marketing: Optional[List[ProductMarketingCreate]] = None
+    descriptions: Optional[List[ProductDescriptionCreate]] = Field(
+        None, description="Product descriptions"
+    )
+    marketing: Optional[List[ProductMarketingCreate]] = Field(
+        None, description="Product marketing content"
+    )
 
 
 class ProductUpdate(BaseModel):
-    """
-    Schema for updating an existing Product.
+    """Schema for updating an existing Product.
 
-    Defines fields that can be updated on a product, with all
-    fields being optional to allow partial updates.
-
-    Attributes:
-        part_number: Unique identifier for the product (optional)
-        application: Unformatted data for vehicle fitment applications (optional)
-        vintage: Vintage fitments flag (optional)
-        late_model: Late model fitments flag (optional)
-        soft: Soft good flag (optional)
-        universal: Universal fit flag (optional)
-        is_active: Whether the product is active (optional)
+    All fields are optional to allow partial updates.
     """
 
-    part_number: Optional[str] = None
-    application: Optional[str] = None
-    vintage: Optional[bool] = None
-    late_model: Optional[bool] = None
-    soft: Optional[bool] = None
-    universal: Optional[bool] = None
-    is_active: Optional[bool] = None
+    part_number: Optional[str] = Field(None, description="Product part number")
+    application: Optional[str] = Field(None, description="Product application/use case")
+    vintage: Optional[bool] = Field(None, description="Whether for vintage vehicles")
+    late_model: Optional[bool] = Field(
+        None, description="Whether for late model vehicles"
+    )
+    soft: Optional[bool] = Field(None, description="Whether product is soft")
+    universal: Optional[bool] = Field(None, description="Whether product is universal")
+    is_active: Optional[bool] = Field(None, description="Whether product is active")
 
 
 class ProductInDB(ProductBase):
-    """
-    Schema for Product as stored in the database.
+    """Schema for Product data as stored in the database.
 
-    Extends the base product schema with database-specific fields.
-
-    Attributes:
-        id: Product UUID
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class Product(ProductInDB):
-    """
-    Schema for Product responses.
+    """Schema for complete Product data in API responses.
 
-    This schema is used for API responses returning product data.
-    It extends the database schema with related entities.
-
-    Attributes:
-        descriptions: List of product descriptions
-        marketing: List of marketing content
-        activities: List of product activities
-        superseded_by: List of products this product is superseded by
-        supersedes: List of products this product supersedes
-        measurements: List of product measurements
-        stock: List of product stock information
+    Includes related entities like descriptions, marketing, etc.
     """
 
-    descriptions: List[ProductDescription] = []
-    marketing: List[ProductMarketing] = []
-    activities: List[ProductActivity] = []
-    superseded_by: List[ProductSupersession] = []
-    supersedes: List[ProductSupersession] = []
-    measurements: List[ProductMeasurement] = []
-    stock: List[ProductStock] = []
+    descriptions: List[ProductDescription] = Field(
+        [], description="Product descriptions"
+    )
+    marketing: List[ProductMarketing] = Field(
+        [], description="Product marketing content"
+    )
+    activities: List[ProductActivity] = Field(
+        [], description="Product status activities"
+    )
+    superseded_by: List[ProductSupersession] = Field(
+        [], description="Products that replace this one"
+    )
+    supersedes: List[ProductSupersession] = Field(
+        [], description="Products this one replaces"
+    )
+    measurements: List[ProductMeasurement] = Field(
+        [], description="Product measurements"
+    )
+    stock: List[ProductStock] = Field([], description="Product stock levels")
 
 
-# Fitment Schemas
 class FitmentBase(BaseModel):
-    """
-    Base schema for Fitment data.
-
-    Defines common fields used across fitment-related schemas.
+    """Base schema for Fitment data.
 
     Attributes:
-        year: Vehicle model year
-        make: Vehicle manufacturer
-        model: Vehicle model name
-        engine: Engine specification (optional)
-        transmission: Transmission type (optional)
-        attributes: Additional fitment attributes
+        year: Vehicle year.
+        make: Vehicle make.
+        model: Vehicle model.
+        engine: Engine specification.
+        transmission: Transmission specification.
+        attributes: Additional fitment attributes.
     """
 
-    year: int
-    make: str
-    model: str
-    engine: Optional[str] = None
-    transmission: Optional[str] = None
-    attributes: Dict[str, Any] = Field(default_factory=dict)
+    year: int = Field(..., description="Vehicle year")
+    make: str = Field(..., description="Vehicle make")
+    model: str = Field(..., description="Vehicle model")
+    engine: Optional[str] = Field(None, description="Engine specification")
+    transmission: Optional[str] = Field(None, description="Transmission specification")
+    attributes: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional attributes"
+    )
 
     @field_validator("year")
     @classmethod
     def validate_year(cls, v: int) -> int:
-        """
-        Validate the year is within a reasonable range.
+        """Validate vehicle year.
 
         Args:
-            v: Year value
+            v: The year to validate.
 
         Returns:
-            int: Validated year
+            Validated year.
 
         Raises:
-            ValueError: If year is outside reasonable range
+            ValueError: If the year is outside valid range.
         """
         current_year = datetime.now().year
-        if (
-            v < 1900 or v > current_year + 2
-        ):  # Allow up to 2 years in the future for new models
+        if v < 1900 or v > current_year + 2:
             raise ValueError(f"Year must be between 1900 and {current_year + 2}")
         return v
 
 
 class FitmentCreate(FitmentBase):
-    """
-    Schema for creating a new Fitment.
-
-    Extends the base fitment schema for creation requests.
-    """
+    """Schema for creating a new Fitment."""
 
     pass
 
 
 class FitmentUpdate(BaseModel):
-    """
-    Schema for updating an existing Fitment.
+    """Schema for updating an existing Fitment.
 
-    Defines fields that can be updated on a fitment, with all
-    fields being optional to allow partial updates.
-
-    Attributes:
-        year: Vehicle model year (optional)
-        make: Vehicle manufacturer (optional)
-        model: Vehicle model name (optional)
-        engine: Engine specification (optional)
-        transmission: Transmission type (optional)
-        attributes: Additional fitment attributes (optional)
+    All fields are optional to allow partial updates.
     """
 
-    year: Optional[int] = None
-    make: Optional[str] = None
-    model: Optional[str] = None
-    engine: Optional[str] = None
-    transmission: Optional[str] = None
-    attributes: Optional[Dict[str, Any]] = None
+    year: Optional[int] = Field(None, description="Vehicle year")
+    make: Optional[str] = Field(None, description="Vehicle make")
+    model: Optional[str] = Field(None, description="Vehicle model")
+    engine: Optional[str] = Field(None, description="Engine specification")
+    transmission: Optional[str] = Field(None, description="Transmission specification")
+    attributes: Optional[Dict[str, Any]] = Field(
+        None, description="Additional attributes"
+    )
 
     @field_validator("year")
     @classmethod
     def validate_year(cls, v: Optional[int]) -> Optional[int]:
-        """
-        Validate the year is within a reasonable range if provided.
+        """Validate vehicle year if provided.
 
         Args:
-            v: Year value (optional)
+            v: The year to validate or None.
 
         Returns:
-            Optional[int]: Validated year
+            Validated year or None.
 
         Raises:
-            ValueError: If year is outside reasonable range
+            ValueError: If the year is outside valid range.
         """
         if v is None:
             return v
@@ -796,78 +627,55 @@ class FitmentUpdate(BaseModel):
 
 
 class FitmentInDB(FitmentBase):
-    """
-    Schema for Fitment as stored in the database.
+    """Schema for Fitment data as stored in the database.
 
-    Extends the base fitment schema with database-specific fields.
-
-    Attributes:
-        id: Fitment UUID
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class Fitment(FitmentInDB):
-    """
-    Schema for Fitment responses.
-
-    This schema is used for API responses returning fitment data.
-    """
+    """Schema for complete Fitment data in API responses."""
 
     pass
 
 
-# Pagination schemas
 class PaginatedResponse(BaseModel):
-    """
-    Generic paginated response schema.
-
-    This schema provides a structure for paginated list responses,
-    including metadata about the pagination.
+    """Base schema for paginated responses.
 
     Attributes:
-        items: List of items
-        total: Total number of items
-        page: Current page number
-        page_size: Number of items per page
-        pages: Total number of pages
+        items: List of items.
+        total: Total number of items.
+        page: Current page number.
+        page_size: Number of items per page.
+        pages: Total number of pages.
     """
 
-    items: List[Any]
-    total: int
-    page: int
-    page_size: int
-    pages: int
+    items: List[Any] = Field(..., description="List of items")
+    total: int = Field(..., description="Total number of items")
+    page: int = Field(..., description="Current page number")
+    page_size: int = Field(..., description="Number of items per page")
+    pages: int = Field(..., description="Total number of pages")
 
 
 class ProductListResponse(PaginatedResponse):
-    """
-    Paginated response for product listings.
+    """Schema for paginated product response.
 
-    This schema specializes the generic paginated response for product listings.
-
-    Attributes:
-        items: List of products
+    Overrides items type to be specifically List[Product].
     """
 
-    items: List[Product]
+    items: List[Product] = Field(..., description="List of products")
 
 
 class FitmentListResponse(PaginatedResponse):
-    """
-    Paginated response for fitment listings.
+    """Schema for paginated fitment response.
 
-    This schema specializes the generic paginated response for fitment listings.
-
-    Attributes:
-        items: List of fitments
+    Overrides items type to be specifically List[Fitment].
     """
 
-    items: List[Fitment]
+    items: List[Fitment] = Field(..., description="List of fitments")

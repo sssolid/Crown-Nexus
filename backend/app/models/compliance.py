@@ -1,54 +1,36 @@
-# backend/app/models/compliance.py
-"""
-Compliance models.
-
-This module defines models for compliance-related data:
-- Proposition 65 chemicals and warnings
-- DOT approvals
-- Hazardous materials information
-- Other regulatory compliance data
-
-These models support product compliance with various regulations
-and provide necessary information for documentation and labeling.
-"""
-
 from __future__ import annotations
+
+"""Compliance model definition.
+
+This module defines models for regulatory compliance, hazardous materials,
+warnings, and approval statuses for products.
+"""
 
 import uuid
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
-from sqlalchemy import (
-    Boolean,
-    Date,
-    DateTime,
-    Enum as SQLAEnum,
-    ForeignKey,
-    Integer,
-    Numeric,
-    String,
-    Text,
-    func,
-)
+from sqlalchemy import Boolean, Date, DateTime, Enum as SQLAEnum, ForeignKey
+from sqlalchemy import Integer, Numeric, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 
-# For type hints only, not runtime imports
 if TYPE_CHECKING:
     from app.models.product import Product
     from app.models.user import User
 
 
 class ChemicalType(str, Enum):
-    """
-    Types of chemical hazards under Proposition 65.
+    """Types of chemicals for regulatory compliance.
 
-    Defines the categories of chemical hazards recognized by
-    California's Proposition 65.
+    Attributes:
+        CARCINOGEN: Cancer-causing chemicals.
+        REPRODUCTIVE_TOXICANT: Chemicals harmful to reproduction.
+        BOTH: Chemicals that are both carcinogenic and reproductive toxicants.
     """
 
     CARCINOGEN = "Carcinogen"
@@ -57,11 +39,12 @@ class ChemicalType(str, Enum):
 
 
 class ExposureScenario(str, Enum):
-    """
-    Types of exposure scenarios for chemicals.
+    """Scenarios for potential chemical exposure.
 
-    Defines the different contexts in which chemical exposure
-    might occur.
+    Attributes:
+        CONSUMER: Exposure to general consumers.
+        OCCUPATIONAL: Exposure in occupational settings.
+        ENVIRONMENTAL: Environmental exposure.
     """
 
     CONSUMER = "Consumer"
@@ -70,10 +53,13 @@ class ExposureScenario(str, Enum):
 
 
 class ApprovalStatus(str, Enum):
-    """
-    Statuses for regulatory approvals.
+    """Status of regulatory approvals.
 
-    Defines the possible states of a regulatory approval.
+    Attributes:
+        APPROVED: Fully approved.
+        PENDING: Approval pending.
+        REVOKED: Approval revoked.
+        NOT_REQUIRED: Approval not required.
     """
 
     APPROVED = "Approved"
@@ -83,11 +69,14 @@ class ApprovalStatus(str, Enum):
 
 
 class TransportRestriction(str, Enum):
-    """
-    Types of transportation restrictions.
+    """Restrictions on product transportation methods.
 
-    Defines the possible transportation restrictions for
-    hazardous materials.
+    Attributes:
+        NONE: No restrictions.
+        AIR: Air transport restricted.
+        GROUND: Ground transport restricted.
+        SEA: Sea transport restricted.
+        ALL: All transport methods restricted.
     """
 
     NONE = "NONE"
@@ -98,18 +87,15 @@ class TransportRestriction(str, Enum):
 
 
 class Prop65Chemical(Base):
-    """
-    Proposition 65 chemical model.
-
-    Represents chemicals listed under California's Proposition 65.
+    """California Proposition 65 chemical entity.
 
     Attributes:
-        id: Primary key UUID
-        name: Chemical name
-        cas_number: Chemical Abstracts Service (CAS) Number
-        type: Type of hazard (Carcinogen, Reproductive Toxicant, Both)
-        exposure_limit: Exposure limit if applicable
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        name: Chemical name.
+        cas_number: CAS Registry Number (unique chemical identifier).
+        type: Type of chemical hazard.
+        exposure_limit: Safe harbor exposure limit if applicable.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "prop65_chemical"
@@ -140,27 +126,23 @@ class Prop65Chemical(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the chemical.
+        """Return string representation of Prop65Chemical instance.
 
         Returns:
-            str: Chemical representation
+            String representation including name and CAS number.
         """
         return f"<Prop65Chemical {self.name} ({self.cas_number})>"
 
 
 class Warning(Base):
-    """
-    Warning model.
-
-    Represents warning text for chemicals in products.
+    """Warning entity for products containing regulated chemicals.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        chemical_id: Reference to chemical
-        warning_text: Warning text
-        last_updated: Last update timestamp
+        id: Unique identifier.
+        product_id: ID of the product requiring the warning.
+        chemical_id: ID of the chemical in the warning.
+        warning_text: Text of the warning label.
+        last_updated: Last update timestamp.
     """
 
     __tablename__ = "warning"
@@ -186,11 +168,10 @@ class Warning(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the warning.
+        """Return string representation of Warning instance.
 
         Returns:
-            str: Warning representation
+            String representation including product ID and chemical ID.
         """
         return (
             f"<Warning for Product {self.product_id} and Chemical {self.chemical_id}>"
@@ -198,19 +179,15 @@ class Warning(Base):
 
 
 class ProductChemical(Base):
-    """
-    Product chemical association model.
-
-    Represents relationships between products and chemicals,
-    including exposure scenarios and warning requirements.
+    """Product-chemical association entity.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        chemical_id: Reference to chemical
-        exposure_scenario: Scenario (Consumer, Occupational, Environmental)
-        warning_required: Whether a warning is required
-        warning_label: Warning text for label
+        id: Unique identifier.
+        product_id: ID of the product containing the chemical.
+        chemical_id: ID of the chemical in the product.
+        exposure_scenario: Type of exposure scenario.
+        warning_required: Whether a warning label is required.
+        warning_label: Text of the required warning label if applicable.
     """
 
     __tablename__ = "product_chemical"
@@ -239,32 +216,28 @@ class ProductChemical(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product chemical association.
+        """Return string representation of ProductChemical instance.
 
         Returns:
-            str: Product chemical association representation
+            String representation including product ID and chemical ID.
         """
         return f"<ProductChemical for Product {self.product_id} and Chemical {self.chemical_id}>"
 
 
 class ProductDOTApproval(Base):
-    """
-    Product DOT approval model.
-
-    Represents Department of Transportation approvals for products.
+    """Department of Transportation approval entity for products.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        approval_status: Status (Approved, Pending, Revoked, Not Required)
-        approval_number: Official DOT approval number
-        approved_by: Entity or agency that approved the product
-        approval_date: When the product was approved
-        expiration_date: If the approval has an expiration date
-        reason: If revoked or pending, store reason
-        changed_by_id: User who made the change
-        changed_at: When the change occurred
+        id: Unique identifier.
+        product_id: ID of the approved product.
+        approval_status: Status of the approval.
+        approval_number: DOT approval number if applicable.
+        approved_by: Name of the approver.
+        approval_date: Date of approval.
+        expiration_date: Expiration date of the approval.
+        reason: Reason for the approval status.
+        changed_by_id: ID of the user who last changed the approval.
+        changed_at: When the approval was last changed.
     """
 
     __tablename__ = "product_dot_approval"
@@ -297,30 +270,26 @@ class ProductDOTApproval(Base):
     changed_by: Mapped[Optional["User"]] = relationship("User")
 
     def __repr__(self) -> str:
-        """
-        String representation of the DOT approval.
+        """Return string representation of ProductDOTApproval instance.
 
         Returns:
-            str: DOT approval representation
+            String representation including product ID and approval status.
         """
         return f"<ProductDOTApproval for Product {self.product_id}: {self.approval_status}>"
 
 
 class HazardousMaterial(Base):
-    """
-    Hazardous material model.
-
-    Represents hazardous material information for products.
+    """Hazardous material information entity for products.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        un_number: UN/NA Number (e.g., 1993 for flammable liquids)
-        hazard_class: Hazard Classification (e.g., Flammable Liquid)
-        packing_group: Packing Group (I, II, III)
-        handling_instructions: Storage or transport precautions
-        restricted_transport: Restrictions (Air, Ground, Sea, None)
-        created_at: Creation timestamp
+        id: Unique identifier.
+        product_id: ID of the hazardous product.
+        un_number: UN number for hazardous material.
+        hazard_class: DOT hazard class.
+        packing_group: Packing group (I, II, III).
+        handling_instructions: Special handling instructions.
+        restricted_transport: Transport restrictions.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "hazardous_material"
@@ -353,10 +322,9 @@ class HazardousMaterial(Base):
     product: Mapped["Product"] = relationship("Product")
 
     def __repr__(self) -> str:
-        """
-        String representation of the hazardous material.
+        """Return string representation of HazardousMaterial instance.
 
         Returns:
-            str: Hazardous material representation
+            String representation including product ID.
         """
         return f"<HazardousMaterial for Product {self.product_id}>"

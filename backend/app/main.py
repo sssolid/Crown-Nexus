@@ -84,35 +84,27 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Initialize error system
     await initialize_error_system()
-    logger.info("Error system initialized")
 
     # Initialize validation system()
     await initialize_validation_system()
-    logger.info("Validation system initialized")
 
     # Initialize metrics system
     await initialize_metrics_system()
-    logger.info("Metrics system initialized")
 
     # Initialize pagination system
     await initialize_pagination_system()
-    logger.info("Pagination system initialized")
 
     # Initialize rate limiting system
     await initialize_ratelimiting_system()
-    logger.info("Rate Limiting system initialized")
 
     # Initialize cache backends
     await initialize_cache()
-    logger.info("Cache backends initialized")
 
     # Initialize services
     await initialize_services()
-    logger.info("Services initialized")
 
     # Initialize fitment mapping engine
     await initialize_mapping_engine()
-    logger.info("Mapping Engine initialized")
 
     logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
 
@@ -132,27 +124,21 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Shutdown services
     await shutdown_services()
-    logger.info("Services shut down")
 
     # Shutdown rate limiting system
     await shutdown_ratelimiting_system()
-    logger.info("Rate Limiting system shut down")
 
     # Shutdown pagination system
     await shutdown_pagination_system()
-    logger.info("Pagination system shut down")
 
     # Shutdown metrics system
     await shutdown_metrics_system()
-    logger.info("Metrics system shut down")
 
     # Shutdown validation system
     await shutdown_validation_system()
-    logger.info("Validation system shut down")
 
     # Shutdown error handling service
     await shutdown_error_system()
-    logger.info("Error system shut down")
 
     logger.info("Application shutdown complete")
 

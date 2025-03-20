@@ -1,87 +1,49 @@
-# backend/app/models/product.py
-"""
-Product catalog models.
-
-This module defines the models for products, categories, and related entities
-in the automotive aftermarket catalog. It supports:
-- Core product data with advanced attributes
-- Product descriptions and marketing content
-- Product activity tracking
-- Product supersession relationships
-- Brand and manufacturer associations
-- Media associations
-- Categorization and classification
-- Pricing and measurements
-- Country of origin and compliance information
-
-The models provide a comprehensive structure for managing automotive parts,
-accessories, and their metadata.
-"""
-
 from __future__ import annotations
+
+"""Product model definition.
+
+This module defines the Product model and related entities for
+product management within the application.
+"""
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from sqlalchemy import (
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Integer,
-    Numeric,
-    String,
-    Text,
-    UniqueConstraint,
-    func,
-    text,
-)
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import UniqueConstraint, func, text
 from sqlalchemy.dialects.postgresql import JSONB, TSVECTOR, UUID
-from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 
-# Import associations with a conditional to avoid circular imports
 if TYPE_CHECKING:
-    from app.models.associations import (
-        product_fitment_association,
-        product_media_association,
-    )
+    from app.models.media import Media
+    from app.models.user import User
 else:
     from app.models.associations import (
         product_fitment_association,
         product_media_association,
     )
 
-# For type hints only, not runtime imports
-if TYPE_CHECKING:
-    from app.models.media import Media
-    from app.models.user import User
-
 
 class Product(Base):
-    """
-    Product model representing automotive parts and accessories.
-
-    This model stores core information about products including:
-    - Basic product details (part number, application)
-    - Product flags (vintage, late_model, soft, universal)
-    - Search capabilities via search_vector
-    - Relationships to descriptions, marketing, activities, etc.
+    """Product entity representing a sellable item.
 
     Attributes:
-        id: Primary key UUID
-        part_number: Unique identifier for the product
-        part_number_stripped: Alphanumeric version of part_number
-        application: Unformatted data for vehicle fitment applications
-        vintage: Vintage fitments flag
-        late_model: Late model fitments flag
-        soft: Soft good flag
-        universal: Universal fit flag
-        search_vector: Full-text search vector
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        part_number: Product part number (unique).
+        part_number_stripped: Normalized version of part number for searching.
+        application: Product application or use case description.
+        vintage: Whether the product is for vintage vehicles.
+        late_model: Whether the product is for late model vehicles.
+        soft: Whether the product is soft (e.g., fabric vs metal).
+        universal: Whether the product is universal (fits multiple applications).
+        search_vector: Full-text search vector.
+        is_active: Whether the product is active in the catalog.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "product"
@@ -112,76 +74,6 @@ class Product(Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
-
-    # Relationships
-    descriptions: Mapped[List["ProductDescription"]] = relationship(
-        "ProductDescription", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    marketing: Mapped[List["ProductMarketing"]] = relationship(
-        "ProductMarketing", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    activities: Mapped[List["ProductActivity"]] = relationship(
-        "ProductActivity", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    # Supersession relationships
-    superseded_by: Mapped[List["ProductSupersession"]] = relationship(
-        "ProductSupersession",
-        foreign_keys="ProductSupersession.old_product_id",
-        back_populates="old_product",
-        cascade="all, delete-orphan",
-    )
-
-    supersedes: Mapped[List["ProductSupersession"]] = relationship(
-        "ProductSupersession",
-        foreign_keys="ProductSupersession.new_product_id",
-        back_populates="new_product",
-        cascade="all, delete-orphan",
-    )
-
-    # Attributes
-    attributes: Mapped[List["ProductAttribute"]] = relationship(
-        "ProductAttribute", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    # Pricing
-    pricing: Mapped[List["ProductPricing"]] = relationship(
-        "ProductPricing", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    # Measurements
-    measurements: Mapped[List["ProductMeasurement"]] = relationship(
-        "ProductMeasurement", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    # Brand history
-    brand_history: Mapped[List["ProductBrandHistory"]] = relationship(
-        "ProductBrandHistory",
-        foreign_keys="ProductBrandHistory.product_id",
-        back_populates="product",
-        cascade="all, delete-orphan",
-    )
-
-    # Media relationship - using fully qualified string to avoid circular imports
-    media: Mapped[List["Media"]] = relationship(
-        "app.models.media.Media",
-        secondary=product_media_association,
-        back_populates="products",
-    )
-
-    # Fitment relationship
-    fitments: Mapped[List["Fitment"]] = relationship(
-        "Fitment", secondary=product_fitment_association, back_populates="products"
-    )
-
-    # Stock relationship
-    stock: Mapped[List["ProductStock"]] = relationship(
-        "ProductStock", back_populates="product", cascade="all, delete-orphan"
-    )
-
-    # Audit timestamps
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -192,28 +84,73 @@ class Product(Base):
         nullable=False,
     )
 
+    # Relationships
+    descriptions: Mapped[List["ProductDescription"]] = relationship(
+        "ProductDescription", back_populates="product", cascade="all, delete-orphan"
+    )
+    marketing: Mapped[List["ProductMarketing"]] = relationship(
+        "ProductMarketing", back_populates="product", cascade="all, delete-orphan"
+    )
+    activities: Mapped[List["ProductActivity"]] = relationship(
+        "ProductActivity", back_populates="product", cascade="all, delete-orphan"
+    )
+    superseded_by: Mapped[List["ProductSupersession"]] = relationship(
+        "ProductSupersession",
+        foreign_keys="ProductSupersession.old_product_id",
+        back_populates="old_product",
+        cascade="all, delete-orphan",
+    )
+    supersedes: Mapped[List["ProductSupersession"]] = relationship(
+        "ProductSupersession",
+        foreign_keys="ProductSupersession.new_product_id",
+        back_populates="new_product",
+        cascade="all, delete-orphan",
+    )
+    attributes: Mapped[List["ProductAttribute"]] = relationship(
+        "ProductAttribute", back_populates="product", cascade="all, delete-orphan"
+    )
+    pricing: Mapped[List["ProductPricing"]] = relationship(
+        "ProductPricing", back_populates="product", cascade="all, delete-orphan"
+    )
+    measurements: Mapped[List["ProductMeasurement"]] = relationship(
+        "ProductMeasurement", back_populates="product", cascade="all, delete-orphan"
+    )
+    brand_history: Mapped[List["ProductBrandHistory"]] = relationship(
+        "ProductBrandHistory",
+        foreign_keys="ProductBrandHistory.product_id",
+        back_populates="product",
+        cascade="all, delete-orphan",
+    )
+    media: Mapped[List["Media"]] = relationship(
+        "app.models.media.Media",
+        secondary=product_media_association,
+        back_populates="products",
+    )
+    fitments: Mapped[List["Fitment"]] = relationship(
+        "Fitment", secondary=product_fitment_association, back_populates="products"
+    )
+    stock: Mapped[List["ProductStock"]] = relationship(
+        "ProductStock", back_populates="product", cascade="all, delete-orphan"
+    )
+
     def __repr__(self) -> str:
-        """
-        String representation of the product.
+        """Return string representation of Product instance.
 
         Returns:
-            str: Product representation with part number
+            String representation including part number.
         """
         return f"<Product {self.part_number}>"
 
 
 class ProductDescription(Base):
-    """
-    Product description model.
-
-    Stores different types of descriptions for products.
+    """Product description entity representing a textual description of a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        description_type: Type of description (Short, Long, Keywords, etc.)
-        description: Description content
-        created_at: Creation timestamp
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        description_type: Type of description (e.g., short, long, etc.).
+        description: The actual description text.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "product_description"
@@ -236,28 +173,24 @@ class ProductDescription(Base):
     product: Mapped["Product"] = relationship("Product", back_populates="descriptions")
 
     def __repr__(self) -> str:
-        """
-        String representation of the product description.
+        """Return string representation of ProductDescription instance.
 
         Returns:
-            str: Product description representation
+            String representation including description type and product ID.
         """
         return f"<ProductDescription {self.description_type} for {self.product_id}>"
 
 
 class ProductMarketing(Base):
-    """
-    Product marketing model.
-
-    Stores marketing content for products.
+    """Product marketing entity representing marketing content for a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        marketing_type: Type of marketing content (Bullet Point, Ad Copy)
-        content: Marketing content
-        position: Order for display
-        created_at: Creation timestamp
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        marketing_type: Type of marketing content (e.g., bullet point, ad copy, etc.).
+        content: The actual marketing content.
+        position: Display order position.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "product_marketing"
@@ -279,28 +212,24 @@ class ProductMarketing(Base):
     product: Mapped["Product"] = relationship("Product", back_populates="marketing")
 
     def __repr__(self) -> str:
-        """
-        String representation of the product marketing.
+        """Return string representation of ProductMarketing instance.
 
         Returns:
-            str: Product marketing representation
+            String representation including marketing type and product ID.
         """
         return f"<ProductMarketing {self.marketing_type} for {self.product_id}>"
 
 
 class ProductActivity(Base):
-    """
-    Product activity model.
-
-    Tracks status changes for products.
+    """Product activity entity representing status changes for a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        status: Product status (active, inactive)
-        reason: Reason for status change
-        changed_by: User who made the change
-        changed_at: When the change occurred
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        status: Product status (e.g., active, inactive, discontinued, etc.).
+        reason: Reason for the status change.
+        changed_by_id: ID of the user who made the change.
+        changed_at: When the change was made.
     """
 
     __tablename__ = "product_activity"
@@ -327,27 +256,23 @@ class ProductActivity(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product activity.
+        """Return string representation of ProductActivity instance.
 
         Returns:
-            str: Product activity representation
+            String representation including status and product ID.
         """
         return f"<ProductActivity {self.status} for {self.product_id}>"
 
 
 class ProductSupersession(Base):
-    """
-    Product supersession model.
-
-    Tracks product replacements.
+    """Product supersession entity representing when one product replaces another.
 
     Attributes:
-        id: Primary key UUID
-        old_product_id: Product being replaced
-        new_product_id: Replacement product
-        reason: Explanation of why the product was superseded
-        changed_at: When the change occurred
+        id: Unique identifier.
+        old_product_id: ID of the product being replaced.
+        new_product_id: ID of the replacement product.
+        reason: Reason for the supersession.
+        changed_at: When the supersession was created.
     """
 
     __tablename__ = "product_supersession"
@@ -375,26 +300,22 @@ class ProductSupersession(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product supersession.
+        """Return string representation of ProductSupersession instance.
 
         Returns:
-            str: Product supersession representation
+            String representation including old and new product IDs.
         """
         return f"<ProductSupersession {self.old_product_id} -> {self.new_product_id}>"
 
 
 class Brand(Base):
-    """
-    Brand model.
-
-    Represents product brands.
+    """Brand entity representing a product brand.
 
     Attributes:
-        id: Primary key UUID
-        name: Brand name
-        parent_company_id: Reference to parent company
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Brand name.
+        parent_company_id: ID of the parent company.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "brand"
@@ -412,39 +333,32 @@ class Brand(Base):
 
     # Relationships
     parent_company = relationship("Company", foreign_keys=[parent_company_id])
-
-    # Brand history
     brand_history: Mapped[List["ProductBrandHistory"]] = relationship(
         "ProductBrandHistory",
         foreign_keys="[ProductBrandHistory.new_brand_id, ProductBrandHistory.old_brand_id]",
-        primaryjoin="or_(Brand.id==ProductBrandHistory.new_brand_id, "
-        "Brand.id==ProductBrandHistory.old_brand_id)",
+        primaryjoin="or_(Brand.id==ProductBrandHistory.new_brand_id, Brand.id==ProductBrandHistory.old_brand_id)",
         viewonly=True,
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the brand.
+        """Return string representation of Brand instance.
 
         Returns:
-            str: Brand representation
+            String representation including name.
         """
         return f"<Brand {self.name}>"
 
 
 class ProductBrandHistory(Base):
-    """
-    Product brand history model.
-
-    Tracks brand changes for products.
+    """Product brand history entity representing brand changes for a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        old_brand_id: Previous brand
-        new_brand_id: New brand
-        changed_by_id: User who made the change
-        changed_at: When the change occurred
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        old_brand_id: ID of the previous brand.
+        new_brand_id: ID of the new brand.
+        changed_by_id: ID of the user who made the change.
+        changed_at: When the change was made.
     """
 
     __tablename__ = "product_brand_history"
@@ -481,36 +395,32 @@ class ProductBrandHistory(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product brand history.
+        """Return string representation of ProductBrandHistory instance.
 
         Returns:
-            str: Product brand history representation
+            String representation including product ID and brand change.
         """
         return f"<ProductBrandHistory {self.product_id}: {self.old_brand_id} -> {self.new_brand_id}>"
 
 
 class AttributeDefinition(Base):
-    """
-    Attribute definition model.
-
-    Defines flexible product attributes.
+    """Attribute definition entity representing a product attribute type.
 
     Attributes:
-        id: Primary key UUID
-        name: Attribute name
-        code: Code for the attribute
-        description: Description of the attribute
-        data_type: Data type
-        is_required: Whether the attribute is required
-        default_value: Default value for the attribute
-        validation_regex: Regular expression for validation
-        min_value: Minimum value
-        max_value: Maximum value
-        options: For picklist values
-        display_order: Order for displaying attributes
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        name: Attribute name.
+        code: Attribute code (unique).
+        description: Attribute description.
+        data_type: Data type (e.g., string, number, boolean, etc.).
+        is_required: Whether the attribute is required.
+        default_value: Default value for the attribute.
+        validation_regex: Regex for validation of string values.
+        min_value: Minimum allowed value for numeric attributes.
+        max_value: Maximum allowed value for numeric attributes.
+        options: Available options for enum-like attributes.
+        display_order: Display order position.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "attribute_definition"
@@ -551,32 +461,28 @@ class AttributeDefinition(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the attribute definition.
+        """Return string representation of AttributeDefinition instance.
 
         Returns:
-            str: Attribute definition representation
+            String representation including code.
         """
         return f"<AttributeDefinition {self.code}>"
 
 
 class ProductAttribute(Base):
-    """
-    Product attribute model.
-
-    Stores flexible attribute values for products.
+    """Product attribute entity representing a specific attribute value for a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        attribute_id: Reference to attribute definition
-        value_string: String value
-        value_number: Numeric value
-        value_boolean: Boolean value
-        value_date: Date value
-        value_json: JSON value
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        attribute_id: ID of the attribute definition.
+        value_string: String value.
+        value_number: Numeric value.
+        value_boolean: Boolean value.
+        value_date: Date value.
+        value_json: JSON value.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "product_attribute"
@@ -621,31 +527,26 @@ class ProductAttribute(Base):
     )
 
     __table_args__ = (
-        # Ensure a product can't have the same attribute twice
         UniqueConstraint("product_id", "attribute_id", name="uix_product_attribute"),
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product attribute.
+        """Return string representation of ProductAttribute instance.
 
         Returns:
-            str: Product attribute representation
+            String representation including product ID and attribute ID.
         """
         return f"<ProductAttribute {self.product_id}: {self.attribute_id}>"
 
 
 class PriceType(Base):
-    """
-    Price type model.
-
-    Defines types of prices.
+    """Price type entity representing a type of pricing (e.g., retail, wholesale, etc.).
 
     Attributes:
-        id: Primary key UUID
-        name: Price type name
-        description: Description of price type
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Price type name.
+        description: Price type description.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "price_type"
@@ -667,29 +568,25 @@ class PriceType(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the price type.
+        """Return string representation of PriceType instance.
 
         Returns:
-            str: Price type representation
+            String representation including name.
         """
         return f"<PriceType {self.name}>"
 
 
 class ProductPricing(Base):
-    """
-    Product pricing model.
-
-    Stores pricing information for products.
+    """Product pricing entity representing a price for a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        pricing_type_id: Reference to price type
-        manufacturer_id: Optional manufacturer reference
-        price: The current price
-        currency: Currency code
-        last_updated: Last update timestamp
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        pricing_type_id: ID of the price type.
+        manufacturer_id: ID of the manufacturer.
+        price: Price value.
+        currency: Currency code.
+        last_updated: When the price was last updated.
     """
 
     __tablename__ = "product_pricing"
@@ -724,30 +621,26 @@ class ProductPricing(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product pricing.
+        """Return string representation of ProductPricing instance.
 
         Returns:
-            str: Product pricing representation
+            String representation including product ID, pricing type, and price.
         """
         return f"<ProductPricing {self.product_id}: {self.pricing_type_id} = {self.price} {self.currency}>"
 
 
 class Manufacturer(Base):
-    """
-    Manufacturer model.
-
-    Represents product manufacturers.
+    """Manufacturer entity representing a product manufacturer.
 
     Attributes:
-        id: Primary key UUID
-        name: Manufacturer name
-        company_id: Parent company if applicable
-        address_id: Reference to address
-        billing_address_id: Reference to billing address
-        shipping_address_id: Reference to shipping address
-        country_id: Manufacturing location
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Manufacturer name.
+        company_id: ID of the associated company.
+        address_id: ID of the primary address.
+        billing_address_id: ID of the billing address.
+        shipping_address_id: ID of the shipping address.
+        country_id: ID of the country of origin.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "manufacturer"
@@ -781,44 +674,36 @@ class Manufacturer(Base):
     billing_address = relationship("Address", foreign_keys=[billing_address_id])
     shipping_address = relationship("Address", foreign_keys=[shipping_address_id])
     country = relationship("Country", foreign_keys=[country_id])
-
-    # Product pricing
     product_pricing: Mapped[List["ProductPricing"]] = relationship(
         "ProductPricing", back_populates="manufacturer"
     )
-
-    # Product measurements
     product_measurements: Mapped[List["ProductMeasurement"]] = relationship(
         "ProductMeasurement", back_populates="manufacturer"
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the manufacturer.
+        """Return string representation of Manufacturer instance.
 
         Returns:
-            str: Manufacturer representation
+            String representation including name.
         """
         return f"<Manufacturer {self.name}>"
 
 
 class ProductMeasurement(Base):
-    """
-    Product measurement model.
-
-    Stores dimensional information for products.
+    """Product measurement entity representing physical measurements of a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        manufacturer_id: Optional manufacturer reference
-        length: Length in inches
-        width: Width in inches
-        height: Height in inches
-        weight: Weight in pounds
-        volume: Volume in cubic inches
-        dimensional_weight: DIM weight calculation
-        effective_date: When measurements become effective
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        manufacturer_id: ID of the manufacturer who provided the measurements.
+        length: Length measurement.
+        width: Width measurement.
+        height: Height measurement.
+        weight: Weight measurement.
+        volume: Volume measurement.
+        dimensional_weight: Dimensional weight for shipping calculations.
+        effective_date: When the measurements became effective.
     """
 
     __tablename__ = "product_measurement"
@@ -851,27 +736,23 @@ class ProductMeasurement(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the product measurement.
+        """Return string representation of ProductMeasurement instance.
 
         Returns:
-            str: Product measurement representation
+            String representation including product ID.
         """
         return f"<ProductMeasurement {self.product_id}>"
 
 
 class ProductStock(Base):
-    """
-    Product stock model.
-
-    Tracks inventory levels for products.
+    """Product stock entity representing inventory levels for a product.
 
     Attributes:
-        id: Primary key UUID
-        product_id: Reference to product
-        warehouse_id: Reference to warehouse
-        quantity: Quantity in stock
-        last_updated: Last stock update timestamp
+        id: Unique identifier.
+        product_id: ID of the associated product.
+        warehouse_id: ID of the warehouse.
+        quantity: Stock quantity.
+        last_updated: When the stock level was last updated.
     """
 
     __tablename__ = "product_stock"
@@ -897,11 +778,10 @@ class ProductStock(Base):
     warehouse: Mapped["Warehouse"] = relationship("Warehouse", back_populates="stock")
 
     def __repr__(self) -> str:
-        """
-        String representation of the product stock.
+        """Return string representation of ProductStock instance.
 
         Returns:
-            str: Product stock representation
+            String representation including product ID, warehouse ID, and quantity.
         """
         return (
             f"<ProductStock {self.product_id} @ {self.warehouse_id}: {self.quantity}>"
@@ -909,25 +789,18 @@ class ProductStock(Base):
 
 
 class Fitment(Base):
-    """
-    Fitment model representing vehicle compatibility information.
-
-    This model stores information about vehicle compatibility for products:
-    - Year/Make/Model data for basic vehicle identification
-    - Engine and transmission details for specific applications
-    - Flexible JSON attributes for additional fitment criteria
+    """Fitment entity representing vehicle compatibility for a product.
 
     Attributes:
-        id: Primary key UUID
-        year: Vehicle model year
-        make: Vehicle manufacturer
-        model: Vehicle model name
-        engine: Engine specification
-        transmission: Transmission type
-        attributes: JSON field for additional fitment attributes
-        products: Associated products for this fitment
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        year: Vehicle year.
+        make: Vehicle make.
+        model: Vehicle model.
+        engine: Engine specification.
+        transmission: Transmission specification.
+        attributes: Additional fitment attributes.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "fitment"
@@ -947,13 +820,6 @@ class Fitment(Base):
     attributes: Mapped[Dict[str, Any]] = mapped_column(
         JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb")
     )
-
-    # Relationships
-    products: Mapped[List[Product]] = relationship(
-        "Product", secondary=product_fitment_association, back_populates="fitments"
-    )
-
-    # Audit timestamps
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -964,11 +830,15 @@ class Fitment(Base):
         nullable=False,
     )
 
+    # Relationships
+    products: Mapped[List[Product]] = relationship(
+        "Product", secondary=product_fitment_association, back_populates="fitments"
+    )
+
     def __repr__(self) -> str:
-        """
-        String representation of the fitment.
+        """Return string representation of Fitment instance.
 
         Returns:
-            str: Fitment representation with year, make, and model
+            String representation including year, make, and model.
         """
         return f"<Fitment {self.year} {self.make} {self.model}>"

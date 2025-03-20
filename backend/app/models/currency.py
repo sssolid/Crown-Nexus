@@ -1,17 +1,10 @@
-# backend/app/models/currency.py
-"""
-Currency models.
-
-This module defines models for currency management and exchange rates:
-- Currency information and codes
-- Historical exchange rates between currencies
-- API configuration for rate updates
-
-These models support price conversion, international sales, and
-financial reporting across different currencies.
-"""
-
 from __future__ import annotations
+
+"""Currency model definition.
+
+This module defines the Currency model and related functionality for
+currency and exchange rate management within the application.
+"""
 
 import uuid
 from datetime import datetime
@@ -33,24 +26,17 @@ from app.db.base_class import Base
 
 
 class Currency(Base):
-    """
-    Currency model.
-
-    Represents currency information:
-    - ISO codes
-    - Name
-    - Symbol
-    - Active status
+    """Currency entity representing a monetary currency.
 
     Attributes:
-        id: Primary key UUID
-        code: ISO 4217 currency code (USD, EUR, etc.)
-        name: Currency name
-        symbol: Currency symbol
-        is_active: Whether the currency is active
-        is_base: Whether this is the base currency for the system
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        code: ISO 4217 currency code.
+        name: Currency name.
+        symbol: Currency symbol.
+        is_active: Whether the currency is active.
+        is_base: Whether this is the base currency.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "currency"
@@ -88,33 +74,26 @@ class Currency(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the currency.
+        """Return string representation of Currency instance.
 
         Returns:
-            str: Currency representation
+            String representation including code and name.
         """
         return f"<Currency {self.code} ({self.name})>"
 
 
 class ExchangeRate(Base):
-    """
-    Exchange rate model.
-
-    Tracks historical exchange rates between currencies:
-    - Source and target currencies
-    - Rate value
-    - Effective date
+    """Exchange rate between two currencies.
 
     Attributes:
-        id: Primary key UUID
-        source_currency_id: Reference to source currency
-        target_currency_id: Reference to target currency
-        rate: Exchange rate value
-        effective_date: When the rate became effective
-        fetched_at: When the rate was fetched from the API
-        data_source: API or source that provided the rate
-        created_at: Creation timestamp
+        id: Unique identifier.
+        source_currency_id: ID of the source currency.
+        target_currency_id: ID of the target currency.
+        rate: Exchange rate value.
+        effective_date: When the rate became effective.
+        fetched_at: When the rate was fetched.
+        data_source: API or source that provided the rate.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "exchange_rate"
@@ -148,7 +127,6 @@ class ExchangeRate(Base):
         "Currency", foreign_keys=[target_currency_id], back_populates="target_rates"
     )
 
-    # Ensure we don't have duplicate entries for same currency pair and date
     __table_args__ = (
         UniqueConstraint(
             "source_currency_id",
@@ -159,10 +137,9 @@ class ExchangeRate(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the exchange rate.
+        """Return string representation of ExchangeRate instance.
 
         Returns:
-            str: Exchange rate representation
+            String representation including source, target, and rate.
         """
         return f"<ExchangeRate {self.source_currency_id} -> {self.target_currency_id}: {self.rate}>"

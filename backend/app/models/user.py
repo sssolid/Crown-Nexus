@@ -1,24 +1,15 @@
-# backend/app/models/user.py
-"""
-User model and authentication utilities.
-
-This module defines the User and Company models for authentication
-and authorization. It also provides utility functions for password
-hashing and token creation.
-
-The models support:
-- User roles with different permission levels
-- Company associations for B2B functionality
-- Secure password handling
-- JWT token generation for authentication
-"""
-
 from __future__ import annotations
+
+"""User model definition.
+
+This module defines the User model, user roles, authentication utilities,
+and related functionality for user management within the application.
+"""
 
 import uuid
 import datetime
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -31,17 +22,21 @@ from sqlalchemy.sql import expression
 from app.core.config import settings
 from app.db.base_class import Base
 
+if TYPE_CHECKING:
+    from app.models.company import Company
+    from app.models.chat import ChatMember
+    from app.models.api_key import ApiKey
+
 
 class UserRole(str, Enum):
-    """
-    User role enumeration for authorization.
+    """Enumeration of user roles in the system.
 
-    These roles define different permission levels in the system:
-    - ADMIN: Full system access and management capabilities
-    - MANAGER: Product and user management, approvals
-    - CLIENT: Regular customer access
-    - DISTRIBUTOR: B2B partner access
-    - READ_ONLY: Limited view-only access
+    Attributes:
+        ADMIN: Administrator role with full system access.
+        MANAGER: Manager role with elevated permissions.
+        CLIENT: Standard client user.
+        DISTRIBUTOR: Distributor with specific permissions.
+        READ_ONLY: User with read-only access.
     """
 
     ADMIN = "admin"
@@ -52,27 +47,18 @@ class UserRole(str, Enum):
 
 
 class User(Base):
-    """
-    User model for authentication and authorization.
-
-    This model stores user information, credentials, and permissions.
-    It supports:
-    - Email-based authentication
-    - Role-based access control
-    - Company association for B2B users
-    - Account status tracking
+    """User entity representing a system user.
 
     Attributes:
-        id: Primary key UUID
-        email: User's email address (used for login)
-        hashed_password: Bcrypt-hashed password
-        full_name: User's full name
-        role: User's role in the system
-        is_active: Whether the user account is active
-        company_id: Reference to associated company (optional)
-        company: Relationship to Company model
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        email: User's email address (unique).
+        hashed_password: Securely hashed password.
+        full_name: User's full name.
+        role: User's role in the system.
+        is_active: Whether the user account is active.
+        company_id: ID of the associated company.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "user"
@@ -97,92 +83,13 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
-
-    # Company relationship (if applicable)
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("company.id"), nullable=True
     )
-    company: Mapped[Optional["Company"]] = relationship("Company")
-
-    # Audit timestamps
-    created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
-    )
-
-    def __repr__(self) -> str:
-        """
-        String representation of the user.
-
-        Returns:
-            str: User representation with email and role
-        """
-        return f"<User {self.email} ({self.role})>"
-
-
-class Company(Base):
-    """
-    Company model for B2B customers and distributors.
-
-    This model stores information about client companies and distributors.
-    It supports:
-    - Account number tracking for integration with external systems
-    - Different account types (distributor, jobber, etc.)
-    - Address information for headquarters, billing, and shipping
-    - Industry classification
-    - Status tracking
-
-    Attributes:
-        id: Primary key UUID
-        name: Company name
-        headquarters_address_id: Reference to headquarters address
-        billing_address_id: Reference to billing address
-        shipping_address_id: Reference to shipping address
-        account_number: External account number (e.g., from iSeries)
-        account_type: Type of account (distributor, jobber, etc.)
-        industry: Industry sector (Automotive, Electronics, etc.)
-        is_active: Whether the company account is active
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
-    """
-
-    __tablename__ = "company"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    # Address relationships
-    headquarters_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
-    )
-    billing_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
-    )
-    shipping_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
-    )
-    # Existing fields
-    account_number: Mapped[Optional[str]] = mapped_column(
-        String(50), unique=True, index=True, nullable=True
-    )
-    account_type: Mapped[str] = mapped_column(String(50), nullable=False)
-    # New industry field
-    industry: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, default=True, server_default=expression.true(), nullable=False
-    )
-
-    # Audit timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
+    updated_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
@@ -190,49 +97,57 @@ class Company(Base):
     )
 
     # Relationships
-    headquarters_address = relationship(
-        "Address", foreign_keys=[headquarters_address_id]
+    company: Mapped[Optional["Company"]] = relationship(
+        "Company", back_populates="users"
     )
-    billing_address = relationship("Address", foreign_keys=[billing_address_id])
-    shipping_address = relationship("Address", foreign_keys=[shipping_address_id])
+    chat_memberships: Mapped[List["ChatMember"]] = relationship(
+        "ChatMember", back_populates="user"
+    )
+    api_keys: Mapped[List["ApiKey"]] = relationship("ApiKey", back_populates="user")
+    audit_logs: Mapped[List["AuditLog"]] = relationship(
+        "AuditLog", back_populates="user"
+    )
+    uploaded_media = relationship(
+        "Media", foreign_keys="[Media.uploaded_by_id]", back_populates="uploaded_by"
+    )
+    approved_media = relationship(
+        "Media", foreign_keys="[Media.approved_by_id]", back_populates="approved_by"
+    )
 
     def __repr__(self) -> str:
-        """
-        String representation of the company.
+        """Return string representation of User instance.
 
         Returns:
-            str: Company representation with name and account type
+            String representation including email and role.
         """
-        return f"<Company {self.name} ({self.account_type})>"
+        return f"<User {self.email} ({self.role})>"
 
 
-# Password handling utilities with Bcrypt
+# Password handling utilities
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verify a password against a hash.
+    """Verify if a plain password matches a hash.
 
     Args:
-        plain_password: Plain text password
-        hashed_password: Bcrypt hashed password
+        plain_password: The plain-text password to verify.
+        hashed_password: The hashed password to compare against.
 
     Returns:
-        bool: True if password matches, False otherwise
+        True if the password matches, False otherwise.
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    """
-    Hash a password using Bcrypt.
+    """Generate a hash from a plain-text password.
 
     Args:
-        password: Plain text password
+        password: The plain-text password to hash.
 
     Returns:
-        str: Hashed password
+        The hashed password.
     """
     return pwd_context.hash(password)
 
@@ -242,22 +157,19 @@ def create_access_token(
     role: UserRole,
     expires_delta: Optional[datetime.timedelta] = None,
 ) -> str:
-    """
-    Create a JWT access token.
+    """Create a JWT access token for a user.
 
     Args:
-        subject: Subject (usually user ID) to include in the token
-        role: User role to include in the token
-        expires_delta: Token expiration time delta (optional)
+        subject: The subject (user ID) for the token.
+        role: The user's role.
+        expires_delta: Optional custom expiration time delta.
 
     Returns:
-        str: JWT token string
+        The encoded JWT token string.
     """
-    # Convert subject to string if it's a UUID
     if isinstance(subject, uuid.UUID):
         subject = str(subject)
 
-    # Set expiration time
     if expires_delta:
         expire = datetime.datetime.now(datetime.UTC) + expires_delta
     else:
@@ -265,13 +177,11 @@ def create_access_token(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
-    # Create JWT payload
     to_encode: Dict[str, Any] = {
         "sub": subject,
         "exp": expire,
         "role": role,
-        "iat": datetime.datetime.now(datetime.UTC),  # Issued at time
+        "iat": datetime.datetime.now(datetime.UTC),
     }
 
-    # Encode and return token
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")

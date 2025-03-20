@@ -1,27 +1,38 @@
-# backend/app/schemas/chat.py
-"""
-Chat system Pydantic schemas.
-
-This module defines the Pydantic models for chat data validation:
-- WebSocket commands and responses
-- Chat room data
-- Message formats
-- User presence and status
-
-These schemas ensure consistent data structures throughout the chat system.
-"""
-
 from __future__ import annotations
+
+import uuid
+
+"""Chat schema definitions.
+
+This module defines Pydantic schemas for chat-related objects,
+including commands, messages, and responses.
+"""
 
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.models.chat import ChatRoomType, ChatMemberRole, MessageType
 
 
 class CommandType(str, Enum):
-    """WebSocket command types."""
+    """Types of WebSocket commands.
+
+    Attributes:
+        JOIN_ROOM: Join a chat room.
+        LEAVE_ROOM: Leave a chat room.
+        SEND_MESSAGE: Send a message to a room.
+        READ_MESSAGES: Mark messages as read.
+        TYPING_START: Indicate the user started typing.
+        TYPING_STOP: Indicate the user stopped typing.
+        FETCH_HISTORY: Request message history.
+        ADD_REACTION: Add a reaction to a message.
+        REMOVE_REACTION: Remove a reaction from a message.
+        EDIT_MESSAGE: Edit a message.
+        DELETE_MESSAGE: Delete a message.
+    """
 
     JOIN_ROOM = "join_room"
     LEAVE_ROOM = "leave_room"
@@ -36,252 +47,397 @@ class CommandType(str, Enum):
     DELETE_MESSAGE = "delete_message"
 
 
-class MessageType(str, Enum):
-    """Message content types."""
-
-    TEXT = "text"
-    IMAGE = "image"
-    FILE = "file"
-    SYSTEM = "system"
-    ACTION = "action"
-
-
 class WebSocketCommand(BaseModel):
-    """
-    Base WebSocket command structure.
+    """Base schema for WebSocket commands.
 
-    This model defines the common structure for all WebSocket commands:
-    - Command type to identify the action
-    - Optional room identifier
-    - Command data with type-specific content
+    Attributes:
+        command: Type of command.
+        room_id: ID of the chat room.
+        data: Command-specific data.
     """
 
-    command: CommandType
-    room_id: Optional[str] = None
-    data: Dict[str, Any] = Field(default_factory=dict)
+    command: CommandType = Field(..., description="Command type")
+    room_id: Optional[str] = Field(None, description="Chat room ID")
+    data: Dict[str, Any] = Field(default_factory=dict, description="Command data")
 
 
 class JoinRoomCommand(BaseModel):
-    """
-    Command to join a chat room.
+    """Schema for joining a chat room.
 
     Attributes:
-        room_id: Room identifier
+        room_id: ID of the room to join.
     """
 
-    room_id: str
+    room_id: str = Field(..., description="Room ID to join")
 
 
 class LeaveRoomCommand(BaseModel):
-    """
-    Command to leave a chat room.
+    """Schema for leaving a chat room.
 
     Attributes:
-        room_id: Room identifier
+        room_id: ID of the room to leave.
     """
 
-    room_id: str
+    room_id: str = Field(..., description="Room ID to leave")
 
 
 class SendMessageCommand(BaseModel):
-    """
-    Command to send a message.
+    """Schema for sending a message.
 
     Attributes:
-        room_id: Room identifier
-        content: Message content
-        message_type: Type of message (text, image, etc.)
-        metadata: Additional message data
+        room_id: ID of the room to send to.
+        content: Message content.
+        message_type: Type of message.
+        extra_metadata: Additional message metadata.
     """
 
-    room_id: str
-    content: str
-    message_type: MessageType = MessageType.TEXT
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    room_id: str = Field(..., description="Room ID to send to")
+    content: str = Field(..., description="Message content")
+    message_type: MessageType = Field(MessageType.TEXT, description="Message type")
+    extra_metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional metadata"
+    )
 
 
 class ReadMessagesCommand(BaseModel):
-    """
-    Command to mark messages as read.
+    """Schema for marking messages as read.
 
     Attributes:
-        room_id: Room identifier
-        last_read_id: ID of the last read message
+        room_id: ID of the room.
+        last_read_id: ID of the last read message.
     """
 
-    room_id: str
-    last_read_id: str
+    room_id: str = Field(..., description="Room ID")
+    last_read_id: str = Field(..., description="Last read message ID")
 
 
 class TypingCommand(BaseModel):
-    """
-    Command for typing indicators.
+    """Schema for typing indicators.
 
     Attributes:
-        room_id: Room identifier
+        room_id: ID of the room.
     """
 
-    room_id: str
+    room_id: str = Field(..., description="Room ID")
 
 
 class FetchHistoryCommand(BaseModel):
-    """
-    Command to fetch message history.
+    """Schema for fetching message history.
 
     Attributes:
-        room_id: Room identifier
-        before_id: Fetch messages before this ID
-        limit: Maximum number of messages to return
+        room_id: ID of the room.
+        before_id: ID to fetch messages before.
+        limit: Maximum number of messages to fetch.
     """
 
-    room_id: str
-    before_id: Optional[str] = None
-    limit: int = 50
+    room_id: str = Field(..., description="Room ID")
+    before_id: Optional[str] = Field(None, description="Fetch messages before this ID")
+    limit: int = Field(50, description="Maximum number of messages to fetch")
 
 
 class ReactionCommand(BaseModel):
-    """
-    Command for message reactions.
+    """Schema for message reactions.
 
     Attributes:
-        room_id: Room identifier
-        message_id: Message identifier
-        reaction: Reaction content
+        room_id: ID of the room.
+        message_id: ID of the message.
+        reaction: Reaction string (e.g., emoji).
     """
 
-    room_id: str
-    message_id: str
-    reaction: str
+    room_id: str = Field(..., description="Room ID")
+    message_id: str = Field(..., description="Message ID")
+    reaction: str = Field(..., description="Reaction string (e.g., emoji)")
 
 
 class EditMessageCommand(BaseModel):
-    """
-    Command to edit a message.
+    """Schema for editing a message.
 
     Attributes:
-        room_id: Room identifier
-        message_id: Message identifier
-        content: New message content
+        room_id: ID of the room.
+        message_id: ID of the message to edit.
+        content: New message content.
     """
 
-    room_id: str
-    message_id: str
-    content: str
+    room_id: str = Field(..., description="Room ID")
+    message_id: str = Field(..., description="Message ID to edit")
+    content: str = Field(..., description="New message content")
 
 
 class DeleteMessageCommand(BaseModel):
-    """
-    Command to delete a message.
+    """Schema for deleting a message.
 
     Attributes:
-        room_id: Room identifier
-        message_id: Message identifier
+        room_id: ID of the room.
+        message_id: ID of the message to delete.
     """
 
-    room_id: str
-    message_id: str
+    room_id: str = Field(..., description="Room ID")
+    message_id: str = Field(..., description="Message ID to delete")
 
 
 class WebSocketResponse(BaseModel):
-    """
-    Base WebSocket response structure.
-
-    This model defines the common structure for all WebSocket responses:
-    - Response type for client handling
-    - Optional error information
-    - Response data with type-specific content
-    """
-
-    type: str
-    success: bool = True
-    error: Optional[str] = None
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-
-class ChatRoomSchema(BaseModel):
-    """
-    Chat room information schema.
+    """Schema for WebSocket responses.
 
     Attributes:
-        id: Room identifier
-        name: Room name
-        type: Room type
-        created_at: Creation timestamp
-        member_count: Number of members in the room
-        last_message: Last message information (optional)
+        type: Response type.
+        success: Whether the operation was successful.
+        error: Error message if not successful.
+        data: Response data.
     """
 
-    id: str
-    name: Optional[str] = None
-    type: str
-    created_at: datetime
-    member_count: int
-    last_message: Optional[Dict[str, Any]] = None
+    type: str = Field(..., description="Response type")
+    success: bool = Field(True, description="Whether the operation was successful")
+    error: Optional[str] = Field(None, description="Error message if not successful")
+    data: Dict[str, Any] = Field(default_factory=dict, description="Response data")
 
 
-class ChatMessageSchema(BaseModel):
-    """
-    Chat message schema.
+class ChatRoomBase(BaseModel):
+    """Base schema for ChatRoom data.
 
     Attributes:
-        id: Message identifier
-        room_id: Room identifier
-        sender_id: Sender user identifier
-        sender_name: Sender display name
-        message_type: Type of message
-        content: Message content
-        reactions: Message reactions
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
-        is_edited: Whether the message has been edited
-        is_deleted: Whether the message has been deleted
+        name: Room name (might be null for direct chats).
+        type: Type of chat room.
+        company_id: ID of the associated company.
+        is_active: Whether the room is active.
+        extra_metadata: Additional metadata about the room.
     """
 
-    id: str
-    room_id: str
-    sender_id: Optional[str] = None
-    sender_name: Optional[str] = None
-    message_type: str
-    content: str
-    reactions: Dict[str, List[str]] = Field(default_factory=dict)
-    created_at: datetime
-    updated_at: datetime
-    is_edited: bool = False
-    is_deleted: bool = False
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    name: Optional[str] = Field(None, description="Room name")
+    type: ChatRoomType = Field(..., description="Room type")
+    company_id: Optional[uuid.UUID] = Field(None, description="Associated company ID")
+    is_active: bool = Field(True, description="Whether the room is active")
+    extra_metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional metadata"
+    )
 
 
-class ChatMemberSchema(BaseModel):
+class ChatRoomCreate(ChatRoomBase):
+    """Schema for creating a new ChatRoom."""
+
+    pass
+
+
+class ChatRoomUpdate(BaseModel):
+    """Schema for updating an existing ChatRoom.
+
+    All fields are optional to allow partial updates.
     """
-    Chat room member schema.
+
+    name: Optional[str] = Field(None, description="Room name")
+    is_active: Optional[bool] = Field(None, description="Whether the room is active")
+    extra_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class ChatRoomInDB(ChatRoomBase):
+    """Schema for ChatRoom data as stored in the database.
+
+    Includes database-specific fields like ID and timestamps.
+    """
+
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ChatRoom(ChatRoomInDB):
+    """Schema for complete ChatRoom data in API responses.
+
+    Includes additional computed fields and related entities.
+    """
+
+    member_count: int = Field(0, description="Number of members in the room")
+    last_message: Optional[Dict[str, Any]] = Field(
+        None, description="Last message in the room"
+    )
+    company: Optional[Dict[str, Any]] = Field(
+        None, description="Associated company details"
+    )
+
+
+class ChatMemberBase(BaseModel):
+    """Base schema for ChatMember data.
 
     Attributes:
-        user_id: User identifier
-        user_name: User display name
-        role: Member role in the room
-        is_online: Whether the user is currently online
-        last_seen_at: When the user was last active
+        room_id: ID of the chat room.
+        user_id: ID of the user.
+        role: Member's role in the room.
+        is_active: Whether the membership is active.
     """
 
-    user_id: str
-    user_name: str
-    role: str
-    is_online: bool
-    last_seen_at: Optional[datetime] = None
+    room_id: uuid.UUID = Field(..., description="Chat room ID")
+    user_id: uuid.UUID = Field(..., description="User ID")
+    role: ChatMemberRole = Field(ChatMemberRole.MEMBER, description="Member role")
+    is_active: bool = Field(True, description="Whether the membership is active")
 
 
-class UserPresenceSchema(BaseModel):
+class ChatMemberCreate(ChatMemberBase):
+    """Schema for creating a new ChatMember."""
+
+    pass
+
+
+class ChatMemberUpdate(BaseModel):
+    """Schema for updating an existing ChatMember.
+
+    All fields are optional to allow partial updates.
     """
-    User presence information schema.
+
+    role: Optional[ChatMemberRole] = Field(None, description="Member role")
+    is_active: Optional[bool] = Field(
+        None, description="Whether the membership is active"
+    )
+    last_read_at: Optional[datetime] = Field(None, description="Last read timestamp")
+
+
+class ChatMemberInDB(ChatMemberBase):
+    """Schema for ChatMember data as stored in the database.
+
+    Includes database-specific fields like ID and timestamps.
+    """
+
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    last_read_at: Optional[datetime] = Field(None, description="Last read timestamp")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ChatMember(ChatMemberInDB):
+    """Schema for complete ChatMember data in API responses.
+
+    Includes related entities like user and room details.
+    """
+
+    user: Optional[Dict[str, Any]] = Field(None, description="User details")
+    room: Optional[Dict[str, Any]] = Field(None, description="Room details")
+
+
+class ChatMessageBase(BaseModel):
+    """Base schema for ChatMessage data.
 
     Attributes:
-        user_id: User identifier
-        is_online: Whether the user is currently online
-        last_seen_at: When the user was last active
-        status: Custom status message
+        room_id: ID of the chat room.
+        sender_id: ID of the message sender.
+        message_type: Type of message.
+        content: Message content.
+        extra_metadata: Additional metadata about the message.
     """
 
-    user_id: str
-    is_online: bool
-    last_seen_at: Optional[datetime] = None
-    status: Optional[str] = None
+    room_id: uuid.UUID = Field(..., description="Chat room ID")
+    sender_id: Optional[uuid.UUID] = Field(None, description="Sender user ID")
+    message_type: MessageType = Field(MessageType.TEXT, description="Message type")
+    content: str = Field(..., description="Message content")
+    extra_metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional metadata"
+    )
+
+
+class ChatMessageCreate(ChatMessageBase):
+    """Schema for creating a new ChatMessage."""
+
+    pass
+
+
+class ChatMessageUpdate(BaseModel):
+    """Schema for updating an existing ChatMessage.
+
+    All fields are optional to allow partial updates.
+    """
+
+    content: Optional[str] = Field(None, description="Message content")
+    extra_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class ChatMessageInDB(ChatMessageBase):
+    """Schema for ChatMessage data as stored in the database.
+
+    Includes database-specific fields like ID and timestamps.
+    """
+
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    is_deleted: bool = Field(False, description="Whether the message is deleted")
+    deleted_at: Optional[datetime] = Field(
+        None, description="When the message was deleted"
+    )
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ChatMessage(ChatMessageInDB):
+    """Schema for complete ChatMessage data in API responses.
+
+    Includes additional fields like sender information and reactions.
+    """
+
+    sender_name: Optional[str] = Field(None, description="Sender name")
+    reactions: Dict[str, List[str]] = Field(
+        default_factory=dict, description="Message reactions"
+    )
+    is_edited: bool = Field(False, description="Whether the message has been edited")
+    room: Optional[Dict[str, Any]] = Field(None, description="Room details")
+    sender: Optional[Dict[str, Any]] = Field(None, description="Sender details")
+
+
+class MessageReactionBase(BaseModel):
+    """Base schema for MessageReaction data.
+
+    Attributes:
+        message_id: ID of the message.
+        user_id: ID of the user.
+        reaction: Reaction string (e.g., emoji).
+    """
+
+    message_id: uuid.UUID = Field(..., description="Message ID")
+    user_id: uuid.UUID = Field(..., description="User ID")
+    reaction: str = Field(..., description="Reaction string (e.g., emoji)")
+
+
+class MessageReactionCreate(MessageReactionBase):
+    """Schema for creating a new MessageReaction."""
+
+    pass
+
+
+class MessageReactionInDB(MessageReactionBase):
+    """Schema for MessageReaction data as stored in the database.
+
+    Includes database-specific fields like ID and timestamps.
+    """
+
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    created_at: datetime = Field(..., description="Creation timestamp")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MessageReaction(MessageReactionInDB):
+    """Schema for complete MessageReaction data in API responses.
+
+    Includes related entities like user details.
+    """
+
+    user: Optional[Dict[str, Any]] = Field(None, description="User details")
+    message: Optional[Dict[str, Any]] = Field(None, description="Message details")
+
+
+class UserPresence(BaseModel):
+    """Schema for user presence information.
+
+    Attributes:
+        user_id: ID of the user.
+        is_online: Whether the user is currently online.
+        last_seen_at: When the user was last seen.
+        status: Optional custom status message.
+    """
+
+    user_id: str = Field(..., description="User ID")
+    is_online: bool = Field(..., description="Whether the user is online")
+    last_seen_at: Optional[datetime] = Field(
+        None, description="When the user was last seen"
+    )
+    status: Optional[str] = Field(None, description="Custom status message")

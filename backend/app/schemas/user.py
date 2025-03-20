@@ -1,35 +1,31 @@
-# backend/app/schemas/user.py
-"""
-User data schemas.
-
-This module provides Pydantic schemas for user-related data validation
-and serialization. The schemas support:
-- Request validation for user creation and updates
-- Response serialization for user data
-- JWT token data validation
-- Company-related data structures
-
-These schemas ensure that data passed to and from API endpoints
-is properly validated and transformed according to the application's
-requirements.
-"""
-
 from __future__ import annotations
+
+"""User schema definitions.
+
+This module defines Pydantic schemas for User objects,
+including creation, update, and response models, as well as
+authentication-related schemas like tokens.
+"""
 
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional, Union, Any, Dict
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from app.schemas.company import Company
+
 
 class UserRole(str, Enum):
-    """
-    User role enumeration.
+    """Enumeration of user roles in the system.
 
-    Defines the possible roles a user can have in the system,
-    determining their access privileges.
+    Attributes:
+        ADMIN: Administrator role with full system access.
+        MANAGER: Manager role with elevated permissions.
+        CLIENT: Standard client user.
+        DISTRIBUTOR: Distributor with specific permissions.
+        READ_ONLY: User with read-only access.
     """
 
     ADMIN = "admin"
@@ -40,238 +36,149 @@ class UserRole(str, Enum):
 
 
 class Token(BaseModel):
-    """
-    Token schema for authentication responses.
-
-    This schema defines the structure of token responses sent
-    to clients after successful authentication.
+    """Schema for authentication tokens.
 
     Attributes:
-        access_token: JWT access token
-        token_type: Token type (usually "bearer")
+        access_token: The JWT access token.
+        token_type: The token type (typically "bearer").
     """
 
-    access_token: str
-    token_type: str = "bearer"
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = Field("bearer", description="Token type")
 
 
 class TokenPayload(BaseModel):
-    """
-    Token payload schema.
-
-    This schema defines the structure of the JWT token payload
-    for validation and extraction of token data.
+    """Schema for JWT token payload.
 
     Attributes:
-        sub: User ID (subject)
-        exp: Expiration timestamp
-        role: User role
-        iat: Issued at timestamp (optional)
+        sub: Subject (typically user ID).
+        exp: Expiration timestamp.
+        role: User role.
+        iat: Issued at timestamp.
     """
 
-    sub: str  # User ID
-    exp: int  # Expiration timestamp
-    role: UserRole  # User role
-    iat: Optional[int] = None  # Issued at timestamp
-
-
-class CompanyBase(BaseModel):
-    """
-    Base schema for Company data.
-
-    Defines common fields used across company-related schemas.
-
-    Attributes:
-        name: Company name
-        account_number: External account number (optional)
-        account_type: Type of account
-        is_active: Whether the account is active
-    """
-
-    name: str
-    account_number: Optional[str] = None
-    account_type: str
-    is_active: bool = True
-
-
-class CompanyCreate(CompanyBase):
-    """
-    Schema for creating a new Company.
-
-    Extends the base company schema for creation requests.
-    """
-
-    pass
-
-
-class CompanyUpdate(BaseModel):
-    """
-    Schema for updating an existing Company.
-
-    Defines fields that can be updated on a company, with all
-    fields being optional to allow partial updates.
-
-    Attributes:
-        name: Company name (optional)
-        account_number: External account number (optional)
-        account_type: Type of account (optional)
-        is_active: Whether the account is active (optional)
-    """
-
-    name: Optional[str] = None
-    account_number: Optional[str] = None
-    account_type: Optional[str] = None
-    is_active: Optional[bool] = None
-
-
-class CompanyInDB(CompanyBase):
-    """
-    Schema for Company as stored in the database.
-
-    Extends the base company schema with database-specific fields.
-
-    Attributes:
-        id: Company UUID
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
-    """
-
-    id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class Company(CompanyInDB):
-    """
-    Schema for Company responses.
-
-    This schema is used for API responses returning company data.
-    It extends the database schema with any additional computed fields.
-    """
-
-    pass
+    sub: str = Field(..., description="Subject (user ID)")
+    exp: int = Field(..., description="Expiration timestamp")
+    role: UserRole = Field(..., description="User role")
+    iat: Optional[int] = Field(None, description="Issued at timestamp")
 
 
 class UserBase(BaseModel):
-    """
-    Base schema for User data.
-
-    Defines common fields used across user-related schemas.
+    """Base schema for user data.
 
     Attributes:
-        email: User email address
-        full_name: User's full name
-        role: User role
-        is_active: Whether the user account is active
-        company_id: Reference to associated company (optional)
+        email: User's email address.
+        full_name: User's full name.
+        role: User's role in the system.
+        is_active: Whether the user account is active.
+        company_id: ID of the associated company.
     """
 
-    email: EmailStr
-    full_name: str
-    role: UserRole = UserRole.CLIENT
-    is_active: bool = True
-    company_id: Optional[uuid.UUID] = None
+    email: EmailStr = Field(..., description="User email address")
+    full_name: str = Field(..., description="User full name")
+    role: UserRole = Field(UserRole.CLIENT, description="User role")
+    is_active: bool = Field(True, description="Whether user is active")
+    company_id: Optional[uuid.UUID] = Field(None, description="Associated company ID")
 
 
 class UserCreate(UserBase):
-    """
-    Schema for creating a new User.
+    """Schema for creating a new user.
 
-    Extends the base user schema with password field for user creation.
+    Extends UserBase to include password.
 
     Attributes:
-        password: User password (min length: 8)
+        password: User's plain-text password (will be hashed).
     """
 
-    password: str = Field(..., min_length=8, description="User password")
+    password: str = Field(
+        ...,
+        min_length=8,
+        description="User password (min 8 characters)",
+    )
+
+    @field_validator("password")
+    @classmethod
+    def password_strength(cls, v: str) -> str:
+        """Validate password strength.
+
+        Args:
+            v: The password to validate.
+
+        Returns:
+            The password if valid.
+
+        Raises:
+            ValueError: If the password doesn't meet strength requirements.
+        """
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+
+        # Additional strength checks could be added here
+        # For example: requiring numbers, special chars, etc.
+
+        return v
 
 
 class UserUpdate(BaseModel):
-    """
-    Schema for updating an existing User.
+    """Schema for updating an existing user.
 
-    Defines fields that can be updated on a user, with all
-    fields being optional to allow partial updates.
-
-    Attributes:
-        email: User email address (optional)
-        full_name: User's full name (optional)
-        password: User password (optional, min length: 8)
-        role: User role (optional)
-        is_active: Whether the user account is active (optional)
-        company_id: Reference to associated company (optional, can be set to None)
+    All fields are optional to allow partial updates.
     """
 
-    email: Optional[EmailStr] = None
-    full_name: Optional[str] = None
-    password: Optional[str] = Field(None, min_length=8, description="User password")
-    role: Optional[UserRole] = None
-    is_active: Optional[bool] = None
+    email: Optional[EmailStr] = Field(None, description="User email address")
+    full_name: Optional[str] = Field(None, description="User full name")
+    password: Optional[str] = Field(
+        None, min_length=8, description="User password (min 8 characters)"
+    )
+    role: Optional[UserRole] = Field(None, description="User role")
+    is_active: Optional[bool] = Field(None, description="Whether user is active")
     company_id: Optional[Union[uuid.UUID, None]] = Field(
-        default=..., description="Company ID, can be null to remove company association"
+        default=...,
+        description="Company ID, can be null to remove company association",
     )
 
-    @field_validator("password", mode="before")
+    @field_validator("password")
     @classmethod
     def password_strength(cls, v: Optional[str]) -> Optional[str]:
-        """
-        Validate password strength.
+        """Validate password strength if provided.
 
         Args:
-            v: Password value
+            v: The password to validate or None.
 
         Returns:
-            Optional[str]: Validated password
+            The password if valid or None if not provided.
 
         Raises:
-            ValueError: If password doesn't meet strength requirements
+            ValueError: If the password doesn't meet strength requirements.
         """
         if v is None:
             return v
 
-        # Check password strength (example only, adjust as needed)
         if len(v) < 8:
             raise ValueError("Password must be at least 8 characters long")
 
-        # Additional checks could be added here (e.g., requiring numbers, special chars)
+        # Additional strength checks could be added here
 
         return v
 
 
 class UserInDB(UserBase):
-    """
-    Schema for User as stored in the database.
+    """Schema for user data as stored in the database.
 
-    Extends the base user schema with database-specific fields.
-
-    Attributes:
-        id: User UUID
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+    Includes database-specific fields like ID and timestamps.
     """
 
-    id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class User(UserInDB):
-    """
-    Schema for User responses.
+    """Schema for complete user data in API responses.
 
-    This schema is used for API responses returning user data.
-    It extends the database schema with the associated company.
-
-    Attributes:
-        company: Associated company information (optional)
+    Includes related entities like company details.
     """
 
-    company: Optional[Company] = None
-
-
-# Update forward references for nested models
-User.model_rebuild()
+    company: Optional[Company] = Field(None, description="Associated company details")

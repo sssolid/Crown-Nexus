@@ -1,18 +1,10 @@
-# backend/app/models/chat.py
-"""
-Chat system models.
-
-This module defines the models for the real-time chat system:
-- Chat rooms
-- Chat messages with encryption
-- Chat members and permissions
-- Rate limiting data
-
-These models provide a comprehensive structure for secure, real-time
-messaging within the B2B platform.
-"""
-
 from __future__ import annotations
+
+"""Chat model definition.
+
+This module defines the Chat models and related enums for
+messaging functionality within the application.
+"""
 
 import uuid
 from datetime import datetime
@@ -27,20 +19,19 @@ from sqlalchemy.sql import expression
 from app.db.base_class import Base
 from app.utils.crypto import encrypt_message, decrypt_message
 
-# For type hints only, not runtime imports
 if TYPE_CHECKING:
     from app.models.user import User
+    from app.models.company import Company
 
 
 class ChatRoomType(str, Enum):
-    """
-    Types of chat rooms supported by the system.
+    """Types of chat rooms.
 
-    Defines the possible chat room configurations:
-    - DIRECT: One-to-one chat between two users
-    - GROUP: Group chat for multiple users
-    - COMPANY: Company-wide chat room
-    - SUPPORT: Customer support chat
+    Attributes:
+        DIRECT: One-to-one chat between two users.
+        GROUP: Group chat with multiple users.
+        COMPANY: Company-wide chat.
+        SUPPORT: Support chat with customer service.
     """
 
     DIRECT = "direct"
@@ -50,24 +41,17 @@ class ChatRoomType(str, Enum):
 
 
 class ChatRoom(Base):
-    """
-    Chat room model representing a conversation space.
-
-    This model defines a chat room where users can exchange messages:
-    - Each room has a type (direct, group, etc.)
-    - Rooms can be associated with a company
-    - Messages are linked to rooms
-    - Members track participants in the room
+    """Chat room entity representing a conversation space.
 
     Attributes:
-        id: Primary key UUID
-        name: Room name (optional for direct chats)
-        type: Room type (direct, group, company, support)
-        company_id: Associated company (optional)
-        is_active: Whether the room is active
-        metadata: Additional room data as JSON
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        name: Optional room name (might be null for direct chats).
+        type: Type of chat room.
+        company_id: ID of the associated company.
+        is_active: Whether the room is active.
+        extra_metadata: Additional metadata about the room.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "chat_room"
@@ -83,7 +67,7 @@ class ChatRoom(Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
-    metadata: Mapped[Dict] = mapped_column(
+    extra_metadata: Mapped[Dict] = mapped_column(
         JSONB,
         nullable=False,
         default=dict,
@@ -100,7 +84,9 @@ class ChatRoom(Base):
     )
 
     # Relationships
-    company = relationship("Company", back_populates="chat_rooms")
+    company: Mapped[Optional["Company"]] = relationship(
+        "Company", back_populates="chat_rooms"
+    )
     messages: Mapped[List["ChatMessage"]] = relationship(
         "ChatMessage", back_populates="room", cascade="all, delete-orphan"
     )
@@ -109,19 +95,22 @@ class ChatRoom(Base):
     )
 
     def __repr__(self) -> str:
-        """String representation of the chat room."""
+        """Return string representation of ChatRoom instance.
+
+        Returns:
+            String representation including id, name, and type.
+        """
         return f"<ChatRoom {self.id}: {self.name or '(Direct)'} ({self.type})>"
 
 
 class ChatMemberRole(str, Enum):
-    """
-    Roles of chat room members.
+    """Roles of chat room members.
 
-    Defines the possible roles a user can have in a chat room:
-    - OWNER: Creator/owner with full permissions
-    - ADMIN: Administrator with moderation rights
-    - MEMBER: Regular participant
-    - GUEST: Temporary participant with limited rights
+    Attributes:
+        OWNER: Room owner with full control.
+        ADMIN: Administrator with elevated permissions.
+        MEMBER: Regular member.
+        GUEST: Guest with limited permissions.
     """
 
     OWNER = "owner"
@@ -131,23 +120,17 @@ class ChatMemberRole(str, Enum):
 
 
 class ChatMember(Base):
-    """
-    Chat room member model.
-
-    This model tracks users' membership in chat rooms:
-    - Each member has a role (owner, admin, etc.)
-    - Tracks when the user last read messages
-    - Records membership status
+    """Chat member entity representing a user's membership in a chat room.
 
     Attributes:
-        id: Primary key UUID
-        room_id: Reference to chat room
-        user_id: Reference to user
-        role: Member role (owner, admin, member, guest)
-        last_read_at: When the user last read messages
-        is_active: Whether the membership is active
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        room_id: ID of the chat room.
+        user_id: ID of the user.
+        role: Member's role in the room.
+        last_read_at: When the user last read messages in the room.
+        is_active: Whether the membership is active.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "chat_member"
@@ -184,24 +167,26 @@ class ChatMember(Base):
     room: Mapped["ChatRoom"] = relationship("ChatRoom", back_populates="members")
     user: Mapped["User"] = relationship("User", back_populates="chat_memberships")
 
-    # Ensure a user can only be a member of a specific room once
     __table_args__ = (Index("idx_unique_room_user", "room_id", "user_id", unique=True),)
 
     def __repr__(self) -> str:
-        """String representation of the chat member."""
+        """Return string representation of ChatMember instance.
+
+        Returns:
+            String representation including id, user ID, room ID, and role.
+        """
         return f"<ChatMember {self.id}: User {self.user_id} in Room {self.room_id} ({self.role})>"
 
 
 class MessageType(str, Enum):
-    """
-    Types of messages supported by the chat system.
+    """Types of chat messages.
 
-    Defines the possible message types:
-    - TEXT: Regular text message
-    - IMAGE: Image attachment
-    - FILE: File attachment
-    - SYSTEM: System-generated message
-    - ACTION: User action notification
+    Attributes:
+        TEXT: Plain text message.
+        IMAGE: Image message.
+        FILE: File attachment message.
+        SYSTEM: System notification message.
+        ACTION: User action message.
     """
 
     TEXT = "text"
@@ -212,25 +197,19 @@ class MessageType(str, Enum):
 
 
 class ChatMessage(Base):
-    """
-    Chat message model.
-
-    This model represents individual messages in chat rooms:
-    - Messages support various types (text, image, etc.)
-    - Content is encrypted for security
-    - Tracks message status (sent, delivered, read)
+    """Chat message entity representing a message in a chat room.
 
     Attributes:
-        id: Primary key UUID
-        room_id: Reference to chat room
-        sender_id: Reference to sender user
-        message_type: Type of message (text, image, file, system, action)
-        content_encrypted: Encrypted message content
-        metadata: Additional message metadata as JSON
-        is_deleted: Whether the message has been deleted
-        deleted_at: When the message was deleted
-        created_at: Creation timestamp
-        updated_at: Last update timestamp
+        id: Unique identifier.
+        room_id: ID of the chat room.
+        sender_id: ID of the user who sent the message.
+        message_type: Type of message.
+        content_encrypted: Encrypted message content.
+        extra_metadata: Additional metadata about the message.
+        is_deleted: Whether the message was deleted.
+        deleted_at: When the message was deleted.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
     __tablename__ = "chat_message"
@@ -248,7 +227,7 @@ class ChatMessage(Base):
         String(20), nullable=False, default=MessageType.TEXT
     )
     content_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
-    metadata: Mapped[Dict] = mapped_column(
+    extra_metadata: Mapped[Dict] = mapped_column(
         JSONB,
         nullable=False,
         default=dict,
@@ -279,34 +258,40 @@ class ChatMessage(Base):
 
     @property
     def content(self) -> str:
-        """Decrypt and return the message content."""
+        """Get the decrypted message content.
+
+        Returns:
+            Decrypted message content.
+        """
         return decrypt_message(self.content_encrypted)
 
     @content.setter
     def content(self, value: str) -> None:
-        """Encrypt and store the message content."""
+        """Set the message content, encrypting it.
+
+        Args:
+            value: Plain text message content to encrypt.
+        """
         self.content_encrypted = encrypt_message(value)
 
     def __repr__(self) -> str:
-        """String representation of the chat message."""
+        """Return string representation of ChatMessage instance.
+
+        Returns:
+            String representation including id, message type, and room ID.
+        """
         return f"<ChatMessage {self.id}: {self.message_type} in Room {self.room_id}>"
 
 
 class MessageReaction(Base):
-    """
-    Message reaction model.
-
-    This model tracks reactions to messages (like emoji reactions):
-    - Each reaction is associated with a specific message
-    - Users can react with emoji or predefined reactions
-    - Multiple users can add the same reaction
+    """Message reaction entity representing a user's reaction to a message.
 
     Attributes:
-        id: Primary key UUID
-        message_id: Reference to chat message
-        user_id: Reference to user who reacted
-        reaction: Reaction content (emoji or predefined reaction)
-        created_at: Creation timestamp
+        id: Unique identifier.
+        message_id: ID of the message being reacted to.
+        user_id: ID of the user who reacted.
+        reaction: Reaction string (e.g., emoji).
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "message_reaction"
@@ -331,7 +316,6 @@ class MessageReaction(Base):
     )
     user: Mapped["User"] = relationship("User")
 
-    # Ensure a user can only react once with the same reaction to a message
     __table_args__ = (
         Index(
             "idx_unique_message_user_reaction",
@@ -343,26 +327,24 @@ class MessageReaction(Base):
     )
 
     def __repr__(self) -> str:
-        """String representation of the message reaction."""
+        """Return string representation of MessageReaction instance.
+
+        Returns:
+            String representation including id, reaction, and user ID.
+        """
         return f"<MessageReaction {self.id}: {self.reaction} from User {self.user_id}>"
 
 
 class RateLimitLog(Base):
-    """
-    Rate limiting log model.
-
-    This model tracks rate limiting for users to prevent spam:
-    - Records user's message sending attempts
-    - Used to enforce rate limits on messaging
-    - Supports both global and room-specific limits
+    """Rate limit log entity for tracking API rate limits.
 
     Attributes:
-        id: Primary key UUID
-        user_id: Reference to user
-        room_id: Reference to chat room (optional)
-        event_type: Type of event being rate limited
-        timestamp: When the event occurred
-        count: Number of events in the current period
+        id: Unique identifier.
+        user_id: ID of the user being rate limited.
+        room_id: ID of the chat room (if applicable).
+        event_type: Type of event being limited.
+        timestamp: When the event occurred.
+        count: Event count.
     """
 
     __tablename__ = "rate_limit_log"
@@ -387,5 +369,9 @@ class RateLimitLog(Base):
     room: Mapped[Optional["ChatRoom"]] = relationship("ChatRoom")
 
     def __repr__(self) -> str:
-        """String representation of the rate limit log."""
+        """Return string representation of RateLimitLog instance.
+
+        Returns:
+            String representation including id, user ID, event type, and count.
+        """
         return f"<RateLimitLog {self.id}: User {self.user_id} - {self.event_type} ({self.count})>"

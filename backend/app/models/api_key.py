@@ -1,72 +1,99 @@
-# app/models/api_key.py
 from __future__ import annotations
 
+"""API Key model definition.
+
+This module defines the API Key model for API authentication.
+"""
+
 import uuid
-from typing import Any, Dict
+from datetime import datetime
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, String, JSON, ForeignKey, Index, Boolean
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
-from app.core.logging import get_logger
 
-logger = get_logger("app.models.api_key")
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class ApiKey(Base):
-    """SQLAlchemy model for API keys.
+    """API Key entity for API authentication.
 
-    This model stores API keys for authenticating API requests.
+    Attributes:
+        id: Unique identifier.
+        user_id: ID of the user who owns the key.
+        key_id: Public identifier for the API key.
+        hashed_secret: Hashed secret part of the API key.
+        name: Human-readable name for the key.
+        is_active: Whether the key is active.
+        last_used_at: When the key was last used.
+        expires_at: When the key expires.
+        permissions: Specific permissions granted to the key.
+        extra_metadata: Additional metadata about the key.
+        created_at: Creation timestamp.
+        updated_at: Last update timestamp.
     """
 
-    __tablename__ = "api_keys"
+    __tablename__ = "api_key"
 
-    # Unique identifier for the API key
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-
-    # User who owns this API key
-    user_id = Column(
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("user.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    user = relationship("User", back_populates="api_keys")
+    key_id: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True)
+    hashed_secret: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, nullable=False, index=True
+    )
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    expires_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    permissions: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
+    extra_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.now, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=datetime.now,
+        onupdate=datetime.now,
+        nullable=False,
+    )
 
-    # Key identifier (public part)
-    key_id = Column(String, unique=True, nullable=False, index=True)
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="api_keys")
 
-    # Hashed secret (never stored in plain text)
-    hashed_secret = Column(String, nullable=False)
-
-    # Name of the API key
-    name = Column(String, nullable=False)
-
-    # Whether the key is currently active
-    is_active = Column(Boolean, default=True, nullable=False, index=True)
-
-    # When the key was last used
-    last_used_at = Column(DateTime(timezone=True), nullable=True)
-
-    # Optional expiration date
-    expires_at = Column(DateTime(timezone=True), nullable=True)
-
-    # Permissions granted to this key
-    permissions = Column(JSON, nullable=True)
-
-    # Metadata
-    metadata = Column(JSON, nullable=True)
-
-    # Indexes
     __table_args__ = (Index("ix_api_keys_user_id_name", user_id, name, unique=True),)
 
     def __repr__(self) -> str:
-        """String representation of API key."""
+        """Return string representation of ApiKey instance.
+
+        Returns:
+            String representation including id, user_id, and name.
+        """
         return f"<ApiKey(id={self.id}, user_id={self.user_id}, name={self.name})>"
 
     def to_dict(self, include_secret: bool = False) -> Dict[str, Any]:
-        """Convert API key to dictionary."""
+        """Convert the API key to a dictionary.
+
+        Args:
+            include_secret: Whether to include the hashed secret.
+
+        Returns:
+            Dictionary representation of the API key.
+        """
         result = {
             "id": str(self.id),
             "user_id": str(self.user_id),
@@ -80,7 +107,7 @@ class ApiKey(Base):
             ),
             "expires_at": self.expires_at.isoformat() if self.expires_at else None,
             "permissions": self.permissions or [],
-            "metadata": self.metadata or {},
+            "extra_metadata": self.extra_metadata or {},
         }
 
         if include_secret:

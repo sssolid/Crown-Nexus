@@ -1,51 +1,35 @@
-# backend/app/models/reference.py
-"""
-Reference data models.
-
-This module defines models for various reference data used throughout
-the application. These models represent relatively static lookup tables
-that provide standardization and categorization:
-- Colors
-- Construction types (materials)
-- Textures
-- Packaging types
-- Hardware items
-- Classification codes
-- Warehouses
-
-The models follow a consistent pattern with standardized audit fields
-and appropriate relationships to related entities.
-"""
-
 from __future__ import annotations
+
+"""Reference model definition.
+
+This module defines reference data models such as Color, ConstructionType,
+Texture, PackagingType, Hardware, TariffCode, UnspscCode, and Warehouse.
+"""
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, func, text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 
-# For type hints only, not runtime imports
 if TYPE_CHECKING:
-    from app.models.product import Product
+    from app.models.product import Product, ProductStock
+    from app.models.location import Address
 
 
 class Color(Base):
-    """
-    Color model.
-
-    Represents standard color names and their hex codes.
+    """Color entity representing a product color.
 
     Attributes:
-        id: Primary key UUID
-        name: Standard color name
-        hex_code: Hex code for digital representation (optional)
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Color name.
+        hex_code: Hexadecimal color code.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "color"
@@ -62,26 +46,22 @@ class Color(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the color.
+        """Return string representation of Color instance.
 
         Returns:
-            str: Color representation
+            String representation including name and hex code.
         """
         return f"<Color {self.name} ({self.hex_code or 'no hex'})>"
 
 
 class ConstructionType(Base):
-    """
-    Construction type model.
-
-    Represents materials used in product construction.
+    """Construction type entity representing a product construction method.
 
     Attributes:
-        id: Primary key UUID
-        name: Material name
-        description: Optional description
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Construction type name.
+        description: Description of the construction type.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "construction_type"
@@ -98,26 +78,22 @@ class ConstructionType(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the construction type.
+        """Return string representation of ConstructionType instance.
 
         Returns:
-            str: Construction type representation
+            String representation including name.
         """
         return f"<ConstructionType {self.name}>"
 
 
 class Texture(Base):
-    """
-    Texture model.
-
-    Represents surface textures of products.
+    """Texture entity representing a product texture.
 
     Attributes:
-        id: Primary key UUID
-        name: Texture name
-        description: Optional description
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Texture name.
+        description: Description of the texture.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "texture"
@@ -134,28 +110,24 @@ class Texture(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the texture.
+        """Return string representation of Texture instance.
 
         Returns:
-            str: Texture representation
+            String representation including name.
         """
         return f"<Texture {self.name}>"
 
 
 class PackagingType(Base):
-    """
-    Packaging type model.
-
-    Represents types of product packaging.
+    """Packaging type entity representing a product packaging method.
 
     Attributes:
-        id: Primary key UUID
-        pies_code: AutoCare PCdb PIES Code (optional)
-        name: Packaging type name
-        description: Optional description
-        source: Source of the data
-        created_at: Creation timestamp
+        id: Unique identifier.
+        pies_code: PIES standard code.
+        name: Packaging type name.
+        description: Description of the packaging type.
+        source: Source of the packaging type data.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "packaging_type"
@@ -171,34 +143,33 @@ class PackagingType(Base):
     )
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     source: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="Custom", server_default=text("'Custom'")
+        String(20),
+        nullable=False,
+        default="Custom",
+        server_default=func.text("'Custom'"),
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the packaging type.
+        """Return string representation of PackagingType instance.
 
         Returns:
-            str: Packaging type representation
+            String representation including name.
         """
         return f"<PackagingType {self.name}>"
 
 
 class Hardware(Base):
-    """
-    Hardware item model.
-
-    Represents hardware items included with products.
+    """Hardware item entity representing hardware used with products.
 
     Attributes:
-        id: Primary key UUID
-        name: Name of the hardware item
-        description: Optional details
-        part_number: Optional part number for the hardware item
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Hardware item name.
+        description: Description of the hardware item.
+        part_number: Manufacturer part number.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "hardware_item"
@@ -218,27 +189,23 @@ class Hardware(Base):
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the hardware item.
+        """Return string representation of Hardware instance.
 
         Returns:
-            str: Hardware item representation
+            String representation including name.
         """
         return f"<Hardware {self.name}>"
 
 
 class TariffCode(Base):
-    """
-    Tariff code model.
-
-    Represents HS, HTS, or other tariff codes.
+    """Tariff code entity representing a product tariff classification.
 
     Attributes:
-        id: Primary key UUID
-        code: Tariff code
-        description: Description of the code
-        country_id: Country this code applies to (optional)
-        created_at: Creation timestamp
+        id: Unique identifier.
+        code: Tariff code number.
+        description: Description of the tariff code.
+        country_id: ID of the country this tariff applies to.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "tariff_code"
@@ -256,33 +223,29 @@ class TariffCode(Base):
     )
 
     # Relationships
-    country = relationship("Country")
+    country = relationship("Country", back_populates="tariff_codes")
 
     def __repr__(self) -> str:
-        """
-        String representation of the tariff code.
+        """Return string representation of TariffCode instance.
 
         Returns:
-            str: Tariff code representation
+            String representation including code.
         """
         return f"<TariffCode {self.code}>"
 
 
 class UnspscCode(Base):
-    """
-    UNSPSC code model.
-
-    Represents United Nations Standard Products and Services Code.
+    """UNSPSC code entity for product classification.
 
     Attributes:
-        id: Primary key UUID
-        code: 8- or 10-digit UNSPSC code
-        description: UNSPSC category description
-        segment: High-level category
-        family: Sub-category
-        class: Product class
-        commodity: Specific commodity category
-        created_at: Creation timestamp
+        id: Unique identifier.
+        code: UNSPSC code number.
+        description: Description of the code.
+        segment: Segment description.
+        family: Family description.
+        class_: Class description.
+        commodity: Commodity description.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "unspsc_code"
@@ -296,36 +259,30 @@ class UnspscCode(Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     segment: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     family: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    class_: Mapped[Optional[str]] = mapped_column(
-        "class", String(255), nullable=True  # class is a reserved word
-    )
+    class_: Mapped[Optional[str]] = mapped_column("class", String(255), nullable=True)
     commodity: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
     def __repr__(self) -> str:
-        """
-        String representation of the UNSPSC code.
+        """Return string representation of UnspscCode instance.
 
         Returns:
-            str: UNSPSC code representation
+            String representation including code and description.
         """
         return f"<UnspscCode {self.code}: {self.description}>"
 
 
 class Warehouse(Base):
-    """
-    Warehouse model.
-
-    Represents product storage locations.
+    """Warehouse entity representing a storage location.
 
     Attributes:
-        id: Primary key UUID
-        name: Warehouse name
-        address_id: Reference to address (optional)
-        is_active: Whether the warehouse is active
-        created_at: Creation timestamp
+        id: Unique identifier.
+        name: Warehouse name.
+        address_id: ID of the warehouse address.
+        is_active: Whether the warehouse is active.
+        created_at: Creation timestamp.
     """
 
     __tablename__ = "warehouse"
@@ -349,14 +306,15 @@ class Warehouse(Base):
     )
 
     # Relationships
-    address = relationship("Address")
-    stock = relationship("ProductStock", back_populates="warehouse")
+    address: Mapped["Address"] = relationship("Address")
+    stock: Mapped[List["ProductStock"]] = relationship(
+        "ProductStock", back_populates="warehouse"
+    )
 
     def __repr__(self) -> str:
-        """
-        String representation of the warehouse.
+        """Return string representation of Warehouse instance.
 
         Returns:
-            str: Warehouse representation
+            String representation including name.
         """
         return f"<Warehouse {self.name}>"

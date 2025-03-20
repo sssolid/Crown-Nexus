@@ -28,7 +28,6 @@ from app.core.security.passwords import (
     validate_password_policy,
     verify_password,
 )
-from app.core.security.rate_limiting import RateLimitManager, check_rate_limit
 from app.core.security.tokens import (
     TokenManager,
     add_token_to_blacklist,
@@ -86,9 +85,6 @@ __all__ = [
     "get_password_hash",
     "validate_password_policy",
     "verify_password",
-    # Rate limiting
-    "RateLimitManager",
-    "check_rate_limit",
     # Tokens
     "TokenManager",
     "add_token_to_blacklist",

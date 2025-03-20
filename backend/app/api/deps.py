@@ -16,7 +16,7 @@ from app.core.exceptions import (
 )
 from app.core.logging import get_logger, set_user_id
 from app.services.audit import AuditService
-from app.core.rate_limiter import RateLimiter, RateLimitRule
+from app.core.rate_limiting import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
 from app.core.security import (
     decode_token,

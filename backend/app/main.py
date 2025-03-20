@@ -19,12 +19,36 @@ from app.core.exceptions import (
 )
 from app.middleware.metrics import MetricsMiddleware
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.request_context import RequestContextMiddleware
 from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
-from app.core.rate_limiter import RateLimitMiddleware, RateLimitRule, RateLimitStrategy
+from app.middleware.rate_limiting import RateLimitMiddleware
 from app.api.deps import get_current_user
 from app.core.config import Environment, settings
 from app.core.logging import get_logger, request_context, set_user_id
+from app.core.error import (
+    initialize as initialize_error_system,
+    shutdown as shutdown_error_system,
+)
+from app.core.validation import (
+    initialize as initialize_validation_system,
+    shutdown as shutdown_validation_system,
+)
+from app.core.metrics import (
+    initialize as initialize_metrics_system,
+    shutdown as shutdown_metrics_system,
+)
+from app.core.rate_limiting import (
+    initialize as initialize_ratelimiting_system,
+    shutdown as shutdown_ratelimiting_system,
+    RateLimitRule,
+    RateLimitStrategy,
+)
+from app.core.pagination import (
+    initialize as initialize_pagination_system,
+    shutdown as shutdown_pagination_system,
+)
+
 from app.core.dependency_manager import (
     register_services,
     initialize_services,
@@ -58,14 +82,37 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Register services
     register_services()
 
+    # Initialize error system
+    await initialize_error_system()
+    logger.info("Error system initialized")
+
+    # Initialize validation system()
+    await initialize_validation_system()
+    logger.info("Validation system initialized")
+
+    # Initialize metrics system
+    await initialize_metrics_system()
+    logger.info("Metrics system initialized")
+
+    # Initialize pagination system
+    await initialize_pagination_system()
+    logger.info("Pagination system initialized")
+
+    # Initialize rate limiting system
+    await initialize_ratelimiting_system()
+    logger.info("Rate Limiting system initialized")
+
     # Initialize cache backends
     await initialize_cache()
+    logger.info("Cache backends initialized")
 
     # Initialize services
     await initialize_services()
+    logger.info("Services initialized")
 
     # Initialize fitment mapping engine
     await initialize_mapping_engine()
+    logger.info("Mapping Engine initialized")
 
     logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
 
@@ -85,6 +132,27 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Shutdown services
     await shutdown_services()
+    logger.info("Services shut down")
+
+    # Shutdown rate limiting system
+    await shutdown_ratelimiting_system()
+    logger.info("Rate Limiting system shut down")
+
+    # Shutdown pagination system
+    await shutdown_pagination_system()
+    logger.info("Pagination system shut down")
+
+    # Shutdown metrics system
+    await shutdown_metrics_system()
+    logger.info("Metrics system shut down")
+
+    # Shutdown validation system
+    await shutdown_validation_system()
+    logger.info("Validation system shut down")
+
+    # Shutdown error handling service
+    await shutdown_error_system()
+    logger.info("Error system shut down")
 
     logger.info("Application shutdown complete")
 
@@ -99,67 +167,6 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
     lifespan=lifespan,
 )
-
-
-# Request context middleware
-class RequestContextMiddleware:
-    """Middleware that sets up logging request context.
-
-    This middleware ensures each request has a unique ID and tracks execution time,
-    both stored in the logging context.
-    """
-
-    def __init__(self, app: Callable) -> None:
-        """Initialize middleware with the FastAPI app."""
-        self.app = app
-
-    async def __call__(self, request: Request, call_next: Callable) -> Response:
-        """Process the request and set up logging context.
-
-        Args:
-            request: The incoming request
-            call_next: The next middleware or route handler
-
-        Returns:
-            Response: The processed response
-        """
-        # Generate request ID
-        request_id = str(uuid.uuid4())
-
-        # Store request start time
-        start_time = time.time()
-
-        # Add request ID to request state
-        request.state.request_id = request_id
-
-        # Use logging context manager
-        with request_context(request_id):
-            # Log request
-            logger.info(
-                f"Request: {request.method} {request.url.path}",
-                method=request.method,
-                path=request.url.path,
-                client=request.client.host if request.client else None,
-            )
-
-            # Process request
-            response = await call_next(request)
-
-            # Calculate execution time
-            execution_time = time.time() - start_time
-
-            # Log response
-            logger.info(
-                f"Response: {response.status_code}",
-                status_code=response.status_code,
-                execution_time=f"{execution_time:.4f}s",
-            )
-
-            # Add request ID and timing headers
-            response.headers["X-Request-ID"] = request_id
-            response.headers["X-Execution-Time"] = f"{execution_time:.4f}s"
-
-            return response
 
 
 # CORS configuration

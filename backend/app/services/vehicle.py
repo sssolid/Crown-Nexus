@@ -257,7 +257,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cached(maxsize=100, ttl=3600, backend="redis")
+    @cached(ttl=3600, backend="redis")
     async def validate_fitment(
         self,
         year: int,
@@ -320,7 +320,7 @@ class VehicleDataService:
                 original_exception=e,
             ) from e
 
-    @cached(maxsize=1000, ttl=86400, backend="redis")
+    @cached(ttl=86400, backend="redis")
     async def decode_vin(self, vin: str) -> Optional[Dict[str, Any]]:
         """Decode a Vehicle Identification Number (VIN).
 
@@ -400,9 +400,9 @@ class VehicleDataService:
     @classmethod
     def register(cls) -> None:
         """Register this service with the service registry."""
-        from app.services import service_registry
+        from app.core.dependency_manager import register_service
 
-        service_registry.register(cls, "vehicle_service")
+        register_service(cls, "vehicle_service")
 
 
 async def get_vehicle_service(db: AsyncSession = Depends(get_db)) -> VehicleDataService:

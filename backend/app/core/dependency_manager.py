@@ -18,7 +18,7 @@ from typing import Any, Callable, Dict, Optional, Type, TypeVar, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ConfigurationException, ErrorCode
+from app.core.exceptions import ConfigurationException
 from app.core.logging import get_logger
 
 logger = get_logger("app.core.dependency_manager")
@@ -216,9 +216,6 @@ class DependencyManager:
         # Add core services that should be initialized first
         core_services = [
             "logging_service",
-            "error_service",
-            "validation_service",
-            "metrics_service",
         ]
 
         # Process core services first, then others
@@ -334,11 +331,7 @@ def register_services() -> None:
     # These would typically be your service imports
     try:
         from app.services.audit import get_audit_service, AuditService
-        from app.services.error import get_error_service, ErrorService
-        from app.services.validation import get_validation_service, ValidationService
-        from app.services.metrics import get_metrics_service, MetricsService
         from app.services.search import get_search_service, SearchService
-        from app.services.pagination import get_pagination_service, PaginationService
         from app.services.media import get_media_service, MediaService
 
         # from app.services.logging_service import LoggingService
@@ -350,15 +343,6 @@ def register_services() -> None:
 
         # Register dependencies as factories
         dependency_manager.register_factory(
-            "error_service", lambda: get_error_service()
-        )
-        dependency_manager.register_factory(
-            "validation_service", lambda: get_validation_service()
-        )
-        dependency_manager.register_factory(
-            "metrics_service", lambda: get_metrics_service()
-        )
-        dependency_manager.register_factory(
             "audit_service", lambda db: get_audit_service(db) if db else None
         )
         dependency_manager.register_factory(
@@ -366,14 +350,6 @@ def register_services() -> None:
         )
         dependency_manager.register_factory(
             "media_service", lambda: get_media_service()
-        )
-        dependency_manager.register_factory(
-            "pagination_service",
-            lambda db=None, model_class=None, response_model=None: (
-                get_pagination_service(db, model_class, response_model)
-                if db and model_class
-                else None
-            ),
         )
 
         # dependency_manager.register_factory("logging_service", lambda: LoggingService())
@@ -384,12 +360,7 @@ def register_services() -> None:
         # dependency_manager.register_factory("exchange_rate_service", lambda db: ExchangeRateService(db) if db else None)
 
         # Register service classes
-        dependency_manager.register_service(ErrorService, "ErrorService")
-        dependency_manager.register_service(ValidationService, "ValidationService")
-        dependency_manager.register_service(MetricsService, "MetricsService")
-        dependency_manager.register_service(SecurityService, "SecurityService")
         dependency_manager.register_service(AuditService, "AuditService")
-        dependency_manager.register_service(PaginationService, "PaginationService")
         dependency_manager.register_service(MediaService, "MediaService")
         dependency_manager.register_service(SearchService, "SearchService")
 

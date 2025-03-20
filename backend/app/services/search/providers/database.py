@@ -1,8 +1,8 @@
 # /app/services/search/providers/database.py
 from __future__ import annotations
 
+from app.core.pagination import paginate_with_offset
 from app.schemas.pagination import OffsetPaginationParams
-from app.services.pagination import PaginationService
 
 """Database search provider implementation.
 
@@ -139,11 +139,8 @@ class DatabaseSearchProvider(SearchProvider):
             )
 
             # Execute paginated query
-            paginate_service = cast(
-                PaginationService, get_dependency("paginate_service", db=self.db)
-            )
             params = OffsetPaginationParams(page=page, page_size=page_size)
-            result = await paginate_service.paginate_with_offset(query, params)
+            result = await paginate_with_offset(query, params)
 
             self.logger.info(
                 "Database search successful",

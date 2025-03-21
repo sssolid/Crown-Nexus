@@ -37,7 +37,7 @@ class RedisCacheBackend(CacheBackend[T]):
             prefix: Cache key prefix
             **redis_options: Additional Redis client options
         """
-        self.redis_url = redis_url or settings.redis.uri
+        self.redis_url = redis_url or settings.REDIS_URI
         self.serializer = serializer
         self.prefix = prefix
         self.redis_options = redis_options

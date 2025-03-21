@@ -32,6 +32,7 @@ class DatabaseSettings(BaseSettings):
     REDIS_PASSWORD: Optional[SecretStr] = None
     REDIS_DB: int = 0
     REDIS_MAX_CONNECTIONS: int = 5000
+    REDIS_URI: str = "redis://localhost:6379/0"
 
     model_config = SettingsConfigDict(
         env_file=".env",

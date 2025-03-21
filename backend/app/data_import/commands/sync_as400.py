@@ -14,10 +14,10 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import typer
 
-from app.core.config.as400 import AS400Settings, get_as400_connector_config
+from app.core.config.integrations.as400 import as400_settings, get_as400_connector_config
 from app.core.exceptions import AppException
 from app.core.logging import get_logger
-from app.data_import.connectors.as400_connector import AS400Connector
+from app.data_import.connectors.as400_connector import AS400Connector, AS400ConnectionConfig
 from app.services.as400_sync_service import (
     as400_sync_service, SyncEntityType, SyncStatus
 )
@@ -274,8 +274,9 @@ async def _test_as400_connection() -> Dict:
         Dictionary with connection test results
     """
     try:
-        # Create connector
-        connector_config = AS400Settings(**get_as400_connector_config())
+        # Get connector configuration
+        connector_config_dict = get_as400_connector_config()
+        connector_config = AS400ConnectionConfig(**connector_config_dict)
         connector = AS400Connector(connector_config)
 
         # Try to connect

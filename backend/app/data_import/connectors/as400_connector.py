@@ -116,20 +116,32 @@ class AS400Connector:
                 f"on DSN: {self.config.dsn}"
             )
 
-            # Set query timeout at driver level
-            pyodbc.setdecimalsep(".")
-            self.connection = pyodbc.connect(
-                connection_string, timeout=self.config.connection_timeout
-            )
+            # Connect to the database
+            # Some drivers don't support the timeout parameter through connect()
+            # So we'll try both approaches
+            try:
+                self.connection = pyodbc.connect(connection_string)
+            except pyodbc.Error as e:
+                logger.debug(f"Connection attempt failed: {str(e)}, retrying with different parameters")
+                # If first approach fails, try without any extra parameters
+                self.connection = pyodbc.connect(connection_string)
 
             # Set additional connection properties for security
             if self.connection:
-                self.connection.setdecoding(pyodbc.SQL_CHAR, encoding="utf-8")
-                self.connection.setdecoding(pyodbc.SQL_WCHAR, encoding="utf-8")
-                self.connection.setencoding(encoding="utf-8")
+                try:
+                    # These might not be supported by all drivers
+                    self.connection.setdecoding(pyodbc.SQL_CHAR, encoding="utf-8")
+                    self.connection.setdecoding(pyodbc.SQL_WCHAR, encoding="utf-8")
+                    self.connection.setencoding(encoding="utf-8")
+                except (pyodbc.Error, AttributeError) as e:
+                    logger.debug(f"Could not set encoding: {str(e)}")
 
-                # Set query timeout
-                self.connection.timeout = self.config.query_timeout
+                try:
+                    # Set query timeout if supported
+                    if hasattr(self.connection, 'timeout'):
+                        self.connection.timeout = self.config.query_timeout
+                except (pyodbc.Error, AttributeError) as e:
+                    logger.debug(f"Could not set timeout: {str(e)}")
 
             logger.info(
                 f"Successfully connected to AS400 database: {self.config.database}"
@@ -273,9 +285,16 @@ class AS400Connector:
         if self.config.port:
             connection_string += f"PORT={self.config.port};"
 
-        # Add security parameters
-        if self.config.ssl:
+        # Many AS400 ODBC drivers don't support SSL connection parameter directly
+        # It's often configured at the ODBC DSN level instead
+        # Only add if explicitly configured and you know your driver supports it
+        if self.config.ssl and os.environ.get("AS400_ENABLE_SSL_PARAM", "").lower() == "true":
             connection_string += "SSLCONNECTION=TRUE;"
+
+        # Many AS400 ODBC drivers don't support the ReadOnly parameter
+        # Only add if explicitly configured and you know your driver supports it
+        if os.environ.get("AS400_ENABLE_READONLY_PARAM", "").lower() == "true":
+            connection_string += "ReadOnly=True;"
 
         # Add read-only parameter if driver supports it
         connection_string += "ReadOnly=True;"

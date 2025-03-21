@@ -43,6 +43,8 @@ class AS400Settings(BaseSettings):
     AS400_CONNECTION_TIMEOUT: int = 30
     AS400_QUERY_TIMEOUT: int = 60
     AS400_ENCRYPT_CONNECTION: bool = True
+    AS400_ENABLE_SSL_PARAM: bool = True
+    AS400_ENABLE_READONLY_PARAM: bool = True
 
     # Sync settings
     AS400_SYNC_ENABLED: bool = True
@@ -163,7 +165,7 @@ def get_as400_connector_config() -> Dict[str, Any]:
     return {
         "dsn": as400_settings.AS400_DSN,
         "username": as400_settings.AS400_USERNAME,
-        "password": as400_settings.AS400_PASSWORD.get_secret_value(),
+        "password": as400_settings.AS400_PASSWORD,
         "database": as400_settings.AS400_DATABASE,
         "server": as400_settings.AS400_SERVER,
         "port": as400_settings.AS400_PORT,

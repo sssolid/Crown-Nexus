@@ -1,0 +1,330 @@
+# Project Structure Tree View
+
+Project: backend
+
+```
+backend/
+├── alembic/
+│   ├── versions/
+│   │   └── __init__.py
+│   ├── README
+│   ├── env.py
+│   └── script.py.mako
+├── app/
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── endpoints/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── auth.py
+│   │   │   │   ├── chat.py
+│   │   │   │   ├── currency.py
+│   │   │   │   ├── fitments.py
+│   │   │   │   ├── i18n.py
+│   │   │   │   ├── media.py
+│   │   │   │   ├── products.py
+│   │   │   │   ├── search.py
+│   │   │   │   └── users.py
+│   │   │   ├── __init__.py
+│   │   │   └── router.py
+│   │   ├── __init__.py
+│   │   ├── deps.py
+│   │   └── responses.py
+│   ├── chat/
+│   │   ├── connection.py
+│   │   ├── service.py
+│   │   └── websocket.py
+│   ├── commands/
+│   │   ├── __init__.py
+│   │   └── init_currencies.py
+│   ├── core/
+│   │   ├── cache/
+│   │   │   ├── backends/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── memory.py
+│   │   │   │   ├── null.py
+│   │   │   │   └── redis.py
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── decorators.py
+│   │   │   ├── keys.py
+│   │   │   └── manager.py
+│   │   ├── config/
+│   │   │   ├── integrations/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── as400.py
+│   │   │   │   └── elasticsearch.py
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── celery.py
+│   │   │   ├── currency.py
+│   │   │   ├── database.py
+│   │   │   ├── fitment.py
+│   │   │   ├── media.py
+│   │   │   ├── security.py
+│   │   │   └── settings.py
+│   │   ├── error/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── factory.py
+│   │   │   ├── manager.py
+│   │   │   └── reporters.py
+│   │   ├── exceptions/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── domain.py
+│   │   │   ├── handlers.py
+│   │   │   └── system.py
+│   │   ├── metrics/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── collectors.py
+│   │   │   ├── decorators.py
+│   │   │   ├── manager.py
+│   │   │   ├── prometheus.py
+│   │   │   └── trackers.py
+│   │   ├── pagination/
+│   │   │   ├── providers/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── cursor.py
+│   │   │   │   └── offset.py
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── factory.py
+│   │   │   └── manager.py
+│   │   ├── permissions/
+│   │   │   ├── __init__.py
+│   │   │   ├── checker.py
+│   │   │   ├── decorators.py
+│   │   │   ├── models.py
+│   │   │   ├── permissions.py
+│   │   │   └── utils.py
+│   │   ├── rate_limiting/
+│   │   │   ├── __init__.py
+│   │   │   ├── limiter.py
+│   │   │   ├── models.py
+│   │   │   ├── rate_limiter.py
+│   │   │   └── utils.py
+│   │   ├── security/
+│   │   │   ├── __init__.py
+│   │   │   ├── api_keys.py
+│   │   │   ├── csrf.py
+│   │   │   ├── dependencies.py
+│   │   │   ├── encryption.py
+│   │   │   ├── models.py
+│   │   │   ├── passwords.py
+│   │   │   ├── tokens.py
+│   │   │   └── validation.py
+│   │   ├── startup/
+│   │   │   ├── __init__.py
+│   │   │   └── as400_sync.py
+│   │   ├── validation/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── db.py
+│   │   │   ├── factory.py
+│   │   │   ├── manager.py
+│   │   │   └── validators.py
+│   │   ├── __init__.py
+│   │   ├── celery_app.py
+│   │   ├── celeryconfig.py
+│   │   ├── dependency_manager.py
+│   │   └── logging.py
+│   ├── data_import/
+│   │   ├── commands/
+│   │   │   ├── __init__.py
+│   │   │   ├── import_products.py
+│   │   │   └── sync_as400.py
+│   │   ├── connectors/
+│   │   │   ├── __init__.py
+│   │   │   ├── as400_connector.py
+│   │   │   ├── base.py
+│   │   │   ├── file_connector.py
+│   │   │   └── filemaker_connector.py
+│   │   ├── importers/
+│   │   │   ├── __init__.py
+│   │   │   ├── as400_importers.py
+│   │   │   ├── base.py
+│   │   │   └── product_importer.py
+│   │   ├── pipeline/
+│   │   │   ├── __init__.py
+│   │   │   ├── as400_pipeline.py
+│   │   │   ├── base.py
+│   │   │   └── product_pipeline.py
+│   │   ├── processors/
+│   │   │   ├── __init__.py
+│   │   │   ├── as400_processor.py
+│   │   │   ├── base.py
+│   │   │   └── product_processor.py
+│   │   └── __init__.py
+│   ├── db/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── base_class.py
+│   │   ├── session.py
+│   │   └── utils.py
+│   ├── fitment/
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── api.py
+│   │   ├── config.py
+│   │   ├── db.py
+│   │   ├── dependencies.py
+│   │   ├── exceptions.py
+│   │   ├── mapper.py
+│   │   ├── models.py
+│   │   ├── parser.py
+│   │   └── validator.py
+│   ├── i18n/
+│   │   └── translations.py
+│   ├── middleware/
+│   │   ├── __init__.py
+│   │   ├── error_handler.py
+│   │   ├── metrics.py
+│   │   ├── rate_limiting.py
+│   │   ├── request_context.py
+│   │   ├── response_formatter.py
+│   │   └── security.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── api_key.py
+│   │   ├── associations.py
+│   │   ├── audit.py
+│   │   ├── chat.py
+│   │   ├── company.py
+│   │   ├── compliance.py
+│   │   ├── currency.py
+│   │   ├── location.py
+│   │   ├── media.py
+│   │   ├── model_mapping.py
+│   │   ├── product.py
+│   │   ├── reference.py
+│   │   ├── sync_history.py
+│   │   └── user.py
+│   ├── repositories/
+│   │   ├── __init__.py
+│   │   ├── api_key_repository.py
+│   │   ├── audit_repository.py
+│   │   ├── base.py
+│   │   ├── chat_repository.py
+│   │   ├── company_repository.py
+│   │   ├── compliance_repository.py
+│   │   ├── currency_repository.py
+│   │   ├── location_repository.py
+│   │   ├── media_repository.py
+│   │   ├── model_mapping_repository.py
+│   │   ├── product_repository.py
+│   │   ├── reference_repository.py
+│   │   ├── sync_history_repository.py
+│   │   └── user_repository.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── address.py
+│   │   ├── api_key.py
+│   │   ├── audit.py
+│   │   ├── chat.py
+│   │   ├── company.py
+│   │   ├── compliance.py
+│   │   ├── country.py
+│   │   ├── currency.py
+│   │   ├── location.py
+│   │   ├── media.py
+│   │   ├── model_mapping.py
+│   │   ├── product.py
+│   │   ├── reference.py
+│   │   └── user.py
+│   ├── services/
+│   │   ├── audit/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── factory.py
+│   │   │   ├── loggers.py
+│   │   │   ├── query.py
+│   │   │   └── service.py
+│   │   ├── base_service/
+│   │   │   ├── operations/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── create_update.py
+│   │   │   │   └── read_delete.py
+│   │   │   ├── __init__.py
+│   │   │   ├── contracts.py
+│   │   │   ├── permissions.py
+│   │   │   └── service.py
+│   │   ├── media/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── factory.py
+│   │   │   ├── local.py
+│   │   │   ├── s3.py
+│   │   │   ├── service.py
+│   │   │   └── thumbnails.py
+│   │   ├── search/
+│   │   │   ├── providers/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── database.py
+│   │   │   │   └── elasticsearch.py
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── factory.py
+│   │   │   └── service.py
+│   │   ├── __init__.py
+│   │   ├── as400_sync_service.py
+│   │   ├── chat.py
+│   │   ├── currency_service.py
+│   │   ├── interfaces.py
+│   │   ├── product_service.py
+│   │   ├── test_service.py
+│   │   └── vehicle.py
+│   ├── tasks/
+│   │   ├── __init__.py
+│   │   ├── chat_tasks.py
+│   │   └── currency_tasks.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── circuit_breaker.py
+│   │   ├── crypto.py
+│   │   ├── file.py
+│   │   ├── redis_manager.py
+│   │   └── retry.py
+│   ├── __init__.py
+│   ├── as400_integration.md
+│   └── main.py
+├── scripts/
+│   ├── auto_translate.py
+│   ├── bootstrap_countries.py
+│   ├── database_bootstrap.py
+│   ├── extract_messages.py
+│   ├── init_db.py
+│   └── reset_db.py
+├── tests/
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── __init__.py
+│   │   │   ├── test_auth.py
+│   │   │   ├── test_products.py
+│   │   │   └── test_users.py
+│   │   └── __init__.py
+│   ├── integration/
+│   │   ├── test_api/
+│   │   │   ├── test_auth.py
+│   │   │   └── test_products.py
+│   │   └── test_as400_sync.py
+│   ├── unit/
+│   │   ├── test_config.py
+│   │   └── test_db.py
+│   ├── utils/
+│   │   └── factories.py
+│   ├── __init__.py
+│   ├── conftest.py
+│   └── utils.py
+├── IMPLEMENTATION.md
+├── README.md
+├── REFACTORING.md
+├── alembic.ini
+├── backend.iml
+├── pyproject.toml
+├── pytest.ini
+├── requirements.in
+└── requirements.txt
+```
+
+[Back to Project Index](index.md)

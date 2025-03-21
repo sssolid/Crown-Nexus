@@ -333,6 +333,7 @@ def register_services() -> None:
         from app.services.audit import get_audit_service, AuditService
         from app.services.search import get_search_service, SearchService
         from app.services.media import get_media_service, MediaService
+        from app.services.as400_sync_service import as400_sync_service, AS400SyncService
 
         # from app.services.logging_service import LoggingService
         # from app.services.chat import ChatService
@@ -351,6 +352,9 @@ def register_services() -> None:
         dependency_manager.register_factory(
             "media_service", lambda: get_media_service()
         )
+        dependency_manager.register_factory(
+            "as400_sync_service", lambda: as400_sync_service
+        )
 
         # dependency_manager.register_factory("logging_service", lambda: LoggingService())
         # dependency_manager.register_factory("user_service", lambda db: UserService(db) if db else None)
@@ -363,6 +367,7 @@ def register_services() -> None:
         dependency_manager.register_service(AuditService, "AuditService")
         dependency_manager.register_service(MediaService, "MediaService")
         dependency_manager.register_service(SearchService, "SearchService")
+        dependency_manager.register_service(AS400SyncService, "AS400SyncService")
 
         # dependency_manager.register_service(LoggingService, "LoggingService")
         # dependency_manager.register_service(UserService, "UserService")

@@ -58,6 +58,9 @@ from app.core.cache.manager import initialize_cache
 
 from app.fitment.api import router as fitment_router
 from app.fitment.dependencies import initialize_mapping_engine
+
+from app.core.startup.as400_sync import initialize_as400_sync, shutdown_as400_sync
+
 from app.models.user import User
 
 import uvicorn
@@ -106,6 +109,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Initialize fitment mapping engine
     await initialize_mapping_engine()
 
+    # Initialize AS400 sync
+    await initialize_as400_sync()
+
     logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
 
     # Include API router
@@ -121,6 +127,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     )
 
     yield
+
+    # Shutdown AS400 sync
+    await shutdown_as400_sync()
 
     # Shutdown services
     await shutdown_services()

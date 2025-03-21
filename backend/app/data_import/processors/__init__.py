@@ -9,7 +9,10 @@ raw data from external sources into structured formats for import.
 """
 
 from app.data_import.processors.base import Processor
-from app.data_import.processors.product_processor import ProductProcessor, ProductMappingConfig
+from app.data_import.processors.product_processor import (
+    ProductProcessor,
+    ProductMappingConfig,
+)
 from app.data_import.processors.as400_processor import (
     AS400BaseProcessor,
     AS400ProcessorConfig,

@@ -17,23 +17,38 @@ from typing import Any, Dict, List, Optional, Set, Type, cast
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config.integrations.as400 import AS400Settings, as400_settings, get_as400_connector_config
+from app.core.config.integrations.as400 import (
+    AS400Settings,
+    as400_settings,
+    get_as400_connector_config,
+)
 from app.core.exceptions import AppException, ConfigurationException
 from app.core.logging import get_logger
-from app.data_import.connectors.as400_connector import AS400Connector, AS400ConnectionConfig
+from app.data_import.connectors.as400_connector import (
+    AS400Connector,
+    AS400ConnectionConfig,
+)
 from app.data_import.pipeline.as400_pipeline import AS400Pipeline, ParallelAS400Pipeline
 from app.db.session import async_session_maker, get_db_context
 from app.models.audit import AuditLog
 from app.models.product import Product, ProductMeasurement, ProductStock
 from app.models.reference import Warehouse
-from app.schemas.product import ProductCreate, ProductMeasurementCreate, ProductStock as ProductStockSchema
+from app.schemas.product import (
+    ProductCreate,
+    ProductMeasurementCreate,
+    ProductStock as ProductStockSchema,
+)
 from app.data_import.processors.as400_processor import (
-    AS400ProcessorConfig, ProductAS400Processor, PricingAS400Processor,
-    InventoryAS400Processor
+    AS400ProcessorConfig,
+    ProductAS400Processor,
+    PricingAS400Processor,
+    InventoryAS400Processor,
 )
 from app.data_import.importers.as400_importers import (
-    ProductAS400Importer, ProductMeasurementImporter, ProductStockImporter,
-    ProductPricingImporter
+    ProductAS400Importer,
+    ProductMeasurementImporter,
+    ProductStockImporter,
+    ProductPricingImporter,
 )
 
 
@@ -75,7 +90,7 @@ class SyncLog:
         records_failed: int = 0,
         started_at: Optional[datetime] = None,
         completed_at: Optional[datetime] = None,
-        error_message: Optional[str] = None
+        error_message: Optional[str] = None,
     ) -> None:
         """
         Initialize a sync log entry.
@@ -108,7 +123,7 @@ class SyncLog:
         records_created: int,
         records_updated: int,
         records_failed: int,
-        error_message: Optional[str] = None
+        error_message: Optional[str] = None,
     ) -> None:
         """
         Mark the sync as complete.
@@ -195,7 +210,9 @@ class AS400SyncService:
                 # Initialize last sync times
                 self._last_sync_times = {}
                 for entity_type in SyncEntityType:
-                    self._last_sync_times[entity_type] = datetime.now() - timedelta(days=1)
+                    self._last_sync_times[entity_type] = datetime.now() - timedelta(
+                        days=1
+                    )
 
                 # Schedule initial sync if needed
                 if as400_settings.AS400_SYNC_ENABLED:
@@ -209,7 +226,7 @@ class AS400SyncService:
                 raise ConfigurationException(
                     message=f"Failed to initialize AS400 sync service: {str(e)}",
                     component="AS400SyncService",
-                    original_exception=e
+                    original_exception=e,
                 ) from e
 
     async def shutdown(self) -> None:
@@ -235,9 +252,7 @@ class AS400SyncService:
             logger.info("AS400 sync service shut down successfully")
 
     async def schedule_sync(
-        self,
-        entity_type: SyncEntityType,
-        delay_seconds: Optional[int] = None
+        self, entity_type: SyncEntityType, delay_seconds: Optional[int] = None
     ) -> None:
         """
         Schedule a sync for a specific entity type.
@@ -265,9 +280,7 @@ class AS400SyncService:
         )
 
     async def run_sync(
-        self,
-        entity_type: SyncEntityType,
-        force: bool = False
+        self, entity_type: SyncEntityType, force: bool = False
     ) -> Dict[str, Any]:
         """
         Run a synchronization operation.
@@ -281,14 +294,12 @@ class AS400SyncService:
         """
         # Check if sync is already running
         if entity_type in self._active_syncs and not force:
-            logger.warning(
-                f"Sync for {entity_type.value} is already running, skipping"
-            )
+            logger.warning(f"Sync for {entity_type.value} is already running, skipping")
             return {
                 "success": False,
                 "message": f"Sync for {entity_type.value} is already running",
                 "entity_type": entity_type.value,
-                "status": "skipped"
+                "status": "skipped",
             }
 
         # Mark sync as active
@@ -310,21 +321,23 @@ class AS400SyncService:
                 self._last_sync_times[entity_type] = datetime.now()
 
                 # Update sync log
-                status = SyncStatus.COMPLETED if result.get("success", False) else SyncStatus.FAILED
+                status = (
+                    SyncStatus.COMPLETED
+                    if result.get("success", False)
+                    else SyncStatus.FAILED
+                )
                 sync_log.complete(
                     status=status,
                     records_processed=result.get("records_processed", 0),
                     records_created=result.get("records_created", 0),
                     records_updated=result.get("records_updated", 0),
                     records_failed=result.get("records_with_errors", 0),
-                    error_message=result.get("error", None)
+                    error_message=result.get("error", None),
                 )
 
                 # Log audit record
                 await self._log_sync_audit(
-                    db=db,
-                    entity_type=entity_type,
-                    result=result
+                    db=db, entity_type=entity_type, result=result
                 )
 
                 logger.info(
@@ -348,7 +361,7 @@ class AS400SyncService:
                     "records_updated": result.get("records_updated", 0),
                     "records_failed": result.get("records_with_errors", 0),
                     "sync_time": result.get("total_time", 0),
-                    "sync_timestamp": datetime.now().isoformat()
+                    "sync_timestamp": datetime.now().isoformat(),
                 }
         except Exception as e:
             logger.error(f"Error running sync for {entity_type.value}: {str(e)}")
@@ -360,7 +373,7 @@ class AS400SyncService:
                 records_created=0,
                 records_updated=0,
                 records_failed=0,
-                error_message=str(e)
+                error_message=str(e),
             )
 
             return {
@@ -369,15 +382,14 @@ class AS400SyncService:
                 "entity_type": entity_type.value,
                 "status": "failed",
                 "error": str(e),
-                "sync_timestamp": datetime.now().isoformat()
+                "sync_timestamp": datetime.now().isoformat(),
             }
         finally:
             # Mark sync as inactive
             self._active_syncs.remove(entity_type)
 
     async def get_sync_status(
-        self,
-        entity_type: Optional[SyncEntityType] = None
+        self, entity_type: Optional[SyncEntityType] = None
     ) -> Dict[str, Any]:
         """
         Get the status of all or a specific sync operation.
@@ -390,7 +402,7 @@ class AS400SyncService:
         """
         result: Dict[str, Any] = {
             "is_initialized": self._initialized,
-            "active_syncs": [e.value for e in self._active_syncs]
+            "active_syncs": [e.value for e in self._active_syncs],
         }
 
         # Add last sync times
@@ -404,30 +416,33 @@ class AS400SyncService:
             entity_history = []
             for log in reversed(self._sync_history):
                 if log.entity_type == entity_type:
-                    entity_history.append({
-                        "status": log.status.value,
-                        "records_processed": log.records_processed,
-                        "records_created": log.records_created,
-                        "records_updated": log.records_updated,
-                        "records_failed": log.records_failed,
-                        "started_at": log.started_at.isoformat(),
-                        "completed_at": log.completed_at.isoformat() if log.completed_at else None,
-                        "error_message": log.error_message
-                    })
+                    entity_history.append(
+                        {
+                            "status": log.status.value,
+                            "records_processed": log.records_processed,
+                            "records_created": log.records_created,
+                            "records_updated": log.records_updated,
+                            "records_failed": log.records_failed,
+                            "started_at": log.started_at.isoformat(),
+                            "completed_at": (
+                                log.completed_at.isoformat()
+                                if log.completed_at
+                                else None
+                            ),
+                            "error_message": log.error_message,
+                        }
+                    )
             result["entity_history"] = entity_history
 
             # Add current status
             result["current_status"] = (
-                "running" if entity_type in self._active_syncs
-                else "idle"
+                "running" if entity_type in self._active_syncs else "idle"
             )
 
         return result
 
     async def _schedule_sync_task(
-        self,
-        entity_type: SyncEntityType,
-        delay_seconds: int
+        self, entity_type: SyncEntityType, delay_seconds: int
     ) -> None:
         """
         Background task for scheduling sync operations.
@@ -445,16 +460,12 @@ class AS400SyncService:
         except asyncio.CancelledError:
             logger.info(f"Scheduled sync for {entity_type.value} was cancelled")
         except Exception as e:
-            logger.error(
-                f"Error in scheduled sync for {entity_type.value}: {str(e)}"
-            )
+            logger.error(f"Error in scheduled sync for {entity_type.value}: {str(e)}")
             # Reschedule with a shorter delay in case of error
             await self.schedule_sync(entity_type, delay_seconds=300)
 
     async def _run_entity_sync(
-        self,
-        entity_type: SyncEntityType,
-        db: AsyncSession
+        self, entity_type: SyncEntityType, db: AsyncSession
     ) -> Dict[str, Any]:
         """
         Run sync for a specific entity type.
@@ -483,9 +494,7 @@ class AS400SyncService:
             raise ValueError(f"Unsupported entity type: {entity_type.value}")
 
     async def _sync_products(
-        self,
-        connector: AS400Connector,
-        db: AsyncSession
+        self, connector: AS400Connector, db: AsyncSession
     ) -> Dict[str, Any]:
         """
         Synchronize product data from AS400.
@@ -506,12 +515,12 @@ class AS400SyncService:
                 "late_model": "LATEMDL",
                 "soft": "SOFT",
                 "universal": "UNIVRSL",
-                "is_active": "ACTIVE"
+                "is_active": "ACTIVE",
             },
             boolean_true_values=["1", "Y", "YES", "TRUE", "T"],
             boolean_false_values=["0", "N", "NO", "FALSE", "F"],
             required_fields=["part_number"],
-            unique_key_field="part_number"
+            unique_key_field="part_number",
         )
 
         # Set up processor and importer
@@ -523,7 +532,7 @@ class AS400SyncService:
             connector=connector,
             processor=processor,
             importer=importer,
-            chunk_size=as400_settings.AS400_BATCH_SIZE
+            chunk_size=as400_settings.AS400_BATCH_SIZE,
         )
 
         # Run sync with appropriate query
@@ -531,9 +540,7 @@ class AS400SyncService:
         return await pipeline.run("SELECT * FROM PRODUCTLIB.PRODUCTS")
 
     async def _sync_measurements(
-        self,
-        connector: AS400Connector,
-        db: AsyncSession
+        self, connector: AS400Connector, db: AsyncSession
     ) -> Dict[str, Any]:
         """
         Synchronize product measurement data from AS400.
@@ -557,10 +564,10 @@ class AS400SyncService:
                 "height": "HEIGHT",
                 "weight": "WEIGHT",
                 "volume": "VOLUME",
-                "dimensional_weight": "DIMWT"
+                "dimensional_weight": "DIMWT",
             },
             required_fields=["product_id"],
-            unique_key_field="product_id"
+            unique_key_field="product_id",
         )
 
         # Set up processor with custom processing
@@ -568,9 +575,7 @@ class AS400SyncService:
 
         class CustomMeasurementProcessor(AS400BaseProcessor[ProductMeasurementCreate]):
             def _process_record_custom(
-                self,
-                processed_record: Dict[str, Any],
-                original_record: Dict[str, Any]
+                self, processed_record: Dict[str, Any], original_record: Dict[str, Any]
             ) -> Dict[str, Any]:
                 # Convert part number to product ID
                 if "product_id" in processed_record:
@@ -585,7 +590,9 @@ class AS400SyncService:
                 return processed_record
 
         # Set up processor and importer
-        processor = CustomMeasurementProcessor(processor_config, ProductMeasurementCreate)
+        processor = CustomMeasurementProcessor(
+            processor_config, ProductMeasurementCreate
+        )
         importer = ProductMeasurementImporter(db)
 
         # Create and run pipeline
@@ -593,7 +600,7 @@ class AS400SyncService:
             connector=connector,
             processor=processor,
             importer=importer,
-            chunk_size=as400_settings.AS400_BATCH_SIZE
+            chunk_size=as400_settings.AS400_BATCH_SIZE,
         )
 
         # Run sync with appropriate query
@@ -601,9 +608,7 @@ class AS400SyncService:
         return await pipeline.run("SELECT * FROM PRODUCTLIB.MEASUREMENTS")
 
     async def _sync_inventory(
-        self,
-        connector: AS400Connector,
-        db: AsyncSession
+        self, connector: AS400Connector, db: AsyncSession
     ) -> Dict[str, Any]:
         """
         Synchronize product inventory/stock data from AS400.
@@ -624,10 +629,10 @@ class AS400SyncService:
             field_mapping={
                 "product_id": "PRDNUM",  # Will be transformed to real ID
                 "warehouse_id": "WRHSNUM",  # Will be transformed to real ID
-                "quantity": "QUANTITY"
+                "quantity": "QUANTITY",
             },
             required_fields=["product_id", "warehouse_id", "quantity"],
-            unique_key_field="product_id"  # Combined with warehouse in custom processing
+            unique_key_field="product_id",  # Combined with warehouse in custom processing
         )
 
         # Set up processor with custom processing
@@ -635,9 +640,7 @@ class AS400SyncService:
 
         class CustomStockProcessor(AS400BaseProcessor[ProductStockSchema]):
             def _process_record_custom(
-                self,
-                processed_record: Dict[str, Any],
-                original_record: Dict[str, Any]
+                self, processed_record: Dict[str, Any], original_record: Dict[str, Any]
             ) -> Dict[str, Any]:
                 # Convert part number to product ID
                 if "product_id" in processed_record:
@@ -654,7 +657,9 @@ class AS400SyncService:
                 if "warehouse_id" in processed_record:
                     warehouse_code = processed_record["warehouse_id"]
                     if warehouse_code in warehouse_id_map:
-                        processed_record["warehouse_id"] = warehouse_id_map[warehouse_code]
+                        processed_record["warehouse_id"] = warehouse_id_map[
+                            warehouse_code
+                        ]
                     else:
                         # Skip record if warehouse doesn't exist
                         raise ValueError(
@@ -676,7 +681,7 @@ class AS400SyncService:
             connector=connector,
             processor=processor,
             importer=importer,
-            chunk_size=as400_settings.AS400_BATCH_SIZE
+            chunk_size=as400_settings.AS400_BATCH_SIZE,
         )
 
         # Run sync with appropriate query
@@ -684,9 +689,7 @@ class AS400SyncService:
         return await pipeline.run("SELECT * FROM INVENTORYLIB.INVENTORY")
 
     async def _sync_pricing(
-        self,
-        connector: AS400Connector,
-        db: AsyncSession
+        self, connector: AS400Connector, db: AsyncSession
     ) -> Dict[str, Any]:
         """
         Synchronize product pricing data from AS400.
@@ -707,7 +710,7 @@ class AS400SyncService:
             "records_created": 0,
             "records_updated": 0,
             "records_with_errors": 0,
-            "total_time": 0
+            "total_time": 0,
         }
 
     async def _get_product_id_map(self, db: AsyncSession) -> Dict[str, uuid.UUID]:
@@ -747,10 +750,7 @@ class AS400SyncService:
         return {row[1]: row[0] for row in result}
 
     async def _log_sync_audit(
-        self,
-        db: AsyncSession,
-        entity_type: SyncEntityType,
-        result: Dict[str, Any]
+        self, db: AsyncSession, entity_type: SyncEntityType, result: Dict[str, Any]
     ) -> None:
         """
         Log sync operation to audit log.
@@ -773,9 +773,9 @@ class AS400SyncService:
                 "records_updated": result.get("records_updated", 0),
                 "records_with_errors": result.get("records_with_errors", 0),
                 "sync_time": result.get("total_time", 0),
-                "message": result.get("message", "Sync completed")
+                "message": result.get("message", "Sync completed"),
             },
-            resource_type=entity_type.value
+            resource_type=entity_type.value,
         )
 
         db.add(audit_log)

@@ -18,6 +18,7 @@ from app.data_import.processors.base import Processor
 
 T = TypeVar("T")
 
+
 class Pipeline(Protocol[T]):
     """Protocol for data import pipelines."""
 

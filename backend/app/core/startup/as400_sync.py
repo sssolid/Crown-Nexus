@@ -47,7 +47,7 @@ async def initialize_as400_sync() -> None:
         for entity_type in SyncEntityType:
             await as400_sync_service.schedule_sync(
                 entity_type,
-                delay_seconds=30 + (15 * list(SyncEntityType).index(entity_type))
+                delay_seconds=30 + (15 * list(SyncEntityType).index(entity_type)),
             )
 
         _initialized = True

@@ -16,7 +16,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ResourceNotFoundException
 from app.core.logging import get_logger
-from app.models.sync_history import SyncHistory, SyncEvent, SyncStatus, SyncEntityType, SyncSource
+from app.models.sync_history import (
+    SyncHistory,
+    SyncEvent,
+    SyncStatus,
+    SyncEntityType,
+    SyncSource,
+)
 from app.repositories.base import BaseRepository
 
 logger = get_logger("app.repositories.sync_history_repository")
@@ -59,16 +65,14 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
             status=SyncStatus.PENDING.value,
             triggered_by_id=triggered_by_id,
             details=details or {},
-            started_at=datetime.now()
+            started_at=datetime.now(),
         )
 
         self.db.add(sync)
         await self.db.flush()
         await self.db.refresh(sync)
 
-        logger.debug(
-            f"Created sync history record: {sync.id} for {entity_type.value}"
-        )
+        logger.debug(f"Created sync history record: {sync.id} for {entity_type.value}")
 
         return sync
 
@@ -112,7 +116,9 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
         if status in [SyncStatus.COMPLETED, SyncStatus.FAILED, SyncStatus.CANCELLED]:
             sync.completed_at = datetime.now()
             if sync.started_at:
-                sync.sync_duration = (sync.completed_at - sync.started_at).total_seconds()
+                sync.sync_duration = (
+                    sync.completed_at - sync.started_at
+                ).total_seconds()
 
         # Update fields
         sync.status = status.value
@@ -125,15 +131,15 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
             sync.error_message = error_message
 
         if details:
-            sync.details = details if sync.details is None else {**sync.details, **details}
+            sync.details = (
+                details if sync.details is None else {**sync.details, **details}
+            )
 
         self.db.add(sync)
         await self.db.flush()
         await self.db.refresh(sync)
 
-        logger.debug(
-            f"Updated sync history record: {sync.id} to status {status.value}"
-        )
+        logger.debug(f"Updated sync history record: {sync.id} to status {status.value}")
 
         return sync
 
@@ -170,16 +176,14 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
             event_type=event_type,
             message=message,
             details=details,
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
         )
 
         self.db.add(event)
         await self.db.flush()
         await self.db.refresh(event)
 
-        logger.debug(
-            f"Added sync event: {event.id} to sync {sync_id}"
-        )
+        logger.debug(f"Added sync event: {event.id} to sync {sync_id}")
 
         return event
 
@@ -236,11 +240,7 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
         if status:
             conditions.append(SyncHistory.status == status.value)
 
-        query = (
-            select(SyncHistory)
-            .order_by(desc(SyncHistory.started_at))
-            .limit(limit)
-        )
+        query = select(SyncHistory).order_by(desc(SyncHistory.started_at)).limit(limit)
 
         if conditions:
             query = query.where(and_(*conditions))
@@ -264,10 +264,7 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
             List of active sync history records
         """
         conditions = [
-            SyncHistory.status.in_([
-                SyncStatus.PENDING.value,
-                SyncStatus.RUNNING.value
-            ])
+            SyncHistory.status.in_([SyncStatus.PENDING.value, SyncStatus.RUNNING.value])
         ]
 
         if entity_type:
@@ -310,7 +307,7 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
         conditions = [
             SyncHistory.started_at >= start_date,
             SyncHistory.started_at <= end_date,
-            ]
+        ]
 
         if entity_type:
             conditions.append(SyncHistory.entity_type == entity_type.value)
@@ -319,12 +316,18 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
             conditions.append(SyncHistory.source == source.value)
 
         # Execute count queries
-        total_query = select(func.count()).select_from(SyncHistory).where(and_(*conditions))
-        success_query = select(func.count()).select_from(SyncHistory).where(
-            and_(*conditions, SyncHistory.status == SyncStatus.COMPLETED.value)
+        total_query = (
+            select(func.count()).select_from(SyncHistory).where(and_(*conditions))
         )
-        failed_query = select(func.count()).select_from(SyncHistory).where(
-            and_(*conditions, SyncHistory.status == SyncStatus.FAILED.value)
+        success_query = (
+            select(func.count())
+            .select_from(SyncHistory)
+            .where(and_(*conditions, SyncHistory.status == SyncStatus.COMPLETED.value))
+        )
+        failed_query = (
+            select(func.count())
+            .select_from(SyncHistory)
+            .where(and_(*conditions, SyncHistory.status == SyncStatus.FAILED.value))
         )
 
         # Get record counts
@@ -338,9 +341,7 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
         # Get average duration
         duration_query = select(
             func.avg(SyncHistory.sync_duration).label("avg_duration")
-        ).where(
-            and_(*conditions, SyncHistory.sync_duration.is_not(None))
-        )
+        ).where(and_(*conditions, SyncHistory.sync_duration.is_not(None)))
 
         # Execute queries
         total_result = await self.db.execute(total_query)
@@ -370,7 +371,9 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
             "total_syncs": total_count,
             "successful_syncs": success_count,
             "failed_syncs": failed_count,
-            "success_rate": (success_count / total_count * 100) if total_count > 0 else 0,
+            "success_rate": (
+                (success_count / total_count * 100) if total_count > 0 else 0
+            ),
             "records_processed": records_processed,
             "records_created": records_created,
             "records_updated": records_updated,
@@ -422,14 +425,12 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
                     sync.id,
                     "cancel",
                     message,
-                    {"cancelled_by": str(cancelled_by_id) if cancelled_by_id else None}
+                    {"cancelled_by": str(cancelled_by_id) if cancelled_by_id else None},
                 )
 
                 cancelled_count += 1
             except Exception as e:
-                logger.error(
-                    f"Failed to cancel sync {sync.id}: {str(e)}"
-                )
+                logger.error(f"Failed to cancel sync {sync.id}: {str(e)}")
 
         return cancelled_count
 

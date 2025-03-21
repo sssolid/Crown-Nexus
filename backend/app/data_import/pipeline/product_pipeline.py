@@ -22,6 +22,7 @@ from app.schemas.product import ProductCreate
 
 logger = get_logger("app.data_import.pipeline.product_pipeline")
 
+
 class ProductPipeline:
     """Pipeline for product data import."""
 
@@ -30,7 +31,7 @@ class ProductPipeline:
         connector: Union[Connector, FileMakerConnector, FileConnector],
         processor: ProductProcessor,
         importer: ProductImporter,
-        dry_run: bool = False
+        dry_run: bool = False,
     ) -> None:
         """
         Initialize the product import pipeline.
@@ -47,7 +48,9 @@ class ProductPipeline:
         self.dry_run = dry_run
         logger.debug(f"ProductPipeline initialized (dry_run={dry_run})")
 
-    async def run(self, query: str, limit: Optional[int] = None, **params: Any) -> Dict[str, Any]:
+    async def run(
+        self, query: str, limit: Optional[int] = None, **params: Any
+    ) -> Dict[str, Any]:
         """
         Run the complete product import pipeline.
 
@@ -66,7 +69,9 @@ class ProductPipeline:
 
         try:
             # Extract phase
-            logger.info(f"Starting data extraction with query: {query} {f'(limited to {limit} records)' if limit else ''}")
+            logger.info(
+                f"Starting data extraction with query: {query} {f'(limited to {limit} records)' if limit else ''}"
+            )
             extract_start = time.time()
             await self.connector.connect()
             raw_data = await self.connector.extract(query, limit=limit, **params)
@@ -85,10 +90,12 @@ class ProductPipeline:
                     "process_time": 0,
                     "validate_time": 0,
                     "import_time": 0,
-                    "total_time": time.time() - start_time
+                    "total_time": time.time() - start_time,
                 }
 
-            logger.info(f"Extracted {len(raw_data)} records in {extract_time:.2f} seconds")
+            logger.info(
+                f"Extracted {len(raw_data)} records in {extract_time:.2f} seconds"
+            )
 
             # Process phase
             logger.info("Starting data processing")
@@ -110,10 +117,12 @@ class ProductPipeline:
                     "process_time": process_time,
                     "validate_time": 0,
                     "import_time": 0,
-                    "total_time": time.time() - start_time
+                    "total_time": time.time() - start_time,
                 }
 
-            logger.info(f"Processed {len(processed_data)} records in {process_time:.2f} seconds")
+            logger.info(
+                f"Processed {len(processed_data)} records in {process_time:.2f} seconds"
+            )
 
             # Validate phase
             logger.info("Starting data validation")
@@ -135,10 +144,12 @@ class ProductPipeline:
                     "process_time": process_time,
                     "validate_time": validate_time,
                     "import_time": 0,
-                    "total_time": time.time() - start_time
+                    "total_time": time.time() - start_time,
                 }
 
-            logger.info(f"Validated {len(validated_data)} records in {validate_time:.2f} seconds")
+            logger.info(
+                f"Validated {len(validated_data)} records in {validate_time:.2f} seconds"
+            )
 
             # Import phase
             if self.dry_run:
@@ -149,7 +160,7 @@ class ProductPipeline:
                     "updated": 0,
                     "errors": 0,
                     "total": len(validated_data),
-                    "message": "Dry run, no data imported"
+                    "message": "Dry run, no data imported",
                 }
                 import_time = 0
             else:
@@ -157,7 +168,9 @@ class ProductPipeline:
                 import_start = time.time()
                 import_result = await self.importer.import_data(validated_data)
                 import_time = time.time() - import_start
-                logger.info(f"Imported data in {import_time:.2f} seconds: {import_result}")
+                logger.info(
+                    f"Imported data in {import_time:.2f} seconds: {import_result}"
+                )
 
             # Clean up
             await self.connector.close()
@@ -171,7 +184,8 @@ class ProductPipeline:
                 "records_extracted": len(raw_data),
                 "records_processed": len(processed_data),
                 "records_validated": len(validated_data),
-                "records_imported": import_result.get("created", 0) + import_result.get("updated", 0),
+                "records_imported": import_result.get("created", 0)
+                + import_result.get("updated", 0),
                 "records_created": import_result.get("created", 0),
                 "records_updated": import_result.get("updated", 0),
                 "records_with_errors": import_result.get("errors", 0),
@@ -181,7 +195,7 @@ class ProductPipeline:
                 "validate_time": validate_time,
                 "import_time": import_time,
                 "total_time": total_time,
-                "dry_run": self.dry_run
+                "dry_run": self.dry_run,
             }
 
         except AppException as e:
@@ -212,5 +226,5 @@ class ProductPipeline:
                 "records_validated": 0,
                 "records_imported": 0,
                 "total_time": total_time,
-                "error": str(e)
+                "error": str(e),
             }

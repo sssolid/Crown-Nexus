@@ -1,4 +1,4 @@
-# /backend/app/core/cache/memory.py
+# /backend/app/core/cache/backends/memory.py
 from __future__ import annotations
 
 import asyncio
@@ -38,6 +38,26 @@ class MemoryCacheBackend(CacheBackend[T]):
         self.clean_interval = clean_interval
         self.lock = RLock()
         self.last_cleanup = time.time()
+
+    async def initialize(self) -> None:
+        """Initialize the memory cache backend.
+
+        This is a no-op for the memory backend since it doesn't require
+        external connections, but implemented for interface consistency.
+        """
+        logger.info("Memory cache backend initialized")
+        return None
+
+    async def shutdown(self) -> None:
+        """Shut down the memory cache backend.
+
+        Clears all cached data and performs cleanup.
+        """
+        with self.lock:
+            self.cache.clear()
+            self.expiry.clear()
+        logger.info("Memory cache backend shut down")
+        return None
 
     async def get(self, key: str) -> Optional[T]:
         """Get a value from the cache.

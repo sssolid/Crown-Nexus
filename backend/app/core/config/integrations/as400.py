@@ -138,7 +138,9 @@ class AS400Settings(BaseSettings):
                 raise ValueError(f"Invalid format in AS400_SYNC_TABLES: {e}")
         return v
 
-    @field_validator("AS400_SSL", "AS400_ENCRYPT_CONNECTION", "AS400_SYNC_ENABLED", mode="before")
+    @field_validator(
+        "AS400_SSL", "AS400_ENCRYPT_CONNECTION", "AS400_SYNC_ENABLED", mode="before"
+    )
     @classmethod
     def parse_boolean(cls, v: Any) -> bool:
         """Parse boolean from string if necessary."""

@@ -20,7 +20,8 @@ from app.core.config.as400 import AS400Settings, as400_settings
 from app.data_import.connectors.as400_connector import AS400Connector
 from app.data_import.importers.as400_importers import ProductAS400Importer
 from app.data_import.processors.as400_processor import (
-    AS400ProcessorConfig, ProductAS400Processor
+    AS400ProcessorConfig,
+    ProductAS400Processor,
 )
 from app.data_import.pipeline.as400_pipeline import AS400Pipeline
 from app.db.session import async_session_maker
@@ -34,7 +35,7 @@ from app.services.as400_sync_service import as400_sync_service, SyncEntityType
 # Skip tests if AS400 environment variables are not set
 pytestmark = pytest.mark.skipif(
     not os.environ.get("AS400_DSN") or not os.environ.get("AS400_USERNAME"),
-    reason="AS400 credentials not found in environment"
+    reason="AS400 credentials not found in environment",
 )
 
 
@@ -122,12 +123,12 @@ async def test_product_sync_pipeline(
             "late_model": "LATEMDL",
             "soft": "SOFT",
             "universal": "UNIVRSL",
-            "is_active": "ACTIVE"
+            "is_active": "ACTIVE",
         },
         boolean_true_values=["1", "Y", "YES", "TRUE", "T"],
         boolean_false_values=["0", "N", "NO", "FALSE", "F"],
         required_fields=["part_number"],
-        unique_key_field="part_number"
+        unique_key_field="part_number",
     )
 
     # Set up pipeline
@@ -138,7 +139,7 @@ async def test_product_sync_pipeline(
         processor=processor,
         importer=importer,
         dry_run=True,  # Use dry run for testing
-        chunk_size=10
+        chunk_size=10,
     )
 
     # Run sync
@@ -159,8 +160,7 @@ async def test_sync_history_tracking(
     """Test sync history tracking functionality."""
     # Create a test sync record
     sync = await sync_history_repo.create_sync(
-        entity_type=SyncEntityType.PRODUCT,
-        source=SyncSource.AS400
+        entity_type=SyncEntityType.PRODUCT, source=SyncSource.AS400
     )
 
     # Verify record was created
@@ -170,9 +170,7 @@ async def test_sync_history_tracking(
 
     # Update status
     updated_sync = await sync_history_repo.update_sync_status(
-        sync_id=sync.id,
-        status=SyncStatus.RUNNING,
-        records_processed=0
+        sync_id=sync.id, status=SyncStatus.RUNNING, records_processed=0
     )
 
     # Verify update
@@ -180,10 +178,7 @@ async def test_sync_history_tracking(
 
     # Add an event
     event = await sync_history_repo.add_sync_event(
-        sync_id=sync.id,
-        event_type="test",
-        message="Test event",
-        details={"test": True}
+        sync_id=sync.id, event_type="test", message="Test event", details={"test": True}
     )
 
     # Verify event
@@ -197,7 +192,7 @@ async def test_sync_history_tracking(
         records_processed=100,
         records_created=50,
         records_updated=50,
-        records_failed=0
+        records_failed=0,
     )
 
     # Verify completion

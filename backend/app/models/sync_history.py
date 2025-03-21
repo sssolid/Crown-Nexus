@@ -13,8 +13,15 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import (
-    Boolean, DateTime, Float, ForeignKey, Integer,
-    String, Text, JSON, Index
+    Boolean,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    JSON,
+    Index,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -62,52 +69,33 @@ class SyncHistory(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    entity_type: Mapped[str] = mapped_column(
-        String(50), nullable=False, index=True
-    )
+    entity_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     source: Mapped[str] = mapped_column(
-        String(50), nullable=False, index=True,
-        default=SyncSource.AS400.value
+        String(50), nullable=False, index=True, default=SyncSource.AS400.value
     )
     status: Mapped[str] = mapped_column(
-        String(20), nullable=False, index=True,
-        default=SyncStatus.PENDING.value
+        String(20), nullable=False, index=True, default=SyncStatus.PENDING.value
     )
 
     started_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False,
-        server_default=func.now(), index=True
+        DateTime(timezone=True), nullable=False, server_default=func.now(), index=True
     )
     completed_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
 
-    records_processed: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
-    )
-    records_created: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
-    )
-    records_updated: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
-    )
-    records_failed: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
-    )
+    records_processed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    records_created: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    records_updated: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    records_failed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
-    sync_duration: Mapped[Optional[float]] = mapped_column(
-        Float, nullable=True
-    )
+    sync_duration: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     triggered_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
     )
-    error_message: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
-    details: Mapped[Optional[Dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
+    details: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
     # Relationships
     triggered_by = relationship("User", foreign_keys=[triggered_by_id])
@@ -160,17 +148,16 @@ class SyncHistory(Base):
         self.error_message = error_message
 
         if details:
-            self.details = details if self.details is None else {**self.details, **details}
+            self.details = (
+                details if self.details is None else {**self.details, **details}
+            )
 
         # Calculate duration
         if self.started_at:
             self.sync_duration = (datetime.now() - self.started_at).total_seconds()
 
     def add_event(
-        self,
-        event_type: str,
-        message: str,
-        details: Optional[Dict[str, Any]] = None
+        self, event_type: str, message: str, details: Optional[Dict[str, Any]] = None
     ) -> "SyncEvent":
         """
         Add an event to this sync operation.
@@ -184,10 +171,7 @@ class SyncHistory(Base):
             Created event
         """
         event = SyncEvent(
-            sync_id=self.id,
-            event_type=event_type,
-            message=message,
-            details=details
+            sync_id=self.id, event_type=event_type, message=message, details=details
         )
         self.events.append(event)
         return event
@@ -205,23 +189,15 @@ class SyncEvent(Base):
         UUID(as_uuid=True), ForeignKey("sync_history.id"), nullable=False, index=True
     )
 
-    event_type: Mapped[str] = mapped_column(
-        String(50), nullable=False, index=True
-    )
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), index=True
     )
-    message: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
-    details: Mapped[Optional[Dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    details: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
     # Relationships
-    sync: Mapped[SyncHistory] = relationship(
-        "SyncHistory", back_populates="events"
-    )
+    sync: Mapped[SyncHistory] = relationship("SyncHistory", back_populates="events")
 
     def __repr__(self) -> str:
         return (

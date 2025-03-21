@@ -89,7 +89,7 @@ class AuditLoggerFactory:
         if logger_type == "database":
             audit_logger = logger_class(db=db)
         elif logger_type == "file":
-            file_path = kwargs.get("file_path", settings.security.AUDIT_LOG_FILE)
+            file_path = kwargs.get("file_path", settings.AUDIT_LOG_FILE)
             audit_logger = logger_class(file_path=file_path)
         else:
             audit_logger = logger_class()
@@ -118,18 +118,11 @@ class AuditLoggerFactory:
         loggers.append(cls.create_logger("logging"))
 
         # Add file logger if configured
-        if (
-            hasattr(settings.security, "AUDIT_LOG_TO_FILE")
-            and settings.security.AUDIT_LOG_TO_FILE
-        ):
+        if hasattr(settings, "AUDIT_LOG_TO_FILE") and settings.AUDIT_LOG_TO_FILE:
             loggers.append(cls.create_logger("file"))
 
         # Add database logger if configured and session provided
-        if (
-            db
-            and hasattr(settings.security, "AUDIT_LOG_TO_DB")
-            and settings.security.AUDIT_LOG_TO_DB
-        ):
+        if db and hasattr(settings, "AUDIT_LOG_TO_DB") and settings.AUDIT_LOG_TO_DB:
             loggers.append(cls.create_logger("database", db=db))
 
         return loggers

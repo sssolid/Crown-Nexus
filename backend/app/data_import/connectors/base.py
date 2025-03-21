@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Protocol, TypeVar
 
 T = TypeVar("T")
 
+
 class Connector(Protocol):
     """Protocol for data source connectors."""
 
@@ -24,7 +25,9 @@ class Connector(Protocol):
         """
         ...
 
-    async def extract(self, query: str, limit: Optional[int] = None, **params: Any) -> List[Dict[str, Any]]:
+    async def extract(
+        self, query: str, limit: Optional[int] = None, **params: Any
+    ) -> List[Dict[str, Any]]:
         """
         Extract data from the source.
 

@@ -142,5 +142,7 @@ class SecuritySettings(BaseSettings):
         """Validate rate limit storage backend."""
         valid_storage = {"redis", "memory"}
         if v not in valid_storage:
-            raise ValueError(f"Invalid rate limit storage: {v}. Must be one of {valid_storage}")
+            raise ValueError(
+                f"Invalid rate limit storage: {v}. Must be one of {valid_storage}"
+            )
         return v

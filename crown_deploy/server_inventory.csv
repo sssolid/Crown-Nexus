@@ -1,0 +1,4 @@
+hostname,ip,username,key_path,description
+nexus-01,nexus-01,ryan,/c/Users/ryan_/.ssh/id_rsa,HP Z220
+nexus-02,nexus-02,ryan,/c/Users/ryan_/.ssh/id_rsa,Intel Pentium
+nexus-03,nexus-03,ryan,/c/Users/ryan_/.ssh/id_rsa,HP Kathy

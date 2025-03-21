@@ -47,5 +47,6 @@ class ElasticsearchSettings(BaseSettings):
 
         return f"{protocol}://{auth}{self.ELASTICSEARCH_HOST}:{self.ELASTICSEARCH_PORT}"
 
+
 # Create the settings instance
 elasticsearch_settings = ElasticsearchSettings()

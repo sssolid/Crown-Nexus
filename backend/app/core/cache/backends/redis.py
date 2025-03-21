@@ -1,9 +1,9 @@
-# app/core/cache/redis.py
+# app/core/cache/backends/redis.py
 from __future__ import annotations
 
 import json
 import pickle
-from typing import Any, Dict, List, Optional, Pattern, Set, TypeVar, Union, cast
+from typing import Any, Dict, List, Optional, TypeVar, Union, cast
 
 import redis.asyncio as redis
 from redis.asyncio import Redis
@@ -43,6 +43,35 @@ class RedisCacheBackend(CacheBackend[T]):
         self.redis_options = redis_options
         self.client: Optional[Redis] = None
         logger.debug(f"Initialized Redis cache backend with prefix: {prefix}")
+
+    async def initialize(self) -> None:
+        """Initialize the Redis connection.
+
+        This method establishes the Redis connection during application startup.
+        """
+        try:
+            client = await self._get_client()
+            # Test connection by pinging the server
+            await client.ping()
+            logger.info("Redis cache connection established successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize Redis connection: {str(e)}")
+            raise
+
+    async def shutdown(self) -> None:
+        """Close the Redis connection.
+
+        This method is called during application shutdown to properly close
+        the Redis connection.
+        """
+        if self.client:
+            try:
+                await self.client.close()
+                logger.info("Redis cache connection closed")
+            except Exception as e:
+                logger.error(f"Error closing Redis connection: {str(e)}")
+            finally:
+                self.client = None
 
     async def _get_client(self) -> Redis:
         """Get or create Redis client.

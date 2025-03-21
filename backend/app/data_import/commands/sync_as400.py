@@ -14,12 +14,20 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import typer
 
-from app.core.config.integrations.as400 import as400_settings, get_as400_connector_config
+from app.core.config.integrations.as400 import (
+    as400_settings,
+    get_as400_connector_config,
+)
 from app.core.exceptions import AppException
 from app.core.logging import get_logger
-from app.data_import.connectors.as400_connector import AS400Connector, AS400ConnectionConfig
+from app.data_import.connectors.as400_connector import (
+    AS400Connector,
+    AS400ConnectionConfig,
+)
 from app.services.as400_sync_service import (
-    as400_sync_service, SyncEntityType, SyncStatus
+    as400_sync_service,
+    SyncEntityType,
+    SyncStatus,
 )
 from app.db.session import get_db_context
 
@@ -30,20 +38,19 @@ app = typer.Typer()
 @app.command()
 def sync(
     entity_type: str = typer.Option(
-        "product", "--entity", "-e",
-        help="Entity type to sync (product, measurement, stock, pricing)"
+        "product",
+        "--entity",
+        "-e",
+        help="Entity type to sync (product, measurement, stock, pricing)",
     ),
     force: bool = typer.Option(
-        False, "--force", "-f",
-        help="Force sync regardless of schedule"
+        False, "--force", "-f", help="Force sync regardless of schedule"
     ),
     dry_run: bool = typer.Option(
-        False, "--dry-run", "-d",
-        help="Extract and process data but don't import"
+        False, "--dry-run", "-d", help="Extract and process data but don't import"
     ),
     output_file: Optional[str] = typer.Option(
-        None, "--output", "-o",
-        help="Output file for processed data (dry run only)"
+        None, "--output", "-o", help="Output file for processed data (dry run only)"
     ),
 ) -> None:
     """
@@ -61,7 +68,7 @@ def sync(
             typer.echo(
                 f"Error: Invalid entity type '{entity_type}'. "
                 f"Valid types are: {valid_types}",
-                err=True
+                err=True,
             )
             sys.exit(1)
 
@@ -87,12 +94,13 @@ def sync(
 @app.command()
 def schedule(
     entity_type: str = typer.Option(
-        "product", "--entity", "-e",
-        help="Entity type to schedule (product, measurement, stock, pricing)"
+        "product",
+        "--entity",
+        "-e",
+        help="Entity type to schedule (product, measurement, stock, pricing)",
     ),
     delay: int = typer.Option(
-        300, "--delay", "-d",
-        help="Delay in seconds before running sync"
+        300, "--delay", "-d", help="Delay in seconds before running sync"
     ),
 ) -> None:
     """
@@ -110,7 +118,7 @@ def schedule(
             typer.echo(
                 f"Error: Invalid entity type '{entity_type}'. "
                 f"Valid types are: {valid_types}",
-                err=True
+                err=True,
             )
             sys.exit(1)
 
@@ -129,12 +137,13 @@ def schedule(
 @app.command()
 def status(
     entity_type: Optional[str] = typer.Option(
-        None, "--entity", "-e",
-        help="Entity type to check (product, measurement, stock, pricing)"
+        None,
+        "--entity",
+        "-e",
+        help="Entity type to check (product, measurement, stock, pricing)",
     ),
     json_output: bool = typer.Option(
-        False, "--json", "-j",
-        help="Output in JSON format"
+        False, "--json", "-j", help="Output in JSON format"
     ),
 ) -> None:
     """
@@ -154,7 +163,7 @@ def status(
                 typer.echo(
                     f"Error: Invalid entity type '{entity_type}'. "
                     f"Valid types are: {valid_types}",
-                    err=True
+                    err=True,
                 )
                 sys.exit(1)
 
@@ -191,7 +200,9 @@ def test_connection() -> None:
             typer.echo(f"Available tables: {', '.join(result.get('tables', []))}")
             sys.exit(0)
         else:
-            typer.echo(f"Connection failed: {result.get('error', 'Unknown error')}", err=True)
+            typer.echo(
+                f"Connection failed: {result.get('error', 'Unknown error')}", err=True
+            )
             sys.exit(1)
     except Exception as e:
         typer.echo(f"Error: {str(e)}", err=True)
@@ -199,10 +210,7 @@ def test_connection() -> None:
 
 
 async def _run_sync(
-    entity: SyncEntityType,
-    force: bool,
-    dry_run: bool,
-    output_file: Optional[str]
+    entity: SyncEntityType, force: bool, dry_run: bool, output_file: Optional[str]
 ) -> Dict:
     """
     Run a sync operation asynchronously.
@@ -286,12 +294,16 @@ async def _test_as400_connection() -> Dict:
         tables = []
         try:
             # This query might need adjustment for AS400
-            result = await connector.extract("SELECT TABLE_NAME FROM QSYS2.SYSTABLES FETCH FIRST 10 ROWS ONLY")
+            result = await connector.extract(
+                "SELECT TABLE_NAME FROM QSYS2.SYSTABLES FETCH FIRST 10 ROWS ONLY"
+            )
             tables = [row.get("TABLE_NAME", "") for row in result]
         except Exception:
             # Try alternative approach if first fails
             try:
-                result = await connector.extract("SELECT * FROM SYSTABLES FETCH FIRST 10 ROWS ONLY")
+                result = await connector.extract(
+                    "SELECT * FROM SYSTABLES FETCH FIRST 10 ROWS ONLY"
+                )
                 tables = [row.get("TABLE_NAME", "") for row in result]
             except Exception:
                 pass
@@ -304,13 +316,13 @@ async def _test_as400_connection() -> Dict:
             "database": connector_config.database,
             "tables": tables[:10],  # Limit to 10 tables
             "message": "Connection successful",
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
     except Exception as e:
         return {
             "success": False,
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
 
@@ -356,10 +368,12 @@ def _print_sync_status(result: Dict, entity: Optional[SyncEntityType]) -> None:
         typer.echo(f"\nHistory for {entity.value}:")
         for idx, history in enumerate(result["entity_history"][:5]):  # Show only last 5
             typer.echo(f"  {idx+1}. {history['status']} at {history['started_at']}")
-            typer.echo(f"     Processed: {history['records_processed']}, "
-                       f"Created: {history['records_created']}, "
-                       f"Updated: {history['records_updated']}, "
-                       f"Failed: {history['records_failed']}")
+            typer.echo(
+                f"     Processed: {history['records_processed']}, "
+                f"Created: {history['records_created']}, "
+                f"Updated: {history['records_updated']}, "
+                f"Failed: {history['records_failed']}"
+            )
             if history.get("error_message"):
                 typer.echo(f"     Error: {history['error_message']}")
 

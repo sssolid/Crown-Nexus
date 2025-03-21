@@ -316,7 +316,9 @@ async def update_object(
         db_obj = await get_by_id(db, model, id_value)
 
         if not db_obj:
-            logger.warning(f"Update failed: No {model.__name__} found with ID: {id_value}")
+            logger.warning(
+                f"Update failed: No {model.__name__} found with ID: {id_value}"
+            )
             return None
 
         # Add user ID for tracking changes
@@ -380,7 +382,9 @@ async def delete_object(
         db_obj = await get_by_id(db, model, id_value)
 
         if not db_obj:
-            logger.warning(f"Delete failed: No {model.__name__} found with ID: {id_value}")
+            logger.warning(
+                f"Delete failed: No {model.__name__} found with ID: {id_value}"
+            )
             return False
 
         if hard_delete:
@@ -673,7 +677,9 @@ async def upsert(
         logger.debug(f"Upserting {model.__name__} with data: {data}")
 
         if not unique_fields:
-            logger.warning(f"No unique fields provided for {model.__name__}, creating new instance")
+            logger.warning(
+                f"No unique fields provided for {model.__name__}, creating new instance"
+            )
             return await create_object(db, model, data)
 
         # Build conditions to find existing object
@@ -699,7 +705,9 @@ async def upsert(
             db.add(existing)
             await db.flush()
             await db.refresh(existing)
-            logger.info(f"Updated existing {model.__name__} with ID: {getattr(existing, 'id', None)}")
+            logger.info(
+                f"Updated existing {model.__name__} with ID: {getattr(existing, 'id', None)}"
+            )
             return existing
         else:
             logger.debug(f"No existing {model.__name__} found, creating new")
@@ -714,9 +722,7 @@ async def upsert(
 
 
 # Database metrics tracking
-def track_db_query(
-    operation: str, entity: Optional[str] = None
-) -> Callable[[F], F]:
+def track_db_query(operation: str, entity: Optional[str] = None) -> Callable[[F], F]:
     """Decorator to track database query performance.
 
     Args:

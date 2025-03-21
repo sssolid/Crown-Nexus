@@ -42,7 +42,7 @@ class AuditService(ServiceInterface):
             db: Optional database session
         """
         self.db = db
-        self.enabled = getattr(settings.security, "AUDIT_LOGGING_ENABLED", True)
+        self.enabled = getattr(settings, "AUDIT_LOGGING_ENABLED", True)
         self.loggers: List[AuditLogger] = []
 
         # Default sensitive fields to mask

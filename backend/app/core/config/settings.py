@@ -83,6 +83,7 @@ class Settings(
             AS400Settings: The AS400 settings object
         """
         from app.core.config.integrations.as400 import as400_settings
+
         return as400_settings
 
     @property
@@ -97,6 +98,7 @@ class Settings(
             ElasticsearchSettings: The Elasticsearch settings object
         """
         from app.core.config.integrations.elasticsearch import elasticsearch_settings
+
         return elasticsearch_settings
 
 

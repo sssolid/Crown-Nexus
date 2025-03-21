@@ -52,7 +52,9 @@ class MediaSettings(BaseSettings):
         """Validate media storage type."""
         valid_storage_types: Set[str] = {"local", "s3", "azure", "gcs"}
         if v not in valid_storage_types:
-            raise ValueError(f"Invalid storage type: {v}. Must be one of {valid_storage_types}")
+            raise ValueError(
+                f"Invalid storage type: {v}. Must be one of {valid_storage_types}"
+            )
         return v
 
     @property

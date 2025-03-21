@@ -14,7 +14,11 @@ import pyodbc
 from pydantic import BaseModel, Field, SecretStr, validator
 from cryptography.fernet import Fernet
 
-from app.core.exceptions import ConfigurationException, DatabaseException, SecurityException
+from app.core.exceptions import (
+    ConfigurationException,
+    DatabaseException,
+    SecurityException,
+)
 from app.core.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.as400_connector")
@@ -36,13 +40,9 @@ class AS400ConnectionConfig(BaseModel):
     allowed_schemas: Optional[List[str]] = Field(
         None, description="Whitelist of allowed schemas/libraries"
     )
-    connection_timeout: int = Field(
-        30, description="Connection timeout in seconds"
-    )
+    connection_timeout: int = Field(30, description="Connection timeout in seconds")
     query_timeout: int = Field(60, description="Query timeout in seconds")
-    encrypt_connection: bool = Field(
-        True, description="Encrypt connection parameters"
-    )
+    encrypt_connection: bool = Field(True, description="Encrypt connection parameters")
 
     @validator("port")
     def validate_port(cls, v: Optional[int]) -> Optional[int]:
@@ -52,9 +52,7 @@ class AS400ConnectionConfig(BaseModel):
         return v
 
     @validator("allowed_tables", "allowed_schemas")
-    def validate_allowed_lists(
-        cls, v: Optional[List[str]]
-    ) -> Optional[List[str]]:
+    def validate_allowed_lists(cls, v: Optional[List[str]]) -> Optional[List[str]]:
         """Validate and normalize allowed lists."""
         if v is not None:
             return [item.upper() for item in v]
@@ -122,7 +120,9 @@ class AS400Connector:
             try:
                 self.connection = pyodbc.connect(connection_string)
             except pyodbc.Error as e:
-                logger.debug(f"Connection attempt failed: {str(e)}, retrying with different parameters")
+                logger.debug(
+                    f"Connection attempt failed: {str(e)}, retrying with different parameters"
+                )
                 # If first approach fails, try without any extra parameters
                 self.connection = pyodbc.connect(connection_string)
 
@@ -138,7 +138,7 @@ class AS400Connector:
 
                 try:
                     # Set query timeout if supported
-                    if hasattr(self.connection, 'timeout'):
+                    if hasattr(self.connection, "timeout"):
                         self.connection.timeout = self.config.query_timeout
                 except (pyodbc.Error, AttributeError) as e:
                     logger.debug(f"Could not set timeout: {str(e)}")
@@ -153,7 +153,10 @@ class AS400Connector:
             logger.error(f"Failed to connect to AS400: {sanitized_error}")
 
             # Convert error to appropriate exception type
-            if "permission" in error_msg.lower() or "access denied" in error_msg.lower():
+            if (
+                "permission" in error_msg.lower()
+                or "access denied" in error_msg.lower()
+            ):
                 raise SecurityException(
                     message=f"Security error connecting to AS400: {sanitized_error}",
                     original_exception=e,
@@ -226,7 +229,10 @@ class AS400Connector:
             logger.error(f"Error extracting data from AS400: {sanitized_error}")
 
             # Classify error
-            if "permission" in error_msg.lower() or "access denied" in error_msg.lower():
+            if (
+                "permission" in error_msg.lower()
+                or "access denied" in error_msg.lower()
+            ):
                 raise SecurityException(
                     message=f"Security error accessing AS400 data: {sanitized_error}",
                     original_exception=e,
@@ -288,7 +294,10 @@ class AS400Connector:
         # Many AS400 ODBC drivers don't support SSL connection parameter directly
         # It's often configured at the ODBC DSN level instead
         # Only add if explicitly configured and you know your driver supports it
-        if self.config.ssl and os.environ.get("AS400_ENABLE_SSL_PARAM", "").lower() == "true":
+        if (
+            self.config.ssl
+            and os.environ.get("AS400_ENABLE_SSL_PARAM", "").lower() == "true"
+        ):
             connection_string += "SSLCONNECTION=TRUE;"
 
         # Many AS400 ODBC drivers don't support the ReadOnly parameter
@@ -329,7 +338,9 @@ class AS400Connector:
                     )
 
             # Add limit clause if requested
-            limit_clause = f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
+            limit_clause = (
+                f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
+            )
             query = f'SELECT * FROM "{table_name}"{limit_clause}'
             return table_name
         else:
@@ -340,8 +351,16 @@ class AS400Connector:
             if any(
                 write_op in query_upper
                 for write_op in [
-                    "INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "TRUNCATE",
-                    "GRANT", "REVOKE", "RENAME"
+                    "INSERT",
+                    "UPDATE",
+                    "DELETE",
+                    "CREATE",
+                    "DROP",
+                    "ALTER",
+                    "TRUNCATE",
+                    "GRANT",
+                    "REVOKE",
+                    "RENAME",
                 ]
             ):
                 raise SecurityException(

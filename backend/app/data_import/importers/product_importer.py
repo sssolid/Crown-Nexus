@@ -16,14 +16,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import DatabaseException
 from app.core.logging import get_logger
 from app.db.utils import transaction
-from app.models.product import (
-    Product,
-    ProductDescription,
-    ProductMarketing
-)
+from app.models.product import Product, ProductDescription, ProductMarketing
 from app.schemas.product import ProductCreate
 
 logger = get_logger("app.data_import.importers.product_importer")
+
 
 class ProductImporter:
     """Importer for product data."""
@@ -38,7 +35,9 @@ class ProductImporter:
         self.db = db
         logger.debug("ProductImporter initialized")
 
-    async def _get_existing_products(self, part_numbers: List[str]) -> Dict[str, Product]:
+    async def _get_existing_products(
+        self, part_numbers: List[str]
+    ) -> Dict[str, Product]:
         """
         Get existing products by part numbers.
 
@@ -58,19 +57,19 @@ class ProductImporter:
             query = select(Product).where(Product.part_number.in_(part_numbers))
             result = await self.db.execute(query)
             existing_products = {p.part_number: p for p in result.scalars().all()}
-            logger.debug(f"Found {len(existing_products)} existing products out of {len(part_numbers)} requested")
+            logger.debug(
+                f"Found {len(existing_products)} existing products out of {len(part_numbers)} requested"
+            )
             return existing_products
         except Exception as e:
             logger.error(f"Error fetching existing products: {str(e)}")
             raise DatabaseException(
                 message=f"Failed to fetch existing products: {str(e)}",
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def _create_or_update_product(
-        self,
-        product_data: ProductCreate,
-        existing_product: Optional[Product] = None
+        self, product_data: ProductCreate, existing_product: Optional[Product] = None
     ) -> Tuple[Product, bool]:
         """
         Create or update a product.
@@ -98,7 +97,7 @@ class ProductImporter:
                     late_model=product_data.late_model,
                     soft=product_data.soft,
                     universal=product_data.universal,
-                    is_active=product_data.is_active
+                    is_active=product_data.is_active,
                 )
                 self.db.add(product)
                 await self.db.flush()  # Get ID assigned
@@ -131,7 +130,7 @@ class ProductImporter:
                     description = ProductDescription(
                         product_id=product.id,
                         description_type=desc.description_type,
-                        description=desc.description
+                        description=desc.description,
                     )
                     self.db.add(description)
 
@@ -151,7 +150,7 @@ class ProductImporter:
                         product_id=product.id,
                         marketing_type=mkt.marketing_type,
                         content=mkt.content,
-                        position=mkt.position
+                        position=mkt.position,
                     )
                     self.db.add(marketing)
 
@@ -159,10 +158,12 @@ class ProductImporter:
             return product, is_new
 
         except Exception as e:
-            logger.error(f"Error creating/updating product {product_data.part_number}: {str(e)}")
+            logger.error(
+                f"Error creating/updating product {product_data.part_number}: {str(e)}"
+            )
             raise DatabaseException(
                 message=f"Failed to create/update product: {str(e)}",
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def import_data(self, data: List[ProductCreate]) -> Dict[str, Any]:
@@ -184,7 +185,7 @@ class ProductImporter:
                 "created": 0,
                 "updated": 0,
                 "errors": 0,
-                "total": 0
+                "total": 0,
             }
 
         try:
@@ -193,18 +194,15 @@ class ProductImporter:
             existing_products = await self._get_existing_products(part_numbers)
 
             # Statistics
-            stats = {
-                "created": 0,
-                "updated": 0,
-                "errors": 0,
-                "error_details": []
-            }
+            stats = {"created": 0, "updated": 0, "errors": 0, "error_details": []}
 
             # Process each product
             for product_data in data:
                 try:
                     existing_product = existing_products.get(product_data.part_number)
-                    _, is_new = await self._create_or_update_product(product_data, existing_product)
+                    _, is_new = await self._create_or_update_product(
+                        product_data, existing_product
+                    )
 
                     if is_new:
                         stats["created"] += 1
@@ -212,12 +210,13 @@ class ProductImporter:
                         stats["updated"] += 1
 
                 except Exception as e:
-                    logger.error(f"Error importing product {product_data.part_number}: {str(e)}")
+                    logger.error(
+                        f"Error importing product {product_data.part_number}: {str(e)}"
+                    )
                     stats["errors"] += 1
-                    stats["error_details"].append({
-                        "part_number": product_data.part_number,
-                        "error": str(e)
-                    })
+                    stats["error_details"].append(
+                        {"part_number": product_data.part_number, "error": str(e)}
+                    )
 
             # Ensure we've flushed all changes
             await self.db.flush()
@@ -238,13 +237,12 @@ class ProductImporter:
                 "updated": stats["updated"],
                 "errors": stats["errors"],
                 "error_details": stats["error_details"] if stats["errors"] > 0 else [],
-                "total": len(data)
+                "total": len(data),
             }
         except Exception as e:
             # Roll back the transaction on error
             await self.db.rollback()
             logger.error(f"Transaction failed in import_data: {str(e)}")
             raise DatabaseException(
-                message=f"Import transaction failed: {str(e)}",
-                original_exception=e
+                message=f"Import transaction failed: {str(e)}", original_exception=e
             ) from e

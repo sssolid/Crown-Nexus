@@ -47,9 +47,7 @@ class AS400BaseProcessor(Generic[T], ABC):
     """
 
     def __init__(
-        self,
-        config: AS400ProcessorConfig,
-        destination_model: Type[T]
+        self, config: AS400ProcessorConfig, destination_model: Type[T]
     ) -> None:
         """
         Initialize the processor with configuration and model.
@@ -93,29 +91,23 @@ class AS400BaseProcessor(Generic[T], ABC):
                 processed_record = self._process_record(record)
 
                 # Track processed keys for duplicate detection if needed
-                if self.config.unique_key_field and processed_record.get(self.config.unique_key_field):
+                if self.config.unique_key_field and processed_record.get(
+                    self.config.unique_key_field
+                ):
                     key = processed_record[self.config.unique_key_field]
                     if key in self.processed_keys:
                         logger.warning(f"Duplicate key: {key}")
-                        errors.append({
-                            "index": i,
-                            "key": key,
-                            "error": "Duplicate key"
-                        })
+                        errors.append(
+                            {"index": i, "key": key, "error": "Duplicate key"}
+                        )
                         continue
                     self.processed_keys.add(key)
 
                 processed_data.append(processed_record)
 
             except Exception as e:
-                logger.warning(
-                    f"Error processing record at index {i}: {str(e)}"
-                )
-                errors.append({
-                    "index": i,
-                    "error": str(e),
-                    "record": record
-                })
+                logger.warning(f"Error processing record at index {i}: {str(e)}")
+                errors.append({"index": i, "error": str(e), "record": record})
 
         # Log processing results
         if errors:
@@ -150,14 +142,10 @@ class AS400BaseProcessor(Generic[T], ABC):
                 validated_data.append(validated_item)
             except Exception as e:
                 logger.warning(f"Validation error at index {i}: {str(e)}")
-                key_value = item.get(
-                    self.config.unique_key_field, f"index_{i}"
+                key_value = item.get(self.config.unique_key_field, f"index_{i}")
+                validation_errors.append(
+                    {"index": i, "key": key_value, "error": str(e)}
                 )
-                validation_errors.append({
-                    "index": i,
-                    "key": key_value,
-                    "error": str(e)
-                })
 
         # Log validation results
         if validation_errors:
@@ -169,8 +157,7 @@ class AS400BaseProcessor(Generic[T], ABC):
             # Raise exception if all records failed validation
             if len(validation_errors) >= len(data):
                 raise ValidationException(
-                    message="All records failed validation",
-                    errors=validation_errors
+                    message="All records failed validation", errors=validation_errors
                 )
         else:
             logger.info(f"Validated {len(validated_data)} records successfully")
@@ -233,9 +220,8 @@ class AS400BaseProcessor(Generic[T], ABC):
         # Handle various types based on field names or content patterns
 
         # Boolean fields
-        if (
-            field_name.startswith(("IS_", "HAS_"))
-            or field_name.endswith(("_FLAG", "_YN", "_INDICATOR"))
+        if field_name.startswith(("IS_", "HAS_")) or field_name.endswith(
+            ("_FLAG", "_YN", "_INDICATOR")
         ):
             return self._convert_to_boolean(value)
 
@@ -252,10 +238,9 @@ class AS400BaseProcessor(Generic[T], ABC):
             return self._convert_to_timestamp(value)
 
         # Numeric fields
-        if (
-            field_name.endswith(("_QTY", "_AMOUNT", "_AMT", "_NUM", "_PRICE"))
-            and isinstance(value, (str, int, float))
-        ):
+        if field_name.endswith(
+            ("_QTY", "_AMOUNT", "_AMT", "_NUM", "_PRICE")
+        ) and isinstance(value, (str, int, float)):
             return self._convert_to_numeric(value)
 
         # Default processing: strip strings, pass other types through
@@ -350,8 +335,12 @@ class AS400BaseProcessor(Generic[T], ABC):
                 time_obj = datetime.strptime(value, self.config.time_format)
                 today = datetime.today()
                 return datetime(
-                    today.year, today.month, today.day,
-                    time_obj.hour, time_obj.minute, time_obj.second
+                    today.year,
+                    today.month,
+                    today.day,
+                    time_obj.hour,
+                    time_obj.minute,
+                    time_obj.second,
                 )
             except ValueError:
                 # Try alternative formats
@@ -360,8 +349,12 @@ class AS400BaseProcessor(Generic[T], ABC):
                         time_obj = datetime.strptime(value, fmt)
                         today = datetime.today()
                         return datetime(
-                            today.year, today.month, today.day,
-                            time_obj.hour, time_obj.minute, time_obj.second
+                            today.year,
+                            today.month,
+                            today.day,
+                            time_obj.hour,
+                            time_obj.minute,
+                            time_obj.second,
                         )
                     except ValueError:
                         continue
@@ -396,7 +389,7 @@ class AS400BaseProcessor(Generic[T], ABC):
                 for fmt in [
                     "%Y%m%d%H%M%S",
                     "%Y-%m-%dT%H:%M:%S",
-                    "%m/%d/%Y %I:%M:%S %p"
+                    "%m/%d/%Y %I:%M:%S %p",
                 ]:
                     try:
                         return datetime.strptime(value, fmt)
@@ -445,9 +438,7 @@ class AS400BaseProcessor(Generic[T], ABC):
 
     @abstractmethod
     def _process_record_custom(
-        self,
-        processed_record: Dict[str, Any],
-        original_record: Dict[str, Any]
+        self, processed_record: Dict[str, Any], original_record: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Apply custom processing to a record.
@@ -469,9 +460,7 @@ class ProductAS400Processor(AS400BaseProcessor[T]):
     """Processor for product data from AS400."""
 
     def _process_record_custom(
-        self,
-        processed_record: Dict[str, Any],
-        original_record: Dict[str, Any]
+        self, processed_record: Dict[str, Any], original_record: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Apply product-specific processing.
@@ -484,10 +473,15 @@ class ProductAS400Processor(AS400BaseProcessor[T]):
             Further processed record
         """
         # Generate normalized part number if not present
-        if "part_number" in processed_record and "part_number_stripped" not in processed_record:
+        if (
+            "part_number" in processed_record
+            and "part_number_stripped" not in processed_record
+        ):
             part_number = processed_record["part_number"]
             if part_number:
-                processed_record["part_number_stripped"] = self._normalize_part_number(part_number)
+                processed_record["part_number_stripped"] = self._normalize_part_number(
+                    part_number
+                )
 
         return processed_record
 
@@ -508,9 +502,7 @@ class PricingAS400Processor(AS400BaseProcessor[T]):
     """Processor for pricing data from AS400."""
 
     def _process_record_custom(
-        self,
-        processed_record: Dict[str, Any],
-        original_record: Dict[str, Any]
+        self, processed_record: Dict[str, Any], original_record: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Apply pricing-specific processing.
@@ -540,9 +532,7 @@ class InventoryAS400Processor(AS400BaseProcessor[T]):
     """Processor for inventory/stock data from AS400."""
 
     def _process_record_custom(
-        self,
-        processed_record: Dict[str, Any],
-        original_record: Dict[str, Any]
+        self, processed_record: Dict[str, Any], original_record: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Apply inventory-specific processing.

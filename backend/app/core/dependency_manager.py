@@ -1,3 +1,4 @@
+# /app/core/dependency_manager.py
 from __future__ import annotations
 
 """Dependency management system for application-wide service registration and resolution.
@@ -31,8 +32,7 @@ class DependencyManager:
 
     _instance = None
     _dependencies: Dict[str, Any] = {}
-    _factories: Dict[str, Callable[..., Any]] = {}
-    _services: Dict[str, Any] = {}
+    _services: Dict[str, Callable[..., Any]] = {}
     _initialized = False
 
     def __new__(cls) -> DependencyManager:
@@ -44,7 +44,6 @@ class DependencyManager:
         if cls._instance is None:
             cls._instance = super(DependencyManager, cls).__new__(cls)
             cls._instance._dependencies = {}
-            cls._instance._factories = {}
             cls._instance._services = {}
             cls._instance._initialized = False
         return cls._instance
@@ -59,36 +58,22 @@ class DependencyManager:
         logger.debug(f"Registering dependency: {name}")
         self._dependencies[name] = instance
 
-    def register_factory(self, name: str, factory: Callable[..., Any]) -> None:
-        """Register a factory function for creating a dependency.
+    def register_service(self, provider: Callable[..., Any], name: str) -> None:
+        """Register a service provider function.
 
         Args:
-            name: The name of the dependency
-            factory: A callable that creates the dependency
+            provider: A callable that creates the service
+            name: The name of the service
         """
-        logger.debug(f"Registering factory: {name}")
-        self._factories[name] = factory
-
-    def register_service(
-        self, service_class: Type[Any], name: Optional[str] = None
-    ) -> None:
-        """Register a service class with the manager.
-
-        Args:
-            service_class: The service class to register
-            name: Optional name for the service (defaults to class name)
-        """
-        if name is None:
-            name = service_class.__name__
         logger.debug(f"Registering service: {name}")
-        self._services[name] = service_class
+        self._services[name] = provider
 
     def get(self, name: str, **kwargs: Any) -> Any:
         """Get a dependency instance by name.
 
         Args:
             name: The name of the dependency
-            **kwargs: Additional arguments to pass to the factory if needed
+            **kwargs: Additional arguments to pass to the service provider if needed
 
         Returns:
             The dependency instance
@@ -100,64 +85,31 @@ class DependencyManager:
         if name in self._dependencies:
             return self._dependencies[name]
 
-        # Check for a factory
-        if name in self._factories:
-            instance = self._factories[name](**kwargs)
+        # Check for a service provider
+        if name in self._services:
+            instance = self._services[name](**kwargs)
             if instance is not None:  # Don't cache None results
                 self._dependencies[name] = instance
             return instance
 
-        # Check for a service
-        if name in self._services:
-            return self._create_service_instance(name, **kwargs)
-
         logger.error(f"Dependency not registered: {name}")
+        available_dependencies = list(self._dependencies.keys()) + list(
+            self._services.keys()
+        )
         raise ConfigurationException(
             message=f"Dependency not registered: {name}",
             details={
                 "dependency_name": name,
-                "available_dependencies": list(self._dependencies.keys()),
+                "available_dependencies": available_dependencies,
             },
         )
-
-    def _create_service_instance(self, name: str, **kwargs: Any) -> Any:
-        """Create an instance of a registered service.
-
-        Args:
-            name: The name of the service
-            **kwargs: Arguments to pass to the service constructor
-
-        Returns:
-            The service instance
-        """
-        service_class = self._services[name]
-
-        # Handle function/method services
-        if isinstance(service_class, (staticmethod, classmethod)) or inspect.isfunction(
-            service_class
-        ):
-            db = kwargs.get("db")
-            return service_class(db) if db else service_class()
-
-        # Handle class-based services
-        signature = inspect.signature(service_class.__init__)
-        params = signature.parameters
-
-        # Check if service expects a db parameter
-        if "db" in params and "db" in kwargs:
-            return service_class(db=kwargs["db"])
-        elif "db" in params and "db" not in kwargs:
-            logger.warning(f"Database session required for service: {name}")
-            return None
-        else:
-            return service_class()
 
     def get_instance(self, cls: Type[T], **kwargs: Any) -> T:
         """Get an instance of a specific class.
 
         Args:
             cls: The class to get an instance of
-            **kwargs: Additional arguments to pass to the factory if needed
+            **kwargs: Additional arguments to pass to the service provider if needed
 
         Returns:
             An instance of the specified class
@@ -211,7 +163,22 @@ class DependencyManager:
         This calls the initialize method on each service that has one.
         """
         logger.info("Initializing services")
-        service_names = list(self._services.keys())
+
+        # Get all services that are already instantiated
+        service_names = list(self._dependencies.keys())
+
+        # Also check for services that are registered but not yet instantiated
+        for service_name in list(self._services.keys()):
+            if service_name not in service_names:
+                # Try to instantiate the service
+                try:
+                    service = self.get(service_name)
+                    if service is not None:
+                        service_names.append(service_name)
+                except Exception as e:
+                    logger.error(
+                        f"Error instantiating service {service_name}: {str(e)}"
+                    )
 
         # Add core services that should be initialized first
         core_services = [
@@ -223,12 +190,11 @@ class DependencyManager:
             s for s in service_names if s not in core_services
         ]:
             try:
-                if service_name not in self._services:
-                    continue
-
-                service = self.get(service_name)
-                if hasattr(service, "initialize") and callable(
-                    getattr(service, "initialize")
+                service = self._dependencies.get(service_name)
+                if (
+                    service
+                    and hasattr(service, "initialize")
+                    and callable(getattr(service, "initialize"))
                 ):
                     await service.initialize()
                     logger.info(f"Initialized {service_name}")
@@ -278,7 +244,7 @@ def get_dependency(name: str, **kwargs: Any) -> Any:
 
     Args:
         name: The name of the dependency
-        **kwargs: Additional arguments to pass to the factory if needed
+        **kwargs: Additional arguments to pass to the service provider if needed
 
     Returns:
         The dependency instance
@@ -307,20 +273,24 @@ def inject_dependency(dependency_name: str) -> Callable:
     return decorator
 
 
-def register_service(service_class: Type[Any], name: Optional[str] = None) -> Type[Any]:
-    """Register a service class with the dependency manager.
+def register_service(
+    provider: Callable[..., Any], name: Optional[str] = None
+) -> Callable[..., Any]:
+    """Register a service provider with the dependency manager.
 
     This can be used as a decorator or called directly.
 
     Args:
-        service_class: The service class to register
-        name: Optional name for the service (defaults to class name)
+        provider: The service provider function
+        name: Optional name for the service (defaults to function name)
 
     Returns:
-        The original service class
+        The original provider function
     """
-    dependency_manager.register_service(service_class, name)
-    return service_class
+    if name is None:
+        name = provider.__name__
+    dependency_manager.register_service(provider, name)
+    return provider
 
 
 def register_services() -> None:
@@ -328,53 +298,25 @@ def register_services() -> None:
     logger.info("Registering services")
 
     # Import services here to avoid circular imports
-    # These would typically be your service imports
     try:
-        from app.services.audit import get_audit_service, AuditService
-        from app.services.search import get_search_service, SearchService
-        from app.services.media import get_media_service, MediaService
-        from app.services.as400_sync_service import as400_sync_service, AS400SyncService
+        from app.services.audit import get_audit_service
+        from app.services.search import get_search_service
+        from app.services.media import get_media_service
+        from app.services.as400_sync_service import as400_sync_service
 
-        # from app.services.logging_service import LoggingService
-        # from app.services.chat import ChatService
-        # from app.services.currency_service import ExchangeRateService
-        # from app.services.product_service import ProductService
-        # from app.services.user_service import UserService
-        # from app.services.vehicle import VehicleDataService
-
-        # Register dependencies as factories
-        dependency_manager.register_factory(
-            "audit_service", lambda db: get_audit_service(db) if db else None
+        # Register all services with the dependency manager using snake_case naming
+        dependency_manager.register_service(
+            lambda db=None: get_audit_service(db), "audit_service"
         )
-        dependency_manager.register_factory(
-            "search_service", lambda db: get_search_service(db) if db else None
+        dependency_manager.register_service(
+            lambda db=None: get_search_service(db), "search_service"
         )
-        dependency_manager.register_factory(
-            "media_service", lambda: get_media_service()
+        dependency_manager.register_service(
+            lambda: get_media_service(), "media_service"
         )
-        dependency_manager.register_factory(
-            "as400_sync_service", lambda: as400_sync_service
+        dependency_manager.register_service(
+            lambda: as400_sync_service, "as400_sync_service"
         )
-
-        # dependency_manager.register_factory("logging_service", lambda: LoggingService())
-        # dependency_manager.register_factory("user_service", lambda db: UserService(db) if db else None)
-        # dependency_manager.register_factory("product_service", lambda db: ProductService(db) if db else None)
-        # dependency_manager.register_factory("chat_service", lambda db: ChatService(db) if db else None)
-        # dependency_manager.register_factory("vehicle_service", lambda db: VehicleDataService(db) if db else None)
-        # dependency_manager.register_factory("exchange_rate_service", lambda db: ExchangeRateService(db) if db else None)
-
-        # Register service classes
-        dependency_manager.register_service(AuditService, "AuditService")
-        dependency_manager.register_service(MediaService, "MediaService")
-        dependency_manager.register_service(SearchService, "SearchService")
-        dependency_manager.register_service(AS400SyncService, "AS400SyncService")
-
-        # dependency_manager.register_service(LoggingService, "LoggingService")
-        # dependency_manager.register_service(UserService, "UserService")
-        # dependency_manager.register_service(ProductService, "ProductService")
-        # dependency_manager.register_service(ChatService, "ChatService")
-        # dependency_manager.register_service(VehicleDataService, "VehicleDataService")
-        # dependency_manager.register_service(ExchangeRateService, "ExchangeRateService")
 
     except ImportError as e:
         logger.warning(f"Could not import all services: {str(e)}")

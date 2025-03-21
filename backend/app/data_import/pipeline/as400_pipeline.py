@@ -63,10 +63,7 @@ class AS400Pipeline(Generic[T]):
         )
 
     async def run(
-        self,
-        query: str,
-        limit: Optional[int] = None,
-        **params: Any
+        self, query: str, limit: Optional[int] = None, **params: Any
     ) -> Dict[str, Any]:
         """
         Run the sync pipeline.
@@ -161,7 +158,10 @@ class AS400Pipeline(Generic[T]):
                         total_updated += import_result.get("updated", 0)
                         total_errors += import_result.get("errors", 0)
 
-                        if "error_details" in import_result and import_result["error_details"]:
+                        if (
+                            "error_details" in import_result
+                            and import_result["error_details"]
+                        ):
                             # Adjust indices for chunk position
                             for error in import_result["error_details"]:
                                 if "index" in error:
@@ -169,13 +169,13 @@ class AS400Pipeline(Generic[T]):
                             error_details.extend(import_result["error_details"])
 
                 except Exception as e:
-                    logger.error(
-                        f"Error processing chunk {chunk_index + 1}: {str(e)}"
+                    logger.error(f"Error processing chunk {chunk_index + 1}: {str(e)}")
+                    error_details.append(
+                        {
+                            "chunk": chunk_index + 1,
+                            "error": str(e),
+                        }
                     )
-                    error_details.append({
-                        "chunk": chunk_index + 1,
-                        "error": str(e),
-                    })
                     total_errors += 1
 
             process_time = time.time() - process_start - validate_time - import_time
@@ -248,9 +248,7 @@ class AS400Pipeline(Generic[T]):
             raise
 
         except Exception as e:
-            logger.error(
-                f"Unexpected error in pipeline: {str(e)}", exc_info=True
-            )
+            logger.error(f"Unexpected error in pipeline: {str(e)}", exc_info=True)
             try:
                 await self.connector.close()
             except Exception as close_error:
@@ -309,9 +307,7 @@ class ParallelAS400Pipeline(Generic[T]):
         semaphore = asyncio.Semaphore(self.max_workers)
 
         async def run_pipeline_with_semaphore(
-            pipeline: AS400Pipeline[Any],
-            query: str,
-            **params: Any
+            pipeline: AS400Pipeline[Any], query: str, **params: Any
         ) -> Dict[str, Any]:
             async with semaphore:
                 return await pipeline.run(query, **params)
@@ -346,15 +342,15 @@ class ParallelAS400Pipeline(Generic[T]):
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 failed_pipelines += 1
-                logger.error(
-                    f"Pipeline {i+1} failed with exception: {str(result)}"
+                logger.error(f"Pipeline {i+1} failed with exception: {str(result)}")
+                pipeline_results.append(
+                    {
+                        "pipeline": i + 1,
+                        "name": getattr(self.pipelines[i], "name", f"Pipeline{i+1}"),
+                        "success": False,
+                        "error": str(result),
+                    }
                 )
-                pipeline_results.append({
-                    "pipeline": i + 1,
-                    "name": getattr(self.pipelines[i], "name", f"Pipeline{i+1}"),
-                    "success": False,
-                    "error": str(result),
-                })
             else:
                 if result.get("success", False):
                     successful_pipelines += 1
@@ -369,18 +365,20 @@ class ParallelAS400Pipeline(Generic[T]):
                 records_updated += result.get("records_updated", 0)
                 records_with_errors += result.get("records_with_errors", 0)
 
-                pipeline_results.append({
-                    "pipeline": i + 1,
-                    "name": getattr(self.pipelines[i], "name", f"Pipeline{i+1}"),
-                    "success": result.get("success", False),
-                    "records_extracted": result.get("records_extracted", 0),
-                    "records_processed": result.get("records_processed", 0),
-                    "records_validated": result.get("records_validated", 0),
-                    "records_created": result.get("records_created", 0),
-                    "records_updated": result.get("records_updated", 0),
-                    "records_with_errors": result.get("records_with_errors", 0),
-                    "message": result.get("message", ""),
-                })
+                pipeline_results.append(
+                    {
+                        "pipeline": i + 1,
+                        "name": getattr(self.pipelines[i], "name", f"Pipeline{i+1}"),
+                        "success": result.get("success", False),
+                        "records_extracted": result.get("records_extracted", 0),
+                        "records_processed": result.get("records_processed", 0),
+                        "records_validated": result.get("records_validated", 0),
+                        "records_created": result.get("records_created", 0),
+                        "records_updated": result.get("records_updated", 0),
+                        "records_with_errors": result.get("records_with_errors", 0),
+                        "message": result.get("message", ""),
+                    }
+                )
 
         total_time = time.time() - start_time
 

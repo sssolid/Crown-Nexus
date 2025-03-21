@@ -21,6 +21,7 @@ from app.core.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.file_connector")
 
+
 class FileConnectionConfig(BaseModel):
     """Configuration for file connections."""
 
@@ -40,10 +41,15 @@ class FileConnectionConfig(BaseModel):
     def validate_file_type(cls, v: str, values: Dict[str, Any]) -> str:
         file_path = values.get("file_path", "")
         if v == "csv" and not file_path.endswith(".csv"):
-            raise ValueError(f"File with extension {Path(file_path).suffix} is not a CSV file")
+            raise ValueError(
+                f"File with extension {Path(file_path).suffix} is not a CSV file"
+            )
         if v == "json" and not file_path.endswith(".json"):
-            raise ValueError(f"File with extension {Path(file_path).suffix} is not a JSON file")
+            raise ValueError(
+                f"File with extension {Path(file_path).suffix} is not a JSON file"
+            )
         return v
+
 
 class FileConnector:
     """Connector for file-based data sources (CSV, JSON)."""
@@ -72,16 +78,20 @@ class FileConnector:
             logger.debug(f"Loading file: {self.config.file_path}")
 
             if self.config.file_type == "csv":
-                with open(self.config.file_path, "r", encoding=self.config.encoding) as file:
+                with open(
+                    self.config.file_path, "r", encoding=self.config.encoding
+                ) as file:
                     reader = csv.DictReader(
                         file,
                         delimiter=self.config.csv_delimiter,
-                        quotechar=self.config.csv_quotechar
+                        quotechar=self.config.csv_quotechar,
                     )
                     self.file_data = list(reader)
 
             elif self.config.file_type == "json":
-                with open(self.config.file_path, "r", encoding=self.config.encoding) as file:
+                with open(
+                    self.config.file_path, "r", encoding=self.config.encoding
+                ) as file:
                     data = json.load(file)
                     # Ensure the data is a list of dictionaries
                     if isinstance(data, dict):
@@ -101,10 +111,12 @@ class FileConnector:
             raise ConfigurationException(
                 message=f"Failed to load file: {str(e)}",
                 component="FileConnector",
-                original_exception=e
+                original_exception=e,
             ) from e
 
-    async def extract(self, query: str = "", limit: Optional[int] = None, **params: Any) -> List[Dict[str, Any]]:
+    async def extract(
+        self, query: str = "", limit: Optional[int] = None, **params: Any
+    ) -> List[Dict[str, Any]]:
         """
         Extract data from the file.
 
@@ -145,7 +157,7 @@ class FileConnector:
                     field_values[field.strip()] = value.strip()
 
                 filtered_data = []
-                for item in (self.file_data or []):
+                for item in self.file_data or []:
                     match = True
                     for field, value in field_values.items():
                         if field not in item or str(item[field]) != value:
@@ -181,7 +193,7 @@ class FileConnector:
             raise ConfigurationException(
                 message=f"Failed to extract data from file: {str(e)}",
                 component="FileConnector",
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def close(self) -> None:

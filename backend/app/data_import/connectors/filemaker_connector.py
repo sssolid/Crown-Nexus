@@ -19,22 +19,28 @@ from app.core.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.filemaker_connector")
 
+
 class FileMakerConnectionConfig(BaseModel):
     """Configuration for FileMaker ODBC connection."""
 
     dsn: str = Field(..., description="ODBC Data Source Name")
     username: str = Field(..., description="FileMaker username")
     password: str = Field(..., description="FileMaker password")
-    database: Optional[str] = Field(None, description="FileMaker database name (often included in DSN)")
+    database: Optional[str] = Field(
+        None, description="FileMaker database name (often included in DSN)"
+    )
     server: Optional[str] = Field(None, description="FileMaker server address")
     port: Optional[int] = Field(None, description="FileMaker server port")
-    disable_ssl_verification: bool = Field(False, description="Disable SSL certificate verification")
+    disable_ssl_verification: bool = Field(
+        False, description="Disable SSL certificate verification"
+    )
 
     @validator("port")
     def validate_port(cls, v: Optional[int]) -> Optional[int]:
         if v is not None and (v < 1 or v > 65535):
             raise ValueError("Port must be between 1 and 65535")
         return v
+
 
 class FileMakerConnector:
     """Connector for FileMaker databases using ODBC."""
@@ -79,9 +85,12 @@ class FileMakerConnector:
                 # Some environments require setting environment variables
                 # to disable SSL verification globally
                 import os
-                os.environ['PYTHONHTTPSVERIFY'] = '0'
 
-                logger.warning("SSL certificate verification disabled for FileMaker connection")
+                os.environ["PYTHONHTTPSVERIFY"] = "0"
+
+                logger.warning(
+                    "SSL certificate verification disabled for FileMaker connection"
+                )
 
             logger.debug(f"Connecting to FileMaker with DSN: {self.config.dsn}")
 
@@ -95,10 +104,12 @@ class FileMakerConnector:
             logger.error(f"Failed to connect to FileMaker: {str(e)}")
             raise DatabaseException(
                 message=f"Failed to connect to FileMaker database: {str(e)}",
-                original_exception=e
+                original_exception=e,
             ) from e
 
-    async def extract(self, query: str, limit: Optional[int] = None, **params: Any) -> List[Dict[str, Any]]:
+    async def extract(
+        self, query: str, limit: Optional[int] = None, **params: Any
+    ) -> List[Dict[str, Any]]:
         """
         Extract data from FileMaker.
 
@@ -122,8 +133,10 @@ class FileMakerConnector:
             # If query is a table name rather than a SQL query
             if " " not in query:
                 # Add LIMIT clause if specified
-                limit_clause = f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
-                query = f"SELECT * FROM \"{query}\"{limit_clause}"
+                limit_clause = (
+                    f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
+                )
+                query = f'SELECT * FROM "{query}"{limit_clause}'
                 logger.debug(f"Using table query: {query}")
 
                 # Execute without parameters when just querying a table
@@ -151,7 +164,7 @@ class FileMakerConnector:
             logger.error(f"Error extracting data from FileMaker: {str(e)}")
             raise DatabaseException(
                 message=f"Failed to extract data from FileMaker: {str(e)}",
-                original_exception=e
+                original_exception=e,
             ) from e
 
     async def close(self) -> None:
@@ -170,5 +183,5 @@ class FileMakerConnector:
                 logger.error(f"Error closing FileMaker connection: {str(e)}")
                 raise DatabaseException(
                     message=f"Failed to close FileMaker connection: {str(e)}",
-                    original_exception=e
+                    original_exception=e,
                 ) from e

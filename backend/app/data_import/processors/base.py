@@ -12,6 +12,7 @@ from typing import Any, Dict, Generic, List, Protocol, TypeVar
 
 T = TypeVar("T")
 
+
 class Processor(Protocol[T]):
     """Protocol for data processors."""
 

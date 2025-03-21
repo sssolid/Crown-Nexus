@@ -18,103 +18,77 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import AppException
 from app.core.logging import get_logger
-from app.data_import.connectors.file_connector import FileConnector, FileConnectionConfig
-from app.data_import.connectors.filemaker_connector import FileMakerConnector, FileMakerConnectionConfig
+from app.data_import.connectors.file_connector import (
+    FileConnector,
+    FileConnectionConfig,
+)
+from app.data_import.connectors.filemaker_connector import (
+    FileMakerConnector,
+    FileMakerConnectionConfig,
+)
 from app.data_import.importers.product_importer import ProductImporter
 from app.data_import.pipeline.product_pipeline import ProductPipeline
-from app.data_import.processors.product_processor import ProductMappingConfig, ProductProcessor
+from app.data_import.processors.product_processor import (
+    ProductMappingConfig,
+    ProductProcessor,
+)
 from app.db.session import get_db_context
 
 logger = get_logger("app.data_import.commands.import_products")
 
 app = typer.Typer()
 
+
 @app.command()
 def import_products(
     source_type: str = typer.Option(
-        "filemaker",
-        "--source",
-        "-s",
-        help="Source type (filemaker or file)"
+        "filemaker", "--source", "-s", help="Source type (filemaker or file)"
     ),
     config_file: str = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="Path to configuration JSON file"
+        None, "--config", "-c", help="Path to configuration JSON file"
     ),
     query: str = typer.Option(
-        None,
-        "--query",
-        "-q",
-        help="Query or table name to extract data from"
+        None, "--query", "-q", help="Query or table name to extract data from"
     ),
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
         "-d",
-        help="Dry run (extract, process, validate, but don't import)"
+        help="Dry run (extract, process, validate, but don't import)",
     ),
     output_file: Optional[str] = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help="Output file for processed data (dry run only)"
+        None, "--output", "-o", help="Output file for processed data (dry run only)"
     ),
-    dsn: Optional[str] = typer.Option(
-        None,
-        "--dsn",
-        help="FileMaker ODBC DSN"
-    ),
+    dsn: Optional[str] = typer.Option(None, "--dsn", help="FileMaker ODBC DSN"),
     # FileMaker specific options
     username: Optional[str] = typer.Option(
-        None,
-        "--username",
-        "-u",
-        help="FileMaker username"
+        None, "--username", "-u", help="FileMaker username"
     ),
     password: Optional[str] = typer.Option(
-        None,
-        "--password",
-        "-p",
-        help="FileMaker password"
+        None, "--password", "-p", help="FileMaker password"
     ),
     database: Optional[str] = typer.Option(
         None,
         "--database",
         "-db",
-        help="FileMaker database name (optional, may be included in DSN)"
+        help="FileMaker database name (optional, may be included in DSN)",
     ),
     file_path: Optional[str] = typer.Option(
-        None,
-        "--file",
-        "-f",
-        help="Path to input file (CSV or JSON)"
+        None, "--file", "-f", help="Path to input file (CSV or JSON)"
     ),
     # Mapping options
     mapping_file: Optional[str] = typer.Option(
-        None,
-        "--mapping",
-        "-m",
-        help="Path to field mapping JSON file"
+        None, "--mapping", "-m", help="Path to field mapping JSON file"
     ),
     # File specific options
     file_type: Optional[str] = typer.Option(
-        None,
-        "--file-type",
-        "-ft",
-        help="File type (csv or json)"
+        None, "--file-type", "-ft", help="File type (csv or json)"
     ),
     disable_ssl: bool = typer.Option(
-        False,
-        "--disable-ssl-verification",
-        help="Disable SSL certificate verification"
+        False, "--disable-ssl-verification", help="Disable SSL certificate verification"
     ),
     limit: Optional[int] = typer.Option(
-        None,
-        "--limit",
-        "-l",
-        help="Limit the number of records to import"
+        None, "--limit", "-l", help="Limit the number of records to import"
     ),
 ) -> None:
     """
@@ -134,7 +108,7 @@ def import_products(
             database=database,
             file_path=file_path,
             file_type=file_type,
-            disable_ssl=disable_ssl
+            disable_ssl=disable_ssl,
         )
 
         mapping_config = _load_mapping_config(mapping_file)
@@ -146,15 +120,17 @@ def import_products(
                 query = ""
 
         # Run the import
-        result = asyncio.run(_run_import(
-            source_type=source_type,
-            connector_config=connector_config,
-            mapping_config=mapping_config,
-            query=query,
-            limit=limit,
-            dry_run=dry_run,
-            output_file=output_file
-        ))
+        result = asyncio.run(
+            _run_import(
+                source_type=source_type,
+                connector_config=connector_config,
+                mapping_config=mapping_config,
+                query=query,
+                limit=limit,
+                dry_run=dry_run,
+                output_file=output_file,
+            )
+        )
 
         # Print result
         _print_result(result)
@@ -171,6 +147,7 @@ def import_products(
         typer.echo(f"Error: {str(e)}", err=True)
         sys.exit(1)
 
+
 def _load_connector_config(
     source_type: str,
     config_file: Optional[str],
@@ -180,7 +157,7 @@ def _load_connector_config(
     database: Optional[str],
     file_path: Optional[str],
     file_type: Optional[str],
-    disable_ssl: bool = False
+    disable_ssl: bool = False,
 ) -> Dict:
     """
     Load connector configuration from file or command line options.
@@ -219,7 +196,7 @@ def _load_connector_config(
             "dsn": dsn,
             "username": username,
             "password": password,
-            "disable_ssl_verification": disable_ssl
+            "disable_ssl_verification": disable_ssl,
         }
 
         # Only add database if specified
@@ -251,11 +228,12 @@ def _load_connector_config(
             "file_type": file_type,
             "encoding": "utf-8",
             "csv_delimiter": ",",
-            "csv_quotechar": '"'
+            "csv_quotechar": '"',
         }
 
     else:
         raise ValueError(f"Unsupported source type: {source_type}")
+
 
 def _load_mapping_config(mapping_file: Optional[str]) -> Dict:
     """
@@ -292,12 +270,11 @@ def _load_mapping_config(mapping_file: Optional[str]) -> Dict:
         "description_fields": {
             "Short": "ShortDescription",
             "Long": "Description",
-            "Keywords": "Keywords"
+            "Keywords": "Keywords",
         },
-        "marketing_fields": {
-            "Bullet Point": "BulletPoints"
-        }
+        "marketing_fields": {"Bullet Point": "BulletPoints"},
     }
+
 
 async def _run_import(
     source_type: str,
@@ -306,7 +283,7 @@ async def _run_import(
     query: str,
     limit: Optional[int],
     dry_run: bool,
-    output_file: Optional[str]
+    output_file: Optional[str],
 ) -> Dict:
     """
     Run the import pipeline.
@@ -328,7 +305,9 @@ async def _run_import(
     async with get_db_context() as db:
         # Create connector
         if source_type == "filemaker":
-            connector = FileMakerConnector(FileMakerConnectionConfig(**connector_config))
+            connector = FileMakerConnector(
+                FileMakerConnectionConfig(**connector_config)
+            )
         else:
             connector = FileConnector(FileConnectionConfig(**connector_config))
 
@@ -340,10 +319,7 @@ async def _run_import(
 
         # Create pipeline
         pipeline = ProductPipeline(
-            connector=connector,
-            processor=processor,
-            importer=importer,
-            dry_run=dry_run
+            connector=connector, processor=processor, importer=importer, dry_run=dry_run
         )
 
         # Run pipeline
@@ -359,6 +335,7 @@ async def _run_import(
                 typer.echo(f"Failed to write output file: {str(e)}", err=True)
 
         return result
+
 
 def _print_result(result: Dict) -> None:
     """
@@ -384,8 +361,9 @@ def _print_result(result: Dict) -> None:
     typer.echo(f"    - Import: {result.get('import_time', 0):.2f} seconds")
     typer.echo(f"    - Total: {result.get('total_time', 0):.2f} seconds")
 
-    if result.get('dry_run', False):
+    if result.get("dry_run", False):
         typer.echo("\nDRY RUN: No data was imported")
+
 
 if __name__ == "__main__":
     app()

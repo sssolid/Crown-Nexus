@@ -12,7 +12,7 @@ database paths, caching, and validation.
 import os
 from typing import Optional
 
-from pydantic import Field, model_validator
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.config.base import Environment
@@ -22,26 +22,27 @@ class FitmentSettings(BaseSettings):
     """Fitment database and processing settings."""
 
     # Paths to fitment data files
-    VCDB_PATH: str = Field("data/vcdb.accdb")
-    PCDB_PATH: str = Field("data/pcdb.accdb")
+    VCDB_PATH: str = "data/vcdb.accdb"
+    PCDB_PATH: str = "data/pcdb.accdb"
     MODEL_MAPPINGS_PATH: Optional[str] = None
 
     # Database and performance settings
     FITMENT_DB_URL: Optional[str] = None
-    FITMENT_LOG_LEVEL: str = Field("INFO")
-    FITMENT_CACHE_SIZE: int = Field(100)
+    FITMENT_LOG_LEVEL: str = "INFO"
+    FITMENT_CACHE_SIZE: int = 100
 
     # Environment (used for validation logic)
-    ENVIRONMENT: Environment = Field(Environment.DEVELOPMENT)
+    ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Allow extra fields in env file
     )
 
     @model_validator(mode="after")
-    def validate_fitment_paths(self) -> FitmentSettings:
+    def validate_fitment_paths(self) -> "FitmentSettings":
         """Validate fitment file paths in production."""
         # Only validate paths in production
         if self.ENVIRONMENT == Environment.PRODUCTION:

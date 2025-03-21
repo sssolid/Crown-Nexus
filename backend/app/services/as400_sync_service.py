@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Set, Type, cast
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config.as400 import AS400Settings, as400_settings, get_as400_connector_config
+from app.core.config.integrations.as400 import AS400Settings, as400_settings, get_as400_connector_config
 from app.core.exceptions import AppException, ConfigurationException
 from app.core.logging import get_logger
 from app.data_import.connectors.as400_connector import AS400Connector, AS400ConnectionConfig

@@ -11,7 +11,7 @@ including connection parameters and security settings.
 
 from typing import Optional
 
-from pydantic import Field, SecretStr
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,9 +19,9 @@ class ElasticsearchSettings(BaseSettings):
     """Elasticsearch connection and configuration settings."""
 
     # Connection settings
-    ELASTICSEARCH_HOST: str = Field("localhost")
-    ELASTICSEARCH_PORT: int = Field(9200)
-    ELASTICSEARCH_USE_SSL: bool = Field(False)
+    ELASTICSEARCH_HOST: str = "localhost"
+    ELASTICSEARCH_PORT: int = 9200
+    ELASTICSEARCH_USE_SSL: bool = False
     ELASTICSEARCH_USERNAME: Optional[str] = None
     ELASTICSEARCH_PASSWORD: Optional[SecretStr] = None
 
@@ -29,6 +29,7 @@ class ElasticsearchSettings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Allow extra fields in env file
     )
 
     @property
@@ -45,3 +46,6 @@ class ElasticsearchSettings(BaseSettings):
             auth = f"{self.ELASTICSEARCH_USERNAME}:{password}@"
 
         return f"{protocol}://{auth}{self.ELASTICSEARCH_HOST}:{self.ELASTICSEARCH_PORT}"
+
+# Create the settings instance
+elasticsearch_settings = ElasticsearchSettings()

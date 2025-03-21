@@ -10,7 +10,7 @@ authentication, CORS, rate limiting, and content security policies.
 """
 
 import secrets
-from typing import List, Union
+from typing import Any, List, Optional, Union
 
 from pydantic import AnyHttpUrl, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -36,7 +36,7 @@ class SecuritySettings(BaseSettings):
     CORS_ALWAYS_ALLOW: bool = Field(
         default=False, description="Whether to always allow CORS requests"
     )
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = Field(default_factory=list)
+    BACKEND_CORS_ORIGINS: List[str] = Field(default_factory=list)
 
     # CSRF protection
     CSRF_COOKIE_SECURE: bool = Field(
@@ -103,19 +103,41 @@ class SecuritySettings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Allow extra fields in env file
+        json_schema_extra={
+            # Disable JSON parsing for these fields that use string-based parsing
+            "ALLOWED_HOSTS": {"env_mode": "str"},
+            "TRUSTED_PROXIES": {"env_mode": "str"},
+            "BACKEND_CORS_ORIGINS": {"env_mode": "str"},
+        },
     )
+
+    @field_validator("ALLOWED_HOSTS", "TRUSTED_PROXIES", mode="before")
+    @classmethod
+    def parse_str_to_list(cls, v: Any) -> List[str]:
+        """Parse string to list of strings if needed."""
+        if isinstance(v, str):
+            if not v:
+                return []
+            if "," in v:
+                return [item.strip() for item in v.split(",")]
+            return [v.strip()]
+        return v
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         """Parse CORS origins from string or list."""
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
-        raise ValueError(v)
+        if isinstance(v, str):
+            if not v:
+                return []
+            if "," in v:
+                return [i.strip() for i in v.split(",")]
+            return [v.strip()]
+        return v
 
     @field_validator("RATE_LIMIT_STORAGE")
+    @classmethod
     def validate_rate_limit_storage(cls, v: str) -> str:
         """Validate rate limit storage backend."""
         valid_storage = {"redis", "memory"}

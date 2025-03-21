@@ -9,14 +9,15 @@ This module exports the main settings interfaces and common types used
 throughout the application.
 """
 
+# First, export base types that don't depend on settings
 from app.core.config.base import Environment, LogLevel
-from app.core.config.integrations import (
-    AS400Settings,
-    ElasticsearchSettings,
-    as400_settings,
-    get_as400_connector_config,
-)
+
+# Then export the settings
 from app.core.config.settings import Settings, get_settings, settings
+
+# Export integration settings
+from app.core.config.integrations.as400 import AS400Settings, as400_settings, get_as400_connector_config
+from app.core.config.integrations.elasticsearch import ElasticsearchSettings, elasticsearch_settings
 
 __all__ = [
     "Settings",
@@ -27,5 +28,6 @@ __all__ = [
     "AS400Settings",
     "ElasticsearchSettings",
     "as400_settings",
+    "elasticsearch_settings",
     "get_as400_connector_config",
 ]

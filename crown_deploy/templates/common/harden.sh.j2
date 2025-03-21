@@ -13,10 +13,38 @@ sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/
 sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 sudo systemctl restart ssh || sudo systemctl restart sshd
 
-# Setup automatic security updates
-echo "Setting up automatic security updates..."
-sudo apt install -y unattended-upgrades apt-listchanges
-sudo dpkg-reconfigure -plow unattended-upgrades
+echo "[INFO] Installing unattended-upgrades and related tools..."
+sudo DEBIAN_FRONTEND=noninteractive apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unattended-upgrades apt-listchanges
+
+echo "[INFO] Enabling unattended-upgrades (non-interactive)..."
+echo 'unattended-upgrades unattended-upgrades/enable_auto_updates boolean true' | sudo debconf-set-selections
+
+echo "[INFO] Configuring periodic APT updates..."
+sudo tee /etc/apt/apt.conf.d/20auto-upgrades > /dev/null <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+
+echo "[INFO] Configuring unattended-upgrades (security-only, no auto-reboot)..."
+sudo tee /etc/apt/apt.conf.d/50unattended-upgrades > /dev/null <<'EOF'
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-security";
+};
+
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "false";
+Unattended-Upgrade::Mail "root";
+Unattended-Upgrade::MailOnlyOnError "true";
+EOF
+
+echo "[INFO] Reloading systemd timers and services..."
+sudo systemctl daemon-reexec
+sudo systemctl restart unattended-upgrades.service || true
+
+echo "[INFO] Setup complete. Security updates will be applied automatically without reboots."
 
 # Configure fail2ban
 echo "Configuring fail2ban..."

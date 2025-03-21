@@ -19,7 +19,7 @@ from pythonjsonlogger import jsonlogger
 from structlog.stdlib import BoundLogger
 from structlog.types import EventDict, Processor, WrappedLogger
 
-from app.core.config import Environment, LogLevel, settings
+from app.core.config.base import Environment, LogLevel
 
 # Type variables for function signatures
 F = TypeVar("F", bound=Callable[..., Any])

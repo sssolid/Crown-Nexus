@@ -11,9 +11,9 @@ environment, logging configuration, and basic application information.
 
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional, Union
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -39,33 +39,40 @@ class BaseAppSettings(BaseSettings):
     """Base application settings and configuration."""
 
     # Basic info
-    PROJECT_NAME: str = Field("Crown Nexus")
-    DESCRIPTION: str = Field("B2B platform for automotive aftermarket industry")
-    VERSION: str = Field("0.1.0")
-    API_V1_STR: str = Field("/api/v1")
-    ENVIRONMENT: Environment = Field(Environment.DEVELOPMENT)
-    BASE_DIR: Path = Field(
-        default_factory=lambda: Path(__file__).resolve().parent.parent.parent.parent
-    )
+    PROJECT_NAME: str = "Crown Nexus"
+    DESCRIPTION: str = "B2B platform for automotive aftermarket industry"
+    VERSION: str = "0.1.0"
+    API_V1_STR: str = "/api/v1"
+    ENVIRONMENT: Environment = Environment.DEVELOPMENT
+    BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent.parent
 
     # Locale settings
-    DEFAULT_LOCALE: str = Field("en")
-    AVAILABLE_LOCALES: List[str] = Field(["en", "es", "fr", "de"])
+    DEFAULT_LOCALE: str = "en"
+    AVAILABLE_LOCALES: Union[List[str], str] = ["en", "es", "fr", "de"]
 
     # Logging settings
-    LOG_LEVEL: LogLevel = Field(LogLevel.INFO)
-    LOG_FORMAT: str = Field("text")
+    LOG_LEVEL: LogLevel = LogLevel.INFO
+    LOG_FORMAT: str = "text"
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Allow extra fields in env file
+        json_schema_extra={
+            # Disable JSON parsing for these fields
+            "AVAILABLE_LOCALES": {"env_mode": "str"},
+        },
     )
 
-    @field_validator("AVAILABLE_LOCALES")
-    def validate_locales(cls, v: List[str]) -> List[str]:
-        """Validate that all locales are correctly formatted."""
-        for locale in v:
-            if not locale.isalpha() or len(locale) != 2:
-                raise ValueError(f"Invalid locale format: {locale}. Expected 2-letter code.")
+    @field_validator("AVAILABLE_LOCALES", mode="before")
+    @classmethod
+    def parse_str_to_list(cls, v: Any) -> List[str]:
+        """Parse string to list."""
+        if isinstance(v, str):
+            if not v:
+                return []
+            if "," in v:
+                return [item.strip() for item in v.split(",")]
+            return [v.strip()]
         return v

@@ -12,7 +12,7 @@ CDN configuration.
 import os
 from typing import Optional, Set
 
-from pydantic import DirectoryPath, Field, field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.config.base import Environment
@@ -22,21 +22,22 @@ class MediaSettings(BaseSettings):
     """Media handling and storage settings."""
 
     # Media storage configuration
-    MEDIA_ROOT: DirectoryPath = Field("media")
-    MEDIA_URL: str = Field("/media/")
-    MEDIA_STORAGE_TYPE: str = Field("local")  # Options: local, s3, azure, etc.
+    MEDIA_ROOT: str = "media"
+    MEDIA_URL: str = "/media/"
+    MEDIA_STORAGE_TYPE: str = "local"  # Options: local, s3, azure, etc.
     MEDIA_CDN_URL: Optional[str] = None
 
     # Current environment (used for CDN decisions)
-    ENVIRONMENT: Environment = Field(Environment.DEVELOPMENT)
+    ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Allow extra fields in env file
     )
 
-    @field_validator("MEDIA_ROOT", mode="before")
+    @field_validator("MEDIA_ROOT")
     @classmethod
     def create_media_directories(cls, v: str) -> str:
         """Create media directories if they don't exist."""
@@ -46,6 +47,7 @@ class MediaSettings(BaseSettings):
         return v
 
     @field_validator("MEDIA_STORAGE_TYPE")
+    @classmethod
     def validate_storage_type(cls, v: str) -> str:
         """Validate media storage type."""
         valid_storage_types: Set[str] = {"local", "s3", "azure", "gcs"}

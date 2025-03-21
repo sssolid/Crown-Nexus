@@ -1,6 +1,7 @@
 """Script generator service for the Crown Nexus deployment system."""
 from __future__ import annotations
 
+import base64
 import os
 import jinja2
 from pathlib import Path
@@ -16,6 +17,12 @@ from utils.errors import ScriptGenerationError
 # Initialize logger
 logger = structlog.get_logger()
 
+# Setup base64 encoder for kubernetes jinja template
+def b64encode_filter(value: str) -> str:
+    """Base64-encodes a string (or bytes)."""
+    if isinstance(value, str):
+        value = value.encode('utf-8')
+    return base64.b64encode(value).decode('utf-8')
 
 class ScriptGenerator:
     """Class to generate deployment scripts based on templates."""
@@ -37,6 +44,7 @@ class ScriptGenerator:
             trim_blocks=True,
             lstrip_blocks=True,
         )
+        self.jinja_env.filters["b64encode"] = b64encode_filter
 
         # Add ServerRole to global Jinja environment so it's available in all templates
         self.jinja_env.globals['ServerRole'] = ServerRole

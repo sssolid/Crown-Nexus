@@ -19,28 +19,29 @@ class DatabaseSettings(BaseSettings):
     """Database connection settings."""
 
     # PostgreSQL settings
-    POSTGRES_SERVER: str = Field("localhost")
-    POSTGRES_USER: str = Field("postgres")
-    POSTGRES_PASSWORD: str = Field("postgres")
-    POSTGRES_DB: str = Field("crown_nexus")
-    POSTGRES_PORT: str = Field("5432")
+    POSTGRES_SERVER: str = "localhost"
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "crown_nexus"
+    POSTGRES_PORT: str = "5432"
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     # Redis settings
-    REDIS_HOST: str = Field("localhost")
-    REDIS_PORT: int = Field(6379)
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
     REDIS_PASSWORD: Optional[SecretStr] = None
-    REDIS_DB: int = Field(0)
-    REDIS_MAX_CONNECTIONS: int = Field(5000)
+    REDIS_DB: int = 0
+    REDIS_MAX_CONNECTIONS: int = 5000
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        extra="ignore",  # Allow extra fields in env file
     )
 
     @model_validator(mode="after")
-    def assemble_db_connection(self) -> DatabaseSettings:
+    def assemble_db_connection(self) -> "DatabaseSettings":
         """Build the database URI if not provided directly."""
         if not self.SQLALCHEMY_DATABASE_URI:
             self.SQLALCHEMY_DATABASE_URI = PostgresDsn.build(

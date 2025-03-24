@@ -8,9 +8,8 @@ VCDB and PCDB databases for fitment data.
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union
+from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple
 
-import pandas as pd
 import pyodbc
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -349,7 +348,7 @@ class FitmentDBService:
 
         async with self.get_session() as session:
             try:
-                from app.models.model_mapping import ModelMapping
+                from app.domains.model_mapping.models import ModelMapping
 
                 # Get all active mappings ordered by priority
                 query = (
@@ -396,7 +395,7 @@ class FitmentDBService:
 
         async with self.get_session() as session:
             try:
-                from app.models.model_mapping import ModelMapping
+                from app.domains.model_mapping.models import ModelMapping
 
                 # Create new mapping
                 mapping_obj = ModelMapping(
@@ -439,7 +438,7 @@ class FitmentDBService:
 
         async with self.get_session() as session:
             try:
-                from app.models.model_mapping import ModelMapping
+                from app.domains.model_mapping.models import ModelMapping
 
                 # Get mapping
                 mapping_obj = await session.get(ModelMapping, mapping_id)
@@ -475,7 +474,7 @@ class FitmentDBService:
 
         async with self.get_session() as session:
             try:
-                from app.models.model_mapping import ModelMapping
+                from app.domains.model_mapping.models import ModelMapping
 
                 # Get mapping
                 mapping_obj = await session.get(ModelMapping, mapping_id)
@@ -511,7 +510,7 @@ class FitmentDBService:
 
         async with self.get_session() as session:
             try:
-                from app.models.model_mapping import ModelMapping
+                from app.domains.model_mapping.models import ModelMapping
                 from sqlalchemy.exc import IntegrityError
 
                 # Process each pattern and its mappings

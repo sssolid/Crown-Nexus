@@ -1,4 +1,4 @@
-# backend/app/api/v1/endpoints/currency.py
+# backend/app/api/v1/endpoints/models.py
 """
 Currency API endpoints.
 
@@ -19,18 +19,16 @@ from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_admin_user, get_current_active_user, get_db
-from app.models.currency import Currency, ExchangeRate
-from app.models.user import User
-from app.schemas.currency import (
+from app.domains.currency.models import Currency, ExchangeRate
+from app.domains.users.models import User
+from app.domains.currency.schemas import (
     ConversionRequest,
     ConversionResponse,
-    CurrencyCreate,
     CurrencyRead,
-    CurrencyUpdate,
     ExchangeRateRead,
 )
-from app.services.currency_service import ExchangeRateService
-from app.tasks.currency_tasks import update_exchange_rates
+from app.domains.currency.service import ExchangeRateService
+from app.domains.currency.tasks import update_exchange_rates
 
 router = APIRouter()
 

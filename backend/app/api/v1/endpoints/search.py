@@ -13,11 +13,11 @@ from __future__ import annotations
 
 from typing import Annotated, Any, List, Optional
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user, get_db
-from app.models.user import User
+from app.domains.users.models import User
 from app.services.search import SearchService, get_search_service
 from app.services.vehicle import VehicleDataService, get_vehicle_service
 

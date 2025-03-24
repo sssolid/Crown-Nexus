@@ -2,15 +2,14 @@ from __future__ import annotations
 
 from typing import Annotated, Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
-from app.models.product import Fitment, Product, product_fitment_association
-from app.models.user import User
-from app.schemas.product import (
+from app.domains.products.models import Fitment, Product, product_fitment_association
+from app.domains.users.models import User
+from app.domains.products.schemas import (
     Fitment as FitmentSchema,
     FitmentCreate,
     FitmentListResponse,

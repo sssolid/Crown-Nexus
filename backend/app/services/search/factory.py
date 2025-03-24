@@ -7,14 +7,14 @@ This module provides a factory for creating different search provider instances
 based on model type and configuration.
 """
 
-from typing import Any, Dict, Optional, Type, cast
+from typing import Any, Dict, Optional, Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.models.product import Fitment, Product
+from app.domains.products.models import Fitment, Product
 from app.services.search.base import SearchProvider
 from app.services.search.providers import (
     DatabaseSearchProvider,

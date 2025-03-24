@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from datetime import datetime
-from typing import Annotated, Any, List, Optional, Set
+from typing import Annotated, Any, List, Optional
 
 from fastapi import (
     APIRouter,
@@ -12,14 +12,12 @@ from fastapi import (
     File,
     Form,
     HTTPException,
-    Response,
     UploadFile,
     status,
 )
 from fastapi.responses import FileResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.api.deps import (
     get_admin_user,
@@ -28,14 +26,12 @@ from app.api.deps import (
     get_pagination,
     get_optional_user,
 )
-from app.core.config import settings
-from app.models.media import Media, MediaType, MediaVisibility
-from app.models.product import Product, product_media_association
-from app.models.user import User
-from app.schemas.media import (
+from app.domains.media.models import Media, MediaType, MediaVisibility
+from app.domains.products.models import Product, product_media_association
+from app.domains.users.models import User
+from app.domains.media.schemas import (
     FileUploadResponse,
     Media as MediaSchema,
-    MediaCreate,
     MediaListResponse,
     MediaUpdate,
 )

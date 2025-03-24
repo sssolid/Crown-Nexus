@@ -22,8 +22,8 @@ from fastapi import (
 )
 from pydantic import BaseModel, Field
 
-from app.schemas.model_mapping import ModelMapping as ModelMappingSchema
-from app.schemas.model_mapping import (
+from app.domains.model_mapping.schemas import ModelMapping as ModelMappingSchema
+from app.domains.model_mapping.schemas import (
     ModelMappingCreate,
     ModelMappingUpdate,
 )
@@ -287,7 +287,7 @@ async def list_model_mappings(
     """
     try:
         async with mapping_engine.db_service.get_session() as session:
-            from app.models.model_mapping import ModelMapping
+            from app.domains.model_mapping.models import ModelMapping
             from sqlalchemy import or_, select, func, desc, asc
 
             # Build query
@@ -375,7 +375,7 @@ async def create_model_mapping(
 
         # Return the created mapping
         async with mapping_engine.db_service.get_session() as session:
-            from app.models.model_mapping import ModelMapping
+            from app.domains.model_mapping.models import ModelMapping
 
             mapping = await session.get(ModelMapping, mapping_id)
             if not mapping:
@@ -445,7 +445,7 @@ async def update_model_mapping(
 
         # Return the updated mapping
         async with mapping_engine.db_service.get_session() as session:
-            from app.models.model_mapping import ModelMapping
+            from app.domains.model_mapping.models import ModelMapping
 
             mapping = await session.get(ModelMapping, mapping_id)
             if not mapping:

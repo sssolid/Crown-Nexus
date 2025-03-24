@@ -1,4 +1,4 @@
-# app/core/config/currency.py
+# app/core/config/models.py
 
 from __future__ import annotations
 

@@ -2,16 +2,14 @@ from __future__ import annotations
 
 from typing import Annotated, Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
-from app.models.product import (
+from app.domains.products.models import (
     Brand,
-    Fitment,
     Product,
     ProductActivity,
     ProductBrandHistory,
@@ -21,15 +19,12 @@ from app.models.product import (
     ProductStock,
     ProductSupersession,
 )
-from app.models.reference import Warehouse
-from app.models.user import User
-from app.schemas.product import (
+from app.domains.reference.models import Warehouse
+from app.domains.users.models import User
+from app.domains.products.schemas import (
     Brand as BrandSchema,
     BrandCreate,
     BrandUpdate,
-    Fitment as FitmentSchema,
-    FitmentCreate,
-    FitmentUpdate,
     Product as ProductSchema,
     ProductCreate,
     ProductDescription as ProductDescriptionSchema,
@@ -41,7 +36,6 @@ from app.schemas.product import (
     ProductMarketingUpdate,
     ProductMeasurement as ProductMeasurementSchema,
     ProductMeasurementCreate,
-    ProductMeasurementUpdate,
     ProductStatus,
     ProductStock as ProductStockSchema,
     ProductStockCreate,
@@ -1045,7 +1039,7 @@ async def create_brand(
     """
     # Check if company exists if provided
     if brand_in.parent_company_id:
-        from app.models.user import Company
+        from app.domains.users.models import Company
 
         stmt = select(Company).where(Company.id == brand_in.parent_company_id)
         result = await db.execute(stmt)
@@ -1126,7 +1120,7 @@ async def update_brand(
 
     # Check if company exists if provided
     if brand_in.parent_company_id is not None and brand_in.parent_company_id:
-        from app.models.user import Company
+        from app.domains.users.models import Company
 
         stmt = select(Company).where(Company.id == brand_in.parent_company_id)
         result = await db.execute(stmt)

@@ -12,11 +12,11 @@ from typing import Any, List, Optional, Set, Union, TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import AuthenticationException, ErrorCode
+from app.core.exceptions import AuthenticationException
 from app.core.logging import get_logger
 
 if TYPE_CHECKING:
-    from app.models.user import User
+    from app.domains.users.models import User
 
 logger = get_logger(__name__)
 
@@ -35,7 +35,7 @@ async def get_user_by_id(db: AsyncSession, user_id: str) -> "User":
         AuthenticationException: If user not found
     """
     # Import User model here to avoid circular imports
-    from app.models.user import User
+    from app.domains.users.models import User
 
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()

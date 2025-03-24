@@ -7,14 +7,14 @@ This module provides functionality for checking and enforcing permissions
 in service operations, ensuring proper access control.
 """
 
-from typing import Any, Optional, Type, Union, cast
+from typing import Any, Optional, Union
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import AuthenticationException, ErrorCode
 from app.core.logging import get_logger
-from app.models.user import User
+from app.domains.users.models import User
 
 logger = get_logger("app.services.base_service.permissions")
 

@@ -7,17 +7,15 @@ This module provides data importers for AS400 synchronization operations,
 implementing the logic to create or update records in the application database.
 """
 
-import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, cast
+from typing import Any, Dict, List, TypeVar
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException
 from app.core.logging import get_logger
-from app.db.utils import transaction
-from app.models.product import (
+from app.domains.products.models import (
     Product,
     ProductMeasurement,
     ProductPricing,
@@ -25,9 +23,9 @@ from app.models.product import (
     Manufacturer,
     PriceType,
 )
-from app.models.currency import Currency
-from app.models.reference import Warehouse
-from app.schemas.product import (
+from app.domains.currency.models import Currency
+from app.domains.reference.models import Warehouse
+from app.domains.products.schemas import (
     ProductCreate,
     ProductMeasurementCreate,
     ProductStock as ProductStockSchema,
@@ -220,7 +218,7 @@ class ProductAS400Importer(AS400BaseImporter[ProductCreate]):
         # Process descriptions
         if hasattr(product_data, "descriptions") and product_data.descriptions:
             for desc_data in product_data.descriptions:
-                from app.models.product import ProductDescription
+                from app.domains.products.models import ProductDescription
 
                 description = ProductDescription(
                     product_id=product.id,
@@ -232,7 +230,7 @@ class ProductAS400Importer(AS400BaseImporter[ProductCreate]):
         # Process marketing content
         if hasattr(product_data, "marketing") and product_data.marketing:
             for mkt_data in product_data.marketing:
-                from app.models.product import ProductMarketing
+                from app.domains.products.models import ProductMarketing
 
                 marketing = ProductMarketing(
                     product_id=product.id,
@@ -273,7 +271,7 @@ class ProductAS400Importer(AS400BaseImporter[ProductCreate]):
         # Update descriptions if present
         if hasattr(product_data, "descriptions") and product_data.descriptions:
             # Delete existing descriptions
-            from app.models.product import ProductDescription
+            from app.domains.products.models import ProductDescription
 
             await self.db.execute(
                 select(ProductDescription)
@@ -293,7 +291,7 @@ class ProductAS400Importer(AS400BaseImporter[ProductCreate]):
         # Update marketing content if present
         if hasattr(product_data, "marketing") and product_data.marketing:
             # Delete existing marketing content
-            from app.models.product import ProductMarketing
+            from app.domains.products.models import ProductMarketing
 
             await self.db.execute(
                 select(ProductMarketing)

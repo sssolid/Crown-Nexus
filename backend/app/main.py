@@ -1,12 +1,10 @@
 # /backend/app/main.py to use the service registry
 from __future__ import annotations
-import time
-import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncGenerator, Callable, Optional
+from typing import AsyncGenerator, Optional
 
-from fastapi import FastAPI, Request, Response, Depends, HTTPException
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
@@ -25,7 +23,7 @@ from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMidd
 from app.middleware.rate_limiting import RateLimitMiddleware
 from app.api.deps import get_current_user
 from app.core.config import Environment, settings
-from app.core.logging import get_logger, request_context, set_user_id
+from app.core.logging import get_logger, set_user_id
 from app.core.error import (
     initialize as initialize_error_system,
     shutdown as shutdown_error_system,
@@ -61,7 +59,7 @@ from app.fitment.dependencies import initialize_mapping_engine
 
 from app.core.startup.as400_sync import initialize_as400_sync, shutdown_as400_sync
 
-from app.models.user import User
+from app.domains.users.models import User
 
 import uvicorn
 

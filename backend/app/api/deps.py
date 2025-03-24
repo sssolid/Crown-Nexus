@@ -23,8 +23,8 @@ from app.core.security import (
     oauth2_scheme,
 )
 from app.db.session import get_db
-from app.models.user import User, UserRole
-from app.repositories.user_repository import UserRepository
+from app.domains.users.models import User, UserRole
+from app.domains.users.repository import UserRepository
 
 logger = get_logger("app.api.deps")
 

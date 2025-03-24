@@ -16,20 +16,20 @@ from __future__ import annotations
 
 from typing import Annotated, Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
-from app.models.user import User, UserRole, get_password_hash
-from app.schemas.user import (
+from app.api.deps import get_admin_user, get_current_active_user, get_db
+from app.domains.users.models import User, UserRole, get_password_hash
+from app.domains.users.schemas import (
     Company as CompanySchema,
     User as UserSchema,
     UserCreate,
     UserUpdate,
 )
-from app.schemas.company import CompanyCreate, CompanyUpdate
+from app.domains.company.schemas import CompanyCreate, CompanyUpdate
 
 router = APIRouter()
 

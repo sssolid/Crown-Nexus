@@ -8,16 +8,15 @@ This module provides a product data importer that inserts or updates
 product data in the application database.
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException
 from app.core.logging import get_logger
-from app.db.utils import transaction
-from app.models.product import Product, ProductDescription, ProductMarketing
-from app.schemas.product import ProductCreate
+from app.domains.products.models import Product, ProductDescription, ProductMarketing
+from app.domains.products.schemas import ProductCreate
 
 logger = get_logger("app.data_import.importers.product_importer")
 

@@ -9,7 +9,7 @@ from data extraction to transformation and loading.
 """
 
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from app.core.exceptions import AppException
 from app.core.logging import get_logger
@@ -18,7 +18,6 @@ from app.data_import.connectors.file_connector import FileConnector
 from app.data_import.connectors.filemaker_connector import FileMakerConnector
 from app.data_import.importers.product_importer import ProductImporter
 from app.data_import.processors.product_processor import ProductProcessor
-from app.schemas.product import ProductCreate
 
 logger = get_logger("app.data_import.pipeline.product_pipeline")
 

@@ -2,15 +2,14 @@
 from __future__ import annotations
 
 import uuid
-from typing import Dict, Any
 
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.product import Product
-from app.models.user import User
+from app.domains.products.models import Product
+from app.domains.users.models import User
 from tests.utils import make_authenticated_request, create_random_string
 
 

@@ -7,7 +7,7 @@ makes, models, etc., validating fitments, and decoding VINs.
 
 from __future__ import annotations
 import re
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Dict, List, Optional, Any
 
 from fastapi import Depends
 from sqlalchemy import func, select
@@ -18,7 +18,7 @@ from app.api.deps import get_db
 from app.core.cache.decorators import cached
 from app.core.exceptions import DatabaseException, ErrorCode, ValidationException
 from app.core.logging import get_logger
-from app.models.product import Fitment
+from app.domains.products.models import Fitment
 
 logger = get_logger("app.services.vehicle")
 

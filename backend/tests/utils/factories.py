@@ -3,19 +3,18 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.user import Company, User, UserRole, get_password_hash
-from app.models.product import (
+from app.domains.users.models import Company, User, UserRole, get_password_hash
+from app.domains.products.models import (
     Brand,
     Fitment,
     Product,
-    ProductDescription,
     ProductStatus,
 )
-from app.models.media import Media, MediaType, MediaVisibility
+from app.domains.media.models import Media, MediaType, MediaVisibility
 
 from tests.utils import create_random_email, create_random_string
 

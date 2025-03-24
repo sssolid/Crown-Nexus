@@ -11,13 +11,11 @@ This module tests:
 
 from __future__ import annotations
 
-import pytest
 from httpx import AsyncClient
 
-from app.models.user import User, UserRole
+from app.domains.users.models import User, UserRole
 from tests.utils import (
     create_random_email,
-    create_random_string,
     make_authenticated_request,
 )
 

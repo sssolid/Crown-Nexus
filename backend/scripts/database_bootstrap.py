@@ -35,7 +35,6 @@ from typing import Optional, Tuple
 # Add parent directory to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from asyncpg.exceptions import PostgresError
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -43,7 +42,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from app.core.config import settings
 from app.db.base import Base
 from app.db.session import get_db_context
-from app.models.user import User, UserRole, get_password_hash
+from app.domains.users.models import UserRole, get_password_hash
 
 from scripts.bootstrap_countries import insert_countries
 

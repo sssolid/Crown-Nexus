@@ -22,8 +22,8 @@ from app.core.exceptions import (
 )
 from app.core.logging import get_logger, log_execution_time
 from app.db.session import AsyncSession
-from app.models.chat import ChatMemberRole, ChatRoomType, MessageType
-from app.models.user import User
+from app.domains.chat.models import ChatMemberRole, ChatRoomType, MessageType
+from app.domains.users.models import User
 from app.services import get_chat_service
 from app.schemas.responses import Response
 
@@ -1371,7 +1371,7 @@ async def create_direct_chat(
 
         # Verify that the target user exists
         from sqlalchemy import select
-        from app.models.user import User
+        from app.domains.users.models import User
 
         query = select(User).where(User.id == request.user_id)
         result = await db.execute(query)

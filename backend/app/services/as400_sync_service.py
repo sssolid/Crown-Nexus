@@ -8,32 +8,29 @@ operations, ensuring secure and consistent data flow.
 """
 
 import asyncio
-import time
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Type, cast
+from typing import Any, Dict, List, Optional, Set
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config.integrations.as400 import (
-    AS400Settings,
     as400_settings,
     get_as400_connector_config,
 )
-from app.core.exceptions import AppException, ConfigurationException
+from app.core.exceptions import ConfigurationException
 from app.core.logging import get_logger
 from app.data_import.connectors.as400_connector import (
     AS400Connector,
     AS400ConnectionConfig,
 )
-from app.data_import.pipeline.as400_pipeline import AS400Pipeline, ParallelAS400Pipeline
-from app.db.session import async_session_maker, get_db_context
-from app.models.audit import AuditLog
-from app.models.product import Product, ProductMeasurement, ProductStock
-from app.models.reference import Warehouse
-from app.schemas.product import (
+from app.data_import.pipeline.as400_pipeline import AS400Pipeline
+from app.db.session import get_db_context
+from app.domains.products.models import Product
+from app.domains.reference.models import Warehouse
+from app.domains.products.schemas import (
     ProductCreate,
     ProductMeasurementCreate,
     ProductStock as ProductStockSchema,
@@ -41,14 +38,11 @@ from app.schemas.product import (
 from app.data_import.processors.as400_processor import (
     AS400ProcessorConfig,
     ProductAS400Processor,
-    PricingAS400Processor,
-    InventoryAS400Processor,
 )
 from app.data_import.importers.as400_importers import (
     ProductAS400Importer,
     ProductMeasurementImporter,
     ProductStockImporter,
-    ProductPricingImporter,
 )
 
 
@@ -760,7 +754,7 @@ class AS400SyncService:
             entity_type: Type of entity synced
             result: Sync result
         """
-        from app.models.audit import AuditLog
+        from app.domains.audit.models import AuditLog
 
         # Create audit log entry
         audit_log = AuditLog(

@@ -1,4 +1,4 @@
-# app/core/config/media.py
+# app/core/config/models.py
 
 from __future__ import annotations
 

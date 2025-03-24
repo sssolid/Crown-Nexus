@@ -2,14 +2,12 @@
 from __future__ import annotations
 
 import uuid
-from typing import Any, List
 
 import pytest
-import pytest_asyncio
 from sqlalchemy import select
 
 from app.db.utils import create_object, get_by_id, update_object, delete_object
-from app.models.user import User, UserRole
+from app.domains.users.models import User, UserRole
 
 
 @pytest.mark.asyncio

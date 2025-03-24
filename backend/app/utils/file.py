@@ -22,16 +22,12 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import (
-    BinaryIO,
     Dict,
-    List,
-    Literal,
     Optional,
     Protocol,
     Set,
     Tuple,
     Union,
-    cast,
 )
 
 from fastapi import HTTPException, UploadFile, status
@@ -44,7 +40,7 @@ from app.core.exceptions import (
     ValidationException,
 )
 from app.core.logging import get_logger
-from app.models.media import MediaType
+from app.domains.media.models import MediaType
 
 # Initialize structured logger
 logger = get_logger("app.utils.file")

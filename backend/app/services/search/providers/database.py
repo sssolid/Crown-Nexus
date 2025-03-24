@@ -8,7 +8,7 @@ from app.core.pagination import paginate_with_offset, OffsetPaginationParams
 This module provides a search provider that queries the database directly.
 """
 
-from typing import Any, Dict, List, Optional, Type, Union, cast
+from typing import Any, Dict, List, Optional, Type, cast
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,9 +17,8 @@ from sqlalchemy.orm import DeclarativeMeta
 
 from app.core.exceptions import DatabaseException, ErrorCode
 from app.core.logging import get_logger
-from app.models.product import Fitment, Product
+from app.domains.products.models import Fitment, Product
 from app.services.search.base import SearchProvider, SearchResult
-from app.core.dependency_manager import get_dependency
 
 logger = get_logger("app.services.search.providers.database")
 

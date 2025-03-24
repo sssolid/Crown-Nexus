@@ -7,16 +7,13 @@ and can be run manually or during application setup.
 """
 
 import asyncio
-import sys
 import typer
-from typing import List, Optional
 
 from sqlalchemy import select
 
-from app.core.config import settings
 from app.db.session import get_db_context
-from app.models.currency import Currency
-from app.tasks.currency_tasks import init_currencies as init_currencies_task
+from app.domains.currency.models import Currency
+from app.domains.currency.tasks import init_currencies as init_currencies_task
 
 app = typer.Typer()
 
@@ -93,7 +90,7 @@ async def _init_currencies_sync(force: bool, base_currency: str) -> None:
         typer.echo(f"Added {len(currencies)} currencies to the database.")
 
         # Trigger initial exchange rate update
-        from app.services.currency_service import ExchangeRateService
+        from app.domains.currency.service import ExchangeRateService
 
         try:
             count = await ExchangeRateService.update_exchange_rates(db, force=True)

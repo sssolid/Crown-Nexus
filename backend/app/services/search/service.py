@@ -9,17 +9,15 @@ This module provides the primary SearchService that coordinates search
 operations across different backends and entity types.
 """
 
-from typing import Any, Dict, List, Optional, Type, Union, cast
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeMeta
 
 from app.core.dependency_manager import get_dependency
-from app.core.exceptions import BusinessException, DatabaseException, ErrorCode
+from app.core.exceptions import DatabaseException, ErrorCode
 from app.core.logging import get_logger
-from app.models.product import Fitment, Product
+from app.domains.products.models import Fitment, Product
 from app.services.interfaces import ServiceInterface
-from app.services.search.base import SearchProvider, SearchResult
 from app.services.search.factory import SearchProviderFactory
 
 logger = get_logger("app.services.search.service")

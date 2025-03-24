@@ -22,7 +22,6 @@ celery_app = Celery("crown_nexus")
 celery_app.config_from_object("app.core.celeryconfig")
 
 # Import tasks to ensure they're registered
-import app.tasks.currency_tasks
 
 # Define periodic tasks
 celery_app.conf.beat_schedule = {

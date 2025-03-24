@@ -136,10 +136,11 @@ async def create_product():
 1. Complete implementation by creating concrete repositories for each model:
 
 ```python
-# app/repositories/product_repository.py
+# app/domains/product/repository.py
 from app.repositories.base import BaseRepository
-from app.models.product import Product
+from app.domains.products.models import Product
 from typing import List, Optional, UUID
+
 
 class ProductRepository(BaseRepository[Product, UUID]):
     """Repository for product-related database operations."""
@@ -209,7 +210,7 @@ class BaseService:
 
 2. Use specific service implementations focused on business logic:
 ```python
-# app/services/product_service.py
+# app/domains/product/service.py
 class ProductService:
     """Service for product operations."""
 
@@ -412,10 +413,12 @@ tests/
 ```
 
 2. Create test factories for all models:
+
 ```python
 # tests/utils/factories.py
-from app.models.product import Product, Brand
+from app.domains.products.models import Product, Brand
 import factory
+
 
 class BrandFactory(factory.Factory):
     class Meta:
@@ -423,6 +426,7 @@ class BrandFactory(factory.Factory):
 
     id = factory.LazyFunction(uuid.uuid4)
     name = factory.Sequence(lambda n: f"Test Brand {n}")
+
 
 class ProductFactory(factory.Factory):
     class Meta:

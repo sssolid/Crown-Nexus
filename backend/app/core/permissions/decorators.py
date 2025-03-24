@@ -15,7 +15,7 @@ from app.core.permissions.checker import PermissionChecker
 from app.core.permissions.models import Permission
 
 if TYPE_CHECKING:
-    from app.models.user import User
+    pass
 
 logger = get_logger(__name__)
 

@@ -23,8 +23,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user, get_db
 from app.core.config import settings
-from app.models.user import User, create_access_token, verify_password
-from app.schemas.user import Token, TokenPayload, User as UserSchema
+from app.domains.users.models import User, create_access_token, verify_password
+from app.domains.users.schemas import Token, TokenPayload, User as UserSchema
 
 router = APIRouter()
 

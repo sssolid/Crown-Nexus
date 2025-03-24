@@ -7,14 +7,14 @@ This module provides the core permission checking functionality to determine
 if users have the required permissions for various actions.
 """
 
-from typing import Any, List, Set, Optional, cast, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING
 
 from app.core.exceptions import PermissionDeniedException
 from app.core.logging import get_logger
 from app.core.permissions.models import Permission, ROLE_PERMISSIONS
 
 if TYPE_CHECKING:
-    from app.models.user import User
+    from app.domains.users.models import User
 
 logger = get_logger(__name__)
 

@@ -12,7 +12,7 @@ from typing import Dict, Set, TYPE_CHECKING
 
 # Use TYPE_CHECKING to avoid runtime circular imports
 if TYPE_CHECKING:
-    from app.models.user import UserRole
+    from app.domains.users.models import UserRole
 else:
     # Define an enum for UserRole to avoid importing the actual model
     class UserRole(str, enum.Enum):

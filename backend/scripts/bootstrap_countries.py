@@ -22,7 +22,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db_context
-from app.models.location import Country
+from app.domains.location.models import Country
 
 # Configure logging
 logging.basicConfig(

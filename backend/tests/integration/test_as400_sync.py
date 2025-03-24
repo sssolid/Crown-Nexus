@@ -8,9 +8,7 @@ verifying the data synchronization logic functions correctly.
 """
 
 import os
-import uuid
-from datetime import datetime
-from typing import Any, Dict, Generator, List
+from typing import Generator
 
 import pytest
 import pytest_asyncio
@@ -25,10 +23,9 @@ from app.data_import.processors.as400_processor import (
 )
 from app.data_import.pipeline.as400_pipeline import AS400Pipeline
 from app.db.session import async_session_maker
-from app.models.product import Product
-from app.models.sync_history import SyncHistory, SyncEntityType, SyncSource, SyncStatus
-from app.repositories.sync_history_repository import SyncHistoryRepository
-from app.schemas.product import ProductCreate
+from app.domains.sync_history.models import SyncEntityType, SyncSource, SyncStatus
+from app.domains.sync_history.repository import SyncHistoryRepository
+from app.domains.products.schemas import ProductCreate
 from app.services.as400_sync_service import as400_sync_service, SyncEntityType
 
 

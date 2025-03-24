@@ -2,36 +2,25 @@
 from __future__ import annotations
 
 import asyncio
-import os
 import uuid
-from datetime import datetime
 from typing import (
-    Any,
     AsyncGenerator,
-    Callable,
     Dict,
     Generator,
-    List,
-    Optional,
-    Type,
-    TypeVar,
 )
 
 import pytest
 import pytest_asyncio
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
 from httpx import AsyncClient
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.core.config import Environment, settings
+from app.core.config import settings
 from app.core.security import create_access_token
 from app.db.base import Base
 from app.main import app
-from app.models.user import Company, User, UserRole, get_password_hash
-from app.models.product import Brand, Fitment, Product
+from app.domains.users.models import Company, User, UserRole, get_password_hash
+from app.domains.products.models import Brand, Fitment, Product
 from app.api.deps import get_db
 
 # Constants

@@ -27,14 +27,14 @@ from app.api.deps import (
     get_optional_user,
 )
 from app.domains.media.models import Media, MediaType, MediaVisibility
-from app.domains.products.models import Product, product_media_association
-from app.domains.users.models import User
 from app.domains.media.schemas import (
     FileUploadResponse,
     Media as MediaSchema,
     MediaListResponse,
     MediaUpdate,
 )
+from app.domains.products.models import Product, product_media_association
+from app.domains.users.models import User
 from app.utils.file import (
     get_file_path,
     get_thumbnail_path,

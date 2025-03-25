@@ -1,3 +1,4 @@
+# app/core/events/backend.py
 from __future__ import annotations
 
 """Domain Events Backend Implementations.
@@ -10,7 +11,6 @@ import inspect
 import logging
 from abc import ABC, abstractmethod
 from enum import Enum, auto
-from functools import wraps
 from typing import (
     Any,
     Callable,
@@ -18,11 +18,10 @@ from typing import (
     List,
     Optional,
     Protocol,
-    Type,
-    TypeVar,
-    Union,
-    cast,
 )
+
+# Logger
+logger = logging.getLogger(__name__)
 
 # Type for event handlers
 EventHandler = Callable[[Dict[str, Any]], Any]
@@ -183,8 +182,10 @@ class MemoryEventBackend(EventBackend):
         self.handlers[event_name].append(handler)
 
 
-# Global event backend instance
+# Global event backend instance and pending handlers
 _event_backend: Optional[EventBackend] = None
+_pending_handlers: Dict[str, List[EventHandler]] = {}
+_is_initialized = False
 
 
 def get_event_backend() -> EventBackend:
@@ -216,7 +217,13 @@ def init_event_backend(backend_type: EventBackendType, **kwargs: Any) -> EventBa
     Raises:
         ValueError: If an unsupported backend type is requested
     """
-    global _event_backend
+    global _event_backend, _is_initialized
+
+    if _is_initialized:
+        logger.warning("Event backend already initialized")
+        return _event_backend
+
+    logger.info(f"Initializing event backend: {backend_type.name}")
 
     if backend_type == EventBackendType.CELERY:
         # Dynamically import celery to avoid hard dependency
@@ -227,6 +234,9 @@ def init_event_backend(backend_type: EventBackendType, **kwargs: Any) -> EventBa
         _event_backend = MemoryEventBackend()
     else:
         raise ValueError(f"Unsupported event backend type: {backend_type}")
+
+    _is_initialized = True
+    logger.info(f"Event backend initialized: {backend_type.name}")
 
     return _event_backend
 
@@ -245,28 +255,103 @@ def publish_event(event_name: str, payload: Dict[str, Any]) -> None:
 def subscribe_to_event(event_name: str) -> Callable[[EventHandler], EventHandler]:
     """Decorator to subscribe a function to a domain event.
 
+    If the event backend is not yet initialized, handlers will be stored
+    for later registration with init_domain_events().
+
     Args:
         event_name: The name of the event to subscribe to
 
     Returns:
         Decorator function that registers the handler
     """
-
     def decorator(handler: EventHandler) -> EventHandler:
-        backend = get_event_backend()
-        backend.subscribe(event_name, handler)
+        global _pending_handlers, _is_initialized, _event_backend
+
+        # Store the handler for potential deferred registration
+        if event_name not in _pending_handlers:
+            _pending_handlers[event_name] = []
+
+        _pending_handlers[event_name].append(handler)
+        logger.debug(f"Queued handler {handler.__name__} for event {event_name}")
+
+        # If backend is already initialized, register immediately
+        if _is_initialized and _event_backend is not None:
+            try:
+                _event_backend.subscribe(event_name, handler)
+                logger.debug(f"Registered handler {handler.__name__} for event {event_name}")
+            except Exception as e:
+                logger.error(f"Error registering handler: {str(e)}")
+
         return handler
 
     return decorator
 
 
+def init_domain_events() -> None:
+    """Initialize domain events by registering all pending handlers.
+
+    This should be called after the event backend is initialized.
+    """
+    global _event_backend, _is_initialized, _pending_handlers
+
+    if not _is_initialized or _event_backend is None:
+        raise RuntimeError(
+            "Event backend not initialized. Call init_event_backend first."
+        )
+
+    logger.info("Registering domain event handlers")
+
+    # Register all pending handlers
+    for event_name, handlers in _pending_handlers.items():
+        for handler in handlers:
+            try:
+                logger.debug(f"Registering handler {handler.__name__} for event {event_name}")
+                _event_backend.subscribe(event_name, handler)
+            except Exception as e:
+                logger.error(f"Error registering handler: {str(e)}")
+
+    # Import domain event modules to trigger decorator execution
+    _import_event_handlers()
+
+    logger.info(f"Registered {sum(len(handlers) for handlers in _pending_handlers.values())} event handlers")
+
+
 def register_event_handlers(*modules: Any) -> None:
     """Import modules to register their event handlers.
 
-    This function doesn't do anything directly; it simply ensures that
-    the specified modules are imported so their event handlers are registered.
+    This function has been deprecated. Use init_domain_events() instead.
 
     Args:
         *modules: Module objects to ensure are imported
     """
-    pass  # Just importing the modules causes their decorators to run
+    logger.warning("register_event_handlers is deprecated. Use init_domain_events instead.")
+    # No-op for backward compatibility
+
+
+def _import_event_handlers() -> None:
+    """Import all domain event handler modules."""
+    logger.debug("Importing domain event handler modules")
+
+    # Import event handlers from domains
+    try:
+        # These imports will cause the handler decorators to execute
+        import importlib
+
+        # Attempt to import all handler modules
+        modules_to_import = [
+            "app.domains.products.handlers",
+            "app.domains.orders.handlers",
+            "app.domains.inventory.handlers",
+            # Add more domain handler imports as needed
+        ]
+
+        for module_name in modules_to_import:
+            try:
+                importlib.import_module(module_name)
+                logger.debug(f"Imported event handlers from {module_name}")
+            except ImportError:
+                # This is normal for modules that don't exist yet
+                logger.debug(f"Could not import event handlers from {module_name} (module may not exist)")
+
+    except Exception as e:
+        logger.warning(f"Error importing event handler modules: {str(e)}")

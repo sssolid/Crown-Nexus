@@ -8,20 +8,14 @@ import, export, and query operations.
 
 import logging
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import BusinessException, ResourceNotFoundException
-from app.domains.autocare.exceptions import AutocareException, PAdbException
-from app.domains.autocare.schemas import AutocareImportParams
+from app.core.exceptions import ResourceNotFoundException
+from app.domains.autocare.exceptions import PAdbException
 from app.domains.autocare.padb.repository import (
     PAdbRepository,
-    PartAttributeRepository,
-    MetaDataRepository,
-    ValidValueRepository,
-    MetaUOMCodeRepository,
 )
 
 logger = logging.getLogger(__name__)

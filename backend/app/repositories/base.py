@@ -1,9 +1,8 @@
 # app/repositories/base.py
 from __future__ import annotations
 
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException

@@ -7,9 +7,7 @@ This module defines common types, protocols, and interfaces
 used throughout the search service components.
 """
 
-from typing import Any, Dict, List, Optional, Protocol, TypeVar, Union
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, Dict, Optional, Protocol, TypeVar
 
 # Type variables
 T = TypeVar("T")  # Entity type

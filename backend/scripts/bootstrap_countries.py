@@ -15,11 +15,16 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import sys
+from pathlib import Path
 import uuid
 from typing import Any, Dict, List
 
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
+# Add the parent directory to sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.db.session import get_db_context
 from app.domains.location.models import Country

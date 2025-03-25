@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
-from typing import Optional
 
 from app.core.config import settings as app_settings
 from .db import FitmentDBService

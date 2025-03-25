@@ -8,7 +8,7 @@ including Redis-based rate check functions.
 from __future__ import annotations
 
 import time
-from typing import Tuple, Optional
+from typing import Tuple
 
 from app.core.logging import get_logger
 from app.utils.redis_manager import get_key, set_key

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from app.schemas.responses import Response
 from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field, validator
 
@@ -24,8 +25,7 @@ from app.core.logging import get_logger, log_execution_time
 from app.db.session import AsyncSession
 from app.domains.chat.models import ChatMemberRole, ChatRoomType, MessageType
 from app.domains.users.models import User
-from app.services import get_chat_service
-from app.schemas.responses import Response
+from app.core.dependency_manager import get_service
 
 router = APIRouter()
 logger = get_logger("app.api.v1.endpoints.chat")
@@ -185,7 +185,7 @@ async def create_room(
     Raises:
         HTTPException: If validation fails or an error occurs during room creation
     """
-    chat_service = get_chat_service(db)
+    chat_service = get_service("chat_service", db)
     try:
         logger.info(
             "Creating chat room",

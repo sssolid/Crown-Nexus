@@ -7,7 +7,7 @@ This module provides a factory for creating different error reporters
 based on configuration settings.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, List
 
 from app.core.config import settings
 from app.core.logging import get_logger

@@ -9,7 +9,7 @@ as well as generating cryptographically secure tokens.
 import base64
 import binascii
 import json
-from typing import Any, Union
+from typing import Union
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes

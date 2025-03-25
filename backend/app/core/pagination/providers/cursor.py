@@ -11,9 +11,9 @@ import base64
 import json
 from datetime import datetime
 import uuid
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, cast
 
-from sqlalchemy import and_, asc, desc, func, select
+from sqlalchemy import asc, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.sql import Select

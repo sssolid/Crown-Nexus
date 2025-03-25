@@ -13,9 +13,9 @@ from functools import lru_cache
 from typing import Any, Dict
 
 from pydantic import model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import SettingsConfigDict
 
-from app.core.config.base import BaseAppSettings, Environment, LogLevel
+from app.core.config.base import BaseAppSettings
 from app.core.config.celery import CelerySettings
 from app.core.config.currency import CurrencySettings
 from app.core.config.database import DatabaseSettings

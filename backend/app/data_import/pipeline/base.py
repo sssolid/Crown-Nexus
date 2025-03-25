@@ -8,7 +8,7 @@ This module defines protocol classes for data import pipelines that orchestrate
 the extract, transform, and load process.
 """
 
-from typing import Any, Dict, Generic, List, Protocol, TypeVar, Union
+from typing import Any, Dict, Protocol, TypeVar, Union
 
 from app.data_import.connectors.base import Connector
 from app.data_import.connectors.file_connector import FileConnector

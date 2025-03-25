@@ -20,7 +20,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_admin_user, get_current_active_user, get_db
 from app.domains.currency.models import Currency, ExchangeRate
-from app.domains.users.models import User
 from app.domains.currency.schemas import (
     ConversionRequest,
     ConversionResponse,
@@ -29,6 +28,7 @@ from app.domains.currency.schemas import (
 )
 from app.domains.currency.service import ExchangeRateService
 from app.domains.currency.tasks import update_exchange_rates
+from app.domains.users.models import User
 
 router = APIRouter()
 

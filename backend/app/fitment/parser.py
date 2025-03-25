@@ -8,18 +8,16 @@ fitment application strings into structured data.
 from __future__ import annotations
 
 import re
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Tuple
 
+from .exceptions import ParsingError
 from .models import (
     PartApplication,
     PartFitment,
     Position,
     PositionGroup,
-    ValidationResult,
-    ValidationStatus,
     Vehicle,
 )
-from .exceptions import ParsingError
 
 
 class FitmentParser:

@@ -1,13 +1,11 @@
 # app/api/responses.py
 from __future__ import annotations
 
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
-
-from fastapi import status
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from typing import Any, Dict, List, Optional, TypeVar
 
 from app.schemas.responses import Response, PaginatedResponse
+from fastapi import status
+from fastapi.responses import JSONResponse
 
 T = TypeVar("T")
 

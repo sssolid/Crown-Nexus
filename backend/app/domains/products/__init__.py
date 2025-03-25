@@ -14,7 +14,7 @@ from app.domains.products.schemas import (
     Product as ProductSchema,
     Brand as BrandSchema,
 )
-from app.domains.products.service import ProductService, BrandService
+from app.domains.products.service import ProductService
 from app.domains.products.exceptions import (
     ProductNotFoundException,
     DuplicatePartNumberException,
@@ -36,7 +36,6 @@ __all__ = [
     "BrandSchema",
     # Services
     "ProductService",
-    "BrandService",
     # Exceptions
     "ProductNotFoundException",
     "DuplicatePartNumberException",

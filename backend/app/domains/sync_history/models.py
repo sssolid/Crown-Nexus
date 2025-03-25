@@ -13,7 +13,6 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import (
-    Boolean,
     DateTime,
     Float,
     ForeignKey,
@@ -25,7 +24,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import expression, func
+from sqlalchemy.sql import func
 
 from app.db.base_class import Base
 

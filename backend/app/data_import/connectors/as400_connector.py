@@ -8,14 +8,12 @@ databases while implementing strict security measures to protect sensitive data.
 """
 
 import os
-import logging
-from typing import Any, Dict, List, Optional, Union, Set
+from typing import Any, Dict, List, Optional, Set
 import pyodbc
 from pydantic import BaseModel, Field, SecretStr, validator
 from cryptography.fernet import Fernet
 
 from app.core.exceptions import (
-    ConfigurationException,
     DatabaseException,
     SecurityException,
 )

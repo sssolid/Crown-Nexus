@@ -8,14 +8,14 @@ throughout the application.
 """
 
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
 from pydantic import BaseModel, ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ValidationException
 from app.core.logging import get_logger
-from app.core.validation.base import ValidationResult, Validator
+from app.core.validation.base import Validator
 from app.core.validation.db import UniqueValidator
 from app.core.validation.factory import ValidatorFactory
 
@@ -444,4 +444,3 @@ async def shutdown() -> None:
 
 
 # Fix imports for methods in the module
-from datetime import date, datetime

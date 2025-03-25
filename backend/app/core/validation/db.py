@@ -7,7 +7,7 @@ This module provides validators that require database access,
 such as unique field validation.
 """
 
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

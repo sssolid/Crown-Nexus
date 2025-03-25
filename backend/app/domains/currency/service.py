@@ -20,9 +20,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache.decorators import cached
 from app.core.config import settings
-from app.domains.currency.models import Currency, ExchangeRate
-
 from app.core.logging import get_logger
+from app.domains.currency.models import Currency, ExchangeRate
 
 logger = get_logger("app.services.currency_service")
 

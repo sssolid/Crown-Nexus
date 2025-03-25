@@ -11,16 +11,16 @@ from pathlib import Path
 from typing import BinaryIO, Dict, Optional, Set, Tuple, Union
 
 import aiofiles
-from fastapi import UploadFile
-
-from app.core.config import settings
-from app.core.logging import get_logger
-from app.domains.media.models import MediaType
 from app.services.media.base import (
     FileNotFoundError,
     MediaStorageError,
 )
 from app.services.media.thumbnails import ThumbnailGenerator
+from fastapi import UploadFile
+
+from app.core.config import settings
+from app.core.logging import get_logger
+from app.domains.media.models import MediaType
 
 logger = get_logger(__name__)
 

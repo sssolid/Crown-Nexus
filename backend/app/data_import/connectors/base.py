@@ -8,7 +8,7 @@ This module defines protocol classes for data source connectors that extract
 data from various sources like databases, files, and APIs.
 """
 
-from typing import Any, Dict, List, Protocol, TypeVar
+from typing import Any, Dict, List, Protocol, TypeVar, Optional
 
 T = TypeVar("T")
 

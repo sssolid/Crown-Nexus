@@ -7,9 +7,9 @@ This module provides data access and persistence operations for fitment mapping 
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional
 
-from sqlalchemy import select, and_, or_, func, desc, text
+from sqlalchemy import select, and_, or_, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ResourceNotFoundException

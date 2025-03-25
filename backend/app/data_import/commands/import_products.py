@@ -11,12 +11,10 @@ FileMaker or files.
 import asyncio
 import json
 import sys
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import typer
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import AppException
 from app.core.logging import get_logger
 from app.data_import.connectors.file_connector import (
     FileConnector,

@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
-from typing import Dict, List, Optional, Union
+from typing import Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import Field, validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

@@ -9,13 +9,11 @@ in the application, mapping them to appropriate HTTP responses.
 
 import traceback
 import datetime
-from typing import Any, Dict, Optional
 
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from pydantic import ValidationError
 
 from app.core.exceptions.base import (
     AppException,

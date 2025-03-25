@@ -14,9 +14,9 @@ from sqlalchemy import delete, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
-from app.services.audit.base import AuditEventType, AuditLogLevel
+from app.domains.audit.service.base import AuditEventType, AuditLogLevel
 
-logger = get_logger("app.services.audit.query")
+logger = get_logger("app.domains.audit.service.query")
 
 
 class AuditQuery:

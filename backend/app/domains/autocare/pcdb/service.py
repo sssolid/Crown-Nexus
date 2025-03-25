@@ -13,15 +13,11 @@ from typing import Any, Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import BusinessException, ResourceNotFoundException
-from app.domains.autocare.exceptions import AutocareException, PCdbException
+from app.core.exceptions import ResourceNotFoundException
+from app.domains.autocare.exceptions import PCdbException
 from app.domains.autocare.schemas import AutocareImportParams
 from app.domains.autocare.pcdb.repository import (
     PCdbRepository,
-    PartsRepository,
-    CategoryRepository,
-    SubCategoryRepository,
-    PositionRepository,
 )
 
 logger = logging.getLogger(__name__)

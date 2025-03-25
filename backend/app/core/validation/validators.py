@@ -12,7 +12,7 @@ import re
 import uuid
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Pattern, Type, Union, cast
+from typing import Any, Dict, List, Optional, Type, Union
 
 from app.core.logging import get_logger
 from app.core.validation.base import ValidationResult, Validator

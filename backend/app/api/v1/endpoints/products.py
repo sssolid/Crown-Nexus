@@ -19,8 +19,6 @@ from app.domains.products.models import (
     ProductStock,
     ProductSupersession,
 )
-from app.domains.reference.models import Warehouse
-from app.domains.users.models import User
 from app.domains.products.schemas import (
     Brand as BrandSchema,
     BrandCreate,
@@ -44,6 +42,8 @@ from app.domains.products.schemas import (
     ProductSupersessionCreate,
     ProductUpdate,
 )
+from app.domains.reference.models import Warehouse
+from app.domains.users.models import User
 
 router = APIRouter()
 

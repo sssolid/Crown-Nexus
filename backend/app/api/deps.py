@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Union, Callable
 
+from app.domains.audit.service.service import AuditService
 from fastapi import Depends, Query, WebSocket, status
 from jose import JWTError
 from pydantic import ValidationError
@@ -15,9 +16,8 @@ from app.core.exceptions import (
     RateLimitException,
 )
 from app.core.logging import get_logger, set_user_id
-from app.services.audit import AuditService
-from app.core.rate_limiting import RateLimiter, RateLimitRule
 from app.core.permissions import Permission, PermissionChecker
+from app.core.rate_limiting import RateLimiter, RateLimitRule
 from app.core.security import (
     decode_token,
     oauth2_scheme,

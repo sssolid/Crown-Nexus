@@ -7,7 +7,6 @@ including HTTP server setup and push gateway support.
 from __future__ import annotations
 
 import asyncio
-import time
 from typing import Optional
 
 from prometheus_client import REGISTRY, start_http_server, push_to_gateway

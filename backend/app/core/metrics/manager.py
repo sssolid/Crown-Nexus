@@ -6,12 +6,10 @@ and exposing application metrics for monitoring and performance analysis.
 """
 from __future__ import annotations
 
-import asyncio
 import uuid
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from app.core.config import settings
 from app.core.logging import get_logger
 from app.core.metrics.base import (
     MetricName,

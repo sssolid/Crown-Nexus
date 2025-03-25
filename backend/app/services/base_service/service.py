@@ -7,13 +7,11 @@ This module provides the primary BaseService that implements the CrudServiceInte
 with standardized CRUD operations, permission checking, and lifecycle hooks.
 """
 
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
 from pydantic import BaseModel
-from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ResourceNotFoundException
 from app.core.logging import get_logger
 from app.core.permissions import Permission
 from app.db.base_class import Base
@@ -29,7 +27,6 @@ from app.services.base_service.operations import (
     ReadDeleteOperations,
 )
 from app.services.base_service.permissions import PermissionHelper
-from app.services.interfaces import CrudServiceInterface
 from app.services.pagination.service import PaginationService
 
 logger = get_logger("app.services.base_service.service")

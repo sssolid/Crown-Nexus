@@ -6,7 +6,7 @@ database operations, service calls, and cache operations.
 """
 from __future__ import annotations
 
-from typing import Dict, Optional
+from typing import Optional
 
 from app.core.logging import get_logger
 from app.core.metrics.base import MetricName, MetricTag

@@ -7,13 +7,14 @@ implementations.
 """
 from __future__ import annotations
 
-from typing import Optional, Type
+from typing import Optional
 
-from app.core.config import settings
-from app.core.logging import get_logger
 from app.services.media.base import MediaStorageBackend, StorageBackendType
 from app.services.media.local import LocalMediaStorage
 from app.services.media.s3 import S3MediaStorage
+
+from app.core.config import settings
+from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 

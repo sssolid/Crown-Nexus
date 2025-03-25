@@ -12,8 +12,6 @@ import inspect
 from typing import Any, Dict, List, Optional, TypeVar
 
 from app.core.exceptions import (
-    AppException,
-    AuthenticationException,
     BusinessException,
     ErrorCode,
     PermissionDeniedException,

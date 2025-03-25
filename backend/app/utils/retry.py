@@ -38,9 +38,7 @@ from typing import (
 
 from app.core.exceptions import (
     NetworkException,
-    RateLimitException,
     ServiceException,
-    ErrorCode,
 )
 from app.core.logging import get_logger
 

@@ -11,7 +11,7 @@ environment, logging configuration, and basic application information.
 
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict

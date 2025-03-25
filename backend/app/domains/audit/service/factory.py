@@ -7,20 +7,20 @@ This module provides a factory for creating different audit logger instances
 based on configuration settings.
 """
 
-from typing import Dict, List, Optional, Type, cast
+from typing import Dict, List, Optional, Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.services.audit.base import AuditLogger
-from app.services.audit.loggers import (
+from app.domains.audit.service.base import AuditLogger
+from app.domains.audit.service.loggers import (
     DatabaseAuditLogger,
     FileAuditLogger,
     LoggingAuditLogger,
 )
 
-logger = get_logger("app.services.audit.factory")
+logger = get_logger("app.domains.audit.service.factory")
 
 
 class AuditLoggerFactory:

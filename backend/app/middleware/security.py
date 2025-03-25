@@ -8,8 +8,7 @@ common web vulnerabilities like XSS, CSRF, and clickjacking.
 
 from __future__ import annotations
 
-import json
-from typing import Callable, Optional, Dict, Any
+from typing import Callable, Optional
 
 from fastapi import FastAPI, Request, Response, status
 from starlette.middleware.base import BaseHTTPMiddleware

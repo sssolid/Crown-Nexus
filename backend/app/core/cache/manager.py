@@ -1,6 +1,7 @@
 # backend/app/core/cache/manager.py
 from __future__ import annotations
-from typing import Any, Dict, Optional, Type, Union
+
+from typing import Dict
 
 from app.core.cache.backends import get_backend
 from app.core.cache.base import CacheBackend

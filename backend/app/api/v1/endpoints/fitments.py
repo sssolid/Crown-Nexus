@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_admin_user, get_current_active_user, get_db, get_pagination
 from app.domains.products.models import Fitment, Product, product_fitment_association
-from app.domains.users.models import User
 from app.domains.products.schemas import (
     Fitment as FitmentSchema,
     FitmentCreate,
@@ -16,6 +15,7 @@ from app.domains.products.schemas import (
     FitmentUpdate,
     Product as ProductSchema,
 )
+from app.domains.users.models import User
 
 router = APIRouter()
 

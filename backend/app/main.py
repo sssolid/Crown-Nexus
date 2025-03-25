@@ -1,40 +1,45 @@
 # /backend/app/main.py to use the service registry
 from __future__ import annotations
+
+from app.db import base
+
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator, Optional
 
+import uvicorn
 from fastapi import FastAPI, Depends
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.exceptions import RequestValidationError
 
+from app.api.deps import get_current_user
+from app.core.cache.manager import initialize_cache
+from app.core.config import Environment, settings
+from app.core.dependency_manager import (
+    register_services,
+    initialize_services,
+    shutdown_services,
+)
+from app.core.error import (
+    initialize as initialize_error_system,
+    shutdown as shutdown_error_system,
+)
+from app.core.events import EventBackendType, init_event_backend, init_domain_events
 from app.core.exceptions import (
     AppException,
     app_exception_handler,
     validation_exception_handler,
     generic_exception_handler,
 )
-from app.middleware.metrics import MetricsMiddleware
-from app.middleware.error_handler import ErrorHandlerMiddleware
-from app.middleware.request_context import RequestContextMiddleware
-from app.middleware.response_formatter import ResponseFormatterMiddleware
-from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
-from app.middleware.rate_limiting import RateLimitMiddleware
-from app.api.deps import get_current_user
-from app.core.config import Environment, settings
 from app.core.logging import get_logger, set_user_id
-from app.core.error import (
-    initialize as initialize_error_system,
-    shutdown as shutdown_error_system,
-)
-from app.core.validation import (
-    initialize as initialize_validation_system,
-    shutdown as shutdown_validation_system,
-)
 from app.core.metrics import (
     initialize as initialize_metrics_system,
     shutdown as shutdown_metrics_system,
+)
+from app.core.pagination import (
+    initialize as initialize_pagination_system,
+    shutdown as shutdown_pagination_system,
 )
 from app.core.rate_limiting import (
     initialize as initialize_ratelimiting_system,
@@ -42,26 +47,18 @@ from app.core.rate_limiting import (
     RateLimitRule,
     RateLimitStrategy,
 )
-from app.core.pagination import (
-    initialize as initialize_pagination_system,
-    shutdown as shutdown_pagination_system,
-)
-
-from app.core.dependency_manager import (
-    register_services,
-    initialize_services,
-    shutdown_services,
-)
-from app.core.cache.manager import initialize_cache
-
-from app.fitment.api import router as fitment_router
-from app.fitment.dependencies import initialize_mapping_engine
-
 from app.core.startup.as400_sync import initialize_as400_sync, shutdown_as400_sync
-
+from app.core.validation import (
+    initialize as initialize_validation_system,
+    shutdown as shutdown_validation_system,
+)
 from app.domains.users.models import User
-
-import uvicorn
+from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.metrics import MetricsMiddleware
+from app.middleware.rate_limiting import RateLimitMiddleware
+from app.middleware.request_context import RequestContextMiddleware
+from app.middleware.response_formatter import ResponseFormatterMiddleware
+from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
 
 # Logger
 logger = get_logger("app.main")
@@ -80,6 +77,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Yields:
         None
     """
+    # Initialize event system
+    event_backend = EventBackendType.CELERY
+    init_event_backend(event_backend)
+
+    # Initialize domain event handlers
+    init_domain_events()
+
     # Register services
     register_services()
 
@@ -104,9 +108,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Initialize services
     await initialize_services()
 
-    # Initialize fitment mapping engine
-    await initialize_mapping_engine()
-
     # Initialize AS400 sync
     await initialize_as400_sync()
 
@@ -116,13 +117,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     from app.api.v1.router import api_router
 
     app.include_router(api_router, prefix=settings.API_V1_STR)
-
-    # Include fitment router
-    app.include_router(
-        fitment_router,
-        prefix=f"{settings.API_V1_STR}/fitment",
-        tags=["fitment"],
-    )
 
     yield
 

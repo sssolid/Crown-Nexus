@@ -2,20 +2,19 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 import logging.config
 import sys
 import threading
 import uuid
 from contextlib import contextmanager
-import datetime
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, TypeVar, cast, Union
+from typing import Any, Callable, Dict, List, Optional, TypeVar, cast
 
 import pythonjsonlogger
 import structlog
-from pythonjsonlogger import jsonlogger
 from structlog.stdlib import BoundLogger
 from structlog.types import EventDict, Processor, WrappedLogger
 

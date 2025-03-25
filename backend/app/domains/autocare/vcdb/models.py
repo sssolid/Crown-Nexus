@@ -9,7 +9,7 @@ Auto Care Association standards.
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Optional
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table
 from sqlalchemy.dialects.postgresql import UUID

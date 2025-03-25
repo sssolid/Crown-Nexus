@@ -7,8 +7,8 @@ message management, and member access control.
 """
 from __future__ import annotations
 
-import uuid
 import datetime
+import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import and_, desc, func, or_, select, update
@@ -1606,6 +1606,6 @@ class ChatService:
     @classmethod
     def register(cls) -> None:
         """Register this service with the service registry."""
-        from app.services import service_registry
+        from app.core.dependency_manager import register_service
 
-        service_registry.register(cls, "chat_service")
+        register_service(cls, "chat_service")

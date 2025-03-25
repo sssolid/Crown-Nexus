@@ -7,9 +7,9 @@ This module defines models for mapping local product fitments to VCdb, PCdb, and
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, Table
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func, expression
@@ -83,7 +83,7 @@ class FitmentMapping(Base):
 
     # Relationships
     product = relationship(
-        "app.domains.products.models.Product", foreign_keys=[product_id]
+        "Product", foreign_keys=[product_id]
     )
     created_by = relationship("User", foreign_keys=[created_by_id])
     updated_by = relationship("User", foreign_keys=[updated_by_id])

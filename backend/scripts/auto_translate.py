@@ -1,9 +1,10 @@
 # backend/scripts/auto_translate.py
 import json
 import os
-import requests
 from pathlib import Path
+
 import polib
+import requests
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SOURCE_LOCALE = "en"

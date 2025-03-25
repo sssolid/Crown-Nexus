@@ -1,9 +1,10 @@
 from __future__ import annotations
+
 from typing import Dict, Any
 
 from app.core.cache.backends.memory import MemoryCacheBackend
-from app.core.cache.backends.redis import RedisCacheBackend
 from app.core.cache.backends.null import NullCacheBackend
+from app.core.cache.backends.redis import RedisCacheBackend
 
 # Export backend classes
 __all__ = ["MemoryCacheBackend", "RedisCacheBackend", "NullCacheBackend", "get_backend"]

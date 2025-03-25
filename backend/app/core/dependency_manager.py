@@ -14,7 +14,6 @@ The system provides a centralized way to manage application dependencies and ser
 making it easier to maintain and test the application.
 """
 
-import inspect
 from typing import Any, Callable, Dict, Optional, Type, TypeVar, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -299,7 +298,7 @@ def register_services() -> None:
 
     # Import services here to avoid circular imports
     try:
-        from app.services.audit import get_audit_service
+        from app.domains.audit.service import get_audit_service
         from app.services.search import get_search_service
         from app.services.media import get_media_service
         from app.services.as400_sync_service import as400_sync_service

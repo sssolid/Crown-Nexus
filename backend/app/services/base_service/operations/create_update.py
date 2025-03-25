@@ -7,7 +7,7 @@ This module provides functionality for creating and updating entities,
 with support for validation, permission checking, and hooks.
 """
 
-from typing import Any, Dict, Generic, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, Optional, TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession

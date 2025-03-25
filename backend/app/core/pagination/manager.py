@@ -10,17 +10,11 @@ both offset-based and cursor-based pagination strategies.
 from typing import (
     Any,
     Callable,
-    Dict,
-    Generic,
-    List,
     Optional,
     Type,
     TypeVar,
-    Union,
-    cast,
 )
 
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.sql import Select
@@ -30,7 +24,6 @@ from app.core.logging import get_logger
 from app.core.pagination.base import (
     CursorPaginationParams,
     OffsetPaginationParams,
-    PaginationProvider,
     PaginationResult,
 )
 from app.core.pagination.factory import PaginationProviderFactory

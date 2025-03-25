@@ -7,15 +7,13 @@ This module provides service methods for mapping products to autocare database e
 
 import logging
 import uuid
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import BusinessException, ResourceNotFoundException
+from app.core.exceptions import ResourceNotFoundException
 from app.domains.autocare.exceptions import (
-    AutocareException,
     MappingNotFoundException,
     ImportException,
 )

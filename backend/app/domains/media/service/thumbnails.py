@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Tuple
+
+from app.services.media.base import FileNotFoundError, MediaStorageError
 
 from app.core.logging import get_logger
-from app.services.media.base import FileNotFoundError, MediaStorageError
 
 logger = get_logger(__name__)
 

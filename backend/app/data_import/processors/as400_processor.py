@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, Generic, List, Optional, Set, Type, TypeVar, Union
 
-from pydantic import BaseModel, create_model, validator
+from pydantic import BaseModel
 
 from app.core.exceptions import ValidationException
 from app.core.logging import get_logger

@@ -1,16 +1,11 @@
 # backend/app/chat/websocket.py
 from __future__ import annotations
 
+import datetime
 import json
 import uuid
-import datetime
 from typing import cast
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.api.deps import get_current_user_ws, get_db
-from app.domains.chat.connection import manager, redis_manager
 from app.chat.schemas import (
     ChatMessageSchema,
     CommandType,
@@ -18,7 +13,14 @@ from app.chat.schemas import (
     WebSocketCommand,
     WebSocketResponse,
 )
-from app.domains.chat.service import ChatService
+from app.core.service_registry import get_service
+from app.domains.audit.service_service import AuditEventType, AuditLogLevel, AuditService
+from app.services.metrics_service import MetricsService
+from app.services.validation_service import ValidationService
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.deps import get_current_user_ws, get_db
 from app.core.exceptions import (
     BusinessLogicException,
     ErrorCode,
@@ -26,13 +28,10 @@ from app.core.exceptions import (
     ValidationException,
 )
 from app.core.logging import get_logger
-from app.core.service_registry import get_service
-
 from app.core.security import sanitize_input, moderate_content
+from app.domains.chat.connection import manager, redis_manager
+from app.domains.chat.service import ChatService
 from app.domains.users.models import User
-from app.services.audit_service import AuditEventType, AuditLogLevel, AuditService
-from app.services.metrics_service import MetricsService
-from app.services.validation_service import ValidationService
 from app.utils.redis_manager import rate_limit_check
 
 logger = get_logger("app.chat.websocket")

@@ -7,23 +7,20 @@ This module provides data access and persistence operations for PCdb entities.
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
-from sqlalchemy import select, and_, or_, func, desc
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ResourceNotFoundException
 from app.repositories.base import BaseRepository
 from app.domains.autocare.pcdb.models import (
     Parts,
-    PartsDescription,
     Category,
     SubCategory,
     Position,
     PartCategory,
     PartPosition,
     PartsSupersession,
-    CodeMaster,
     PCdbVersion,
 )
 

@@ -7,7 +7,7 @@ This module defines common types, protocols, and interfaces
 used throughout the validation components.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Protocol, TypeVar, Union
+from typing import Any, Dict, List, Protocol, TypeVar
 
 from pydantic import BaseModel
 

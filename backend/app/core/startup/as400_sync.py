@@ -7,9 +7,6 @@ This module handles the initialization and shutdown of the AS400 sync service
 during application startup and shutdown.
 """
 
-import asyncio
-from typing import Optional
-
 from app.core.config.integrations.as400 import as400_settings
 from app.core.logging import get_logger
 from app.services.as400_sync_service import as400_sync_service, SyncEntityType

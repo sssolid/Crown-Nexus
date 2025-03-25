@@ -15,16 +15,13 @@ from __future__ import annotations
 
 import asyncio
 import json
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, Optional, Set
 
-from fastapi import WebSocket, WebSocketDisconnect
-from pydantic import BaseModel, ValidationError
-
-from app.chat.schemas import WebSocketCommand
-from app.utils.redis_manager import get_redis_pool
+from app.domains.chat.schemas import WebSocketCommand
+from fastapi import WebSocket
 
 from app.core.logging import get_logger
-
+from app.utils.redis_manager import get_redis_pool
 
 logger = get_logger("app.chat.connection")
 

@@ -1,9 +1,9 @@
 # /backend/app/middleware/response_formatter.py
 from __future__ import annotations
 
-import json
 import datetime
-from typing import Any, Callable, Dict, Optional, Union
+import json
+from typing import Callable
 
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse

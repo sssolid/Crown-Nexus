@@ -8,24 +8,24 @@ and querying operations.
 """
 
 import datetime
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.services.audit.base import (
+from app.domains.audit.service.base import (
     AuditContext,
     AuditEventType,
     AuditLogLevel,
     AuditLogger,
     AuditOptions,
 )
-from app.services.audit.factory import AuditLoggerFactory
-from app.services.audit.query import AuditQuery
+from app.domains.audit.service.factory import AuditLoggerFactory
+from app.domains.audit.service.query import AuditQuery
 from app.services.interfaces import ServiceInterface
 
-logger = get_logger("app.services.audit.service")
+logger = get_logger("app.domains.audit.service.service")
 
 
 class AuditService(ServiceInterface):

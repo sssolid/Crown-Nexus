@@ -1,13 +1,10 @@
 # /backend/tests/utils.py
 from __future__ import annotations
 
-import json
 import random
 import string
-import uuid
-from typing import Any, Dict, List, Optional, Type, TypeVar, cast
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
-from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 from pydantic import BaseModel
 

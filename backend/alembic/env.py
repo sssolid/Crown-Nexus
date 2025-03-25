@@ -10,11 +10,9 @@ the application's models and configuration.
 from __future__ import annotations
 
 import asyncio
-import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Optional
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool, text

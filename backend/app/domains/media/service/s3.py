@@ -12,19 +12,19 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, AsyncGenerator, BinaryIO, Dict, Optional, Set, Union
 
-import aiofiles
 import aioboto3
-from fastapi import UploadFile
-
-from app.core.config import settings
-from app.core.logging import get_logger
-from app.domains.media.models import MediaType
+import aiofiles
 from app.services.media.base import (
     FileNotFoundError,
     MediaStorageError,
     StorageConnectionError,
 )
 from app.services.media.thumbnails import ThumbnailGenerator
+from fastapi import UploadFile
+
+from app.core.config import settings
+from app.core.logging import get_logger
+from app.domains.media.models import MediaType
 
 logger = get_logger(__name__)
 

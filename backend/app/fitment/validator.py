@@ -8,19 +8,16 @@ VCDB and PCDB databases.
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Set
 
 from .models import (
     PartFitment,
-    PartTerminology,
     PCDBPosition,
     Position,
     ValidationResult,
     ValidationStatus,
     VCDBVehicle,
 )
-from .exceptions import ValidationError
-
 
 logger = logging.getLogger(__name__)
 

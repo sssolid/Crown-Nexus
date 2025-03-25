@@ -8,7 +8,7 @@ both in-memory and Redis-based rate limiting.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from fastapi import Request
 
@@ -16,7 +16,6 @@ from app.core.config import settings
 from app.core.logging import get_logger
 from app.core.rate_limiting.models import RateLimitRule, RateLimitStrategy
 from app.utils.redis_manager import get_redis_client, increment_counter
-from app.core.rate_limiting.utils import check_rate_limit
 
 logger = get_logger(__name__)
 

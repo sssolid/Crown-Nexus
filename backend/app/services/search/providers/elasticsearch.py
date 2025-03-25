@@ -7,7 +7,7 @@ This module provides a search provider that uses Elasticsearch for full-text sea
 """
 
 import json
-from typing import Any, Dict, List, Optional, Type, Union, cast
+from typing import Any, Dict, List, Optional, Type
 
 from elasticsearch import AsyncElasticsearch
 from sqlalchemy import select

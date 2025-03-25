@@ -10,7 +10,7 @@ process between AS400 and the application database.
 import asyncio
 import time
 from datetime import datetime
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Generic, List, Optional, TypeVar
 
 from pydantic import BaseModel
 

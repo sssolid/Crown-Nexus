@@ -14,12 +14,11 @@ operations from the main application thread.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from celery import Celery
 
 from app.core.config import settings
-
 from app.core.logging import get_logger
 
 # Configure logging

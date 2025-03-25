@@ -4,7 +4,6 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.error import handle_exception
-
 from app.core.exceptions import (
     AppException,
     app_exception_handler,

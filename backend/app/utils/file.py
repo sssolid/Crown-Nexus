@@ -30,8 +30,8 @@ from typing import (
     Union,
 )
 
-from fastapi import HTTPException, UploadFile, status
 from PIL import Image, UnidentifiedImageError
+from fastapi import HTTPException, UploadFile, status
 
 from app.core.config import settings
 from app.core.exceptions import (

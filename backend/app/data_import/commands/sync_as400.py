@@ -11,14 +11,12 @@ import asyncio
 import json
 import sys
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 import typer
 
 from app.core.config.integrations.as400 import (
-    as400_settings,
     get_as400_connector_config,
 )
-from app.core.exceptions import AppException
 from app.core.logging import get_logger
 from app.data_import.connectors.as400_connector import (
     AS400Connector,
@@ -27,9 +25,7 @@ from app.data_import.connectors.as400_connector import (
 from app.services.as400_sync_service import (
     as400_sync_service,
     SyncEntityType,
-    SyncStatus,
 )
-from app.db.session import get_db_context
 
 logger = get_logger("app.commands.sync_as400")
 app = typer.Typer()

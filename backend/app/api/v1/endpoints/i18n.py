@@ -1,5 +1,5 @@
 # backend/app/api/v1/endpoints/i18n.py
-from typing import Annotated, Dict, Any
+from typing import Annotated, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 

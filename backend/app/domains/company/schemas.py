@@ -12,7 +12,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.schemas.address import Address
+from app.domains.location.schemas import Address
 
 
 class CompanyBase(BaseModel):

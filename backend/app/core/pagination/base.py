@@ -7,8 +7,8 @@ This module defines common types, protocols, and interfaces
 used throughout the pagination components.
 """
 
-from enum import Enum, auto
-from typing import Any, Dict, Generic, List, Optional, Protocol, TypeVar, Union
+from enum import Enum
+from typing import Any, Dict, Generic, List, Optional, Protocol, TypeVar
 
 from pydantic import BaseModel, Field
 from sqlalchemy.sql import Select

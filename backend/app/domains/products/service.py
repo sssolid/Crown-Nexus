@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from uuid import UUID
 
 from sqlalchemy import select
@@ -7,9 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependency_manager import get_dependency
 from app.domains.products.models import Product
 from app.domains.products.schemas import ProductCreate
-
-# Get error service
-error_service = get_dependency("error_service")
 
 
 class ProductService:
@@ -25,6 +23,7 @@ class ProductService:
         product = result.scalars().first()
 
         # Use error service instead of direct exception
+        error_service = get_dependency("error_service")
         return error_service.ensure_not_none(
             product, resource_type="Product", resource_id=str(product_id)
         )
@@ -38,6 +37,7 @@ class ProductService:
 
         if existing is not None:
             # Use error service to create exception
+            error_service = get_dependency("error_service")
             raise error_service.resource_already_exists(
                 resource_type="Product",
                 identifier=data.part_number,

@@ -1,6 +1,7 @@
 # backend/app/core/cache/backends/null.py
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, TypeVar, Union
+
+from typing import Any, Dict, List, Optional, TypeVar
 
 from app.core.cache.base import CacheBackend
 from app.core.logging import get_logger

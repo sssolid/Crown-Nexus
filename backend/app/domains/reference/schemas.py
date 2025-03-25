@@ -9,7 +9,7 @@ TariffCode, UnspscCode, and Warehouse.
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 

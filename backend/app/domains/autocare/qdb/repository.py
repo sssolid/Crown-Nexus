@@ -7,12 +7,11 @@ This module provides data access and persistence operations for Qdb entities.
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
-from sqlalchemy import select, and_, or_, func, desc
+from sqlalchemy import select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ResourceNotFoundException
 from app.repositories.base import BaseRepository
 from app.domains.autocare.qdb.models import (
     QualifierType,

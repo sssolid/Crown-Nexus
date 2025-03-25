@@ -1,13 +1,11 @@
 # /backend/app/core/cache/backends/memory.py
 from __future__ import annotations
 
-import asyncio
 import fnmatch
-import re
 import time
 from collections import OrderedDict
 from threading import RLock
-from typing import Any, Dict, List, Optional, Pattern, Set, TypeVar, Union
+from typing import Any, Dict, List, Optional, TypeVar
 
 from app.core.cache.base import CacheBackend
 from app.core.logging import get_logger

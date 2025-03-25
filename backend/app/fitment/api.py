@@ -22,17 +22,15 @@ from fastapi import (
 )
 from pydantic import BaseModel, Field
 
+from app.core.logging import get_logger
 from app.domains.model_mapping.schemas import ModelMapping as ModelMappingSchema
 from app.domains.model_mapping.schemas import (
     ModelMappingCreate,
     ModelMappingUpdate,
 )
-
 from .exceptions import ConfigurationError, FitmentError
 from .mapper import FitmentMappingEngine
 from .models import ValidationStatus
-
-from app.core.logging import get_logger
 
 logger = get_logger("app.fitment.api")
 

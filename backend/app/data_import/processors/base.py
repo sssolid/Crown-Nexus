@@ -8,7 +8,7 @@ This module defines protocol classes for data processors that transform and vali
 raw data into structured formats suitable for importing into the application.
 """
 
-from typing import Any, Dict, Generic, List, Protocol, TypeVar
+from typing import Any, Dict, List, Protocol, TypeVar
 
 T = TypeVar("T")
 

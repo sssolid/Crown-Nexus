@@ -8,13 +8,12 @@ implement, providing a standardized contract for CRUD operations and other
 common service functionality.
 """
 
-from typing import Any, Dict, Generic, List, Optional, Protocol, Type, TypeVar, Union
+from typing import Any, Dict, Generic, Optional, TypeVar
 
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base_class import Base
-from app.services.interfaces import CrudServiceInterface, ServiceInterface
+from app.services.interfaces import CrudServiceInterface
 
 # Type variables
 T = TypeVar("T", bound=Base)  # SQLAlchemy model type

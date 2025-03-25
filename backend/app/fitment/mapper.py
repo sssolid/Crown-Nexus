@@ -7,16 +7,13 @@ fitment data with VCDB and PCDB records.
 
 from __future__ import annotations
 
-import json
-from dataclasses import asdict
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, cast
+from typing import Any, Dict, List, Optional
 
+from app.core.logging import get_logger
 from .db import FitmentDBService
 from .exceptions import MappingError
 from .models import (
-    PartApplication,
-    PartFitment,
     PartTerminology,
     PCDBPosition,
     ValidationResult,
@@ -25,8 +22,6 @@ from .models import (
 )
 from .parser import FitmentParser
 from .validator import FitmentValidator
-
-from app.core.logging import get_logger
 
 logger = get_logger("app.fitment.mapper")
 

@@ -7,15 +7,14 @@ from typing import Any, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.users.models import Company, User, UserRole, get_password_hash
+from app.domains.media.models import Media, MediaType, MediaVisibility
 from app.domains.products.models import (
     Brand,
     Fitment,
     Product,
     ProductStatus,
 )
-from app.domains.media.models import Media, MediaType, MediaVisibility
-
+from app.domains.users.models import Company, User, UserRole, get_password_hash
 from tests.utils import create_random_email, create_random_string
 
 

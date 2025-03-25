@@ -1,9 +1,7 @@
 # /backend/app/services/interfaces.py
 from __future__ import annotations
 
-import abc
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Optional, Protocol, Type, TypeVar, Union
+from typing import Any, Dict, Generic, List, Optional, Protocol, TypeVar
 
 T = TypeVar("T")  # Entity type
 ID = TypeVar("ID")  # ID type

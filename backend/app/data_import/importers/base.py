@@ -8,7 +8,7 @@ This module defines protocol classes for data importers that insert or update
 data in the application database.
 """
 
-from typing import Any, Dict, Generic, List, Protocol, TypeVar
+from typing import Any, Dict, List, Protocol, TypeVar
 
 T = TypeVar("T")
 

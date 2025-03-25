@@ -15,10 +15,9 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from .models import PCDBPosition, PartTerminology, VCDBVehicle
-from .exceptions import DatabaseError
-
 from app.core.logging import get_logger
+from .exceptions import DatabaseError
+from .models import PCDBPosition, PartTerminology, VCDBVehicle
 
 logger = get_logger("app.fitment.db")
 

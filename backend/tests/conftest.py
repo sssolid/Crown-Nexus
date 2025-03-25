@@ -15,13 +15,13 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.core.config import settings
-from app.core.security import create_access_token
-from app.db.base import Base
-from app.main import app
-from app.domains.users.models import Company, User, UserRole, get_password_hash
-from app.domains.products.models import Brand, Fitment, Product
 from app.api.deps import get_db
+from app.core.config import settings
+from app.core.security import create_token
+from app.db.base_class import Base
+from app.domains.products.models import Brand, Fitment, Product
+from app.domains.users.models import Company, User, UserRole, get_password_hash
+from app.main import app
 
 # Constants
 TEST_DATABASE_URL = str(settings.SQLALCHEMY_DATABASE_URI).replace(
@@ -198,7 +198,7 @@ async def user_token(normal_user) -> str:
     Returns:
         str: JWT token for normal user
     """
-    return create_access_token(
+    return create_token(
         str(normal_user.id),
         "access",
         expires_delta=None,
@@ -220,7 +220,7 @@ async def admin_token(admin_user) -> str:
     Returns:
         str: JWT token for admin user
     """
-    return create_access_token(
+    return create_token(
         str(admin_user.id),
         "access",
         expires_delta=None,

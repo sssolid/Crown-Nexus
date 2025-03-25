@@ -13,7 +13,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Use Python standard logging to avoid circular imports

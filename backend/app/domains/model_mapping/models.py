@@ -7,9 +7,8 @@ different vehicle model naming systems.
 """
 
 from datetime import datetime
-from typing import Optional
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
+from sqlalchemy import Boolean, DateTime, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base_class import Base

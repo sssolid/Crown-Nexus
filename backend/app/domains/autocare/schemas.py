@@ -6,12 +6,10 @@ This module defines Pydantic schemas for the main Autocare domain functionality.
 These schemas are used for validation and serialization across the autocare sub-domains.
 """
 
-import uuid
-from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class FileFormat(str, Enum):

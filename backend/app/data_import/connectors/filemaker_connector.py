@@ -8,13 +8,12 @@ This module provides a connector for extracting data from FileMaker databases
 using ODBC connections.
 """
 
-import logging
 from typing import Any, Dict, List, Optional
 
 import pyodbc
 from pydantic import BaseModel, Field, validator
 
-from app.core.exceptions import ConfigurationException, DatabaseException
+from app.core.exceptions import DatabaseException
 from app.core.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.filemaker_connector")

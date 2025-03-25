@@ -29,14 +29,10 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Generic,
     List,
-    Literal,
     Optional,
-    Protocol,
     Type,
     TypeVar,
-    Union,
     cast,
 )
 
@@ -320,7 +316,6 @@ class CircuitBreaker:
                 # Otherwise raise service unavailable exception
                 raise ServiceException(
                     message=f"Service is unavailable (circuit breaker '{self.name}' is OPEN)",
-                    code=ErrorCode.SERVICE_UNAVAILABLE,
                 )
 
             try:
@@ -365,7 +360,6 @@ class CircuitBreaker:
                 # Otherwise raise service unavailable exception
                 raise ServiceException(
                     message=f"Service is unavailable (circuit breaker '{self.name}' is OPEN)",
-                    code=ErrorCode.SERVICE_UNAVAILABLE,
                 )
 
             try:

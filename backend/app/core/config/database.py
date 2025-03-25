@@ -11,7 +11,7 @@ parameters for PostgreSQL and Redis.
 
 from typing import Optional
 
-from pydantic import Field, PostgresDsn, SecretStr, model_validator
+from pydantic import PostgresDsn, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

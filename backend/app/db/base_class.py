@@ -10,17 +10,13 @@ from typing import (
     Optional,
     Type,
     TypeVar,
-    cast,
     ClassVar,
-    get_args,
-    get_origin,
-    get_type_hints,
 )
 
-from sqlalchemy import Column, DateTime, Boolean, String, inspect, func, select
+from sqlalchemy import DateTime, Boolean, inspect, func, select
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from sqlalchemy.orm import DeclarativeBase, Session, relationship, Mapped, mapped_column
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql.expression import Select
 
 from app.core.logging import get_logger

@@ -129,7 +129,7 @@ class Media(Base):
 
     # Relationships
     products: Mapped[List["Product"]] = relationship(
-        "app.models.product.Product",
+        "Product",
         secondary=product_media_association,
         back_populates="media",
     )

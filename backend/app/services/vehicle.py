@@ -6,6 +6,7 @@ makes, models, etc., validating fitments, and decoding VINs.
 """
 
 from __future__ import annotations
+
 import re
 from typing import Dict, List, Optional, Any
 
@@ -360,7 +361,7 @@ class VehicleDataService:
             logger.error("Failed to decode VIN", vin=vin, error=str(e), exc_info=True)
             raise DatabaseException(
                 message=f"Failed to decode VIN: {str(e)}",
-                code=ErrorCode.EXTERNAL_SERVICE_ERROR,
+                code=ErrorCode.SERVICE_ERROR,
                 original_exception=e,
             ) from e
 

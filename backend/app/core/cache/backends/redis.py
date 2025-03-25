@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 import pickle
-from typing import Any, Dict, List, Optional, TypeVar, Union, cast
+from typing import Any, Dict, List, Optional, TypeVar, cast
 
 import redis.asyncio as redis
 from redis.asyncio import Redis

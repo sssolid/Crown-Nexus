@@ -20,6 +20,7 @@ from app.domains.chat.models import ChatRoom
 from app.domains.audit.models import AuditLog
 
 if TYPE_CHECKING:
+    from app.domains.location.models import Address
     from app.domains.users.models import User
     from app.domains.audit.models import AuditLog
     from app.domains.products.models import Brand

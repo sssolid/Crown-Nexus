@@ -10,10 +10,9 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from enum import Enum, auto
-from typing import Dict, List, Optional, Set, Union, Literal
+from typing import Dict, List, Optional, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
-from pydantic_core.core_schema import ValidationInfo
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class Position(str, Enum):

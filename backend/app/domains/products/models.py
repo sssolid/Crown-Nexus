@@ -146,7 +146,7 @@ class Product(Base):
 
     # Many-to-many relationships using association tables
     media: Mapped[List["Media"]] = relationship(
-        "app.models.media.Media",
+        "Media",
         secondary=product_media_association,
         back_populates="products",
     )
@@ -156,49 +156,49 @@ class Product(Base):
     )
 
     tariff_codes: Mapped[List["TariffCode"]] = relationship(
-        "app.models.reference.TariffCode",
+        "TariffCode",
         secondary=product_tariff_code_association,
         backref="products",  # Simpler than back_populates if TariffCode doesn't define the relationship
     )
 
     unspsc_codes: Mapped[List["UnspscCode"]] = relationship(
-        "app.models.reference.UnspscCode",
+        "UnspscCode",
         secondary=product_unspsc_association,
         backref="products",
     )
 
     countries_of_origin: Mapped[List["Country"]] = relationship(
-        "app.models.location.Country",
+        "Country",
         secondary=product_country_origin_association,
         backref="products_as_origin",
     )
 
     hardware_items: Mapped[List["Hardware"]] = relationship(
-        "app.models.reference.Hardware",
+        "Hardware",
         secondary=product_hardware_association,
         backref="products",
     )
 
     colors: Mapped[List["Color"]] = relationship(
-        "app.models.reference.Color",
+        "Color",
         secondary=product_color_association,
         backref="products",
     )
 
     construction_types: Mapped[List["ConstructionType"]] = relationship(
-        "app.models.reference.ConstructionType",
+        "ConstructionType",
         secondary=product_construction_type_association,
         backref="products",
     )
 
     textures: Mapped[List["Texture"]] = relationship(
-        "app.models.reference.Texture",
+        "Texture",
         secondary=product_texture_association,
         backref="products",
     )
 
     packaging_types: Mapped[List["PackagingType"]] = relationship(
-        "app.models.reference.PackagingType",
+        "PackagingType",
         secondary=product_packaging_association,
         backref="products",
     )

@@ -2,11 +2,8 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict
 
-import pytest
-
-from app.core.config import Environment, Settings, get_settings
+from app.core.config import Environment, get_settings
 
 
 def test_settings_from_env() -> None:

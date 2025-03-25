@@ -7,7 +7,7 @@ This module defines exceptions related to business logic, resources,
 authentication, and validation that are specific to the application's domain.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from app.core.exceptions.base import (
     AppException,

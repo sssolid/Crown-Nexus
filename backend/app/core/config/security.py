@@ -10,9 +10,9 @@ authentication, CORS, rate limiting, and content security policies.
 """
 
 import secrets
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union
 
-from pydantic import AnyHttpUrl, Field, field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

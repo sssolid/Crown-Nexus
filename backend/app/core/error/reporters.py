@@ -7,8 +7,6 @@ This module provides different implementations of the ErrorReporter protocol
 for reporting errors to various destinations.
 """
 
-from typing import Any, Dict, Optional
-
 from app.core.logging import get_logger
 from app.core.error.base import ErrorContext, ErrorReporter
 

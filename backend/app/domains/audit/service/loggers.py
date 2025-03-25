@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
-from app.services.audit.base import (
+from app.domains.audit.service.base import (
     AuditContext,
     AuditEventType,
     AuditLogLevel,
@@ -23,7 +23,7 @@ from app.services.audit.base import (
     AuditOptions,
 )
 
-logger = get_logger("app.services.audit.loggers")
+logger = get_logger("app.domains.audit.service.loggers")
 
 
 class BaseAuditLogger:

@@ -1,7 +1,7 @@
 # /backend/app/services/test_service.py
 from __future__ import annotations
 
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, cast
+from typing import Any, Generic, List, Optional, Type, TypeVar
 
 from app.core.logging import get_logger
 

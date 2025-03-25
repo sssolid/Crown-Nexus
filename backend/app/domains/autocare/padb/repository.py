@@ -7,23 +7,20 @@ This module provides data access and persistence operations for PAdb entities.
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
-from sqlalchemy import select, and_, or_, func, desc
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ResourceNotFoundException
 from app.repositories.base import BaseRepository
 from app.domains.autocare.padb.models import (
     PartAttribute,
     MetaData,
-    MeasurementGroup,
     MetaUOMCode,
     PartAttributeAssignment,
     MetaUomCodeAssignment,
     ValidValue,
     ValidValueAssignment,
-    Style,
     PAdbVersion,
 )
 

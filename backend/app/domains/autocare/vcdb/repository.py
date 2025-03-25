@@ -7,12 +7,11 @@ This module provides data access and persistence operations for VCdb entities.
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import select, and_, or_, func, desc, text
+from sqlalchemy import select, and_, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ResourceNotFoundException
 from app.repositories.base import BaseRepository
 from app.domains.autocare.vcdb.models import (
     Vehicle,
@@ -22,22 +21,16 @@ from app.domains.autocare.vcdb.models import (
     Year,
     SubModel,
     VehicleType,
-    VehicleTypeGroup,
     Region,
-    PublicationStage,
     VCdbVersion,
     DriveType,
     BrakeType,
     BrakeSystem,
     BrakeABS,
     BrakeConfig,
-    BedType,
-    BedLength,
-    BedConfig,
     BodyType,
     BodyNumDoors,
     BodyStyleConfig,
-    MfrBodyCode,
     EngineBlock,
     EngineBoreStroke,
     EngineBase,
@@ -57,11 +50,6 @@ from app.domains.autocare.vcdb.models import (
     IgnitionSystemType,
     PowerOutput,
     EngineConfig,
-    SpringType,
-    SpringTypeConfig,
-    SteeringType,
-    SteeringSystem,
-    SteeringConfig,
     TransmissionType,
     TransmissionNumSpeeds,
     TransmissionControlType,

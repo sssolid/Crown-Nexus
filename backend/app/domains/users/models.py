@@ -21,10 +21,11 @@ from sqlalchemy.sql import expression
 
 from app.core.config import settings
 from app.db.base_class import Base
-from app.domains.company.schemas import Company
-from app.domains.api_key.models import ApiKey
 
 if TYPE_CHECKING:
+    from app.domains.company.models import Company
+    from app.domains.api_key.models import ApiKey
+    from app.domains.media.models import Media
     from app.domains.chat.models import ChatMember
 
 

@@ -10,7 +10,7 @@ implementing the logic to create or update records in the application database.
 from datetime import datetime
 from typing import Any, Dict, List, TypeVar
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException
@@ -274,12 +274,11 @@ class ProductAS400Importer(AS400BaseImporter[ProductCreate]):
             from app.domains.products.models import ProductDescription
 
             await self.db.execute(
-                select(ProductDescription)
-                .where(ProductDescription.product_id == existing_product.id)
-                .delete()
+                delete(ProductDescription).where(ProductDescription.product_id == existing_product.id)
             )
 
-            # Add new descriptions
+
+# Add new descriptions
             for desc_data in product_data.descriptions:
                 description = ProductDescription(
                     product_id=existing_product.id,
@@ -294,12 +293,11 @@ class ProductAS400Importer(AS400BaseImporter[ProductCreate]):
             from app.domains.products.models import ProductMarketing
 
             await self.db.execute(
-                select(ProductMarketing)
-                .where(ProductMarketing.product_id == existing_product.id)
-                .delete()
+                delete(ProductMarketing).where(ProductMarketing.product_id == existing_product.id)
             )
 
-            # Add new marketing content
+
+# Add new marketing content
             for mkt_data in product_data.marketing:
                 marketing = ProductMarketing(
                     product_id=existing_product.id,

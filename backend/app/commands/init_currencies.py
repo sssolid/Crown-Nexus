@@ -7,8 +7,8 @@ and can be run manually or during application setup.
 """
 
 import asyncio
-import typer
 
+import typer
 from sqlalchemy import select
 
 from app.db.session import get_db_context

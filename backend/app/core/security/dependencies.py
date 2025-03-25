@@ -6,7 +6,7 @@ This module provides dependency functions for FastAPI to handle authentication
 and authorization in request handlers.
 """
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from app.core.config import settings

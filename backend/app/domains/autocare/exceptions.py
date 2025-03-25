@@ -26,7 +26,9 @@ class AutocareException(BusinessException):
 class InvalidVehicleDataException(AutocareException):
     """Raised when vehicle data is invalid or incomplete."""
 
-    def __init__(self, message: str = "Invalid vehicle data", details: dict = None) -> None:
+    def __init__(
+        self, message: str = "Invalid vehicle data", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -39,7 +41,9 @@ class InvalidVehicleDataException(AutocareException):
 class InvalidPartDataException(AutocareException):
     """Raised when part data is invalid or incomplete."""
 
-    def __init__(self, message: str = "Invalid part data", details: dict = None) -> None:
+    def __init__(
+        self, message: str = "Invalid part data", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -70,7 +74,9 @@ class MappingNotFoundException(ResourceNotFoundException):
 class ImportException(AutocareException):
     """Raised when importing data from ACES or PIES files fails."""
 
-    def __init__(self, message: str = "Failed to import data", details: dict = None) -> None:
+    def __init__(
+        self, message: str = "Failed to import data", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -83,7 +89,9 @@ class ImportException(AutocareException):
 class ExportException(AutocareException):
     """Raised when exporting data to ACES or PIES files fails."""
 
-    def __init__(self, message: str = "Failed to export data", details: dict = None) -> None:
+    def __init__(
+        self, message: str = "Failed to export data", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -95,8 +103,10 @@ class ExportException(AutocareException):
 
 class VCdbException(AutocareException):
     """Raised when there's an issue with VCdb data."""
-    
-    def __init__(self, message: str = "VCdb operation failed", details: dict = None) -> None:
+
+    def __init__(
+        self, message: str = "VCdb operation failed", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -108,8 +118,10 @@ class VCdbException(AutocareException):
 
 class PCdbException(AutocareException):
     """Raised when there's an issue with PCdb data."""
-    
-    def __init__(self, message: str = "PCdb operation failed", details: dict = None) -> None:
+
+    def __init__(
+        self, message: str = "PCdb operation failed", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -121,8 +133,10 @@ class PCdbException(AutocareException):
 
 class PAdbException(AutocareException):
     """Raised when there's an issue with PAdb data."""
-    
-    def __init__(self, message: str = "PAdb operation failed", details: dict = None) -> None:
+
+    def __init__(
+        self, message: str = "PAdb operation failed", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:
@@ -134,8 +148,10 @@ class PAdbException(AutocareException):
 
 class QdbException(AutocareException):
     """Raised when there's an issue with Qdb data."""
-    
-    def __init__(self, message: str = "Qdb operation failed", details: dict = None) -> None:
+
+    def __init__(
+        self, message: str = "Qdb operation failed", details: dict = None
+    ) -> None:
         """Initialize the exception.
 
         Args:

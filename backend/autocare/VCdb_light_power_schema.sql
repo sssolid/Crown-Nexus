@@ -13,7 +13,7 @@ CREATE TABLE "Make" (
 
 CREATE TABLE "VehicleTypeGroup" (
     "VehicleTypeGroupID" INT NOT NULL,
-    "VehicleTypeGroupName" VARCHAR(50) NOT NULL	
+    "VehicleTypeGroupName" VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE "VehicleType" (
@@ -238,10 +238,10 @@ CREATE TABLE "BodyStyleConfig" (
 CREATE TABLE "Class" (
 	"ClassID" int NOT NULL,
 	"ClassName" varchar(30) NOT NULL,
- CONSTRAINT "PK_Class" PRIMARY KEY 
+ CONSTRAINT "PK_Class" PRIMARY KEY
 (
-	"ClassID" 
-) 
+	"ClassID"
+)
 );
 
 CREATE TABLE "CylinderHeadType" (
@@ -268,7 +268,7 @@ CREATE TABLE "EngineBlock" (
     "Cylinders" VARCHAR(2) NOT NULL,
     "BlockType" VARCHAR(2) NOT NULL,
 	    PRIMARY KEY ("EngineBlockID")
-	);		 
+	);
 
 CREATE TABLE "EngineBoreStroke" (
     "EngineBoreStrokeID" INT NOT NULL,
@@ -772,9 +772,9 @@ CREATE TABLE "VehicleToClass" (
 	"VehicleID" int NOT NULL,
 	"ClassID" int NOT NULL,
 	"Source" varchar(10) DEFAULT NULL,
- CONSTRAINT "PK_VehicleToClass" PRIMARY KEY 
+ CONSTRAINT "PK_VehicleToClass" PRIMARY KEY
 (
-	"VehicleToClassID" 
+	"VehicleToClassID"
 ),
     CONSTRAINT "classVehicle_fk" FOREIGN KEY ("ClassID")
         REFERENCES "Class" ("ClassID"),
@@ -853,8 +853,8 @@ CREATE TABLE "ChangeDetails"(
 		ON DELETE NO ACTION ON UPDATE NO ACTION,
 	CONSTRAINT "FK_ChangeTableNames_ChangeDetails" FOREIGN KEY ("TableNameID")
 		REFERENCES "ChangeTableNames" ("TableNameID")
-		ON DELETE NO ACTION ON UPDATE NO ACTION    
-    
+		ON DELETE NO ACTION ON UPDATE NO ACTION
+
 );
 
 CREATE TABLE Version(
@@ -866,19 +866,14 @@ CREATE TABLE VCdbChanges(
 	TableName varchar(30) NOT NULL,
 	ID int NOT NULL,
 	Action varchar(1) NOT NULL
-) 
+)
 ;
 
 CREATE TABLE Attachment(
-
 	AttachmentID int  NOT NULL ,
-
 	AttachmentTypeID int NOT NULL,
-
 	AttachmentFileName varchar(50) NOT NULL,
-
 	AttachmentURL varchar(100) NOT NULL,
-
 	AttachmentDescription varchar(50) NOT NULL,
     Primary key (AttachmentID)
 	)
@@ -886,9 +881,7 @@ CREATE TABLE Attachment(
 ;
 
 CREATE TABLE AttachmentType(
-
 	AttachmentTypeID int  NOT NULL ,
-
 	AttachmentTypeName varchar(20) NOT NULL,
     Primary key(AttachmentTypeID)
 	)
@@ -896,53 +889,35 @@ CREATE TABLE AttachmentType(
 ;
 
 CREATE TABLE EnglishPhrase(
-
 	EnglishPhraseID int  NOT NULL ,
-
 	EnglishPhrase varchar(100) NOT NULL,
     Primary key(EnglishPhraseID)
 	)
-
 ;
 
 CREATE TABLE Language(
-
 	LanguageID int NOT NULL ,
-
 	LanguageName varchar(20) NOT NULL,
-
 	DialectName varchar(20) NULL,
-    
     Primary key(LanguageID)
 	)
 
 ;
 
 CREATE TABLE LanguageTranslation(
-
 	LanguageTranslationID int  NOT NULL ,
-
 	EnglishPhraseID int NOT NULL,
-
 	LanguageID int NOT NULL,
-
 	Translation varchar(150) NOT NULL,
-    
     Primary KEY (LanguageTranslationID)
 	)
 
 ;
 
 CREATE TABLE LanguageTranslationAttachment(
-
 	LanguageTranslationAttachmentID int NOT NULL ,
-
 	LanguageTranslationID int NOT NULL,
-
 	AttachmentID int NOT NULL,
-    
     Primary key(LanguageTranslationAttachmentID)
-	
 	)
-
 ;

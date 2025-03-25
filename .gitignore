@@ -1,3 +1,6 @@
+# Ignore data directory
+/data/
+
 # Ignore everything inside processed_project/
 processed_project/*
 

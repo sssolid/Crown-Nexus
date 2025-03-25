@@ -44,7 +44,7 @@ class ImportMode(str, Enum):
 
     REPLACE = "replace"
     MERGE = "merge"
-    UPDATE = "update" 
+    UPDATE = "update"
     INSERT = "insert"
 
 
@@ -81,7 +81,9 @@ class AutocareImportParams(BaseModel):
     mode: ImportMode = Field(ImportMode.MERGE, description="Import mode")
     data_type: DataType = Field(DataType.ALL, description="Type of data to import")
     validate: bool = Field(True, description="Whether to validate data before import")
-    options: Optional[Dict[str, Any]] = Field(None, description="Additional import options")
+    options: Optional[Dict[str, Any]] = Field(
+        None, description="Additional import options"
+    )
 
 
 class AutocareExportParams(BaseModel):
@@ -98,8 +100,12 @@ class AutocareExportParams(BaseModel):
     file_path: str = Field(..., description="Path to the export file")
     format: FileFormat = Field(..., description="Format of the export file")
     data_type: DataType = Field(DataType.ALL, description="Type of data to export")
-    filters: Optional[Dict[str, Any]] = Field(None, description="Filters to apply to the data")
-    options: Optional[Dict[str, Any]] = Field(None, description="Additional export options")
+    filters: Optional[Dict[str, Any]] = Field(
+        None, description="Filters to apply to the data"
+    )
+    options: Optional[Dict[str, Any]] = Field(
+        None, description="Additional export options"
+    )
 
 
 class FitmentSearchParams(BaseModel):
@@ -138,13 +144,18 @@ class FitmentSearchParams(BaseModel):
             ValueError: If no search criteria are provided
         """
         criteria = [
-            self.year, self.make, self.model, self.submodel,
-            self.part_number, self.part_type, self.brand
+            self.year,
+            self.make,
+            self.model,
+            self.submodel,
+            self.part_number,
+            self.part_type,
+            self.brand,
         ]
-        
+
         if not any(criteria):
             raise ValueError("At least one search criterion must be provided")
-        
+
         return self
 
 

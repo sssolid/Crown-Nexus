@@ -35,7 +35,9 @@ class Make(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    make_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    make_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
@@ -66,7 +68,9 @@ class Year(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    year_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    year_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     year: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
 
     # Relationships
@@ -98,9 +102,13 @@ class Model(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    model_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    model_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    vehicle_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_vehicle_type.vehicle_type_id"), nullable=False)
+    vehicle_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_vehicle_type.vehicle_type_id"), nullable=False
+    )
 
     # Relationships
     base_vehicles = relationship("BaseVehicle", back_populates="model")
@@ -132,17 +140,21 @@ class VehicleType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    vehicle_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    vehicle_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     vehicle_type_group_id: Mapped[Optional[int]] = mapped_column(
-        Integer, 
-        ForeignKey("autocare_vehicle_type_group.vehicle_type_group_id"), 
-        nullable=True
+        Integer,
+        ForeignKey("autocare_vehicle_type_group.vehicle_type_group_id"),
+        nullable=True,
     )
 
     # Relationships
     models = relationship("Model", back_populates="vehicle_type")
-    vehicle_type_group = relationship("VehicleTypeGroup", back_populates="vehicle_types")
+    vehicle_type_group = relationship(
+        "VehicleTypeGroup", back_populates="vehicle_types"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of VehicleType instance.
@@ -168,7 +180,9 @@ class VehicleTypeGroup(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    vehicle_type_group_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    vehicle_type_group_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
@@ -198,7 +212,9 @@ class SubModel(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    submodel_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    submodel_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
@@ -232,11 +248,11 @@ class Region(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    region_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    region_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     parent_id: Mapped[Optional[int]] = mapped_column(
-        Integer, 
-        ForeignKey("autocare_region.region_id"), 
-        nullable=True
+        Integer, ForeignKey("autocare_region.region_id"), nullable=True
     )
     abbr: Mapped[Optional[str]] = mapped_column(String(3), nullable=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
@@ -270,7 +286,9 @@ class PublicationStage(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    publication_stage_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    publication_stage_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
 
     # Relationships
@@ -305,10 +323,18 @@ class BaseVehicle(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    base_vehicle_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    year_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_year.year_id"), nullable=False)
-    make_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_make.make_id"), nullable=False)
-    model_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_model.model_id"), nullable=False)
+    base_vehicle_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    year_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_year.year_id"), nullable=False
+    )
+    make_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_make.make_id"), nullable=False
+    )
+    model_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_model.model_id"), nullable=False
+    )
 
     # Relationships
     year = relationship("Year", back_populates="base_vehicles")
@@ -352,33 +378,62 @@ class Vehicle(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    vehicle_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    base_vehicle_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_base_vehicle.base_vehicle_id"), nullable=False)
-    submodel_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_submodel.submodel_id"), nullable=False)
-    region_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_region.region_id"), nullable=False)
+    vehicle_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    base_vehicle_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_base_vehicle.base_vehicle_id"), nullable=False
+    )
+    submodel_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_submodel.submodel_id"), nullable=False
+    )
+    region_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_region.region_id"), nullable=False
+    )
     source: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
-    publication_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_publication_stage.publication_stage_id"), nullable=False, default=4)
+    publication_stage_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_publication_stage.publication_stage_id"),
+        nullable=False,
+        default=4,
+    )
     publication_stage_source: Mapped[str] = mapped_column(String(100), nullable=False)
-    publication_stage_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=func.now())
+    publication_stage_date: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, default=func.now()
+    )
 
     # Relationships
     base_vehicle = relationship("BaseVehicle", back_populates="vehicles")
     submodel = relationship("SubModel", back_populates="vehicles")
     region = relationship("Region", back_populates="vehicles")
     publication_stage = relationship("PublicationStage", back_populates="vehicles")
-    
+
     # Vehicle attributes relationships
     drive_types = relationship("DriveType", secondary="autocare_vehicle_to_drive_type")
-    brake_configs = relationship("BrakeConfig", secondary="autocare_vehicle_to_brake_config")
+    brake_configs = relationship(
+        "BrakeConfig", secondary="autocare_vehicle_to_brake_config"
+    )
     bed_configs = relationship("BedConfig", secondary="autocare_vehicle_to_bed_config")
-    body_style_configs = relationship("BodyStyleConfig", secondary="autocare_vehicle_to_body_style_config")
-    mfr_body_codes = relationship("MfrBodyCode", secondary="autocare_vehicle_to_mfr_body_code")
-    engine_configs = relationship("EngineConfig", secondary="autocare_vehicle_to_engine_config")
-    spring_type_configs = relationship("SpringTypeConfig", secondary="autocare_vehicle_to_spring_type_config")
-    steering_configs = relationship("SteeringConfig", secondary="autocare_vehicle_to_steering_config")
-    transmissions = relationship("Transmission", secondary="autocare_vehicle_to_transmission")
+    body_style_configs = relationship(
+        "BodyStyleConfig", secondary="autocare_vehicle_to_body_style_config"
+    )
+    mfr_body_codes = relationship(
+        "MfrBodyCode", secondary="autocare_vehicle_to_mfr_body_code"
+    )
+    engine_configs = relationship(
+        "EngineConfig", secondary="autocare_vehicle_to_engine_config"
+    )
+    spring_type_configs = relationship(
+        "SpringTypeConfig", secondary="autocare_vehicle_to_spring_type_config"
+    )
+    steering_configs = relationship(
+        "SteeringConfig", secondary="autocare_vehicle_to_steering_config"
+    )
+    transmissions = relationship(
+        "Transmission", secondary="autocare_vehicle_to_transmission"
+    )
     wheel_bases = relationship("WheelBase", secondary="autocare_vehicle_to_wheel_base")
-    
+
     # Properties for convenience
     @property
     def make(self) -> Make:
@@ -388,7 +443,7 @@ class Vehicle(Base):
             Make object.
         """
         return self.base_vehicle.make
-    
+
     @property
     def year(self) -> int:
         """Get the year of this vehicle.
@@ -397,7 +452,7 @@ class Vehicle(Base):
             Year value.
         """
         return self.base_vehicle.year.year
-    
+
     @property
     def model(self) -> str:
         """Get the model of this vehicle.
@@ -418,6 +473,7 @@ class Vehicle(Base):
 
 # Vehicle attribute tables
 
+
 class DriveType(Base):
     """DriveType entity representing types of drive systems.
 
@@ -433,7 +489,9 @@ class DriveType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    drive_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    drive_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     def __repr__(self) -> str:
@@ -450,8 +508,15 @@ vehicle_to_drive_type = Table(
     "autocare_vehicle_to_drive_type",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("drive_type_id", Integer, ForeignKey("autocare_drive_type.drive_type_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "drive_type_id",
+        Integer,
+        ForeignKey("autocare_drive_type.drive_type_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -472,19 +537,21 @@ class BrakeType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    brake_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    brake_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
     front_brake_configs = relationship(
-        "BrakeConfig", 
-        foreign_keys="[BrakeConfig.front_brake_type_id]", 
-        back_populates="front_brake_type"
+        "BrakeConfig",
+        foreign_keys="[BrakeConfig.front_brake_type_id]",
+        back_populates="front_brake_type",
     )
     rear_brake_configs = relationship(
-        "BrakeConfig", 
-        foreign_keys="[BrakeConfig.rear_brake_type_id]", 
-        back_populates="rear_brake_type"
+        "BrakeConfig",
+        foreign_keys="[BrakeConfig.rear_brake_type_id]",
+        back_populates="rear_brake_type",
     )
 
     def __repr__(self) -> str:
@@ -511,7 +578,9 @@ class BrakeSystem(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    brake_system_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    brake_system_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -541,7 +610,9 @@ class BrakeABS(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    brake_abs_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    brake_abs_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -578,15 +649,33 @@ class BrakeConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    brake_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    front_brake_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_brake_type.brake_type_id"), nullable=False)
-    rear_brake_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_brake_type.brake_type_id"), nullable=False)
-    brake_system_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_brake_system.brake_system_id"), nullable=False)
-    brake_abs_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_brake_abs.brake_abs_id"), nullable=False)
+    brake_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    front_brake_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_brake_type.brake_type_id"), nullable=False
+    )
+    rear_brake_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_brake_type.brake_type_id"), nullable=False
+    )
+    brake_system_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_brake_system.brake_system_id"), nullable=False
+    )
+    brake_abs_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_brake_abs.brake_abs_id"), nullable=False
+    )
 
     # Relationships
-    front_brake_type = relationship("BrakeType", foreign_keys=[front_brake_type_id], back_populates="front_brake_configs")
-    rear_brake_type = relationship("BrakeType", foreign_keys=[rear_brake_type_id], back_populates="rear_brake_configs")
+    front_brake_type = relationship(
+        "BrakeType",
+        foreign_keys=[front_brake_type_id],
+        back_populates="front_brake_configs",
+    )
+    rear_brake_type = relationship(
+        "BrakeType",
+        foreign_keys=[rear_brake_type_id],
+        back_populates="rear_brake_configs",
+    )
     brake_system = relationship("BrakeSystem", back_populates="brake_configs")
     brake_abs = relationship("BrakeABS", back_populates="brake_configs")
 
@@ -604,8 +693,15 @@ vehicle_to_brake_config = Table(
     "autocare_vehicle_to_brake_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("brake_config_id", Integer, ForeignKey("autocare_brake_config.brake_config_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "brake_config_id",
+        Integer,
+        ForeignKey("autocare_brake_config.brake_config_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -625,7 +721,9 @@ class BedType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    bed_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    bed_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
@@ -656,7 +754,9 @@ class BedLength(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    bed_length_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    bed_length_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     length: Mapped[str] = mapped_column(String(10), nullable=False)
     length_metric: Mapped[str] = mapped_column(String(10), nullable=False)
 
@@ -690,9 +790,15 @@ class BedConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    bed_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    bed_length_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_bed_length.bed_length_id"), nullable=False)
-    bed_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_bed_type.bed_type_id"), nullable=False)
+    bed_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    bed_length_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_bed_length.bed_length_id"), nullable=False
+    )
+    bed_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_bed_type.bed_type_id"), nullable=False
+    )
 
     # Relationships
     bed_length = relationship("BedLength", back_populates="bed_configs")
@@ -712,8 +818,15 @@ vehicle_to_bed_config = Table(
     "autocare_vehicle_to_bed_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("bed_config_id", Integer, ForeignKey("autocare_bed_config.bed_config_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "bed_config_id",
+        Integer,
+        ForeignKey("autocare_bed_config.bed_config_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -733,7 +846,9 @@ class BodyType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    body_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    body_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
@@ -763,11 +878,15 @@ class BodyNumDoors(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    body_num_doors_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    body_num_doors_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     num_doors: Mapped[str] = mapped_column(String(3), nullable=False)
 
     # Relationships
-    body_style_configs = relationship("BodyStyleConfig", back_populates="body_num_doors")
+    body_style_configs = relationship(
+        "BodyStyleConfig", back_populates="body_num_doors"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BodyNumDoors instance.
@@ -796,9 +915,15 @@ class BodyStyleConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    body_style_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    body_num_doors_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_body_num_doors.body_num_doors_id"), nullable=False)
-    body_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_body_type.body_type_id"), nullable=False)
+    body_style_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    body_num_doors_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_body_num_doors.body_num_doors_id"), nullable=False
+    )
+    body_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_body_type.body_type_id"), nullable=False
+    )
 
     # Relationships
     body_num_doors = relationship("BodyNumDoors", back_populates="body_style_configs")
@@ -818,8 +943,15 @@ vehicle_to_body_style_config = Table(
     "autocare_vehicle_to_body_style_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("body_style_config_id", Integer, ForeignKey("autocare_body_style_config.body_style_config_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "body_style_config_id",
+        Integer,
+        ForeignKey("autocare_body_style_config.body_style_config_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -839,7 +971,9 @@ class MfrBodyCode(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    mfr_body_code_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    mfr_body_code_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     code: Mapped[str] = mapped_column(String(10), nullable=False, index=True)
 
     def __repr__(self) -> str:
@@ -856,8 +990,15 @@ vehicle_to_mfr_body_code = Table(
     "autocare_vehicle_to_mfr_body_code",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("mfr_body_code_id", Integer, ForeignKey("autocare_mfr_body_code.mfr_body_code_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "mfr_body_code_id",
+        Integer,
+        ForeignKey("autocare_mfr_body_code.mfr_body_code_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -881,7 +1022,9 @@ class EngineBlock(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_block_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    engine_block_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     liter: Mapped[str] = mapped_column(String(6), nullable=False)
     cc: Mapped[str] = mapped_column(String(8), nullable=False)
     cid: Mapped[str] = mapped_column(String(7), nullable=False)
@@ -897,7 +1040,9 @@ class EngineBlock(Base):
         Returns:
             String representation.
         """
-        return f"<EngineBlock {self.liter}L {self.cylinders}cyl ({self.engine_block_id})>"
+        return (
+            f"<EngineBlock {self.liter}L {self.cylinders}cyl ({self.engine_block_id})>"
+        )
 
 
 class EngineBoreStroke(Base):
@@ -918,7 +1063,9 @@ class EngineBoreStroke(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_bore_stroke_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    engine_bore_stroke_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     bore_in: Mapped[str] = mapped_column(String(10), nullable=False)
     bore_metric: Mapped[str] = mapped_column(String(10), nullable=False)
     stroke_in: Mapped[str] = mapped_column(String(10), nullable=False)
@@ -954,9 +1101,17 @@ class EngineBase(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_base_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    engine_block_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_engine_block.engine_block_id"), nullable=False)
-    engine_bore_stroke_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_engine_bore_stroke.engine_bore_stroke_id"), nullable=False)
+    engine_base_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    engine_block_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_engine_block.engine_block_id"), nullable=False
+    )
+    engine_bore_stroke_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_engine_bore_stroke.engine_bore_stroke_id"),
+        nullable=False,
+    )
 
     # Relationships
     engine_block = relationship("EngineBlock", back_populates="engine_bases")
@@ -987,7 +1142,9 @@ class Aspiration(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    aspiration_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    aspiration_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1017,7 +1174,9 @@ class FuelType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    fuel_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    fuel_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1047,7 +1206,9 @@ class CylinderHeadType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    cylinder_head_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    cylinder_head_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1077,7 +1238,9 @@ class EngineDesignation(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_designation_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    engine_designation_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1107,7 +1270,9 @@ class EngineVIN(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_vin_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    engine_vin_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     code: Mapped[str] = mapped_column(String(5), nullable=False, index=True)
 
     # Relationships
@@ -1137,7 +1302,9 @@ class EngineVersion(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_version_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    engine_version_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     version: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
 
     # Relationships
@@ -1168,12 +1335,16 @@ class Mfr(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    mfr_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    mfr_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
     engine_configs = relationship("EngineConfig", back_populates="engine_mfr")
-    transmission_configs = relationship("Transmission", back_populates="transmission_mfr")
+    transmission_configs = relationship(
+        "Transmission", back_populates="transmission_mfr"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Mfr instance.
@@ -1199,7 +1370,9 @@ class IgnitionSystemType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    ignition_system_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    ignition_system_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1229,7 +1402,9 @@ class Valves(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    valves_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    valves_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     valves_per_engine: Mapped[str] = mapped_column(String(3), nullable=False)
 
     # Relationships
@@ -1259,11 +1434,15 @@ class FuelDeliveryType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    fuel_delivery_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    fuel_delivery_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship("FuelDeliveryConfig", back_populates="fuel_delivery_type")
+    fuel_delivery_configs = relationship(
+        "FuelDeliveryConfig", back_populates="fuel_delivery_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelDeliveryType instance.
@@ -1289,11 +1468,15 @@ class FuelDeliverySubType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    fuel_delivery_subtype_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    fuel_delivery_subtype_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship("FuelDeliveryConfig", back_populates="fuel_delivery_subtype")
+    fuel_delivery_configs = relationship(
+        "FuelDeliveryConfig", back_populates="fuel_delivery_subtype"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelDeliverySubType instance.
@@ -1319,11 +1502,15 @@ class FuelSystemControlType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    fuel_system_control_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    fuel_system_control_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship("FuelDeliveryConfig", back_populates="fuel_system_control_type")
+    fuel_delivery_configs = relationship(
+        "FuelDeliveryConfig", back_populates="fuel_system_control_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelSystemControlType instance.
@@ -1331,7 +1518,9 @@ class FuelSystemControlType(Base):
         Returns:
             String representation.
         """
-        return f"<FuelSystemControlType {self.name} ({self.fuel_system_control_type_id})>"
+        return (
+            f"<FuelSystemControlType {self.name} ({self.fuel_system_control_type_id})>"
+        )
 
 
 class FuelSystemDesign(Base):
@@ -1349,11 +1538,15 @@ class FuelSystemDesign(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    fuel_system_design_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    fuel_system_design_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship("FuelDeliveryConfig", back_populates="fuel_system_design")
+    fuel_delivery_configs = relationship(
+        "FuelDeliveryConfig", back_populates="fuel_system_design"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelSystemDesign instance.
@@ -1386,17 +1579,43 @@ class FuelDeliveryConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    fuel_delivery_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    fuel_delivery_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_fuel_delivery_type.fuel_delivery_type_id"), nullable=False)
-    fuel_delivery_subtype_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_fuel_delivery_subtype.fuel_delivery_subtype_id"), nullable=False)
-    fuel_system_control_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_fuel_system_control_type.fuel_system_control_type_id"), nullable=False)
-    fuel_system_design_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_fuel_system_design.fuel_system_design_id"), nullable=False)
+    fuel_delivery_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    fuel_delivery_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_fuel_delivery_type.fuel_delivery_type_id"),
+        nullable=False,
+    )
+    fuel_delivery_subtype_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_fuel_delivery_subtype.fuel_delivery_subtype_id"),
+        nullable=False,
+    )
+    fuel_system_control_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_fuel_system_control_type.fuel_system_control_type_id"),
+        nullable=False,
+    )
+    fuel_system_design_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_fuel_system_design.fuel_system_design_id"),
+        nullable=False,
+    )
 
     # Relationships
-    fuel_delivery_type = relationship("FuelDeliveryType", back_populates="fuel_delivery_configs")
-    fuel_delivery_subtype = relationship("FuelDeliverySubType", back_populates="fuel_delivery_configs")
-    fuel_system_control_type = relationship("FuelSystemControlType", back_populates="fuel_delivery_configs")
-    fuel_system_design = relationship("FuelSystemDesign", back_populates="fuel_delivery_configs")
+    fuel_delivery_type = relationship(
+        "FuelDeliveryType", back_populates="fuel_delivery_configs"
+    )
+    fuel_delivery_subtype = relationship(
+        "FuelDeliverySubType", back_populates="fuel_delivery_configs"
+    )
+    fuel_system_control_type = relationship(
+        "FuelSystemControlType", back_populates="fuel_delivery_configs"
+    )
+    fuel_system_design = relationship(
+        "FuelSystemDesign", back_populates="fuel_delivery_configs"
+    )
     engine_configs = relationship("EngineConfig", back_populates="fuel_delivery_config")
 
     def __repr__(self) -> str:
@@ -1424,7 +1643,9 @@ class PowerOutput(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    power_output_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    power_output_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     horsepower: Mapped[str] = mapped_column(String(10), nullable=False)
     kilowatt: Mapped[str] = mapped_column(String(10), nullable=False)
 
@@ -1478,30 +1699,72 @@ class EngineConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    engine_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    engine_base_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_engine_base.engine_base_id"), nullable=False)
-    engine_designation_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_engine_designation.engine_designation_id"), nullable=False)
-    engine_vin_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_engine_vin.engine_vin_id"), nullable=False)
-    valves_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_valves.valves_id"), nullable=False)
-    fuel_delivery_config_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_fuel_delivery_config.fuel_delivery_config_id"), nullable=False)
-    aspiration_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_aspiration.aspiration_id"), nullable=False)
-    cylinder_head_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_cylinder_head_type.cylinder_head_type_id"), nullable=False)
-    fuel_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_fuel_type.fuel_type_id"), nullable=False)
-    ignition_system_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_ignition_system_type.ignition_system_type_id"), nullable=False)
-    engine_mfr_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_mfr.mfr_id"), nullable=False)
-    engine_version_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_engine_version.engine_version_id"), nullable=False)
-    power_output_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_power_output.power_output_id"), nullable=False)
+    engine_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    engine_base_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_engine_base.engine_base_id"), nullable=False
+    )
+    engine_designation_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_engine_designation.engine_designation_id"),
+        nullable=False,
+    )
+    engine_vin_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_engine_vin.engine_vin_id"), nullable=False
+    )
+    valves_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_valves.valves_id"), nullable=False
+    )
+    fuel_delivery_config_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_fuel_delivery_config.fuel_delivery_config_id"),
+        nullable=False,
+    )
+    aspiration_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_aspiration.aspiration_id"), nullable=False
+    )
+    cylinder_head_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_cylinder_head_type.cylinder_head_type_id"),
+        nullable=False,
+    )
+    fuel_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_fuel_type.fuel_type_id"), nullable=False
+    )
+    ignition_system_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_ignition_system_type.ignition_system_type_id"),
+        nullable=False,
+    )
+    engine_mfr_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_mfr.mfr_id"), nullable=False
+    )
+    engine_version_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_engine_version.engine_version_id"), nullable=False
+    )
+    power_output_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_power_output.power_output_id"), nullable=False
+    )
 
     # Relationships
     engine_base = relationship("EngineBase", back_populates="engine_configs")
-    engine_designation = relationship("EngineDesignation", back_populates="engine_configs")
+    engine_designation = relationship(
+        "EngineDesignation", back_populates="engine_configs"
+    )
     engine_vin = relationship("EngineVIN", back_populates="engine_configs")
     valves = relationship("Valves", back_populates="engine_configs")
-    fuel_delivery_config = relationship("FuelDeliveryConfig", back_populates="engine_configs")
+    fuel_delivery_config = relationship(
+        "FuelDeliveryConfig", back_populates="engine_configs"
+    )
     aspiration = relationship("Aspiration", back_populates="engine_configs")
-    cylinder_head_type = relationship("CylinderHeadType", back_populates="engine_configs")
+    cylinder_head_type = relationship(
+        "CylinderHeadType", back_populates="engine_configs"
+    )
     fuel_type = relationship("FuelType", back_populates="engine_configs")
-    ignition_system_type = relationship("IgnitionSystemType", back_populates="engine_configs")
+    ignition_system_type = relationship(
+        "IgnitionSystemType", back_populates="engine_configs"
+    )
     engine_mfr = relationship("Mfr", back_populates="engine_configs")
     engine_version = relationship("EngineVersion", back_populates="engine_configs")
     power_output = relationship("PowerOutput", back_populates="engine_configs")
@@ -1520,8 +1783,15 @@ vehicle_to_engine_config = Table(
     "autocare_vehicle_to_engine_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("engine_config_id", Integer, ForeignKey("autocare_engine_config.engine_config_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "engine_config_id",
+        Integer,
+        ForeignKey("autocare_engine_config.engine_config_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -1542,19 +1812,21 @@ class SpringType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    spring_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    spring_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
     front_spring_configs = relationship(
-        "SpringTypeConfig", 
-        foreign_keys="[SpringTypeConfig.front_spring_type_id]", 
-        back_populates="front_spring_type"
+        "SpringTypeConfig",
+        foreign_keys="[SpringTypeConfig.front_spring_type_id]",
+        back_populates="front_spring_type",
     )
     rear_spring_configs = relationship(
-        "SpringTypeConfig", 
-        foreign_keys="[SpringTypeConfig.rear_spring_type_id]", 
-        back_populates="rear_spring_type"
+        "SpringTypeConfig",
+        foreign_keys="[SpringTypeConfig.rear_spring_type_id]",
+        back_populates="rear_spring_type",
     )
 
     def __repr__(self) -> str:
@@ -1584,13 +1856,27 @@ class SpringTypeConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    spring_type_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    front_spring_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_spring_type.spring_type_id"), nullable=False)
-    rear_spring_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_spring_type.spring_type_id"), nullable=False)
+    spring_type_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    front_spring_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_spring_type.spring_type_id"), nullable=False
+    )
+    rear_spring_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_spring_type.spring_type_id"), nullable=False
+    )
 
     # Relationships
-    front_spring_type = relationship("SpringType", foreign_keys=[front_spring_type_id], back_populates="front_spring_configs")
-    rear_spring_type = relationship("SpringType", foreign_keys=[rear_spring_type_id], back_populates="rear_spring_configs")
+    front_spring_type = relationship(
+        "SpringType",
+        foreign_keys=[front_spring_type_id],
+        back_populates="front_spring_configs",
+    )
+    rear_spring_type = relationship(
+        "SpringType",
+        foreign_keys=[rear_spring_type_id],
+        back_populates="rear_spring_configs",
+    )
 
     def __repr__(self) -> str:
         """Return string representation of SpringTypeConfig instance.
@@ -1606,8 +1892,15 @@ vehicle_to_spring_type_config = Table(
     "autocare_vehicle_to_spring_type_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("spring_type_config_id", Integer, ForeignKey("autocare_spring_type_config.spring_type_config_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "spring_type_config_id",
+        Integer,
+        ForeignKey("autocare_spring_type_config.spring_type_config_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -1627,7 +1920,9 @@ class SteeringType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    steering_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    steering_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1657,7 +1952,9 @@ class SteeringSystem(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    steering_system_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    steering_system_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1690,9 +1987,17 @@ class SteeringConfig(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    steering_config_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    steering_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_steering_type.steering_type_id"), nullable=False)
-    steering_system_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_steering_system.steering_system_id"), nullable=False)
+    steering_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    steering_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_steering_type.steering_type_id"), nullable=False
+    )
+    steering_system_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_steering_system.steering_system_id"),
+        nullable=False,
+    )
 
     # Relationships
     steering_type = relationship("SteeringType", back_populates="steering_configs")
@@ -1712,8 +2017,15 @@ vehicle_to_steering_config = Table(
     "autocare_vehicle_to_steering_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("steering_config_id", Integer, ForeignKey("autocare_steering_config.steering_config_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "steering_config_id",
+        Integer,
+        ForeignKey("autocare_steering_config.steering_config_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -1733,11 +2045,15 @@ class TransmissionType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    transmission_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    transmission_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    transmission_bases = relationship("TransmissionBase", back_populates="transmission_type")
+    transmission_bases = relationship(
+        "TransmissionBase", back_populates="transmission_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of TransmissionType instance.
@@ -1763,11 +2079,15 @@ class TransmissionNumSpeeds(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    transmission_num_speeds_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    transmission_num_speeds_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     num_speeds: Mapped[str] = mapped_column(String(3), nullable=False, index=True)
 
     # Relationships
-    transmission_bases = relationship("TransmissionBase", back_populates="transmission_num_speeds")
+    transmission_bases = relationship(
+        "TransmissionBase", back_populates="transmission_num_speeds"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of TransmissionNumSpeeds instance.
@@ -1793,11 +2113,15 @@ class TransmissionControlType(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    transmission_control_type_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    transmission_control_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    transmission_bases = relationship("TransmissionBase", back_populates="transmission_control_type")
+    transmission_bases = relationship(
+        "TransmissionBase", back_populates="transmission_control_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of TransmissionControlType instance.
@@ -1828,15 +2152,35 @@ class TransmissionBase(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    transmission_base_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    transmission_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_transmission_type.transmission_type_id"), nullable=False)
-    transmission_num_speeds_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_transmission_num_speeds.transmission_num_speeds_id"), nullable=False)
-    transmission_control_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_transmission_control_type.transmission_control_type_id"), nullable=False)
+    transmission_base_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    transmission_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_transmission_type.transmission_type_id"),
+        nullable=False,
+    )
+    transmission_num_speeds_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_transmission_num_speeds.transmission_num_speeds_id"),
+        nullable=False,
+    )
+    transmission_control_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_transmission_control_type.transmission_control_type_id"),
+        nullable=False,
+    )
 
     # Relationships
-    transmission_type = relationship("TransmissionType", back_populates="transmission_bases")
-    transmission_num_speeds = relationship("TransmissionNumSpeeds", back_populates="transmission_bases")
-    transmission_control_type = relationship("TransmissionControlType", back_populates="transmission_bases")
+    transmission_type = relationship(
+        "TransmissionType", back_populates="transmission_bases"
+    )
+    transmission_num_speeds = relationship(
+        "TransmissionNumSpeeds", back_populates="transmission_bases"
+    )
+    transmission_control_type = relationship(
+        "TransmissionControlType", back_populates="transmission_bases"
+    )
     transmissions = relationship("Transmission", back_populates="transmission_base")
 
     def __repr__(self) -> str:
@@ -1863,7 +2207,9 @@ class TransmissionMfrCode(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    transmission_mfr_code_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    transmission_mfr_code_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     code: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
@@ -1893,7 +2239,9 @@ class ElecControlled(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    elec_controlled_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    elec_controlled_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     value: Mapped[str] = mapped_column(String(3), nullable=False, index=True)
 
     # Relationships
@@ -1930,15 +2278,33 @@ class Transmission(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    transmission_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
-    transmission_base_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_transmission_base.transmission_base_id"), nullable=False)
-    transmission_mfr_code_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_transmission_mfr_code.transmission_mfr_code_id"), nullable=False)
-    elec_controlled_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_elec_controlled.elec_controlled_id"), nullable=False)
-    transmission_mfr_id: Mapped[int] = mapped_column(Integer, ForeignKey("autocare_mfr.mfr_id"), nullable=False)
+    transmission_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    transmission_base_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_transmission_base.transmission_base_id"),
+        nullable=False,
+    )
+    transmission_mfr_code_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_transmission_mfr_code.transmission_mfr_code_id"),
+        nullable=False,
+    )
+    elec_controlled_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("autocare_elec_controlled.elec_controlled_id"),
+        nullable=False,
+    )
+    transmission_mfr_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("autocare_mfr.mfr_id"), nullable=False
+    )
 
     # Relationships
     transmission_base = relationship("TransmissionBase", back_populates="transmissions")
-    transmission_mfr_code = relationship("TransmissionMfrCode", back_populates="transmissions")
+    transmission_mfr_code = relationship(
+        "TransmissionMfrCode", back_populates="transmissions"
+    )
     elec_controlled = relationship("ElecControlled", back_populates="transmissions")
     transmission_mfr = relationship("Mfr", back_populates="transmission_configs")
 
@@ -1956,8 +2322,15 @@ vehicle_to_transmission = Table(
     "autocare_vehicle_to_transmission",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("transmission_id", Integer, ForeignKey("autocare_transmission.transmission_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "transmission_id",
+        Integer,
+        ForeignKey("autocare_transmission.transmission_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 
@@ -1978,7 +2351,9 @@ class WheelBase(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    wheel_base_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, index=True)
+    wheel_base_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
     wheel_base: Mapped[str] = mapped_column(String(10), nullable=False)
     wheel_base_metric: Mapped[str] = mapped_column(String(10), nullable=False)
 
@@ -1996,8 +2371,15 @@ vehicle_to_wheel_base = Table(
     "autocare_vehicle_to_wheel_base",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column("vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False),
-    Column("wheel_base_id", Integer, ForeignKey("autocare_wheel_base.wheel_base_id"), nullable=False),
+    Column(
+        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+    ),
+    Column(
+        "wheel_base_id",
+        Integer,
+        ForeignKey("autocare_wheel_base.wheel_base_id"),
+        nullable=False,
+    ),
     Column("source", String(10), nullable=True),
 )
 

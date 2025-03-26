@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from app.services.media.base import MediaStorageBackend, StorageBackendType
-from app.services.media.local import LocalMediaStorage
-from app.services.media.s3 import S3MediaStorage
+from app.domains.media.service.base import MediaStorageBackend, StorageBackendType
+from app.domains.media.service.local import LocalMediaStorage
+from app.domains.media.service.s3 import S3MediaStorage
 
 from app.core.config import settings
 from app.core.logging import get_logger

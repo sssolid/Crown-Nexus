@@ -18,6 +18,10 @@ logger = get_logger(__name__)
 
 # OAuth2 setup for FastAPI
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
+optional_oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/auth/login",
+    auto_error=False
+)
 
 
 async def get_token_from_header(token: str = Depends(oauth2_scheme)) -> str:

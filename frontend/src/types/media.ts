@@ -5,7 +5,7 @@ export interface Media {
   url: string;
   thumbnail_url?: string;
   mime_type: string;
-  size: number;
+  file_size: number;
   media_type: string;
   alt_text?: string;
   description?: string;

@@ -1,4 +1,3 @@
-# /backend/app/core/exceptions/system.py
 from __future__ import annotations
 
 """System-level exceptions for the application.
@@ -7,35 +6,30 @@ This module defines exceptions related to system components such as
 database, network, external services, configuration, and security.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
-from app.core.exceptions.base import (
-    AppException,
-    ErrorCategory,
-    ErrorCode,
-    ErrorSeverity,
-)
+from app.core.exceptions.base import AppException, ErrorCategory, ErrorCode, ErrorSeverity
 
 
 class SystemException(AppException):
-    """Base exception for system-level errors."""
+    """Base exception for system-related errors."""
 
     def __init__(
         self,
         message: str,
         code: ErrorCode = ErrorCode.UNKNOWN_ERROR,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 500,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a system exception.
+        """Initialize a SystemException.
 
         Args:
             message: Human-readable error message
-            code: Error code
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            code: Error code from ErrorCode enum
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -49,24 +43,24 @@ class SystemException(AppException):
 
 
 class DatabaseException(SystemException):
-    """Exception raised for database errors."""
+    """Exception raised when a database operation fails."""
 
     def __init__(
         self,
         message: str,
         code: ErrorCode = ErrorCode.DATABASE_ERROR,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 500,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a database exception.
+        """Initialize a DatabaseException.
 
         Args:
             message: Human-readable error message
-            code: Error code
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            code: Error code from ErrorCode enum
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -78,20 +72,20 @@ class DatabaseException(SystemException):
 
 
 class DataIntegrityException(DatabaseException):
-    """Exception raised for data integrity errors."""
+    """Exception raised when a database operation would violate data integrity."""
 
     def __init__(
         self,
         message: str,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a data integrity exception.
+        """Initialize a DataIntegrityException.
 
         Args:
             message: Human-readable error message
-            details: Additional error details
-            original_exception: Original exception
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -103,20 +97,20 @@ class DataIntegrityException(DatabaseException):
 
 
 class TransactionException(DatabaseException):
-    """Exception raised for transaction errors."""
+    """Exception raised when a database transaction fails."""
 
     def __init__(
         self,
         message: str,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a transaction exception.
+        """Initialize a TransactionException.
 
         Args:
             message: Human-readable error message
-            details: Additional error details
-            original_exception: Original exception
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -128,22 +122,22 @@ class TransactionException(DatabaseException):
 
 
 class NetworkException(SystemException):
-    """Exception raised for network errors."""
+    """Exception raised when a network operation fails."""
 
     def __init__(
         self,
         message: str,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 503,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a network exception.
+        """Initialize a NetworkException.
 
         Args:
             message: Human-readable error message
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -155,26 +149,27 @@ class NetworkException(SystemException):
 
 
 class ServiceException(SystemException):
-    """Exception raised for external service errors."""
+    """Exception raised when an external service call fails."""
 
     def __init__(
         self,
         message: str,
         service_name: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 502,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a service exception.
+        """Initialize a ServiceException.
 
         Args:
             message: Human-readable error message
-            service_name: Name of the external service
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            service_name: Name of the external service that failed
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         error_details = details or {}
+
         if service_name:
             error_details["service_name"] = service_name
 
@@ -188,24 +183,25 @@ class ServiceException(SystemException):
 
 
 class ConfigurationException(SystemException):
-    """Exception raised for configuration errors."""
+    """Exception raised when there is an issue with application configuration."""
 
     def __init__(
         self,
         message: str,
         component: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a configuration exception.
+        """Initialize a ConfigurationException.
 
         Args:
             message: Human-readable error message
-            component: Component with configuration error
-            details: Additional error details
-            original_exception: Original exception
+            component: The component with configuration issues
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         error_details = details or {}
+
         if component:
             error_details["component"] = component
 
@@ -219,22 +215,22 @@ class ConfigurationException(SystemException):
 
 
 class SecurityException(SystemException):
-    """Exception raised for security issues."""
+    """Exception raised when a security-related issue occurs."""
 
     def __init__(
         self,
         message: str,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 403,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a security exception.
+        """Initialize a SecurityException.
 
         Args:
             message: Human-readable error message
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -246,22 +242,22 @@ class SecurityException(SystemException):
 
 
 class RateLimitException(SecurityException):
-    """Exception raised for rate limit errors."""
+    """Exception raised when a rate limit is exceeded."""
 
     def __init__(
         self,
         message: str = "Rate limit exceeded",
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         headers: Optional[Dict[str, str]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a rate limit exception.
+        """Initialize a RateLimitException.
 
         Args:
             message: Human-readable error message
-            details: Additional error details
+            details: Additional details about the error
             headers: HTTP headers to include in the response
-            original_exception: Original exception
+            original_exception: Original exception if this is a wrapper
         """
         error_details = details or {}
         error_details["headers"] = headers or {}

@@ -1,4 +1,3 @@
-# /app/core/error/manager.py
 from __future__ import annotations
 
 """Core error handling functionality.
@@ -9,7 +8,8 @@ and creating standardized exceptions throughout the application.
 
 import asyncio
 import inspect
-from typing import Any, Dict, List, Optional, TypeVar
+import traceback
+from typing import Any, Callable, Dict, List, Optional, TypeVar, cast, Union
 
 from app.core.exceptions import (
     BusinessException,
@@ -24,28 +24,29 @@ from app.core.error.base import ErrorContext, ErrorReporter
 from app.core.error.factory import ErrorReporterFactory
 
 logger = get_logger("app.core.error.manager")
+
 T = TypeVar("T")
 
-# Global reporters registry
+# Global registry of error reporters
 _reporters: List[ErrorReporter] = []
 
 
 def register_reporter(reporter: ErrorReporter) -> None:
-    """Register a new error reporter.
+    """Register an error reporter.
 
     Args:
-        reporter: Error reporter to register
+        reporter: The error reporter to register
     """
     _reporters.append(reporter)
     logger.debug(f"Registered error reporter: {reporter.__class__.__name__}")
 
 
 async def report_error(exception: Exception, context: ErrorContext) -> None:
-    """Report an error using all registered reporters.
+    """Report an error to all registered reporters.
 
     Args:
-        exception: Exception to report
-        context: Context information for the error
+        exception: The exception to report
+        context: Context information about where the error occurred
     """
     for reporter in _reporters:
         try:
@@ -57,15 +58,15 @@ async def report_error(exception: Exception, context: ErrorContext) -> None:
 def resource_not_found(
     resource_type: str, resource_id: str, message: Optional[str] = None
 ) -> ResourceNotFoundException:
-    """Create a resource not found exception.
+    """Create a ResourceNotFoundException.
 
     Args:
-        resource_type: Type of resource
-        resource_id: ID of the resource
-        message: Optional custom error message
+        resource_type: Type of resource that was not found
+        resource_id: ID of the resource that was not found
+        message: Optional custom message
 
     Returns:
-        ResourceNotFoundException
+        A ResourceNotFoundException instance
     """
     return ResourceNotFoundException(
         resource_type=resource_type,
@@ -76,21 +77,18 @@ def resource_not_found(
 
 
 def resource_already_exists(
-    resource_type: str,
-    identifier: str,
-    field: str = "id",
-    message: Optional[str] = None,
+    resource_type: str, identifier: str, field: str = "id", message: Optional[str] = None
 ) -> ResourceAlreadyExistsException:
-    """Create a resource already exists exception.
+    """Create a ResourceAlreadyExistsException.
 
     Args:
-        resource_type: Type of resource
-        identifier: Value of the identifier
-        field: Field name that must be unique
-        message: Optional custom error message
+        resource_type: Type of resource that already exists
+        identifier: Identifier value of the resource
+        field: Field name that contains the identifier (defaults to "id")
+        message: Optional custom message
 
     Returns:
-        ResourceAlreadyExistsException
+        A ResourceAlreadyExistsException instance
     """
     return ResourceAlreadyExistsException(
         resource_type=resource_type,
@@ -104,25 +102,19 @@ def resource_already_exists(
 def validation_error(
     field: str, message: str, error_type: str = "invalid_value"
 ) -> ValidationException:
-    """Create a validation error exception.
+    """Create a ValidationException for a single field.
 
     Args:
-        field: Field with the validation error
-        message: Validation error message
-        error_type: Type of validation error
+        field: The field that failed validation
+        message: The validation error message
+        error_type: The type of validation error
 
     Returns:
-        ValidationException
+        A ValidationException instance
     """
     return ValidationException(
         message=f"Validation error: {message}",
-        errors=[
-            {
-                "loc": [field],
-                "msg": message,
-                "type": error_type,
-            }
-        ],
+        errors=[{"loc": [field], "msg": message, "type": error_type}],
         original_exception=None,
     )
 
@@ -130,15 +122,15 @@ def validation_error(
 def permission_denied(
     action: str, resource_type: str, permission: str
 ) -> PermissionDeniedException:
-    """Create a permission denied exception.
+    """Create a PermissionDeniedException.
 
     Args:
-        action: Action being attempted
-        resource_type: Type of resource
-        permission: Required permission
+        action: The action that was attempted (e.g., "create", "read")
+        resource_type: The type of resource being accessed
+        permission: The permission that was required
 
     Returns:
-        PermissionDeniedException
+        A PermissionDeniedException instance
     """
     return PermissionDeniedException(
         message=f"Permission denied to {action} {resource_type}",
@@ -152,14 +144,14 @@ def permission_denied(
 def business_logic_error(
     message: str, details: Optional[Dict[str, Any]] = None
 ) -> BusinessException:
-    """Create a business logic error exception.
+    """Create a BusinessException.
 
     Args:
-        message: Error message
-        details: Additional error details
+        message: The error message
+        details: Additional details about the error
 
     Returns:
-        BusinessException
+        A BusinessException instance
     """
     return BusinessException(
         message=message,
@@ -171,79 +163,190 @@ def business_logic_error(
 
 
 def ensure_not_none(
-    value: Optional[T],
-    resource_type: str,
-    resource_id: str,
-    message: Optional[str] = None,
+    value: Optional[T], resource_type: str, resource_id: str, message: Optional[str] = None
 ) -> T:
-    """Ensure a value is not None or raise a resource not found exception.
+    """Ensure a value is not None, raising ResourceNotFoundException if it is.
 
     Args:
-        value: Value to check
-        resource_type: Type of resource
-        resource_id: ID of the resource
-        message: Optional custom error message
+        value: The value to check
+        resource_type: Type of resource being checked
+        resource_id: ID of the resource being checked
+        message: Optional custom message
 
     Returns:
-        The value if not None
+        The value if it is not None
 
     Raises:
-        ResourceNotFoundException: If value is None
+        ResourceNotFoundException: If the value is None
     """
     if value is None:
         raise resource_not_found(resource_type, resource_id, message)
     return value
 
 
-def handle_exception(exception: Exception, request_id: Optional[str] = None) -> None:
-    """Handle an exception by logging and reporting it.
+def create_error_context(
+    function_name: Optional[str] = None,
+    args: Optional[List[Any]] = None,
+    kwargs: Optional[Dict[str, Any]] = None,
+    user_id: Optional[str] = None,
+    request_id: Optional[str] = None,
+) -> ErrorContext:
+    """Create an ErrorContext with the given parameters or from the current stack frame.
 
     Args:
-        exception: Exception to handle
-        request_id: Optional request ID for tracking
+        function_name: Name of the function where the error occurred
+        args: Positional arguments to the function
+        kwargs: Keyword arguments to the function
+        user_id: ID of the user who triggered the error
+        request_id: ID of the request that triggered the error
+
+    Returns:
+        An ErrorContext instance
     """
-    # Get caller frame information
+    if function_name is None:
+        frame = inspect.currentframe()
+        if frame is not None:
+            frame = frame.f_back
+            if frame is not None:
+                function_name = frame.f_code.co_name
+                if args is None and kwargs is None:
+                    arg_names = inspect.getargvalues(frame).args
+                    locals_dict = frame.f_locals
+                    args = [locals_dict[arg] for arg in arg_names if arg in locals_dict]
+                    kwargs = {
+                        k: v for k, v in locals_dict.items()
+                        if k not in arg_names and not k.startswith("__")
+                    }
+
+    # Use empty defaults if values are not provided
+    function_name = function_name or "unknown_function"
+    args = args or []
+    kwargs = kwargs or {}
+
+    return ErrorContext(
+        function=function_name,
+        args=args,
+        kwargs=kwargs,
+        user_id=user_id,
+        request_id=request_id,
+    )
+
+
+def handle_exception(
+    exception: Exception,
+    request_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+    function_name: Optional[str] = None,
+) -> None:
+    """Handle an exception by reporting it to all registered reporters.
+
+    Args:
+        exception: The exception to handle
+        request_id: ID of the request that triggered the exception
+        user_id: ID of the user who triggered the exception
+        function_name: Name of the function where the exception occurred
+    """
+    # Create error context automatically from the stack frame if not provided
     frame = inspect.currentframe()
-    if frame is not None:
-        frame = frame.f_back  # Get caller frame
-
-    if frame is not None:
-        function_name = frame.f_code.co_name
-        args = inspect.getargvalues(frame).args
+    if frame is not None and frame.f_back is not None:
+        frame = frame.f_back
+        function_name = function_name or frame.f_code.co_name
+        arg_names = inspect.getargvalues(frame).args
         locals_dict = frame.f_locals
-
-        # Extract arguments
-        args_values = [locals_dict[arg] for arg in args if arg in locals_dict]
+        args_values = [locals_dict[arg] for arg in arg_names if arg in locals_dict]
         kwargs_values = {
-            k: v
-            for k, v in locals_dict.items()
-            if k not in args and not k.startswith("__")
+            k: v for k, v in locals_dict.items()
+            if k not in arg_names and not k.startswith("__")
         }
 
-        # Create context
         context = ErrorContext(
             function=function_name,
             args=args_values,
             kwargs=kwargs_values,
+            user_id=user_id,
             request_id=request_id,
         )
 
-        # Report error asynchronously
+        # Report the error asynchronously
         asyncio.create_task(report_error(exception, context))
+    else:
+        # Fallback if frame information cannot be obtained
+        context = ErrorContext(
+            function=function_name or "unknown_function",
+            args=[],
+            kwargs={},
+            user_id=user_id,
+            request_id=request_id,
+        )
+        asyncio.create_task(report_error(exception, context))
+
+
+def error_context_decorator(
+    user_id_param: Optional[str] = None, request_id_param: Optional[str] = None
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    """Decorator to automatically report exceptions with context information.
+
+    Args:
+        user_id_param: Name of the parameter containing the user ID
+        request_id_param: Name of the parameter containing the request ID
+
+    Returns:
+        Decorator function
+    """
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(func)
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            user_id = kwargs.get(user_id_param) if user_id_param else None
+            request_id = kwargs.get(request_id_param) if request_id_param else None
+
+            try:
+                return await func(*args, **kwargs)
+            except Exception as e:
+                handle_exception(
+                    exception=e,
+                    request_id=request_id,
+                    user_id=user_id,
+                    function_name=func.__name__,
+                )
+                raise
+
+        @functools.wraps(func)
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+            user_id = kwargs.get(user_id_param) if user_id_param else None
+            request_id = kwargs.get(request_id_param) if request_id_param else None
+
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                handle_exception(
+                    exception=e,
+                    request_id=request_id,
+                    user_id=user_id,
+                    function_name=func.__name__,
+                )
+                raise
+
+        # Choose the appropriate wrapper based on whether the function is async
+        if asyncio.iscoroutinefunction(func):
+            return async_wrapper
+        else:
+            return sync_wrapper
+
+    return decorator
 
 
 async def initialize() -> None:
     """Initialize the error handling system.
 
-    This function sets up the default error reporters.
+    Registers default error reporters based on configuration settings.
     """
     logger.info("Initializing error handling system")
 
-    # Clear existing reporters
+    # Clear existing reporters to avoid duplicates on reinitialization
     global _reporters
     _reporters = []
 
-    # Register default reporters from factory
+    # Create and register default reporters
     default_reporters = ErrorReporterFactory.create_default_reporters()
     for reporter in default_reporters:
         register_reporter(reporter)
@@ -252,10 +355,11 @@ async def initialize() -> None:
 
 
 async def shutdown() -> None:
-    """Shutdown the error handling system.
+    """Shut down the error handling system.
 
-    This function cleans up any resources used by the error reporters.
+    Clears all registered reporters.
     """
     logger.info("Shutting down error handling system")
+
     global _reporters
     _reporters = []

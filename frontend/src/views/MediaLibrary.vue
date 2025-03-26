@@ -142,7 +142,7 @@
                     <!-- Size Filter -->
                     <v-col cols="12" md="4">
                       <v-select
-                        v-model="filters.size"
+                        v-model="filters.file_size"
                         label="File Size"
                         :items="[
                           { title: 'Small (< 1MB)', value: 'small' },
@@ -326,7 +326,7 @@
 
                   <v-card-subtitle class="px-3 pt-0 pb-2">
                     <div class="d-flex justify-space-between">
-                      <span class="text-caption">{{ formatFileSize(item.size) }}</span>
+                      <span class="text-caption">{{ formatFileSize(item.file_size) }}</span>
                       <span class="text-caption">{{ formatDate(item.created_at) }}</span>
                     </div>
                   </v-card-subtitle>
@@ -353,42 +353,42 @@
               v-model="selected"
               :headers="headers"
               :items="filteredMedia"
-              item-value="id"
+              item-key="id"
               show-select
             >
               <!-- Filename Column -->
               <template v-slot:item.filename="{ item }">
                 <div class="d-flex align-center">
                   <v-avatar size="36" color="grey-lighten-4" class="mr-2">
-                    <v-icon :icon="getFileTypeIcon(item.raw)"></v-icon>
+                    <v-icon :icon="getFileTypeIcon(item)"></v-icon>
                   </v-avatar>
                   <div>
-                    <div class="font-weight-medium">{{ item.raw.filename }}</div>
-                    <div class="text-caption">{{ getFileTypeLabel(item.raw) }}</div>
+                    <div class="font-weight-medium">{{ item.filename }}</div>
+                    <div class="text-caption">{{ getFileTypeLabel(item) }}</div>
                   </div>
                 </div>
               </template>
 
               <!-- Size Column -->
-              <template v-slot:item.size="{ item }">
-                {{ formatFileSize(item.raw.size) }}
+              <template v-slot:item.file_size="{ item }">
+                {{ formatFileSize(item.file_size) }}
               </template>
 
               <!-- Date Column -->
               <template v-slot:item.created_at="{ item }">
-                {{ formatDate(item.raw.created_at) }}
+                {{ formatDate(item.created_at) }}
               </template>
 
               <!-- Product Column -->
               <template v-slot:item.product="{ item }">
                 <v-chip
-                  v-if="item.raw.product"
+                  v-if="item.product"
                   size="small"
                   color="primary"
                   variant="tonal"
-                  :to="{ name: 'ProductDetail', params: { id: item.raw.product.id } }"
+                  :to="{ name: 'ProductDetail', params: { id: item.product.id } }"
                 >
-                  {{ item.raw.product.name }}
+                  {{ item.product.name }}
                 </v-chip>
                 <span v-else class="text-medium-emphasis">None</span>
               </template>
@@ -401,7 +401,7 @@
                       icon
                       size="small"
                       v-bind="props"
-                      @click="openMediaPreview(item.raw)"
+                      @click="openMediaPreview(item)"
                     >
                       <v-icon>mdi-eye</v-icon>
                     </v-btn>
@@ -415,7 +415,7 @@
                       size="small"
                       color="info"
                       v-bind="props"
-                      @click="editMedia(item.raw)"
+                      @click="editMedia(item)"
                       class="ml-1"
                     >
                       <v-icon>mdi-pencil</v-icon>
@@ -430,7 +430,7 @@
                       size="small"
                       color="success"
                       v-bind="props"
-                      @click="downloadMedia(item.raw)"
+                      @click="downloadMedia(item)"
                       class="ml-1"
                     >
                       <v-icon>mdi-download</v-icon>
@@ -445,7 +445,7 @@
                       size="small"
                       color="error"
                       v-bind="props"
-                      @click="confirmDeleteMedia(item.raw)"
+                      @click="confirmDeleteMedia(item)"
                       class="ml-1"
                       :disabled="!canDeleteMedia"
                     >
@@ -455,18 +455,6 @@
                 </v-tooltip>
               </template>
             </v-data-table>
-
-            <!-- Pagination -->
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-pagination
-                v-model="page"
-                :length="totalPages"
-                @update:modelValue="fetchMedia"
-                rounded="circle"
-              ></v-pagination>
-              <v-spacer></v-spacer>
-            </v-card-actions>
           </v-card>
 
           <!-- No Results -->
@@ -609,7 +597,7 @@
                 </template>
                 <v-list-item-title>{{ item.filename }}</v-list-item-title>
                 <v-list-item-subtitle>
-                  <span>{{ formatFileSize(item.size) }}</span>
+                  <span>{{ formatFileSize(item.file_size) }}</span>
                   <span class="mx-1">•</span>
                   <span>{{ formatTimeAgo(item.created_at) }}</span>
                 </v-list-item-subtitle>
@@ -772,7 +760,7 @@
             >
               <v-icon :icon="getFileTypeIcon(selectedMedia)" size="x-large" color="primary" class="mb-4"></v-icon>
               <p class="text-h6">{{ selectedMedia.filename }}</p>
-              <p class="text-caption">{{ formatFileSize(selectedMedia.size) }}</p>
+              <p class="text-caption">{{ formatFileSize(selectedMedia.file_size) }}</p>
               <v-btn
                 color="primary"
                 variant="tonal"
@@ -795,7 +783,7 @@
 
               <v-list-item>
                 <v-list-item-title>Size</v-list-item-title>
-                <v-list-item-subtitle>{{ selectedMedia ? formatFileSize(selectedMedia.size) : '' }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ selectedMedia ? formatFileSize(selectedMedia.file_size) : '' }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
@@ -1161,12 +1149,12 @@ export default defineComponent({
 
     // Table headers for list view
     const headers = ref([
-      { title: 'Filename', key: 'filename', sortable: true },
-      { title: 'Type', key: 'mime_type', sortable: true },
-      { title: 'Size', key: 'size', sortable: true },
-      { title: 'Uploaded', key: 'created_at', sortable: true },
-      { title: 'Product', key: 'product', sortable: false },
-      { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
+      { title: 'Filename', aligh: 'start', key: 'filename', sortable: true },
+      { title: 'Type', aligh: 'start', key: 'mime_type', sortable: true },
+      { title: 'Size', aligh: 'start', key: 'file_size', sortable: true },
+      { title: 'Uploaded', aligh: 'start', key: 'created_at', sortable: true },
+      { title: 'Product', aligh: 'start', key: 'product', sortable: false },
+      { title: 'Actions', aligh: 'start', key: 'actions', sortable: false, align: 'end' }
     ]);
 
     // Form validation rules
@@ -1208,7 +1196,7 @@ export default defineComponent({
     });
 
     const totalSize = computed(() => {
-      return allMedia.value.reduce((sum, item) => sum + item.size, 0);
+      return allMedia.value.reduce((sum, item) => sum + item.file_size, 0);
     });
 
     // Type checking utilities
@@ -1367,13 +1355,13 @@ export default defineComponent({
       }
 
       // Apply size filter
-      if (filters.value.size) {
-        if (filters.value.size === 'small') {
-          result = result.filter(item => item.size < 1024 * 1024); // < 1MB
-        } else if (filters.value.size === 'medium') {
-          result = result.filter(item => item.size >= 1024 * 1024 && item.size <= 5 * 1024 * 1024); // 1-5MB
-        } else if (filters.value.size === 'large') {
-          result = result.filter(item => item.size > 5 * 1024 * 1024); // > 5MB
+      if (filters.value.file_size) {
+        if (filters.value.file_size === 'small') {
+          result = result.filter(item => item.file_size < 1024 * 1024); // < 1MB
+        } else if (filters.value.file_size === 'medium') {
+          result = result.filter(item => item.file_size >= 1024 * 1024 && item.file_size <= 5 * 1024 * 1024); // 1-5MB
+        } else if (filters.value.file_size === 'large') {
+          result = result.filter(item => item.file_size > 5 * 1024 * 1024); // > 5MB
         }
       }
 
@@ -1388,9 +1376,9 @@ export default defineComponent({
         } else if (sortOption.value === 'name_desc') {
           result.sort((a, b) => b.filename.localeCompare(a.filename));
         } else if (sortOption.value === 'size_desc') {
-          result.sort((a, b) => b.size - a.size);
+          result.sort((a, b) => b.file_size - a.file_size);
         } else if (sortOption.value === 'size_asc') {
-          result.sort((a, b) => a.size - b.size);
+          result.sort((a, b) => a.file_size - b.file_size);
         }
       }
 

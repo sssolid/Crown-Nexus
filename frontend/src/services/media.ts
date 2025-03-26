@@ -28,6 +28,8 @@ export interface MediaFilters {
   search?: string;
   page?: number;
   page_size?: number;
+  date_from?: string;
+  date_to?: string;
 }
 
 // Media metadata interface

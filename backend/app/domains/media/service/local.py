@@ -11,11 +11,11 @@ from pathlib import Path
 from typing import BinaryIO, Dict, Optional, Set, Tuple, Union
 
 import aiofiles
-from app.services.media.base import (
+from app.domains.media.service.base import (
     FileNotFoundError,
     MediaStorageError,
 )
-from app.services.media.thumbnails import ThumbnailGenerator
+from app.domains.media.service.thumbnails import ThumbnailGenerator
 from fastapi import UploadFile
 
 from app.core.config import settings

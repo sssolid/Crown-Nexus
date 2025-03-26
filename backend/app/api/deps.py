@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Union, Callable
 
+from app.core.security.dependencies import optional_oauth2_scheme
 from app.domains.audit.service.service import AuditService
 from fastapi import Depends, Query, WebSocket, status
 from jose import JWTError
@@ -218,7 +219,7 @@ async def get_manager_user(
 
 async def get_optional_user(
     db: AsyncSession = Depends(get_db),
-    token: Optional[str] = Depends(oauth2_scheme),
+    token: Optional[str] = Depends(optional_oauth2_scheme),
 ) -> Optional[User]:
     """Get the current user if authenticated, otherwise None.
 

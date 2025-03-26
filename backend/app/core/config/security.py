@@ -52,7 +52,7 @@ class SecuritySettings(BaseSettings):
         default=True, description="Whether rate limiting is enabled"
     )
     RATE_LIMIT_REQUESTS_PER_MINUTE: int = Field(
-        default=60, description="Default requests allowed per minute"
+        default=600, description="Default requests allowed per minute"
     )
     RATE_LIMIT_BURST_MULTIPLIER: float = Field(
         default=1.5, description="Multiplier for burst capacity"

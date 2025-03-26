@@ -19,7 +19,7 @@ from app.core.config import Environment, settings
 from app.core.dependency_manager import (
     register_services,
     initialize_services,
-    shutdown_services,
+    shutdown_services, get_service,
 )
 from app.core.error import (
     initialize as initialize_error_system,
@@ -66,82 +66,57 @@ logger = get_logger("app.main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """FastAPI lifespan event handler.
+    """Application lifespan manager.
 
-    This context manager handles application startup and shutdown events.
-    It's responsible for initializing and cleaning up resources.
-
-    Args:
-        app: FastAPI application instance
-
-    Yields:
-        None
+    This function manages the startup and shutdown sequence for the application,
+    ensuring proper initialization and cleanup of all subsystems.
     """
-    # Initialize event system
-    event_backend = EventBackendType.CELERY
-    init_event_backend(event_backend)
-
-    # Initialize domain event handlers
-    init_domain_events()
-
-    # Register services
-    register_services()
-
-    # Initialize error system
+    # First, set up error handling system (must be first to catch initialization errors)
     await initialize_error_system()
 
-    # Initialize validation system()
+    # Second, register services (but don't initialize them yet)
+    register_services()
+
+    # Third, initialize core subsystems
     await initialize_validation_system()
-
-    # Initialize metrics system
     await initialize_metrics_system()
-
-    # Initialize pagination system
     await initialize_pagination_system()
-
-    # Initialize rate limiting system
     await initialize_ratelimiting_system()
-
-    # Initialize cache backends
     await initialize_cache()
 
-    # Initialize services
+    # Fourth, initialize all services (now that error handling is ready)
     await initialize_services()
 
-    # Initialize AS400 sync
+    # Finally, initialize domain-specific subsystems
     await initialize_as400_sync()
 
-    logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
+    logger.info(f'Application started in {settings.ENVIRONMENT.value} environment')
 
-    # Include API router
+    # Register API routes
     from app.api.v1.router import api_router
-
     app.include_router(api_router, prefix=settings.API_V1_STR)
 
     yield
 
-    # Shutdown AS400 sync
+    # Shutdown in reverse order of initialization
+    logger.info("Beginning application shutdown sequence")
+
+    # First, shutdown domain-specific subsystems
     await shutdown_as400_sync()
 
-    # Shutdown services
+    # Second, shutdown all services
     await shutdown_services()
 
-    # Shutdown rate limiting system
+    # Third, shutdown other subsystems
     await shutdown_ratelimiting_system()
-
-    # Shutdown pagination system
     await shutdown_pagination_system()
-
-    # Shutdown metrics system
     await shutdown_metrics_system()
-
-    # Shutdown validation system
     await shutdown_validation_system()
 
-    # Shutdown error handling service
+    # Finally, shutdown error handling system (should be last)
     await shutdown_error_system()
 
-    logger.info("Application shutdown complete")
+    logger.info('Application shutdown complete')
 
 
 # Create FastAPI app
@@ -155,6 +130,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+@app.on_event("startup")
+async def initialize_async_services():
+    """Initialize async services explicitly during application startup."""
+    # Get the service instance (non-initialized)
+    media_service = get_service("media_service")
+    try:
+        # Explicitly initialize it
+        await media_service.initialize()
+        logger.info("Media service initialized during startup")
+    except Exception as e:
+        logger.error(f"Error initializing media service: {str(e)}", exc_info=True)
 
 # CORS configuration
 if settings.BACKEND_CORS_ORIGINS:

@@ -10,7 +10,7 @@ import asyncio
 from pathlib import Path
 from typing import Tuple
 
-from app.services.media.base import FileNotFoundError, MediaStorageError
+from app.domains.media.service.base import FileNotFoundError, MediaStorageError
 
 from app.core.logging import get_logger
 

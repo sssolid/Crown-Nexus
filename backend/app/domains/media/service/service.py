@@ -12,13 +12,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
-from app.services.media.base import (
+from app.domains.media.service.base import (
     FileNotFoundError,
     MediaStorageBackend,
     MediaStorageError,
     StorageBackendType,
 )
-from app.services.media.factory import StorageBackendFactory
+from app.domains.media.service.factory import StorageBackendFactory
 from fastapi import HTTPException, UploadFile, status
 
 from app.core.config import settings

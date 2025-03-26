@@ -14,12 +14,12 @@ from typing import Any, AsyncGenerator, BinaryIO, Dict, Optional, Set, Union
 
 import aioboto3
 import aiofiles
-from app.services.media.base import (
+from app.domains.media.service.base import (
     FileNotFoundError,
     MediaStorageError,
     StorageConnectionError,
 )
-from app.services.media.thumbnails import ThumbnailGenerator
+from app.domains.media.service.thumbnails import ThumbnailGenerator
 from fastapi import UploadFile
 
 from app.core.config import settings

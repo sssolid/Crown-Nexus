@@ -1,4 +1,3 @@
-# /backend/app/core/exceptions/domain.py
 from __future__ import annotations
 
 """Domain-specific exceptions for the application.
@@ -7,14 +6,9 @@ This module defines exceptions related to business logic, resources,
 authentication, and validation that are specific to the application's domain.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
-from app.core.exceptions.base import (
-    AppException,
-    ErrorCategory,
-    ErrorCode,
-    ErrorSeverity,
-)
+from app.core.exceptions.base import AppException, ErrorCategory, ErrorCode, ErrorSeverity
 
 
 class ResourceException(AppException):
@@ -24,18 +18,18 @@ class ResourceException(AppException):
         self,
         message: str,
         code: ErrorCode = ErrorCode.RESOURCE_NOT_FOUND,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 404,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a resource exception.
+        """Initialize a ResourceException.
 
         Args:
             message: Human-readable error message
-            code: Error code
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            code: Error code from ErrorCode enum
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -49,32 +43,29 @@ class ResourceException(AppException):
 
 
 class ResourceNotFoundException(ResourceException):
-    """Exception raised when a resource is not found."""
+    """Exception raised when a requested resource is not found."""
 
     def __init__(
         self,
         resource_type: str,
         resource_id: str,
         message: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a resource not found exception.
+        """Initialize a ResourceNotFoundException.
 
         Args:
-            resource_type: Type of resource (e.g., "User", "Product")
-            resource_id: ID of the resource
-            message: Custom error message (optional)
-            details: Additional error details
-            original_exception: Original exception
+            resource_type: Type of resource that was not found
+            resource_id: ID of the resource that was not found
+            message: Optional custom message (defaults to standard not found message)
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         if message is None:
             message = f"{resource_type} with ID {resource_id} not found"
 
-        error_details = details or {
-            "resource_type": resource_type,
-            "resource_id": resource_id,
-        }
+        error_details = details or {"resource_type": resource_type, "resource_id": resource_id}
 
         super().__init__(
             message=message,
@@ -86,7 +77,7 @@ class ResourceNotFoundException(ResourceException):
 
 
 class ResourceAlreadyExistsException(ResourceException):
-    """Exception raised when a resource already exists."""
+    """Exception raised when attempting to create a resource that already exists."""
 
     def __init__(
         self,
@@ -94,18 +85,18 @@ class ResourceAlreadyExistsException(ResourceException):
         identifier: str,
         field: str = "id",
         message: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a resource already exists exception.
+        """Initialize a ResourceAlreadyExistsException.
 
         Args:
-            resource_type: Type of resource (e.g., "User", "Product")
-            identifier: Value of the unique identifier
-            field: Name of the field that must be unique
-            message: Custom error message (optional)
-            details: Additional error details
-            original_exception: Original exception
+            resource_type: Type of resource that already exists
+            identifier: Identifier value of the resource
+            field: Field name that contains the identifier (defaults to "id")
+            message: Optional custom message
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         if message is None:
             message = f"{resource_type} with {field} {identifier} already exists"
@@ -113,7 +104,7 @@ class ResourceAlreadyExistsException(ResourceException):
         error_details = details or {
             "resource_type": resource_type,
             "field": field,
-            "identifier": identifier,
+            "identifier": identifier
         }
 
         super().__init__(
@@ -132,18 +123,18 @@ class AuthException(AppException):
         self,
         message: str,
         code: ErrorCode,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 401,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize an authentication/authorization exception.
+        """Initialize an AuthException.
 
         Args:
             message: Human-readable error message
-            code: Error code
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            code: Error code from ErrorCode enum
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -157,20 +148,20 @@ class AuthException(AppException):
 
 
 class AuthenticationException(AuthException):
-    """Exception raised for authentication errors."""
+    """Exception raised when authentication fails."""
 
     def __init__(
         self,
         message: str = "Authentication failed",
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize an authentication exception.
+        """Initialize an AuthenticationException.
 
         Args:
             message: Human-readable error message
-            details: Additional error details
-            original_exception: Original exception
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -182,7 +173,7 @@ class AuthenticationException(AuthException):
 
 
 class PermissionDeniedException(AuthException):
-    """Exception raised for permission/authorization errors."""
+    """Exception raised when a user doesn't have permission for an action."""
 
     def __init__(
         self,
@@ -190,27 +181,31 @@ class PermissionDeniedException(AuthException):
         action: Optional[str] = None,
         resource_type: Optional[str] = None,
         permission: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a permission denied exception.
+        """Initialize a PermissionDeniedException.
 
         Args:
             message: Human-readable error message
-            action: Attempted action (e.g., "create", "update")
-            resource_type: Type of resource being accessed
-            permission: Required permission
-            details: Additional error details
-            original_exception: Original exception
+            action: The action that was attempted (e.g., "create", "read")
+            resource_type: The type of resource being accessed
+            permission: The permission that was required
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         error_details = details or {}
+
         if action and resource_type:
             if not message or message == "Permission denied":
                 message = f"Permission denied to {action} {resource_type}"
+
             if "action" not in error_details:
                 error_details["action"] = action
+
             if "resource_type" not in error_details:
                 error_details["resource_type"] = resource_type
+
             if permission and "permission" not in error_details:
                 error_details["permission"] = permission
 
@@ -224,22 +219,22 @@ class PermissionDeniedException(AuthException):
 
 
 class ValidationException(AppException):
-    """Exception raised for validation errors."""
+    """Exception raised when input validation fails."""
 
     def __init__(
         self,
         message: str = "Validation error",
         errors: Optional[List[Dict[str, Any]]] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a validation exception.
+        """Initialize a ValidationException.
 
         Args:
             message: Human-readable error message
             errors: List of validation errors
-            details: Additional error details
-            original_exception: Original exception
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         error_details = errors or details or []
 
@@ -255,24 +250,24 @@ class ValidationException(AppException):
 
 
 class BusinessException(AppException):
-    """Exception raised for business logic errors."""
+    """Exception raised when a business rule is violated."""
 
     def __init__(
         self,
         message: str,
         code: ErrorCode = ErrorCode.BUSINESS_LOGIC_ERROR,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         status_code: int = 400,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize a business logic exception.
+        """Initialize a BusinessException.
 
         Args:
             message: Human-readable error message
-            code: Error code
-            details: Additional error details
-            status_code: HTTP status code
-            original_exception: Original exception
+            code: Error code from ErrorCode enum
+            details: Additional details about the error
+            status_code: HTTP status code to return
+            original_exception: Original exception if this is a wrapper
         """
         super().__init__(
             message=message,
@@ -286,28 +281,30 @@ class BusinessException(AppException):
 
 
 class InvalidStateException(BusinessException):
-    """Exception raised when an operation is invalid for the current state."""
+    """Exception raised when an operation is attempted on an entity in an invalid state."""
 
     def __init__(
         self,
         message: str,
         current_state: Optional[str] = None,
         expected_state: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize an invalid state exception.
+        """Initialize an InvalidStateException.
 
         Args:
             message: Human-readable error message
-            current_state: Current state of the entity
-            expected_state: Expected state for the operation
-            details: Additional error details
-            original_exception: Original exception
+            current_state: The current state of the entity
+            expected_state: The expected state for the operation
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         error_details = details or {}
+
         if current_state:
             error_details["current_state"] = current_state
+
         if expected_state:
             error_details["expected_state"] = expected_state
 
@@ -321,28 +318,30 @@ class InvalidStateException(BusinessException):
 
 
 class OperationNotAllowedException(BusinessException):
-    """Exception raised when an operation is not allowed."""
+    """Exception raised when an operation is not allowed due to business rules."""
 
     def __init__(
         self,
         message: str,
         operation: Optional[str] = None,
         reason: Optional[str] = None,
-        details: Any = None,
+        details: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize an operation not allowed exception.
+        """Initialize an OperationNotAllowedException.
 
         Args:
             message: Human-readable error message
-            operation: Attempted operation
-            reason: Reason why the operation is not allowed
-            details: Additional error details
-            original_exception: Original exception
+            operation: The operation that was attempted
+            reason: The reason the operation is not allowed
+            details: Additional details about the error
+            original_exception: Original exception if this is a wrapper
         """
         error_details = details or {}
+
         if operation:
             error_details["operation"] = operation
+
         if reason:
             error_details["reason"] = reason
 

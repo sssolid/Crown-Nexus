@@ -14,7 +14,7 @@ Usage:
 from __future__ import annotations
 
 import asyncio
-import logging
+from app.logging import get_logger
 import sys
 from pathlib import Path
 import uuid

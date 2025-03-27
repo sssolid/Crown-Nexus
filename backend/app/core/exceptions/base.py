@@ -1,81 +1,67 @@
-# /backend/app/core/exceptions/base.py
+# app/core/exceptions/base.py
 from __future__ import annotations
 
-import logging
-
-"""Base exception system for the application.
+"""
+Base exception system for the application.
 
 This module defines the core exception types, error codes, and response models
 used throughout the application. It provides a consistent foundation for error
 handling and reporting.
 """
 
+from app.logging import get_logger
 import traceback
+import logging
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.logging import get_logger
+from app.logging.context import get_logger
 
 logger = get_logger("app.core.exceptions")
 
 
 class ErrorCategory(str, Enum):
-    """Categories for different types of errors."""
+    """Categories of errors in the application."""
 
-    VALIDATION = "validation"  # Input validation errors
-    AUTH = "auth"  # Authentication and authorization errors
-    RESOURCE = "resource"  # Resource access and management errors
-    SYSTEM = "system"  # System-level errors (DB, network, services)
-    BUSINESS = "business"  # Business logic and domain rule errors
+    VALIDATION = "validation"
+    AUTH = "auth"
+    RESOURCE = "resource"
+    SYSTEM = "system"
+    BUSINESS = "business"
 
 
 class ErrorCode(str, Enum):
-    """Standardized error codes for application errors.
+    """Specific error codes for different error scenarios."""
 
-    These codes provide a consistent way to identify error types across
-    the application, allowing clients to handle errors in a structured way.
-    """
-
-    # Resource errors
     RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND"
     RESOURCE_ALREADY_EXISTS = "RESOURCE_ALREADY_EXISTS"
-
-    # Auth errors
     AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED"
     PERMISSION_DENIED = "PERMISSION_DENIED"
-
-    # Validation errors
     VALIDATION_ERROR = "VALIDATION_ERROR"
     BAD_REQUEST = "BAD_REQUEST"
-
-    # Business logic errors
     BUSINESS_LOGIC_ERROR = "BUSINESS_LOGIC_ERROR"
     INVALID_STATE = "INVALID_STATE"
     OPERATION_NOT_ALLOWED = "OPERATION_NOT_ALLOWED"
-
-    # System errors
     DATABASE_ERROR = "DATABASE_ERROR"
     NETWORK_ERROR = "NETWORK_ERROR"
     SERVICE_ERROR = "SERVICE_ERROR"
     CONFIGURATION_ERROR = "CONFIGURATION_ERROR"
     SECURITY_ERROR = "SECURITY_ERROR"
-
-    # Generic errors
     UNKNOWN_ERROR = "UNKNOWN_ERROR"
 
 
 class ErrorSeverity(str, Enum):
     """Severity levels for errors."""
 
-    WARNING = "warning"  # Issues that need attention but aren't critical
-    ERROR = "error"  # Serious errors that impact functionality
-    CRITICAL = "critical"  # Critical failures requiring immediate attention
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL = "critical"
 
 
 class ErrorDetail(BaseModel):
-    """Detailed error information for API responses."""
+    """Detailed information about a specific error."""
 
     loc: List[str] = Field(..., description="Error location (path to the error)")
     msg: str = Field(..., description="Error message")
@@ -83,11 +69,7 @@ class ErrorDetail(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """Standardized error response model.
-
-    This model defines the structure of error responses returned by the API,
-    providing consistent error information to clients.
-    """
+    """Standardized error response model."""
 
     success: bool = Field(False, description="Success flag (always False for errors)")
     message: str = Field(..., description="Human-readable error message")
@@ -100,7 +82,15 @@ class ErrorResponse(BaseModel):
     @field_validator("details", mode="before")
     @classmethod
     def validate_details(cls, v: Any) -> List[ErrorDetail]:
-        """Validate and convert error details to proper format."""
+        """
+        Validate and transform error details.
+
+        Args:
+            v: The input value to validate
+
+        Returns:
+            Processed list of error details
+        """
         if isinstance(v, dict) and "errors" in v:
             return v["errors"]
         elif isinstance(v, list):
@@ -111,10 +101,11 @@ class ErrorResponse(BaseModel):
 
 
 class AppException(Exception):
-    """Base exception for all application-specific exceptions.
+    """
+    Base exception class for application exceptions.
 
-    This class provides the foundation for the application's exception hierarchy,
-    with standardized error codes, messages, and HTTP status codes.
+    Provides consistent error handling, formatting, and logging for all
+    application exceptions.
     """
 
     def __init__(
@@ -127,16 +118,17 @@ class AppException(Exception):
         category: ErrorCategory = ErrorCategory.SYSTEM,
         original_exception: Optional[Exception] = None,
     ) -> None:
-        """Initialize the exception with customizable properties.
+        """
+        Initialize the exception.
 
         Args:
             message: Human-readable error message
-            code: Error code from ErrorCode enum
-            details: Additional error details or context
-            status_code: HTTP status code to return
-            severity: Error severity level
-            category: Error category for classification
-            original_exception: Original exception that caused this error
+            code: Error code identifier
+            details: Additional details about the error
+            status_code: HTTP status code for the error
+            severity: Severity level of the error
+            category: Category of the error
+            original_exception: Original exception that caused this one
         """
         self.message = message
         self.code = code
@@ -146,38 +138,36 @@ class AppException(Exception):
         self.category = category
         self.original_exception = original_exception
 
-        # Add traceback information if original exception is provided
+        # Add original exception info if available
         if original_exception:
-            self.details["original_error"] = str(original_exception)
-            self.details["traceback"] = traceback.format_exception(
-                type(original_exception),
-                original_exception,
-                original_exception.__traceback__,
-            )
+            if isinstance(self.details, dict):
+                self.details["original_error"] = str(original_exception)
+                self.details["traceback"] = traceback.format_exception(
+                    type(original_exception),
+                    original_exception,
+                    original_exception.__traceback__,
+                )
 
         super().__init__(self.message)
 
     def to_response(self, request_id: Optional[str] = None) -> ErrorResponse:
-        """Convert exception to a standardized error response.
+        """
+        Convert the exception to a standardized error response.
 
         Args:
-            request_id: Request ID for tracking
+            request_id: Optional request ID to include in the response
 
         Returns:
-            ErrorResponse: Standardized error response
+            Formatted error response object
         """
-        # Prepare error details
         error_details = []
 
         if isinstance(self.details, list):
-            # Already formatted as error details
             error_details = self.details
         elif isinstance(self.details, dict):
             if "errors" in self.details:
-                # Use provided errors list
                 error_details = self.details["errors"]
             else:
-                # Convert details to error detail format
                 for key, value in self.details.items():
                     if key not in ["original_error", "traceback"]:
                         error_details.append(
@@ -188,17 +178,15 @@ class AppException(Exception):
                             }
                         )
         else:
-            # Create default error detail
             error_details = [
                 {"loc": ["server"], "msg": self.message, "type": str(self.code).lower()}
             ]
 
-        # Create metadata
+        # Add metadata
         meta = {"request_id": request_id} if request_id else {}
         meta["severity"] = self.severity
         meta["category"] = self.category
 
-        # Return error response
         return ErrorResponse(
             success=False,
             message=self.message,
@@ -206,20 +194,20 @@ class AppException(Exception):
             data=None,
             details=error_details,
             meta=meta,
-            timestamp=None,  # Will be filled by middleware
+            timestamp=None,
         )
 
     def log(self, request_id: Optional[str] = None) -> None:
-        """Log the exception with appropriate severity level.
+        """
+        Log the exception with appropriate severity and context.
 
         Args:
-            request_id: Request ID for tracking
+            request_id: Optional request ID for correlation
         """
         log_level = (
             logging.WARNING if self.severity == ErrorSeverity.WARNING else logging.ERROR
         )
 
-        # Prepare log context
         context = {
             "status_code": self.status_code,
             "error_code": str(self.code),
@@ -229,13 +217,12 @@ class AppException(Exception):
         if request_id:
             context["request_id"] = request_id
 
-        # Log the error
         if self.original_exception:
             logger.log(
                 log_level,
                 f"{self.message} (original error: {str(self.original_exception)})",
                 exc_info=self.original_exception,
-                extra=context,
+                **context,
             )
         else:
-            logger.log(log_level, self.message, extra=context)
+            logger.log(log_level, self.message, **context)

@@ -18,7 +18,7 @@ from app.core.logging import get_logger
 from app.core.rate_limiting.limiter import RateLimiter
 from app.core.rate_limiting.models import RateLimitRule
 
-logger = get_logger(__name__)
+logger = get_logger("app.middleware.rate_limiting")
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):

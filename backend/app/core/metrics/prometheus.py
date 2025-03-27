@@ -14,7 +14,7 @@ from prometheus_client import REGISTRY, start_http_server, push_to_gateway
 from app.core.logging import get_logger
 from app.core.metrics.base import MetricsConfig
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.metrics.prometheus")
 
 
 class PrometheusManager:

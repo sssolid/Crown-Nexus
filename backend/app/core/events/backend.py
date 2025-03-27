@@ -8,7 +8,7 @@ This module implements the core event system functionality with different backen
 
 import asyncio
 import inspect
-import logging
+from app.logging import get_logger
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import (
@@ -21,7 +21,7 @@ from typing import (
 )
 
 # Logger
-logger = logging.getLogger(__name__)
+logger = get_logger("app.core.events.backend")
 
 # Type for event handlers
 EventHandler = Callable[[Dict[str, Any]], Any]
@@ -95,7 +95,7 @@ class CeleryEventBackend(EventBackend):
             celery_app: The Celery application instance
         """
         self.celery_app = celery_app
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger("app.core.events.backend")
 
     def publish_event(self, event_name: str, payload: Dict[str, Any]) -> None:
         """Publish an event using Celery tasks.
@@ -142,7 +142,7 @@ class MemoryEventBackend(EventBackend):
     def __init__(self) -> None:
         """Initialize the in-memory event registry."""
         self.handlers: Dict[str, List[EventHandler]] = {}
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger("app.core.events.backend")
 
     def publish_event(self, event_name: str, payload: Dict[str, Any]) -> None:
         """Publish an event to all subscribers immediately in-process.
@@ -264,6 +264,7 @@ def subscribe_to_event(event_name: str) -> Callable[[EventHandler], EventHandler
     Returns:
         Decorator function that registers the handler
     """
+
     def decorator(handler: EventHandler) -> EventHandler:
         global _pending_handlers, _is_initialized, _event_backend
 
@@ -278,7 +279,9 @@ def subscribe_to_event(event_name: str) -> Callable[[EventHandler], EventHandler
         if _is_initialized and _event_backend is not None:
             try:
                 _event_backend.subscribe(event_name, handler)
-                logger.debug(f"Registered handler {handler.__name__} for event {event_name}")
+                logger.debug(
+                    f"Registered handler {handler.__name__} for event {event_name}"
+                )
             except Exception as e:
                 logger.error(f"Error registering handler: {str(e)}")
 
@@ -305,7 +308,9 @@ def init_domain_events() -> None:
     for event_name, handlers in _pending_handlers.items():
         for handler in handlers:
             try:
-                logger.debug(f"Registering handler {handler.__name__} for event {event_name}")
+                logger.debug(
+                    f"Registering handler {handler.__name__} for event {event_name}"
+                )
                 _event_backend.subscribe(event_name, handler)
             except Exception as e:
                 logger.error(f"Error registering handler: {str(e)}")
@@ -313,7 +318,9 @@ def init_domain_events() -> None:
     # Import domain event modules to trigger decorator execution
     _import_event_handlers()
 
-    logger.info(f"Registered {sum(len(handlers) for handlers in _pending_handlers.values())} event handlers")
+    logger.info(
+        f"Registered {sum(len(handlers) for handlers in _pending_handlers.values())} event handlers"
+    )
 
 
 def register_event_handlers(*modules: Any) -> None:
@@ -324,7 +331,9 @@ def register_event_handlers(*modules: Any) -> None:
     Args:
         *modules: Module objects to ensure are imported
     """
-    logger.warning("register_event_handlers is deprecated. Use init_domain_events instead.")
+    logger.warning(
+        "register_event_handlers is deprecated. Use init_domain_events instead."
+    )
     # No-op for backward compatibility
 
 
@@ -351,7 +360,9 @@ def _import_event_handlers() -> None:
                 logger.debug(f"Imported event handlers from {module_name}")
             except ImportError:
                 # This is normal for modules that don't exist yet
-                logger.debug(f"Could not import event handlers from {module_name} (module may not exist)")
+                logger.debug(
+                    f"Could not import event handlers from {module_name} (module may not exist)"
+                )
 
     except Exception as e:
         logger.warning(f"Error importing event handler modules: {str(e)}")

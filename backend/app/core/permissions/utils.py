@@ -18,7 +18,7 @@ from app.core.logging import get_logger
 if TYPE_CHECKING:
     from app.domains.users.models import User
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.permissions.utils")
 
 
 async def get_user_by_id(db: AsyncSession, user_id: str) -> "User":

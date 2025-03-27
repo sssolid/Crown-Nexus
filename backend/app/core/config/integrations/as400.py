@@ -10,14 +10,15 @@ centralizing all configuration in one secure location.
 """
 
 import json
-import logging
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.logging import get_logger
+
 # Use Python standard logging to avoid circular imports
-logger = logging.getLogger("app.core.config.as400")
+logger = get_logger("app.core.config.as400")
 
 
 class AS400Settings(BaseSettings):

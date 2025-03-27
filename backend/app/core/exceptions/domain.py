@@ -8,7 +8,12 @@ authentication, and validation that are specific to the application's domain.
 
 from typing import Any, Dict, List, Optional, Union
 
-from app.core.exceptions.base import AppException, ErrorCategory, ErrorCode, ErrorSeverity
+from app.core.exceptions.base import (
+    AppException,
+    ErrorCategory,
+    ErrorCode,
+    ErrorSeverity,
+)
 
 
 class ResourceException(AppException):
@@ -65,7 +70,10 @@ class ResourceNotFoundException(ResourceException):
         if message is None:
             message = f"{resource_type} with ID {resource_id} not found"
 
-        error_details = details or {"resource_type": resource_type, "resource_id": resource_id}
+        error_details = details or {
+            "resource_type": resource_type,
+            "resource_id": resource_id,
+        }
 
         super().__init__(
             message=message,
@@ -104,7 +112,7 @@ class ResourceAlreadyExistsException(ResourceException):
         error_details = details or {
             "resource_type": resource_type,
             "field": field,
-            "identifier": identifier
+            "identifier": identifier,
         }
 
         super().__init__(

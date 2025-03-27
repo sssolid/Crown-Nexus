@@ -6,7 +6,7 @@ This module provides service methods for working with Qdb data, including
 import, export, and query operations.
 """
 
-import logging
+from app.logging import get_logger
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
@@ -18,7 +18,7 @@ from app.domains.autocare.qdb.repository import (
     QdbRepository,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.autocare.qdb.service")
 
 
 class QdbService:

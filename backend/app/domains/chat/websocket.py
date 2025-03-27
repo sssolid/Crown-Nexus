@@ -14,7 +14,11 @@ from app.chat.schemas import (
     WebSocketResponse,
 )
 from app.core.service_registry import get_service
-from app.domains.audit.service_service import AuditEventType, AuditLogLevel, AuditService
+from app.domains.audit.service_service import (
+    AuditEventType,
+    AuditLogLevel,
+    AuditService,
+)
 from app.services.metrics_service import MetricsService
 from app.services.validation_service import ValidationService
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect

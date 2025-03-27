@@ -14,7 +14,7 @@ from typing import Optional, Tuple
 from app.core.config import settings
 from app.core.logging import get_logger
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.security.csrf")
 
 
 def generate_csrf_token(session_id: str) -> str:

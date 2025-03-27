@@ -1,8 +1,99 @@
-# Developer's Guide: Error Handling and Dependency Management Systems
+# Developer's Guide: Logging, Error Handling, and Dependency Management Systems
 
-This guide provides a practical overview of the error handling, exception, and dependency management systems. Use it as a reference when implementing these components in your code.
+This guide provides a practical overview of the logging, error handling, exception, and dependency management systems. Use it as a reference when implementing these components in your code.
 
-## 1. Exception System
+## Table of Contents
+1. [Logging System](#1-logging-system)
+2. [Exception System](#2-exception-system)
+3. [Error Handling System](#3-error-handling-system)
+4. [Dependency Management System](#4-dependency-management-system)
+5. [Common Patterns](#5-common-patterns)
+
+## 1. Logging System
+
+The logging system provides structured, context-aware logging throughout the application. It supports both human-readable formatted logs for development and JSON logs for production.
+
+### Key Features
+- Structured logging with contextual information
+- Request and user ID tracking
+- Execution time logging
+- Line numbers and file information for easy debugging
+- Colorized development logs
+- JSON-formatted production logs
+
+### Basic Logging
+
+```python
+from app.logging import get_logger
+
+# Create a logger for your module
+logger = get_logger("app.your.module")
+
+# Log at different levels
+logger.debug("Debug information with context", item_id=123, status="pending")
+logger.info("Operation completed successfully")
+logger.warning("Something unexpected happened", details="connection timeout")
+logger.error("Operation failed", error_code="DB_CONN_ERROR", retry_count=3)
+logger.exception("Exception occurred during processing", exc_info=exception)
+```
+
+### Request Context Tracking
+
+Request context is automatically managed by middleware, but you can also use it directly:
+
+```python
+from app.logging import request_context, set_user_id, clear_user_id
+
+# Create a custom context for a set of operations
+with request_context(request_id="manual-operation-123", user_id="admin"):
+    logger.info("Performing administrative operation")
+    # All logs within this context will include the specified request_id and user_id
+
+# Set just the user ID
+set_user_id("user-456")
+logger.info("User context operation")  # Will include user_id=user-456
+
+# Clear when done
+clear_user_id()
+```
+
+### Performance Logging
+
+Use decorators to automatically log execution time:
+
+```python
+from app.logging import log_execution_time, log_execution_time_async
+
+# For synchronous functions
+@log_execution_time()  # Optional parameters: logger, level
+def process_data(data):
+    # Processing logic
+    return result
+    # Will log start/end times and duration automatically
+
+# For asynchronous functions
+@log_execution_time_async()
+async def fetch_data():
+    # Async processing logic
+    return result
+```
+
+### Configuration
+
+The logging system is configured at application startup automatically. The configuration:
+- Sets appropriate formatters for development vs. production
+- Routes logs to console and/or files based on environment
+- Configures structlog for structured output
+
+In development:
+- Colorized, human-readable logs with line numbers
+- Contextual information for debugging
+
+In production:
+- JSON-formatted logs for machine processing
+- Complete context for log aggregation systems
+
+## 2. Exception System
 
 The exception system provides standardized application exceptions with proper error codes, status codes, and response formatting.
 
@@ -134,7 +225,7 @@ raise RateLimitException(
 )
 ```
 
-## 2. Error Handling System
+## 3. Error Handling System
 
 The error handling system provides utilities for reporting errors to various destinations and creating common exception types.
 
@@ -242,7 +333,7 @@ def check_authorization(user_id, resource, action):
         )
 ```
 
-## 3. Dependency Management System
+## 4. Dependency Management System
 
 The dependency management system handles service registration, initialization, and dependency injection.
 
@@ -334,7 +425,7 @@ class UserService:
         return user
 ```
 
-## 4. Common Patterns
+## 5. Common Patterns
 
 ### API Endpoint Error Handling
 
@@ -358,25 +449,35 @@ async def get_user(
         raise
 ```
 
-### Service Layer Error Handling
+### Service Layer Error Handling and Logging
 
 ```python
 class OrderService:
     def __init__(self, db):
         self.db = db
         self.error_service = get_service("error_service")
+        self.logger = get_logger("app.domains.orders.service")
 
     async def create_order(self, order_data, user_id):
+        self.logger.info("Creating order", user_id=user_id, items_count=len(order_data["items"]))
+
         # Validate inventory availability
         for item in order_data["items"]:
             product = await self.product_repository.get_by_id(item["product_id"])
             if not product:
+                self.logger.warning("Product not found", product_id=item["product_id"])
                 raise self.error_service.resource_not_found(
                     resource_type="Product",
                     resource_id=item["product_id"]
                 )
 
             if product.stock < item["quantity"]:
+                self.logger.warning(
+                    "Insufficient inventory",
+                    product_id=product.id,
+                    requested=item["quantity"],
+                    available=product.stock
+                )
                 raise self.error_service.business_logic_error(
                     message="Insufficient inventory",
                     details={
@@ -387,4 +488,70 @@ class OrderService:
                 )
 
         # Process order...
+        self.logger.info("Order created successfully", order_id=new_order.id)
+        return new_order
 ```
+
+### Logging Best Practices
+
+1. **Use Structured Logging**
+   ```python
+   # Good - structured and searchable
+   logger.info("User registered", user_id=user.id, email=user.email, registration_source="web")
+
+   # Avoid - unstructured string concatenation
+   logger.info(f"User {user.id} with email {user.email} registered from web")
+   ```
+
+2. **Choose Appropriate Log Levels**
+    - `DEBUG`: Detailed information, typically useful only when diagnosing problems
+    - `INFO`: Confirmation that things are working as expected
+    - `WARNING`: An indication that something unexpected happened, but the application still works
+    - `ERROR`: The application has encountered an error that prevents a function from working
+    - `CRITICAL`: A serious error that prevents the application from continuing to function
+
+3. **Include Context**
+   ```python
+   # Include relevant context with every log
+   logger.info(
+       "Payment processed",
+       user_id=user.id,
+       payment_id=payment.id,
+       amount=payment.amount,
+       status=payment.status
+   )
+   ```
+
+4. **Use Request Context When Available**
+   ```python
+   # Request context is automatically included
+   logger.info("Processing request")  # Will include request_id and user_id automatically
+   ```
+
+5. **Log at Service Boundaries**
+   ```python
+   # Log at service boundaries and important events
+   logger.info("Starting external API call", service="stripe", action="create_payment")
+   try:
+       result = await stripe_client.create_payment(payment_data)
+       logger.info("External API call succeeded", service="stripe", duration_ms=duration)
+       return result
+   except Exception as e:
+       logger.exception("External API call failed", service="stripe", error=str(e))
+       raise
+   ```
+
+6. **Use Decorators for Common Patterns**
+   ```python
+   @log_execution_time()
+   def process_report(report_id):
+       # Complex processing...
+       return result
+   ```
+
+7. **Avoid Sensitive Information**
+   ```python
+   # Don't log passwords, tokens, or other secrets
+   logger.info("User authentication", username=username)  # Good
+   logger.info("User authentication", username=username, password=password)  # BAD!
+   ```

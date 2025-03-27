@@ -7,6 +7,7 @@ from app.domains.audit.service.service import AuditService
 # Singleton instance
 _audit_service_instance: Optional[AuditService] = None
 
+
 def get_audit_service(db: Optional[AsyncSession] = None) -> AuditService:
     """Get or create an AuditService instance.
 

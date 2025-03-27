@@ -16,7 +16,7 @@ from app.core.config import settings
 from app.core.logging import get_logger
 from app.core.security.models import PasswordPolicy
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.security.passwords")
 
 # Password hashing setup
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

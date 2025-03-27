@@ -5,7 +5,7 @@ from __future__ import annotations
 This module provides service methods for mapping products to autocare database entities.
 """
 
-import logging
+from app.logging import get_logger
 import uuid
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -22,7 +22,7 @@ from app.domains.autocare.fitment.repository import FitmentMappingRepository
 from app.domains.autocare.fitment.models import FitmentMapping
 from app.domains.products.repository import ProductRepository
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.autocare.fitment.service")
 
 
 class FitmentMappingService:

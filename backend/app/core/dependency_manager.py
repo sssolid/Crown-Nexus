@@ -15,7 +15,18 @@ making it easier to maintain and test the application.
 
 import asyncio
 import functools
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Set, Type, TypeVar, cast
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Set,
+    Type,
+    TypeVar,
+    cast,
+)
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -68,7 +79,9 @@ class DependencyManager:
         logger.debug(f"Registering service: {name}")
         self._services[name] = provider
 
-    def register_dependency_relationship(self, service_name: str, depends_on: List[str]) -> None:
+    def register_dependency_relationship(
+        self, service_name: str, depends_on: List[str]
+    ) -> None:
         """Register dependencies between services for ordered initialization.
 
         Args:
@@ -102,7 +115,9 @@ class DependencyManager:
                     self._dependencies[name] = instance
                 return instance
             except Exception as e:
-                logger.error(f"Error creating dependency {name}: {str(e)}", exc_info=True)
+                logger.error(
+                    f"Error creating dependency {name}: {str(e)}", exc_info=True
+                )
                 raise ConfigurationException(
                     message=f"Failed to create dependency: {name}",
                     details={
@@ -114,13 +129,15 @@ class DependencyManager:
 
         # Error if dependency not found
         logger.error(f"Dependency not registered: {name}")
-        available_dependencies = list(self._dependencies.keys()) + list(self._services.keys())
+        available_dependencies = list(self._dependencies.keys()) + list(
+            self._services.keys()
+        )
         raise ConfigurationException(
             message=f"Dependency not registered: {name}",
             details={
                 "dependency_name": name,
-                "available_dependencies": available_dependencies
-            }
+                "available_dependencies": available_dependencies,
+            },
         )
 
     def get_instance(self, cls: Type[T], **kwargs: Any) -> T:
@@ -197,7 +214,7 @@ class DependencyManager:
             deps_chain = " -> ".join(self._initializing) + f" -> {service_name}"
             raise ConfigurationException(
                 message=f"Circular dependency detected: {deps_chain}",
-                details={"dependency_chain": deps_chain}
+                details={"dependency_chain": deps_chain},
             )
 
         # Mark as initializing
@@ -217,16 +234,25 @@ class DependencyManager:
                 try:
                     service = self.get(service_name)
                 except Exception as e:
-                    logger.error(f"Error instantiating service {service_name}: {str(e)}", exc_info=True)
+                    logger.error(
+                        f"Error instantiating service {service_name}: {str(e)}",
+                        exc_info=True,
+                    )
                     return
 
             # Initialize if has initialize method
-            if service and hasattr(service, "initialize") and callable(getattr(service, "initialize")):
+            if (
+                service
+                and hasattr(service, "initialize")
+                and callable(getattr(service, "initialize"))
+            ):
                 try:
                     await service.initialize()
                     logger.info(f"Initialized {service_name}")
                 except Exception as e:
-                    logger.error(f"Error initializing {service_name}: {str(e)}", exc_info=True)
+                    logger.error(
+                        f"Error initializing {service_name}: {str(e)}", exc_info=True
+                    )
                     return
 
             # Mark as initialized
@@ -252,7 +278,9 @@ class DependencyManager:
                     if service is not None:
                         service_names.append(service_name)
                 except Exception as e:
-                    logger.error(f"Error instantiating service {service_name}: {str(e)}")
+                    logger.error(
+                        f"Error instantiating service {service_name}: {str(e)}"
+                    )
 
         # Core services to initialize first
         core_services = ["logging_service", "error_service", "cache_service"]
@@ -282,11 +310,17 @@ class DependencyManager:
         for service_name in service_names:
             try:
                 service = self._dependencies.get(service_name)
-                if service and hasattr(service, "shutdown") and callable(getattr(service, "shutdown")):
+                if (
+                    service
+                    and hasattr(service, "shutdown")
+                    and callable(getattr(service, "shutdown"))
+                ):
                     await service.shutdown()
                     logger.info(f"Shut down {service_name}")
             except Exception as e:
-                logger.error(f"Error shutting down {service_name}: {str(e)}", exc_info=True)
+                logger.error(
+                    f"Error shutting down {service_name}: {str(e)}", exc_info=True
+                )
 
         # Clear initialization state
         self._initialized.clear()
@@ -319,17 +353,22 @@ def inject_dependency(dependency_name: str) -> Callable:
     Returns:
         Decorator function
     """
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             dependency = get_dependency(dependency_name)
             kwargs[dependency_name] = dependency
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
-def register_service(provider: Callable[..., Any], name: Optional[str] = None) -> Callable[..., Any]:
+def register_service(
+    provider: Callable[..., Any], name: Optional[str] = None
+) -> Callable[..., Any]:
     """Decorator to register a service provider.
 
     Args:
@@ -345,8 +384,7 @@ def register_service(provider: Callable[..., Any], name: Optional[str] = None) -
 
 
 def register_async_service(
-    async_provider: Callable[..., Awaitable[T]],
-    name: Optional[str] = None
+    async_provider: Callable[..., Awaitable[T]], name: Optional[str] = None
 ) -> Callable[..., Awaitable[T]]:
     """Register an async service provider.
 
@@ -367,6 +405,7 @@ def register_async_service(
             # For media service, just create without initializing
             if service_name == "media_service":
                 from app.domains.media.service.service import MediaService
+
                 return MediaService(storage_type=kwargs.get("storage_type"))
 
             # For other services, create a task that will be awaited later
@@ -396,6 +435,7 @@ def register_services() -> None:
         # Import and register core services
         try:
             from app.core.error.service import get_error_service
+
             dependency_manager.register_service(get_error_service, "error_service")
         except ImportError:
             logger.warning("Error service not available")
@@ -403,26 +443,38 @@ def register_services() -> None:
         # Import and register domain services
         try:
             from app.domains.audit.service import get_audit_service
-            dependency_manager.register_service(lambda db=None: get_audit_service(db), "audit_service")
-            dependency_manager.register_dependency_relationship("audit_service", ["error_service"])
+
+            dependency_manager.register_service(
+                lambda db=None: get_audit_service(db), "audit_service"
+            )
+            dependency_manager.register_dependency_relationship(
+                "audit_service", ["error_service"]
+            )
         except ImportError:
             logger.warning("Audit service not available")
 
         try:
             from app.services.search import get_search_service
-            dependency_manager.register_service(lambda db=None: get_search_service(db), "search_service")
+
+            dependency_manager.register_service(
+                lambda db=None: get_search_service(db), "search_service"
+            )
         except ImportError:
             logger.warning("Search service not available")
 
         try:
             from app.domains.media.service import get_media_service_factory
+
             register_async_service(get_media_service_factory, "media_service")
         except ImportError:
             logger.warning("Media service not available")
 
         try:
             from app.services.as400_sync_service import as400_sync_service
-            dependency_manager.register_service(lambda: as400_sync_service, "as400_sync_service")
+
+            dependency_manager.register_service(
+                lambda: as400_sync_service, "as400_sync_service"
+            )
         except ImportError:
             logger.warning("AS400 sync service not available")
 
@@ -481,6 +533,7 @@ def with_dependencies(**dependencies: str) -> Callable:
     Returns:
         Decorator function
     """
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -488,5 +541,7 @@ def with_dependencies(**dependencies: str) -> Callable:
                 if param_name not in kwargs:
                     kwargs[param_name] = get_dependency(dependency_name)
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator

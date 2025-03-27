@@ -26,7 +26,7 @@ from app.core.logging import get_logger
 from app.domains.media.models import MediaType, MediaVisibility
 from app.services.interfaces import ServiceInterface
 
-logger = get_logger(__name__)
+logger = get_logger("app.domains.media.service.service")
 
 
 class MediaService(ServiceInterface):

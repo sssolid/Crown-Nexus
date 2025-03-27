@@ -1,6 +1,8 @@
+# app/core/error/service.py
 from __future__ import annotations
 
-"""Error handling service implementation.
+"""
+Error handling service implementation.
 
 This module provides a service wrapper around the error handling system,
 making it available through the dependency manager.
@@ -28,44 +30,56 @@ from app.core.error.reporters import (
     ExternalServiceReporter,
     LoggingErrorReporter,
 )
-from app.core.logging import get_logger
+from app.logging.context import get_logger
 
 logger = get_logger("app.core.error.service")
 
 
 class ErrorService:
-    """Service for managing error handling and reporting."""
+    """
+    Service for error handling and reporting.
+
+    This service provides methods for creating and reporting errors,
+    as well as initializing and managing error reporters.
+    """
 
     def __init__(self) -> None:
-        """Initialize the ErrorService."""
+        """Initialize the error service."""
         self.reporters: List[ErrorReporter] = []
+        self._initialized = False
 
     async def initialize(self) -> None:
-        """Initialize the error service.
+        """Initialize the error service."""
+        if self._initialized:
+            logger.debug("Error service already initialized, skipping")
+            return
 
-        This method initializes the error handling system and registers
-        the default error reporters.
-        """
         logger.info("Initializing error service")
 
-        # Initialize the error handling manager
+        # Initialize the error manager only if needed
         await initialize_manager()
 
-        # Register default reporters
+        # Create and register reporters
         self.reporters = ErrorReporterFactory.create_default_reporters()
         for reporter in self.reporters:
             register_reporter(reporter)
 
+        self._initialized = True
         logger.info(f"Registered {len(self.reporters)} default error reporters")
 
     async def shutdown(self) -> None:
         """Shut down the error service."""
+        if not self._initialized:
+            return
+
         logger.info("Shutting down error service")
         await shutdown_manager()
         self.reporters = []
+        self._initialized = False
 
     async def register_reporter(self, reporter: ErrorReporter) -> None:
-        """Register an error reporter.
+        """
+        Register an error reporter.
 
         Args:
             reporter: The error reporter to register
@@ -75,7 +89,8 @@ class ErrorService:
         logger.debug(f"Registered error reporter: {reporter.__class__.__name__}")
 
     async def register_reporter_by_name(self, reporter_name: str) -> None:
-        """Register an error reporter by name.
+        """
+        Register an error reporter by name.
 
         Args:
             reporter_name: Name of the reporter to register
@@ -85,11 +100,12 @@ class ErrorService:
             await self.register_reporter(reporter)
 
     async def report_error(self, exception: Exception, context: ErrorContext) -> None:
-        """Report an error to all registered reporters.
+        """
+        Report an error with context.
 
         Args:
             exception: The exception to report
-            context: Context information about where the error occurred
+            context: Context information for the error
         """
         await report_error(exception, context)
 
@@ -100,13 +116,14 @@ class ErrorService:
         user_id: Optional[str] = None,
         function_name: Optional[str] = None,
     ) -> None:
-        """Handle an exception by reporting it to all registered reporters.
+        """
+        Handle an exception by reporting it.
 
         Args:
             exception: The exception to handle
-            request_id: ID of the request that triggered the exception
-            user_id: ID of the user who triggered the exception
-            function_name: Name of the function where the exception occurred
+            request_id: Optional request ID
+            user_id: Optional user ID
+            function_name: Optional function name
         """
         handle_exception(
             exception=exception,
@@ -115,97 +132,103 @@ class ErrorService:
             function_name=function_name,
         )
 
-    # Convenience methods for creating specific exception types
-
     def resource_not_found(
         self, resource_type: str, resource_id: str, message: Optional[str] = None
     ) -> Exception:
-        """Create a ResourceNotFoundException.
+        """
+        Create a resource not found exception.
 
         Args:
             resource_type: Type of resource that was not found
             resource_id: ID of the resource that was not found
-            message: Optional custom message
+            message: Optional custom error message
 
         Returns:
-            A ResourceNotFoundException instance
+            A configured ResourceNotFoundException
         """
         return resource_not_found(resource_type, resource_id, message)
 
     def resource_already_exists(
-        self, resource_type: str, identifier: str, field: str = "id", message: Optional[str] = None
+        self,
+        resource_type: str,
+        identifier: str,
+        field: str = "id",
+        message: Optional[str] = None,
     ) -> Exception:
-        """Create a ResourceAlreadyExistsException.
+        """
+        Create a resource already exists exception.
 
         Args:
             resource_type: Type of resource that already exists
-            identifier: Identifier value of the resource
-            field: Field name that contains the identifier
-            message: Optional custom message
+            identifier: Identifier of the resource
+            field: Field name of the identifier (default: 'id')
+            message: Optional custom error message
 
         Returns:
-            A ResourceAlreadyExistsException instance
+            A configured ResourceAlreadyExistsException
         """
         return resource_already_exists(resource_type, identifier, field, message)
 
     def validation_error(
         self, field: str, message: str, error_type: str = "invalid_value"
     ) -> Exception:
-        """Create a ValidationException.
+        """
+        Create a validation error exception.
 
         Args:
-            field: The field that failed validation
-            message: The validation error message
-            error_type: The type of validation error
+            field: Field that failed validation
+            message: Error message
+            error_type: Type of validation error
 
         Returns:
-            A ValidationException instance
+            A configured ValidationException
         """
         return validation_error(field, message, error_type)
 
     def permission_denied(
         self, action: str, resource_type: str, permission: str
     ) -> Exception:
-        """Create a PermissionDeniedException.
+        """
+        Create a permission denied exception.
 
         Args:
-            action: The action that was attempted
-            resource_type: The type of resource being accessed
-            permission: The permission that was required
+            action: Action that was attempted
+            resource_type: Type of resource being accessed
+            permission: Permission that was required
 
         Returns:
-            A PermissionDeniedException instance
+            A configured PermissionDeniedException
         """
         return permission_denied(action, resource_type, permission)
 
     def business_logic_error(
         self, message: str, details: Optional[Dict[str, Any]] = None
     ) -> Exception:
-        """Create a BusinessException.
+        """
+        Create a business logic error exception.
 
         Args:
-            message: The error message
-            details: Additional details about the error
+            message: Error message
+            details: Additional error details
 
         Returns:
-            A BusinessException instance
+            A configured BusinessException
         """
         return business_logic_error(message, details)
 
 
-# Singleton instance
+# Singleton error service instance
 _error_service: Optional[ErrorService] = None
 
 
 def get_error_service() -> ErrorService:
-    """Get the singleton ErrorService instance.
+    """
+    Get the error service singleton.
 
     Returns:
-        The ErrorService instance
+        The error service instance
     """
     global _error_service
-
     if _error_service is None:
         _error_service = ErrorService()
-
     return _error_service

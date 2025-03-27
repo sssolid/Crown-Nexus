@@ -14,13 +14,12 @@ from app.core.exceptions import AuthenticationException
 from app.core.logging import get_logger
 from app.core.security.tokens import decode_token
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.security.dependencies")
 
 # OAuth2 setup for FastAPI
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
 optional_oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/auth/login",
-    auto_error=False
+    tokenUrl=f"{settings.API_V1_STR}/auth/login", auto_error=False
 )
 
 

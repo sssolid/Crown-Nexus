@@ -14,7 +14,7 @@ from typing import Any, Callable, Dict, Generator, Optional, cast
 from app.core.logging import get_logger
 from app.core.metrics.base import F
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.metrics.decorators")
 
 
 @contextmanager

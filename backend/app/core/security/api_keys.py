@@ -17,7 +17,7 @@ from app.core.logging import get_logger
 from app.core.security.models import ApiKeyData, TokenType
 from app.core.security.tokens import create_token
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.security.api_keys")
 
 
 def generate_api_key(

@@ -6,6 +6,7 @@ from app.domains.media.service.service import MediaService
 # Singleton instance
 _media_service_instance: Optional[MediaService] = None
 
+
 # Keep the original async function, but add a sync version
 def get_media_service_factory(storage_type: Optional[str] = None) -> MediaService:
     """Get or create a MediaService instance without initialization.
@@ -23,6 +24,7 @@ def get_media_service_factory(storage_type: Optional[str] = None) -> MediaServic
         _media_service_instance = MediaService(storage_type=storage_type)
 
     return _media_service_instance
+
 
 # Keep the original async function for full initialization
 async def get_media_service(storage_type: Optional[str] = None) -> MediaService:

@@ -25,7 +25,7 @@ from app.core.pagination.base import (
     SortField,
 )
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.pagination.providers.offset")
 
 T = TypeVar("T")  # Entity type
 R = TypeVar("R")  # Result type

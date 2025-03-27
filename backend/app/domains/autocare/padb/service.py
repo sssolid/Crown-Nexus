@@ -6,7 +6,7 @@ This module provides service methods for working with PAdb data, including
 import, export, and query operations.
 """
 
-import logging
+from app.logging import get_logger
 from datetime import datetime
 from typing import Any, Dict
 
@@ -18,7 +18,7 @@ from app.domains.autocare.padb.repository import (
     PAdbRepository,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.autocare.padb.service")
 
 
 class PAdbService:

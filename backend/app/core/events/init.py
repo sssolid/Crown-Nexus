@@ -11,13 +11,13 @@ of domain event handlers.
 import asyncio
 import importlib
 import inspect
-import logging
+from app.logging import get_logger
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import Any, Callable, Dict, List, Optional, Protocol
 
 # Logger
-logger = logging.getLogger(__name__)
+logger = get_logger("app.core.events.init")
 
 # Event handler type
 EventHandler = Callable[[Dict[str, Any]], Any]
@@ -91,7 +91,7 @@ class CeleryEventBackend(EventBackend):
             celery_app: The Celery application instance
         """
         self.celery_app = celery_app
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger("app.core.events.init")
 
     def publish_event(self, event_name: str, payload: Dict[str, Any]) -> None:
         """Publish an event using Celery tasks.
@@ -138,7 +138,7 @@ class MemoryEventBackend(EventBackend):
     def __init__(self) -> None:
         """Initialize the in-memory event registry."""
         self.handlers: Dict[str, List[EventHandler]] = {}
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger("app.core.events.init")
 
     def publish_event(self, event_name: str, payload: Dict[str, Any]) -> None:
         """Publish an event to all subscribers immediately in-process.
@@ -203,6 +203,7 @@ def init_event_backend(backend_type: EventBackendType, **kwargs: Any) -> None:
     if backend_type == EventBackendType.CELERY:
         # Dynamically import celery to avoid hard dependency
         from app.core.celery_app import celery_app
+
         _event_backend = CeleryEventBackend(celery_app)
     elif backend_type == EventBackendType.MEMORY:
         _event_backend = MemoryEventBackend()
@@ -224,7 +225,9 @@ def get_event_backend() -> EventBackend:
         RuntimeError: If event backend is not initialized
     """
     if _event_backend is None:
-        raise RuntimeError("Event backend not initialized. Call init_event_backend first.")
+        raise RuntimeError(
+            "Event backend not initialized. Call init_event_backend first."
+        )
     return _event_backend
 
 
@@ -241,6 +244,7 @@ def subscribe_to_event(event_name: str) -> Callable[[EventHandler], EventHandler
     Returns:
         Decorator function
     """
+
     def decorator(handler: EventHandler) -> EventHandler:
         # Store the handler for deferred registration
         if event_name not in _pending_handlers:
@@ -252,7 +256,9 @@ def subscribe_to_event(event_name: str) -> Callable[[EventHandler], EventHandler
         # If backend is already initialized, register immediately
         if _is_initialized and _event_backend is not None:
             _event_backend.subscribe(event_name, handler)
-            logger.debug(f"Registered handler {handler.__name__} for event {event_name}")
+            logger.debug(
+                f"Registered handler {handler.__name__} for event {event_name}"
+            )
 
         return handler
 
@@ -277,13 +283,17 @@ def init_domain_events() -> None:
     # Register all pending handlers
     for event_name, handlers in _pending_handlers.items():
         for handler in handlers:
-            logger.debug(f"Registering handler {handler.__name__} for event {event_name}")
+            logger.debug(
+                f"Registering handler {handler.__name__} for event {event_name}"
+            )
             _event_backend.subscribe(event_name, handler)
 
     # Import domain event modules to trigger decorator execution
     _import_event_handlers()
 
-    logger.info(f"Registered {sum(len(handlers) for handlers in _pending_handlers.values())} event handlers")
+    logger.info(
+        f"Registered {sum(len(handlers) for handlers in _pending_handlers.values())} event handlers"
+    )
 
 
 def publish_event(event_name: str, payload: Dict[str, Any]) -> None:

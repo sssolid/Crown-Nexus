@@ -22,7 +22,7 @@ from app.core.config import settings
 from app.core.logging import get_logger
 from app.domains.media.models import MediaType
 
-logger = get_logger(__name__)
+logger = get_logger("app.domains.media.service.local")
 
 
 @dataclass

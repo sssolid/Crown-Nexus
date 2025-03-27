@@ -16,7 +16,7 @@ from app.core.permissions.models import Permission, ROLE_PERMISSIONS
 if TYPE_CHECKING:
     from app.domains.users.models import User
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.permissions.checkers")
 
 
 class PermissionChecker:

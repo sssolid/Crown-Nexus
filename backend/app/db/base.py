@@ -18,6 +18,7 @@ from app.db.base_class import Base  # noqa: F401
 # Import models with proper dependency order
 # First models that don't depend on others:
 from app.domains.location.models import Country, Address  # noqa: F401
+from app.domains.api_key.models import ApiKey  # noqa: F401
 from app.domains.users.models import User, UserRole  # noqa: F401
 from app.domains.company.models import Company  # noqa: F401
 from app.domains.reference.models import (
@@ -74,7 +75,6 @@ from app.domains.chat.models import (
     MessageType,
     RateLimitLog,
 )  # noqa: F401
-from app.domains.api_key.models import ApiKey  # noqa: F401
 
 # Import associations after all models
 from app.models.associations import (
@@ -92,4 +92,3 @@ from app.models.associations import (
 )  # noqa: F401
 
 # Import any future models here to ensure Alembic detects them
-

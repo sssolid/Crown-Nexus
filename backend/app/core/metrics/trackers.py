@@ -11,7 +11,7 @@ from typing import Optional
 from app.core.logging import get_logger
 from app.core.metrics.base import MetricName, MetricTag
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.metrics.trackers")
 
 
 class HttpTracker:

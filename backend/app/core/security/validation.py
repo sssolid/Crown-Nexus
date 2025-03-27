@@ -15,7 +15,7 @@ from enum import Enum
 from app.core.config import settings
 from app.core.logging import get_logger
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.security.validation")
 
 
 def is_valid_hostname(hostname: str) -> bool:

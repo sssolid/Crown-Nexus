@@ -5,7 +5,7 @@ from __future__ import annotations
 This module contains event handlers for the products domain.
 """
 
-import logging
+from app.logging import get_logger
 from typing import Any, Dict
 from uuid import UUID
 
@@ -13,7 +13,7 @@ from app.core.events import subscribe_to_event
 from app.db.session import get_db
 from app.domains.products.repository import ProductRepository
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.products.handlers")
 
 
 @subscribe_to_event("inventory.stock_level_critical")

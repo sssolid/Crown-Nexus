@@ -19,7 +19,7 @@ from app.core.config import settings
 from app.core.exceptions import SecurityException, ErrorCode, ConfigurationException
 from app.core.logging import get_logger
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.security.encryption")
 
 
 def encrypt_data(data: Union[str, bytes, dict]) -> str:

@@ -32,7 +32,7 @@ from app.core.metrics.trackers import (
     ServiceTracker,
 )
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.metrics.manager")
 
 # Global configuration
 _config: MetricsConfig = MetricsConfig()

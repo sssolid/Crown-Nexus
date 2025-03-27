@@ -1,5 +1,12 @@
-# /app/middleware/request_context.py
+# app/middleware/request_context.py
 from __future__ import annotations
+
+"""
+Request context middleware for the application.
+
+This middleware sets up the request context for each incoming request,
+including request ID generation and logging of request/response information.
+"""
 
 import time
 import uuid
@@ -8,65 +15,61 @@ from typing import Callable
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.core.logging import get_logger, request_context
+from app.logging.context import get_logger, request_context
 
 logger = get_logger("app.middleware.request_context")
 
 
 class RequestContextMiddleware(BaseHTTPMiddleware):
-    """Middleware that sets up logging request context.
+    """
+    Middleware for setting up request context and logging request information.
 
-    This middleware ensures each request has a unique ID and tracks execution time,
-    both stored in the logging context.
+    This middleware generates a request ID for each incoming request, logs
+    request and response information, and sets up the thread-local request
+    context for use by other components.
     """
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        """Process the request and set up logging context.
+        """
+        Process the request, setting up context and logging information.
 
         Args:
             request: The incoming request
-            call_next: The next middleware or route handler
+            call_next: The next middleware in the chain
 
         Returns:
-            Response: The processed response
+            The response from downstream middleware
         """
-        # Generate request ID
-        request_id = str(uuid.uuid4())
-
-        # Store request start time
+        # Generate or extract request ID
+        request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
         start_time = time.time()
 
-        # Add request ID to request state
+        # Store request_id in request state for other middleware
         request.state.request_id = request_id
 
-        # Use logging context manager
+        # Set up logging context for this request
         with request_context(request_id):
-            # Log request
+            # Log request information
             logger.info(
                 f"Request: {request.method} {request.url.path}",
-                extra={
-                    "method": request.method,
-                    "path": request.url.path,
-                    "client": request.client.host if request.client else None,
-                },
+                method=request.method,
+                path=request.url.path,
+                query=str(request.query_params),
+                client=request.client.host if request.client else None,
             )
 
-            # Process request
+            # Process the request
             response = await call_next(request)
 
-            # Calculate execution time
+            # Log response information
             execution_time = time.time() - start_time
-
-            # Log response
             logger.info(
                 f"Response: {response.status_code}",
-                extra={
-                    "status_code": response.status_code,
-                    "execution_time": f"{execution_time:.4f}s",
-                },
+                status_code=response.status_code,
+                execution_time=f"{execution_time:.4f}s",
             )
 
-            # Add request ID and timing headers
+            # Add headers to response
             response.headers["X-Request-ID"] = request_id
             response.headers["X-Execution-Time"] = f"{execution_time:.4f}s"
 

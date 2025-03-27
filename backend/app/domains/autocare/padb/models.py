@@ -133,9 +133,7 @@ class PartAttributeAssignment(Base):
     )
 
     # Relationships
-    part = relationship(
-        "Parts", foreign_keys=[part_terminology_id]
-    )
+    part = relationship("Parts", foreign_keys=[part_terminology_id])
     attribute = relationship("PartAttribute", back_populates="assignments")
     metadata = relationship("MetaData", back_populates="assignments")
     uom_assignments = relationship(
@@ -293,9 +291,7 @@ class PartTypeStyle(Base):
 
     # Relationships
     style = relationship("Style", back_populates="part_type_styles")
-    part = relationship(
-        "Parts", foreign_keys=[part_terminology_id]
-    )
+    part = relationship("Parts", foreign_keys=[part_terminology_id])
 
     def __repr__(self) -> str:
         return f"<PartTypeStyle {self.id}: {self.part_terminology_id}>"

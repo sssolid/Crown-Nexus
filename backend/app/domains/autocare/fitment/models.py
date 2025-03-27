@@ -82,9 +82,7 @@ class FitmentMapping(Base):
     )
 
     # Relationships
-    product = relationship(
-        "Product", foreign_keys=[product_id]
-    )
+    product = relationship("Product", foreign_keys=[product_id])
     created_by = relationship("User", foreign_keys=[created_by_id])
     updated_by = relationship("User", foreign_keys=[updated_by_id])
 

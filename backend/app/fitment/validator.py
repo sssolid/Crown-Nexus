@@ -7,7 +7,7 @@ VCDB and PCDB databases.
 
 from __future__ import annotations
 
-import logging
+from app.logging import get_logger
 from typing import Dict, List, Set
 
 from .models import (
@@ -19,7 +19,7 @@ from .models import (
     VCDBVehicle,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.fitment.validator")
 
 
 class FitmentValidator:

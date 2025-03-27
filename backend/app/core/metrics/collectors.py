@@ -12,7 +12,7 @@ from prometheus_client import Counter, Gauge, Histogram, Summary
 
 from app.core.logging import get_logger
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.metrics.collectors")
 
 
 class MetricCollector:

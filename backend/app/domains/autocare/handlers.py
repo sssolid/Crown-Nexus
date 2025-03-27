@@ -6,7 +6,7 @@ This module contains event handlers for the autocare domain, which respond to
 domain events related to vehicle, part, and fitment data.
 """
 
-import logging
+from app.logging import get_logger
 from typing import Any, Dict
 from uuid import UUID
 
@@ -15,7 +15,7 @@ from app.db.session import get_db
 from app.domains.autocare.fitment.repository import FitmentMappingRepository
 from app.domains.products.repository import ProductRepository
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.autocare.handlers")
 
 
 @subscribe_to_event("products.product_created")

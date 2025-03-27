@@ -17,7 +17,7 @@ from app.core.permissions.models import Permission
 if TYPE_CHECKING:
     pass
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.permissions.decorators")
 
 T = TypeVar("T", bound=Callable[..., Any])
 

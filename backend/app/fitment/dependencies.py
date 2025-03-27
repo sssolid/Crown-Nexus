@@ -118,9 +118,9 @@ async def initialize_mapping_engine() -> None:
         return
     except Exception as e:
         # Log the error but continue to try file-based configuration
-        import logging
+        from app.logging import get_logger
 
-        logger = logging.getLogger(__name__)
+        logger = get_logger("app.fitment.dependencies")
         logger.warning(f"Failed to load model mappings from database: {str(e)}")
 
     # If database loading fails or is not available, try file-based configuration
@@ -133,19 +133,19 @@ async def initialize_mapping_engine() -> None:
             # Try to import mappings to database if database is available
             try:
                 await engine.db_service.import_mappings_from_json(engine.model_mappings)
-                import logging
+                from app.logging import get_logger
 
-                logger = logging.getLogger(__name__)
+                logger = get_logger("app.fitment.dependencies")
                 logger.info("Successfully imported mappings from file to database")
             except Exception as e:
-                import logging
+                from app.logging import get_logger
 
-                logger = logging.getLogger(__name__)
+                logger = get_logger("app.fitment.dependencies")
                 logger.warning(f"Failed to import mappings to database: {str(e)}")
         except Exception as e:
-            import logging
+            from app.logging import get_logger
 
-            logger = logging.getLogger(__name__)
+            logger = get_logger("app.fitment.dependencies")
             logger.error(f"Failed to load model mappings from file: {str(e)}")
             raise ConfigurationError(
                 f"Failed to configure mapping engine: {str(e)}"

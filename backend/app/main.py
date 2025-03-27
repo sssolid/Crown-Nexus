@@ -1,17 +1,26 @@
-# /backend/app/main.py to use the service registry
+# app/main.py
 from __future__ import annotations
 
-from app.db import base
+"""
+Main application module.
+
+This module initializes and configures the FastAPI application, including
+middleware, exception handlers, and application components.
+"""
 
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Callable, Optional
 
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
+
+import app.db.base  # noqa
 
 from app.api.deps import get_current_user
 from app.core.cache.manager import initialize_cache
@@ -19,7 +28,8 @@ from app.core.config import Environment, settings
 from app.core.dependency_manager import (
     register_services,
     initialize_services,
-    shutdown_services, get_service,
+    shutdown_services,
+    get_service,
 )
 from app.core.error import (
     initialize as initialize_error_system,
@@ -32,7 +42,13 @@ from app.core.exceptions import (
     validation_exception_handler,
     generic_exception_handler,
 )
-from app.core.logging import get_logger, set_user_id
+from app.logging import (
+    reinitialize_logging,  # Use reinitialize instead of initialize
+    shutdown_logging,
+    get_logger,
+    set_user_id,
+)
+from app.middleware.logging import RequestLoggingMiddleware
 from app.core.metrics import (
     initialize as initialize_metrics_system,
     shutdown as shutdown_metrics_system,
@@ -56,70 +72,100 @@ from app.domains.users.models import User
 from app.middleware.error_handler import ErrorHandlerMiddleware
 from app.middleware.metrics import MetricsMiddleware
 from app.middleware.rate_limiting import RateLimitMiddleware
-from app.middleware.request_context import RequestContextMiddleware
 from app.middleware.response_formatter import ResponseFormatterMiddleware
 from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
 
-# Logger
+# Initialize logger for this module - logging system is already initialized
 logger = get_logger("app.main")
+
+
+# Type definition for middleware add_middleware method
+def add_typed_middleware(app: FastAPI, middleware_class: Any, **options: Any) -> None:
+    """Add middleware with proper type annotations to avoid IDE warnings."""
+    app.add_middleware(middleware_class, **options)  # type: ignore
+
+
+# Type definition for exception handlers
+ExceptionHandlerType = Callable[[Request, Exception], Response | JSONResponse]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Application lifespan manager.
-
-    This function manages the startup and shutdown sequence for the application,
-    ensuring proper initialization and cleanup of all subsystems.
     """
-    # First, set up error handling system (must be first to catch initialization errors)
+    Context manager for the application lifespan.
+
+    Handles initialization and shutdown of application components.
+
+    Args:
+        app: The FastAPI application
+
+    Yields:
+        None
+    """
+    # Reinitialize logging if needed (it's already initialized at import time)
+    await reinitialize_logging()
+
+    logger.info("Starting application initialization")
+
+    # Initialize error system before other components that might use it
     await initialize_error_system()
 
-    # Second, register services (but don't initialize them yet)
+    # Register services before initialization
     register_services()
 
-    # Third, initialize core subsystems
+    # Initialize core systems in order of dependency
     await initialize_validation_system()
     await initialize_metrics_system()
     await initialize_pagination_system()
     await initialize_ratelimiting_system()
     await initialize_cache()
 
-    # Fourth, initialize all services (now that error handling is ready)
+    # Initialize services after all core systems are ready
     await initialize_services()
 
-    # Finally, initialize domain-specific subsystems
+    # Initialize external integrations
     await initialize_as400_sync()
 
-    logger.info(f'Application started in {settings.ENVIRONMENT.value} environment')
+    # Initialize media service
+    media_service = get_service("media_service")
+    try:
+        await media_service.initialize()
+        logger.info("Media service initialized during startup")
+    except Exception as e:
+        logger.error(f"Error initializing media service: {str(e)}", exc_info=True)
 
-    # Register API routes
+    # Initialize event system
+    try:
+        init_event_backend(EventBackendType.MEMORY)
+        init_domain_events()
+    except Exception as e:
+        logger.error(f"Failed to initialize event system: {str(e)}", exc_info=e)
+
+    logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
+
+    # Include API router
     from app.api.v1.router import api_router
+
     app.include_router(api_router, prefix=settings.API_V1_STR)
 
     yield
 
-    # Shutdown in reverse order of initialization
+    # Shutdown sequence - in reverse order of initialization
     logger.info("Beginning application shutdown sequence")
 
-    # First, shutdown domain-specific subsystems
     await shutdown_as400_sync()
-
-    # Second, shutdown all services
     await shutdown_services()
-
-    # Third, shutdown other subsystems
     await shutdown_ratelimiting_system()
     await shutdown_pagination_system()
     await shutdown_metrics_system()
     await shutdown_validation_system()
-
-    # Finally, shutdown error handling system (should be last)
     await shutdown_error_system()
 
-    logger.info('Application shutdown complete')
+    logger.info("Application shutdown complete")
+    await shutdown_logging()
 
 
-# Create FastAPI app
+# Create FastAPI application
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description=settings.DESCRIPTION,
@@ -130,21 +176,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-@app.on_event("startup")
-async def initialize_async_services():
-    """Initialize async services explicitly during application startup."""
-    # Get the service instance (non-initialized)
-    media_service = get_service("media_service")
-    try:
-        # Explicitly initialize it
-        await media_service.initialize()
-        logger.info("Media service initialized during startup")
-    except Exception as e:
-        logger.error(f"Error initializing media service: {str(e)}", exc_info=True)
-
-# CORS configuration
+# Configure CORS
 if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
+    add_typed_middleware(
+        app,
         CORSMiddleware,
         allow_origins=settings.BACKEND_CORS_ORIGINS,
         allow_credentials=True,
@@ -152,25 +187,23 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-# Add middleware
-app.add_middleware(RequestContextMiddleware)
-app.add_middleware(MetricsMiddleware)
-app.add_middleware(ErrorHandlerMiddleware)
-app.add_middleware(ResponseFormatterMiddleware)
-
-# Add security middleware
-app.add_middleware(
+# Add middleware in order of execution
+add_typed_middleware(app, RequestLoggingMiddleware)
+add_typed_middleware(app, MetricsMiddleware)
+add_typed_middleware(app, ErrorHandlerMiddleware)
+add_typed_middleware(app, ResponseFormatterMiddleware)
+add_typed_middleware(
+    app,
     SecurityHeadersMiddleware,
     content_security_policy=settings.CONTENT_SECURITY_POLICY,
     permissions_policy=settings.PERMISSIONS_POLICY,
 )
+add_typed_middleware(app, SecureRequestMiddleware, block_suspicious_requests=True)
 
-# Add secure request validation
-app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
-
-# Add rate limiting middleware
+# Add rate limiting middleware in non-development environments
 if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLED:
-    app.add_middleware(
+    add_typed_middleware(
+        app,
         RateLimitMiddleware,
         rules=[
             RateLimitRule(
@@ -179,7 +212,6 @@ if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLE
                 strategy=RateLimitStrategy.IP,
                 exclude_paths=["/api/v1/health", "/static/"],
             ),
-            # Stricter limits for auth endpoints
             RateLimitRule(
                 requests_per_window=10,
                 window_seconds=60,
@@ -192,43 +224,41 @@ if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLE
         block_exceeding_requests=True,
     )
 
-# Exception handlers
-app.add_exception_handler(AppException, app_exception_handler)
-app.add_exception_handler(RequestValidationError, validation_exception_handler)
-app.add_exception_handler(Exception, generic_exception_handler)
+# Add exception handlers with proper typing
+app.add_exception_handler(AppException, app_exception_handler)  # type: ignore
+app.add_exception_handler(RequestValidationError, validation_exception_handler)  # type: ignore
+app.add_exception_handler(Exception, generic_exception_handler)  # type: ignore
 
-# Static files for media
+# Mount static files
 media_path = Path(settings.MEDIA_ROOT).resolve()
 app.mount("/media", StaticFiles(directory=media_path), name="media")
 
 
-# Log current user
+# Dependency for tracking current user in logs
 async def log_current_user(
     current_user: User = Depends(get_current_user),
 ) -> Optional[User]:
-    """Log the current user ID in the request context.
+    """
+    Dependency for logging the current user.
 
     Args:
-        current_user: Current authenticated user from token
+        current_user: The authenticated user
 
     Returns:
-        The current user unchanged
+        The authenticated user
     """
     if current_user:
         set_user_id(str(current_user.id))
     return current_user
 
 
-# Health check endpoint
 @app.get("/health")
 async def health_check() -> dict:
-    """Health check endpoint.
-
-    This endpoint allows monitoring systems to check if the application is running
-    and responding to requests.
+    """
+    Health check endpoint.
 
     Returns:
-        dict: Health status information
+        A dictionary with health status information
     """
     return {
         "status": "healthy",
@@ -237,11 +267,9 @@ async def health_check() -> dict:
     }
 
 
-# Main entry point for running the application directly
 if __name__ == "__main__":
     host = "0.0.0.0"
     port = 8000
-
     uvicorn.run(
         "app.main:app",
         host=host,

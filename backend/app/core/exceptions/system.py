@@ -8,7 +8,12 @@ database, network, external services, configuration, and security.
 
 from typing import Any, Dict, List, Optional, Union
 
-from app.core.exceptions.base import AppException, ErrorCategory, ErrorCode, ErrorSeverity
+from app.core.exceptions.base import (
+    AppException,
+    ErrorCategory,
+    ErrorCode,
+    ErrorSeverity,
+)
 
 
 class SystemException(AppException):

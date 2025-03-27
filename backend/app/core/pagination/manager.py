@@ -32,7 +32,7 @@ from app.core.pagination.providers import (
     OffsetPaginationProvider,
 )
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.pagination.manager")
 
 T = TypeVar("T")  # SQLAlchemy model type
 R = TypeVar("R")  # Result type

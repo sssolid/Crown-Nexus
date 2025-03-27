@@ -10,7 +10,11 @@ from typing import Any, Dict, List, Optional
 from app.core.config import settings
 from app.core.logging import get_logger
 from app.core.error.base import ErrorReporter
-from app.core.error.reporters import DatabaseErrorReporter, ExternalServiceReporter, LoggingErrorReporter
+from app.core.error.reporters import (
+    DatabaseErrorReporter,
+    ExternalServiceReporter,
+    LoggingErrorReporter,
+)
 
 logger = get_logger("app.core.error.factory")
 
@@ -40,8 +44,7 @@ class ErrorReporterFactory:
             if "service_url" not in kwargs or "api_key" not in kwargs:
                 raise ValueError("External reporter requires service_url and api_key")
             return ExternalServiceReporter(
-                service_url=kwargs["service_url"],
-                api_key=kwargs["api_key"]
+                service_url=kwargs["service_url"], api_key=kwargs["api_key"]
             )
         else:
             logger.error(f"Unsupported error reporter type: {reporter_type}")
@@ -57,20 +60,30 @@ class ErrorReporterFactory:
         reporters: List[ErrorReporter] = [LoggingErrorReporter()]
 
         # Add database reporter if enabled
-        if hasattr(settings, "ERROR_DATABASE_REPORTING_ENABLED") and settings.ERROR_DATABASE_REPORTING_ENABLED:
+        if (
+            hasattr(settings, "ERROR_DATABASE_REPORTING_ENABLED")
+            and settings.ERROR_DATABASE_REPORTING_ENABLED
+        ):
             reporters.append(DatabaseErrorReporter())
 
         # Add external reporter if enabled and configured
-        if hasattr(settings, "ERROR_EXTERNAL_REPORTING_ENABLED") and settings.ERROR_EXTERNAL_REPORTING_ENABLED:
-            if hasattr(settings, "ERROR_REPORTING_SERVICE_URL") and hasattr(settings, "ERROR_REPORTING_API_KEY"):
+        if (
+            hasattr(settings, "ERROR_EXTERNAL_REPORTING_ENABLED")
+            and settings.ERROR_EXTERNAL_REPORTING_ENABLED
+        ):
+            if hasattr(settings, "ERROR_REPORTING_SERVICE_URL") and hasattr(
+                settings, "ERROR_REPORTING_API_KEY"
+            ):
                 reporters.append(
                     ExternalServiceReporter(
                         service_url=settings.ERROR_REPORTING_SERVICE_URL,
-                        api_key=settings.ERROR_REPORTING_API_KEY
+                        api_key=settings.ERROR_REPORTING_API_KEY,
                     )
                 )
             else:
-                logger.warning("External error reporting enabled but service URL or API key not configured")
+                logger.warning(
+                    "External error reporting enabled but service URL or API key not configured"
+                )
 
         return reporters
 
@@ -88,22 +101,36 @@ class ErrorReporterFactory:
             return LoggingErrorReporter()
 
         elif reporter_name == "database":
-            if hasattr(settings, "ERROR_DATABASE_REPORTING_ENABLED") and settings.ERROR_DATABASE_REPORTING_ENABLED:
+            if (
+                hasattr(settings, "ERROR_DATABASE_REPORTING_ENABLED")
+                and settings.ERROR_DATABASE_REPORTING_ENABLED
+            ):
                 return DatabaseErrorReporter()
             else:
-                logger.warning("Database error reporting requested but not enabled in settings")
+                logger.warning(
+                    "Database error reporting requested but not enabled in settings"
+                )
 
         elif reporter_name == "external":
-            if hasattr(settings, "ERROR_EXTERNAL_REPORTING_ENABLED") and settings.ERROR_EXTERNAL_REPORTING_ENABLED:
-                if hasattr(settings, "ERROR_REPORTING_SERVICE_URL") and hasattr(settings, "ERROR_REPORTING_API_KEY"):
+            if (
+                hasattr(settings, "ERROR_EXTERNAL_REPORTING_ENABLED")
+                and settings.ERROR_EXTERNAL_REPORTING_ENABLED
+            ):
+                if hasattr(settings, "ERROR_REPORTING_SERVICE_URL") and hasattr(
+                    settings, "ERROR_REPORTING_API_KEY"
+                ):
                     return ExternalServiceReporter(
                         service_url=settings.ERROR_REPORTING_SERVICE_URL,
-                        api_key=settings.ERROR_REPORTING_API_KEY
+                        api_key=settings.ERROR_REPORTING_API_KEY,
                     )
                 else:
-                    logger.warning("External error reporting requested but service URL or API key not configured")
+                    logger.warning(
+                        "External error reporting requested but service URL or API key not configured"
+                    )
             else:
-                logger.warning("External error reporting requested but not enabled in settings")
+                logger.warning(
+                    "External error reporting requested but not enabled in settings"
+                )
 
         else:
             logger.warning(f"Unknown error reporter name: {reporter_name}")

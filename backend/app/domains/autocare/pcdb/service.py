@@ -6,7 +6,7 @@ This module provides service methods for working with PCdb data, including
 import, export, and query operations.
 """
 
-import logging
+from app.logging import get_logger
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -20,7 +20,7 @@ from app.domains.autocare.pcdb.repository import (
     PCdbRepository,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.autocare.pcdb.service")
 
 
 class PCdbService:

@@ -6,7 +6,7 @@ This module provides the main service for interacting with autocare databases
 and standards. It serves as a facade to the underlying subdomain services.
 """
 
-import logging
+from app.logging import get_logger
 from pathlib import Path
 from typing import Any, Dict
 
@@ -30,7 +30,7 @@ from app.domains.autocare.padb.service import PAdbService
 from app.domains.autocare.qdb.service import QdbService
 from app.domains.autocare.fitment.service import FitmentMappingService
 
-logger = logging.getLogger(__name__)
+logger = get_logger("app.domains.autocare.service")
 
 
 class AutocareService:

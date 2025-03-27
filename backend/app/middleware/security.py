@@ -1,35 +1,30 @@
-# backend/app/middleware/security.py
-"""Security middleware components for Crown Nexus application.
-
-This module provides middleware components that enhance the security of the
-application by adding security headers, validating requests, and preventing
-common web vulnerabilities like XSS, CSRF, and clickjacking.
-"""
-
+# app/middleware/security.py
 from __future__ import annotations
 
-from typing import Callable, Optional
+"""
+Security middleware for the application.
 
+This module provides middleware for adding security headers and
+blocking suspicious requests.
+"""
+
+from typing import Callable, Optional
 from fastapi import FastAPI, Request, Response, status
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.config import settings
 from app.core.exceptions import SecurityException
-from app.core.logging import get_logger
+from app.logging.context import get_logger
 
 logger = get_logger("app.middleware.security")
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    """Middleware that adds security headers to all responses.
+    """
+    Middleware for adding security headers to responses.
 
-    This middleware adds various security headers to enhance protection against
-    common web vulnerabilities like XSS, clickjacking, and MIME type sniffing.
-
-    Attributes:
-        content_security_policy: CSP policy string for the application
-        permissions_policy: Permissions policy string to restrict features
-        expect_ct: Certificate Transparency policy
+    This middleware adds headers such as Content-Security-Policy,
+    X-Frame-Options, and other security-related headers to responses.
     """
 
     def __init__(
@@ -39,13 +34,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         permissions_policy: Optional[str] = None,
         expect_ct: Optional[str] = None,
     ) -> None:
-        """Initialize the security headers middleware.
+        """
+        Initialize the middleware.
 
         Args:
             app: The FastAPI application
-            content_security_policy: CSP policy string, defaults to restrictive policy
-            permissions_policy: Permissions policy string, defaults to restrictive policy
-            expect_ct: Certificate Transparency policy, defaults to None
+            content_security_policy: Optional CSP header value
+            permissions_policy: Optional permissions policy header value
+            expect_ct: Optional Expect-CT header value
         """
         super().__init__(app)
         self.content_security_policy: str = (
@@ -53,25 +49,22 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         )
         self.permissions_policy: str = permissions_policy or settings.PERMISSIONS_POLICY
         self.expect_ct: Optional[str] = expect_ct
-
         logger.info("SecurityHeadersMiddleware initialized")
 
     async def dispatch(
-        self,
-        request: Request,
-        call_next: Callable[[Request], Response],
+        self, request: Request, call_next: Callable[[Request], Response]
     ) -> Response:
-        """Process the request and add security headers to the response.
+        """
+        Process the request, adding security headers to the response.
 
         Args:
             request: The incoming request
-            call_next: The next middleware or route handler
+            call_next: The next middleware in the chain
 
         Returns:
-            Response: The processed response with security headers
+            The response with added security headers
         """
         try:
-            # Process the request through the rest of the application
             response: Response = await call_next(request)
 
             # Add security headers
@@ -84,7 +77,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             )
             response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
-            # Add optional headers
             if self.permissions_policy:
                 response.headers["Permissions-Policy"] = self.permissions_policy
 
@@ -93,126 +85,107 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
             return response
         except Exception as e:
-            # Let the application's error handlers handle exceptions
-            # This ensures the exception handling middleware can process all exceptions
+            logger.exception(
+                f"Error in SecurityHeadersMiddleware: {str(e)}", exc_info=e
+            )
             raise
 
 
 class SecureRequestMiddleware(BaseHTTPMiddleware):
-    """Middleware for validating and sanitizing incoming requests.
+    """
+    Middleware for blocking suspicious requests.
 
-    This middleware checks request data for potential security issues
-    and can reject suspicious requests.
-
-    Attributes:
-        block_suspicious_requests: Whether to block suspicious requests
-        suspicious_patterns: List of patterns to check for in request data
+    This middleware checks incoming requests for suspicious patterns
+    and blocks them if detected.
     """
 
-    def __init__(
-        self,
-        app: FastAPI,
-        block_suspicious_requests: bool = True,
-    ) -> None:
-        """Initialize the secure request middleware.
+    def __init__(self, app: FastAPI, block_suspicious_requests: bool = True) -> None:
+        """
+        Initialize the middleware.
 
         Args:
             app: The FastAPI application
-            block_suspicious_requests: Whether to block requests that look suspicious
+            block_suspicious_requests: Whether to block suspicious requests
         """
         super().__init__(app)
         self.block_suspicious_requests: bool = block_suspicious_requests
-        self.suspicious_patterns: list[str] = [
-            "../../",  # Path traversal
-            "<script",  # Basic XSS
-            "eval(",  # Code injection
-            "SELECT ",  # SQL injection
-        ]
+        self.suspicious_patterns: list[str] = ["../../", "<script", "eval(", "SELECT "]
         logger.info("SecureRequestMiddleware initialized")
 
     async def dispatch(
-        self,
-        request: Request,
-        call_next: Callable[[Request], Response],
+        self, request: Request, call_next: Callable[[Request], Response]
     ) -> Response:
-        """Process and validate incoming requests.
+        """
+        Process the request, checking for suspicious patterns.
 
         Args:
             request: The incoming request
-            call_next: The next middleware or route handler
+            call_next: The next middleware in the chain
 
         Returns:
-            Response: The processed response
+            The response if the request is not suspicious
 
         Raises:
-            SecurityException: If the request appears suspicious
+            SecurityException: If the request is suspicious and blocking is enabled
         """
-        # Check for suspicious patterns in headers
         if self.block_suspicious_requests and self._is_suspicious_request(request):
-            logger.warning(f"Blocked suspicious request from {request.client.host}")
-
-            # Use custom exception from app's hierarchy
+            client_ip = request.client.host if request.client else "unknown"
+            logger.warning(
+                f"Blocked suspicious request",
+                ip=client_ip,
+                path=request.url.path,
+                method=request.method,
+            )
             raise SecurityException(
                 message="Forbidden - Suspicious request detected",
-                details={"ip": request.client.host},
+                details={"ip": client_ip},
                 status_code=status.HTTP_403_FORBIDDEN,
             )
 
         return await call_next(request)
 
     def _is_suspicious_request(self, request: Request) -> bool:
-        """Check if the request contains suspicious patterns.
+        """
+        Check if a request contains suspicious patterns.
 
         Args:
-            request: The incoming HTTP request
+            request: The request to check
 
         Returns:
-            bool: True if the request appears suspicious, False otherwise
+            True if the request is suspicious, False otherwise
         """
-        # Check URL path for suspicious patterns
+        # Check path
         path = request.url.path
         for pattern in self.suspicious_patterns:
             if pattern.lower() in path.lower():
-                logger.warning(f"Suspicious pattern '{pattern}' found in path: {path}")
+                logger.warning(
+                    f"Suspicious pattern detected in path", pattern=pattern, path=path
+                )
                 return True
 
-        # Check query parameters
+        # Check query string
         query_string = str(request.url.query)
         for pattern in self.suspicious_patterns:
             if pattern.lower() in query_string.lower():
                 logger.warning(
-                    f"Suspicious pattern '{pattern}' found in query: {query_string}"
+                    f"Suspicious pattern detected in query",
+                    pattern=pattern,
+                    query=query_string,
                 )
                 return True
 
-        # Check headers for suspicious patterns
+        # Check headers
         for header_name, header_value in request.headers.items():
             for pattern in self.suspicious_patterns:
                 if pattern.lower() in header_value.lower():
                     logger.warning(
-                        f"Suspicious pattern '{pattern}' found in header {header_name}"
+                        f"Suspicious pattern detected in header",
+                        pattern=pattern,
+                        header_name=header_name,
                     )
                     return True
 
-        # Check request body if available
-        async def check_body() -> bool:
-            try:
-                body = await request.body()
-                if body:
-                    body_str = body.decode("utf-8", errors="ignore")
-                    for pattern in self.suspicious_patterns:
-                        if pattern.lower() in body_str.lower():
-                            logger.warning(
-                                f"Suspicious pattern '{pattern}' found in request body"
-                            )
-                            return True
-            except Exception as e:
-                logger.debug(f"Error checking request body: {str(e)}")
-            return False
+        # We can't check the body without consuming it, which would break other middleware
+        # This would require more complex handling to read and restore the body
 
-        # We can't check the body here as it would consume it
-        # The body check would need to be implemented differently for production
-        # potentially using a custom request object that allows multiple body reads
-
-        # Request appears safe
         return False

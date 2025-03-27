@@ -1,14 +1,16 @@
-# /backend/app/core/exceptions/handlers.py
+# app/core/exceptions/handlers.py
 from __future__ import annotations
 
-"""Exception handlers for the application.
+"""
+Exception handlers for the application.
 
 This module defines handlers for different types of exceptions that can occur
 in the application, mapping them to appropriate HTTP responses.
 """
 
-import traceback
 import datetime
+import traceback
+from typing import Dict, Any
 
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
@@ -22,74 +24,68 @@ from app.core.exceptions.base import (
     ErrorResponse,
     ErrorSeverity,
 )
-from app.core.logging import get_logger
+from app.logging.context import get_logger
 
 logger = get_logger("app.core.exceptions.handlers")
 
 
 async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
-    """Handle application-specific exceptions.
-
-    Converts AppException instances to standardized error responses with
-    appropriate status codes.
+    """
+    Handle application exceptions.
 
     Args:
-        request: FastAPI request object
-        exc: Application exception
+        request: The request that caused the exception
+        exc: The application exception
 
     Returns:
-        JSONResponse with standardized error format
+        A formatted JSON response with error details
     """
-    # Get request ID from state if available
     request_id = getattr(request.state, "request_id", None)
 
     # Log the exception
     exc.log(request_id=request_id)
 
-    # Convert to error response model
+    # Create response
     error_response = exc.to_response(request_id=request_id)
-
-    # Add timestamp
     error_response.timestamp = datetime.datetime.now(datetime.UTC).isoformat()
 
-    # Return JSON response with appropriate status code
+    # Extract any custom headers from details
+    headers: Dict[str, str] = {}
+    if isinstance(exc.details, dict) and "headers" in exc.details:
+        headers = exc.details["headers"]
+
     return JSONResponse(
         status_code=exc.status_code,
         content=jsonable_encoder(error_response),
-        headers=exc.details.get("headers", {}) if isinstance(exc.details, dict) else {},
+        headers=headers,
     )
 
 
 async def validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
-    """Handle validation errors from FastAPI and Pydantic.
-
-    Converts validation errors to a standardized format with details
-    about each validation error.
+    """
+    Handle validation exceptions.
 
     Args:
-        request: FastAPI request object
-        exc: Validation exception
+        request: The request that caused the exception
+        exc: The validation exception
 
     Returns:
-        JSONResponse with standardized error format
+        A formatted JSON response with validation error details
     """
-    # Get request ID from state if available
     request_id = getattr(request.state, "request_id", None)
 
-    # Extract error details
+    # Format validation errors
     errors = []
     for error in exc.errors():
         errors.append(
             ErrorDetail(
-                loc=list(map(str, error["loc"])),
-                msg=error["msg"],
-                type=error["type"],
+                loc=list(map(str, error["loc"])), msg=error["msg"], type=error["type"]
             )
         )
 
-    # Create error response
+    # Create response
     error_response = ErrorResponse(
         success=False,
         message="Validation error",
@@ -99,19 +95,16 @@ async def validation_exception_handler(
         timestamp=datetime.datetime.now(datetime.UTC).isoformat(),
     )
 
-    # Log the error
+    # Log validation errors
     logger.warning(
         f"Validation error: {len(errors)} validation errors",
-        extra={
-            "request_id": request_id,
-            "path": request.url.path,
-            "validation_errors": [
-                {"loc": e.loc, "msg": e.msg, "type": e.type} for e in errors
-            ],
-        },
+        request_id=request_id,
+        path=request.url.path,
+        validation_errors=[
+            {"loc": e.loc, "msg": e.msg, "type": e.type} for e in errors
+        ],
     )
 
-    # Return JSON response
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder(error_response),
@@ -119,64 +112,53 @@ async def validation_exception_handler(
 
 
 async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    """Handle unhandled exceptions.
-
-    Converts any unhandled exception to a standardized error response
-    with a 500 status code.
+    """
+    Handle generic exceptions.
 
     Args:
-        request: FastAPI request object
-        exc: Unhandled exception
+        request: The request that caused the exception
+        exc: The unhandled exception
 
     Returns:
-        JSONResponse with standardized error format
+        A formatted JSON response with error details
     """
-    # Get request ID from state if available
     request_id = getattr(request.state, "request_id", None)
 
-    # Log the error
+    # Log the unhandled exception
     logger.error(
         f"Unhandled exception: {str(exc)}",
         exc_info=exc,
-        extra={"request_id": request_id, "path": request.url.path},
+        request_id=request_id,
+        path=request.url.path,
     )
 
-    # In production, hide the actual error details for security
+    # Configure error details based on environment
     from app.core.config import settings, Environment
 
     error_message = "An unexpected error occurred"
-    error_details = None
+    error_details: Any = None
 
     if settings.ENVIRONMENT != Environment.PRODUCTION:
-        # In non-production environments, include more error details
         error_message = f"Unhandled error: {str(exc)}"
         error_details = [
-            {
-                "loc": ["server"],
-                "msg": str(exc),
-                "type": "unhandled_error",
-            }
+            {"loc": ["server"], "msg": str(exc), "type": "unhandled_error"}
         ]
 
-        # Add traceback in development environment
+        # Include traceback in development
         if settings.ENVIRONMENT == Environment.DEVELOPMENT:
             trace = traceback.format_exception(type(exc), exc, exc.__traceback__)
             error_details[0]["traceback"] = trace
 
-    # Create error response
+    # Create response
     error_response = ErrorResponse(
         success=False,
         message=error_message,
         code=ErrorCode.UNKNOWN_ERROR,
         details=error_details or [],
-        meta={
-            "request_id": request_id,
-            "severity": ErrorSeverity.ERROR,
-        },
+        meta={"request_id": request_id, "severity": ErrorSeverity.ERROR},
         timestamp=datetime.datetime.now(datetime.UTC).isoformat(),
     )
 
-    # Return JSON response
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=jsonable_encoder(error_response),

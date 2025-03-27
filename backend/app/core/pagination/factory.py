@@ -15,7 +15,7 @@ from sqlalchemy.orm import DeclarativeMeta
 from app.core.logging import get_logger
 from app.core.pagination.base import PaginationProvider
 
-logger = get_logger(__name__)
+logger = get_logger("app.core.pagination.factory")
 
 T = TypeVar("T")  # Entity type
 R = TypeVar("R")  # Result type

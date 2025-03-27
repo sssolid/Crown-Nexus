@@ -14,7 +14,7 @@ from app.domains.media.service.base import FileNotFoundError, MediaStorageError
 
 from app.core.logging import get_logger
 
-logger = get_logger(__name__)
+logger = get_logger("app.domains.media.service.thumbnails")
 
 
 class ThumbnailGenerator:

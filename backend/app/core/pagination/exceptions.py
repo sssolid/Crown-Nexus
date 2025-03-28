@@ -1,7 +1,8 @@
 # app/core/pagination/exceptions.py
 from __future__ import annotations
 
-"""Pagination-specific exceptions for the application.
+"""
+Pagination-specific exceptions for the application.
 
 This module defines exceptions related to pagination operations that integrate
 with the application's exception system.

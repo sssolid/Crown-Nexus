@@ -1,7 +1,8 @@
 # app/core/pagination/service.py
 from __future__ import annotations
 
-"""Pagination service implementation.
+"""
+Pagination service implementation.
 
 This module provides a service wrapper around the pagination system,
 making it available through the dependency manager.

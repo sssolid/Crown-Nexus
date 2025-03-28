@@ -1,10 +1,12 @@
-# /app/core/rate_limiting/models.py
-"""Rate limiting models and types.
-
-This module defines the data models and types used for rate limiting configuration.
-"""
-
+# app/core/rate_limiting/models.py
 from __future__ import annotations
+
+"""
+Rate limiting data models.
+
+This module defines the data models for rate limiting, including strategies
+and rule configurations for flexible rate limiting rules.
+"""
 
 from dataclasses import dataclass, field
 from enum import Enum
@@ -12,13 +14,7 @@ from typing import List, Optional
 
 
 class RateLimitStrategy(str, Enum):
-    """Strategies for rate limiting.
-
-    Defines the different strategies that can be used for rate limiting:
-    - IP: Based on client IP address
-    - USER: Based on authenticated user ID
-    - COMBINED: Based on both IP address and user ID
-    """
+    """Strategy for determining the rate limit key."""
 
     IP = "ip"
     USER = "user"
@@ -27,15 +23,16 @@ class RateLimitStrategy(str, Enum):
 
 @dataclass
 class RateLimitRule:
-    """Rule for rate limiting configuration.
+    """Rule configuration for rate limiting.
 
     Attributes:
-        requests_per_window: Number of allowed requests in the time window
-        window_seconds: Time window in seconds
-        strategy: Rate limiting strategy (IP, user, or combined)
-        burst_multiplier: Multiplier for burst capacity (temporary overage)
-        path_pattern: Optional regex pattern to match request paths
-        exclude_paths: Optional list of path prefixes to exclude from rate limiting
+        requests_per_window: Maximum number of requests allowed in the window.
+        window_seconds: Size of the window in seconds.
+        strategy: Strategy for determining the rate limit key.
+        burst_multiplier: Multiplier for burst allowance above the limit.
+        path_pattern: Pattern to match request paths this rule applies to.
+            If None, applies to all paths.
+        exclude_paths: List of path prefixes to exclude from rate limiting.
     """
 
     requests_per_window: int

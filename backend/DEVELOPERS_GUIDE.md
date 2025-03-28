@@ -1,6 +1,6 @@
 # Developer's Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems
 
-This guide provides a practical overview of the logging, error handling, exception, dependency management, validation, and metrics systems. Use it as a reference when implementing these components in your code.
+This guide provides a practical overview of the logging, error handling, exception, dependency management, validation, metrics, and rate limiting systems. Use it as a reference when implementing these components in your code.
 
 ## Table of Contents
 1. [Logging System](#1-logging-system)
@@ -10,7 +10,8 @@ This guide provides a practical overview of the logging, error handling, excepti
 5. [Validation System](#5-validation-system)
 6. [Metrics System](#6-metrics-system)
 7. [Pagination System](#7-pagination-system)
-8. [Common Patterns](#8-common-patterns)
+8. [Rate Limiting System](#8-rate-limiting-system)
+9. [Common Patterns](#9-common-patterns)
 
 ## 1. Logging System
 
@@ -1208,9 +1209,252 @@ async def custom_pagination(db, params):
         )
 ```
 
-## 8. Common Patterns
+## 8. Rate Limiting System
 
-### API Endpoint Error Handling
+The rate limiting system provides mechanisms to protect the application from excessive use by limiting the number of requests a client can make within a specified time window.
+
+### Key Features
+- Support for different rate limit strategies (IP-based, user-based, combined)
+- Multiple configurable rate limit rules
+- Both Redis-backed and in-memory implementations
+- Path-specific rules and path exclusions
+- Rate limit headers in responses
+- Metrics tracking
+- Integration with the exception system
+
+### Rate Limit Models
+
+```python
+from app.core.rate_limiting.models import RateLimitRule, RateLimitStrategy
+
+# Create a basic rate limit rule
+basic_rule = RateLimitRule(
+    requests_per_window=100,
+    window_seconds=60,
+    strategy=RateLimitStrategy.IP
+)
+
+# Create a rule for specific paths
+api_rule = RateLimitRule(
+    requests_per_window=50,
+    window_seconds=60,
+    strategy=RateLimitStrategy.COMBINED,
+    path_pattern="/api/v1/",
+    exclude_paths=["/api/v1/health", "/api/v1/docs"]
+)
+
+# Create a rule with burst allowance
+auth_rule = RateLimitRule(
+    requests_per_window=20,
+    window_seconds=60,
+    strategy=RateLimitStrategy.IP,
+    burst_multiplier=2.0,  # Allow up to 40 requests in bursts
+    path_pattern="/api/v1/auth/"
+)
+```
+
+### Basic Usage with Middleware
+
+The simplest way to use rate limiting is through middleware:
+
+```python
+from fastapi import FastAPI
+from app.middleware.rate_limiting import RateLimitMiddleware
+from app.core.rate_limiting.models import RateLimitRule, RateLimitStrategy
+
+app = FastAPI()
+
+# Add rate limiting middleware
+app.add_middleware(
+    RateLimitMiddleware,
+    rules=[
+        RateLimitRule(
+            requests_per_window=100,
+            window_seconds=60,
+            strategy=RateLimitStrategy.IP
+        ),
+        RateLimitRule(
+            requests_per_window=20,
+            window_seconds=60,
+            strategy=RateLimitStrategy.IP,
+            path_pattern="/api/v1/auth/"
+        )
+    ],
+    use_redis=True,
+    enable_headers=True,
+    block_exceeding_requests=True
+)
+```
+
+### Using the Rate Limiting Service
+
+For more control, you can use the rate limiting service directly:
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.rate_limiting import get_rate_limiting_service
+from app.core.rate_limiting.models import RateLimitRule
+from app.core.rate_limiting.exceptions import RateLimitExceededException
+
+# In FastAPI endpoints
+@router.post("/custom-rate-limited")
+async def custom_rate_limited_endpoint(
+    request: Request,
+    data: Dict[str, Any]
+):
+    # Get rate limiting service
+    rate_limiting_service = get_rate_limiting_service()
+
+    # Define custom rule for this endpoint
+    rule = RateLimitRule(
+        requests_per_window=5,
+        window_seconds=60
+    )
+
+    # Get key for current request
+    key = rate_limiting_service.get_key_for_request(request, rule)
+
+    # Check rate limit
+    is_limited, count, limit = await rate_limiting_service.is_rate_limited(key, rule)
+
+    # Handle rate limit exceeded
+    if is_limited:
+        headers = {
+            "X-RateLimit-Limit": str(limit),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": str(rule.window_seconds),
+            "Retry-After": str(rule.window_seconds)
+        }
+
+        raise RateLimitExceededException(
+            message="Custom rate limit exceeded",
+            details={"path": request.url.path},
+            headers=headers,
+            reset_seconds=rule.window_seconds
+        )
+
+    # Process the request
+    # ...
+
+    return {"success": True, "rate_limit": {"current": count, "limit": limit}}
+```
+
+### Manual Rate Limiting
+
+For specific operations that need rate limiting within the application:
+
+```python
+from app.core.rate_limiting.utils import check_rate_limit
+
+async def send_email(user_id: str, subject: str, body: str):
+    # Check if user has exceeded email sending limit
+    key = f"email:{user_id}"
+    is_limited, count, reset_seconds = await check_rate_limit(
+        key=key,
+        max_requests=10,  # 10 emails
+        window_seconds=3600  # per hour
+    )
+
+    if is_limited:
+        logger.warning(
+            "Email rate limit exceeded",
+            user_id=user_id,
+            current_count=count,
+            reset_seconds=reset_seconds
+        )
+        raise RateLimitExceededException(
+            message="Email sending limit exceeded",
+            details={"user_id": user_id, "limit": 10, "window": "1 hour"},
+            reset_seconds=reset_seconds
+        )
+
+    # Send email
+    # ...
+
+    return {"success": True}
+```
+
+### Exception Handling
+
+```python
+from fastapi import Request, HTTPException
+from app.core.rate_limiting.exceptions import RateLimitExceededException
+
+@app.exception_handler(RateLimitExceededException)
+async def rate_limit_exception_handler(request: Request, exc: RateLimitExceededException):
+    # Get response headers from exception
+    headers = {}
+    if isinstance(exc.details, dict) and "headers" in exc.details:
+        headers = exc.details["headers"]
+
+    return JSONResponse(
+        status_code=429,
+        content={
+            "success": False,
+            "message": str(exc),
+            "code": "RATE_LIMIT_EXCEEDED",
+            "retry_after": headers.get("Retry-After", "60")
+        },
+        headers=headers
+    )
+```
+
+### Integration with Metrics
+
+The rate limiting system automatically integrates with the metrics system to track performance:
+
+```python
+# These metrics are recorded automatically when using the rate limiting service
+# - rate_limit_exceeded_total (counter)
+# - rate_limiting_requests_total (counter)
+# - rate_limiting_middleware_duration_seconds (histogram)
+# - rate_limiting_check_duration_seconds (histogram)
+# - rate_limiting_checks_total (counter)
+
+# Example metrics queries for Prometheus:
+# - rate(rate_limit_exceeded_total[5m]) # Rate of exceeded limits in the last 5 minutes
+# - sum by (path) (rate_limit_exceeded_total) # Total exceeded limits by path
+# - histogram_quantile(0.95, sum(rate_limiting_check_duration_seconds_bucket) by (le)) # 95th percentile rate limit check duration
+```
+
+## 9. Common Patterns
+
+### API Endpoint Error Handling with Rate Limiting
+
+```python
+@router.get("/products")
+async def list_products(
+    request: Request,
+    page: int = 1,
+    page_size: int = 20,
+    db: AsyncSession = Depends(get_db)
+):
+    try:
+        # Get product service
+        product_service = get_service("product_service", db=db)
+
+        # Apply pagination
+        pagination_params = OffsetPaginationParams(
+            page=page,
+            page_size=page_size,
+            sort=[SortField(field="created_at", direction=SortDirection.DESC)]
+        )
+
+        result = await product_service.list_products(pagination_params)
+        return result
+    except RateLimitExceededException as e:
+        # This exception is already properly formatted by the exception handlers
+        raise
+    except ResourceNotFoundException as e:
+        # App exceptions are automatically converted to proper responses
+        raise
+    except Exception as e:
+        # For unexpected errors, report and re-raise
+        handle_exception(e, request_id=getattr(request.state, "request_id", None))
+        raise
+```
+
+### Standard API Endpoint Error Handling
 
 ```python
 @router.get("/users/{user_id}")
@@ -1230,6 +1474,68 @@ async def get_user(
         # For unexpected errors, report and re-raise
         handle_exception(e, user_id=user_id)
         raise
+```
+
+### Rate Limited Service Methods
+
+```python
+class AnalyticsService:
+    def __init__(self, db):
+        self.db = db
+        self.logger = get_logger("app.domains.analytics.service")
+        self.rate_limiting_service = get_service("rate_limiting_service")
+
+    async def generate_report(self, user_id: str, report_type: str):
+        """Generate a complex analytical report.
+
+        This method is rate limited to prevent resource abuse.
+        """
+        self.logger.info("Generate report requested", user_id=user_id, report_type=report_type)
+
+        # Define a rate limit rule for report generation
+        rule = RateLimitRule(
+            requests_per_window=5,  # 5 reports
+            window_seconds=3600,    # per hour
+            strategy=RateLimitStrategy.USER
+        )
+
+        # Use user ID directly as the key for consistent limits
+        key = f"report_generation:{user_id}"
+
+        # Check rate limit
+        is_limited, count, limit = await self.rate_limiting_service.is_rate_limited(key, rule)
+
+        if is_limited:
+            self.logger.warning(
+                "Report generation rate limit exceeded",
+                user_id=user_id,
+                report_type=report_type,
+                count=count,
+                limit=limit
+            )
+
+            raise RateLimitExceededException(
+                message="Report generation limit exceeded",
+                details={
+                    "user_id": user_id,
+                    "limit": limit,
+                    "window": "1 hour",
+                    "report_type": report_type
+                }
+            )
+
+        # Generate report
+        self.logger.info(
+            "Generating report",
+            user_id=user_id,
+            report_type=report_type,
+            remaining_limit=limit - count
+        )
+
+        # Complex report logic...
+
+        self.logger.info("Report generated successfully", user_id=user_id, report_type=report_type)
+        return report
 ```
 
 ### Service Layer Error Handling and Logging

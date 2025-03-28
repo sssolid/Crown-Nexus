@@ -1,7 +1,8 @@
 # /app/core/pagination/factory.py
 from __future__ import annotations
 
-"""Factory for creating pagination providers.
+"""
+Factory for creating pagination providers.
 
 This module provides a factory for creating different pagination provider instances
 based on pagination type and configuration.

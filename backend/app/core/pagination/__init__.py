@@ -1,7 +1,8 @@
 # app/core/pagination/__init__.py
 from __future__ import annotations
 
-"""Pagination package for application-wide pagination functionality.
+"""
+Pagination package for application-wide pagination functionality.
 
 This package provides core functionality for paginating query results using both
 offset-based and cursor-based pagination strategies.

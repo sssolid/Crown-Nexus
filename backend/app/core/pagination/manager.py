@@ -1,7 +1,8 @@
 # app/core/pagination/manager.py
 from __future__ import annotations
 
-"""Core pagination functionality.
+"""
+Core pagination functionality.
 
 This module provides the main functions for paginating query results using
 both offset-based and cursor-based pagination strategies.

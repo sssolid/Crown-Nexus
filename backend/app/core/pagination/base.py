@@ -1,7 +1,8 @@
 # /app/core/pagination/base.py
 from __future__ import annotations
 
-"""Base interfaces and types for the pagination system.
+"""
+Base interfaces and types for the pagination system.
 
 This module defines common types, protocols, and interfaces
 used throughout the pagination components.

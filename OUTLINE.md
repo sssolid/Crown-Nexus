@@ -1,43 +1,43 @@
-# **Crown Nexus Revised Design Document**  
-**Version:** 2.0  
-**Last Updated:** *March 2025*  
+# **Crown Nexus Revised Design Document**
+**Version:** 2.0
+**Last Updated:** *March 2025*
 
 ---
 
-## **1. Project Overview**  
-The **Crown Nexus** is a **B2B platform** designed for **distributors and clients** in the **automotive aftermarket industry**. It serves as a **centralized hub** for **product data, fitment information, pricing, media, and customer support** while maintaining **strict security and configurability**.  
+## **1. Project Overview**
+The **Crown Nexus** is a **B2B platform** designed for **distributors and clients** in the **automotive aftermarket industry**. It serves as a **centralized hub** for **product data, fitment information, pricing, media, and customer support** while maintaining **strict security and configurability**.
 
-### **1.1. Key Goals**  
-- **Private Portal**: Secure, role-based access for registered users.  
-- **Product Catalog**: Advanced search, filtering, and fitment association.  
-- **Fitment Data**: Comprehensive attributes, VIN lookup, bulk fitment search.  
-- **Media Library**: Role-based uploads, approval workflow, file protection.  
-- **Customer Support**: Ticketing system, live chat, chatbot, and knowledge base.  
-- **Real-Time Inventory**: Synced from **iSeries database**, stored in **PostgreSQL**.  
-- **API-First Design**: Ensures any management tool can interact with the system.  
-- **Audit Logging**: Tracks all changes to product data with efficiency.  
-- **Performance & Scalability**: Optimized search, caching, multi-region hosting.  
-- **Future Growth**: E-commerce-ready architecture, distributor pricing tiers, mobile app expansion.  
+### **1.1. Key Goals**
+- **Private Portal**: Secure, role-based access for registered users.
+- **Product Catalog**: Advanced search, filtering, and fitment association.
+- **Fitment Data**: Comprehensive attributes, VIN lookup, bulk fitment search.
+- **Media Library**: Role-based uploads, approval workflow, file protection.
+- **Customer Support**: Ticketing system, live chat, chatbot, and knowledge base.
+- **Real-Time Inventory**: Synced from **iSeries database**, stored in **PostgreSQL**.
+- **API-First Design**: Ensures any management tool can interact with the system.
+- **Audit Logging**: Tracks all changes to product data with efficiency.
+- **Performance & Scalability**: Optimized search, caching, multi-region hosting.
+- **Future Growth**: E-commerce-ready architecture, distributor pricing tiers, mobile app expansion.
 
 ---
 
-## **2. System Architecture**  
+## **2. System Architecture**
 
-### **2.1. Backend (FastAPI & PostgreSQL)**  
+### **2.1. Backend (FastAPI & PostgreSQL)**
 - **Framework**: FastAPI for **native async support** and **automatic API documentation**.
   - **Type-driven development**: Leveraging Pydantic for request/response validation.
   - **Native OpenAPI integration**: Auto-generated, always up-to-date API documentation.
-- **Database**: **PostgreSQL**, optimized for **fitment & pricing data**. 
+- **Database**: **PostgreSQL**, optimized for **fitment & pricing data**.
   - **SQLAlchemy async ORM** with dataclass models for type safety.
   - **Alembic** for database migrations with roll-back support.
 - **Search Engine**: **Elasticsearch** for high-performance product & fitment searches.
   - **Future consideration**: Add semantic search capabilities for natural language queries.
-- **Caching & Background Processing**:  
+- **Caching & Background Processing**:
   - **Redis** for caching frequently accessed data.
   - **Asyncio-based task queues** for background tasks (e.g., syncing, audit logging).
   - **Structured concurrency patterns** for robust async execution.
   - **Function-level caching** with `functools.lru_cache` for optimized performance.
-- **Authentication & Security**:  
+- **Authentication & Security**:
   - **OAuth 2.0 / JWT** for API authentication.
   - **Two-Factor Authentication (2FA)** for enhanced security.
   - **Role-Based Access Control (RBAC)** for data permissions.
@@ -46,53 +46,53 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
 
 ---
 
-### **2.2. Frontend (Vue.js & UI/UX)**  
-- **Framework**: Vue 3 + Vite for performance.  
-- **State Management**: Pinia.  
-- **UI Framework**: Vuetify for consistency.  
+### **2.2. Frontend (Vue.js & UI/UX)**
+- **Framework**: Vue 3 + Vite for performance.
+- **State Management**: Pinia.
+- **UI Framework**: Vuetify for consistency.
 - **Routing & API Handling**: Vue Router & Axios.
 - **Type Safety**: TypeScript with strict type checking.
-- **SEO Optimization**: Pre-rendering & metadata enhancements.  
-- **Mobile Optimization**:  
-  - Fully responsive UI from launch.  
-  - **Future-proofed for PWA & mobile app integration.**  
+- **SEO Optimization**: Pre-rendering & metadata enhancements.
+- **Mobile Optimization**:
+  - Fully responsive UI from launch.
+  - **Future-proofed for PWA & mobile app integration.**
 
 ---
 
-### **2.3. Infrastructure & Deployment**  
+### **2.3. Infrastructure & Deployment**
 - **Infrastructure as Code**: Using **Pulumi with Python** for infrastructure definition.
   - Enables strong typing and code reuse between application and infrastructure.
   - Supports multi-environment deployments (dev, staging, production).
 - **Hosting**: Self-hosted initially, with **future cloud migration possibilities**.
-- **Version Control & CI/CD**:  
-  - **GitHub** for source control.  
+- **Version Control & CI/CD**:
+  - **GitHub** for source control.
   - **GitHub Actions** for automated builds, tests, and deployments.
   - **Code quality gates** enforcing type checking, test coverage, and linting standards.
-- **Containerization**: 
+- **Containerization**:
   - **Docker** for development and production environments.
   - **Docker Compose** for local development.
   - **Kubernetes** consideration for production scaling.
-- **Monitoring & Observability**:  
+- **Monitoring & Observability**:
   - **Prometheus & Grafana** for performance monitoring.
   - **Sentry for error tracking**.
   - **Distributed tracing** with OpenTelemetry.
   - **Structured JSON logging** with contextualized error information.
-- **Environments**:  
+- **Environments**:
   - **Isolated environments** for development, testing, staging, and production.
   - **Ephemeral environments** for feature testing.
 - **Disaster Recovery**:
   - Regular automated backups.
   - Documented restore procedures.
   - Recovery time objective (RTO) and recovery point objective (RPO) definitions.
-- **Multi-Region Hosting** (Future Consideration):  
-  - **Load balancing** and **failover strategies** for scalability.  
+- **Multi-Region Hosting** (Future Consideration):
+  - **Load balancing** and **failover strategies** for scalability.
 
 ---
 
 ## **3. Development Standards & Practices**
 
 ### **3.1. Python Development Standards**
-- **Python 3.11+** with comprehensive type hints.
+- **Python 3.12+** with comprehensive type hints.
 - **Static Type Checking**:
   - `mypy` with strict type checking.
   - Type stubs for all external libraries.
@@ -155,14 +155,14 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
 
 ---
 
-## **4. Data Management & Integration**  
+## **4. Data Management & Integration**
 
-### **4.1. Fitment & Product Data**  
-- **Fitment data must support numerous attributes** (beyond Year/Make/Model/Engine/Transmission).  
-- **Product attributes are extensive**, with **up to 100 attributes per product** that must be **searchable and filterable**.  
-- **A single fitment may be linked to multiple product attributes**.  
-- **Advanced filtering and search** across all product and fitment attributes are paramount.  
-- **Optimized storage strategy**:  
+### **4.1. Fitment & Product Data**
+- **Fitment data must support numerous attributes** (beyond Year/Make/Model/Engine/Transmission).
+- **Product attributes are extensive**, with **up to 100 attributes per product** that must be **searchable and filterable**.
+- **A single fitment may be linked to multiple product attributes**.
+- **Advanced filtering and search** across all product and fitment attributes are paramount.
+- **Optimized storage strategy**:
   - **PostgreSQL JSONB** for flexible attribute storage.
   - **Database-specific indexing** for JSON fields to optimize query performance.
   - **Elasticsearch indexing** for multi-attribute searches.
@@ -170,44 +170,44 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
 
 ---
 
-### **4.2. Customer Pricing & iSeries Integration**  
-- **Existing customers have accounts in the iSeries database**, where **their pricing is pulled dynamically**.  
-- **No direct link between iSeries and the Crown Nexus** for security.  
-- **Pricing & inventory data are stored in PostgreSQL** for **faster queries**.  
-- **Multiple discount structures**:  
-  - **Customer Type-Based Pricing** (e.g., Jobber, Export, etc.).  
-  - **Specific Product Discounts Per Customer**.  
-- **Configurable Syncing**:  
-  - **Data pull intervals can be set** to balance performance and accuracy.  
+### **4.2. Customer Pricing & iSeries Integration**
+- **Existing customers have accounts in the iSeries database**, where **their pricing is pulled dynamically**.
+- **No direct link between iSeries and the Crown Nexus** for security.
+- **Pricing & inventory data are stored in PostgreSQL** for **faster queries**.
+- **Multiple discount structures**:
+  - **Customer Type-Based Pricing** (e.g., Jobber, Export, etc.).
+  - **Specific Product Discounts Per Customer**.
+- **Configurable Syncing**:
+  - **Data pull intervals can be set** to balance performance and accuracy.
   - **Caching mechanisms to reduce load on iSeries**.
   - **Change Data Capture (CDC)** patterns for efficient updates.
   - **Async processing** for bulk data synchronization.
 
 ---
 
-### **4.3. Audit Logging & Data Integrity**  
-- **Tracks all changes to product data**, including:  
-  - **What changed (previous vs. new values)**.  
-  - **Who made the change**.  
-  - **When it occurred**.  
-- **Optimized for performance**:  
-  - **Batch Logging**: Stores changes in structured intervals.  
-  - **Differential Logging**: Only logs when values actually differ.  
+### **4.3. Audit Logging & Data Integrity**
+- **Tracks all changes to product data**, including:
+  - **What changed (previous vs. new values)**.
+  - **Who made the change**.
+  - **When it occurred**.
+- **Optimized for performance**:
+  - **Batch Logging**: Stores changes in structured intervals.
+  - **Differential Logging**: Only logs when values actually differ.
   - **Asynchronous Processing**: Logs are stored without slowing down the system.
   - **Structured logging** with JSON format for machine-readable logs.
   - **Context propagation** to trace request lifecycle through the system.
 
 ---
 
-## **5. API Design & Management**  
+## **5. API Design & Management**
 
-### **5.1. API-First Design**  
-- **All functionality is exposed via API**, ensuring **any management tool** can interact with it.  
+### **5.1. API-First Design**
+- **All functionality is exposed via API**, ensuring **any management tool** can interact with it.
 - **REST API with OpenAPI documentation** for easy integration.
   - Generated automatically from FastAPI route definitions.
   - Interactive Swagger UI for API exploration.
-- **Secure API authentication via OAuth 2.0 & API keys**.  
-- **Role-Based Permissions**: Restricts access to sensitive operations.  
+- **Secure API authentication via OAuth 2.0 & API keys**.
+- **Role-Based Permissions**: Restricts access to sensitive operations.
 
 ### **5.2. API Lifecycle Management**
 - **API Versioning Strategy**:
@@ -223,18 +223,18 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
   - Code examples for common operations.
   - SDKs for popular programming languages.
 
-### **5.3. Configurable Management Tools**  
-- **Desktop application is a management tool, NOT the core system**.  
-- The **Crown Nexus API must expose all necessary functions**, allowing **any tool** to interact with it.  
-- **Changes & data syncing should be configurable** and not dependent on a specific application.  
-- **The system should be designed with flexibility**, enabling multiple management tools to interact with the API.  
-- **Admin dashboard available for configuration & oversight**.  
+### **5.3. Configurable Management Tools**
+- **Desktop application is a management tool, NOT the core system**.
+- The **Crown Nexus API must expose all necessary functions**, allowing **any tool** to interact with it.
+- **Changes & data syncing should be configurable** and not dependent on a specific application.
+- **The system should be designed with flexibility**, enabling multiple management tools to interact with the API.
+- **Admin dashboard available for configuration & oversight**.
 
 ---
 
-## **6. Performance & Scaling Strategy**  
+## **6. Performance & Scaling Strategy**
 
-### **6.1. High-Performance Search & Caching**  
+### **6.1. High-Performance Search & Caching**
 - **Elasticsearch** for **multi-attribute product & fitment lookups**.
   - Custom analyzers for automotive industry-specific terminology.
   - Optimized indexing strategy based on search patterns.
@@ -247,7 +247,7 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
   - **Query caching** for frequently executed complex queries.
   - **Profiling and monitoring** to identify performance bottlenecks.
 
-### **6.2. Load Handling & Scalability**  
+### **6.2. Load Handling & Scalability**
 - **Async Processing**:
   - Background tasks using native asyncio.
   - Task prioritization for critical vs. non-critical operations.
@@ -359,25 +359,25 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
 
 ---
 
-## **9. Future Enhancements & Roadmap**  
+## **9. Future Enhancements & Roadmap**
 
-### **9.1. E-Commerce Integration (Phase 2+)**  
-- **Cart & Checkout System**  
-- **Custom Pricing per Distributor**  
-- **Order Tracking & Fulfillment**  
+### **9.1. E-Commerce Integration (Phase 2+)**
+- **Cart & Checkout System**
+- **Custom Pricing per Distributor**
+- **Order Tracking & Fulfillment**
 - **Integration with shipping providers**
 - **Payment processing gateway integration**
 
-### **9.2. AI & Data Intelligence (Phase 3+)**  
-- **AI-Powered Product Recommendations**  
-- **Predictive Inventory Forecasting**  
-- **Automated Fitment Validation**  
+### **9.2. AI & Data Intelligence (Phase 3+)**
+- **AI-Powered Product Recommendations**
+- **Predictive Inventory Forecasting**
+- **Automated Fitment Validation**
 - **Anomaly detection for fraud prevention**
 - **Natural language product search**
 
-### **9.3. Mobile Expansion (Phase 3+)**  
-- **Progressive Web App (PWA)**  
-- **Standalone Mobile App (Native or Hybrid)**  
+### **9.3. Mobile Expansion (Phase 3+)**
+- **Progressive Web App (PWA)**
+- **Standalone Mobile App (Native or Hybrid)**
 - **Mobile-specific features (barcode scanning, VIN lookups)**
 - **Offline capabilities for field representatives**
 
@@ -421,5 +421,5 @@ The **Crown Nexus** is a **B2B platform** designed for **distributors and client
 
 ---
 
-## **11. Conclusion**  
+## **11. Conclusion**
 The **Crown Nexus** is designed with **scalability, flexibility, and security in mind**. By **adopting an API-first approach** with **FastAPI and async programming**, it ensures high performance and maintainability while **enabling any tool to interact with the system**. The **comprehensive type safety** and **testing strategy** ensure robust, reliable operation, while the **modern infrastructure** approach provides a solid foundation for **future growth and expansion**.

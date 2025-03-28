@@ -10,7 +10,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from .db import FitmentDBService
 from .exceptions import MappingError
 from .models import (

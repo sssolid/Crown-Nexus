@@ -12,7 +12,7 @@ from typing import Any, Dict, Generic, Optional, Type, TypeVar, cast
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.pagination.base import PaginationProvider
 
 logger = get_logger("app.core.pagination.factory")

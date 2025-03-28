@@ -40,7 +40,7 @@ from app.core.exceptions import (
     ServiceException,
     ErrorCode,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 # Initialize structured logger
 logger = get_logger("app.utils.circuit_breaker")

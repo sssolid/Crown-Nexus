@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field, validator
 
 from app.core.exceptions import ConfigurationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.file_connector")
 

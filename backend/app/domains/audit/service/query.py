@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy import delete, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.audit.service.base import AuditEventType, AuditLogLevel
 
 logger = get_logger("app.domains.audit.service.query")

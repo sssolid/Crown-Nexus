@@ -31,7 +31,7 @@ from app.core.exceptions import (
     PermissionDeniedException,
     ValidationException,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.security import sanitize_input, moderate_content
 from app.domains.chat.connection import manager, redis_manager
 from app.domains.chat.service import ChatService

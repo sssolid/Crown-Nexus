@@ -8,7 +8,7 @@ during application startup and shutdown.
 """
 
 from app.core.config.integrations.as400 import as400_settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.services.as400_sync_service import as400_sync_service, SyncEntityType
 
 logger = get_logger("app.core.startup.as400_sync")

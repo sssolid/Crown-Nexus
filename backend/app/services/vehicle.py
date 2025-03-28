@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_db
 from app.core.cache.decorators import cached
 from app.core.exceptions import DatabaseException, ErrorCode, ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.products.models import Fitment
 
 logger = get_logger("app.services.vehicle")

@@ -31,7 +31,7 @@ from typing import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ConfigurationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.core.dependency_manager")
 

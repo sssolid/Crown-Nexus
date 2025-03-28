@@ -15,7 +15,7 @@ from typing import Any, Dict, Generic, List, Optional, Set, Type, TypeVar, Union
 from pydantic import BaseModel
 
 from app.core.exceptions import ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.data_import.processors.as400_processor")
 

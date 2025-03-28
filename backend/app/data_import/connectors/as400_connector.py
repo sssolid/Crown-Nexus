@@ -17,7 +17,7 @@ from app.core.exceptions import (
     DatabaseException,
     SecurityException,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.as400_connector")
 

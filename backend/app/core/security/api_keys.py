@@ -13,7 +13,7 @@ import uuid
 import datetime
 from typing import List, Optional
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.security.models import ApiKeyData, TokenType
 from app.core.security.tokens import create_token
 

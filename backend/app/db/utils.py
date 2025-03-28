@@ -45,7 +45,7 @@ from app.core.exceptions import (
     ErrorCode,
     TransactionException,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.db.base_class import Base
 
 logger = get_logger("app.db.utils")

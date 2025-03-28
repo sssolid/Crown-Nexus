@@ -6,7 +6,16 @@ This module defines common types, protocols, and interfaces
 used throughout the validation components.
 """
 
-from typing import Any, Dict, List, Optional, Protocol, TypeVar, Union, runtime_checkable
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Protocol,
+    TypeVar,
+    Union,
+    runtime_checkable,
+)
 
 from pydantic import BaseModel, Field
 
@@ -25,7 +34,7 @@ class ValidationResult(BaseModel):
     is_valid: bool = Field(..., description="Whether the validation passed")
     errors: List[Dict[str, Any]] = Field(
         default_factory=list,
-        description="List of validation errors when validation fails"
+        description="List of validation errors when validation fails",
     )
 
     @property
@@ -51,7 +60,7 @@ class ValidationResult(BaseModel):
         msg: str,
         error_type: str,
         loc: Optional[Union[str, List[str]]] = None,
-        **context: Any
+        **context: Any,
     ) -> None:
         """Add an error to the validation result.
 

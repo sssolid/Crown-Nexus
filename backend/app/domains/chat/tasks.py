@@ -19,7 +19,7 @@ from typing import Any, Dict, List
 from celery import Celery
 
 from app.core.config import settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 # Configure logging
 logger = get_logger("app.tasks.chat_tasks")

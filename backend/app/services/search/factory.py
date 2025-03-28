@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
 from app.core.config import settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.products.models import Fitment, Product
 from app.services.search.base import SearchProvider
 from app.services.search.providers import (

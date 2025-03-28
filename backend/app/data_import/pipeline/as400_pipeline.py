@@ -15,7 +15,7 @@ from typing import Any, Dict, Generic, List, Optional, TypeVar
 from pydantic import BaseModel
 
 from app.core.exceptions import AppException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.data_import.connectors.as400_connector import AS400Connector
 from app.data_import.importers.base import Importer
 from app.data_import.processors.as400_processor import AS400BaseProcessor

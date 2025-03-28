@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import AuthenticationException, ErrorCode
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.users.models import User
 
 logger = get_logger("app.services.base_service.permissions")

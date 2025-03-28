@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.validation.base import ValidationResult, Validator
 
 logger = get_logger("app.core.validation.db")
@@ -39,7 +39,7 @@ class UniqueValidator(Validator):
         field: str,
         model: Any,
         exclude_id: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Asynchronously validate that a value is unique in the database.
 
@@ -102,14 +102,16 @@ class UniqueValidator(Validator):
         field: str = "",
         model: Any = None,
         exclude_id: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ValidationResult:
         """Synchronous validation method - not supported.
 
         Raises:
             ValidationException: Always, as this validator requires async operations
         """
-        error_msg = "UniqueValidator requires async operations. Use validate_async instead."
+        error_msg = (
+            "UniqueValidator requires async operations. Use validate_async instead."
+        )
         logger.error(error_msg)
         raise ValidationException(
             "Validation method error",

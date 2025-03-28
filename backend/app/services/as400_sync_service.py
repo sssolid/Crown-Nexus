@@ -21,7 +21,7 @@ from app.core.config.integrations.as400 import (
     get_as400_connector_config,
 )
 from app.core.exceptions import ConfigurationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.data_import.connectors.as400_connector import (
     AS400Connector,
     AS400ConnectionConfig,

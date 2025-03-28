@@ -13,7 +13,6 @@ from app.core.validation.manager import (
     # High-level validation functions
     validate_data,
     validate_model,
-
     # Type-specific validation functions
     validate_email,
     validate_phone,
@@ -30,11 +29,9 @@ from app.core.validation.manager import (
     validate_password_strength,
     validate_enum,
     validate_composite,
-
     # Factory and registration functions
     create_validator,
     register_validator,
-
     # Lifecycle functions
     initialize,
     shutdown,
@@ -58,56 +55,50 @@ from app.core.validation.validators import (
 
 __all__ = [
     # Base types
-    'ValidationResult',
-    'Validator',
-    'ValidatorFactory',
-
+    "ValidationResult",
+    "Validator",
+    "ValidatorFactory",
     # High-level validation functions
-    'validate_data',
-    'validate_model',
-
+    "validate_data",
+    "validate_model",
     # Type-specific validation functions
-    'validate_email',
-    'validate_phone',
-    'validate_date',
-    'validate_length',
-    'validate_range',
-    'validate_regex',
-    'validate_required',
-    'validate_unique',
-    'validate_url',
-    'validate_uuid',
-    'validate_credit_card',
-    'validate_ip_address',
-    'validate_password_strength',
-    'validate_enum',
-    'validate_composite',
-
+    "validate_email",
+    "validate_phone",
+    "validate_date",
+    "validate_length",
+    "validate_range",
+    "validate_regex",
+    "validate_required",
+    "validate_unique",
+    "validate_url",
+    "validate_uuid",
+    "validate_credit_card",
+    "validate_ip_address",
+    "validate_password_strength",
+    "validate_enum",
+    "validate_composite",
     # Factory and registration functions
-    'create_validator',
-    'register_validator',
-
+    "create_validator",
+    "register_validator",
     # Lifecycle functions
-    'initialize',
-    'shutdown',
-
+    "initialize",
+    "shutdown",
     # Service
-    'ValidationService',
-    'get_validation_service',
-
+    "ValidationService",
+    "get_validation_service",
     # Validator implementations
-    'CreditCardValidator',
-    'DateValidator',
-    'EmailValidator',
-    'EnumValidator',
-    'IPAddressValidator',
-    'LengthValidator',
-    'PasswordValidator',
-    'PhoneValidator',
-    'RangeValidator',
-    'RegexValidator',
-    'RequiredValidator',
-    'URLValidator',
-    'UUIDValidator',
-    'UniqueValidator',
+    "CreditCardValidator",
+    "DateValidator",
+    "EmailValidator",
+    "EnumValidator",
+    "IPAddressValidator",
+    "LengthValidator",
+    "PasswordValidator",
+    "PhoneValidator",
+    "RangeValidator",
+    "RegexValidator",
+    "RequiredValidator",
+    "URLValidator",
+    "UUIDValidator",
+    "UniqueValidator",
 ]

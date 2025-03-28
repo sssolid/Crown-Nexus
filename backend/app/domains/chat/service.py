@@ -23,7 +23,7 @@ from app.core.exceptions import (
     ResourceNotFoundException,
     ValidationException,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.chat.models import (
     ChatMember,
     ChatMemberRole,

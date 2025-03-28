@@ -17,7 +17,7 @@ from app.core.exceptions import (
     PermissionDeniedException,
     ResourceNotFoundException,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.permissions import Permission, PermissionChecker
 from app.db.base_class import Base
 from app.db.utils import transactional

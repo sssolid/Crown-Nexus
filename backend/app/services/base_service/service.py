@@ -12,7 +12,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.permissions import Permission
 from app.db.base_class import Base
 from app.repositories.base import BaseRepository

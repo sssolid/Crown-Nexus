@@ -12,7 +12,7 @@ import time
 from typing import Any, Dict, Optional, Union
 
 from app.core.exceptions import AppException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.data_import.connectors.base import Connector
 from app.data_import.connectors.file_connector import FileConnector
 from app.data_import.connectors.filemaker_connector import FileMakerConnector

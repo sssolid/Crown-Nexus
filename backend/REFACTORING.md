@@ -1,6 +1,6 @@
 Standardize exception usage across all services to use core exception classes.
 
-Ensure all services use get_logger from app.core.logging.
+Ensure all services use get_logger from app.logging.
 
 The following are better as core modules then as services
 Move app/services/error/* out of services and make it core functionality in app/core/error

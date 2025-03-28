@@ -10,7 +10,7 @@ from __future__ import annotations
 import time
 from typing import Tuple
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.utils.redis_manager import get_key, set_key
 
 logger = get_logger("app.core.rate_limiting.utils")

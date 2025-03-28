@@ -14,7 +14,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, Union
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.validation.base import ValidationResult, Validator
 
 logger = get_logger("app.core.validation.validators")

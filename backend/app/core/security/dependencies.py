@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from app.core.config import settings
 from app.core.exceptions import AuthenticationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.security.tokens import decode_token
 
 logger = get_logger("app.core.security.dependencies")

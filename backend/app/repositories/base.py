@@ -6,7 +6,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.db.base_class import Base
 from app.db.utils import (
     bulk_create,

@@ -10,7 +10,7 @@ from typing import Dict, List, Optional
 
 from prometheus_client import Counter, Gauge, Histogram, Summary
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.core.metrics.collectors")
 

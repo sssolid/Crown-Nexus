@@ -13,7 +13,7 @@ from typing import Optional, Set, Tuple
 from passlib.context import CryptContext
 
 from app.core.config import settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.security.models import PasswordPolicy
 
 logger = get_logger("app.core.security.passwords")

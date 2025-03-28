@@ -14,7 +14,7 @@ import pyodbc
 from pydantic import BaseModel, Field, validator
 
 from app.core.exceptions import DatabaseException
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.data_import.connectors.filemaker_connector")
 

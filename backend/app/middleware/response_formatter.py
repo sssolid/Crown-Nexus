@@ -9,7 +9,7 @@ from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.middleware.response_formatter")
 

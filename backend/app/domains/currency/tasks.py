@@ -16,7 +16,7 @@ from celery import shared_task
 from celery.exceptions import MaxRetriesExceededError
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.db.session import get_db_context
 from app.domains.currency.service import ExchangeRateService
 

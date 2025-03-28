@@ -20,9 +20,6 @@ import structlog
 from structlog.stdlib import BoundLogger, LoggerFactory
 from structlog.types import EventDict, Processor, WrappedLogger
 
-from app.core.config import settings
-from app.core.config.base import Environment
-
 # Default to INFO if LOG_LEVEL isn't available in settings
 DEFAULT_LOG_LEVEL = "INFO"
 
@@ -108,9 +105,21 @@ def add_service_info_processor(
     logger: WrappedLogger, method_name: str, event_dict: EventDict
 ) -> EventDict:
     """Add service information to structured log event."""
-    event_dict["service"] = settings.PROJECT_NAME
-    event_dict["version"] = settings.VERSION
-    event_dict["environment"] = settings.ENVIRONMENT.value
+
+    # Import settings lazily to avoid circular imports
+    def get_project_info() -> tuple[str, str, str]:
+        try:
+            from app.core.config import settings
+
+            return (settings.PROJECT_NAME, settings.VERSION, settings.ENVIRONMENT.value)
+        except (ImportError, AttributeError):
+            # Fallback values if settings not available
+            return ("App", "0.0.0", "development")
+
+    project_name, version, environment = get_project_info()
+    event_dict["service"] = project_name
+    event_dict["version"] = version
+    event_dict["environment"] = environment
     return event_dict
 
 
@@ -140,10 +149,42 @@ class ConsoleRendererWithLineNumbers(structlog.dev.ConsoleRenderer):
         return output
 
 
+def get_log_level() -> str:
+    """
+    Get the configured log level with fallback logic.
+
+    This isolates the settings dependency and provides a fallback.
+
+    Returns:
+        The log level as a string
+    """
+    try:
+        from app.core.config import settings
+
+        return getattr(settings, "LOG_LEVEL", DEFAULT_LOG_LEVEL)
+    except (ImportError, AttributeError):
+        return DEFAULT_LOG_LEVEL
+
+
+def get_environment() -> str:
+    """
+    Get the application environment with fallback logic.
+
+    Returns:
+        The environment as a string
+    """
+    try:
+        from app.core.config import settings
+
+        return settings.ENVIRONMENT.value
+    except (ImportError, AttributeError):
+        return "development"
+
+
 def configure_std_logging() -> None:
     """Configure standard Python logging."""
-    # Get log level - check if the attribute exists and use default if not
-    log_level_name = getattr(settings, "LOG_LEVEL", DEFAULT_LOG_LEVEL)
+    # Get log level using the helper function
+    log_level_name = get_log_level()
     if isinstance(log_level_name, str):
         log_level = getattr(logging, log_level_name, logging.INFO)
     else:
@@ -187,9 +228,7 @@ def configure_std_logging() -> None:
                 "level": log_level,
                 "class": "logging.StreamHandler",
                 "formatter": (
-                    "structlog"
-                    if settings.ENVIRONMENT == Environment.DEVELOPMENT
-                    else "json"
+                    "structlog" if get_environment() == "development" else "json"
                 ),
                 "filters": ["request_id", "user_id"],
                 "stream": sys.stdout,
@@ -206,7 +245,7 @@ def configure_std_logging() -> None:
                 "handlers": ["console"],
                 "level": (
                     logging.INFO
-                    if settings.ENVIRONMENT == Environment.DEVELOPMENT
+                    if get_environment() == "development"
                     else logging.WARNING
                 ),
                 "propagate": False,
@@ -216,7 +255,7 @@ def configure_std_logging() -> None:
     }
 
     # Add file handlers in non-development environments
-    if settings.ENVIRONMENT != Environment.DEVELOPMENT:
+    if get_environment() != "development":
         config["handlers"]["file"] = {
             "level": log_level,
             "class": "logging.handlers.RotatingFileHandler",
@@ -260,7 +299,7 @@ def configure_structlog() -> None:
     ]
 
     # In development mode, use colored console renderer
-    if settings.ENVIRONMENT == Environment.DEVELOPMENT:
+    if get_environment() == "development":
         structlog.configure(
             processors=shared_processors
             + [
@@ -300,8 +339,8 @@ def initialize_logging() -> None:
     logger = get_logger("app.logging")
     logger.info(
         "Logging initialized",
-        environment=settings.ENVIRONMENT.value,
-        log_level=getattr(settings, "LOG_LEVEL", DEFAULT_LOG_LEVEL),
+        environment=get_environment(),
+        log_level=get_log_level(),
     )
 
 

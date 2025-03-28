@@ -10,7 +10,7 @@ import uuid
 from collections import defaultdict
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.metrics.base import (
     MetricName,
     MetricTag,

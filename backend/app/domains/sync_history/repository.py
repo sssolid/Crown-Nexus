@@ -15,7 +15,7 @@ from sqlalchemy import select, desc, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ResourceNotFoundException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.sync_history.models import (
     SyncHistory,
     SyncEvent,

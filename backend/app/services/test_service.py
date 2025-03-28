@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, List, Optional, Type, TypeVar
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.services.test_service")
 

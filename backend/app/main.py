@@ -20,6 +20,14 @@ from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from app.logging import (
+    reinitialize_logging,  # Use reinitialize instead of initialize
+    shutdown_logging,
+    get_logger,
+    set_user_id,
+)
+
+# SQLAlchemy models import module.
 import app.db.base  # noqa
 
 from app.api.deps import get_current_user
@@ -41,12 +49,6 @@ from app.core.exceptions import (
     app_exception_handler,
     validation_exception_handler,
     generic_exception_handler,
-)
-from app.logging import (
-    reinitialize_logging,  # Use reinitialize instead of initialize
-    shutdown_logging,
-    get_logger,
-    set_user_id,
 )
 from app.middleware.logging import RequestLoggingMiddleware
 from app.core.metrics import (

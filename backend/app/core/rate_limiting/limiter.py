@@ -13,7 +13,7 @@ from typing import Dict, Optional, Tuple
 from fastapi import Request
 
 from app.core.config import settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.rate_limiting.models import RateLimitRule, RateLimitStrategy
 from app.utils.redis_manager import get_redis_client, increment_counter
 

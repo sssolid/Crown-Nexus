@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.audit.service.base import (
     AuditContext,
     AuditEventType,

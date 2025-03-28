@@ -15,7 +15,7 @@ from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.sql import Select
 
 from app.core.exceptions import ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.db.utils import count_query, execute_query
 from app.core.pagination.base import (
     OffsetPaginationParams,

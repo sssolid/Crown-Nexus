@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from app.core.config import settings
 from app.core.exceptions import SecurityException, ErrorCode, ConfigurationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.core.security.encryption")
 

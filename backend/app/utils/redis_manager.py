@@ -16,7 +16,7 @@ from redis.asyncio.connection import ConnectionPool
 
 from app.core.config import settings
 from app.core.exceptions import ServiceException, ErrorCode
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.utils.redis_manager")
 

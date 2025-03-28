@@ -20,7 +20,7 @@ from typing import Dict, Optional, Set
 from app.domains.chat.schemas import WebSocketCommand
 from fastapi import WebSocket
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.utils.redis_manager import get_redis_pool
 
 logger = get_logger("app.chat.connection")

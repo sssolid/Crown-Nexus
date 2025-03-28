@@ -8,7 +8,7 @@ rate limiting with configurable rules and strategies.
 
 from __future__ import annotations
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.rate_limiting.limiter import RateLimiter
 from app.core.rate_limiting.models import RateLimitRule, RateLimitStrategy
 from app.core.rate_limiting.utils import check_rate_limit, get_ttl

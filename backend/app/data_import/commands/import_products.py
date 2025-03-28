@@ -15,7 +15,7 @@ from typing import Dict, Optional
 
 import typer
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.data_import.connectors.file_connector import (
     FileConnector,
     FileConnectionConfig,

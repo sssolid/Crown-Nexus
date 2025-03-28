@@ -26,7 +26,7 @@ from app.core.exceptions import (
     SecurityException,
     ErrorCode,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 # Initialize structured logger
 logger = get_logger("app.utils.crypto")

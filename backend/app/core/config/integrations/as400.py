@@ -10,15 +10,14 @@ centralizing all configuration in one secure location.
 """
 
 import json
+import logging  # Use standard logging during initialization
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.logging import get_logger
-
-# Use Python standard logging to avoid circular imports
-logger = get_logger("app.core.config.as400")
+# Use standard Python logging for module initialization
+_logger = logging.getLogger("app.core.config.as400")
 
 
 class AS400Settings(BaseSettings):
@@ -108,7 +107,8 @@ class AS400Settings(BaseSettings):
                 raise ValueError(f"Invalid sync interval: {v}")
 
         if v < 300:  # 5 minutes minimum
-            logger.warning(
+            # Use standard logging rather than structured logging
+            _logger.warning(
                 f"AS400_SYNC_INTERVAL too small ({v}s), setting to 300s minimum"
             )
             return 300
@@ -135,7 +135,7 @@ class AS400Settings(BaseSettings):
                             key, value = pair.split(":", 1)
                             result[key.strip()] = value.strip()
                     return result
-                logger.error(f"Failed to parse AS400_SYNC_TABLES: {e}")
+                _logger.error(f"Failed to parse AS400_SYNC_TABLES: {e}")
                 raise ValueError(f"Invalid format in AS400_SYNC_TABLES: {e}")
         return v
 
@@ -165,6 +165,13 @@ def get_as400_connector_config() -> Dict[str, Any]:
     Returns:
         Dictionary with AS400 connector configuration
     """
+    # Import the structured logger inside the function to avoid circular imports
+    from app.logging import get_logger
+
+    # Get structured logger for actual operational use (not initialization)
+    logger = get_logger("app.core.config.as400")
+    logger.debug("Retrieving AS400 connector configuration")
+
     return {
         "dsn": as400_settings.AS400_DSN,
         "username": as400_settings.AS400_USERNAME,

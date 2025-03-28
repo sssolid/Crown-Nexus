@@ -21,7 +21,7 @@ from app.core.exceptions import (
     BusinessException,
     ValidationException,
 )
-from app.core.logging import get_logger, log_execution_time
+from app.logging import get_logger, log_execution_time
 from app.db.session import AsyncSession
 from app.domains.chat.models import ChatMemberRole, ChatRoomType, MessageType
 from app.domains.users.models import User

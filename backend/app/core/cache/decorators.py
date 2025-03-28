@@ -7,7 +7,7 @@ from typing import Any, Callable, List, Optional, TypeVar, cast
 
 from app.core.cache.keys import generate_cache_key
 from app.core.cache.manager import cache_manager
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 F = TypeVar("F", bound=Callable[..., Any])
 logger = get_logger("app.core.cache.decorators")

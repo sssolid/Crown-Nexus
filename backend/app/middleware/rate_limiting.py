@@ -14,7 +14,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.config import settings
 from app.core.exceptions import RateLimitException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.rate_limiting.limiter import RateLimiter
 from app.core.rate_limiting.models import RateLimitRule
 

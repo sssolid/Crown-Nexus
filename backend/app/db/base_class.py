@@ -19,7 +19,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql.expression import Select
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.db.base_class")
 

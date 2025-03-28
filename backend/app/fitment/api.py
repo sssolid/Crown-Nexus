@@ -22,7 +22,7 @@ from fastapi import (
 )
 from pydantic import BaseModel, Field
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.model_mapping.schemas import ModelMapping as ModelMappingSchema
 from app.domains.model_mapping.schemas import (
     ModelMappingCreate,

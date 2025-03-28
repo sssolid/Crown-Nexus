@@ -15,7 +15,7 @@ from pydantic import ValidationError
 
 from app.core.config import settings
 from app.core.exceptions import AuthenticationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.security.models import TokenClaimsModel, TokenPair, TokenType
 from app.utils.redis_manager import get_key, set_key
 

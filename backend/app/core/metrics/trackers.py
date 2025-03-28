@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.metrics.base import MetricName, MetricTag
 
 logger = get_logger("app.core.metrics.trackers")

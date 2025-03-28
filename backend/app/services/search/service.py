@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependency_manager import get_dependency
 from app.core.exceptions import DatabaseException, ErrorCode
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.products.models import Fitment, Product
 from app.services.interfaces import ServiceInterface
 from app.services.search.factory import SearchProviderFactory

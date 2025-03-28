@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.validation.base import ValidationResult, Validator
 from app.core.validation.factory import ValidatorFactory
 from app.core.validation.manager import (
@@ -72,7 +72,9 @@ class ValidationService:
         logger.info("Shutting down validation service")
         self._initialized = False
 
-    def validate_data(self, data: Dict[str, Any], schema_class: Type[BaseModel]) -> BaseModel:
+    def validate_data(
+        self, data: Dict[str, Any], schema_class: Type[BaseModel]
+    ) -> BaseModel:
         """Validate data against a Pydantic schema.
 
         Args:
@@ -88,7 +90,10 @@ class ValidationService:
         return validate_data(data, schema_class)
 
     def validate_model(
-        self, model: BaseModel, include: Optional[Set[str]] = None, exclude: Optional[Set[str]] = None
+        self,
+        model: BaseModel,
+        include: Optional[Set[str]] = None,
+        exclude: Optional[Set[str]] = None,
     ) -> None:
         """Validate an existing Pydantic model instance.
 
@@ -145,7 +150,10 @@ class ValidationService:
         return validate_date(value, min_date, max_date, format_str)
 
     def validate_length(
-        self, value: str, min_length: Optional[int] = None, max_length: Optional[int] = None
+        self,
+        value: str,
+        min_length: Optional[int] = None,
+        max_length: Optional[int] = None,
     ) -> bool:
         """Validate string length.
 
@@ -300,7 +308,12 @@ class ValidationService:
             bool: True if valid, False otherwise
         """
         return validate_password_strength(
-            password, min_length, require_lowercase, require_uppercase, require_digit, require_special
+            password,
+            min_length,
+            require_lowercase,
+            require_uppercase,
+            require_digit,
+            require_special,
         )
 
     def validate_enum(self, value: Any, enum_class: Type[Enum]) -> bool:

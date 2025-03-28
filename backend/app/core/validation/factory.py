@@ -9,7 +9,7 @@ based on validation type and configuration options.
 from typing import Any, Dict, List, Type
 
 from app.core.exceptions import ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.validation.base import Validator
 from app.core.validation.validators import (
     CreditCardValidator,

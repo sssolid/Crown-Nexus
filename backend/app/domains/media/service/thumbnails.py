@@ -12,7 +12,7 @@ from typing import Tuple
 
 from app.domains.media.service.base import FileNotFoundError, MediaStorageError
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.domains.media.service.thumbnails")
 

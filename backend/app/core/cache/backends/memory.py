@@ -8,7 +8,7 @@ from threading import RLock
 from typing import Any, Dict, List, Optional, TypeVar
 
 from app.core.cache.base import CacheBackend
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 T = TypeVar("T")
 

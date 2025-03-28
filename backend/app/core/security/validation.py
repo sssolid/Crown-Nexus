@@ -13,7 +13,7 @@ from typing import Any, Dict, Set, Tuple, Optional, Type
 from enum import Enum
 
 from app.core.config import settings
-from app.core.logging import get_logger
+from app.logging import get_logger
 
 logger = get_logger("app.core.security.validation")
 

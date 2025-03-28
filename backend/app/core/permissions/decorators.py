@@ -10,7 +10,7 @@ in API endpoints and service methods.
 from typing import Any, Callable, List, TypeVar, cast, TYPE_CHECKING
 
 from app.core.exceptions import PermissionDeniedException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.permissions.checker import PermissionChecker
 from app.core.permissions.models import Permission
 

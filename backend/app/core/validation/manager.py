@@ -20,7 +20,7 @@ from app.core.exceptions import (
     ErrorCode,
     ValidationException,
 )
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.validation.base import ValidationResult, Validator
 from app.core.validation.db import UniqueValidator
 from app.core.validation.factory import ValidatorFactory
@@ -56,12 +56,16 @@ def validate_data(data: Dict[str, Any], schema_class: Type[BaseModel]) -> BaseMo
         )
         errors = []
         for error in e.errors():
-            errors.append({"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]})
+            errors.append(
+                {"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]}
+            )
         raise ValidationException("Validation error", errors=errors) from e
 
 
 def validate_model(
-    model: BaseModel, include: Optional[Set[str]] = None, exclude: Optional[Set[str]] = None
+    model: BaseModel,
+    include: Optional[Set[str]] = None,
+    exclude: Optional[Set[str]] = None,
 ) -> None:
     """Validate an existing Pydantic model instance.
 
@@ -90,7 +94,9 @@ def validate_model(
         )
         errors = []
         for error in e.errors():
-            errors.append({"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]})
+            errors.append(
+                {"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]}
+            )
         raise ValidationException("Model validation error", errors=errors) from e
 
 
@@ -236,7 +242,11 @@ def validate_required(value: Any) -> bool:
 
 
 async def validate_unique(
-    field: str, value: Any, model: Any, db: AsyncSession, exclude_id: Optional[str] = None
+    field: str,
+    value: Any,
+    model: Any,
+    db: AsyncSession,
+    exclude_id: Optional[str] = None,
 ) -> bool:
     """Validate that a field value is unique in the database.
 
@@ -310,7 +320,9 @@ def validate_credit_card(card_number: str) -> bool:
         if len(card_number) > 4
         else card_number
     )
-    logger.debug(f"Credit card validation result: {result.is_valid}", card=masked_number)
+    logger.debug(
+        f"Credit card validation result: {result.is_valid}", card=masked_number
+    )
     return result.is_valid
 
 
@@ -326,7 +338,9 @@ def validate_ip_address(ip: str, version: Optional[int] = None) -> bool:
     """
     validator = ValidatorFactory.create_validator("ip_address")
     result = validator.validate(ip, version=version)
-    logger.debug(f"IP address validation result: {result.is_valid}", ip=ip, version=version)
+    logger.debug(
+        f"IP address validation result: {result.is_valid}", ip=ip, version=version
+    )
     return result.is_valid
 
 
@@ -416,7 +430,11 @@ def validate_composite(
         if field not in data:
             if field_rules.get("required", False):
                 all_errors.append(
-                    {"loc": [field], "msg": "Field is required", "type": "value_error.missing"}
+                    {
+                        "loc": [field],
+                        "msg": "Field is required",
+                        "type": "value_error.missing",
+                    }
                 )
             continue
 
@@ -474,12 +492,14 @@ def create_validator(rule_type: str, **params: Any) -> Callable[[Any], bool]:
     """
     try:
         validator = ValidatorFactory.create_validator(rule_type)
-        logger.debug(f"Created validator function for rule type: {rule_type}", params=params)
+        logger.debug(
+            f"Created validator function for rule type: {rule_type}", params=params
+        )
     except ValueError as e:
         logger.error(f"Failed to create validator: {str(e)}")
         raise ValidationException(
             f"Failed to create validator",
-            errors=[{"loc": ["validator"], "msg": str(e), "type": "validator_error"}]
+            errors=[{"loc": ["validator"], "msg": str(e), "type": "validator_error"}],
         ) from e
 
     def validator_func(value: Any) -> bool:
@@ -506,7 +526,7 @@ def register_validator(name: str, validator_class: Type[Validator]) -> None:
         logger.error(f"Failed to register validator: {str(e)}")
         raise ValidationException(
             f"Failed to register validator",
-            errors=[{"loc": ["validator"], "msg": str(e), "type": "validator_error"}]
+            errors=[{"loc": ["validator"], "msg": str(e), "type": "validator_error"}],
         ) from e
 
 

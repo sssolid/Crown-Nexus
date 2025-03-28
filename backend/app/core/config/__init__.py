@@ -15,16 +15,8 @@ from app.core.config.base import Environment, LogLevel
 # Then export the settings
 from app.core.config.settings import Settings, get_settings, settings
 
-# Export integration settings
-from app.core.config.integrations.as400 import (
-    AS400Settings,
-    as400_settings,
-    get_as400_connector_config,
-)
-from app.core.config.integrations.elasticsearch import (
-    ElasticsearchSettings,
-    elasticsearch_settings,
-)
+# NOTE: The imports from integration modules are delayed to avoid circular imports
+# The actual objects are still exported in __all__ for proper module API
 
 __all__ = [
     "Settings",
@@ -38,3 +30,34 @@ __all__ = [
     "elasticsearch_settings",
     "get_as400_connector_config",
 ]
+
+
+# Delayed imports of integrations
+def __getattr__(name: str) -> object:
+    """
+    Lazily import and return requested attributes.
+
+    This PEP 562 function allows delayed imports of module attributes.
+    """
+    if name == "AS400Settings":
+        from app.core.config.integrations.as400 import AS400Settings
+
+        return AS400Settings
+    elif name == "as400_settings":
+        from app.core.config.integrations.as400 import as400_settings
+
+        return as400_settings
+    elif name == "get_as400_connector_config":
+        from app.core.config.integrations.as400 import get_as400_connector_config
+
+        return get_as400_connector_config
+    elif name == "ElasticsearchSettings":
+        from app.core.config.integrations.elasticsearch import ElasticsearchSettings
+
+        return ElasticsearchSettings
+    elif name == "elasticsearch_settings":
+        from app.core.config.integrations.elasticsearch import elasticsearch_settings
+
+        return elasticsearch_settings
+
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

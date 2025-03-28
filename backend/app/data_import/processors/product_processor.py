@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set
 from pydantic import BaseModel, Field, validator
 
 from app.core.exceptions import ValidationException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.domains.products.schemas import ProductCreate
 
 logger = get_logger("app.data_import.processors.product_processor")

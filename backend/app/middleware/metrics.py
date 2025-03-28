@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.routing import Route, Match
 
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.metrics import (
     track_request,
     set_gauge,

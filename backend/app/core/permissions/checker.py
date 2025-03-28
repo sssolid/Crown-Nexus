@@ -10,7 +10,7 @@ if users have the required permissions for various actions.
 from typing import Any, List, TYPE_CHECKING
 
 from app.core.exceptions import PermissionDeniedException
-from app.core.logging import get_logger
+from app.logging import get_logger
 from app.core.permissions.models import Permission, ROLE_PERMISSIONS
 
 if TYPE_CHECKING:

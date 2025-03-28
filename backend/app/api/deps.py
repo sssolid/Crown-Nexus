@@ -16,7 +16,7 @@ from app.core.exceptions import (
     PermissionDeniedException,
     RateLimitException,
 )
-from app.core.logging import get_logger, set_user_id
+from app.logging import get_logger, set_user_id
 from app.core.permissions import Permission, PermissionChecker
 from app.core.rate_limiting import RateLimiter, RateLimitRule
 from app.core.security import (

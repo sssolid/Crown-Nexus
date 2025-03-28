@@ -6,8 +6,8 @@ This document acknowledges and lists individuals who have contributed significan
 
 ## Core Maintainers
 
-- **[Ryan Serra]** – Project lead, primary developer, and maintainer.  
-  [GitHub](https://github.com/sssolid) | [LinkedIn](https://www.linkedin.com/in/yourprofile)
+- **[Ryan Serra]** – Project lead, primary developer, and maintainer.
+  [GitHub](https://github.com/sssolid)
 
 ---
 
@@ -15,10 +15,10 @@ This document acknowledges and lists individuals who have contributed significan
 
 We thank the following individuals for their valuable contributions:
 
-- **Contributor Name** – Brief description of contributions.  
+- **Contributor Name** – Brief description of contributions.
   [GitHub](https://github.com/contributorusername)
 
-- **Another Contributor** – Brief description of contributions.  
+- **Another Contributor** – Brief description of contributions.
   [GitHub](https://github.com/anothercontributor)
 
 ---

@@ -441,11 +441,45 @@ def register_services() -> None:
             logger.warning("Error service not available")
 
         try:
+            from app.core.validation.service import get_validation_service
+
+            dependency_manager.register_service(get_validation_service, "error_service")
+        except ImportError:
+            logger.warning("Validation service not available")
+
+        try:
             from app.core.metrics.service import get_metrics_service
 
             dependency_manager.register_service(get_metrics_service, "metrics_service")
         except ImportError:
             logger.warning("Metrics service not available")
+
+        try:
+            from app.core.pagination.service import get_pagination_service
+
+            dependency_manager.register_service(
+                lambda db=None: get_pagination_service(db), "pagination_service"
+            )
+        except ImportError:
+            logger.warning("Pagination service not available")
+
+        try:
+            from app.core.rate_limiting.service import get_rate_limiting_service
+
+            dependency_manager.register_service(
+                lambda db=None: get_rate_limiting_service, "rate_limiting_service"
+            )
+        except ImportError:
+            logger.warning("Rate Limiting service not available")
+
+        try:
+            from app.core.cache.service import get_cache_service
+
+            dependency_manager.register_service(
+                lambda db=None: get_cache_service, "cache_service"
+            )
+        except ImportError:
+            logger.warning("Cache service not available")
 
         # Import and register domain services
         try:

@@ -12,6 +12,7 @@ This guide provides a practical overview of the logging, error handling, excepti
 7. [Pagination System](#7-pagination-system)
 8. [Rate Limiting System](#8-rate-limiting-system)
 9. [Common Patterns](#9-common-patterns)
+10. [Cache System](#10-cache-system)
 
 ## 1. Logging System
 
@@ -1735,3 +1736,446 @@ class ProductService:
    logger.info("User authentication", username=username)  # Good
    logger.info("User authentication", username=username, password=password)  # BAD!
    ```
+
+### Caching with Fallback and Metrics
+
+This pattern demonstrates how to implement robust caching with proper fallback mechanisms, metrics tracking, and integration with the error handling system:
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.cache.exceptions import CacheOperationException
+from app.logging import get_logger
+from app.core.error import handle_exception
+import time
+
+logger = get_logger("app.services.product_service")
+
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.cache_service = get_service("cache_service")
+        self.metrics_service = get_service("metrics_service")
+
+    async def get_product_with_details(self, product_id: str):
+        """Get product with complete details, using caching with proper fallback.
+
+        This method demonstrates caching with:
+        1. Proper key generation
+        2. Error handling with fallback
+        3. Metrics tracking
+        4. Cache invalidation on updates
+        """
+        logger.info("Fetching product with details", product_id=product_id)
+
+        # Define cache key
+        cache_key = f"product:details:{product_id}"
+
+        # Start metrics timer
+        start_time = time.monotonic()
+        cache_hit = False
+
+        try:
+            # Try to get from cache first
+            cached_data = await self.cache_service.get(cache_key)
+
+            if cached_data is not None:
+                logger.debug("Cache hit for product details", product_id=product_id)
+                cache_hit = True
+                return cached_data
+
+            logger.debug("Cache miss for product details", product_id=product_id)
+
+            # Get from database
+            product = await self.db.execute(
+                select(Product).where(Product.id == product_id)
+            )
+            product = product.scalar_one_or_none()
+
+            if not product:
+                logger.warning("Product not found", product_id=product_id)
+                return None
+
+            # Get additional data
+            reviews = await self.db.execute(
+                select(Review).where(Review.product_id == product_id)
+            )
+            reviews = list(reviews.scalars().all())
+
+            inventory = await self.inventory_repository.get_levels(product_id)
+            related_products = await self.get_related_products(product_id)
+
+            # Combine into a complete response
+            result = {
+                "product": product.to_dict(),
+                "reviews": [r.to_dict() for r in reviews],
+                "inventory": inventory,
+                "related_products": related_products,
+                "calculated_rating": self._calculate_rating(reviews)
+            }
+
+            # Cache the result (15 minutes TTL)
+            try:
+                await self.cache_service.set(
+                    cache_key,
+                    result,
+                    ttl=900,
+                    tags=["products", f"product:{product_id}"]
+                )
+            except CacheOperationException as cache_err:
+                # Log but don't fail if caching fails
+                logger.warning(
+                    "Failed to cache product details",
+                    product_id=product_id,
+                    error=str(cache_err)
+                )
+
+            return result
+
+        except Exception as e:
+            # Handle and report the exception
+            handle_exception(e, product_id=product_id)
+            logger.error(
+                "Error fetching product details",
+                product_id=product_id,
+                error=str(e)
+            )
+            raise
+
+        finally:
+            # Record metrics regardless of success/failure
+            duration = time.monotonic() - start_time
+            self.metrics_service.observe_histogram(
+                "product_details_duration_seconds",
+                duration,
+                {
+                    "cache_hit": str(cache_hit),
+                    "product_id": product_id[:5]  # First 5 chars for cardinality
+                }
+            )
+
+    async def update_product(self, product_id: str, data: dict, user_id: str):
+        """Update product data and invalidate related caches."""
+        logger.info("Updating product", product_id=product_id, user_id=user_id)
+
+        try:
+            # Update in database
+            product = await self.repository.update(product_id, data, user_id)
+
+            # Invalidate caches
+            try:
+                # Invalidate specific product cache
+                await self.cache_service.delete(f"product:details:{product_id}")
+
+                # Invalidate any list caches that might contain this product
+                await self.cache_service.invalidate_pattern(f"products:list:*")
+
+                # If using Redis with tags
+                redis_backend = self.cache_service._get_backend("redis")
+                if hasattr(redis_backend, "get_set_members"):
+                    # Invalidate all caches tagged with this product
+                    tag_key = f"cache:tag:product:{product_id}"
+                    tagged_keys = await redis_backend.get_set_members(tag_key)
+                    if tagged_keys:
+                        await self.cache_service.delete_many(tagged_keys)
+                        await redis_backend.delete(tag_key)
+
+            except Exception as cache_err:
+                # Log but continue if cache invalidation fails
+                logger.warning(
+                    "Failed to invalidate cache for product update",
+                    product_id=product_id,
+                    error=str(cache_err)
+                )
+
+            # Audit log the update
+            audit_service = get_service("audit_service")
+            await audit_service.log_action(
+                user_id=user_id,
+                action="product_update",
+                resource_id=product_id,
+                details={"fields_updated": list(data.keys())}
+            )
+
+            return product
+
+        except Exception as e:
+            handle_exception(e, product_id=product_id, user_id=user_id)
+            raise
+```
+
+This pattern demonstrates several important practices:
+
+1. **Proper cache key generation** - Using consistent, structured cache keys
+2. **Error handling with fallback** - Gracefully handling cache failures without affecting core functionality
+3. **Cache invalidation strategy** - Both targeted invalidation and pattern-based invalidation
+4. **Metrics tracking** - Recording performance metrics for both cache hits and misses
+5. **Integration with other systems** - Working with logging, metrics, and error handling
+6. **Tag-based invalidation** - Using Redis tags for grouped invalidation
+7. **Audit logging** - Recording significant data changes
+
+The above example can be adapted for various types of data and services while maintaining the same core principles of robust caching.
+
+## 10. Cache System
+
+The cache system provides a flexible, configurable caching mechanism that supports multiple backends (memory, Redis, etc.) and offers various caching strategies.
+
+### Key Features
+- Multiple cache backends (Memory, Redis, Null)
+- Key generation utilities for consistent caching
+- Function decorators for easy caching
+- Integration with metrics system
+- Customizable TTL (time-to-live)
+- Cache invalidation patterns
+- Tagged caching for bulk invalidation
+- Exception handling and resilience
+- Service pattern for dependency injection
+
+### Basic Usage
+
+```python
+from app.core.dependency_manager import get_service
+
+# Get the cache service
+cache_service = get_service("cache_service")
+
+# Basic cache operations
+async def get_user_profile(user_id: str):
+    # Try to get from cache first
+    cache_key = f"user:profile:{user_id}"
+    cached_profile = await cache_service.get(cache_key)
+
+    if cached_profile is not None:
+        return cached_profile
+
+    # Not in cache, fetch from database
+    profile = await user_repository.get_profile(user_id)
+
+    # Store in cache for future requests (TTL: 10 minutes)
+    await cache_service.set(cache_key, profile, ttl=600)
+
+    return profile
+```
+
+### Using Decorators
+
+The cache system provides decorators for easy function-level caching:
+
+```python
+from app.core.cache import cached, invalidate_cache
+
+# Cache the result of this function for 5 minutes
+@cached(ttl=300)
+async def get_product_details(product_id: str):
+    # This expensive operation will only run on cache misses
+    result = await product_repository.get_details(product_id)
+    return result
+
+# Invalidate cache entries when data changes
+@invalidate_cache(pattern="product:*")
+async def update_product(product_id: str, data: dict):
+    # This will invalidate all cache keys matching the pattern
+    await product_repository.update(product_id, data)
+    return {"status": "updated"}
+```
+
+### Advanced Caching Patterns
+
+```python
+from app.core.cache import cached, cache_aside, memoize
+from app.core.cache.keys import generate_model_key, generate_list_key
+
+# Memoize an expensive function (in-memory caching)
+@memoize(ttl=60)  # 60 seconds
+def calculate_complex_value(input_value: int):
+    # Complex calculation
+    return result
+
+# Cache using custom key generation
+@cache_aside(
+    key_func=lambda category_id, **kwargs: generate_list_key(
+        prefix="products",
+        model_name="product",
+        filters={"category_id": category_id}
+    ),
+    ttl=600,
+    tags=["products", "catalog"]
+)
+async def get_products_by_category(category_id: str):
+    # Fetch from database
+    return await product_repository.list_by_category(category_id)
+```
+
+### Cache Tags for Group Invalidation
+
+```python
+from app.core.dependency_manager import get_service
+
+cache_service = get_service("cache_service")
+
+# Invalidate all product-related cache entries
+async def clear_product_cache():
+    # Get Redis backend
+    redis_backend = cache_service._get_backend("redis")
+
+    # Get all keys with product tag
+    tag_key = "cache:tag:products"
+    keys = await redis_backend.get_set_members(tag_key)
+
+    # Delete all keys
+    if keys:
+        await cache_service.delete_many(keys)
+
+        # Also remove the tag itself
+        await redis_backend.delete(tag_key)
+
+    return {"invalidated": len(keys)}
+```
+
+### Exception Handling
+
+```python
+from app.core.cache.exceptions import CacheException, CacheOperationException
+
+async def get_cached_data(key: str):
+    try:
+        cache_service = get_service("cache_service")
+        return await cache_service.get(key)
+    except CacheOperationException as e:
+        logger.warning(f"Cache operation failed: {e}")
+        # Fallback to database
+        return await fetch_from_database()
+    except CacheException as e:
+        logger.error(f"Cache system error: {e}")
+        # More severe error, may need to be reported
+        raise
+```
+
+### Integration with Metrics
+
+The cache system automatically tracks metrics:
+
+- `cache_hit_total` - Counter of cache hits
+- `cache_miss_total` - Counter of cache misses
+- `cache_operations_total` - Counter of all cache operations
+- `cache_operation_duration_seconds` - Histogram of cache operation durations
+
+These metrics can be used to monitor cache effectiveness:
+
+- Hit rate: `sum(rate(cache_hit_total[5m])) / sum(rate(cache_operations_total[5m]))`
+- Miss rate: `sum(rate(cache_miss_total[5m])) / sum(rate(cache_operations_total[5m]))`
+- Operation latency: `histogram_quantile(0.95, sum(rate(cache_operation_duration_seconds_bucket[5m])) by (le))`
+
+### System Integration
+
+The cache system is designed to seamlessly integrate with other application systems:
+
+#### Error Handling Integration
+
+The cache system uses a dedicated exception hierarchy that integrates with the application's exception system:
+
+```python
+from app.core.cache.exceptions import CacheException, CacheOperationException
+
+try:
+    value = await cache_service.get("my_key")
+except CacheOperationException as e:
+    # Handle specific operation errors
+    logger.warning(f"Cache operation failed: {e}")
+    # Fallback logic
+except CacheException as e:
+    # Handle general cache errors
+    logger.error(f"Cache error: {e}")
+    # More severe error handling
+```
+
+When cache operations fail, the system will automatically log errors with appropriate context and fall back to database operations where possible, rather than causing application failures.
+
+#### Metrics Integration
+
+Cache operations are automatically tracked with the metrics system:
+
+```python
+# These metrics are available automatically
+metrics_service = get_service("metrics_service")
+
+# Get hit rate over the last 5 minutes
+hit_rate = metrics_service.get_counter_rate("cache_hit_total") / \
+           metrics_service.get_counter_rate("cache_operations_total")
+
+# Get p95 latency for cache operations
+latency = metrics_service.get_histogram_quantile(
+    "cache_operation_duration_seconds",
+    0.95,
+    {"component": "product_service"}
+)
+
+# Get miss count by backend
+miss_count = metrics_service.get_counter_sum(
+    "cache_miss_total",
+    {"backend": "redis"}
+)
+```
+
+#### Dependency Injection
+
+The cache service is automatically registered with the dependency manager:
+
+```python
+# In service classes
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.cache_service = get_service("cache_service")
+
+    async def get_product(self, product_id):
+        # Use cache service
+        cache_key = f"product:{product_id}"
+        product = await self.cache_service.get(cache_key)
+        if product:
+            return product
+
+        # Cache miss - get from database
+        product = await self.db.execute(
+            select(Product).where(Product.id == product_id)
+        )
+        product = product.scalar_one_or_none()
+
+        # Cache for next time
+        if product:
+            await self.cache_service.set(cache_key, product, ttl=300)
+
+        return product
+```
+
+### Configuration
+
+The cache system can be configured in the settings:
+
+```python
+# In settings.py or .env
+
+# Cache backend settings
+CACHE_DEFAULT_BACKEND="redis"  # "redis", "memory", or "null"
+
+# Redis connection settings
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD="optional_password"
+REDIS_URI="redis://localhost:6379/0"
+
+# Default TTL settings (in seconds)
+CACHE_DEFAULT_TTL=300  # 5 minutes
+```
+
+### Available Backends
+
+The cache system provides multiple backends:
+
+1. **Redis Backend**: Production-ready backend with all features, including pattern-based invalidation, atomic counters, and tag-based operations. Recommended for production.
+
+2. **Memory Backend**: In-process memory cache. Fast but doesn't persist or share between processes. Good for development, testing, or as a fallback when Redis is unavailable.
+
+3. **Null Backend**: A non-caching implementation that acts like a cache but doesn't store anything. Useful for testing or disabling caching without changing code.
+
+The system automatically falls back to the memory backend if Redis is unavailable, ensuring resilience.

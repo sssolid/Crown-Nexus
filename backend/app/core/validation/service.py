@@ -8,6 +8,7 @@ making it available through the dependency manager.
 
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
+from datetime import date, datetime
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -440,6 +440,13 @@ def register_services() -> None:
         except ImportError:
             logger.warning("Error service not available")
 
+        try:
+            from app.core.metrics.service import get_metrics_service
+
+            dependency_manager.register_service(get_metrics_service, "metrics_service")
+        except ImportError:
+            logger.warning("Metrics service not available")
+
         # Import and register domain services
         try:
             from app.domains.audit.service import get_audit_service

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 # Import all service classes
 from app.core.error.service import ErrorService
+from app.core.metrics.service import MetricsService
 from app.domains.audit.service import AuditService
 from app.services.search import SearchService
 from app.domains.media.service import MediaService
@@ -13,6 +14,10 @@ from app.domains.media.service import MediaService
 def get_service(
     service_name: Literal["error_service"], db: Optional[AsyncSession] = None
 ) -> ErrorService: ...
+@overload
+def get_service(
+    service_name: Literal["metrics_service"], db: Optional[AsyncSession] = None
+) -> MetricsService: ...
 @overload
 def get_service(
     service_name: Literal["audit_service"], db: Optional[AsyncSession] = None

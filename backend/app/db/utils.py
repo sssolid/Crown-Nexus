@@ -83,14 +83,12 @@ async def transaction(db: AsyncSession) -> AsyncGenerator[AsyncSession, None]:
         logger.error(f"Transaction error: {str(e)}", exc_info=True)
         raise TransactionException(
             message=f"Database transaction failed: {str(e)}",
-            code=ErrorCode.TRANSACTION_FAILED,
             original_exception=e,
         ) from e
     except Exception as e:
         logger.error(f"Unexpected error in transaction: {str(e)}", exc_info=True)
         raise TransactionException(
             message=f"Unexpected error in transaction: {str(e)}",
-            code=ErrorCode.TRANSACTION_FAILED,
             original_exception=e,
         ) from e
 
@@ -270,7 +268,6 @@ async def create_object(db: AsyncSession, model: Type[T], obj_in: Dict[str, Any]
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Failed to create {model.__name__}: A record with these attributes already exists",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
 
@@ -334,7 +331,6 @@ async def update_object(
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Cannot update {model.__name__}: A record with these attributes already exists",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
 
@@ -398,7 +394,6 @@ async def delete_object(
         if "foreign key constraint" in error_text:
             raise DataIntegrityException(
                 message=f"Cannot delete {model.__name__}: It is referenced by other records",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
 
@@ -565,7 +560,6 @@ async def bulk_create(
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Bulk create failed: One or more {model.__name__} instances violate uniqueness constraints",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
 
@@ -638,7 +632,6 @@ async def bulk_update(
         if "unique constraint" in error_text or "unique violation" in error_text:
             raise DataIntegrityException(
                 message=f"Bulk update failed: One or more {model.__name__} updates violate uniqueness constraints",
-                code=ErrorCode.DATA_INTEGRITY_ERROR,
                 original_exception=e,
             ) from e
 

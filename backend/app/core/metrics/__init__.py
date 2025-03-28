@@ -5,13 +5,7 @@ This package provides core functionality for collecting, tracking, and exposing
 application metrics for monitoring and performance analysis.
 """
 from __future__ import annotations
-
-from app.core.metrics.base import (
-    MetricName,
-    MetricTag,
-    MetricType,
-    MetricsConfig,
-)
+from app.core.metrics.base import MetricName, MetricTag, MetricType, MetricsConfig
 from app.core.metrics.collectors import (
     CounterCollector,
     GaugeCollector,
@@ -19,6 +13,11 @@ from app.core.metrics.collectors import (
     SummaryCollector,
 )
 from app.core.metrics.decorators import timer
+from app.core.metrics.exceptions import (
+    MetricsException,
+    MetricsConfigurationException,
+    MetricsOperationException,
+)
 from app.core.metrics.manager import (
     initialize,
     shutdown,
@@ -39,6 +38,7 @@ from app.core.metrics.manager import (
     async_timed_function,
     get_current_metrics,
 )
+from app.core.metrics.service import MetricsService, get_metrics_service
 from app.core.metrics.trackers import (
     HttpTracker,
     DatabaseTracker,
@@ -47,21 +47,17 @@ from app.core.metrics.trackers import (
 )
 
 __all__ = [
-    # Base types and constants
     "MetricName",
     "MetricTag",
     "MetricType",
     "MetricsConfig",
-    # Collectors
     "CounterCollector",
     "GaugeCollector",
     "HistogramCollector",
     "SummaryCollector",
-    # Decorators
     "timer",
     "timed_function",
     "async_timed_function",
-    # Core functions
     "initialize",
     "shutdown",
     "create_counter",
@@ -78,9 +74,13 @@ __all__ = [
     "track_service_call",
     "track_cache_operation",
     "get_current_metrics",
-    # Trackers
     "HttpTracker",
     "DatabaseTracker",
     "ServiceTracker",
     "CacheTracker",
+    "MetricsException",
+    "MetricsConfigurationException",
+    "MetricsOperationException",
+    "MetricsService",
+    "get_metrics_service",
 ]

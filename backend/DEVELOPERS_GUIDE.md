@@ -1,6 +1,6 @@
-# Developer's Guide: Logging, Error Handling, Dependency Management, and Validation Systems
+# Developer's Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems
 
-This guide provides a practical overview of the logging, error handling, exception, dependency management, and validation systems. Use it as a reference when implementing these components in your code.
+This guide provides a practical overview of the logging, error handling, exception, dependency management, validation, and metrics systems. Use it as a reference when implementing these components in your code.
 
 ## Table of Contents
 1. [Logging System](#1-logging-system)
@@ -8,7 +8,8 @@ This guide provides a practical overview of the logging, error handling, excepti
 3. [Error Handling System](#3-error-handling-system)
 4. [Dependency Management System](#4-dependency-management-system)
 5. [Validation System](#5-validation-system)
-6. [Common Patterns](#6-common-patterns)
+6. [Metrics System](#6-metrics-system)
+7. [Common Patterns](#7-common-patterns)
 
 ## 1. Logging System
 
@@ -659,71 +660,248 @@ async def create_user(
 validation_service = get_service("validation_service", db=db)
 ```
 
-### Custom Validators
+## 6. Metrics System
+
+The metrics system provides tools for measuring and monitoring application performance and behavior. It supports various metric types and integrates with Prometheus for visualization and alerting.
+
+### Key Features
+- Multiple metric types (counter, gauge, histogram, summary)
+- Automatic tracking of HTTP requests, DB queries, service calls, and cache operations
+- Timing decorators for function execution
+- Prometheus integration
+- Configurable metric collection and reporting
+
+### Basic Usage
 
 ```python
-from app.core.validation import Validator, ValidationResult, register_validator
+from app.core.dependency_manager import get_service
 
-# Create a custom validator
-class PostalCodeValidator(Validator):
-    def validate(self, value: Any, country: str = "US", **kwargs: Any) -> ValidationResult:
-        if not isinstance(value, str):
-            return ValidationResult(
-                is_valid=False,
-                errors=[{
-                    "msg": "Postal code must be a string",
-                    "type": "type_error"
-                }]
-            )
+# Get the metrics service
+metrics_service = get_service("metrics_service")
 
-        if country == "US":
-            # US ZIP code validation (5 digits or ZIP+4 format)
-            import re
-            pattern = r"^\d{5}(?:-\d{4})?$"
-            if not re.match(pattern, value):
-                return ValidationResult(
-                    is_valid=False,
-                    errors=[{
-                        "msg": "Invalid US ZIP code format",
-                        "type": "format_error"
-                    }]
-                )
-        elif country == "CA":
-            # Canadian postal code validation
-            import re
-            pattern = r"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$"
-            if not re.match(pattern, value):
-                return ValidationResult(
-                    is_valid=False,
-                    errors=[{
-                        "msg": "Invalid Canadian postal code format",
-                        "type": "format_error"
-                    }]
-                )
-        else:
-            # Generic validation for other countries
-            if len(value.strip()) == 0:
-                return ValidationResult(
-                    is_valid=False,
-                    errors=[{
-                        "msg": "Postal code cannot be empty",
-                        "type": "empty_error"
-                    }]
-                )
+# Create and use counter metrics
+counter = metrics_service.create_counter(
+    name="user_registrations_total",
+    description="Total number of user registrations",
+    labelnames=["source", "role"]
+)
 
-        return ValidationResult(is_valid=True)
+# Increment counter
+metrics_service.increment_counter(
+    "user_registrations_total",
+    amount=1,
+    labels={"source": "web", "role": "customer"}
+)
 
-# Register the custom validator
-register_validator("postal_code", PostalCodeValidator)
+# Create and use gauge metrics
+gauge = metrics_service.create_gauge(
+    name="active_users",
+    description="Number of currently active users",
+    labelnames=["tenant"]
+)
 
-# Use the custom validator
-from app.core.validation import create_validator
+# Set gauge value
+metrics_service.set_gauge(
+    "active_users",
+    value=42,
+    labels={"tenant": "main"}
+)
 
-postal_code_validator = create_validator("postal_code", country="US")
-is_valid_zip = postal_code_validator("90210")
+# Create and use histogram metrics
+histogram = metrics_service.create_histogram(
+    name="order_processing_seconds",
+    description="Time spent processing orders",
+    labelnames=["type"],
+    buckets=[0.1, 0.5, 1.0, 5.0, 10.0]
+)
+
+# Observe histogram value
+metrics_service.observe_histogram(
+    "order_processing_seconds",
+    value=1.7,
+    labels={"type": "standard"}
+)
 ```
 
-## 6. Common Patterns
+### Tracking Operations
+
+The metrics system provides pre-built trackers for common operations:
+
+```python
+from app.core.dependency_manager import get_service
+
+metrics_service = get_service("metrics_service")
+
+# Track HTTP request
+metrics_service.track_request(
+    method="GET",
+    endpoint="/api/users",
+    status_code=200,
+    duration=0.125
+)
+
+# Track database query
+metrics_service.track_db_query(
+    operation="SELECT",
+    entity="user",
+    duration=0.087
+)
+
+# Track service call
+metrics_service.track_service_call(
+    component="external_api",
+    action="get_weather",
+    duration=0.342
+)
+
+# Track cache operation
+metrics_service.track_cache_operation(
+    operation="get",
+    backend="redis",
+    hit=True,
+    duration=0.004,
+    component="user_profile"
+)
+```
+
+### Function Timing
+
+Measure function performance with decorators:
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.metrics import MetricType
+
+metrics_service = get_service("metrics_service")
+
+# Timing synchronous functions
+@metrics_service.timed_function(
+    name="process_user_data_duration",
+    metric_type=MetricType.HISTOGRAM
+)
+def process_user_data(user_id, data):
+    # Processing logic
+    return result
+
+# Timing asynchronous functions with labels
+@metrics_service.async_timed_function(
+    name="fetch_external_data_duration",
+    metric_type=MetricType.HISTOGRAM,
+    labels_func=lambda resource_id, **kwargs: {"resource_type": resource_id.split("-")[0]}
+)
+async def fetch_external_data(resource_id):
+    # Async processing logic
+    return result
+
+# Tracking in-progress operations
+@metrics_service.async_timed_function(
+    name="long_running_operation_duration",
+    track_in_progress_flag=True,
+    in_progress_metric="long_running_operations_in_progress"
+)
+async def long_running_operation():
+    # Long-running operation logic
+    return result
+```
+
+### Integration with Database Operations
+
+Track database operation performance:
+
+```python
+from app.core.metrics import track_db_select, track_db_insert
+
+# Track SELECT operations
+@track_db_select(entity="user")
+async def get_users_by_role(db, role):
+    query = select(User).where(User.role == role)
+    result = await db.execute(query)
+    return list(result.scalars().all())
+
+# Track INSERT operations
+@track_db_insert(entity="order")
+async def create_order(db, order_data):
+    order = Order(**order_data)
+    db.add(order)
+    await db.commit()
+    await db.refresh(order)
+    return order
+```
+
+### Middleware Integration
+
+```python
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.core.dependency_manager import get_service
+from app.core.metrics import MetricName, MetricTag
+
+class MetricsMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        metrics_service = get_service("metrics_service")
+        start_time = time.monotonic()
+
+        # Track in-progress requests
+        labels = {
+            MetricTag.METHOD: request.method,
+            MetricTag.ENDPOINT: request.url.path
+        }
+        metrics_service.track_in_progress(MetricName.HTTP_IN_PROGRESS, labels, 1)
+
+        try:
+            response = await call_next(request)
+            duration = time.monotonic() - start_time
+
+            # Track completed request
+            metrics_service.track_request(
+                method=request.method,
+                endpoint=request.url.path,
+                status_code=response.status_code,
+                duration=duration,
+                error_code=response.headers.get("X-Error-Code")
+            )
+
+            return response
+        except Exception as e:
+            duration = time.monotonic() - start_time
+
+            # Track failed request
+            metrics_service.track_request(
+                method=request.method,
+                endpoint=request.url.path,
+                status_code=500,
+                duration=duration,
+                error_code=type(e).__name__
+            )
+
+            raise
+        finally:
+            # Ensure we decrement the in-progress counter
+            metrics_service.track_in_progress(MetricName.HTTP_IN_PROGRESS, labels, -1)
+```
+
+### Configuration
+
+Configure the metrics system at application startup:
+
+```python
+from app.core.metrics import MetricsConfig
+from app.core.dependency_manager import get_service
+
+# In app startup
+async def startup():
+    metrics_config = MetricsConfig(
+        namespace="crown_nexus",
+        subsystem="api",
+        default_labels={"environment": settings.ENVIRONMENT.value},
+        enable_prometheus=True,
+        endpoint_port=9090
+    )
+
+    metrics_service = get_service("metrics_service")
+    await metrics_service.initialize(metrics_config)
+```
+
+## 7. Common Patterns
 
 ### API Endpoint Error Handling
 
@@ -833,6 +1011,52 @@ class UserService:
 
         self.logger.info("User created successfully", user_id=user.id)
         return user
+```
+
+### Metrics in Services
+
+```python
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.metrics_service = get_service("metrics_service")
+        self.logger = get_logger("app.domains.products.service")
+
+    @track_db_select(entity="product")
+    async def search_products(self, query, filters=None):
+        self.logger.info("Searching products", query=query, filters=filters)
+
+        # Track search operation
+        start_time = time.monotonic()
+        result_count = 0
+        error = None
+
+        try:
+            # Perform search
+            products = await self.repository.search(query, filters)
+            result_count = len(products)
+            return products
+        except Exception as e:
+            error = type(e).__name__
+            raise
+        finally:
+            duration = time.monotonic() - start_time
+
+            # Track search metrics
+            self.metrics_service.track_service_call(
+                component="product_service",
+                action="search",
+                duration=duration,
+                error=error
+            )
+
+            # Track result count
+            if not error:
+                self.metrics_service.set_gauge(
+                    "product_search_result_count",
+                    value=result_count,
+                    labels={"query_type": "text" if query else "filter"}
+                )
 ```
 
 ### Logging Best Practices

@@ -9,7 +9,8 @@ This guide provides a practical overview of the logging, error handling, excepti
 4. [Dependency Management System](#4-dependency-management-system)
 5. [Validation System](#5-validation-system)
 6. [Metrics System](#6-metrics-system)
-7. [Common Patterns](#7-common-patterns)
+7. [Pagination System](#7-pagination-system)
+8. [Common Patterns](#8-common-patterns)
 
 ## 1. Logging System
 
@@ -901,7 +902,313 @@ async def startup():
     await metrics_service.initialize(metrics_config)
 ```
 
-## 7. Common Patterns
+## 7. Pagination System
+
+The pagination system provides standardized, flexible pagination for database queries, supporting both offset-based and cursor-based pagination approaches.
+
+### Key Features
+- Support for both offset-based and cursor-based pagination
+- Integration with SQLAlchemy for efficient database queries
+- Automatic counting and metadata calculation
+- Customizable sort fields and directions
+- Data transformation capabilities
+- Type-safe interfaces with Pydantic models
+- Comprehensive error handling
+- Metrics tracking
+- Easy integration through dependency injection
+
+### Pagination Models
+
+```python
+from app.core.pagination import (
+    OffsetPaginationParams,
+    CursorPaginationParams,
+    SortDirection,
+    SortField
+)
+from pydantic import BaseModel
+
+# Create offset-based pagination parameters
+offset_params = OffsetPaginationParams(
+    page=2,
+    page_size=20,
+    sort=[
+        SortField(field="created_at", direction=SortDirection.DESC),
+        SortField(field="id", direction=SortDirection.ASC)
+    ]
+)
+
+# Create cursor-based pagination parameters
+cursor_params = CursorPaginationParams(
+    cursor="eyJpZCI6IjEyMyIsImNyZWF0ZWRfYXQiOiIyMDIzLTA1LTE1VDEyOjMwOjAwIn0=",
+    limit=20,
+    sort=[
+        SortField(field="created_at", direction=SortDirection.DESC),
+        SortField(field="id", direction=SortDirection.ASC)
+    ]
+)
+
+# Define a Pydantic model for the response
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    created_at: datetime
+```
+
+### Basic Usage
+
+```python
+from app.core.pagination import paginate_with_offset, paginate_with_cursor
+from sqlalchemy import select
+
+# In a service or repository
+async def get_users_paginated(db, params: OffsetPaginationParams):
+    # Create a query
+    query = select(User).where(User.is_active == True)
+
+    # Apply pagination
+    result = await paginate_with_offset(
+        db=db,
+        model_class=User,
+        query=query,
+        params=params,
+        response_model=UserResponse
+    )
+
+    return result
+
+# Converting pagination result to a response format
+def to_response(pagination_result):
+    return {
+        "items": pagination_result.items,
+        "metadata": {
+            "page": pagination_result.page,
+            "page_size": pagination_result.page_size,
+            "total": pagination_result.total,
+            "pages": pagination_result.pages,
+            "has_next": pagination_result.has_next,
+            "has_prev": pagination_result.has_prev
+        }
+    }
+```
+
+### Using the Pagination Service
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.pagination import get_pagination_service
+
+# In FastAPI endpoints
+@router.get("/users")
+async def list_users(
+    page: int = 1,
+    page_size: int = 20,
+    sort_by: str = "created_at",
+    sort_order: SortDirection = SortDirection.DESC,
+    db: AsyncSession = Depends(get_db)
+):
+    # Get pagination service with database session
+    pagination_service = get_pagination_service(db)
+
+    # Create pagination parameters
+    params = OffsetPaginationParams(
+        page=page,
+        page_size=page_size,
+        sort=[SortField(field=sort_by, direction=sort_order)]
+    )
+
+    # Create query
+    query = select(User).where(User.is_active == True)
+
+    # Apply pagination
+    result = await pagination_service.paginate_with_offset(
+        model_class=User,
+        query=query,
+        params=params,
+        response_model=UserResponse
+    )
+
+    return {
+        "items": result.items,
+        "metadata": {
+            "page": result.page,
+            "page_size": result.page_size,
+            "total": result.total,
+            "pages": result.pages,
+            "has_next": result.has_next,
+            "has_prev": result.has_prev
+        }
+    }
+
+# Cursor-based pagination example
+@router.get("/users/cursor")
+async def list_users_with_cursor(
+    cursor: Optional[str] = None,
+    limit: int = 20,
+    sort_by: str = "created_at",
+    sort_order: SortDirection = SortDirection.DESC,
+    db: AsyncSession = Depends(get_db)
+):
+    pagination_service = get_pagination_service(db)
+
+    params = CursorPaginationParams(
+        cursor=cursor,
+        limit=limit,
+        sort=[SortField(field=sort_by, direction=sort_order)]
+    )
+
+    query = select(User).where(User.is_active == True)
+
+    result = await pagination_service.paginate_with_cursor(
+        model_class=User,
+        query=query,
+        params=params,
+        response_model=UserResponse
+    )
+
+    return {
+        "items": result.items,
+        "metadata": {
+            "total": result.total,
+            "has_next": result.has_next,
+            "has_prev": result.has_prev,
+            "next_cursor": result.next_cursor
+        }
+    }
+```
+
+### Error Handling
+
+```python
+from app.core.pagination.exceptions import (
+    PaginationException,
+    InvalidPaginationParamsException,
+    InvalidCursorException,
+    InvalidSortFieldException
+)
+
+@router.get("/products")
+async def list_products(
+    page: int = 1,
+    page_size: int = 20,
+    sort_by: str = "name",
+    sort_order: SortDirection = SortDirection.ASC,
+    db: AsyncSession = Depends(get_db)
+):
+    try:
+        pagination_service = get_pagination_service(db)
+
+        params = OffsetPaginationParams(
+            page=page,
+            page_size=page_size,
+            sort=[SortField(field=sort_by, direction=sort_order)]
+        )
+
+        query = select(Product)
+
+        result = await pagination_service.paginate_with_offset(
+            model_class=Product,
+            query=query,
+            params=params,
+            response_model=ProductResponse
+        )
+
+        return to_response(result)
+    except InvalidSortFieldException as e:
+        # Handle invalid sort field
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid sort field: {e.details.get('field')}"
+        )
+    except InvalidPaginationParamsException as e:
+        # Handle invalid pagination parameters
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid pagination parameters: {str(e)}"
+        )
+    except PaginationException as e:
+        # Handle other pagination exceptions
+        raise HTTPException(
+            status_code=e.status_code,
+            detail=str(e)
+        )
+```
+
+### Custom Transformations
+
+```python
+from app.core.pagination import paginate_with_offset
+from sqlalchemy import select, func
+
+async def get_products_with_categories(db, params):
+    # Join with categories
+    query = (
+        select(Product, Category)
+        .join(Category, Product.category_id == Category.id)
+        .where(Product.is_active == True)
+    )
+
+    # Define a custom transform function
+    def transform_product(result):
+        product, category = result
+        return {
+            "id": str(product.id),
+            "name": product.name,
+            "price": product.price,
+            "category": {
+                "id": str(category.id),
+                "name": category.name
+            }
+        }
+
+    # Apply pagination with custom transformation
+    result = await paginate_with_offset(
+        db=db,
+        model_class=Product,
+        query=query,
+        params=params,
+        transform_func=transform_product
+    )
+
+    return result
+```
+
+### Integration with Metrics
+
+The pagination system automatically integrates with the metrics system to track performance:
+
+```python
+# These metrics are recorded automatically when using the pagination service
+# - pagination_duration_seconds (histogram)
+# - pagination_operations_total (counter)
+
+# Manual tracking for custom pagination implementations
+from app.core.dependency_manager import get_service
+
+metrics_service = get_service("metrics_service")
+
+async def custom_pagination(db, params):
+    start_time = time.monotonic()
+    error = None
+
+    try:
+        # Custom pagination logic
+        # ...
+        return result
+    except Exception as e:
+        error = type(e).__name__
+        raise
+    finally:
+        duration = time.monotonic() - start_time
+        metrics_service.observe_histogram(
+            "custom_pagination_duration_seconds",
+            duration,
+            {"type": "custom", "error": str(error or "")}
+        )
+```
+
+## 8. Common Patterns
 
 ### API Endpoint Error Handling
 

@@ -1,4 +1,4 @@
-# /app/core/pagination/__init__.py
+# app/core/pagination/__init__.py
 from __future__ import annotations
 
 """Pagination package for application-wide pagination functionality.
@@ -14,23 +14,34 @@ from app.core.pagination.base import (
     SortDirection,
     SortField,
 )
+from app.core.pagination.exceptions import (
+    InvalidCursorException,
+    InvalidPaginationParamsException,
+    InvalidSortFieldException,
+    PaginationException,
+)
 from app.core.pagination.manager import (
     initialize,
-    shutdown,
-    paginate_with_offset,
     paginate_with_cursor,
+    paginate_with_offset,
+    shutdown,
 )
+from app.core.pagination.service import PaginationService, get_pagination_service
 
 __all__ = [
-    # Base types
     "PaginationResult",
     "OffsetPaginationParams",
     "CursorPaginationParams",
     "SortDirection",
     "SortField",
-    # Core functions
     "initialize",
     "shutdown",
     "paginate_with_offset",
     "paginate_with_cursor",
+    "PaginationService",
+    "get_pagination_service",
+    "PaginationException",
+    "InvalidPaginationParamsException",
+    "InvalidCursorException",
+    "InvalidSortFieldException",
 ]

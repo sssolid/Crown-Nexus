@@ -1,13 +1,14 @@
-# Developer's Guide: Logging, Error Handling, and Dependency Management Systems
+# Developer's Guide: Logging, Error Handling, Dependency Management, and Validation Systems
 
-This guide provides a practical overview of the logging, error handling, exception, and dependency management systems. Use it as a reference when implementing these components in your code.
+This guide provides a practical overview of the logging, error handling, exception, dependency management, and validation systems. Use it as a reference when implementing these components in your code.
 
 ## Table of Contents
 1. [Logging System](#1-logging-system)
 2. [Exception System](#2-exception-system)
 3. [Error Handling System](#3-error-handling-system)
 4. [Dependency Management System](#4-dependency-management-system)
-5. [Common Patterns](#5-common-patterns)
+5. [Validation System](#5-validation-system)
+6. [Common Patterns](#6-common-patterns)
 
 ## 1. Logging System
 
@@ -425,7 +426,304 @@ class UserService:
         return user
 ```
 
-## 5. Common Patterns
+## 5. Validation System
+
+The validation system provides comprehensive tools for validating data throughout the application, ensuring data integrity and consistency.
+
+### Key Features
+- Validation of various data types (emails, URLs, dates, etc.)
+- Pydantic model validation
+- Database-specific validations (e.g., uniqueness)
+- Composite validation with multiple rules
+- Integration with error handling and logging systems
+- Extensible validator architecture
+
+### Basic Validations
+
+```python
+from app.core.validation import (
+    validate_email,
+    validate_phone,
+    validate_date,
+    validate_length,
+    validate_range,
+    validate_regex,
+    validate_required,
+    validate_url,
+    validate_uuid,
+    validate_credit_card,
+    validate_ip_address,
+    validate_password_strength,
+    validate_enum
+)
+
+# Simple validation functions return boolean results
+is_valid_email = validate_email("user@example.com")
+is_valid_phone = validate_phone("+12125551234")
+is_valid_url = validate_url("https://example.com")
+is_complex_password = validate_password_strength(
+    "SecureP@ss123",
+    min_length=10,
+    require_lowercase=True,
+    require_uppercase=True,
+    require_digit=True,
+    require_special=True
+)
+
+# Date validation with range constraints
+from datetime import date
+is_valid_date = validate_date(
+    "2023-05-15",
+    min_date=date(2023, 1, 1),
+    max_date=date(2023, 12, 31),
+    format_str="%Y-%m-%d"
+)
+
+# Enum validation
+from enum import Enum
+class UserRole(Enum):
+    ADMIN = "admin"
+    USER = "user"
+    GUEST = "guest"
+
+is_valid_role = validate_enum("admin", UserRole)
+```
+
+### Pydantic Model Validation
+
+```python
+from app.core.validation import validate_data, validate_model
+from pydantic import BaseModel, Field
+
+# Define a Pydantic model
+class UserCreate(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: str = Field(..., pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+    password: str = Field(..., min_length=8)
+    age: int = Field(..., ge=18)
+
+# Validate input data against the model
+try:
+    user_data = {
+        "username": "johndoe",
+        "email": "john@example.com",
+        "password": "Secret123",
+        "age": 25
+    }
+
+    # Returns a validated model instance or raises ValidationException
+    user = validate_data(user_data, UserCreate)
+    print(f"Valid user: {user.username}, {user.email}")
+
+except ValidationException as e:
+    print(f"Validation failed: {e.errors}")
+```
+
+### Database Validations
+
+```python
+from app.core.validation import validate_unique
+from sqlalchemy.ext.asyncio import AsyncSession
+
+# Check if a value is unique in the database
+async def create_user(db: AsyncSession, username: str, email: str):
+    # Check username uniqueness
+    is_username_unique = await validate_unique(
+        field="username",
+        value=username,
+        model=User,
+        db=db
+    )
+
+    if not is_username_unique:
+        raise ValidationException(
+            "Validation failed",
+            errors=[{
+                "loc": ["username"],
+                "msg": f"Username '{username}' is already taken",
+                "type": "unique_error"
+            }]
+        )
+
+    # Check email uniqueness
+    is_email_unique = await validate_unique(
+        field="email",
+        value=email,
+        model=User,
+        db=db
+    )
+
+    if not is_email_unique:
+        raise ValidationException(
+            "Validation failed",
+            errors=[{
+                "loc": ["email"],
+                "msg": f"Email '{email}' is already registered",
+                "type": "unique_error"
+            }]
+        )
+
+    # Proceed with creation
+    # ...
+```
+
+### Composite Validation
+
+```python
+from app.core.validation import validate_composite
+
+# Define validation rules for multiple fields
+validation_rules = {
+    "username": {
+        "required": True,
+        "length": {"min_length": 3, "max_length": 50}
+    },
+    "email": {
+        "required": True,
+        "email": True
+    },
+    "password": {
+        "required": True,
+        "password": {
+            "min_length": 8,
+            "require_uppercase": True,
+            "require_digit": True
+        }
+    },
+    "age": {
+        "required": True,
+        "range": {"min_value": 18}
+    }
+}
+
+# Validate data against the rules
+user_data = {
+    "username": "johndoe",
+    "email": "john@example.com",
+    "password": "Secret123",
+    "age": 25
+}
+
+is_valid, errors = validate_composite(user_data, validation_rules)
+
+if not is_valid:
+    for error in errors:
+        print(f"Field: {error['loc'][0]}, Error: {error['msg']}")
+```
+
+### Using the Validation Service
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.validation import get_validation_service
+
+# In FastAPI endpoints
+@router.post("/users")
+async def create_user(
+    user_data: Dict[str, Any],
+    db: AsyncSession = Depends(get_db)
+):
+    # Get validation service with database session
+    validation_service = get_validation_service(db)
+
+    # Validate email
+    if not validation_service.validate_email(user_data.get("email", "")):
+        raise ValidationException(
+            "Validation failed",
+            errors=[{
+                "loc": ["email"],
+                "msg": "Invalid email format",
+                "type": "value_error.email"
+            }]
+        )
+
+    # Check uniqueness
+    is_email_unique = await validation_service.validate_unique(
+        "email", user_data["email"], User
+    )
+
+    if not is_email_unique:
+        raise ValidationException(
+            "Validation failed",
+            errors=[{
+                "loc": ["email"],
+                "msg": "Email already registered",
+                "type": "unique_error"
+            }]
+        )
+
+    # Create user
+    # ...
+
+# Or through dependency manager
+validation_service = get_service("validation_service", db=db)
+```
+
+### Custom Validators
+
+```python
+from app.core.validation import Validator, ValidationResult, register_validator
+
+# Create a custom validator
+class PostalCodeValidator(Validator):
+    def validate(self, value: Any, country: str = "US", **kwargs: Any) -> ValidationResult:
+        if not isinstance(value, str):
+            return ValidationResult(
+                is_valid=False,
+                errors=[{
+                    "msg": "Postal code must be a string",
+                    "type": "type_error"
+                }]
+            )
+
+        if country == "US":
+            # US ZIP code validation (5 digits or ZIP+4 format)
+            import re
+            pattern = r"^\d{5}(?:-\d{4})?$"
+            if not re.match(pattern, value):
+                return ValidationResult(
+                    is_valid=False,
+                    errors=[{
+                        "msg": "Invalid US ZIP code format",
+                        "type": "format_error"
+                    }]
+                )
+        elif country == "CA":
+            # Canadian postal code validation
+            import re
+            pattern = r"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$"
+            if not re.match(pattern, value):
+                return ValidationResult(
+                    is_valid=False,
+                    errors=[{
+                        "msg": "Invalid Canadian postal code format",
+                        "type": "format_error"
+                    }]
+                )
+        else:
+            # Generic validation for other countries
+            if len(value.strip()) == 0:
+                return ValidationResult(
+                    is_valid=False,
+                    errors=[{
+                        "msg": "Postal code cannot be empty",
+                        "type": "empty_error"
+                    }]
+                )
+
+        return ValidationResult(is_valid=True)
+
+# Register the custom validator
+register_validator("postal_code", PostalCodeValidator)
+
+# Use the custom validator
+from app.core.validation import create_validator
+
+postal_code_validator = create_validator("postal_code", country="US")
+is_valid_zip = postal_code_validator("90210")
+```
+
+## 6. Common Patterns
 
 ### API Endpoint Error Handling
 
@@ -490,6 +788,51 @@ class OrderService:
         # Process order...
         self.logger.info("Order created successfully", order_id=new_order.id)
         return new_order
+```
+
+### Validation in Services
+
+```python
+class UserService:
+    def __init__(self, db):
+        self.db = db
+        self.validation_service = get_service("validation_service", db=db)
+        self.logger = get_logger("app.domains.users.service")
+
+    async def create_user(self, user_data):
+        self.logger.info("Creating new user", email=user_data.get("email"))
+
+        # Validate data against schema
+        try:
+            validated_data = self.validation_service.validate_data(user_data, UserCreateSchema)
+        except ValidationException as e:
+            self.logger.warning("User data validation failed", errors=e.errors)
+            raise
+
+        # Check for unique email
+        is_unique = await self.validation_service.validate_unique(
+            "email", validated_data.email, User
+        )
+
+        if not is_unique:
+            self.logger.warning("Email already exists", email=validated_data.email)
+            raise ValidationException(
+                "Validation error",
+                errors=[{
+                    "loc": ["email"],
+                    "msg": "Email already registered",
+                    "type": "unique_error"
+                }]
+            )
+
+        # Create user
+        user = User(**validated_data.model_dump())
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
+
+        self.logger.info("User created successfully", user_id=user.id)
+        return user
 ```
 
 ### Logging Best Practices

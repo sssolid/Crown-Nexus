@@ -1,4 +1,3 @@
-# /app/core/validation/factory.py
 from __future__ import annotations
 
 """Factory for creating validators.
@@ -7,8 +6,9 @@ This module provides a factory for creating different validator instances
 based on validation type and configuration options.
 """
 
-from typing import Any, Dict, Type
+from typing import Any, Dict, List, Type
 
+from app.core.exceptions import ValidationException
 from app.core.logging import get_logger
 from app.core.validation.base import Validator
 from app.core.validation.validators import (
@@ -31,9 +31,11 @@ logger = get_logger("app.core.validation.factory")
 
 
 class ValidatorFactory:
-    """Factory for creating validator instances."""
+    """Factory for creating validator instances.
 
-    # Registry of validator types to their classes
+    This class provides methods to register and create different types of validators.
+    """
+
     _validators: Dict[str, Type[Validator]] = {
         "email": EmailValidator,
         "phone": PhoneValidator,
@@ -55,40 +57,69 @@ class ValidatorFactory:
         """Register a new validator type.
 
         Args:
-            name: Validator type name
-            validator_class: Validator class
+            name: The name to register the validator under
+            validator_class: The validator class to register
 
         Raises:
-            ValueError: If a validator with the same name is already registered
+            ValidationException: If a validator with the same name is already registered
         """
         if name in cls._validators:
-            raise ValueError(f"Validator '{name}' is already registered")
+            logger.warning(f"Attempted to register duplicate validator: {name}")
+            raise ValidationException(
+                "Validator registration failed",
+                errors=[
+                    {
+                        "loc": ["validator", name],
+                        "msg": f"Validator '{name}' is already registered",
+                        "type": "validator_error.duplicate",
+                    }
+                ],
+            )
 
         cls._validators[name] = validator_class
         logger.debug(f"Registered validator type: {name}")
 
     @classmethod
     def create_validator(cls, validator_type: str, **options: Any) -> Validator:
-        """Create a validator of the specified type.
+        """Create a validator instance of the specified type.
 
         Args:
             validator_type: The type of validator to create
-            **options: Configuration options for the validator
+            **options: Additional options for the validator
 
         Returns:
-            Validator: An instance of the specified validator
+            Validator: An instance of the requested validator
 
         Raises:
-            ValueError: If the validator type is not supported
+            ValidationException: If the validator type is not supported
         """
         if validator_type not in cls._validators:
-            raise ValueError(
-                f"Unsupported validator type: {validator_type}. "
-                f"Supported types: {', '.join(cls._validators.keys())}"
+            supported_types = ", ".join(cls._validators.keys())
+            logger.warning(
+                f"Requested unsupported validator type: {validator_type}",
+                supported_types=supported_types,
+            )
+            raise ValidationException(
+                "Invalid validator type",
+                errors=[
+                    {
+                        "loc": ["validator_type"],
+                        "msg": f"Unsupported validator type: {validator_type}. Supported types: {supported_types}",
+                        "type": "validator_error.unsupported_type",
+                    }
+                ],
             )
 
         validator_class = cls._validators[validator_type]
         validator = validator_class()
-
-        logger.debug(f"Created validator of type: {validator_type}")
+        logger.debug(f"Created validator of type: {validator_type}", options=options)
         return validator
+
+    @classmethod
+    def get_available_validators(cls) -> List[str]:
+        """Get a list of all available validator types.
+
+        Returns:
+            List[str]: List of registered validator type names
+        """
+        return list(cls._validators.keys())

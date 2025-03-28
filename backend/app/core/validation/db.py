@@ -1,4 +1,3 @@
-# /app/core/validation/db.py
 from __future__ import annotations
 
 """Database-specific validators.
@@ -7,11 +6,12 @@ This module provides validators that require database access,
 such as unique field validation.
 """
 
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional, Type, Union
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import ValidationException
 from app.core.logging import get_logger
 from app.core.validation.base import ValidationResult, Validator
 
@@ -19,13 +19,17 @@ logger = get_logger("app.core.validation.db")
 
 
 class UniqueValidator(Validator):
-    """Validator for unique field values in the database."""
+    """Validator that checks if a value is unique in the database.
+
+    This validator requires an async database session and must be used
+    with the validate_async method.
+    """
 
     def __init__(self, db: AsyncSession) -> None:
         """Initialize the unique validator.
 
         Args:
-            db: Database session
+            db: The SQLAlchemy async database session
         """
         self.db = db
 
@@ -35,22 +39,28 @@ class UniqueValidator(Validator):
         field: str,
         model: Any,
         exclude_id: Optional[str] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> ValidationResult:
-        """Validate that a value is unique in the database.
-
-        This is an async version needed for database operations.
+        """Asynchronously validate that a value is unique in the database.
 
         Args:
-            value: The value to validate
-            field: The field name to check
+            value: The value to check for uniqueness
+            field: The field name in the model
             model: The SQLAlchemy model class
-            exclude_id: Optional ID to exclude from the check
-            **kwargs: Additional validation parameters
+            exclude_id: Optional ID to exclude from the uniqueness check
+            **kwargs: Additional keyword arguments
 
         Returns:
-            ValidationResult: The result of the validation
+            ValidationResult: The validation result
         """
+        logger.debug(
+            f"Checking uniqueness of '{field}' in {model.__name__}",
+            field=field,
+            value=value,
+            model=model.__name__,
+            exclude_id=exclude_id,
+        )
+
         query = select(model).filter(getattr(model, field) == value)
 
         if exclude_id:
@@ -60,6 +70,12 @@ class UniqueValidator(Validator):
         existing = result.first()
 
         if existing:
+            logger.debug(
+                f"Value '{value}' already exists for field '{field}' in {model.__name__}",
+                field=field,
+                value=value,
+                model=model.__name__,
+            )
             return ValidationResult(
                 is_valid=False,
                 errors=[
@@ -72,6 +88,12 @@ class UniqueValidator(Validator):
                 ],
             )
 
+        logger.debug(
+            f"Value '{value}' is unique for field '{field}' in {model.__name__}",
+            field=field,
+            value=value,
+            model=model.__name__,
+        )
         return ValidationResult(is_valid=True)
 
     def validate(
@@ -80,23 +102,23 @@ class UniqueValidator(Validator):
         field: str = "",
         model: Any = None,
         exclude_id: Optional[str] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> ValidationResult:
-        """Non-async interface that's part of the Validator protocol.
-
-        Since this validator requires async database operations,
-        this method raises an exception if called directly.
-
-        Args:
-            value: The value to validate
-            field: The field name to check
-            model: The SQLAlchemy model class
-            exclude_id: Optional ID to exclude from the check
-            **kwargs: Additional validation parameters
+        """Synchronous validation method - not supported.
 
         Raises:
-            RuntimeError: Always, as this validator requires async operations
+            ValidationException: Always, as this validator requires async operations
         """
-        raise RuntimeError(
-            "UniqueValidator requires async operations. " "Use validate_async instead."
+        error_msg = "UniqueValidator requires async operations. Use validate_async instead."
+        logger.error(error_msg)
+        raise ValidationException(
+            "Validation method error",
+            errors=[
+                {
+                    "loc": ["method", "validate"],
+                    "msg": error_msg,
+                    "type": "method_error.async_required",
+                    "hint": "Use 'await validator.validate_async()' instead of 'validator.validate()'",
+                }
+            ],
         )

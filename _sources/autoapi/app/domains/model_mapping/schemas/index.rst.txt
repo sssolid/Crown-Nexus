@@ -1,0 +1,280 @@
+app.domains.model_mapping.schemas
+=================================
+
+.. py:module:: app.domains.model_mapping.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.model_mapping.schemas.ModelMappingBase
+   app.domains.model_mapping.schemas.ModelMappingCreate
+   app.domains.model_mapping.schemas.ModelMappingUpdate
+   app.domains.model_mapping.schemas.ModelMappingInDB
+   app.domains.model_mapping.schemas.ModelMapping
+   app.domains.model_mapping.schemas.ModelMappingPaginatedResponse
+   app.domains.model_mapping.schemas.VehicleMatchRequest
+   app.domains.model_mapping.schemas.VehicleMatchResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelMappingBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ModelMapping data.
+
+   Attributes:
+       pattern: Pattern to match in vehicle text.
+       mapping: Mapping in format 'Make|VehicleCode|Model'.
+       priority: Priority for mapping (higher values are processed first).
+       active: Whether this mapping is active.
+
+
+   .. py:attribute:: pattern
+      :type:  str
+
+
+   .. py:attribute:: mapping
+      :type:  str
+
+
+   .. py:attribute:: priority
+      :type:  int
+
+
+   .. py:attribute:: active
+      :type:  bool
+
+
+   .. py:method:: validate_mapping_format(v)
+      :classmethod:
+
+
+      Validate mapping format.
+
+      Args:
+          v: The mapping string to validate.
+
+      Returns:
+          Validated mapping string.
+
+      Raises:
+          ValueError: If the mapping format is invalid.
+
+
+
+.. py:class:: ModelMappingCreate
+
+   Bases: :py:obj:`ModelMappingBase`
+
+
+   Schema for creating a new ModelMapping.
+
+
+.. py:class:: ModelMappingUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ModelMapping.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: pattern
+      :type:  Optional[str]
+
+
+   .. py:attribute:: mapping
+      :type:  Optional[str]
+
+
+   .. py:attribute:: priority
+      :type:  Optional[int]
+
+
+   .. py:attribute:: active
+      :type:  Optional[bool]
+
+
+   .. py:method:: validate_mapping_format(v)
+      :classmethod:
+
+
+      Validate mapping format if provided.
+
+      Args:
+          v: The mapping string to validate or None.
+
+      Returns:
+          Validated mapping string or None.
+
+      Raises:
+          ValueError: If the mapping format is invalid.
+
+
+
+.. py:class:: ModelMappingInDB
+
+   Bases: :py:obj:`ModelMappingBase`
+
+
+   Schema for ModelMapping data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ModelMapping
+
+   Bases: :py:obj:`ModelMappingInDB`
+
+
+   Schema for complete ModelMapping data in API responses.
+
+   Includes additional computed properties.
+
+
+   .. py:property:: make
+      :type: str
+
+
+      Get the make part of the mapping.
+
+      Returns:
+          The make value or empty string if not available.
+
+
+
+   .. py:property:: vehicle_code
+      :type: str
+
+
+      Get the vehicle code part of the mapping.
+
+      Returns:
+          The vehicle code value or empty string if not available.
+
+
+
+   .. py:property:: model
+      :type: str
+
+
+      Get the model part of the mapping.
+
+      Returns:
+          The model value or empty string if not available.
+
+
+
+.. py:class:: ModelMappingPaginatedResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated model mapping data.
+
+   Attributes:
+       items: List of model mappings.
+       total: Total number of items.
+       page: Current page number.
+       page_size: Number of items per page.
+       pages: Total number of pages.
+
+
+   .. py:attribute:: items
+      :type:  List[ModelMapping]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+
+.. py:class:: VehicleMatchRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle matching request.
+
+   Attributes:
+       vehicle_string: Vehicle string to match against patterns.
+
+
+   .. py:attribute:: vehicle_string
+      :type:  str
+
+
+.. py:class:: VehicleMatchResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle matching response.
+
+   Attributes:
+       matched: Whether a match was found.
+       make: Make value if matched.
+       code: Vehicle code value if matched.
+       model: Model value if matched.
+       pattern: Pattern that matched.
+       mapping: Original mapping string.
+
+
+   .. py:attribute:: matched
+      :type:  bool
+
+
+   .. py:attribute:: make
+      :type:  Optional[str]
+
+
+   .. py:attribute:: code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model
+      :type:  Optional[str]
+
+
+   .. py:attribute:: pattern
+      :type:  Optional[str]
+
+
+   .. py:attribute:: mapping
+      :type:  Optional[str]
+
+

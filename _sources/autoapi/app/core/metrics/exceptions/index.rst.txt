@@ -1,0 +1,43 @@
+app.core.metrics.exceptions
+===========================
+
+.. py:module:: app.core.metrics.exceptions
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.metrics.exceptions.MetricsException
+   app.core.metrics.exceptions.MetricsConfigurationException
+   app.core.metrics.exceptions.MetricsOperationException
+
+
+Module Contents
+---------------
+
+.. py:class:: MetricsException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for metrics-related errors.
+
+
+.. py:class:: MetricsConfigurationException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`MetricsException`
+
+
+   Exception for metrics configuration errors.
+
+
+.. py:class:: MetricsOperationException(message, operation, details = None, original_exception = None)
+
+   Bases: :py:obj:`MetricsException`
+
+
+   Exception for metrics operation errors.
+
+

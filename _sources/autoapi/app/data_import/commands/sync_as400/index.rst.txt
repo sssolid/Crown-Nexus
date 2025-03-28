@@ -1,0 +1,138 @@
+app.data_import.commands.sync_as400
+===================================
+
+.. py:module:: app.data_import.commands.sync_as400
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.commands.sync_as400.logger
+   app.data_import.commands.sync_as400.app
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.data_import.commands.sync_as400.sync
+   app.data_import.commands.sync_as400.schedule
+   app.data_import.commands.sync_as400.status
+   app.data_import.commands.sync_as400.test_connection
+   app.data_import.commands.sync_as400._run_sync
+   app.data_import.commands.sync_as400._schedule_sync
+   app.data_import.commands.sync_as400._get_sync_status
+   app.data_import.commands.sync_as400._test_as400_connection
+   app.data_import.commands.sync_as400._print_sync_result
+   app.data_import.commands.sync_as400._print_sync_status
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: app
+
+.. py:function:: sync(entity_type = typer.Option('product', '--entity', '-e', help='Entity type to sync (product, measurement, stock, pricing)'), force = typer.Option(False, '--force', '-f', help='Force sync regardless of schedule'), dry_run = typer.Option(False, '--dry-run', '-d', help="Extract and process data but don't import"), output_file = typer.Option(None, '--output', '-o', help='Output file for processed data (dry run only)'))
+
+   Run AS400 data synchronization for a specific entity type.
+
+   This command triggers the synchronization of data from AS400 to the
+   application database for the specified entity type.
+
+
+.. py:function:: schedule(entity_type = typer.Option('product', '--entity', '-e', help='Entity type to schedule (product, measurement, stock, pricing)'), delay = typer.Option(300, '--delay', '-d', help='Delay in seconds before running sync'))
+
+   Schedule AS400 data synchronization for a specific entity type.
+
+   This command schedules the synchronization of data from AS400 to run
+   after the specified delay.
+
+
+.. py:function:: status(entity_type = typer.Option(None, '--entity', '-e', help='Entity type to check (product, measurement, stock, pricing)'), json_output = typer.Option(False, '--json', '-j', help='Output in JSON format'))
+
+   Get the status of AS400 data synchronization.
+
+   This command retrieves the status of all or a specific entity type's
+   synchronization operations.
+
+
+.. py:function:: test_connection()
+
+   Test the AS400 connection.
+
+   This command verifies that the application can connect to the AS400
+   database using the configured settings.
+
+
+.. py:function:: _run_sync(entity, force, dry_run, output_file)
+   :async:
+
+
+   Run a sync operation asynchronously.
+
+   Args:
+       entity: Entity type to sync
+       force: Whether to force sync
+       dry_run: Whether to perform a dry run
+       output_file: Output file for processed data
+
+   Returns:
+       Dictionary with sync results
+
+
+.. py:function:: _schedule_sync(entity, delay)
+   :async:
+
+
+   Schedule a sync operation asynchronously.
+
+   Args:
+       entity: Entity type to sync
+       delay: Delay in seconds
+
+
+.. py:function:: _get_sync_status(entity)
+   :async:
+
+
+   Get sync status asynchronously.
+
+   Args:
+       entity: Optional entity type to get status for
+
+   Returns:
+       Dictionary with sync status
+
+
+.. py:function:: _test_as400_connection()
+   :async:
+
+
+   Test AS400 connection asynchronously.
+
+   Returns:
+       Dictionary with connection test results
+
+
+.. py:function:: _print_sync_result(result)
+
+   Print sync result in a formatted way.
+
+   Args:
+       result: Sync result dictionary
+
+
+.. py:function:: _print_sync_status(result, entity)
+
+   Print sync status in a formatted way.
+
+   Args:
+       result: Sync status dictionary
+       entity: Entity type if specific
+
+

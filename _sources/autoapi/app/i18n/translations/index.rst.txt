@@ -1,0 +1,157 @@
+app.i18n.translations
+=====================
+
+.. py:module:: app.i18n.translations
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.i18n.translations.i18n_manager
+   app.i18n.translations.get_translator
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.i18n.translations.I18nManager
+   app.i18n.translations.TranslatorDependency
+   app.i18n.translations.I18nMiddleware
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.i18n.translations.get_locale
+
+
+Module Contents
+---------------
+
+.. py:class:: I18nManager
+
+   Manages internationalization (i18n) for the application.
+
+   Provides functions to translate text based on the current locale.
+   Translations are loaded from gettext .mo files.
+
+
+   .. py:attribute:: translations
+      :type:  Dict[str, gettext.GNUTranslations]
+
+
+   .. py:attribute:: default_locale
+
+
+   .. py:attribute:: available_locales
+
+
+   .. py:method:: _load_translations()
+
+      Load all available translations.
+
+
+
+   .. py:method:: gettext(message, locale = None)
+
+      Translate a message to the specified locale.
+
+      Args:
+          message: The message to translate
+          locale: The locale to translate to, or None for default
+
+      Returns:
+          str: The translated message
+
+
+
+   .. py:method:: ngettext(singular, plural, n, locale = None)
+
+      Translate singular/plural form based on number.
+
+      Args:
+          singular: Singular form
+          plural: Plural form
+          n: The count determining which form to use
+          locale: The locale to translate to, or None for default
+
+      Returns:
+          str: The translated message
+
+
+
+.. py:data:: i18n_manager
+
+.. py:function:: get_locale(request, accept_language = Header(None))
+
+   Determine the best locale based on the request.
+
+   Priority:
+   1. Query parameter 'lang'
+   2. Accept-Language header
+   3. User preferences (if authenticated)
+   4. Default locale
+
+   Args:
+       request: FastAPI request object
+       accept_language: Accept-Language header
+
+   Returns:
+       str: Best matching locale
+
+
+.. py:class:: TranslatorDependency(locale = None)
+
+   Dependency that provides a translator function for the current request.
+
+
+   .. py:attribute:: locale_override
+      :value: None
+
+
+
+   .. py:method:: __call__(locale = Depends(get_locale))
+      :async:
+
+
+      Get translation functions for the current locale.
+
+      Args:
+          locale: The locale from get_locale dependency
+
+      Returns:
+          Dict[str, Any]: Translation functions
+
+
+
+.. py:data:: get_translator
+
+.. py:class:: I18nMiddleware
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware to set locale in request state.
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+      Process a request and set locale in request state.
+
+      Args:
+          request: FastAPI request
+          call_next: Next middleware handler
+
+      Returns:
+          Response from next middleware
+
+
+

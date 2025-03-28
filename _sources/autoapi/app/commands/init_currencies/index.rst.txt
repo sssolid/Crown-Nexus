@@ -1,0 +1,48 @@
+app.commands.init_currencies
+============================
+
+.. py:module:: app.commands.init_currencies
+
+.. autoapi-nested-parse::
+
+   Command to initialize currencies in the database.
+
+   This command populates the currency table with common currencies
+   and can be run manually or during application setup.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.commands.init_currencies.app
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.commands.init_currencies.init_currencies
+   app.commands.init_currencies._init_currencies_sync
+
+
+Module Contents
+---------------
+
+.. py:data:: app
+
+.. py:function:: init_currencies(force = typer.Option(False, '--force', '-f', help='Force re-initialization even if currencies exist'), sync = typer.Option(True, '--sync', help='Run synchronously instead of using Celery'), base_currency = typer.Option('USD', '--base', '-b', help='Set base currency code'))
+
+   Initialize currencies in the database.
+
+
+.. py:function:: _init_currencies_sync(force, base_currency)
+   :async:
+
+
+   Initialize currencies synchronously.
+
+

@@ -1,0 +1,321 @@
+app.domains.autocare.fitment.schemas
+====================================
+
+.. py:module:: app.domains.autocare.fitment.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.fitment.schemas.ProductInfo
+   app.domains.autocare.fitment.schemas.FitmentMapping
+   app.domains.autocare.fitment.schemas.FitmentMappingDetail
+   app.domains.autocare.fitment.schemas.FitmentMappingCreate
+   app.domains.autocare.fitment.schemas.FitmentMappingUpdate
+   app.domains.autocare.fitment.schemas.FitmentMappingHistory
+   app.domains.autocare.fitment.schemas.FitmentSearchParameters
+   app.domains.autocare.fitment.schemas.FitmentMappingSearchResponse
+   app.domains.autocare.fitment.schemas.FitmentMappingHistoryResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: ProductInfo
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for minimal product information.
+
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: part_number
+      :type:  str
+
+
+   .. py:attribute:: application
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FitmentMapping
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fitment mapping data.
+
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: product
+      :type:  ProductInfo
+
+
+   .. py:attribute:: vehicle_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: position_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: attributes
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: is_validated
+      :type:  bool
+
+
+   .. py:attribute:: is_manual
+      :type:  bool
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FitmentMappingDetail
+
+   Bases: :py:obj:`FitmentMapping`
+
+
+   Schema for detailed fitment mapping data.
+
+
+   .. py:attribute:: notes
+      :type:  Optional[str]
+
+
+   .. py:attribute:: created_at
+      :type:  str
+
+
+   .. py:attribute:: updated_at
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FitmentMappingCreate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for creating a new fitment mapping.
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: vehicle_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: position_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: attributes
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: is_validated
+      :type:  bool
+
+
+   .. py:attribute:: is_manual
+      :type:  bool
+
+
+   .. py:attribute:: notes
+      :type:  Optional[str]
+
+
+.. py:class:: FitmentMappingUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing fitment mapping.
+
+
+   .. py:attribute:: vehicle_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: position_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: attributes
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: is_validated
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: is_manual
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: notes
+      :type:  Optional[str]
+
+
+.. py:class:: FitmentMappingHistory
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fitment mapping history data.
+
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: change_type
+      :type:  str
+
+
+   .. py:attribute:: previous_values
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: new_values
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: changed_at
+      :type:  str
+
+
+   .. py:attribute:: changed_by_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FitmentSearchParameters
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fitment mapping search parameters.
+
+
+   .. py:attribute:: product_query
+      :type:  Optional[str]
+
+
+   .. py:attribute:: is_validated
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: is_manual
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+.. py:class:: FitmentMappingSearchResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated fitment mapping search response.
+
+
+   .. py:attribute:: items
+      :type:  List[FitmentMapping]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+
+.. py:class:: FitmentMappingHistoryResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated fitment mapping history response.
+
+
+   .. py:attribute:: items
+      :type:  List[FitmentMappingHistory]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+

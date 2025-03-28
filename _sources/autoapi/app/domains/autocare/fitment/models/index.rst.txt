@@ -1,0 +1,149 @@
+app.domains.autocare.fitment.models
+===================================
+
+.. py:module:: app.domains.autocare.fitment.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.fitment.models.FitmentMapping
+   app.domains.autocare.fitment.models.FitmentMappingHistory
+
+
+Module Contents
+---------------
+
+.. py:class:: FitmentMapping
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for mapping product fitments to autocare data.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fitment_mapping'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: vehicle_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: position_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: attributes
+      :type:  sqlalchemy.orm.Mapped[Dict[str, Any]]
+
+
+   .. py:attribute:: is_validated
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: is_manual
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: notes
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: created_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: updated_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: product
+
+
+   .. py:attribute:: created_by
+
+
+   .. py:attribute:: updated_by
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: FitmentMappingHistory
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for tracking changes to fitment mappings.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fitment_mapping_history'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: mapping_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: change_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: previous_values
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: new_values
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: changed_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: changed_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: mapping
+
+
+   .. py:attribute:: changed_by
+
+
+   .. py:method:: __repr__()
+
+

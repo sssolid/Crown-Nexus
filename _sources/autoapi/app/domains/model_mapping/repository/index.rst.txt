@@ -1,0 +1,117 @@
+app.domains.model_mapping.repository
+====================================
+
+.. py:module:: app.domains.model_mapping.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.model_mapping.repository.ModelMappingRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelMappingRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.model_mapping.models.ModelMapping`\ , :py:obj:`int`\ ]
+
+
+   Repository for ModelMapping entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   ModelMapping entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_pattern(pattern)
+      :async:
+
+
+      Find model mappings by pattern.
+
+      Args:
+          pattern: The pattern to search for.
+
+      Returns:
+          List of model mappings matching the pattern.
+
+
+
+   .. py:method:: find_by_make_model(make, model)
+      :async:
+
+
+      Find model mappings by make and model.
+
+      Args:
+          make: The make to search for.
+          model: The model to search for.
+
+      Returns:
+          List of model mappings for the make and model.
+
+
+
+   .. py:method:: match_vehicle_string(vehicle_string)
+      :async:
+
+
+      Match a vehicle string against patterns to find the correct mapping.
+
+      Args:
+          vehicle_string: The vehicle string to match.
+
+      Returns:
+          Dictionary with make, code, and model if matched, None otherwise.
+
+
+
+   .. py:method:: get_by_make(make)
+      :async:
+
+
+      Get model mappings for a specific make.
+
+      Args:
+          make: The make to filter by.
+
+      Returns:
+          List of model mappings for the make.
+
+
+
+   .. py:method:: get_active_mappings(page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of active model mappings.
+
+      Args:
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: ensure_exists(mapping_id)
+      :async:
+
+
+      Ensure a model mapping exists by ID, raising an exception if not found.
+
+      Args:
+          mapping_id: The model mapping ID to check.
+
+      Returns:
+          The model mapping if found.
+
+      Raises:
+          ResourceNotFoundException: If the model mapping is not found.
+
+
+

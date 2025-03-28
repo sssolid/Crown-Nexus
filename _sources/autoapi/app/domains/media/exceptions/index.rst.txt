@@ -1,0 +1,6 @@
+app.domains.media.exceptions
+============================
+
+.. py:module:: app.domains.media.exceptions
+
+

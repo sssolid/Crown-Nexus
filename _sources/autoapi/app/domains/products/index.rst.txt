@@ -1,0 +1,472 @@
+app.domains.products
+====================
+
+.. py:module:: app.domains.products
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/products/exceptions/index
+   /autoapi/app/domains/products/handlers/index
+   /autoapi/app/domains/products/models/index
+   /autoapi/app/domains/products/repository/index
+   /autoapi/app/domains/products/schemas/index
+   /autoapi/app/domains/products/service/index
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.domains.products.ProductNotFoundException
+   app.domains.products.DuplicatePartNumberException
+   app.domains.products.ProductInactiveException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.products.Product
+   app.domains.products.Brand
+   app.domains.products.ProductDescription
+   app.domains.products.ProductCreate
+   app.domains.products.ProductUpdate
+   app.domains.products.ProductSchema
+   app.domains.products.BrandSchema
+   app.domains.products.ProductService
+
+
+Package Contents
+----------------
+
+.. py:class:: Product
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product entity representing a sellable item.
+
+   Attributes:
+       id: Unique identifier.
+       part_number: Product part number (unique).
+       part_number_stripped: Normalized version of part number for searching.
+       application: Product application or use case description.
+       vintage: Whether the product is for vintage vehicles.
+       late_model: Whether the product is for late model vehicles.
+       soft: Whether the product is soft (e.g., fabric vs metal).
+       universal: Whether the product is universal (fits multiple applications).
+       search_vector: Full-text search vector.
+       is_active: Whether the product is active in the catalog.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: part_number
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: part_number_stripped
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: application
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: vintage
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: late_model
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: soft
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: universal
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: search_vector
+      :type:  sqlalchemy.orm.Mapped[Optional[Any]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: descriptions
+      :type:  sqlalchemy.orm.Mapped[List[ProductDescription]]
+
+
+   .. py:attribute:: marketing
+      :type:  sqlalchemy.orm.Mapped[List[ProductMarketing]]
+
+
+   .. py:attribute:: activities
+      :type:  sqlalchemy.orm.Mapped[List[ProductActivity]]
+
+
+   .. py:attribute:: superseded_by
+      :type:  sqlalchemy.orm.Mapped[List[ProductSupersession]]
+
+
+   .. py:attribute:: supersedes
+      :type:  sqlalchemy.orm.Mapped[List[ProductSupersession]]
+
+
+   .. py:attribute:: attributes
+      :type:  sqlalchemy.orm.Mapped[List[ProductAttribute]]
+
+
+   .. py:attribute:: pricing
+      :type:  sqlalchemy.orm.Mapped[List[ProductPricing]]
+
+
+   .. py:attribute:: measurements
+      :type:  sqlalchemy.orm.Mapped[List[ProductMeasurement]]
+
+
+   .. py:attribute:: brand_history
+      :type:  sqlalchemy.orm.Mapped[List[ProductBrandHistory]]
+
+
+   .. py:attribute:: stock
+      :type:  sqlalchemy.orm.Mapped[List[ProductStock]]
+
+
+   .. py:attribute:: media
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.media.models.Media]]
+
+
+   .. py:attribute:: fitments
+      :type:  sqlalchemy.orm.Mapped[List[Fitment]]
+
+
+   .. py:attribute:: tariff_codes
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.TariffCode]]
+
+
+   .. py:attribute:: unspsc_codes
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.UnspscCode]]
+
+
+   .. py:attribute:: countries_of_origin
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.location.models.Country]]
+
+
+   .. py:attribute:: hardware_items
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Hardware]]
+
+
+   .. py:attribute:: colors
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Color]]
+
+
+   .. py:attribute:: construction_types
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.ConstructionType]]
+
+
+   .. py:attribute:: textures
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Texture]]
+
+
+   .. py:attribute:: packaging_types
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.PackagingType]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Product instance.
+
+      Returns:
+          String representation including part number.
+
+
+
+.. py:class:: Brand
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Brand entity representing a product brand.
+
+   Attributes:
+       id: Unique identifier.
+       name: Brand name.
+       parent_company_id: ID of the parent company.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'brand'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: parent_company_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: parent_company
+
+
+   .. py:attribute:: brand_history
+      :type:  sqlalchemy.orm.Mapped[List[ProductBrandHistory]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Brand instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: ProductDescription
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product description entity representing a textual description of a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       description_type: Type of description (e.g., short, long, etc.).
+       description: The actual description text.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_description'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: description_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductDescription instance.
+
+      Returns:
+          String representation including description type and product ID.
+
+
+
+.. py:class:: ProductCreate
+
+   Bases: :py:obj:`ProductBase`
+
+
+   Schema for creating a new Product.
+
+   Includes nested creation of related entities.
+
+
+   .. py:attribute:: descriptions
+      :type:  Optional[List[ProductDescriptionCreate]]
+
+
+   .. py:attribute:: marketing
+      :type:  Optional[List[ProductMarketingCreate]]
+
+
+.. py:class:: ProductUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Product.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: part_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: application
+      :type:  Optional[str]
+
+
+   .. py:attribute:: vintage
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: late_model
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: soft
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: universal
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+.. py:class:: ProductSchema
+
+   Bases: :py:obj:`ProductInDB`
+
+
+   Schema for complete Product data in API responses.
+
+   Includes related entities like descriptions, marketing, etc.
+
+
+   .. py:attribute:: descriptions
+      :type:  List[ProductDescription]
+
+
+   .. py:attribute:: marketing
+      :type:  List[ProductMarketing]
+
+
+   .. py:attribute:: activities
+      :type:  List[ProductActivity]
+
+
+   .. py:attribute:: superseded_by
+      :type:  List[ProductSupersession]
+
+
+   .. py:attribute:: supersedes
+      :type:  List[ProductSupersession]
+
+
+   .. py:attribute:: measurements
+      :type:  List[ProductMeasurement]
+
+
+   .. py:attribute:: stock
+      :type:  List[ProductStock]
+
+
+.. py:class:: BrandSchema
+
+   Bases: :py:obj:`BrandInDB`
+
+
+   Schema for complete Brand data in API responses.
+
+   Includes related entities like parent company details.
+
+
+   .. py:attribute:: parent_company
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: ProductService(db)
+
+   Service for product operations.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: get_product(product_id)
+      :async:
+
+
+      Get product by ID.
+
+
+
+   .. py:method:: create_product(data)
+      :async:
+
+
+      Create a new product.
+
+
+
+.. py:exception:: ProductNotFoundException(product_id)
+
+   Bases: :py:obj:`app.core.exceptions.ResourceNotFoundException`
+
+
+   Raised when a product cannot be found.
+
+
+.. py:exception:: DuplicatePartNumberException(part_number)
+
+   Bases: :py:obj:`app.core.exceptions.BusinessException`
+
+
+   Raised when attempting to create a product with an existing part number.
+
+
+.. py:exception:: ProductInactiveException(product_id)
+
+   Bases: :py:obj:`app.core.exceptions.BusinessException`
+
+
+   Raised when attempting operations on an inactive product.
+
+

@@ -1,0 +1,71 @@
+app.core.exceptions.handlers
+============================
+
+.. py:module:: app.core.exceptions.handlers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.exceptions.handlers.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.exceptions.handlers.app_exception_handler
+   app.core.exceptions.handlers.validation_exception_handler
+   app.core.exceptions.handlers.generic_exception_handler
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: app_exception_handler(request, exc)
+   :async:
+
+
+   Handle application exceptions.
+
+   Args:
+       request: The request that caused the exception
+       exc: The application exception
+
+   Returns:
+       A formatted JSON response with error details
+
+
+.. py:function:: validation_exception_handler(request, exc)
+   :async:
+
+
+   Handle validation exceptions.
+
+   Args:
+       request: The request that caused the exception
+       exc: The validation exception
+
+   Returns:
+       A formatted JSON response with validation error details
+
+
+.. py:function:: generic_exception_handler(request, exc)
+   :async:
+
+
+   Handle generic exceptions.
+
+   Args:
+       request: The request that caused the exception
+       exc: The unhandled exception
+
+   Returns:
+       A formatted JSON response with error details
+
+

@@ -1,0 +1,134 @@
+app.core.error.reporters
+========================
+
+.. py:module:: app.core.error.reporters
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.error.reporters.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.error.reporters.LoggingErrorReporter
+   app.core.error.reporters.DatabaseErrorReporter
+   app.core.error.reporters.ExternalServiceReporter
+   app.core.error.reporters.CompositeErrorReporter
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: LoggingErrorReporter
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that logs errors using the application logging system.
+
+   This reporter formats error information and logs it via the structured
+   logging system, ensuring consistent error logging across the application.
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error by logging it.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: DatabaseErrorReporter
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that stores errors in a database.
+
+   This reporter formats error information and stores it in a database
+   for later analysis and reporting.
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error by storing it in a database.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: ExternalServiceReporter(service_url, api_key)
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that sends errors to an external service.
+
+   This reporter formats error information and sends it to an external
+   error tracking or monitoring service via HTTP.
+
+
+   .. py:attribute:: service_url
+
+
+   .. py:attribute:: api_key
+
+
+   .. py:attribute:: headers
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error by sending it to an external service.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: CompositeErrorReporter(reporters)
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that delegates to multiple other reporters.
+
+   This reporter sends errors to multiple destinations by delegating
+   to a collection of other error reporters.
+
+
+   .. py:attribute:: reporters
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error using all configured reporters.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+

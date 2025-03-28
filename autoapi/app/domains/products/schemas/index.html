@@ -1,0 +1,1458 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.products.schemas &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.products.service" href="../service/index.html" />
+    <link rel="prev" title="app.domains.products.repository" href="../repository/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.products</a></li>
+      <li class="breadcrumb-item active">app.domains.products.schemas</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/products/schemas/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.products.schemas">
+<span id="app-domains-products-schemas"></span><h1>app.domains.products.schemas<a class="headerlink" href="#module-app.domains.products.schemas" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.DescriptionType" title="app.domains.products.schemas.DescriptionType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DescriptionType</span></code></a></p></td>
+<td><p>Types of product descriptions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.MarketingType" title="app.domains.products.schemas.MarketingType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MarketingType</span></code></a></p></td>
+<td><p>Types of product marketing content.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductStatus" title="app.domains.products.schemas.ProductStatus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStatus</span></code></a></p></td>
+<td><p>Product status values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionBase" title="app.domains.products.schemas.ProductDescriptionBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionBase</span></code></a></p></td>
+<td><p>Base schema for ProductDescription data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionCreate" title="app.domains.products.schemas.ProductDescriptionCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionCreate</span></code></a></p></td>
+<td><p>Schema for creating a new ProductDescription.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionUpdate" title="app.domains.products.schemas.ProductDescriptionUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing ProductDescription.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionInDB" title="app.domains.products.schemas.ProductDescriptionInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionInDB</span></code></a></p></td>
+<td><p>Schema for ProductDescription data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductDescription" title="app.domains.products.schemas.ProductDescription"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescription</span></code></a></p></td>
+<td><p>Schema for complete ProductDescription data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMarketingBase" title="app.domains.products.schemas.ProductMarketingBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingBase</span></code></a></p></td>
+<td><p>Base schema for ProductMarketing data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMarketingCreate" title="app.domains.products.schemas.ProductMarketingCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingCreate</span></code></a></p></td>
+<td><p>Schema for creating a new ProductMarketing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMarketingUpdate" title="app.domains.products.schemas.ProductMarketingUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing ProductMarketing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMarketingInDB" title="app.domains.products.schemas.ProductMarketingInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingInDB</span></code></a></p></td>
+<td><p>Schema for ProductMarketing data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMarketing" title="app.domains.products.schemas.ProductMarketing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketing</span></code></a></p></td>
+<td><p>Schema for complete ProductMarketing data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductActivityBase" title="app.domains.products.schemas.ProductActivityBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivityBase</span></code></a></p></td>
+<td><p>Base schema for ProductActivity data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductActivityCreate" title="app.domains.products.schemas.ProductActivityCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivityCreate</span></code></a></p></td>
+<td><p>Schema for creating a new ProductActivity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductActivityInDB" title="app.domains.products.schemas.ProductActivityInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivityInDB</span></code></a></p></td>
+<td><p>Schema for ProductActivity data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductActivity" title="app.domains.products.schemas.ProductActivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivity</span></code></a></p></td>
+<td><p>Schema for complete ProductActivity data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.BrandBase" title="app.domains.products.schemas.BrandBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandBase</span></code></a></p></td>
+<td><p>Base schema for Brand data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.BrandCreate" title="app.domains.products.schemas.BrandCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Brand.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.BrandUpdate" title="app.domains.products.schemas.BrandUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Brand.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.BrandInDB" title="app.domains.products.schemas.BrandInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandInDB</span></code></a></p></td>
+<td><p>Schema for Brand data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.Brand" title="app.domains.products.schemas.Brand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Brand</span></code></a></p></td>
+<td><p>Schema for complete Brand data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionBase" title="app.domains.products.schemas.ProductSupersessionBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionBase</span></code></a></p></td>
+<td><p>Base schema for ProductSupersession data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionCreate" title="app.domains.products.schemas.ProductSupersessionCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionCreate</span></code></a></p></td>
+<td><p>Schema for creating a new ProductSupersession.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionUpdate" title="app.domains.products.schemas.ProductSupersessionUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing ProductSupersession.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionInDB" title="app.domains.products.schemas.ProductSupersessionInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionInDB</span></code></a></p></td>
+<td><p>Schema for ProductSupersession data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductSupersession" title="app.domains.products.schemas.ProductSupersession"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersession</span></code></a></p></td>
+<td><p>Schema for complete ProductSupersession data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementBase" title="app.domains.products.schemas.ProductMeasurementBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementBase</span></code></a></p></td>
+<td><p>Base schema for ProductMeasurement data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementCreate" title="app.domains.products.schemas.ProductMeasurementCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementCreate</span></code></a></p></td>
+<td><p>Schema for creating a new ProductMeasurement.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementUpdate" title="app.domains.products.schemas.ProductMeasurementUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing ProductMeasurement.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementInDB" title="app.domains.products.schemas.ProductMeasurementInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementInDB</span></code></a></p></td>
+<td><p>Schema for ProductMeasurement data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductMeasurement" title="app.domains.products.schemas.ProductMeasurement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurement</span></code></a></p></td>
+<td><p>Schema for complete ProductMeasurement data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductStockBase" title="app.domains.products.schemas.ProductStockBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockBase</span></code></a></p></td>
+<td><p>Base schema for ProductStock data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductStockCreate" title="app.domains.products.schemas.ProductStockCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockCreate</span></code></a></p></td>
+<td><p>Schema for creating new ProductStock.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductStockUpdate" title="app.domains.products.schemas.ProductStockUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing ProductStock.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductStockInDB" title="app.domains.products.schemas.ProductStockInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockInDB</span></code></a></p></td>
+<td><p>Schema for ProductStock data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductStock" title="app.domains.products.schemas.ProductStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStock</span></code></a></p></td>
+<td><p>Schema for complete ProductStock data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductBase" title="app.domains.products.schemas.ProductBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductBase</span></code></a></p></td>
+<td><p>Base schema for Product data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductCreate" title="app.domains.products.schemas.ProductCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Product.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductUpdate" title="app.domains.products.schemas.ProductUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductInDB" title="app.domains.products.schemas.ProductInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductInDB</span></code></a></p></td>
+<td><p>Schema for Product data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.Product" title="app.domains.products.schemas.Product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Product</span></code></a></p></td>
+<td><p>Schema for complete Product data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.FitmentBase" title="app.domains.products.schemas.FitmentBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentBase</span></code></a></p></td>
+<td><p>Base schema for Fitment data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.FitmentCreate" title="app.domains.products.schemas.FitmentCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Fitment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.FitmentUpdate" title="app.domains.products.schemas.FitmentUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Fitment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.FitmentInDB" title="app.domains.products.schemas.FitmentInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentInDB</span></code></a></p></td>
+<td><p>Schema for Fitment data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.Fitment" title="app.domains.products.schemas.Fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fitment</span></code></a></p></td>
+<td><p>Schema for complete Fitment data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.PaginatedResponse" title="app.domains.products.schemas.PaginatedResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PaginatedResponse</span></code></a></p></td>
+<td><p>Base schema for paginated responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.products.schemas.ProductListResponse" title="app.domains.products.schemas.ProductListResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductListResponse</span></code></a></p></td>
+<td><p>Schema for paginated product response.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.products.schemas.FitmentListResponse" title="app.domains.products.schemas.FitmentListResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentListResponse</span></code></a></p></td>
+<td><p>Schema for paginated fitment response.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.DescriptionType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">DescriptionType</span></span><a class="headerlink" href="#app.domains.products.schemas.DescriptionType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Types of product descriptions.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>SHORT: Brief product description.
+LONG: Detailed product description.
+KEYWORDS: Keywords for search.
+SLANG: Colloquial terms for the product.
+NOTES: Internal notes about the product.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.DescriptionType.SHORT">
+<span class="sig-name descname"><span class="pre">SHORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Short'</span></em><a class="headerlink" href="#app.domains.products.schemas.DescriptionType.SHORT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.DescriptionType.LONG">
+<span class="sig-name descname"><span class="pre">LONG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Long'</span></em><a class="headerlink" href="#app.domains.products.schemas.DescriptionType.LONG" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.DescriptionType.KEYWORDS">
+<span class="sig-name descname"><span class="pre">KEYWORDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Keywords'</span></em><a class="headerlink" href="#app.domains.products.schemas.DescriptionType.KEYWORDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.DescriptionType.SLANG">
+<span class="sig-name descname"><span class="pre">SLANG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Slang'</span></em><a class="headerlink" href="#app.domains.products.schemas.DescriptionType.SLANG" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.DescriptionType.NOTES">
+<span class="sig-name descname"><span class="pre">NOTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Notes'</span></em><a class="headerlink" href="#app.domains.products.schemas.DescriptionType.NOTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.MarketingType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">MarketingType</span></span><a class="headerlink" href="#app.domains.products.schemas.MarketingType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Types of product marketing content.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>BULLET_POINT: Bullet point features.
+AD_COPY: Advertising copy.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.MarketingType.BULLET_POINT">
+<span class="sig-name descname"><span class="pre">BULLET_POINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Bullet</span> <span class="pre">Point'</span></em><a class="headerlink" href="#app.domains.products.schemas.MarketingType.BULLET_POINT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.MarketingType.AD_COPY">
+<span class="sig-name descname"><span class="pre">AD_COPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Ad</span> <span class="pre">Copy'</span></em><a class="headerlink" href="#app.domains.products.schemas.MarketingType.AD_COPY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStatus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductStatus</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStatus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Product status values.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>ACTIVE: Product is active and available.
+INACTIVE: Product is temporarily inactive.
+DISCONTINUED: Product is permanently discontinued.
+OUT_OF_STOCK: Product is out of stock.
+PENDING: Product is pending approval or release.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStatus.ACTIVE">
+<span class="sig-name descname"><span class="pre">ACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'active'</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStatus.ACTIVE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStatus.INACTIVE">
+<span class="sig-name descname"><span class="pre">INACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'inactive'</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStatus.INACTIVE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStatus.DISCONTINUED">
+<span class="sig-name descname"><span class="pre">DISCONTINUED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'discontinued'</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStatus.DISCONTINUED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStatus.OUT_OF_STOCK">
+<span class="sig-name descname"><span class="pre">OUT_OF_STOCK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'out_of_stock'</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStatus.OUT_OF_STOCK" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStatus.PENDING">
+<span class="sig-name descname"><span class="pre">PENDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pending'</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStatus.PENDING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductDescriptionBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ProductDescription data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>description_type: Type of description.
+description: The description text.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionBase.description_type">
+<span class="sig-name descname"><span class="pre">description_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.products.schemas.DescriptionType" title="app.domains.products.schemas.DescriptionType"><span class="pre">DescriptionType</span></a></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionBase.description_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductDescriptionCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionBase" title="app.domains.products.schemas.ProductDescriptionBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionBase</span></code></a></p>
+<p>Schema for creating a new ProductDescription.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductDescriptionUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing ProductDescription.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionUpdate.description_type">
+<span class="sig-name descname"><span class="pre">description_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.products.schemas.DescriptionType" title="app.domains.products.schemas.DescriptionType"><span class="pre">DescriptionType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionUpdate.description_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductDescriptionInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionBase" title="app.domains.products.schemas.ProductDescriptionBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionBase</span></code></a></p>
+<p>Schema for ProductDescription data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionInDB.product_id">
+<span class="sig-name descname"><span class="pre">product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionInDB.product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescriptionInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductDescriptionInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductDescription">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductDescription</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductDescription" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionInDB" title="app.domains.products.schemas.ProductDescriptionInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDescriptionInDB</span></code></a></p>
+<p>Schema for complete ProductDescription data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMarketingBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ProductMarketing data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>marketing_type: Type of marketing content.
+content: The marketing content.
+position: Display order position.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingBase.marketing_type">
+<span class="sig-name descname"><span class="pre">marketing_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.products.schemas.MarketingType" title="app.domains.products.schemas.MarketingType"><span class="pre">MarketingType</span></a></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingBase.marketing_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingBase.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingBase.content" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingBase.position">
+<span class="sig-name descname"><span class="pre">position</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingBase.position" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMarketingCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMarketingBase" title="app.domains.products.schemas.ProductMarketingBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingBase</span></code></a></p>
+<p>Schema for creating a new ProductMarketing.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMarketingUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing ProductMarketing.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingUpdate.marketing_type">
+<span class="sig-name descname"><span class="pre">marketing_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.products.schemas.MarketingType" title="app.domains.products.schemas.MarketingType"><span class="pre">MarketingType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingUpdate.marketing_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingUpdate.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingUpdate.content" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingUpdate.position">
+<span class="sig-name descname"><span class="pre">position</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingUpdate.position" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMarketingInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMarketingBase" title="app.domains.products.schemas.ProductMarketingBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingBase</span></code></a></p>
+<p>Schema for ProductMarketing data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingInDB.product_id">
+<span class="sig-name descname"><span class="pre">product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingInDB.product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketingInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMarketingInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMarketing">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMarketing</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMarketing" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMarketingInDB" title="app.domains.products.schemas.ProductMarketingInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMarketingInDB</span></code></a></p>
+<p>Schema for complete ProductMarketing data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductActivityBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductActivityBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ProductActivity data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>status: Product status.
+reason: Reason for the status change.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityBase.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.products.schemas.ProductStatus" title="app.domains.products.schemas.ProductStatus"><span class="pre">ProductStatus</span></a></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivityBase.status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityBase.reason">
+<span class="sig-name descname"><span class="pre">reason</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivityBase.reason" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductActivityCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductActivityCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductActivityBase" title="app.domains.products.schemas.ProductActivityBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivityBase</span></code></a></p>
+<p>Schema for creating a new ProductActivity.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductActivityInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductActivityInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductActivityBase" title="app.domains.products.schemas.ProductActivityBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivityBase</span></code></a></p>
+<p>Schema for ProductActivity data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivityInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityInDB.product_id">
+<span class="sig-name descname"><span class="pre">product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivityInDB.product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityInDB.changed_by_id">
+<span class="sig-name descname"><span class="pre">changed_by_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivityInDB.changed_by_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityInDB.changed_at">
+<span class="sig-name descname"><span class="pre">changed_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivityInDB.changed_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivityInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductActivityInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivity">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductActivity</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductActivity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductActivityInDB" title="app.domains.products.schemas.ProductActivityInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductActivityInDB</span></code></a></p>
+<p>Schema for complete ProductActivity data in API responses.</p>
+<p>Includes related entities like user details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductActivity.changed_by">
+<span class="sig-name descname"><span class="pre">changed_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductActivity.changed_by" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">BrandBase</span></span><a class="headerlink" href="#app.domains.products.schemas.BrandBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Brand data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Brand name.
+parent_company_id: ID of the parent company.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.products.schemas.BrandBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandBase.parent_company_id">
+<span class="sig-name descname"><span class="pre">parent_company_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.BrandBase.parent_company_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">BrandCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.BrandCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.BrandBase" title="app.domains.products.schemas.BrandBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandBase</span></code></a></p>
+<p>Schema for creating a new Brand.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">BrandUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.BrandUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Brand.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.BrandUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandUpdate.parent_company_id">
+<span class="sig-name descname"><span class="pre">parent_company_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.BrandUpdate.parent_company_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">BrandInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.BrandInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.BrandBase" title="app.domains.products.schemas.BrandBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandBase</span></code></a></p>
+<p>Schema for Brand data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.BrandInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.BrandInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.BrandInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.BrandInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Brand">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">Brand</span></span><a class="headerlink" href="#app.domains.products.schemas.Brand" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.BrandInDB" title="app.domains.products.schemas.BrandInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrandInDB</span></code></a></p>
+<p>Schema for complete Brand data in API responses.</p>
+<p>Includes related entities like parent company details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Brand.parent_company">
+<span class="sig-name descname"><span class="pre">parent_company</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.Brand.parent_company" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductSupersessionBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ProductSupersession data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>old_product_id: ID of the product being replaced.
+new_product_id: ID of the replacement product.
+reason: Reason for the supersession.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionBase.old_product_id">
+<span class="sig-name descname"><span class="pre">old_product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionBase.old_product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionBase.new_product_id">
+<span class="sig-name descname"><span class="pre">new_product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionBase.new_product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionBase.reason">
+<span class="sig-name descname"><span class="pre">reason</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionBase.reason" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductSupersessionCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionBase" title="app.domains.products.schemas.ProductSupersessionBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionBase</span></code></a></p>
+<p>Schema for creating a new ProductSupersession.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductSupersessionUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing ProductSupersession.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionUpdate.reason">
+<span class="sig-name descname"><span class="pre">reason</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionUpdate.reason" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductSupersessionInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionBase" title="app.domains.products.schemas.ProductSupersessionBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionBase</span></code></a></p>
+<p>Schema for ProductSupersession data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionInDB.changed_at">
+<span class="sig-name descname"><span class="pre">changed_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionInDB.changed_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersessionInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductSupersessionInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersession">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductSupersession</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductSupersession" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductSupersessionInDB" title="app.domains.products.schemas.ProductSupersessionInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductSupersessionInDB</span></code></a></p>
+<p>Schema for complete ProductSupersession data in API responses.</p>
+<p>Includes related entities like product details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersession.old_product">
+<span class="sig-name descname"><span class="pre">old_product</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersession.old_product" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductSupersession.new_product">
+<span class="sig-name descname"><span class="pre">new_product</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductSupersession.new_product" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMeasurementBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ProductMeasurement data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>manufacturer_id: ID of the manufacturer.
+length: Length measurement.
+width: Width measurement.
+height: Height measurement.
+weight: Weight measurement.
+volume: Volume measurement.
+dimensional_weight: Dimensional weight for shipping calculations.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.manufacturer_id">
+<span class="sig-name descname"><span class="pre">manufacturer_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.manufacturer_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.length">
+<span class="sig-name descname"><span class="pre">length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.width">
+<span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.width" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.height">
+<span class="sig-name descname"><span class="pre">height</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.height" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.weight" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.volume">
+<span class="sig-name descname"><span class="pre">volume</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.volume" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementBase.dimensional_weight">
+<span class="sig-name descname"><span class="pre">dimensional_weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementBase.dimensional_weight" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMeasurementCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementBase" title="app.domains.products.schemas.ProductMeasurementBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementBase</span></code></a></p>
+<p>Schema for creating a new ProductMeasurement.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMeasurementUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementBase" title="app.domains.products.schemas.ProductMeasurementBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementBase</span></code></a></p>
+<p>Schema for updating an existing ProductMeasurement.</p>
+<p>All fields are optional to allow partial updates.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMeasurementInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementBase" title="app.domains.products.schemas.ProductMeasurementBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementBase</span></code></a></p>
+<p>Schema for ProductMeasurement data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementInDB.product_id">
+<span class="sig-name descname"><span class="pre">product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementInDB.product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementInDB.effective_date">
+<span class="sig-name descname"><span class="pre">effective_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementInDB.effective_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurementInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurementInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurement">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductMeasurement</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurement" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductMeasurementInDB" title="app.domains.products.schemas.ProductMeasurementInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductMeasurementInDB</span></code></a></p>
+<p>Schema for complete ProductMeasurement data in API responses.</p>
+<p>Includes related entities like manufacturer details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductMeasurement.manufacturer">
+<span class="sig-name descname"><span class="pre">manufacturer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductMeasurement.manufacturer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductStockBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStockBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ProductStock data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>warehouse_id: ID of the warehouse.
+quantity: Stock quantity.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockBase.warehouse_id">
+<span class="sig-name descname"><span class="pre">warehouse_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStockBase.warehouse_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockBase.quantity">
+<span class="sig-name descname"><span class="pre">quantity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStockBase.quantity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductStockCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStockCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductStockBase" title="app.domains.products.schemas.ProductStockBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockBase</span></code></a></p>
+<p>Schema for creating new ProductStock.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductStockUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStockUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing ProductStock.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockUpdate.quantity">
+<span class="sig-name descname"><span class="pre">quantity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStockUpdate.quantity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductStockInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStockInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductStockBase" title="app.domains.products.schemas.ProductStockBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockBase</span></code></a></p>
+<p>Schema for ProductStock data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStockInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockInDB.product_id">
+<span class="sig-name descname"><span class="pre">product_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStockInDB.product_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockInDB.last_updated">
+<span class="sig-name descname"><span class="pre">last_updated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStockInDB.last_updated" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStockInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStockInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStock">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductStock</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductStock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductStockInDB" title="app.domains.products.schemas.ProductStockInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductStockInDB</span></code></a></p>
+<p>Schema for complete ProductStock data in API responses.</p>
+<p>Includes related entities like warehouse details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductStock.warehouse">
+<span class="sig-name descname"><span class="pre">warehouse</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.ProductStock.warehouse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductBase</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Product data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>part_number: Product part number.
+part_number_stripped: Normalized version of part number for searching.
+application: Product application or use case description.
+vintage: Whether the product is for vintage vehicles.
+late_model: Whether the product is for late model vehicles.
+soft: Whether the product is soft (e.g., fabric vs metal).
+universal: Whether the product is universal (fits multiple applications).
+is_active: Whether the product is active in the catalog.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.part_number">
+<span class="sig-name descname"><span class="pre">part_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.part_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.part_number_stripped">
+<span class="sig-name descname"><span class="pre">part_number_stripped</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.part_number_stripped" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.application">
+<span class="sig-name descname"><span class="pre">application</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.application" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.vintage">
+<span class="sig-name descname"><span class="pre">vintage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.vintage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.late_model">
+<span class="sig-name descname"><span class="pre">late_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.late_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.soft">
+<span class="sig-name descname"><span class="pre">soft</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.soft" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.universal">
+<span class="sig-name descname"><span class="pre">universal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.universal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductBase.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductBase.generate_part_number_stripped">
+<span class="sig-name descname"><span class="pre">generate_part_number_stripped</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.products.schemas.ProductBase.generate_part_number_stripped" title="Link to this definition"></a></dt>
+<dd><p>Generate normalized part number if not provided.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Self with normalized part number.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.domains.products.schemas.ProductBase" title="app.domains.products.schemas.ProductBase">ProductBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductBase" title="app.domains.products.schemas.ProductBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductBase</span></code></a></p>
+<p>Schema for creating a new Product.</p>
+<p>Includes nested creation of related entities.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductCreate.descriptions">
+<span class="sig-name descname"><span class="pre">descriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductDescriptionCreate" title="app.domains.products.schemas.ProductDescriptionCreate"><span class="pre">ProductDescriptionCreate</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductCreate.descriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductCreate.marketing">
+<span class="sig-name descname"><span class="pre">marketing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductMarketingCreate" title="app.domains.products.schemas.ProductMarketingCreate"><span class="pre">ProductMarketingCreate</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductCreate.marketing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Product.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.part_number">
+<span class="sig-name descname"><span class="pre">part_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.part_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.application">
+<span class="sig-name descname"><span class="pre">application</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.application" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.vintage">
+<span class="sig-name descname"><span class="pre">vintage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.vintage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.late_model">
+<span class="sig-name descname"><span class="pre">late_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.late_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.soft">
+<span class="sig-name descname"><span class="pre">soft</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.soft" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.universal">
+<span class="sig-name descname"><span class="pre">universal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.universal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductUpdate.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductUpdate.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductBase" title="app.domains.products.schemas.ProductBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductBase</span></code></a></p>
+<p>Schema for Product data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductInDB.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.ProductInDB.updated_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">Product</span></span><a class="headerlink" href="#app.domains.products.schemas.Product" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.ProductInDB" title="app.domains.products.schemas.ProductInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductInDB</span></code></a></p>
+<p>Schema for complete Product data in API responses.</p>
+<p>Includes related entities like descriptions, marketing, etc.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.descriptions">
+<span class="sig-name descname"><span class="pre">descriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductDescription" title="app.domains.products.schemas.ProductDescription"><span class="pre">ProductDescription</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.descriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.marketing">
+<span class="sig-name descname"><span class="pre">marketing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductMarketing" title="app.domains.products.schemas.ProductMarketing"><span class="pre">ProductMarketing</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.marketing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.activities">
+<span class="sig-name descname"><span class="pre">activities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductActivity" title="app.domains.products.schemas.ProductActivity"><span class="pre">ProductActivity</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.activities" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.superseded_by">
+<span class="sig-name descname"><span class="pre">superseded_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductSupersession" title="app.domains.products.schemas.ProductSupersession"><span class="pre">ProductSupersession</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.superseded_by" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.supersedes">
+<span class="sig-name descname"><span class="pre">supersedes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductSupersession" title="app.domains.products.schemas.ProductSupersession"><span class="pre">ProductSupersession</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.supersedes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.measurements">
+<span class="sig-name descname"><span class="pre">measurements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductMeasurement" title="app.domains.products.schemas.ProductMeasurement"><span class="pre">ProductMeasurement</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.measurements" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Product.stock">
+<span class="sig-name descname"><span class="pre">stock</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.ProductStock" title="app.domains.products.schemas.ProductStock"><span class="pre">ProductStock</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.Product.stock" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">FitmentBase</span></span><a class="headerlink" href="#app.domains.products.schemas.FitmentBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Fitment data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>year: Vehicle year.
+make: Vehicle make.
+model: Vehicle model.
+engine: Engine specification.
+transmission: Transmission specification.
+attributes: Additional fitment attributes.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.year">
+<span class="sig-name descname"><span class="pre">year</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.year" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.make">
+<span class="sig-name descname"><span class="pre">make</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.make" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.engine">
+<span class="sig-name descname"><span class="pre">engine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.engine" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.transmission">
+<span class="sig-name descname"><span class="pre">transmission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.transmission" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.attributes">
+<span class="sig-name descname"><span class="pre">attributes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.attributes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentBase.validate_year">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.products.schemas.FitmentBase.validate_year" title="Link to this definition"></a></dt>
+<dd><p>Validate vehicle year.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: The year to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Validated year.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the year is outside valid range.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">FitmentCreate</span></span><a class="headerlink" href="#app.domains.products.schemas.FitmentCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.FitmentBase" title="app.domains.products.schemas.FitmentBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentBase</span></code></a></p>
+<p>Schema for creating a new Fitment.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">FitmentUpdate</span></span><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Fitment.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.year">
+<span class="sig-name descname"><span class="pre">year</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.year" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.make">
+<span class="sig-name descname"><span class="pre">make</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.make" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.engine">
+<span class="sig-name descname"><span class="pre">engine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.engine" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.transmission">
+<span class="sig-name descname"><span class="pre">transmission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.transmission" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.attributes">
+<span class="sig-name descname"><span class="pre">attributes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.attributes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentUpdate.validate_year">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.products.schemas.FitmentUpdate.validate_year" title="Link to this definition"></a></dt>
+<dd><p>Validate vehicle year if provided.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: The year to validate or None.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Validated year or None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the year is outside valid range.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">FitmentInDB</span></span><a class="headerlink" href="#app.domains.products.schemas.FitmentInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.FitmentBase" title="app.domains.products.schemas.FitmentBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentBase</span></code></a></p>
+<p>Schema for Fitment data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentInDB.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentInDB.updated_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.products.schemas.FitmentInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.Fitment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">Fitment</span></span><a class="headerlink" href="#app.domains.products.schemas.Fitment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.FitmentInDB" title="app.domains.products.schemas.FitmentInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentInDB</span></code></a></p>
+<p>Schema for complete Fitment data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.PaginatedResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">PaginatedResponse</span></span><a class="headerlink" href="#app.domains.products.schemas.PaginatedResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for paginated responses.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>items: List of items.
+total: Total number of items.
+page: Current page number.
+page_size: Number of items per page.
+pages: Total number of pages.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.PaginatedResponse.items">
+<span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.PaginatedResponse.items" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.PaginatedResponse.total">
+<span class="sig-name descname"><span class="pre">total</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.domains.products.schemas.PaginatedResponse.total" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.PaginatedResponse.page">
+<span class="sig-name descname"><span class="pre">page</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.domains.products.schemas.PaginatedResponse.page" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.PaginatedResponse.page_size">
+<span class="sig-name descname"><span class="pre">page_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.domains.products.schemas.PaginatedResponse.page_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.PaginatedResponse.pages">
+<span class="sig-name descname"><span class="pre">pages</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.domains.products.schemas.PaginatedResponse.pages" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductListResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">ProductListResponse</span></span><a class="headerlink" href="#app.domains.products.schemas.ProductListResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.PaginatedResponse" title="app.domains.products.schemas.PaginatedResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PaginatedResponse</span></code></a></p>
+<p>Schema for paginated product response.</p>
+<p>Overrides items type to be specifically List[Product].</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.ProductListResponse.items">
+<span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.Product" title="app.domains.products.schemas.Product"><span class="pre">Product</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.ProductListResponse.items" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentListResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.products.schemas.</span></span><span class="sig-name descname"><span class="pre">FitmentListResponse</span></span><a class="headerlink" href="#app.domains.products.schemas.FitmentListResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.products.schemas.PaginatedResponse" title="app.domains.products.schemas.PaginatedResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PaginatedResponse</span></code></a></p>
+<p>Schema for paginated fitment response.</p>
+<p>Overrides items type to be specifically List[Fitment].</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.products.schemas.FitmentListResponse.items">
+<span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.products.schemas.Fitment" title="app.domains.products.schemas.Fitment"><span class="pre">Fitment</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.products.schemas.FitmentListResponse.items" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../repository/index.html" class="btn btn-neutral float-left" title="app.domains.products.repository" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../service/index.html" class="btn btn-neutral float-right" title="app.domains.products.service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,255 @@
+app.core.cache.backends.memory
+==============================
+
+.. py:module:: app.core.cache.backends.memory
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.cache.backends.memory.T
+   app.core.cache.backends.memory.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.cache.backends.memory.MemoryCacheBackend
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:data:: logger
+
+.. py:class:: MemoryCacheBackend(max_size = 1000, clean_interval = 60)
+
+   Bases: :py:obj:`app.core.cache.base.CacheBackend`\ [\ :py:obj:`T`\ ]
+
+
+   In-memory cache backend implementation.
+
+   This backend stores cached values in memory, with optional TTL expiration.
+   It's suitable for development and testing environments, or for small-scale
+   production use where persistence is not required.
+
+
+   .. py:attribute:: cache
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: expiry
+      :type:  Dict[str, float]
+
+
+   .. py:attribute:: max_size
+      :value: 1000
+
+
+
+   .. py:attribute:: clean_interval
+      :value: 60
+
+
+
+   .. py:attribute:: lock
+
+
+   .. py:attribute:: last_cleanup
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the memory cache backend.
+
+      This is a no-op for the memory backend since it doesn't require
+      external connections, but implemented for interface consistency.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the memory cache backend.
+
+      Clears all cached data and performs cleanup.
+
+
+
+   .. py:method:: get(key)
+      :async:
+
+
+      Get a value from the cache.
+
+      Args:
+          key: Cache key
+
+      Returns:
+          Optional[T]: Cached value or None if not found or expired
+
+
+
+   .. py:method:: set(key, value, ttl = None)
+      :async:
+
+
+      Set a value in the cache.
+
+      Args:
+          key: Cache key
+          value: Value to cache
+          ttl: Time-to-live in seconds
+
+      Returns:
+          bool: True if successful, False otherwise
+
+
+
+   .. py:method:: delete(key)
+      :async:
+
+
+      Delete a value from the cache.
+
+      Args:
+          key: Cache key
+
+      Returns:
+          bool: True if key was deleted, False if key wasn't found
+
+
+
+   .. py:method:: exists(key)
+      :async:
+
+
+      Check if a key exists in the cache.
+
+      Args:
+          key: Cache key
+
+      Returns:
+          bool: True if key exists and hasn't expired, False otherwise
+
+
+
+   .. py:method:: invalidate_pattern(pattern)
+      :async:
+
+
+      Invalidate all keys matching a pattern.
+
+      Args:
+          pattern: Key pattern to match (glob pattern)
+
+      Returns:
+          int: Number of keys invalidated
+
+
+
+   .. py:method:: clear()
+      :async:
+
+
+      Clear all cached values.
+
+      Returns:
+          bool: True if successful, False otherwise
+
+
+
+   .. py:method:: get_many(keys)
+      :async:
+
+
+      Get multiple values from the cache.
+
+      Args:
+          keys: List of cache keys
+
+      Returns:
+          Dict[str, Optional[T]]: Dictionary of key-value pairs
+
+
+
+   .. py:method:: set_many(mapping, ttl = None)
+      :async:
+
+
+      Set multiple values in the cache.
+
+      Args:
+          mapping: Dictionary of key-value pairs to cache
+          ttl: Time-to-live in seconds
+
+      Returns:
+          bool: True if successful, False otherwise
+
+
+
+   .. py:method:: delete_many(keys)
+      :async:
+
+
+      Delete multiple values from the cache.
+
+      Args:
+          keys: List of cache keys
+
+      Returns:
+          int: Number of keys deleted
+
+
+
+   .. py:method:: incr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      Increment a counter in the cache.
+
+      Args:
+          key: Cache key
+          amount: Amount to increment by
+          default: Default value if key doesn't exist
+          ttl: Time-to-live in seconds
+
+      Returns:
+          int: New counter value
+
+
+
+   .. py:method:: decr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      Decrement a counter in the cache.
+
+      Args:
+          key: Cache key
+          amount: Amount to decrement by
+          default: Default value if key doesn't exist
+          ttl: Time-to-live in seconds
+
+      Returns:
+          int: New counter value
+
+
+
+   .. py:method:: _clean_if_needed()
+      :async:
+
+
+      Clean expired keys if cleanup interval has passed.
+
+
+

@@ -1,0 +1,192 @@
+app.domains.media.service
+=========================
+
+.. py:module:: app.domains.media.service
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/media/service/base/index
+   /autoapi/app/domains/media/service/factory/index
+   /autoapi/app/domains/media/service/local/index
+   /autoapi/app/domains/media/service/s3/index
+   /autoapi/app/domains/media/service/service/index
+   /autoapi/app/domains/media/service/thumbnails/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.media.service._media_service_instance
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.service.MediaService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.media.service.get_media_service_factory
+   app.domains.media.service.get_media_service
+
+
+Package Contents
+----------------
+
+.. py:class:: MediaService(storage_type = None)
+
+   Bases: :py:obj:`app.services.interfaces.ServiceInterface`
+
+
+   Service for handling media file operations with configurable storage backends.
+
+
+   .. py:attribute:: storage_type
+
+
+   .. py:attribute:: storage
+      :type:  Optional[app.domains.media.service.base.MediaStorageBackend]
+      :value: None
+
+
+
+   .. py:attribute:: initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the media service and storage backend.
+
+      This must be called before using any other methods.
+
+      Raises:
+          MediaStorageError: If storage initialization fails
+
+
+
+   .. py:method:: ensure_initialized()
+      :async:
+
+
+      Ensure the service is initialized.
+
+
+
+   .. py:method:: upload_file(file, media_type, product_id = None, filename = None, visibility = MediaVisibility.PRIVATE, generate_thumbnail = True)
+      :async:
+
+
+      Upload a file to storage with improved error handling.
+
+      Args:
+          file: The uploaded file
+          media_type: Type of media being uploaded
+          product_id: Optional product ID to associate with the file
+          filename: Optional filename override
+          visibility: Visibility level for the file
+          generate_thumbnail: Whether to generate a thumbnail for images
+
+      Returns:
+          Tuple[str, Dict[str, Any], Optional[str]]:
+              Tuple of (file URL, metadata, thumbnail URL or None)
+
+      Raises:
+          HTTPException: If the file type is invalid or upload fails
+
+
+
+   .. py:method:: delete_file(file_url)
+      :async:
+
+
+      Delete a file from storage with improved error handling.
+
+      Args:
+          file_url: URL of the file to delete
+
+      Returns:
+          bool: True if file was successfully deleted
+
+      Raises:
+          HTTPException: If deletion fails
+
+
+
+   .. py:method:: _sanitize_filename(filename)
+
+      Sanitize a filename to be safe for storage.
+
+      Args:
+          filename: Original filename
+
+      Returns:
+          str: Sanitized filename
+
+
+
+   .. py:method:: _guess_content_type(filename)
+
+      Guess the content type from filename extension.
+
+      Args:
+          filename: Filename to analyze
+
+      Returns:
+          str: Guessed content type
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Release resources during service shutdown.
+
+
+
+.. py:data:: _media_service_instance
+   :type:  Optional[service.MediaService]
+   :value: None
+
+
+.. py:function:: get_media_service_factory(storage_type = None)
+
+   Get or create a MediaService instance without initialization.
+
+   Args:
+       storage_type: Optional storage type
+
+   Returns:
+       A non-initialized MediaService instance
+
+
+.. py:function:: get_media_service(storage_type = None)
+   :async:
+
+
+   Get or create an initialized MediaService instance.
+
+   Args:
+       storage_type: Optional storage type
+
+   Returns:
+       An initialized MediaService instance
+
+

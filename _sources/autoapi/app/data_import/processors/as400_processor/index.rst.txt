@@ -1,0 +1,334 @@
+app.data_import.processors.as400_processor
+==========================================
+
+.. py:module:: app.data_import.processors.as400_processor
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.processors.as400_processor.logger
+   app.data_import.processors.as400_processor.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.processors.as400_processor.AS400ProcessorConfig
+   app.data_import.processors.as400_processor.AS400BaseProcessor
+   app.data_import.processors.as400_processor.ProductAS400Processor
+   app.data_import.processors.as400_processor.PricingAS400Processor
+   app.data_import.processors.as400_processor.InventoryAS400Processor
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: AS400ProcessorConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for AS400 data processors.
+
+
+   .. py:attribute:: field_mapping
+      :type:  Dict[str, str]
+
+
+   .. py:attribute:: boolean_true_values
+      :type:  List[str]
+      :value: ['1', 'Y', 'YES', 'TRUE', 'T']
+
+
+
+   .. py:attribute:: boolean_false_values
+      :type:  List[str]
+      :value: ['0', 'N', 'NO', 'FALSE', 'F']
+
+
+
+   .. py:attribute:: default_values
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: skip_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: required_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: date_format
+      :type:  str
+      :value: '%Y-%m-%d'
+
+
+
+   .. py:attribute:: time_format
+      :type:  str
+      :value: '%H:%M:%S'
+
+
+
+   .. py:attribute:: timestamp_format
+      :type:  str
+      :value: '%Y-%m-%d %H:%M:%S'
+
+
+
+   .. py:attribute:: unique_key_field
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: AS400BaseProcessor(config, destination_model)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ], :py:obj:`abc.ABC`
+
+
+   Base class for AS400 data processors.
+
+   Generic base processor that transforms data from AS400 format
+   to the application's data model format.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: destination_model
+
+
+   .. py:attribute:: processed_keys
+      :type:  Set[str]
+
+
+   .. py:attribute:: field_mapping
+
+
+   .. py:method:: process(data)
+      :async:
+
+
+      Process raw AS400 data into application format.
+
+      Args:
+          data: List of dictionary records from AS400
+
+      Returns:
+          List of processed dictionaries ready for validation
+
+
+
+   .. py:method:: validate(data)
+      :async:
+
+
+      Validate processed data against destination model.
+
+      Args:
+          data: List of processed dictionaries
+
+      Returns:
+          List of validated model instances
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: _process_record(record)
+
+      Process a single record from AS400 format.
+
+      Args:
+          record: Dictionary record from AS400
+
+      Returns:
+          Processed dictionary ready for validation
+
+      Raises:
+          ValueError: If processing fails
+
+
+
+   .. py:method:: _process_field_value(field_name, value)
+
+      Process a field value for specific data types.
+
+      Args:
+          field_name: Field name in the AS400 database
+          value: Raw value from AS400
+
+      Returns:
+          Processed value
+
+
+
+   .. py:method:: _convert_to_boolean(value)
+
+      Convert a value to a boolean.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Boolean representation
+
+
+
+   .. py:method:: _convert_to_date(value)
+
+      Convert a value to a date.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Datetime object or None
+
+
+
+   .. py:method:: _convert_to_time(value)
+
+      Convert a value to a time.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Datetime object or None
+
+
+
+   .. py:method:: _convert_to_timestamp(value)
+
+      Convert a value to a timestamp.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Datetime object or None
+
+
+
+   .. py:method:: _convert_to_numeric(value)
+
+      Convert a value to a numeric type.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          int, float, or None
+
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+      :abstractmethod:
+
+
+      Apply custom processing to a record.
+
+      This method should be implemented by subclasses to provide
+      entity-specific processing logic.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+
+.. py:class:: ProductAS400Processor(config, destination_model)
+
+   Bases: :py:obj:`AS400BaseProcessor`\ [\ :py:obj:`T`\ ]
+
+
+   Processor for product data from AS400.
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+
+      Apply product-specific processing.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+
+   .. py:method:: _normalize_part_number(part_number)
+
+      Normalize a part number by removing non-alphanumeric characters and converting to uppercase.
+
+      Args:
+          part_number: Part number string
+
+      Returns:
+          Normalized part number
+
+
+
+.. py:class:: PricingAS400Processor(config, destination_model)
+
+   Bases: :py:obj:`AS400BaseProcessor`\ [\ :py:obj:`T`\ ]
+
+
+   Processor for pricing data from AS400.
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+
+      Apply pricing-specific processing.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+
+.. py:class:: InventoryAS400Processor(config, destination_model)
+
+   Bases: :py:obj:`AS400BaseProcessor`\ [\ :py:obj:`T`\ ]
+
+
+   Processor for inventory/stock data from AS400.
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+
+      Apply inventory-specific processing.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+

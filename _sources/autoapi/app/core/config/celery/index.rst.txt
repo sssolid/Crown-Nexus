@@ -1,0 +1,40 @@
+app.core.config.celery
+======================
+
+.. py:module:: app.core.config.celery
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.celery.CelerySettings
+
+
+Module Contents
+---------------
+
+.. py:class:: CelerySettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Celery task queue settings.
+
+
+   .. py:attribute:: CELERY_BROKER_URL
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: CELERY_RESULT_BACKEND
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: model_config
+
+

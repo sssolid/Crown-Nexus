@@ -1,0 +1,6 @@
+app.domains.inventory.models
+============================
+
+.. py:module:: app.domains.inventory.models
+
+

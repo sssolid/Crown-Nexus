@@ -1,0 +1,18 @@
+app.domains.autocare.pcdb
+=========================
+
+.. py:module:: app.domains.autocare.pcdb
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/autocare/pcdb/models/index
+   /autoapi/app/domains/autocare/pcdb/repository/index
+   /autoapi/app/domains/autocare/pcdb/schemas/index
+   /autoapi/app/domains/autocare/pcdb/service/index
+
+

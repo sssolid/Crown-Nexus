@@ -1,0 +1,304 @@
+app.core.validation.manager
+===========================
+
+.. py:module:: app.core.validation.manager
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.validation.manager.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.validation.manager.validate_data
+   app.core.validation.manager.validate_model
+   app.core.validation.manager.validate_email
+   app.core.validation.manager.validate_phone
+   app.core.validation.manager.validate_date
+   app.core.validation.manager.validate_length
+   app.core.validation.manager.validate_range
+   app.core.validation.manager.validate_regex
+   app.core.validation.manager.validate_required
+   app.core.validation.manager.validate_unique
+   app.core.validation.manager.validate_url
+   app.core.validation.manager.validate_uuid
+   app.core.validation.manager.validate_credit_card
+   app.core.validation.manager.validate_ip_address
+   app.core.validation.manager.validate_password_strength
+   app.core.validation.manager.validate_enum
+   app.core.validation.manager.validate_composite
+   app.core.validation.manager.create_validator
+   app.core.validation.manager.register_validator
+   app.core.validation.manager.initialize
+   app.core.validation.manager.shutdown
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: validate_data(data, schema_class)
+
+   Validate data against a Pydantic schema.
+
+   Args:
+       data: The data to validate
+       schema_class: The Pydantic model class to validate against
+
+   Returns:
+       BaseModel: The validated model instance
+
+   Raises:
+       ValidationException: If validation fails
+
+
+.. py:function:: validate_model(model, include = None, exclude = None)
+
+   Validate an existing Pydantic model instance.
+
+   Args:
+       model: The model instance to validate
+       include: Optional set of fields to include in validation
+       exclude: Optional set of fields to exclude from validation
+
+   Raises:
+       ValidationException: If validation fails
+
+
+.. py:function:: validate_email(email)
+
+   Validate an email address.
+
+   Args:
+       email: The email address to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_phone(phone)
+
+   Validate a phone number.
+
+   Args:
+       phone: The phone number to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_date(value, min_date = None, max_date = None, format_str = None)
+
+   Validate a date value.
+
+   Args:
+       value: The date to validate (string, date, or datetime)
+       min_date: Optional minimum allowed date
+       max_date: Optional maximum allowed date
+       format_str: Optional date format string for parsing string dates
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_length(value, min_length = None, max_length = None)
+
+   Validate string length.
+
+   Args:
+       value: The string to validate
+       min_length: Optional minimum length
+       max_length: Optional maximum length
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_range(value, min_value = None, max_value = None)
+
+   Validate numeric range.
+
+   Args:
+       value: The number to validate
+       min_value: Optional minimum value
+       max_value: Optional maximum value
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_regex(value, pattern)
+
+   Validate string against a regex pattern.
+
+   Args:
+       value: The string to validate
+       pattern: The regex pattern to validate against
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_required(value)
+
+   Validate that a value is not None or empty.
+
+   Args:
+       value: The value to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_unique(field, value, model, db, exclude_id = None)
+   :async:
+
+
+   Validate that a field value is unique in the database.
+
+   Args:
+       field: The field name to check
+       value: The field value to check
+       model: The SQLAlchemy model class
+       db: The database session
+       exclude_id: Optional ID to exclude from the uniqueness check
+
+   Returns:
+       bool: True if unique, False otherwise
+
+
+.. py:function:: validate_url(url)
+
+   Validate a URL.
+
+   Args:
+       url: The URL to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_uuid(value)
+
+   Validate a UUID string.
+
+   Args:
+       value: The UUID string to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_credit_card(card_number)
+
+   Validate a credit card number.
+
+   Args:
+       card_number: The credit card number to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_ip_address(ip, version = None)
+
+   Validate an IP address.
+
+   Args:
+       ip: The IP address to validate
+       version: Optional IP version (4 or 6)
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_password_strength(password, min_length = 8, require_lowercase = True, require_uppercase = True, require_digit = True, require_special = True)
+
+   Validate password strength.
+
+   Args:
+       password: The password to validate
+       min_length: Minimum password length
+       require_lowercase: Whether to require lowercase letters
+       require_uppercase: Whether to require uppercase letters
+       require_digit: Whether to require digits
+       require_special: Whether to require special characters
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_enum(value, enum_class)
+
+   Validate that a value is a valid enum value.
+
+   Args:
+       value: The value to validate
+       enum_class: The enum class to validate against
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_composite(data, rules)
+
+   Validate data against multiple validation rules.
+
+   Args:
+       data: The data to validate
+       rules: Dictionary mapping field names to validation rules
+
+   Returns:
+       Tuple[bool, List[Dict[str, Any]]]: A tuple containing a boolean indicating
+           validation success and a list of validation errors
+
+
+.. py:function:: create_validator(rule_type, **params)
+
+   Create a validator function for a specific rule type.
+
+   Args:
+       rule_type: The type of validator to create
+       **params: Additional parameters for the validator
+
+   Returns:
+       Callable[[Any], bool]: A function that takes a value and returns a boolean
+
+   Raises:
+       ValidationException: If the validator type is not supported
+
+
+.. py:function:: register_validator(name, validator_class)
+
+   Register a custom validator.
+
+   Args:
+       name: The name to register the validator under
+       validator_class: The validator class to register
+
+   Raises:
+       ValidationException: If a validator with the same name is already registered
+
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the validation system.
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shutdown the validation system.
+
+

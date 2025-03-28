@@ -1,0 +1,129 @@
+app.core.rate_limiting.service
+==============================
+
+.. py:module:: app.core.rate_limiting.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.service.logger
+   app.core.rate_limiting.service._rate_limiting_service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.service.RateLimitingService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.service.get_rate_limiting_service
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: RateLimitingService
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:attribute:: _limiter
+      :type:  Optional[app.core.rate_limiting.limiter.RateLimiter]
+      :value: None
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the rate limiting service.
+
+      If already initialized, this method does nothing.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the rate limiting service.
+
+      If not initialized, this method does nothing.
+
+
+
+   .. py:method:: is_rate_limited(key, rule = None)
+      :async:
+
+
+      Check if a key is rate limited.
+
+      Args:
+          key: The key to check.
+          rule: Optional rate limit rule to apply. If not provided,
+              the default rule will be used.
+
+      Returns:
+          A tuple containing:
+              - Whether the key is rate limited (True if limited)
+              - The current count for the key
+              - The maximum allowed count (limit)
+
+      Raises:
+          RateLimitingServiceException: If the service is not initialized.
+
+
+
+   .. py:method:: get_key_for_request(request, rule)
+
+      Generate a rate limit key for a request.
+
+      Args:
+          request: The request to generate a key for.
+          rule: The rate limit rule that defines the key strategy.
+
+      Returns:
+          A string key for rate limiting.
+
+      Raises:
+          RateLimitingServiceException: If the service is not initialized.
+
+
+
+   .. py:method:: _ensure_initialized()
+
+      Ensure the service is initialized.
+
+      Raises:
+          RateLimitingServiceException: If the service is not initialized.
+
+
+
+.. py:data:: _rate_limiting_service
+   :type:  Optional[RateLimitingService]
+   :value: None
+
+
+.. py:function:: get_rate_limiting_service()
+
+   Get or create the rate limiting service singleton.
+
+   Returns:
+       The rate limiting service instance.
+
+

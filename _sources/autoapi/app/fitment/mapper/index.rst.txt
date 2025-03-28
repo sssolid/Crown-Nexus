@@ -1,0 +1,200 @@
+app.fitment.mapper
+==================
+
+.. py:module:: app.fitment.mapper
+
+.. autoapi-nested-parse::
+
+   Mapper for fitment data.
+
+   This module provides the core mapping engine that connects
+   fitment data with VCDB and PCDB records.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.fitment.mapper.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.mapper.FitmentMappingEngine
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: FitmentMappingEngine(db_service)
+
+   Engine for mapping fitment data to VCDB and PCDB records.
+
+
+   .. py:attribute:: db_service
+
+
+   .. py:attribute:: model_mappings
+      :type:  Dict[str, List[str]]
+
+
+   .. py:attribute:: parser
+      :type:  Optional[app.fitment.parser.FitmentParser]
+      :value: None
+
+
+
+   .. py:method:: configure(model_mappings_path)
+
+      Configure the mapping engine with model mappings.
+
+      Args:
+          model_mappings_path: Path to the model mappings Excel file
+
+
+
+   .. py:method:: get_part_terminology(terminology_id)
+
+      Get part terminology information by ID.
+
+      Args:
+          terminology_id: ID of the part terminology
+
+      Returns:
+          PartTerminology object
+
+      Raises:
+          MappingError: If part terminology not found
+
+
+
+   .. py:method:: get_pcdb_positions(terminology_id)
+
+      Get PCDB positions for a part terminology.
+
+      Args:
+          terminology_id: ID of the part terminology
+
+      Returns:
+          List of PCDBPosition objects
+
+      Raises:
+          MappingError: If positions not found
+
+
+
+   .. py:method:: get_vcdb_vehicles(year = None, make = None, model = None)
+
+      Get VCDB vehicles matching criteria.
+
+      Args:
+          year: Optional year filter
+          make: Optional make filter
+          model: Optional model filter
+
+      Returns:
+          List of VCDBVehicle objects
+
+      Raises:
+          MappingError: If query fails
+
+
+
+   .. py:method:: process_application(application_text, terminology_id)
+
+      Process a part application string and validate against databases.
+
+      Args:
+          application_text: Raw part application text
+          terminology_id: ID of the part terminology
+
+      Returns:
+          List of ValidationResult objects
+
+      Raises:
+          MappingError: If processing fails
+
+
+
+   .. py:method:: batch_process_applications(application_texts, terminology_id)
+
+      Process a batch of part application strings.
+
+      Args:
+          application_texts: List of raw part application texts
+          terminology_id: ID of the part terminology
+
+      Returns:
+          Dictionary mapping application text to validation results
+
+      Raises:
+          MappingError: If processing fails
+
+
+
+   .. py:method:: serialize_validation_results(results)
+
+      Serialize validation results to JSON-compatible dictionaries.
+
+      Args:
+          results: List of ValidationResult objects
+
+      Returns:
+          List of dictionaries
+
+
+
+   .. py:method:: save_mapping_results(product_id, results)
+      :async:
+
+
+      Save mapping results to the database.
+
+      Args:
+          product_id: ID of the product
+          results: List of ValidationResult objects
+
+      Returns:
+          True if successful
+
+      Raises:
+          MappingError: If saving fails
+
+
+
+   .. py:method:: configure_from_file(model_mappings_path)
+
+      Configure the mapping engine with model mappings from a file.
+
+      Args:
+          model_mappings_path: Path to the model mappings JSON file
+
+
+
+   .. py:method:: configure_from_database()
+      :async:
+
+
+      Configure the mapping engine with model mappings from the database.
+
+      This allows for dynamic updates to mappings without server restarts.
+
+
+
+   .. py:method:: refresh_mappings()
+      :async:
+
+
+      Refresh model mappings from the database.
+
+      This allows for reloading mappings without restarting the server.
+
+
+

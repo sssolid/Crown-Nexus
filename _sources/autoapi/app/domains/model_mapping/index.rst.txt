@@ -1,0 +1,17 @@
+app.domains.model_mapping
+=========================
+
+.. py:module:: app.domains.model_mapping
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/model_mapping/models/index
+   /autoapi/app/domains/model_mapping/repository/index
+   /autoapi/app/domains/model_mapping/schemas/index
+
+

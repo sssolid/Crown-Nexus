@@ -1,0 +1,106 @@
+app.core.exceptions.domain
+==========================
+
+.. py:module:: app.core.exceptions.domain
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.core.exceptions.domain.ResourceException
+   app.core.exceptions.domain.ResourceNotFoundException
+   app.core.exceptions.domain.ResourceAlreadyExistsException
+   app.core.exceptions.domain.AuthException
+   app.core.exceptions.domain.AuthenticationException
+   app.core.exceptions.domain.PermissionDeniedException
+   app.core.exceptions.domain.ValidationException
+   app.core.exceptions.domain.BusinessException
+   app.core.exceptions.domain.InvalidStateException
+   app.core.exceptions.domain.OperationNotAllowedException
+
+
+Module Contents
+---------------
+
+.. py:exception:: ResourceException(message, code = ErrorCode.RESOURCE_NOT_FOUND, details = None, status_code = 404, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for resource-related errors.
+
+
+.. py:exception:: ResourceNotFoundException(resource_type, resource_id, message = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`ResourceException`
+
+
+   Exception raised when a requested resource is not found.
+
+
+.. py:exception:: ResourceAlreadyExistsException(resource_type, identifier, field = 'id', message = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`ResourceException`
+
+
+   Exception raised when attempting to create a resource that already exists.
+
+
+.. py:exception:: AuthException(message, code, details = None, status_code = 401, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for authentication and authorization errors.
+
+
+.. py:exception:: AuthenticationException(message = 'Authentication failed', details = None, original_exception = None)
+
+   Bases: :py:obj:`AuthException`
+
+
+   Exception raised when authentication fails.
+
+
+.. py:exception:: PermissionDeniedException(message = 'Permission denied', action = None, resource_type = None, permission = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`AuthException`
+
+
+   Exception raised when a user doesn't have permission for an action.
+
+
+.. py:exception:: ValidationException(message = 'Validation error', errors = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Exception raised when input validation fails.
+
+
+.. py:exception:: BusinessException(message, code = ErrorCode.BUSINESS_LOGIC_ERROR, details = None, status_code = 400, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Exception raised when a business rule is violated.
+
+
+.. py:exception:: InvalidStateException(message, current_state = None, expected_state = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`BusinessException`
+
+
+   Exception raised when an operation is attempted on an entity in an invalid state.
+
+
+.. py:exception:: OperationNotAllowedException(message, operation = None, reason = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`BusinessException`
+
+
+   Exception raised when an operation is not allowed due to business rules.
+
+

@@ -1,0 +1,402 @@
+app.fitment.api
+===============
+
+.. py:module:: app.fitment.api
+
+.. autoapi-nested-parse::
+
+   API endpoints for fitment functionality.
+
+   This module provides the FastAPI endpoints for the fitment module.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.fitment.api.logger
+   app.fitment.api.router
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.api.ProcessFitmentRequest
+   app.fitment.api.FitmentValidationResponse
+   app.fitment.api.ProcessFitmentResponse
+   app.fitment.api.UploadModelMappingsResponse
+   app.fitment.api.ModelMappingRequest
+   app.fitment.api.ModelMappingResponse
+   app.fitment.api.ModelMappingsListResponse
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.fitment.api.get_mapping_engine
+   app.fitment.api.process_fitment
+   app.fitment.api.upload_model_mappings
+   app.fitment.api.list_model_mappings
+   app.fitment.api.create_model_mapping
+   app.fitment.api.update_model_mapping
+   app.fitment.api.delete_model_mapping
+   app.fitment.api.refresh_mappings
+   app.fitment.api.get_pcdb_positions
+   app.fitment.api.parse_application
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: router
+
+.. py:class:: ProcessFitmentRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request body for processing fitment applications.
+
+
+   .. py:attribute:: application_texts
+      :type:  List[str]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  int
+
+
+   .. py:attribute:: product_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: FitmentValidationResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Response model for fitment validation results.
+
+
+   .. py:attribute:: status
+      :type:  str
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+   .. py:attribute:: original_text
+      :type:  str
+
+
+   .. py:attribute:: suggestions
+      :type:  List[str]
+
+
+   .. py:attribute:: fitment
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+.. py:class:: ProcessFitmentResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Response body for processing fitment applications.
+
+
+   .. py:attribute:: results
+      :type:  Dict[str, List[FitmentValidationResponse]]
+
+
+   .. py:attribute:: valid_count
+      :type:  int
+
+
+   .. py:attribute:: warning_count
+      :type:  int
+
+
+   .. py:attribute:: error_count
+      :type:  int
+
+
+.. py:class:: UploadModelMappingsResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Response for model mappings upload.
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+   .. py:attribute:: mapping_count
+      :type:  int
+
+
+.. py:class:: ModelMappingRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request for creating or updating a model mapping.
+
+
+   .. py:attribute:: pattern
+      :type:  str
+
+
+   .. py:attribute:: mapping
+      :type:  str
+
+
+   .. py:attribute:: priority
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: active
+      :type:  bool
+      :value: True
+
+
+
+.. py:class:: ModelMappingResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Response for a model mapping.
+
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: pattern
+      :type:  str
+
+
+   .. py:attribute:: mapping
+      :type:  str
+
+
+   .. py:attribute:: priority
+      :type:  int
+
+
+   .. py:attribute:: active
+      :type:  bool
+
+
+   .. py:attribute:: created_at
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: updated_at
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: ModelMappingsListResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Response for listing model mappings.
+
+
+   .. py:attribute:: items
+      :type:  List[ModelMappingResponse]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+.. py:function:: get_mapping_engine()
+
+   Get an instance of the mapping engine.
+
+   This is a FastAPI dependency for endpoints that need the mapping engine.
+
+
+.. py:function:: process_fitment(request = Body(...), mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Process fitment application texts.
+
+   Args:
+       request: Request body with application texts and part terminology ID
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Processing results
+
+   Raises:
+       HTTPException: If processing fails
+
+
+.. py:function:: upload_model_mappings(file = File(...), mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Upload model mappings JSON file.
+
+   Args:
+       file: JSON file with model mappings
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Upload result
+
+   Raises:
+       HTTPException: If upload fails
+
+
+.. py:function:: list_model_mappings(mapping_engine = Depends(get_mapping_engine), skip = Query(0, ge=0), limit = Query(100, gt=0, le=1000), pattern = None, sort_by = None, sort_order = None)
+   :async:
+
+
+   List model mappings from database.
+
+   Args:
+       mapping_engine: Mapping engine instance
+       skip: Number of items to skip (for pagination)
+       limit: Maximum number of items to return (for pagination)
+       pattern: Optional pattern to filter by
+       sort_by: Field to sort by (pattern, mapping, priority, active)
+       sort_order: Sort order (asc, desc)
+
+   Returns:
+       List of model mappings with pagination information
+
+   Raises:
+       HTTPException: If retrieval fails
+
+
+.. py:function:: create_model_mapping(mapping_data, mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Create a new model mapping.
+
+   Args:
+       mapping_data: Mapping data
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Created mapping
+
+   Raises:
+       HTTPException: If creation fails
+
+
+.. py:function:: update_model_mapping(mapping_id, mapping_data, mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Update an existing model mapping.
+
+   Args:
+       mapping_id: ID of the mapping to update
+       mapping_data: Updated mapping data
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Updated mapping
+
+   Raises:
+       HTTPException: If update fails
+
+
+.. py:function:: delete_model_mapping(mapping_id, mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Delete a model mapping.
+
+   Args:
+       mapping_id: ID of the mapping to delete
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Success message
+
+   Raises:
+       HTTPException: If deletion fails
+
+
+.. py:function:: refresh_mappings(mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Refresh model mappings from the database.
+
+   This allows for updating mappings without restarting the server.
+
+   Args:
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Success message
+
+   Raises:
+       HTTPException: If refresh fails
+
+
+.. py:function:: get_pcdb_positions(terminology_id = Path(...), mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Get PCDB positions for a part terminology.
+
+   Args:
+       terminology_id: Part terminology ID
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       List of PCDB positions
+
+   Raises:
+       HTTPException: If retrieval fails
+
+
+.. py:function:: parse_application(application_text = Body(..., embed=True), mapping_engine = Depends(get_mapping_engine))
+   :async:
+
+
+   Parse a part application text.
+
+   Args:
+       application_text: Raw part application text
+       mapping_engine: Mapping engine instance
+
+   Returns:
+       Parsed application components
+
+   Raises:
+       HTTPException: If parsing fails
+
+

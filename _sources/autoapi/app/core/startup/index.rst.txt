@@ -1,0 +1,15 @@
+app.core.startup
+================
+
+.. py:module:: app.core.startup
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/startup/as400_sync/index
+
+

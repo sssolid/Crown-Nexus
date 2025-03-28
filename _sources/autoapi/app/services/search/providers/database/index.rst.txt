@@ -1,0 +1,87 @@
+app.services.search.providers.database
+======================================
+
+.. py:module:: app.services.search.providers.database
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.search.providers.database.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.search.providers.database.DatabaseSearchProvider
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: DatabaseSearchProvider(db, model_class)
+
+   Bases: :py:obj:`app.services.search.base.SearchProvider`
+
+
+   Search provider that queries the database directly.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: model_class
+
+
+   .. py:attribute:: searchable_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the database search provider.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the database search provider.
+
+
+
+   .. py:method:: search(search_term = None, filters = None, page = 1, page_size = 20, **kwargs)
+      :async:
+
+
+      Search for entities in the database.
+
+      Args:
+          search_term: Text to search for
+          filters: Filters to apply
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          **kwargs: Additional search parameters
+
+      Returns:
+          Dict containing search results and pagination info
+
+      Raises:
+          DatabaseException: If the database search fails
+
+
+

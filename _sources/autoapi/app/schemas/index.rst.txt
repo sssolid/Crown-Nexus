@@ -1,0 +1,6 @@
+app.schemas
+===========
+
+.. py:module:: app.schemas
+
+

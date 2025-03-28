@@ -1,0 +1,432 @@
+app.domains.reference.models
+============================
+
+.. py:module:: app.domains.reference.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.reference.models.Color
+   app.domains.reference.models.ConstructionType
+   app.domains.reference.models.Texture
+   app.domains.reference.models.PackagingType
+   app.domains.reference.models.Hardware
+   app.domains.reference.models.TariffCode
+   app.domains.reference.models.UnspscCode
+   app.domains.reference.models.Warehouse
+
+
+Module Contents
+---------------
+
+.. py:class:: Color
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Color entity representing a product color.
+
+   Attributes:
+       id: Unique identifier.
+       name: Color name.
+       hex_code: Hexadecimal color code.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'color'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: hex_code
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Color instance.
+
+      Returns:
+          String representation including name and hex code.
+
+
+
+.. py:class:: ConstructionType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Construction type entity representing a product construction method.
+
+   Attributes:
+       id: Unique identifier.
+       name: Construction type name.
+       description: Description of the construction type.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'construction_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ConstructionType instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: Texture
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Texture entity representing a product texture.
+
+   Attributes:
+       id: Unique identifier.
+       name: Texture name.
+       description: Description of the texture.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'texture'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Texture instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: PackagingType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Packaging type entity representing a product packaging method.
+
+   Attributes:
+       id: Unique identifier.
+       pies_code: PIES standard code.
+       name: Packaging type name.
+       description: Description of the packaging type.
+       source: Source of the packaging type data.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'packaging_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: pies_code
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: source
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of PackagingType instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: Hardware
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Hardware item entity representing hardware used with products.
+
+   Attributes:
+       id: Unique identifier.
+       name: Hardware item name.
+       description: Description of the hardware item.
+       part_number: Manufacturer part number.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'hardware_item'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: part_number
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Hardware instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: TariffCode
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Tariff code entity representing a product tariff classification.
+
+   Attributes:
+       id: Unique identifier.
+       code: Tariff code number.
+       description: Description of the tariff code.
+       country_id: ID of the country this tariff applies to.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'tariff_code'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: country_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: country
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of TariffCode instance.
+
+      Returns:
+          String representation including code.
+
+
+
+.. py:class:: UnspscCode
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   UNSPSC code entity for product classification.
+
+   Attributes:
+       id: Unique identifier.
+       code: UNSPSC code number.
+       description: Description of the code.
+       segment: Segment description.
+       family: Family description.
+       class_: Class description.
+       commodity: Commodity description.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'unspsc_code'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: segment
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: family
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: class_
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: commodity
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of UnspscCode instance.
+
+      Returns:
+          String representation including code and description.
+
+
+
+.. py:class:: Warehouse
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Warehouse entity representing a storage location.
+
+   Attributes:
+       id: Unique identifier.
+       name: Warehouse name.
+       address_id: ID of the warehouse address.
+       is_active: Whether the warehouse is active.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'warehouse'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: address
+      :type:  sqlalchemy.orm.Mapped[app.domains.location.models.Address]
+
+
+   .. py:attribute:: stock
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.ProductStock]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Warehouse instance.
+
+      Returns:
+          String representation including name.
+
+
+

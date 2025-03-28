@@ -1,0 +1,192 @@
+app.domains.media.service.s3
+============================
+
+.. py:module:: app.domains.media.service.s3
+
+.. autoapi-nested-parse::
+
+   Amazon S3 storage backend implementation.
+
+   This module provides an S3 implementation of the MediaStorageBackend protocol,
+   suitable for production environments with scalable cloud storage.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.media.service.s3.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.service.s3.S3MediaStorage
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: S3MediaStorage
+
+   Amazon S3 storage backend for production.
+
+
+   .. py:attribute:: bucket_name
+      :type:  str
+
+
+   .. py:attribute:: region_name
+      :type:  str
+
+
+   .. py:attribute:: access_key_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: secret_access_key
+      :type:  Optional[str]
+
+
+   .. py:attribute:: endpoint_url
+      :type:  Optional[str]
+
+
+   .. py:attribute:: cdn_url
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: _session
+      :type:  Optional[Any]
+      :value: None
+
+
+
+   .. py:attribute:: _client
+      :type:  Optional[Any]
+      :value: None
+
+
+
+   .. py:attribute:: _resource
+      :type:  Optional[Any]
+      :value: None
+
+
+
+   .. py:attribute:: ALLOWED_MIME_TYPES
+      :type:  Dict[app.domains.media.models.MediaType, Set[str]]
+
+
+   .. py:attribute:: MAX_FILE_SIZES
+      :type:  Dict[app.domains.media.models.MediaType, int]
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize S3 client and create bucket if it doesn't exist.
+
+      Raises:
+          StorageConnectionError: If connection to S3 fails
+
+
+
+   .. py:method:: save_file(file, destination, media_type, content_type = None)
+      :async:
+
+
+      Save file to S3 storage.
+
+      Args:
+          file: The file to upload (UploadFile, file-like object, or bytes)
+          destination: Relative path where the file should be stored
+          media_type: Type of media being stored
+          content_type: Optional content type override
+
+      Returns:
+          str: URL to access the saved file
+
+      Raises:
+          MediaStorageError: If file saving fails
+          ValueError: If invalid file type or format
+
+
+
+   .. py:method:: get_file_url(file_path)
+      :async:
+
+
+      Get URL for S3 file.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          str: Public URL to access the file
+
+
+
+   .. py:method:: delete_file(file_path)
+      :async:
+
+
+      Delete file from S3 storage.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          bool: True if file was successfully deleted, False otherwise
+
+      Raises:
+          MediaStorageError: If deletion fails
+
+
+
+   .. py:method:: file_exists(file_path)
+      :async:
+
+
+      Check if a file exists in S3 storage.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          bool: True if file exists, False otherwise
+
+
+
+   .. py:method:: generate_thumbnail(file_path, width = 200, height = 200)
+      :async:
+
+
+      Generate a thumbnail for an image file in S3.
+
+      This implementation downloads the file, generates the thumbnail locally,
+      then uploads it back to S3. In a production environment, you might want
+      to use a service like AWS Lambda or a dedicated image processing service.
+
+      Args:
+          file_path: Relative path to the original image
+          width: Desired thumbnail width
+          height: Desired thumbnail height
+
+      Returns:
+          Optional[str]: Path to the thumbnail if successful, None otherwise
+
+      Raises:
+          MediaStorageError: If thumbnail generation fails
+
+
+

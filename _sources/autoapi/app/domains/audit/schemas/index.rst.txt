@@ -1,0 +1,387 @@
+app.domains.audit.schemas
+=========================
+
+.. py:module:: app.domains.audit.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.schemas.AuditLogLevel
+   app.domains.audit.schemas.AuditEventType
+   app.domains.audit.schemas.AuditLogBase
+   app.domains.audit.schemas.AuditLogCreate
+   app.domains.audit.schemas.AuditLogInDB
+   app.domains.audit.schemas.AuditLog
+   app.domains.audit.schemas.AuditLogFilter
+   app.domains.audit.schemas.AuditLogStatistics
+   app.domains.audit.schemas.AuditLogExportFormat
+   app.domains.audit.schemas.AuditLogExportRequest
+
+
+Module Contents
+---------------
+
+.. py:class:: AuditLogLevel
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Severity levels for audit logs.
+
+   Attributes:
+       INFO: Informational events.
+       WARNING: Warning events that might require attention.
+       ERROR: Error events that indicate problems.
+       CRITICAL: Critical events that require immediate attention.
+
+
+   .. py:attribute:: INFO
+      :value: 'info'
+
+
+
+   .. py:attribute:: WARNING
+      :value: 'warning'
+
+
+
+   .. py:attribute:: ERROR
+      :value: 'error'
+
+
+
+   .. py:attribute:: CRITICAL
+      :value: 'critical'
+
+
+
+.. py:class:: AuditEventType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of auditable events.
+
+   This is a subset of common event types. The system can handle
+   any string value for event_type, not just these enumerated ones.
+
+
+   .. py:attribute:: LOGIN
+      :value: 'login'
+
+
+
+   .. py:attribute:: LOGOUT
+      :value: 'logout'
+
+
+
+   .. py:attribute:: CREATE
+      :value: 'create'
+
+
+
+   .. py:attribute:: UPDATE
+      :value: 'update'
+
+
+
+   .. py:attribute:: DELETE
+      :value: 'delete'
+
+
+
+   .. py:attribute:: VIEW
+      :value: 'view'
+
+
+
+   .. py:attribute:: EXPORT
+      :value: 'export'
+
+
+
+   .. py:attribute:: IMPORT
+      :value: 'import'
+
+
+
+   .. py:attribute:: APPROVE
+      :value: 'approve'
+
+
+
+   .. py:attribute:: REJECT
+      :value: 'reject'
+
+
+
+   .. py:attribute:: PASSWORD_CHANGE
+      :value: 'password_change'
+
+
+
+   .. py:attribute:: ROLE_CHANGE
+      :value: 'role_change'
+
+
+
+   .. py:attribute:: API_ACCESS
+      :value: 'api_access'
+
+
+
+.. py:class:: AuditLogBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for audit log data.
+
+   Attributes:
+       timestamp: When the audited event occurred.
+       event_type: Type of event being audited.
+       level: Log level (info, warning, error).
+       user_id: ID of the user who performed the action.
+       ip_address: IP address of the user.
+       resource_id: ID of the affected resource.
+       resource_type: Type of the affected resource.
+       details: Additional details about the event.
+       request_id: ID of the request that triggered the event.
+       user_agent: User agent of the client.
+       session_id: ID of the user's session.
+       company_id: ID of the company context.
+
+
+   .. py:attribute:: timestamp
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: event_type
+      :type:  str
+
+
+   .. py:attribute:: level
+      :type:  AuditLogLevel
+
+
+   .. py:attribute:: user_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: ip_address
+      :type:  Optional[str]
+
+
+   .. py:attribute:: resource_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: resource_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: details
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: request_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: user_agent
+      :type:  Optional[str]
+
+
+   .. py:attribute:: session_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: company_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: AuditLogCreate
+
+   Bases: :py:obj:`AuditLogBase`
+
+
+   Schema for creating a new audit log entry.
+
+
+.. py:class:: AuditLogInDB
+
+   Bases: :py:obj:`AuditLogBase`
+
+
+   Schema for audit log data as stored in the database.
+
+   Includes database-specific fields like ID.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: AuditLog
+
+   Bases: :py:obj:`AuditLogInDB`
+
+
+   Schema for complete audit log data in API responses.
+
+   Includes related entities like user and company details.
+
+
+   .. py:attribute:: user
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: company
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: AuditLogFilter
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for filtering audit logs.
+
+   Attributes:
+       start_date: Filter logs after this date.
+       end_date: Filter logs before this date.
+       event_type: Filter by event type.
+       level: Filter by log level.
+       user_id: Filter by user ID.
+       resource_type: Filter by resource type.
+       resource_id: Filter by resource ID.
+       company_id: Filter by company ID.
+
+
+   .. py:attribute:: start_date
+      :type:  Optional[datetime.datetime]
+
+
+   .. py:attribute:: end_date
+      :type:  Optional[datetime.datetime]
+
+
+   .. py:attribute:: event_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: level
+      :type:  Optional[AuditLogLevel]
+
+
+   .. py:attribute:: user_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: resource_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: resource_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: company_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: AuditLogStatistics
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for audit log statistics.
+
+   Attributes:
+       total_count: Total number of log entries.
+       by_level: Count of logs grouped by level.
+       by_event_type: Count of logs grouped by event type.
+       by_user: Count of logs grouped by user.
+       by_resource_type: Count of logs grouped by resource type.
+
+
+   .. py:attribute:: total_count
+      :type:  int
+
+
+   .. py:attribute:: by_level
+      :type:  Dict[str, int]
+
+
+   .. py:attribute:: by_event_type
+      :type:  Dict[str, int]
+
+
+   .. py:attribute:: by_user
+      :type:  Dict[str, int]
+
+
+   .. py:attribute:: by_resource_type
+      :type:  Dict[str, int]
+
+
+.. py:class:: AuditLogExportFormat
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Export formats for audit logs.
+
+   Attributes:
+       CSV: Comma-separated values format.
+       JSON: JSON format.
+       XML: XML format.
+
+
+   .. py:attribute:: CSV
+      :value: 'csv'
+
+
+
+   .. py:attribute:: JSON
+      :value: 'json'
+
+
+
+   .. py:attribute:: XML
+      :value: 'xml'
+
+
+
+.. py:class:: AuditLogExportRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for requesting an audit log export.
+
+   Attributes:
+       filter: Filter criteria for logs to export.
+       format: Export format.
+       include_details: Whether to include detailed information.
+
+
+   .. py:attribute:: filter
+      :type:  Optional[AuditLogFilter]
+
+
+   .. py:attribute:: format
+      :type:  AuditLogExportFormat
+
+
+   .. py:attribute:: include_details
+      :type:  bool
+
+

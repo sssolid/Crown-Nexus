@@ -1,0 +1,232 @@
+app.domains.media.models
+========================
+
+.. py:module:: app.domains.media.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.models.MediaType
+   app.domains.media.models.MediaVisibility
+   app.domains.media.models.Media
+
+
+Module Contents
+---------------
+
+.. py:class:: MediaType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of media that can be stored in the system.
+
+   Attributes:
+       IMAGE: Image files (jpg, png, etc.)
+       DOCUMENT: Document files (pdf, doc, etc.)
+       VIDEO: Video files (mp4, etc.)
+       MSDS: Material Safety Data Sheets
+       DOT_APPROVAL: Department of Transportation approval documents
+       OTHER: Other media types
+
+
+   .. py:attribute:: IMAGE
+      :value: 'image'
+
+
+
+   .. py:attribute:: DOCUMENT
+      :value: 'document'
+
+
+
+   .. py:attribute:: VIDEO
+      :value: 'video'
+
+
+
+   .. py:attribute:: MSDS
+      :value: 'msds'
+
+
+
+   .. py:attribute:: DOT_APPROVAL
+      :value: 'dot_approval'
+
+
+
+   .. py:attribute:: OTHER
+      :value: 'other'
+
+
+
+.. py:class:: MediaVisibility
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Visibility settings for media files.
+
+   Attributes:
+       PUBLIC: Accessible to anyone
+       PRIVATE: Only accessible to authorized users
+       RESTRICTED: Limited access based on specific rules
+
+
+   .. py:attribute:: PUBLIC
+      :value: 'public'
+
+
+
+   .. py:attribute:: PRIVATE
+      :value: 'private'
+
+
+
+   .. py:attribute:: RESTRICTED
+      :value: 'restricted'
+
+
+
+.. py:class:: Media
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Media entity representing a stored file.
+
+   Attributes:
+       id: Unique identifier
+       filename: Original file name
+       file_path: Path to the stored file
+       file_size: File size in bytes
+       media_type: Type of media
+       mime_type: MIME type of the file
+       visibility: Visibility setting
+       file_metadata: Additional metadata about the file
+       uploaded_by_id: ID of the user who uploaded the file
+       is_approved: Whether the media has been approved
+       approved_by_id: ID of the user who approved the media
+       approved_at: When the media was approved
+       created_at: Creation timestamp
+       updated_at: Last update timestamp
+
+
+   .. py:attribute:: __tablename__
+      :value: 'media'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: filename
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: file_path
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: file_size
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: media_type
+      :type:  sqlalchemy.orm.Mapped[MediaType]
+
+
+   .. py:attribute:: mime_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: visibility
+      :type:  sqlalchemy.orm.Mapped[MediaVisibility]
+
+
+   .. py:attribute:: file_metadata
+      :type:  sqlalchemy.orm.Mapped[Dict]
+
+
+   .. py:attribute:: uploaded_by_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: is_approved
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: approved_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: approved_at
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: products
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.Product]]
+
+
+   .. py:attribute:: uploaded_by
+      :type:  sqlalchemy.orm.Mapped[User]
+
+
+   .. py:attribute:: approved_by
+      :type:  sqlalchemy.orm.Mapped[Optional[User]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Media instance.
+
+      Returns:
+          String representation including filename and media type.
+
+
+
+   .. py:property:: extension
+      :type: str
+
+
+      Get the file extension.
+
+      Returns:
+          The file extension or empty string if none.
+
+
+
+   .. py:property:: is_image
+      :type: bool
+
+
+      Check if this media is an image.
+
+      Returns:
+          True if media_type is IMAGE, False otherwise.
+
+
+
+   .. py:property:: has_thumbnail
+      :type: bool
+
+
+      Check if this media has a thumbnail.
+
+      Returns:
+          True if the media is an image (which have thumbnails), False otherwise.
+
+
+

@@ -1,0 +1,298 @@
+app.core.metrics.service
+========================
+
+.. py:module:: app.core.metrics.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.metrics.service.logger
+   app.core.metrics.service.F
+   app.core.metrics.service._metrics_service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.metrics.service.MetricsService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.metrics.service.get_metrics_service
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: F
+
+.. py:class:: MetricsService
+
+   Service wrapper for the metrics system.
+
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:attribute:: _config
+      :type:  Optional[app.core.metrics.base.MetricsConfig]
+      :value: None
+
+
+
+   .. py:method:: initialize(config = None)
+      :async:
+
+
+      Initialize the metrics service.
+
+      Args:
+          config: Optional metrics configuration
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the metrics service.
+
+
+
+   .. py:method:: create_counter(name, description, labelnames = None, namespace = None, subsystem = None)
+
+      Create a counter metric.
+
+      Args:
+          name: Metric name
+          description: Metric description
+          labelnames: Optional list of label names
+          namespace: Optional namespace
+          subsystem: Optional subsystem
+
+      Returns:
+          A counter collector instance
+
+
+
+   .. py:method:: create_gauge(name, description, labelnames = None, namespace = None, subsystem = None)
+
+      Create a gauge metric.
+
+      Args:
+          name: Metric name
+          description: Metric description
+          labelnames: Optional list of label names
+          namespace: Optional namespace
+          subsystem: Optional subsystem
+
+      Returns:
+          A gauge collector instance
+
+
+
+   .. py:method:: create_histogram(name, description, labelnames = None, buckets = None, namespace = None, subsystem = None)
+
+      Create a histogram metric.
+
+      Args:
+          name: Metric name
+          description: Metric description
+          labelnames: Optional list of label names
+          buckets: Optional bucket definitions
+          namespace: Optional namespace
+          subsystem: Optional subsystem
+
+      Returns:
+          A histogram collector instance
+
+
+
+   .. py:method:: create_summary(name, description, labelnames = None, namespace = None, subsystem = None)
+
+      Create a summary metric.
+
+      Args:
+          name: Metric name
+          description: Metric description
+          labelnames: Optional list of label names
+          namespace: Optional namespace
+          subsystem: Optional subsystem
+
+      Returns:
+          A summary collector instance
+
+
+
+   .. py:method:: increment_counter(name, amount = 1.0, labels = None)
+
+      Increment a counter metric.
+
+      Args:
+          name: Metric name
+          amount: Amount to increment by
+          labels: Optional label values
+
+
+
+   .. py:method:: set_gauge(name, value, labels = None)
+
+      Set a gauge metric value.
+
+      Args:
+          name: Metric name
+          value: Value to set
+          labels: Optional label values
+
+
+
+   .. py:method:: observe_histogram(name, value, labels = None)
+
+      Observe a value for a histogram metric.
+
+      Args:
+          name: Metric name
+          value: Value to observe
+          labels: Optional label values
+
+
+
+   .. py:method:: observe_summary(name, value, labels = None)
+
+      Observe a value for a summary metric.
+
+      Args:
+          name: Metric name
+          value: Value to observe
+          labels: Optional label values
+
+
+
+   .. py:method:: track_in_progress(metric_name, labels, count = 1)
+
+      Track in-progress operations.
+
+      Args:
+          metric_name: Metric name
+          labels: Label values
+          count: Count to adjust by
+
+
+
+   .. py:method:: track_request(method, endpoint, status_code, duration, error_code = None)
+
+      Track an HTTP request.
+
+      Args:
+          method: HTTP method
+          endpoint: Request endpoint
+          status_code: Response status code
+          duration: Request duration in seconds
+          error_code: Optional error code
+
+
+
+   .. py:method:: track_db_query(operation, entity, duration, error = None)
+
+      Track a database query.
+
+      Args:
+          operation: Database operation type
+          entity: Entity being operated on
+          duration: Query duration in seconds
+          error: Optional error information
+
+
+
+   .. py:method:: track_service_call(component, action, duration, error = None)
+
+      Track a service call.
+
+      Args:
+          component: Service component
+          action: Action being performed
+          duration: Call duration in seconds
+          error: Optional error information
+
+
+
+   .. py:method:: track_cache_operation(operation, backend, hit, duration, component = 'unknown')
+
+      Track a cache operation.
+
+      Args:
+          operation: Cache operation type
+          backend: Cache backend type
+          hit: Whether the operation was a cache hit
+          duration: Operation duration in seconds
+          component: Optional component name
+
+
+
+   .. py:method:: timed_function(name, metric_type = MetricType.HISTOGRAM, labels_func = None, track_in_progress_flag = False, in_progress_metric = None)
+
+      Create a decorator for timing a function.
+
+      Args:
+          name: Metric name
+          metric_type: Type of metric
+          labels_func: Optional function to generate labels
+          track_in_progress_flag: Whether to track in-progress operations
+          in_progress_metric: Optional metric name for in-progress tracking
+
+      Returns:
+          A decorator function
+
+
+
+   .. py:method:: async_timed_function(name, metric_type = MetricType.HISTOGRAM, labels_func = None, track_in_progress_flag = False, in_progress_metric = None)
+
+      Create a decorator for timing an async function.
+
+      Args:
+          name: Metric name
+          metric_type: Type of metric
+          labels_func: Optional function to generate labels
+          track_in_progress_flag: Whether to track in-progress operations
+          in_progress_metric: Optional metric name for in-progress tracking
+
+      Returns:
+          A decorator function
+
+
+
+   .. py:method:: get_current_metrics()
+
+      Get the current metrics data.
+
+      Returns:
+          A dictionary of current metrics data
+
+
+
+.. py:data:: _metrics_service
+   :type:  Optional[MetricsService]
+   :value: None
+
+
+.. py:function:: get_metrics_service()
+
+   Get the metrics service singleton.
+
+   Returns:
+       The metrics service instance
+
+

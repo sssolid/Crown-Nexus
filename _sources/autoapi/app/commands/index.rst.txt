@@ -1,0 +1,15 @@
+app.commands
+============
+
+.. py:module:: app.commands
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/commands/init_currencies/index
+
+

@@ -1,0 +1,893 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.chat.repository &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.chat.schemas" href="../schemas/index.html" />
+    <link rel="prev" title="app.domains.chat.models" href="../models/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.chat</a></li>
+      <li class="breadcrumb-item active">app.domains.chat.repository</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/chat/repository/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.chat.repository">
+<span id="app-domains-chat-repository"></span><h1>app.domains.chat.repository<a class="headerlink" href="#module-app.domains.chat.repository" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.chat.repository.ChatRoomRepository" title="app.domains.chat.repository.ChatRoomRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChatRoomRepository</span></code></a></p></td>
+<td><p>Repository for ChatRoom entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.chat.repository.ChatMemberRepository" title="app.domains.chat.repository.ChatMemberRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChatMemberRepository</span></code></a></p></td>
+<td><p>Repository for ChatMember entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.chat.repository.ChatMessageRepository" title="app.domains.chat.repository.ChatMessageRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChatMessageRepository</span></code></a></p></td>
+<td><p>Repository for ChatMessage entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.chat.repository.MessageReactionRepository" title="app.domains.chat.repository.MessageReactionRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MessageReactionRepository</span></code></a></p></td>
+<td><p>Repository for MessageReaction entity operations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.chat.repository.</span></span><span class="sig-name descname"><span class="pre">ChatRoomRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.chat.models.ChatRoom</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for ChatRoom entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+ChatRoom entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.find_direct_chat">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_direct_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user1_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user2_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.find_direct_chat" title="Link to this definition"></a></dt>
+<dd><p>Find a direct chat between two users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user1_id: First user ID.
+user2_id: Second user ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The direct chat room if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user1_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user2_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.get_rooms_for_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_rooms_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">room_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.get_rooms_for_user" title="Link to this definition"></a></dt>
+<dd><p>Get paginated list of chat rooms for a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID to filter by.
+room_type: Optional room type to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>room_type</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoomType" title="app.domains.chat.models.ChatRoomType"><em>app.domains.chat.models.ChatRoomType</em></a><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.get_company_rooms">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_company_rooms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.get_company_rooms" title="Link to this definition"></a></dt>
+<dd><p>Get paginated list of chat rooms for a company.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>company_id: The company ID to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>company_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.create_direct_chat">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_direct_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user1_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user2_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.create_direct_chat" title="Link to this definition"></a></dt>
+<dd><p>Create a direct chat between two users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user1_id: First user ID.
+user2_id: Second user ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple containing (chat room, list of members).</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If a direct chat already exists between the users.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user1_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user2_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a>, List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.create_group_chat">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_group_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creator_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">company_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.create_group_chat" title="Link to this definition"></a></dt>
+<dd><p>Create a group chat.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Group chat name.
+creator_id: ID of the user creating the chat.
+member_ids: List of member user IDs.
+company_id: Optional company ID to associate with the chat.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple containing (chat room, list of members).</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If no members are provided.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>creator_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>member_ids</strong> (<em>List</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p></li>
+<li><p><strong>company_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a>, List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.add_members">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ChatMemberRole.MEMBER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">added_by_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.add_members" title="Link to this definition"></a></dt>
+<dd><p>Add members to a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room.
+user_ids: List of user IDs to add.
+role: Role to assign to the new members.
+added_by_id: ID of the user adding the members.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of created member records.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the room doesn’t exist.
+PermissionDeniedException: If the user doesn’t have permission.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_ids</strong> (<em>List</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p></li>
+<li><p><strong>role</strong> (<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMemberRole" title="app.domains.chat.models.ChatMemberRole"><em>app.domains.chat.models.ChatMemberRole</em></a>)</p></li>
+<li><p><strong>added_by_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatRoomRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatRoomRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a chat room exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chat room if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the chat room is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.chat.repository.</span></span><span class="sig-name descname"><span class="pre">ChatMemberRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.chat.models.ChatMember</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for ChatMember entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+ChatMember entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.find_by_room_and_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_room_and_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.find_by_room_and_user" title="Link to this definition"></a></dt>
+<dd><p>Find a chat membership for a specific room and user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+user_id: The user ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chat member if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.get_by_room">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_room</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.get_by_room" title="Link to this definition"></a></dt>
+<dd><p>Get all members of a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+active_only: Whether to include only active members.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of chat members in the room.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>active_only</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.get_by_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.get_by_user" title="Link to this definition"></a></dt>
+<dd><p>Get all chat memberships for a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of chat memberships for the user.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.update_last_read">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_last_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.update_last_read" title="Link to this definition"></a></dt>
+<dd><p>Update the last read timestamp for a member.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+user_id: The user ID.
+timestamp: Optional custom timestamp (defaults to now).</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated member if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>timestamp</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.update_role">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_role</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_by_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.update_role" title="Link to this definition"></a></dt>
+<dd><p>Update the role of a chat member.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+user_id: The user ID.
+new_role: The new role to assign.
+updated_by_id: ID of the user making the change.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated member if found, None otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If the user doesn’t have permission.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>new_role</strong> (<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMemberRole" title="app.domains.chat.models.ChatMemberRole"><em>app.domains.chat.models.ChatMemberRole</em></a>)</p></li>
+<li><p><strong>updated_by_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.remove_member">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_by_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.remove_member" title="Link to this definition"></a></dt>
+<dd><p>Remove a member from a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+user_id: The user ID to remove.
+removed_by_id: ID of the user performing the removal.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the member was removed, False otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If the user doesn’t have permission.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>removed_by_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMemberRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMemberRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a chat member exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>member_id: The chat member ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chat member if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the chat member is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>member_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember">app.domains.chat.models.ChatMember</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.chat.repository.</span></span><span class="sig-name descname"><span class="pre">ChatMessageRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.chat.models.ChatMessage</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for ChatMessage entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+ChatMessage entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository.get_room_messages">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_room_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_deleted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository.get_room_messages" title="Link to this definition"></a></dt>
+<dd><p>Get messages for a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+limit: Maximum number of messages to return.
+before_id: Optional message ID to get messages before.
+include_deleted: Whether to include deleted messages.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of chat messages.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+<li><p><strong>before_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p></li>
+<li><p><strong>include_deleted</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository.send_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MessageType.TEXT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository.send_message" title="Link to this definition"></a></dt>
+<dd><p>Send a message to a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+sender_id: The sender user ID.
+content: The message content.
+message_type: The message type.
+extra_metadata: Optional message metadata.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The created message.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the room doesn’t exist.
+PermissionDeniedException: If the user isn’t a member of the room.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>sender_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>content</strong> (<em>str</em>)</p></li>
+<li><p><strong>message_type</strong> (<a class="reference internal" href="../models/index.html#app.domains.chat.models.MessageType" title="app.domains.chat.models.MessageType"><em>app.domains.chat.models.MessageType</em></a>)</p></li>
+<li><p><strong>extra_metadata</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository.edit_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edited_by_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository.edit_message" title="Link to this definition"></a></dt>
+<dd><p>Edit a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+new_content: The new message content.
+edited_by_id: ID of the user making the edit.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated message if found, None otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If the user doesn’t have permission.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>new_content</strong> (<em>str</em>)</p></li>
+<li><p><strong>edited_by_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository.delete_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deleted_by_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository.delete_message" title="Link to this definition"></a></dt>
+<dd><p>Delete a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+deleted_by_id: ID of the user deleting the message.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The deleted message if found, None otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If the user doesn’t have permission.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>deleted_by_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository.check_rate_limit">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_rate_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository.check_rate_limit" title="Link to this definition"></a></dt>
+<dd><p>Check if a user has exceeded rate limits for an event type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID.
+room_id: The chat room ID.
+event_type: The event type being limited.
+max_count: Maximum allowed events in the time window.
+window_seconds: Time window in seconds.</p>
+</dd>
+<dt>Raises:</dt><dd><p>RateLimitException: If the rate limit is exceeded.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>room_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>event_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>max_count</strong> (<em>int</em>)</p></li>
+<li><p><strong>window_seconds</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.ChatMessageRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.ChatMessageRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a chat message exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The chat message ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chat message if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the chat message is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.chat.repository.</span></span><span class="sig-name descname"><span class="pre">MessageReactionRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.chat.models.MessageReaction" title="app.domains.chat.models.MessageReaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.chat.models.MessageReaction</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for MessageReaction entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+MessageReaction entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository.find_by_message_user_reaction">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_message_user_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository.find_by_message_user_reaction" title="Link to this definition"></a></dt>
+<dd><p>Find a reaction by message, user, and reaction type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+user_id: The user ID.
+reaction: The reaction string.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The reaction if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>reaction</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.MessageReaction" title="app.domains.chat.models.MessageReaction">app.domains.chat.models.MessageReaction</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository.get_by_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository.get_by_message" title="Link to this definition"></a></dt>
+<dd><p>Get all reactions for a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of reactions for the message.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.chat.models.MessageReaction" title="app.domains.chat.models.MessageReaction">app.domains.chat.models.MessageReaction</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository.add_reaction">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository.add_reaction" title="Link to this definition"></a></dt>
+<dd><p>Add a reaction to a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+user_id: The user ID.
+reaction: The reaction string.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The created or existing reaction.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the message doesn’t exist.
+PermissionDeniedException: If the user isn’t a member of the room.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>reaction</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.MessageReaction" title="app.domains.chat.models.MessageReaction">app.domains.chat.models.MessageReaction</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository.remove_reaction">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository.remove_reaction" title="Link to this definition"></a></dt>
+<dd><p>Remove a reaction from a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+user_id: The user ID.
+reaction: The reaction string.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the reaction was removed, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>reaction</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository.get_reaction_counts">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_reaction_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository.get_reaction_counts" title="Link to this definition"></a></dt>
+<dd><p>Get counts of each reaction type for a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dictionary mapping reaction strings to counts.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.repository.MessageReactionRepository.get_user_reactions">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_user_reactions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.repository.MessageReactionRepository.get_user_reactions" title="Link to this definition"></a></dt>
+<dd><p>Get user IDs who reacted with a specific reaction to a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+reaction: The reaction string.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of user IDs.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>reaction</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[uuid.UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../models/index.html" class="btn btn-neutral float-left" title="app.domains.chat.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../schemas/index.html" class="btn btn-neutral float-right" title="app.domains.chat.schemas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

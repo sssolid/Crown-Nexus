@@ -1,0 +1,529 @@
+app.data_import.processors
+==========================
+
+.. py:module:: app.data_import.processors
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/data_import/processors/as400_processor/index
+   /autoapi/app/data_import/processors/base/index
+   /autoapi/app/data_import/processors/product_processor/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.processors.Processor
+   app.data_import.processors.ProductProcessor
+   app.data_import.processors.ProductMappingConfig
+   app.data_import.processors.AS400BaseProcessor
+   app.data_import.processors.AS400ProcessorConfig
+   app.data_import.processors.ProductAS400Processor
+   app.data_import.processors.PricingAS400Processor
+   app.data_import.processors.InventoryAS400Processor
+
+
+Package Contents
+----------------
+
+.. py:class:: Processor
+
+   Bases: :py:obj:`Protocol`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol for data processors.
+
+
+   .. py:method:: process(data)
+      :async:
+
+
+      Process raw data into structured data.
+
+      Args:
+          data: List of raw data records
+
+      Returns:
+          List of processed records
+
+      Raises:
+          ValueError: If data cannot be processed
+
+
+
+   .. py:method:: validate(data)
+      :async:
+
+
+      Validate processed data.
+
+      Args:
+          data: List of processed records
+
+      Returns:
+          List of validated records
+
+      Raises:
+          ValidationError: If data fails validation
+
+
+
+.. py:class:: ProductProcessor(config)
+
+   Processor for transforming raw product data into product schema.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: processed_part_numbers
+      :type:  Set[str]
+
+
+   .. py:method:: _transform_boolean(value)
+
+      Transform a value to a boolean.
+
+      Args:
+          value: Input value
+
+      Returns:
+          Boolean value
+
+
+
+   .. py:method:: _clean_part_number(part_number)
+
+      Clean and standardize a part number.
+
+      Args:
+          part_number: Raw part number
+
+      Returns:
+          Cleaned part number
+
+
+
+   .. py:method:: _generate_part_number_stripped(part_number)
+
+      Generate a stripped version of the part number (alphanumeric only).
+
+      Args:
+          part_number: Part number
+
+      Returns:
+          Stripped part number
+
+
+
+   .. py:method:: _process_record(record)
+
+      Process a single record.
+
+      Args:
+          record: Raw record data
+
+      Returns:
+          Processed record data in product schema format
+
+      Raises:
+          ValueError: If required fields are missing
+
+
+
+   .. py:method:: process(data)
+      :async:
+
+
+      Process raw data into product schema.
+
+      Args:
+          data: List of raw data records
+
+      Returns:
+          List of processed product records
+
+      Raises:
+          ValueError: If data cannot be processed
+
+
+
+   .. py:method:: validate(data)
+      :async:
+
+
+      Validate processed data against the product schema.
+
+      Args:
+          data: List of processed product records
+
+      Returns:
+          List of validated product create models
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+.. py:class:: ProductMappingConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for mapping source data to product schema.
+
+
+   .. py:attribute:: part_number_field
+      :type:  str
+
+
+   .. py:attribute:: application_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: vintage_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: late_model_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: soft_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: universal_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: active_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: boolean_true_values
+      :type:  List[str]
+
+
+   .. py:attribute:: boolean_false_values
+      :type:  List[str]
+
+
+   .. py:attribute:: description_fields
+      :type:  Optional[Dict[str, str]]
+
+
+   .. py:attribute:: marketing_fields
+      :type:  Optional[Dict[str, str]]
+
+
+   .. py:method:: validate_boolean_values(v)
+
+
+.. py:class:: AS400BaseProcessor(config, destination_model)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ], :py:obj:`abc.ABC`
+
+
+   Base class for AS400 data processors.
+
+   Generic base processor that transforms data from AS400 format
+   to the application's data model format.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: destination_model
+
+
+   .. py:attribute:: processed_keys
+      :type:  Set[str]
+
+
+   .. py:attribute:: field_mapping
+
+
+   .. py:method:: process(data)
+      :async:
+
+
+      Process raw AS400 data into application format.
+
+      Args:
+          data: List of dictionary records from AS400
+
+      Returns:
+          List of processed dictionaries ready for validation
+
+
+
+   .. py:method:: validate(data)
+      :async:
+
+
+      Validate processed data against destination model.
+
+      Args:
+          data: List of processed dictionaries
+
+      Returns:
+          List of validated model instances
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: _process_record(record)
+
+      Process a single record from AS400 format.
+
+      Args:
+          record: Dictionary record from AS400
+
+      Returns:
+          Processed dictionary ready for validation
+
+      Raises:
+          ValueError: If processing fails
+
+
+
+   .. py:method:: _process_field_value(field_name, value)
+
+      Process a field value for specific data types.
+
+      Args:
+          field_name: Field name in the AS400 database
+          value: Raw value from AS400
+
+      Returns:
+          Processed value
+
+
+
+   .. py:method:: _convert_to_boolean(value)
+
+      Convert a value to a boolean.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Boolean representation
+
+
+
+   .. py:method:: _convert_to_date(value)
+
+      Convert a value to a date.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Datetime object or None
+
+
+
+   .. py:method:: _convert_to_time(value)
+
+      Convert a value to a time.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Datetime object or None
+
+
+
+   .. py:method:: _convert_to_timestamp(value)
+
+      Convert a value to a timestamp.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          Datetime object or None
+
+
+
+   .. py:method:: _convert_to_numeric(value)
+
+      Convert a value to a numeric type.
+
+      Args:
+          value: Value to convert
+
+      Returns:
+          int, float, or None
+
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+      :abstractmethod:
+
+
+      Apply custom processing to a record.
+
+      This method should be implemented by subclasses to provide
+      entity-specific processing logic.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+
+.. py:class:: AS400ProcessorConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for AS400 data processors.
+
+
+   .. py:attribute:: field_mapping
+      :type:  Dict[str, str]
+
+
+   .. py:attribute:: boolean_true_values
+      :type:  List[str]
+      :value: ['1', 'Y', 'YES', 'TRUE', 'T']
+
+
+
+   .. py:attribute:: boolean_false_values
+      :type:  List[str]
+      :value: ['0', 'N', 'NO', 'FALSE', 'F']
+
+
+
+   .. py:attribute:: default_values
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: skip_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: required_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: date_format
+      :type:  str
+      :value: '%Y-%m-%d'
+
+
+
+   .. py:attribute:: time_format
+      :type:  str
+      :value: '%H:%M:%S'
+
+
+
+   .. py:attribute:: timestamp_format
+      :type:  str
+      :value: '%Y-%m-%d %H:%M:%S'
+
+
+
+   .. py:attribute:: unique_key_field
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: ProductAS400Processor(config, destination_model)
+
+   Bases: :py:obj:`AS400BaseProcessor`\ [\ :py:obj:`T`\ ]
+
+
+   Processor for product data from AS400.
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+
+      Apply product-specific processing.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+
+   .. py:method:: _normalize_part_number(part_number)
+
+      Normalize a part number by removing non-alphanumeric characters and converting to uppercase.
+
+      Args:
+          part_number: Part number string
+
+      Returns:
+          Normalized part number
+
+
+
+.. py:class:: PricingAS400Processor(config, destination_model)
+
+   Bases: :py:obj:`AS400BaseProcessor`\ [\ :py:obj:`T`\ ]
+
+
+   Processor for pricing data from AS400.
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+
+      Apply pricing-specific processing.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+
+.. py:class:: InventoryAS400Processor(config, destination_model)
+
+   Bases: :py:obj:`AS400BaseProcessor`\ [\ :py:obj:`T`\ ]
+
+
+   Processor for inventory/stock data from AS400.
+
+
+   .. py:method:: _process_record_custom(processed_record, original_record)
+
+      Apply inventory-specific processing.
+
+      Args:
+          processed_record: Already processed record
+          original_record: Original record from AS400
+
+      Returns:
+          Further processed record
+
+
+

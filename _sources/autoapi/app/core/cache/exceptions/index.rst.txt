@@ -1,0 +1,64 @@
+app.core.cache.exceptions
+=========================
+
+.. py:module:: app.core.cache.exceptions
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.core.cache.exceptions.CacheException
+   app.core.cache.exceptions.CacheConnectionException
+   app.core.cache.exceptions.CacheOperationException
+   app.core.cache.exceptions.CacheConfigurationException
+
+
+Module Contents
+---------------
+
+.. py:exception:: CacheException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:exception:: CacheConnectionException(message, backend, details = None, original_exception = None)
+
+   Bases: :py:obj:`CacheException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:exception:: CacheOperationException(message, operation, key = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`CacheException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:exception:: CacheConfigurationException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`CacheException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+

@@ -1,0 +1,21 @@
+app.middleware
+==============
+
+.. py:module:: app.middleware
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/middleware/error_handler/index
+   /autoapi/app/middleware/logging/index
+   /autoapi/app/middleware/metrics/index
+   /autoapi/app/middleware/rate_limiting/index
+   /autoapi/app/middleware/request_context/index
+   /autoapi/app/middleware/response_formatter/index
+   /autoapi/app/middleware/security/index
+
+

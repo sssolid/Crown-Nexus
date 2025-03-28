@@ -1,0 +1,555 @@
+app.domains.audit.service.base
+==============================
+
+.. py:module:: app.domains.audit.service.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.audit.service.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.service.base.AuditEventType
+   app.domains.audit.service.base.AuditLogLevel
+   app.domains.audit.service.base.AuditContext
+   app.domains.audit.service.base.AuditOptions
+   app.domains.audit.service.base.AuditLogger
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: AuditEventType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Enum for different types of audit events.
+
+
+   .. py:attribute:: USER_LOGIN
+      :value: 'user_login'
+
+
+
+   .. py:attribute:: USER_LOGOUT
+      :value: 'user_logout'
+
+
+
+   .. py:attribute:: LOGIN_FAILED
+      :value: 'login_failed'
+
+
+
+   .. py:attribute:: PASSWORD_RESET_REQUESTED
+      :value: 'password_reset_requested'
+
+
+
+   .. py:attribute:: PASSWORD_RESET_COMPLETED
+      :value: 'password_reset_completed'
+
+
+
+   .. py:attribute:: MFA_ENABLED
+      :value: 'mfa_enabled'
+
+
+
+   .. py:attribute:: MFA_DISABLED
+      :value: 'mfa_disabled'
+
+
+
+   .. py:attribute:: SESSION_EXPIRED
+      :value: 'session_expired'
+
+
+
+   .. py:attribute:: API_KEY_CREATED
+      :value: 'api_key_created'
+
+
+
+   .. py:attribute:: API_KEY_REVOKED
+      :value: 'api_key_revoked'
+
+
+
+   .. py:attribute:: USER_CREATED
+      :value: 'user_created'
+
+
+
+   .. py:attribute:: USER_UPDATED
+      :value: 'user_updated'
+
+
+
+   .. py:attribute:: USER_DELETED
+      :value: 'user_deleted'
+
+
+
+   .. py:attribute:: USER_ACTIVATED
+      :value: 'user_activated'
+
+
+
+   .. py:attribute:: USER_DEACTIVATED
+      :value: 'user_deactivated'
+
+
+
+   .. py:attribute:: PASSWORD_CHANGED
+      :value: 'password_changed'
+
+
+
+   .. py:attribute:: EMAIL_CHANGED
+      :value: 'email_changed'
+
+
+
+   .. py:attribute:: USER_PROFILE_UPDATED
+      :value: 'user_profile_updated'
+
+
+
+   .. py:attribute:: PERMISSION_CHANGED
+      :value: 'permission_changed'
+
+
+
+   .. py:attribute:: ROLE_ASSIGNED
+      :value: 'role_assigned'
+
+
+
+   .. py:attribute:: ROLE_REVOKED
+      :value: 'role_revoked'
+
+
+
+   .. py:attribute:: ACCESS_DENIED
+      :value: 'access_denied'
+
+
+
+   .. py:attribute:: PRODUCT_CREATED
+      :value: 'product_created'
+
+
+
+   .. py:attribute:: PRODUCT_UPDATED
+      :value: 'product_updated'
+
+
+
+   .. py:attribute:: PRODUCT_DELETED
+      :value: 'product_deleted'
+
+
+
+   .. py:attribute:: PRODUCT_ACTIVATED
+      :value: 'product_activated'
+
+
+
+   .. py:attribute:: PRODUCT_DEACTIVATED
+      :value: 'product_deactivated'
+
+
+
+   .. py:attribute:: PRICE_CHANGED
+      :value: 'price_changed'
+
+
+
+   .. py:attribute:: INVENTORY_UPDATED
+      :value: 'inventory_updated'
+
+
+
+   .. py:attribute:: ORDER_CREATED
+      :value: 'order_created'
+
+
+
+   .. py:attribute:: ORDER_UPDATED
+      :value: 'order_updated'
+
+
+
+   .. py:attribute:: ORDER_CANCELED
+      :value: 'order_canceled'
+
+
+
+   .. py:attribute:: ORDER_SHIPPED
+      :value: 'order_shipped'
+
+
+
+   .. py:attribute:: PAYMENT_RECEIVED
+      :value: 'payment_received'
+
+
+
+   .. py:attribute:: PAYMENT_REFUNDED
+      :value: 'payment_refunded'
+
+
+
+   .. py:attribute:: DATA_EXPORTED
+      :value: 'data_exported'
+
+
+
+   .. py:attribute:: DATA_IMPORTED
+      :value: 'data_imported'
+
+
+
+   .. py:attribute:: DATA_DELETED
+      :value: 'data_deleted'
+
+
+
+   .. py:attribute:: REPORT_GENERATED
+      :value: 'report_generated'
+
+
+
+   .. py:attribute:: SETTINGS_CHANGED
+      :value: 'settings_changed'
+
+
+
+   .. py:attribute:: CONFIGURATION_CHANGED
+      :value: 'configuration_changed'
+
+
+
+   .. py:attribute:: FEATURE_ENABLED
+      :value: 'feature_enabled'
+
+
+
+   .. py:attribute:: FEATURE_DISABLED
+      :value: 'feature_disabled'
+
+
+
+   .. py:attribute:: FILE_UPLOADED
+      :value: 'file_uploaded'
+
+
+
+   .. py:attribute:: FILE_DOWNLOADED
+      :value: 'file_downloaded'
+
+
+
+   .. py:attribute:: FILE_DELETED
+      :value: 'file_deleted'
+
+
+
+   .. py:attribute:: EMAIL_SENT
+      :value: 'email_sent'
+
+
+
+   .. py:attribute:: SMS_SENT
+      :value: 'sms_sent'
+
+
+
+   .. py:attribute:: NOTIFICATION_SENT
+      :value: 'notification_sent'
+
+
+
+   .. py:attribute:: CHAT_ROOM_CREATED
+      :value: 'chat_room_created'
+
+
+
+   .. py:attribute:: CHAT_MESSAGE_SENT
+      :value: 'chat_message_sent'
+
+
+
+   .. py:attribute:: CHAT_MESSAGE_EDITED
+      :value: 'chat_message_edited'
+
+
+
+   .. py:attribute:: CHAT_MESSAGE_DELETED
+      :value: 'chat_message_deleted'
+
+
+
+   .. py:attribute:: CHAT_MEMBER_ADDED
+      :value: 'chat_member_added'
+
+
+
+   .. py:attribute:: CHAT_MEMBER_REMOVED
+      :value: 'chat_member_removed'
+
+
+
+   .. py:attribute:: EXTERNAL_API_CALLED
+      :value: 'external_api_called'
+
+
+
+   .. py:attribute:: WEBHOOK_RECEIVED
+      :value: 'webhook_received'
+
+
+
+   .. py:attribute:: WEBHOOK_PROCESSED
+      :value: 'webhook_processed'
+
+
+
+   .. py:attribute:: SYSTEM_STARTED
+      :value: 'system_started'
+
+
+
+   .. py:attribute:: SYSTEM_STOPPED
+      :value: 'system_stopped'
+
+
+
+   .. py:attribute:: BACKUP_CREATED
+      :value: 'backup_created'
+
+
+
+   .. py:attribute:: BACKUP_RESTORED
+      :value: 'backup_restored'
+
+
+
+   .. py:attribute:: MAINTENANCE_MODE_ENABLED
+      :value: 'maintenance_mode_enabled'
+
+
+
+   .. py:attribute:: MAINTENANCE_MODE_DISABLED
+      :value: 'maintenance_mode_disabled'
+
+
+
+   .. py:attribute:: GDPR_DATA_EXPORT
+      :value: 'gdpr_data_export'
+
+
+
+   .. py:attribute:: GDPR_DATA_DELETED
+      :value: 'gdpr_data_deleted'
+
+
+
+   .. py:attribute:: TERMS_ACCEPTED
+      :value: 'terms_accepted'
+
+
+
+   .. py:attribute:: PRIVACY_POLICY_ACCEPTED
+      :value: 'privacy_policy_accepted'
+
+
+
+.. py:class:: AuditLogLevel
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Enum for audit log severity levels.
+
+
+   .. py:attribute:: INFO
+      :value: 'info'
+
+
+
+   .. py:attribute:: WARNING
+      :value: 'warning'
+
+
+
+   .. py:attribute:: ERROR
+      :value: 'error'
+
+
+
+   .. py:attribute:: CRITICAL
+      :value: 'critical'
+
+
+
+.. py:class:: AuditContext
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Context information for an audit event.
+
+
+   .. py:attribute:: user_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: ip_address
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: user_agent
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: session_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: request_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: company_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: resource_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: resource_type
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: before_state
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: after_state
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: changes
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: metadata
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+.. py:class:: AuditOptions
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Options for audit logging.
+
+
+   .. py:attribute:: include_request_body
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: sensitive_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: anonymize_data
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: capture_before_after
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: retention_period
+      :type:  int
+      :value: 90
+
+
+
+.. py:class:: AuditLogger
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for audit loggers.
+
+
+   .. py:method:: log_event(event_type, user_id = None, ip_address = None, resource_id = None, resource_type = None, details = None, context = None, level = None, options = None)
+      :async:
+
+
+      Log an audit event.
+
+      Args:
+          event_type: Type of the audit event
+          user_id: ID of the user who performed the action
+          ip_address: IP address of the user
+          resource_id: ID of the resource affected
+          resource_type: Type of the resource affected
+          details: Additional details about the event
+          context: Additional context information
+          level: Severity level of the event
+          options: Audit logging options
+
+      Returns:
+          str: The ID of the created audit event
+
+
+

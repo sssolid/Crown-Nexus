@@ -1,0 +1,180 @@
+app.data_import.processors.product_processor
+============================================
+
+.. py:module:: app.data_import.processors.product_processor
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.processors.product_processor.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.processors.product_processor.ProductMappingConfig
+   app.data_import.processors.product_processor.ProductProcessor
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ProductMappingConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for mapping source data to product schema.
+
+
+   .. py:attribute:: part_number_field
+      :type:  str
+
+
+   .. py:attribute:: application_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: vintage_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: late_model_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: soft_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: universal_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: active_field
+      :type:  Optional[str]
+
+
+   .. py:attribute:: boolean_true_values
+      :type:  List[str]
+
+
+   .. py:attribute:: boolean_false_values
+      :type:  List[str]
+
+
+   .. py:attribute:: description_fields
+      :type:  Optional[Dict[str, str]]
+
+
+   .. py:attribute:: marketing_fields
+      :type:  Optional[Dict[str, str]]
+
+
+   .. py:method:: validate_boolean_values(v)
+
+
+.. py:class:: ProductProcessor(config)
+
+   Processor for transforming raw product data into product schema.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: processed_part_numbers
+      :type:  Set[str]
+
+
+   .. py:method:: _transform_boolean(value)
+
+      Transform a value to a boolean.
+
+      Args:
+          value: Input value
+
+      Returns:
+          Boolean value
+
+
+
+   .. py:method:: _clean_part_number(part_number)
+
+      Clean and standardize a part number.
+
+      Args:
+          part_number: Raw part number
+
+      Returns:
+          Cleaned part number
+
+
+
+   .. py:method:: _generate_part_number_stripped(part_number)
+
+      Generate a stripped version of the part number (alphanumeric only).
+
+      Args:
+          part_number: Part number
+
+      Returns:
+          Stripped part number
+
+
+
+   .. py:method:: _process_record(record)
+
+      Process a single record.
+
+      Args:
+          record: Raw record data
+
+      Returns:
+          Processed record data in product schema format
+
+      Raises:
+          ValueError: If required fields are missing
+
+
+
+   .. py:method:: process(data)
+      :async:
+
+
+      Process raw data into product schema.
+
+      Args:
+          data: List of raw data records
+
+      Returns:
+          List of processed product records
+
+      Raises:
+          ValueError: If data cannot be processed
+
+
+
+   .. py:method:: validate(data)
+      :async:
+
+
+      Validate processed data against the product schema.
+
+      Args:
+          data: List of processed product records
+
+      Returns:
+          List of validated product create models
+
+      Raises:
+          ValidationException: If validation fails
+
+
+

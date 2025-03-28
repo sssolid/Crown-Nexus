@@ -1,0 +1,280 @@
+app.domains.sync_history.models
+===============================
+
+.. py:module:: app.domains.sync_history.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.sync_history.models.SyncEntityType
+   app.domains.sync_history.models.SyncStatus
+   app.domains.sync_history.models.SyncSource
+   app.domains.sync_history.models.SyncHistory
+   app.domains.sync_history.models.SyncEvent
+
+
+Module Contents
+---------------
+
+.. py:class:: SyncEntityType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of entities that can be synchronized.
+
+
+   .. py:attribute:: PRODUCT
+      :value: 'product'
+
+
+
+   .. py:attribute:: MEASUREMENT
+      :value: 'measurement'
+
+
+
+   .. py:attribute:: STOCK
+      :value: 'stock'
+
+
+
+   .. py:attribute:: PRICING
+      :value: 'pricing'
+
+
+
+   .. py:attribute:: MANUFACTURER
+      :value: 'manufacturer'
+
+
+
+   .. py:attribute:: CUSTOMER
+      :value: 'customer'
+
+
+
+   .. py:attribute:: ORDER
+      :value: 'order'
+
+
+
+.. py:class:: SyncStatus
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Status of synchronization operations.
+
+
+   .. py:attribute:: PENDING
+      :value: 'pending'
+
+
+
+   .. py:attribute:: RUNNING
+      :value: 'running'
+
+
+
+   .. py:attribute:: COMPLETED
+      :value: 'completed'
+
+
+
+   .. py:attribute:: FAILED
+      :value: 'failed'
+
+
+
+   .. py:attribute:: CANCELLED
+      :value: 'cancelled'
+
+
+
+.. py:class:: SyncSource
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Source systems for synchronization.
+
+
+   .. py:attribute:: AS400
+      :value: 'as400'
+
+
+
+   .. py:attribute:: FILEMAKER
+      :value: 'filemaker'
+
+
+
+   .. py:attribute:: API
+      :value: 'api'
+
+
+
+   .. py:attribute:: EXTERNAL
+      :value: 'external'
+
+
+
+.. py:class:: SyncHistory
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   History of synchronization operations.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'sync_history'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: entity_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: source
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: status
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: started_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: completed_at
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: records_processed
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: records_created
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: records_updated
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: records_failed
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: sync_duration
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: triggered_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: error_message
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: details
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: triggered_by
+
+
+   .. py:attribute:: events
+      :type:  sqlalchemy.orm.Mapped[List[SyncEvent]]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+
+   .. py:method:: complete(status, records_processed, records_created, records_updated, records_failed, error_message = None, details = None)
+
+      Mark the sync as complete with results.
+
+      Args:
+          status: Final status
+          records_processed: Number of records processed
+          records_created: Number of records created
+          records_updated: Number of records updated
+          records_failed: Number of records that failed
+          error_message: Error message if any
+          details: Additional details
+
+
+
+   .. py:method:: add_event(event_type, message, details = None)
+
+      Add an event to this sync operation.
+
+      Args:
+          event_type: Type of event
+          message: Event message
+          details: Additional details
+
+      Returns:
+          Created event
+
+
+
+.. py:class:: SyncEvent
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Events during synchronization operations.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'sync_event'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: sync_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: event_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: timestamp
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: message
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: details
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: sync
+      :type:  sqlalchemy.orm.Mapped[SyncHistory]
+
+
+   .. py:method:: __repr__()
+
+

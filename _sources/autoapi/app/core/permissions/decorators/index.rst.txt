@@ -1,0 +1,63 @@
+app.core.permissions.decorators
+===============================
+
+.. py:module:: app.core.permissions.decorators
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.permissions.decorators.logger
+   app.core.permissions.decorators.T
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.permissions.decorators.require_permission
+   app.core.permissions.decorators.require_permissions
+   app.core.permissions.decorators.require_admin
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:function:: require_permission(permission)
+
+   Decorator to require a specific permission.
+
+   Args:
+       permission: Required permission
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: require_permissions(permissions, require_all = True)
+
+   Decorator to require multiple permissions.
+
+   Args:
+       permissions: Required permissions
+       require_all: Whether all permissions are required (AND) or any (OR)
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: require_admin()
+
+   Decorator to require admin role.
+
+   Returns:
+       Callable: Decorator function
+
+

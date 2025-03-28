@@ -1,0 +1,18 @@
+app.domains.autocare.vcdb
+=========================
+
+.. py:module:: app.domains.autocare.vcdb
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/autocare/vcdb/models/index
+   /autoapi/app/domains/autocare/vcdb/repository/index
+   /autoapi/app/domains/autocare/vcdb/schemas/index
+   /autoapi/app/domains/autocare/vcdb/service/index
+
+

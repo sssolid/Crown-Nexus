@@ -1,0 +1,196 @@
+app.db.base_class
+=================
+
+.. py:module:: app.db.base_class
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.db.base_class.logger
+   app.db.base_class.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.db.base_class.Base
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: Base
+
+   Bases: :py:obj:`sqlalchemy.orm.DeclarativeBase`
+
+
+   Enhanced base class for all database models.
+
+   This class provides common functionality for all models, including:
+   - Automatic table name generation
+   - Audit fields (created_at, updated_at, created_by_id, updated_by_id)
+   - Soft deletion support
+   - JSON serialization via the to_dict() method
+   - Helper methods for common query operations
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: is_deleted
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: updated_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: __exclude_from_dict__
+      :type:  ClassVar[List[str]]
+      :value: ['is_deleted']
+
+
+
+   .. py:attribute:: __include_relationships__
+      :type:  ClassVar[bool]
+      :value: False
+
+
+
+   .. py:method:: __tablename__()
+
+      Generate table name automatically from class name.
+
+      Returns:
+          str: Table name as lowercase class name
+
+
+
+   .. py:method:: to_dict(exclude = None, include_relationships = None)
+
+      Convert model instance to dictionary.
+
+      This method provides a consistent way to serialize models for API responses.
+      It respects the exclude_from_dict and include_relationships configurations.
+
+      Args:
+          exclude: Additional fields to exclude from the result
+          include_relationships: Override __include_relationships__ setting
+
+      Returns:
+          Dict[str, Any]: Dictionary representation of model
+
+
+
+   .. py:method:: get_columns()
+      :classmethod:
+
+
+      Get a list of column names for this model.
+
+      Returns:
+          List[str]: Column names
+
+
+
+   .. py:method:: from_dict(data)
+      :classmethod:
+
+
+      Create a new instance from a dictionary.
+
+      Args:
+          data: Dictionary containing model data
+
+      Returns:
+          T: New model instance
+
+
+
+   .. py:method:: filter_by_id(id_value)
+      :classmethod:
+
+
+      Create a query to filter by id.
+
+      Args:
+          id_value: UUID primary key to filter by
+
+      Returns:
+          Select: SQLAlchemy select statement filtered by id
+
+
+
+   .. py:method:: active_only()
+      :classmethod:
+
+
+      Create a query for non-deleted records only.
+
+      Returns:
+          Select: SQLAlchemy select statement filtered to non-deleted records
+
+
+
+   .. py:method:: soft_delete(user_id = None)
+
+      Mark the record as deleted without removing from database.
+
+      Args:
+          user_id: ID of the user performing the deletion
+
+
+
+   .. py:method:: restore(user_id = None)
+
+      Restore a soft-deleted record.
+
+      Args:
+          user_id: ID of the user restoring the record
+
+
+
+   .. py:method:: update_from_dict(data, user_id = None, exclude = None)
+
+      Update model attributes from dictionary.
+
+      Args:
+          data: Dictionary containing values to update
+          user_id: ID of the user performing the update
+          exclude: Fields to exclude from update
+
+
+
+   .. py:method:: get_relationships()
+      :classmethod:
+
+
+      Get relationships defined on this model.
+
+      Returns:
+          Dict[str, Any]: Dictionary of relationship names and their properties
+
+
+

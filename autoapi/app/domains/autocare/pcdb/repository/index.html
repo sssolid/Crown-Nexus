@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.autocare.pcdb.repository &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.domains.autocare.pcdb.schemas" href="../schemas/index.html" />
+    <link rel="prev" title="app.domains.autocare.pcdb.models" href="../models/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains.autocare</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.autocare.pcdb</a></li>
+      <li class="breadcrumb-item active">app.domains.autocare.pcdb.repository</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/domains/autocare/pcdb/repository/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.autocare.pcdb.repository">
+<span id="app-domains-autocare-pcdb-repository"></span><h1>app.domains.autocare.pcdb.repository<a class="headerlink" href="#module-app.domains.autocare.pcdb.repository" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.pcdb.repository.PCdbRepository" title="app.domains.autocare.pcdb.repository.PCdbRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PCdbRepository</span></code></a></p></td>
+<td><p>Repository for PCdb entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.pcdb.repository.PartsRepository" title="app.domains.autocare.pcdb.repository.PartsRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartsRepository</span></code></a></p></td>
+<td><p>Repository for Parts entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.pcdb.repository.CategoryRepository" title="app.domains.autocare.pcdb.repository.CategoryRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CategoryRepository</span></code></a></p></td>
+<td><p>Repository for Category entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.pcdb.repository.SubCategoryRepository" title="app.domains.autocare.pcdb.repository.SubCategoryRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubCategoryRepository</span></code></a></p></td>
+<td><p>Repository for SubCategory entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.pcdb.repository.PositionRepository" title="app.domains.autocare.pcdb.repository.PositionRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PositionRepository</span></code></a></p></td>
+<td><p>Repository for Position entity operations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.pcdb.repository.</span></span><span class="sig-name descname"><span class="pre">PCdbRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository" title="Link to this definition"></a></dt>
+<dd><p>Repository for PCdb entity operations.</p>
+<p>Provides methods for querying PCdb data and managing database updates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.parts_repo">
+<span class="sig-name descname"><span class="pre">parts_repo</span></span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.parts_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.category_repo">
+<span class="sig-name descname"><span class="pre">category_repo</span></span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.category_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.subcategory_repo">
+<span class="sig-name descname"><span class="pre">subcategory_repo</span></span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.subcategory_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.position_repo">
+<span class="sig-name descname"><span class="pre">position_repo</span></span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.position_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.get_version">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.get_version" title="Link to this definition"></a></dt>
+<dd><p>Get the current version of the PCdb database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The version date as a string or None if no version is set.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.update_version">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version_date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.update_version" title="Link to this definition"></a></dt>
+<dd><p>Update the current version of the PCdb database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>version_date: The new version date.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated version entity.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version_date</strong> (<em>datetime.datetime</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.PCdbVersion" title="app.domains.autocare.pcdb.models.PCdbVersion">app.domains.autocare.pcdb.models.PCdbVersion</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PCdbRepository.search_parts">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_parts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PCdbRepository.search_parts" title="Link to this definition"></a></dt>
+<dd><p>Search for parts by term and optional category filters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>search_term: The search term.
+categories: Optional list of category IDs to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_term</strong> (<em>str</em>)</p></li>
+<li><p><strong>categories</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PartsRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.pcdb.repository.</span></span><span class="sig-name descname"><span class="pre">PartsRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PartsRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Parts" title="app.domains.autocare.pcdb.models.Parts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.pcdb.models.Parts</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Parts entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PartsRepository.get_by_terminology_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_terminology_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PartsRepository.get_by_terminology_id" title="Link to this definition"></a></dt>
+<dd><p>Get a part by its terminology ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>part_terminology_id: The part terminology ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The part if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>part_terminology_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Parts" title="app.domains.autocare.pcdb.models.Parts">app.domains.autocare.pcdb.models.Parts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PartsRepository.search">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PartsRepository.search" title="Link to this definition"></a></dt>
+<dd><p>Search for parts by term and optional category filters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>search_term: The search term.
+categories: Optional list of category IDs to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_term</strong> (<em>str</em>)</p></li>
+<li><p><strong>categories</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PartsRepository.get_by_category">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PartsRepository.get_by_category" title="Link to this definition"></a></dt>
+<dd><p>Get parts by category.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>category_id: The category ID.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PartsRepository.get_supersessions">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_supersessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PartsRepository.get_supersessions" title="Link to this definition"></a></dt>
+<dd><p>Get supersession information for a part.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>part_terminology_id: The part terminology ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict with superseded_by and supersedes lists.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>part_terminology_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, List[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Parts" title="app.domains.autocare.pcdb.models.Parts">app.domains.autocare.pcdb.models.Parts</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.CategoryRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.pcdb.repository.</span></span><span class="sig-name descname"><span class="pre">CategoryRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.CategoryRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Category" title="app.domains.autocare.pcdb.models.Category"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.pcdb.models.Category</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Category entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.CategoryRepository.get_by_category_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_category_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.CategoryRepository.get_by_category_id" title="Link to this definition"></a></dt>
+<dd><p>Get a category by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>category_id: The category ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The category if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>category_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Category" title="app.domains.autocare.pcdb.models.Category">app.domains.autocare.pcdb.models.Category</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.CategoryRepository.get_all_categories">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_categories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.CategoryRepository.get_all_categories" title="Link to this definition"></a></dt>
+<dd><p>Get all categories.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all categories.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Category" title="app.domains.autocare.pcdb.models.Category">app.domains.autocare.pcdb.models.Category</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.CategoryRepository.search">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.CategoryRepository.search" title="Link to this definition"></a></dt>
+<dd><p>Search for categories by name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>search_term: The search term.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of matching categories.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>search_term</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Category" title="app.domains.autocare.pcdb.models.Category">app.domains.autocare.pcdb.models.Category</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.SubCategoryRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.pcdb.repository.</span></span><span class="sig-name descname"><span class="pre">SubCategoryRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.SubCategoryRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.SubCategory" title="app.domains.autocare.pcdb.models.SubCategory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.pcdb.models.SubCategory</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for SubCategory entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.SubCategoryRepository.get_by_subcategory_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_subcategory_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subcategory_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.SubCategoryRepository.get_by_subcategory_id" title="Link to this definition"></a></dt>
+<dd><p>Get a subcategory by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>subcategory_id: The subcategory ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The subcategory if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subcategory_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.SubCategory" title="app.domains.autocare.pcdb.models.SubCategory">app.domains.autocare.pcdb.models.SubCategory</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.SubCategoryRepository.get_by_category">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.SubCategoryRepository.get_by_category" title="Link to this definition"></a></dt>
+<dd><p>Get subcategories by category.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>category_id: The category ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of subcategories in the specified category.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>category_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.SubCategory" title="app.domains.autocare.pcdb.models.SubCategory">app.domains.autocare.pcdb.models.SubCategory</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PositionRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.pcdb.repository.</span></span><span class="sig-name descname"><span class="pre">PositionRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PositionRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Position" title="app.domains.autocare.pcdb.models.Position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.pcdb.models.Position</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Position entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PositionRepository.get_by_position_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_position_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PositionRepository.get_by_position_id" title="Link to this definition"></a></dt>
+<dd><p>Get a position by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>position_id: The position ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The position if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>position_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Position" title="app.domains.autocare.pcdb.models.Position">app.domains.autocare.pcdb.models.Position</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PositionRepository.get_all_positions">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PositionRepository.get_all_positions" title="Link to this definition"></a></dt>
+<dd><p>Get all positions.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all positions.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Position" title="app.domains.autocare.pcdb.models.Position">app.domains.autocare.pcdb.models.Position</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.pcdb.repository.PositionRepository.get_by_part">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.pcdb.repository.PositionRepository.get_by_part" title="Link to this definition"></a></dt>
+<dd><p>Get positions for a specific part.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>part_terminology_id: The part terminology ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of positions for the specified part.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>part_terminology_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.pcdb.models.Position" title="app.domains.autocare.pcdb.models.Position">app.domains.autocare.pcdb.models.Position</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../models/index.html" class="btn btn-neutral float-left" title="app.domains.autocare.pcdb.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../schemas/index.html" class="btn btn-neutral float-right" title="app.domains.autocare.pcdb.schemas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

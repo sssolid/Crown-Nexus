@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.fitment.mapper &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.fitment.models" href="../models/index.html" />
+    <link rel="prev" title="app.fitment.exceptions" href="../exceptions/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.fitment</a></li>
+      <li class="breadcrumb-item active">app.fitment.mapper</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/fitment/mapper/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.fitment.mapper">
+<span id="app-fitment-mapper"></span><h1>app.fitment.mapper<a class="headerlink" href="#module-app.fitment.mapper" title="Link to this heading"></a></h1>
+<p>Mapper for fitment data.</p>
+<p>This module provides the core mapping engine that connects
+fitment data with VCDB and PCDB records.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.fitment.mapper.logger" title="app.fitment.mapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.fitment.mapper.FitmentMappingEngine" title="app.fitment.mapper.FitmentMappingEngine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitmentMappingEngine</span></code></a></p></td>
+<td><p>Engine for mapping fitment data to VCDB and PCDB records.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.fitment.mapper.logger">
+<span class="sig-prename descclassname"><span class="pre">app.fitment.mapper.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.fitment.mapper.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.fitment.mapper.</span></span><span class="sig-name descname"><span class="pre">FitmentMappingEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_service</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine" title="Link to this definition"></a></dt>
+<dd><p>Engine for mapping fitment data to VCDB and PCDB records.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db_service</strong> (<a class="reference internal" href="../db/index.html#app.fitment.db.FitmentDBService" title="app.fitment.db.FitmentDBService"><em>app.fitment.db.FitmentDBService</em></a>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.db_service">
+<span class="sig-name descname"><span class="pre">db_service</span></span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.db_service" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.model_mappings">
+<span class="sig-name descname"><span class="pre">model_mappings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.model_mappings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.parser">
+<span class="sig-name descname"><span class="pre">parser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../parser/index.html#app.fitment.parser.FitmentParser" title="app.fitment.parser.FitmentParser"><span class="pre">app.fitment.parser.FitmentParser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.parser" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.configure">
+<span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_mappings_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.configure" title="Link to this definition"></a></dt>
+<dd><p>Configure the mapping engine with model mappings.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>model_mappings_path: Path to the model mappings Excel file</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_mappings_path</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.get_part_terminology">
+<span class="sig-name descname"><span class="pre">get_part_terminology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.get_part_terminology" title="Link to this definition"></a></dt>
+<dd><p>Get part terminology information by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>terminology_id: ID of the part terminology</p>
+</dd>
+<dt>Returns:</dt><dd><p>PartTerminology object</p>
+</dd>
+<dt>Raises:</dt><dd><p>MappingError: If part terminology not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>terminology_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.fitment.models.PartTerminology" title="app.fitment.models.PartTerminology">app.fitment.models.PartTerminology</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.get_pcdb_positions">
+<span class="sig-name descname"><span class="pre">get_pcdb_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.get_pcdb_positions" title="Link to this definition"></a></dt>
+<dd><p>Get PCDB positions for a part terminology.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>terminology_id: ID of the part terminology</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of PCDBPosition objects</p>
+</dd>
+<dt>Raises:</dt><dd><p>MappingError: If positions not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>terminology_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.fitment.models.PCDBPosition" title="app.fitment.models.PCDBPosition">app.fitment.models.PCDBPosition</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.get_vcdb_vehicles">
+<span class="sig-name descname"><span class="pre">get_vcdb_vehicles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.get_vcdb_vehicles" title="Link to this definition"></a></dt>
+<dd><p>Get VCDB vehicles matching criteria.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year: Optional year filter
+make: Optional make filter
+model: Optional model filter</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of VCDBVehicle objects</p>
+</dd>
+<dt>Raises:</dt><dd><p>MappingError: If query fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.fitment.models.VCDBVehicle" title="app.fitment.models.VCDBVehicle">app.fitment.models.VCDBVehicle</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.process_application">
+<span class="sig-name descname"><span class="pre">process_application</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">application_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.process_application" title="Link to this definition"></a></dt>
+<dd><p>Process a part application string and validate against databases.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>application_text: Raw part application text
+terminology_id: ID of the part terminology</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of ValidationResult objects</p>
+</dd>
+<dt>Raises:</dt><dd><p>MappingError: If processing fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>application_text</strong> (<em>str</em>)</p></li>
+<li><p><strong>terminology_id</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.fitment.models.ValidationResult" title="app.fitment.models.ValidationResult">app.fitment.models.ValidationResult</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.batch_process_applications">
+<span class="sig-name descname"><span class="pre">batch_process_applications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">application_texts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminology_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.batch_process_applications" title="Link to this definition"></a></dt>
+<dd><p>Process a batch of part application strings.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>application_texts: List of raw part application texts
+terminology_id: ID of the part terminology</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dictionary mapping application text to validation results</p>
+</dd>
+<dt>Raises:</dt><dd><p>MappingError: If processing fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>application_texts</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>terminology_id</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, List[<a class="reference internal" href="../models/index.html#app.fitment.models.ValidationResult" title="app.fitment.models.ValidationResult">app.fitment.models.ValidationResult</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.serialize_validation_results">
+<span class="sig-name descname"><span class="pre">serialize_validation_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.serialize_validation_results" title="Link to this definition"></a></dt>
+<dd><p>Serialize validation results to JSON-compatible dictionaries.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>results: List of ValidationResult objects</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of dictionaries</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>results</strong> (<em>List</em><em>[</em><a class="reference internal" href="../models/index.html#app.fitment.models.ValidationResult" title="app.fitment.models.ValidationResult"><em>app.fitment.models.ValidationResult</em></a><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.save_mapping_results">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_mapping_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.save_mapping_results" title="Link to this definition"></a></dt>
+<dd><p>Save mapping results to the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: ID of the product
+results: List of ValidationResult objects</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if successful</p>
+</dd>
+<dt>Raises:</dt><dd><p>MappingError: If saving fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>results</strong> (<em>List</em><em>[</em><a class="reference internal" href="../models/index.html#app.fitment.models.ValidationResult" title="app.fitment.models.ValidationResult"><em>app.fitment.models.ValidationResult</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.configure_from_file">
+<span class="sig-name descname"><span class="pre">configure_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_mappings_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.configure_from_file" title="Link to this definition"></a></dt>
+<dd><p>Configure the mapping engine with model mappings from a file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>model_mappings_path: Path to the model mappings JSON file</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_mappings_path</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.configure_from_database">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">configure_from_database</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.configure_from_database" title="Link to this definition"></a></dt>
+<dd><p>Configure the mapping engine with model mappings from the database.</p>
+<p>This allows for dynamic updates to mappings without server restarts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.fitment.mapper.FitmentMappingEngine.refresh_mappings">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refresh_mappings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.fitment.mapper.FitmentMappingEngine.refresh_mappings" title="Link to this definition"></a></dt>
+<dd><p>Refresh model mappings from the database.</p>
+<p>This allows for reloading mappings without restarting the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../exceptions/index.html" class="btn btn-neutral float-left" title="app.fitment.exceptions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../models/index.html" class="btn btn-neutral float-right" title="app.fitment.models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

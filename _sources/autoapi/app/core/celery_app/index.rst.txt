@@ -1,0 +1,42 @@
+app.core.celery_app
+===================
+
+.. py:module:: app.core.celery_app
+
+.. autoapi-nested-parse::
+
+   Celery configuration.
+
+   This module sets up the Celery application for background tasks:
+   - Task queue configuration
+   - Scheduled tasks
+   - Worker settings
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.celery_app.celery_app
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.celery_app.get_celery_app
+
+
+Module Contents
+---------------
+
+.. py:data:: celery_app
+
+.. py:function:: get_celery_app()
+
+   Get the Celery application instance.
+
+

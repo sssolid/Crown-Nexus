@@ -1,0 +1,148 @@
+app.core.config.security
+========================
+
+.. py:module:: app.core.config.security
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.security.SecuritySettings
+
+
+Module Contents
+---------------
+
+.. py:class:: SecuritySettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Security-related application settings.
+
+
+   .. py:attribute:: SECRET_KEY
+      :type:  str
+
+
+   .. py:attribute:: ACCESS_TOKEN_EXPIRE_MINUTES
+      :type:  int
+
+
+   .. py:attribute:: ALGORITHM
+      :type:  str
+
+
+   .. py:attribute:: ALLOWED_HOSTS
+      :type:  List[str]
+
+
+   .. py:attribute:: TRUSTED_PROXIES
+      :type:  List[str]
+
+
+   .. py:attribute:: CORS_ALWAYS_ALLOW
+      :type:  bool
+
+
+   .. py:attribute:: BACKEND_CORS_ORIGINS
+      :type:  List[str]
+
+
+   .. py:attribute:: CSRF_COOKIE_SECURE
+      :type:  bool
+
+
+   .. py:attribute:: CSRF_TOKEN_EXPIRY
+      :type:  int
+
+
+   .. py:attribute:: RATE_LIMIT_ENABLED
+      :type:  bool
+
+
+   .. py:attribute:: RATE_LIMIT_REQUESTS_PER_MINUTE
+      :type:  int
+
+
+   .. py:attribute:: RATE_LIMIT_BURST_MULTIPLIER
+      :type:  float
+
+
+   .. py:attribute:: RATE_LIMIT_STORAGE
+      :type:  str
+
+
+   .. py:attribute:: CONTENT_SECURITY_POLICY
+      :type:  str
+
+
+   .. py:attribute:: PERMISSIONS_POLICY
+      :type:  str
+
+
+   .. py:attribute:: AUDIT_LOGGING_ENABLED
+      :type:  bool
+
+
+   .. py:attribute:: AUDIT_LOG_TO_DB
+      :type:  bool
+
+
+   .. py:attribute:: AUDIT_LOG_TO_FILE
+      :type:  bool
+
+
+   .. py:attribute:: AUDIT_LOG_FILE
+      :type:  str
+
+
+   .. py:attribute:: CHAT_ENCRYPTION_SALT
+      :type:  str
+
+
+   .. py:attribute:: CHAT_MESSAGE_LIMIT
+      :type:  int
+
+
+   .. py:attribute:: CHAT_RATE_LIMIT_PER_MINUTE
+      :type:  int
+
+
+   .. py:attribute:: CHAT_WEBSOCKET_KEEPALIVE
+      :type:  int
+
+
+   .. py:attribute:: CHAT_MAX_MESSAGE_LENGTH
+      :type:  int
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: parse_str_to_list(v)
+      :classmethod:
+
+
+      Parse string to list of strings if needed.
+
+
+
+   .. py:method:: assemble_cors_origins(v)
+      :classmethod:
+
+
+      Parse CORS origins from string or list.
+
+
+
+   .. py:method:: validate_rate_limit_storage(v)
+      :classmethod:
+
+
+      Validate rate limit storage backend.
+
+
+

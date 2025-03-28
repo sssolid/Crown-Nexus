@@ -1,0 +1,346 @@
+app.domains.autocare.padb.schemas
+=================================
+
+.. py:module:: app.domains.autocare.padb.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.padb.schemas.PartAttribute
+   app.domains.autocare.padb.schemas.MetaData
+   app.domains.autocare.padb.schemas.MeasurementGroup
+   app.domains.autocare.padb.schemas.MetaUOMCode
+   app.domains.autocare.padb.schemas.ValidValue
+   app.domains.autocare.padb.schemas.PartAttributeAssignment
+   app.domains.autocare.padb.schemas.AttributeWithMetadata
+   app.domains.autocare.padb.schemas.PartAttributeDetail
+   app.domains.autocare.padb.schemas.PartAttributesResponse
+   app.domains.autocare.padb.schemas.AttributeSearchParameters
+   app.domains.autocare.padb.schemas.AttributeSearchResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: PartAttribute
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part attribute data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: pa_id
+      :type:  int
+
+
+   .. py:attribute:: pa_name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: pa_descr
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: MetaData
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for attribute metadata.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: meta_id
+      :type:  int
+
+
+   .. py:attribute:: meta_name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: meta_descr
+      :type:  Optional[str]
+
+
+   .. py:attribute:: meta_format
+      :type:  Optional[str]
+
+
+   .. py:attribute:: data_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: min_length
+      :type:  Optional[int]
+
+
+   .. py:attribute:: max_length
+      :type:  Optional[int]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: MeasurementGroup
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for measurement group data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: measurement_group_id
+      :type:  int
+
+
+   .. py:attribute:: measurement_group_name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: MetaUOMCode
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for unit of measure code data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: meta_uom_id
+      :type:  int
+
+
+   .. py:attribute:: uom_code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: uom_description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: uom_label
+      :type:  Optional[str]
+
+
+   .. py:attribute:: measurement_group_id
+      :type:  int
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ValidValue
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for valid value data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: valid_value_id
+      :type:  int
+
+
+   .. py:attribute:: valid_value
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PartAttributeAssignment
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part attribute assignment data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: papt_id
+      :type:  int
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  int
+
+
+   .. py:attribute:: pa_id
+      :type:  int
+
+
+   .. py:attribute:: meta_id
+      :type:  int
+
+
+   .. py:attribute:: attribute
+      :type:  Optional[PartAttribute]
+
+
+   .. py:attribute:: metadata
+      :type:  Optional[MetaData]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: AttributeWithMetadata
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for attribute with metadata and valid values.
+
+
+   .. py:attribute:: assignment_id
+      :type:  int
+
+
+   .. py:attribute:: attribute
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: metadata
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: valid_values
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: uom_codes
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PartAttributeDetail
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for detailed part attribute data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: pa_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: metadata_assignments
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PartAttributesResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part attributes response.
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  int
+
+
+   .. py:attribute:: attributes
+      :type:  List[AttributeWithMetadata]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: AttributeSearchParameters
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for attribute search parameters.
+
+
+   .. py:attribute:: search_term
+      :type:  str
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+.. py:class:: AttributeSearchResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated attribute search response.
+
+
+   .. py:attribute:: items
+      :type:  List[PartAttribute]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+

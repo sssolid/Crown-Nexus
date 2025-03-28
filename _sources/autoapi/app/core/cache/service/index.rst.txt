@@ -1,0 +1,249 @@
+app.core.cache.service
+======================
+
+.. py:module:: app.core.cache.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.cache.service.logger
+   app.core.cache.service.T
+   app.core.cache.service._cache_service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.cache.service.CacheService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.cache.service.get_cache_service
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: CacheService
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the cache service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the cache service.
+
+
+
+   .. py:method:: get(key, default = None, backend = None)
+      :async:
+
+
+      Get a value from the cache.
+
+      Args:
+          key: The cache key.
+          default: Default value if key doesn't exist.
+          backend: Optional backend name.
+
+      Returns:
+          The cached value or default.
+
+
+
+   .. py:method:: set(key, value, ttl = None, backend = None)
+      :async:
+
+
+      Set a value in the cache.
+
+      Args:
+          key: The cache key.
+          value: The value to cache.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: delete(key, backend = None)
+      :async:
+
+
+      Delete a value from the cache.
+
+      Args:
+          key: The cache key.
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: exists(key, backend = None)
+      :async:
+
+
+      Check if a key exists in the cache.
+
+      Args:
+          key: The cache key.
+          backend: Optional backend name.
+
+      Returns:
+          True if key exists, False otherwise.
+
+
+
+   .. py:method:: clear(backend = None)
+      :async:
+
+
+      Clear the cache.
+
+      Args:
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: invalidate_pattern(pattern, backend = None)
+      :async:
+
+
+      Invalidate cache keys matching a pattern.
+
+      Args:
+          pattern: The pattern to match.
+          backend: Optional backend name.
+
+      Returns:
+          Number of invalidated keys.
+
+
+
+   .. py:method:: get_many(keys, backend = None)
+      :async:
+
+
+      Get multiple values from the cache.
+
+      Args:
+          keys: List of cache keys.
+          backend: Optional backend name.
+
+      Returns:
+          Dictionary of key-value pairs.
+
+
+
+   .. py:method:: set_many(mapping, ttl = None, backend = None)
+      :async:
+
+
+      Set multiple values in the cache.
+
+      Args:
+          mapping: Dictionary of key-value pairs.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: delete_many(keys, backend = None)
+      :async:
+
+
+      Delete multiple values from the cache.
+
+      Args:
+          keys: List of cache keys.
+          backend: Optional backend name.
+
+      Returns:
+          Number of deleted keys.
+
+
+
+   .. py:method:: incr(key, amount = 1, default = 0, ttl = None, backend = None)
+      :async:
+
+
+      Increment a counter.
+
+      Args:
+          key: The cache key.
+          amount: Amount to increment by.
+          default: Default value if key doesn't exist.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          New counter value.
+
+
+
+   .. py:method:: decr(key, amount = 1, default = 0, ttl = None, backend = None)
+      :async:
+
+
+      Decrement a counter.
+
+      Args:
+          key: The cache key.
+          amount: Amount to decrement by.
+          default: Default value if key doesn't exist.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          New counter value.
+
+
+
+.. py:data:: _cache_service
+   :type:  Optional[CacheService]
+   :value: None
+
+
+.. py:function:: get_cache_service()
+
+   Get the cache service singleton instance.
+
+   Returns:
+       The cache service instance.
+
+

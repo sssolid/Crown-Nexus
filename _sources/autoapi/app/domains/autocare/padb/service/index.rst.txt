@@ -1,0 +1,109 @@
+app.domains.autocare.padb.service
+=================================
+
+.. py:module:: app.domains.autocare.padb.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.padb.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.padb.service.PAdbService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: PAdbService(db)
+
+   Service for PAdb operations.
+
+   Provides methods for importing, exporting, and querying parts attribute data.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: repository
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current version of the PAdb database.
+
+      Returns:
+          The version date as a string.
+
+
+
+   .. py:method:: update_database(file_path)
+      :async:
+
+
+      Update the PAdb database from a file.
+
+      Args:
+          file_path: Path to the update file.
+
+      Returns:
+          Dict with update results information.
+
+
+
+   .. py:method:: search_attributes(search_term, page = 1, page_size = 20)
+      :async:
+
+
+      Search for part attributes.
+
+      Args:
+          search_term: The search term.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_attribute_details(pa_id)
+      :async:
+
+
+      Get detailed information about a part attribute.
+
+      Args:
+          pa_id: The part attribute ID.
+
+      Returns:
+          Dict with detailed attribute information.
+
+
+
+   .. py:method:: get_part_attributes(part_terminology_id)
+      :async:
+
+
+      Get attributes for a specific part.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+
+      Returns:
+          Dict with part attributes information.
+
+
+

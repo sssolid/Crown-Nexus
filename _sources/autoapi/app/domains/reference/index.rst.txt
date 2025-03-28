@@ -1,0 +1,17 @@
+app.domains.reference
+=====================
+
+.. py:module:: app.domains.reference
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/reference/models/index
+   /autoapi/app/domains/reference/repository/index
+   /autoapi/app/domains/reference/schemas/index
+
+

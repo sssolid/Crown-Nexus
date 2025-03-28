@@ -1,0 +1,93 @@
+app.core.pagination.factory
+===========================
+
+.. py:module:: app.core.pagination.factory
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.pagination.factory.logger
+   app.core.pagination.factory.T
+   app.core.pagination.factory.R
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.pagination.factory.PaginationProviderFactory
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: R
+
+.. py:class:: PaginationProviderFactory
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`R`\ ]
+
+
+   Factory for creating pagination provider instances.
+
+
+   .. py:attribute:: _providers
+      :type:  Dict[str, Type[app.core.pagination.base.PaginationProvider]]
+
+
+   .. py:attribute:: _provider_cache
+      :type:  Dict[str, app.core.pagination.base.PaginationProvider]
+
+
+   .. py:method:: register_provider(name, provider_class)
+      :classmethod:
+
+
+      Register a new pagination provider type.
+
+      Args:
+          name: Provider type name
+          provider_class: Provider class
+
+      Raises:
+          ValueError: If a provider with the same name is already registered
+
+
+
+   .. py:method:: create_provider(provider_type, db, model_class, response_model = None, **kwargs)
+      :classmethod:
+
+
+      Create a pagination provider of the specified type.
+
+      Args:
+          provider_type: The type of provider to create ('offset', 'cursor')
+          db: Database session
+          model_class: SQLAlchemy model class
+          response_model: Response model type (for generic type inference)
+          **kwargs: Additional provider configuration
+
+      Returns:
+          PaginationProvider: The created provider
+
+      Raises:
+          ValueError: If the provider type is not supported
+
+
+
+   .. py:method:: clear_cache()
+      :classmethod:
+
+
+      Clear provider cache.
+
+
+

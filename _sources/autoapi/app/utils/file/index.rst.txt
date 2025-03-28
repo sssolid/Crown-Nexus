@@ -1,0 +1,240 @@
+app.utils.file
+==============
+
+.. py:module:: app.utils.file
+
+.. autoapi-nested-parse::
+
+   File handling utilities for secure file operations and validation.
+
+   This module provides functions for file validation, upload handling, path manipulation,
+   and security checks related to files. It includes utilities for:
+   - Validating file types and sizes
+   - Handling file uploads securely
+   - Generating thumbnails for image files
+   - Sanitizing filenames to prevent path traversal attacks
+   - Retrieving file paths and URLs
+
+   All functions include proper error handling, logging, and security checks to ensure
+   file operations are performed safely and securely.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.utils.file.logger
+   app.utils.file.MediaConstraints
+   app.utils.file.SizeConstraints
+   app.utils.file.DimensionsTuple
+   app.utils.file.ALLOWED_MIME_TYPES
+   app.utils.file.MAX_FILE_SIZES
+   app.utils.file.THUMBNAIL_SIZE
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.utils.file.ImageProcessor
+   app.utils.file.FileSecurityError
+   app.utils.file.FileValidationError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.utils.file.get_media_type_from_mime
+   app.utils.file.validate_file
+   app.utils.file.save_upload_file
+   app.utils.file.get_file_path
+   app.utils.file.get_thumbnail_path
+   app.utils.file.get_file_url
+   app.utils.file.get_file_extension
+   app.utils.file.is_safe_filename
+   app.utils.file.sanitize_filename
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ImageProcessor
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining interface for image processing operations.
+
+
+   .. py:method:: open(path)
+
+      Open an image file.
+
+      Args:
+          path: Path to the image file
+
+      Returns:
+          Image object
+
+
+
+.. py:data:: MediaConstraints
+
+.. py:data:: SizeConstraints
+
+.. py:data:: DimensionsTuple
+
+.. py:data:: ALLOWED_MIME_TYPES
+   :type:  MediaConstraints
+
+.. py:data:: MAX_FILE_SIZES
+   :type:  SizeConstraints
+
+.. py:data:: THUMBNAIL_SIZE
+   :type:  DimensionsTuple
+   :value: (300, 300)
+
+
+.. py:class:: FileSecurityError(message, code = ErrorCode.SECURITY_ERROR, details = None)
+
+   Bases: :py:obj:`app.core.exceptions.SecurityException`
+
+
+   Exception raised for file security validation failures.
+
+
+.. py:class:: FileValidationError(message, code = ErrorCode.VALIDATION_ERROR, details = None)
+
+   Bases: :py:obj:`app.core.exceptions.ValidationException`
+
+
+   Exception raised for file validation failures.
+
+
+.. py:function:: get_media_type_from_mime(mime_type)
+
+   Determine media type from MIME type.
+
+   Args:
+       mime_type: MIME type string (e.g., 'image/jpeg')
+
+   Returns:
+       MediaType: Appropriate MediaType enum value
+
+
+.. py:function:: validate_file(file, allowed_types = None)
+
+   Validate file type, size, and content.
+
+   Performs comprehensive validation on the uploaded file including:
+   - Filename validation
+   - Size limits checking
+   - MIME type verification
+   - For images: additional image content validation
+
+   Args:
+       file: FastAPI UploadFile object
+       allowed_types: Set of allowed MediaType values, if None all types are allowed
+
+   Returns:
+       Tuple containing:
+       - MediaType: Detected media type
+       - bool: True if file is an image, False otherwise
+
+   Raises:
+       FileValidationError: If validation fails
+
+
+.. py:function:: save_upload_file(file, media_id, media_type, is_image)
+
+   Save uploaded file to disk with secure naming.
+
+   Args:
+       file: FastAPI UploadFile object
+       media_id: UUID for the media record
+       media_type: MediaType enum value
+       is_image: Whether the file is an image
+
+   Returns:
+       Tuple containing:
+       - str: Relative path to saved file
+       - int: File size in bytes
+       - str: Generated media hash
+
+   Raises:
+       HTTPException: If file saving fails
+
+
+.. py:function:: get_file_path(file_path)
+
+   Convert URL or relative path to absolute file path.
+
+   Args:
+       file_path: URL, absolute, or relative file path
+
+   Returns:
+       Path: Absolute path to the file
+
+
+.. py:function:: get_thumbnail_path(file_path)
+
+   Get thumbnail path for a given file path.
+
+   Args:
+       file_path: Path to the original file
+
+   Returns:
+       Optional[Path]: Path to thumbnail if exists, None otherwise
+
+
+.. py:function:: get_file_url(file_path)
+
+   Get public URL for a file path.
+
+   Args:
+       file_path: Path to the file
+
+   Returns:
+       str: URL to access the file
+
+
+.. py:function:: get_file_extension(filename)
+
+   Extract file extension from filename.
+
+   Args:
+       filename: Name of the file
+
+   Returns:
+       str: Extension without dot or empty string if none
+
+
+.. py:function:: is_safe_filename(filename)
+
+   Check if filename is safe (no path traversal).
+
+   Args:
+       filename: Name of the file to check
+
+   Returns:
+       bool: True if filename is safe, False otherwise
+
+
+.. py:function:: sanitize_filename(filename)
+
+   Sanitize filename to remove unsafe characters.
+
+   Args:
+       filename: Original filename
+
+   Returns:
+       str: Sanitized filename
+
+

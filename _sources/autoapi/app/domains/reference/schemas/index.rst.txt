@@ -1,0 +1,783 @@
+app.domains.reference.schemas
+=============================
+
+.. py:module:: app.domains.reference.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.reference.schemas.ColorBase
+   app.domains.reference.schemas.ColorCreate
+   app.domains.reference.schemas.ColorUpdate
+   app.domains.reference.schemas.ColorInDB
+   app.domains.reference.schemas.Color
+   app.domains.reference.schemas.ConstructionTypeBase
+   app.domains.reference.schemas.ConstructionTypeCreate
+   app.domains.reference.schemas.ConstructionTypeUpdate
+   app.domains.reference.schemas.ConstructionTypeInDB
+   app.domains.reference.schemas.ConstructionType
+   app.domains.reference.schemas.TextureBase
+   app.domains.reference.schemas.TextureCreate
+   app.domains.reference.schemas.TextureUpdate
+   app.domains.reference.schemas.TextureInDB
+   app.domains.reference.schemas.Texture
+   app.domains.reference.schemas.PackagingTypeBase
+   app.domains.reference.schemas.PackagingTypeCreate
+   app.domains.reference.schemas.PackagingTypeUpdate
+   app.domains.reference.schemas.PackagingTypeInDB
+   app.domains.reference.schemas.PackagingType
+   app.domains.reference.schemas.HardwareBase
+   app.domains.reference.schemas.HardwareCreate
+   app.domains.reference.schemas.HardwareUpdate
+   app.domains.reference.schemas.HardwareInDB
+   app.domains.reference.schemas.Hardware
+   app.domains.reference.schemas.TariffCodeBase
+   app.domains.reference.schemas.TariffCodeCreate
+   app.domains.reference.schemas.TariffCodeUpdate
+   app.domains.reference.schemas.TariffCodeInDB
+   app.domains.reference.schemas.TariffCode
+   app.domains.reference.schemas.UnspscCodeBase
+   app.domains.reference.schemas.UnspscCodeCreate
+   app.domains.reference.schemas.UnspscCodeUpdate
+   app.domains.reference.schemas.UnspscCodeInDB
+   app.domains.reference.schemas.UnspscCode
+   app.domains.reference.schemas.WarehouseBase
+   app.domains.reference.schemas.WarehouseCreate
+   app.domains.reference.schemas.WarehouseUpdate
+   app.domains.reference.schemas.WarehouseInDB
+   app.domains.reference.schemas.Warehouse
+
+
+Module Contents
+---------------
+
+.. py:class:: ColorBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Color data.
+
+   Attributes:
+       name: Color name.
+       hex_code: Hexadecimal color code.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: hex_code
+      :type:  Optional[str]
+
+
+   .. py:method:: validate_hex_code(v)
+      :classmethod:
+
+
+      Validate hex code format.
+
+      Args:
+          v: The hex code to validate or None.
+
+      Returns:
+          Validated hex code or None.
+
+      Raises:
+          ValueError: If the hex code format is invalid.
+
+
+
+.. py:class:: ColorCreate
+
+   Bases: :py:obj:`ColorBase`
+
+
+   Schema for creating a new Color.
+
+
+.. py:class:: ColorUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Color.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: hex_code
+      :type:  Optional[str]
+
+
+   .. py:method:: validate_hex_code(v)
+      :classmethod:
+
+
+      Validate hex code format if provided.
+
+      Args:
+          v: The hex code to validate or None.
+
+      Returns:
+          Validated hex code or None.
+
+      Raises:
+          ValueError: If the hex code format is invalid.
+
+
+
+.. py:class:: ColorInDB
+
+   Bases: :py:obj:`ColorBase`
+
+
+   Schema for Color data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Color
+
+   Bases: :py:obj:`ColorInDB`
+
+
+   Schema for complete Color data in API responses.
+
+
+.. py:class:: ConstructionTypeBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ConstructionType data.
+
+   Attributes:
+       name: Construction type name.
+       description: Description of the construction type.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+.. py:class:: ConstructionTypeCreate
+
+   Bases: :py:obj:`ConstructionTypeBase`
+
+
+   Schema for creating a new ConstructionType.
+
+
+.. py:class:: ConstructionTypeUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ConstructionType.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+.. py:class:: ConstructionTypeInDB
+
+   Bases: :py:obj:`ConstructionTypeBase`
+
+
+   Schema for ConstructionType data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ConstructionType
+
+   Bases: :py:obj:`ConstructionTypeInDB`
+
+
+   Schema for complete ConstructionType data in API responses.
+
+
+.. py:class:: TextureBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Texture data.
+
+   Attributes:
+       name: Texture name.
+       description: Description of the texture.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+.. py:class:: TextureCreate
+
+   Bases: :py:obj:`TextureBase`
+
+
+   Schema for creating a new Texture.
+
+
+.. py:class:: TextureUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Texture.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+.. py:class:: TextureInDB
+
+   Bases: :py:obj:`TextureBase`
+
+
+   Schema for Texture data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Texture
+
+   Bases: :py:obj:`TextureInDB`
+
+
+   Schema for complete Texture data in API responses.
+
+
+.. py:class:: PackagingTypeBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for PackagingType data.
+
+   Attributes:
+       name: Packaging type name.
+       pies_code: PIES standard code.
+       description: Description of the packaging type.
+       source: Source of the packaging type data.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: pies_code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: source
+      :type:  str
+
+
+.. py:class:: PackagingTypeCreate
+
+   Bases: :py:obj:`PackagingTypeBase`
+
+
+   Schema for creating a new PackagingType.
+
+
+.. py:class:: PackagingTypeUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing PackagingType.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: pies_code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: source
+      :type:  Optional[str]
+
+
+.. py:class:: PackagingTypeInDB
+
+   Bases: :py:obj:`PackagingTypeBase`
+
+
+   Schema for PackagingType data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PackagingType
+
+   Bases: :py:obj:`PackagingTypeInDB`
+
+
+   Schema for complete PackagingType data in API responses.
+
+
+.. py:class:: HardwareBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Hardware data.
+
+   Attributes:
+       name: Hardware item name.
+       description: Description of the hardware item.
+       part_number: Manufacturer part number.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: part_number
+      :type:  Optional[str]
+
+
+.. py:class:: HardwareCreate
+
+   Bases: :py:obj:`HardwareBase`
+
+
+   Schema for creating a new Hardware.
+
+
+.. py:class:: HardwareUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Hardware.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: part_number
+      :type:  Optional[str]
+
+
+.. py:class:: HardwareInDB
+
+   Bases: :py:obj:`HardwareBase`
+
+
+   Schema for Hardware data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Hardware
+
+   Bases: :py:obj:`HardwareInDB`
+
+
+   Schema for complete Hardware data in API responses.
+
+
+.. py:class:: TariffCodeBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for TariffCode data.
+
+   Attributes:
+       code: Tariff code number.
+       description: Description of the tariff code.
+       country_id: ID of the country this tariff applies to.
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: description
+      :type:  str
+
+
+   .. py:attribute:: country_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: TariffCodeCreate
+
+   Bases: :py:obj:`TariffCodeBase`
+
+
+   Schema for creating a new TariffCode.
+
+
+.. py:class:: TariffCodeUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing TariffCode.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: country_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: TariffCodeInDB
+
+   Bases: :py:obj:`TariffCodeBase`
+
+
+   Schema for TariffCode data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: TariffCode
+
+   Bases: :py:obj:`TariffCodeInDB`
+
+
+   Schema for complete TariffCode data in API responses.
+
+   Includes related entities like country details.
+
+
+   .. py:attribute:: country
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: UnspscCodeBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for UnspscCode data.
+
+   Attributes:
+       code: UNSPSC code number.
+       description: Description of the code.
+       segment: Segment description.
+       family: Family description.
+       class_: Class description.
+       commodity: Commodity description.
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: description
+      :type:  str
+
+
+   .. py:attribute:: segment
+      :type:  Optional[str]
+
+
+   .. py:attribute:: family
+      :type:  Optional[str]
+
+
+   .. py:attribute:: class_
+      :type:  Optional[str]
+
+
+   .. py:attribute:: commodity
+      :type:  Optional[str]
+
+
+.. py:class:: UnspscCodeCreate
+
+   Bases: :py:obj:`UnspscCodeBase`
+
+
+   Schema for creating a new UnspscCode.
+
+
+.. py:class:: UnspscCodeUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing UnspscCode.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: segment
+      :type:  Optional[str]
+
+
+   .. py:attribute:: family
+      :type:  Optional[str]
+
+
+   .. py:attribute:: class_
+      :type:  Optional[str]
+
+
+   .. py:attribute:: commodity
+      :type:  Optional[str]
+
+
+.. py:class:: UnspscCodeInDB
+
+   Bases: :py:obj:`UnspscCodeBase`
+
+
+   Schema for UnspscCode data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: UnspscCode
+
+   Bases: :py:obj:`UnspscCodeInDB`
+
+
+   Schema for complete UnspscCode data in API responses.
+
+
+.. py:class:: WarehouseBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Warehouse data.
+
+   Attributes:
+       name: Warehouse name.
+       address_id: ID of the warehouse address.
+       is_active: Whether the warehouse is active.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: is_active
+      :type:  bool
+
+
+.. py:class:: WarehouseCreate
+
+   Bases: :py:obj:`WarehouseBase`
+
+
+   Schema for creating a new Warehouse.
+
+
+.. py:class:: WarehouseUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Warehouse.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+.. py:class:: WarehouseInDB
+
+   Bases: :py:obj:`WarehouseBase`
+
+
+   Schema for Warehouse data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Warehouse
+
+   Bases: :py:obj:`WarehouseInDB`
+
+
+   Schema for complete Warehouse data in API responses.
+
+   Includes related entities like address details.
+
+
+   .. py:attribute:: address
+      :type:  Optional[Dict[str, Any]]
+
+

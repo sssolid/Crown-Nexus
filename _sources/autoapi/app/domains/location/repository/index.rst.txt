@@ -1,0 +1,176 @@
+app.domains.location.repository
+===============================
+
+.. py:module:: app.domains.location.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.location.repository.CountryRepository
+   app.domains.location.repository.AddressRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: CountryRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.location.models.Country`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Country entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Country entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_iso_code(iso_code)
+      :async:
+
+
+      Find a country by ISO code (alpha-2 or alpha-3).
+
+      Args:
+          iso_code: The ISO code to search for.
+
+      Returns:
+          The country if found, None otherwise.
+
+
+
+   .. py:method:: find_by_name(name)
+      :async:
+
+
+      Find countries by name (partial match).
+
+      Args:
+          name: The country name to search for.
+
+      Returns:
+          List of countries with matching names.
+
+
+
+   .. py:method:: get_by_region(region)
+      :async:
+
+
+      Get countries in a specific region.
+
+      Args:
+          region: The region to filter by.
+
+      Returns:
+          List of countries in the specified region.
+
+
+
+   .. py:method:: get_by_currency(currency_code)
+      :async:
+
+
+      Get countries using a specific currency.
+
+      Args:
+          currency_code: The ISO 4217 currency code.
+
+      Returns:
+          List of countries using the specified currency.
+
+
+
+   .. py:method:: ensure_exists(country_id)
+      :async:
+
+
+      Ensure a country exists by ID, raising an exception if not found.
+
+      Args:
+          country_id: The country ID to check.
+
+      Returns:
+          The country if found.
+
+      Raises:
+          ResourceNotFoundException: If the country is not found.
+
+
+
+.. py:class:: AddressRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.location.models.Address`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Address entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Address entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_postal_code(postal_code, country_id = None)
+      :async:
+
+
+      Find addresses by postal code.
+
+      Args:
+          postal_code: The postal code to search for.
+          country_id: Optional country ID to restrict search.
+
+      Returns:
+          List of addresses with matching postal code.
+
+
+
+   .. py:method:: find_by_city(city, country_id = None)
+      :async:
+
+
+      Find addresses by city.
+
+      Args:
+          city: The city name to search for.
+          country_id: Optional country ID to restrict search.
+
+      Returns:
+          List of addresses in the specified city.
+
+
+
+   .. py:method:: search(search_term, page = 1, page_size = 20)
+      :async:
+
+
+      Search addresses by various fields.
+
+      Args:
+          search_term: The term to search for.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: ensure_exists(address_id)
+      :async:
+
+
+      Ensure an address exists by ID, raising an exception if not found.
+
+      Args:
+          address_id: The address ID to check.
+
+      Returns:
+          The address if found.
+
+      Raises:
+          ResourceNotFoundException: If the address is not found.
+
+
+

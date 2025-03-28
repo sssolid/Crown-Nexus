@@ -1,0 +1,6 @@
+app.domains.users.exceptions
+============================
+
+.. py:module:: app.domains.users.exceptions
+
+

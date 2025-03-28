@@ -1,0 +1,223 @@
+app.core.cache.backends.null
+============================
+
+.. py:module:: app.core.cache.backends.null
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.cache.backends.null.T
+   app.core.cache.backends.null.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.cache.backends.null.NullCacheBackend
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:data:: logger
+
+.. py:class:: NullCacheBackend
+
+   Bases: :py:obj:`app.core.cache.base.CacheBackend`\ [\ :py:obj:`T`\ ]
+
+
+   No-op cache backend for testing or disabling cache.
+
+   This backend doesn't actually store or retrieve any data. It simply provides
+   the interface required by the CacheBackend protocol but performs no operations.
+   Useful for testing or when caching needs to be disabled.
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the null cache backend.
+
+      This is a no-op method that exists for interface consistency.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the null cache backend.
+
+      This is a no-op method that exists for interface consistency.
+
+
+
+   .. py:method:: get(key, default = None)
+      :async:
+
+
+      Always return default value.
+
+      Args:
+          key: Cache key
+          default: Default value to return
+
+      Returns:
+          Default value (always)
+
+
+
+   .. py:method:: set(key, value, ttl = None)
+      :async:
+
+
+      No-op, always return success.
+
+      Args:
+          key: Cache key
+          value: Value to cache
+          ttl: Time-to-live in seconds
+
+      Returns:
+          bool: Always True
+
+
+
+   .. py:method:: delete(key)
+      :async:
+
+
+      No-op, always return success.
+
+      Args:
+          key: Cache key
+
+      Returns:
+          bool: Always True
+
+
+
+   .. py:method:: exists(key)
+      :async:
+
+
+      Always return False.
+
+      Args:
+          key: Cache key
+
+      Returns:
+          bool: Always False
+
+
+
+   .. py:method:: clear()
+      :async:
+
+
+      No-op, always return success.
+
+      Returns:
+          bool: Always True
+
+
+
+   .. py:method:: invalidate_pattern(pattern)
+      :async:
+
+
+      No-op invalidate method.
+
+      Args:
+          pattern: Pattern to match
+
+      Returns:
+          int: Always 0
+
+
+
+   .. py:method:: get_many(keys)
+      :async:
+
+
+      No-op get many method.
+
+      Args:
+          keys: List of cache keys
+
+      Returns:
+          Dict[str, Optional[T]]: Dictionary with None values for all keys
+
+
+
+   .. py:method:: set_many(mapping, ttl = None)
+      :async:
+
+
+      No-op set many method.
+
+      Args:
+          mapping: Dictionary of key-value pairs
+          ttl: Time-to-live in seconds
+
+      Returns:
+          bool: Always True
+
+
+
+   .. py:method:: delete_many(keys)
+      :async:
+
+
+      No-op delete many method.
+
+      Args:
+          keys: List of cache keys
+
+      Returns:
+          int: Always 0
+
+
+
+   .. py:method:: incr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      No-op increment method.
+
+      Args:
+          key: Cache key
+          amount: Amount to increment by
+          default: Default value if key doesn't exist
+          ttl: Time-to-live in seconds
+
+      Returns:
+          int: Always the default value
+
+
+
+   .. py:method:: decr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      No-op decrement method.
+
+      Args:
+          key: Cache key
+          amount: Amount to decrement by
+          default: Default value if key doesn't exist
+          ttl: Time-to-live in seconds
+
+      Returns:
+          int: Always the default value
+
+
+

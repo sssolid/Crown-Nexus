@@ -1,0 +1,200 @@
+app.api.v1.endpoints.media
+==========================
+
+.. py:module:: app.api.v1.endpoints.media
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.media.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.media.upload_file
+   app.api.v1.endpoints.media.read_media
+   app.api.v1.endpoints.media.read_media_item
+   app.api.v1.endpoints.media.update_media
+   app.api.v1.endpoints.media.delete_media
+   app.api.v1.endpoints.media.get_media_file
+   app.api.v1.endpoints.media.get_media_thumbnail
+   app.api.v1.endpoints.media.associate_media_with_product
+   app.api.v1.endpoints.media.remove_media_from_product
+   app.api.v1.endpoints.media.get_product_media
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: upload_file(background_tasks, db, current_user, file = File(...), media_type = Form(MediaType.IMAGE), visibility = Form(MediaVisibility.PRIVATE), metadata = Form('{}'), product_id = Form(None))
+   :async:
+
+
+   Upload a new file.
+
+   Args:
+       background_tasks: Background tasks
+       db: Database session
+       current_user: Current authenticated user
+       file: Uploaded file
+       media_type: Type of media
+       visibility: Visibility level
+       metadata: Additional metadata as JSON string
+       product_id: ID of product to associate with the media
+
+   Returns:
+       FileUploadResponse: Response with the created media
+
+
+.. py:function:: read_media(db, current_user, media_type = None, visibility = None, is_approved = None, product_id = None, page = 1, page_size = 20)
+   :async:
+
+
+   Retrieve media with filtering options.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       media_type: Filter by media type
+       visibility: Filter by visibility
+       is_approved: Filter by approval status
+       product_id: Filter by associated product
+       page: Page number
+       page_size: Number of items per page
+
+   Returns:
+       MediaListResponse: Paginated list of media
+
+
+.. py:function:: read_media_item(media_id, db, current_user)
+   :async:
+
+
+   Get media by ID.
+
+   Args:
+       media_id: Media ID
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       Media: Media with specified ID
+
+
+.. py:function:: update_media(media_id, media_in, db, current_user)
+   :async:
+
+
+   Update media metadata.
+
+   Args:
+       media_id: Media ID
+       media_in: Updated media data
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       Media: Updated media
+
+
+.. py:function:: delete_media(media_id, db, current_user)
+   :async:
+
+
+   Delete media.
+
+   Args:
+       media_id: Media ID
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: get_media_file(media_id, db, current_user = Depends(get_optional_user))
+   :async:
+
+
+   Get the file for media.
+
+   Args:
+       media_id: Media ID
+       db: Database session
+       current_user: Current authenticated user (optional for public files)
+
+   Returns:
+       FileResponse: Media file
+
+
+.. py:function:: get_media_thumbnail(media_id, db, current_user = Depends(get_optional_user))
+   :async:
+
+
+   Get the thumbnail for an image.
+
+   Args:
+       media_id: Media ID
+       db: Database session
+       current_user: Current authenticated user (optional for public files)
+
+   Returns:
+       FileResponse: Thumbnail file or original file if thumbnail doesn't exist
+
+
+.. py:function:: associate_media_with_product(media_id, product_id, db, current_user)
+   :async:
+
+
+   Associate media with a product.
+
+   Args:
+       media_id: Media ID
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: remove_media_from_product(media_id, product_id, db, current_user)
+   :async:
+
+
+   Remove association between media and a product.
+
+   Args:
+       media_id: Media ID
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: get_product_media(product_id, db, current_user, media_type = None)
+   :async:
+
+
+   Get media associated with a product.
+
+   Args:
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated user
+       media_type: Filter by media type
+
+   Returns:
+       List[Media]: List of media associated with the product
+
+

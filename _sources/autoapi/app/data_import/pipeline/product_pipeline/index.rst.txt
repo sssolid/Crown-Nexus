@@ -1,0 +1,65 @@
+app.data_import.pipeline.product_pipeline
+=========================================
+
+.. py:module:: app.data_import.pipeline.product_pipeline
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.pipeline.product_pipeline.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.pipeline.product_pipeline.ProductPipeline
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ProductPipeline(connector, processor, importer, dry_run = False)
+
+   Pipeline for product data import.
+
+
+   .. py:attribute:: connector
+
+
+   .. py:attribute:: processor
+
+
+   .. py:attribute:: importer
+
+
+   .. py:attribute:: dry_run
+      :value: False
+
+
+
+   .. py:method:: run(query, limit = None, **params)
+      :async:
+
+
+      Run the complete product import pipeline.
+
+      Args:
+          query: Query string or identifier for the data to extract
+          limit: Maximum number of records to retrieve
+          params: Additional parameters for the query
+
+      Returns:
+          Dictionary with pipeline execution statistics
+
+      Raises:
+          AppException: If any stage of the pipeline fails
+
+
+

@@ -1,0 +1,159 @@
+app.core.security.tokens
+========================
+
+.. py:module:: app.core.security.tokens
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.tokens.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.tokens.TokenManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.tokens.generate_token_jti
+   app.core.security.tokens.create_token
+   app.core.security.tokens.create_token_pair
+   app.core.security.tokens.add_token_to_blacklist
+   app.core.security.tokens.is_token_blacklisted
+   app.core.security.tokens.decode_token
+   app.core.security.tokens.revoke_token
+   app.core.security.tokens.refresh_tokens
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: generate_token_jti()
+
+   Generate a unique JWT ID.
+
+   Returns:
+       str: A unique identifier for a JWT token.
+
+
+.. py:function:: create_token(subject, token_type, expires_delta = None, role = '', permissions = None, user_data = None)
+
+   Create a JWT token.
+
+   Args:
+       subject: The subject of the token (usually the user ID).
+       token_type: The type of token to create.
+       expires_delta: Optional expiration time delta.
+       role: Optional user role.
+       permissions: Optional list of permissions.
+       user_data: Optional additional user data.
+
+   Returns:
+       str: The encoded JWT token.
+
+
+.. py:function:: create_token_pair(user_id, role, permissions = None, user_data = None)
+
+   Create an access and refresh token pair.
+
+   Args:
+       user_id: The user ID.
+       role: The user role.
+       permissions: Optional list of permissions.
+       user_data: Optional additional user data.
+
+   Returns:
+       TokenPair: A model containing the access and refresh tokens.
+
+
+.. py:function:: add_token_to_blacklist(token_jti, expires_at)
+   :async:
+
+
+   Add a token to the blacklist.
+
+   Args:
+       token_jti: The JWT ID of the token.
+       expires_at: The expiration time of the token.
+
+
+.. py:function:: is_token_blacklisted(token_jti)
+   :async:
+
+
+   Check if a token is blacklisted.
+
+   Args:
+       token_jti: The JWT ID of the token.
+
+   Returns:
+       bool: True if the token is blacklisted, False otherwise.
+
+
+.. py:function:: decode_token(token)
+   :async:
+
+
+   Decode and validate a JWT token.
+
+   Args:
+       token: The token to decode.
+
+   Returns:
+       TokenClaimsModel: The decoded token claims.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:function:: revoke_token(token)
+   :async:
+
+
+   Revoke a token by adding it to the blacklist.
+
+   Args:
+       token: The token to revoke.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:function:: refresh_tokens(refresh_token)
+   :async:
+
+
+   Refresh an access token using a refresh token.
+
+   Args:
+       refresh_token: The refresh token.
+
+   Returns:
+       TokenPair: A new token pair.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:class:: TokenManager
+
+   Manager for token-related functionality.
+
+
+   .. py:attribute:: token_blacklist_prefix
+      :value: 'token:blacklist:'
+
+
+

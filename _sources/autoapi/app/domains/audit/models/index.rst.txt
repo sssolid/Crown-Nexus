@@ -1,0 +1,128 @@
+app.domains.audit.models
+========================
+
+.. py:module:: app.domains.audit.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.models.AuditLog
+
+
+Module Contents
+---------------
+
+.. py:class:: AuditLog
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Audit log entity for tracking system activity.
+
+   Attributes:
+       id: Unique identifier.
+       timestamp: When the audited event occurred.
+       event_type: Type of event being audited.
+       level: Log level (info, warning, error).
+       user_id: ID of the user who performed the action.
+       ip_address: IP address of the user.
+       resource_id: ID of the affected resource.
+       resource_type: Type of the affected resource.
+       details: Additional details about the event.
+       request_id: ID of the request that triggered the event.
+       user_agent: User agent of the client.
+       session_id: ID of the user's session.
+       company_id: ID of the company context.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'audit_log'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: timestamp
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: event_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: level
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: user_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: ip_address
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: resource_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: resource_type
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: details
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: request_id
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: user_agent
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: session_id
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: company_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: user
+      :type:  sqlalchemy.orm.Mapped[Optional[app.domains.users.models.User]]
+
+
+   .. py:attribute:: company
+      :type:  sqlalchemy.orm.Mapped[Optional[app.domains.company.schemas.Company]]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of AuditLog instance.
+
+      Returns:
+          String representation including id, event_type, and timestamp.
+
+
+
+   .. py:method:: to_dict()
+
+      Convert the audit log to a dictionary.
+
+      Returns:
+          Dictionary representation of the audit log.
+
+
+

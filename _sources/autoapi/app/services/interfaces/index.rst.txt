@@ -1,0 +1,260 @@
+app.services.interfaces
+=======================
+
+.. py:module:: app.services.interfaces
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.interfaces.T
+   app.services.interfaces.ID
+   app.services.interfaces.C
+   app.services.interfaces.U
+   app.services.interfaces.R
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.interfaces.ServiceInterface
+   app.services.interfaces.CrudServiceInterface
+   app.services.interfaces.ReadOnlyServiceInterface
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:data:: ID
+
+.. py:data:: C
+
+.. py:data:: U
+
+.. py:data:: R
+
+.. py:class:: ServiceInterface
+
+   Bases: :py:obj:`Protocol`, :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ ]
+
+
+   Base protocol for all services.
+
+   This protocol defines the standard interface that all services must implement.
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize service resources.
+
+      This method should be called during application startup to initialize
+      any resources needed by the service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Release service resources.
+
+      This method should be called during application shutdown to release
+      any resources held by the service.
+
+
+
+   .. py:method:: get_by_id(id, user_id = None)
+      :async:
+
+
+      Get entity by ID.
+
+      Args:
+          id: Entity ID
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          Optional[T]: The entity if found, None otherwise
+
+
+
+   .. py:method:: get_all(page = 1, page_size = 20, filters = None, user_id = None)
+      :async:
+
+
+      Get all entities with pagination.
+
+      Args:
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          filters: Optional filters to apply
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          Dict[str, Any]: Paginated results
+
+
+
+   .. py:method:: create(data, user_id = None)
+      :async:
+
+
+      Create a new entity.
+
+      Args:
+          data: Entity data
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          T: The created entity
+
+
+
+   .. py:method:: update(id, data, user_id = None)
+      :async:
+
+
+      Update an existing entity.
+
+      Args:
+          id: Entity ID
+          data: Updated entity data
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          Optional[T]: The updated entity if found, None otherwise
+
+
+
+   .. py:method:: delete(id, user_id = None)
+      :async:
+
+
+      Delete an entity.
+
+      Args:
+          id: Entity ID
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          bool: True if the entity was deleted, False otherwise
+
+
+
+.. py:class:: CrudServiceInterface
+
+   Bases: :py:obj:`ServiceInterface`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ ], :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ ]
+
+
+   Extended interface for CRUD services with schema validation.
+
+   This interface extends the base service interface with methods that use
+   Pydantic models for validation.
+
+
+   .. py:method:: create_with_schema(schema, user_id = None)
+      :async:
+
+
+      Create a new entity using a Pydantic schema.
+
+      Args:
+          schema: Create schema
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          T: The created entity
+
+
+
+   .. py:method:: update_with_schema(id, schema, user_id = None)
+      :async:
+
+
+      Update an existing entity using a Pydantic schema.
+
+      Args:
+          id: Entity ID
+          schema: Update schema
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          Optional[T]: The updated entity if found, None otherwise
+
+
+
+   .. py:method:: to_response(entity)
+      :async:
+
+
+      Convert entity to response schema.
+
+      Args:
+          entity: Entity to convert
+
+      Returns:
+          R: Response schema
+
+
+
+   .. py:method:: to_response_multi(entities)
+      :async:
+
+
+      Convert entities to response schemas.
+
+      Args:
+          entities: Entities to convert
+
+      Returns:
+          List[R]: Response schemas
+
+
+
+.. py:class:: ReadOnlyServiceInterface
+
+   Bases: :py:obj:`ServiceInterface`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ ], :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`R`\ ]
+
+
+   Interface for read-only services.
+
+   This interface provides only read operations, useful for services
+   that don't need to modify data.
+
+
+   .. py:method:: to_response(entity)
+      :async:
+
+
+      Convert entity to response schema.
+
+      Args:
+          entity: Entity to convert
+
+      Returns:
+          R: Response schema
+
+
+
+   .. py:method:: to_response_multi(entities)
+      :async:
+
+
+      Convert entities to response schemas.
+
+      Args:
+          entities: Entities to convert
+
+      Returns:
+          List[R]: Response schemas
+
+
+

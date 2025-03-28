@@ -1,0 +1,702 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.rate_limiting &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.core.rate_limiting.exceptions" href="exceptions/index.html" />
+    <link rel="prev" title="app.core.permissions.utils" href="../permissions/utils/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core</a></li>
+      <li class="breadcrumb-item active">app.core.rate_limiting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/core/rate_limiting/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.rate_limiting">
+<span id="app-core-rate-limiting"></span><h1>app.core.rate_limiting<a class="headerlink" href="#module-app.core.rate_limiting" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exceptions/index.html">app.core.rate_limiting.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limiter/index.html">app.core.rate_limiting.limiter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/index.html">app.core.rate_limiting.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_limiter/index.html">app.core.rate_limiting.rate_limiter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service/index.html">app.core.rate_limiting.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/index.html">app.core.rate_limiting.utils</a></li>
+</ul>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimiter" title="app.core.rate_limiting.RateLimiter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimiter</span></code></a></p></td>
+<td><p>Rate limiter that enforces rate limits for various keys.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitRule" title="app.core.rate_limiting.RateLimitRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitRule</span></code></a></p></td>
+<td><p>Rule configuration for rate limiting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitStrategy" title="app.core.rate_limiting.RateLimitStrategy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitStrategy</span></code></a></p></td>
+<td><p>Strategy for determining the rate limit key.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitingException" title="app.core.rate_limiting.RateLimitingException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingException</span></code></a></p></td>
+<td><p>Base exception for rate limiting errors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitExceededException" title="app.core.rate_limiting.RateLimitExceededException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitExceededException</span></code></a></p></td>
+<td><p>Exception raised when a rate limit is exceeded.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitingServiceException" title="app.core.rate_limiting.RateLimitingServiceException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingServiceException</span></code></a></p></td>
+<td><p>Exception raised when the rate limiting service encounters an error.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitingConfigurationException" title="app.core.rate_limiting.RateLimitingConfigurationException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingConfigurationException</span></code></a></p></td>
+<td><p>Exception raised when the rate limiting configuration is invalid.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitingService" title="app.core.rate_limiting.RateLimitingService"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingService</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.check_rate_limit" title="app.core.rate_limiting.check_rate_limit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_rate_limit</span></code></a>(key, max_requests, window_seconds)</p></td>
+<td><p>Check if a rate limit has been exceeded.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.rate_limiting.get_ttl" title="app.core.rate_limiting.get_ttl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ttl</span></code></a>(key)</p></td>
+<td><p>Get the TTL of a key in Redis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.get_rate_limiting_service" title="app.core.rate_limiting.get_rate_limiting_service"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rate_limiting_service</span></code></a>()</p></td>
+<td><p>Get or create the rate limiting service singleton.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.rate_limiting.initialize" title="app.core.rate_limiting.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>()</p></td>
+<td><p>Initialize the rate limiting system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.rate_limiting.shutdown" title="app.core.rate_limiting.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>()</p></td>
+<td><p>Shut down the rate limiting system.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimiter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_redis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ratelimit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_rule</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimiter" title="Link to this definition"></a></dt>
+<dd><p>Rate limiter that enforces rate limits for various keys.</p>
+<p>Supports both in-memory and Redis-based rate limiting with different
+strategies for generating rate limit keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>use_redis</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>default_rule</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter.use_redis">
+<span class="sig-name descname"><span class="pre">use_redis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimiter.use_redis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ratelimit'</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimiter.prefix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter.default_rule">
+<span class="sig-name descname"><span class="pre">default_rule</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><span class="pre">app.core.rate_limiting.models.RateLimitRule</span></a></em><a class="headerlink" href="#app.core.rate_limiting.RateLimiter.default_rule" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter._counters">
+<span class="sig-name descname"><span class="pre">_counters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimiter._counters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter.is_rate_limited">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_rate_limited</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimiter.is_rate_limited" title="Link to this definition"></a></dt>
+<dd><p>Check if a key is rate limited.</p>
+<dl>
+<dt>Args:</dt><dd><p>key: The key to check.
+rule: Optional rate limit rule to apply. If not provided,</p>
+<blockquote>
+<div><p>the default rule will be used.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>Whether the key is rate limited (True if limited)</p></li>
+<li><p>The current count for the key</p></li>
+<li><p>The maximum allowed count (limit)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>rule</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter._check_in_memory">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_check_in_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimiter._check_in_memory" title="Link to this definition"></a></dt>
+<dd><p>Check if a key is rate limited using in-memory storage.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The key to check.
+rule: The rate limit rule to apply.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>Whether the key is rate limited (True if limited)</p></li>
+<li><p>The current count for the key</p></li>
+<li><p>The maximum allowed count (limit)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>rule</strong> (<a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter.get_key_for_request">
+<span class="sig-name descname"><span class="pre">get_key_for_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimiter.get_key_for_request" title="Link to this definition"></a></dt>
+<dd><p>Generate a rate limit key for a request.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request: The request to generate a key for.
+rule: The rate limit rule that defines the key strategy.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A string key for rate limiting.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>fastapi.Request</em>)</p></li>
+<li><p><strong>rule</strong> (<a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimiter._get_window_key">
+<span class="sig-name descname"><span class="pre">_get_window_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimiter._get_window_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a window-specific key for rate limiting.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The base key to use.
+rule: The rate limit rule that defines the window.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A string key with the window information.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>rule</strong> (<a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitRule</span></span><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule" title="Link to this definition"></a></dt>
+<dd><p>Rule configuration for rate limiting.</p>
+<dl>
+<dt>Attributes:</dt><dd><p>requests_per_window: Maximum number of requests allowed in the window.
+window_seconds: Size of the window in seconds.
+strategy: Strategy for determining the rate limit key.
+burst_multiplier: Multiplier for burst allowance above the limit.
+path_pattern: Pattern to match request paths this rule applies to.</p>
+<blockquote>
+<div><p>If None, applies to all paths.</p>
+</div></blockquote>
+<p>exclude_paths: List of path prefixes to exclude from rate limiting.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule.requests_per_window">
+<span class="sig-name descname"><span class="pre">requests_per_window</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule.requests_per_window" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule.window_seconds">
+<span class="sig-name descname"><span class="pre">window_seconds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule.window_seconds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule.strategy">
+<span class="sig-name descname"><span class="pre">strategy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.core.rate_limiting.RateLimitStrategy" title="app.core.rate_limiting.RateLimitStrategy"><span class="pre">RateLimitStrategy</span></a></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule.strategy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule.burst_multiplier">
+<span class="sig-name descname"><span class="pre">burst_multiplier</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule.burst_multiplier" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule.path_pattern">
+<span class="sig-name descname"><span class="pre">path_pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule.path_pattern" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitRule.exclude_paths">
+<span class="sig-name descname"><span class="pre">exclude_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitRule.exclude_paths" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitStrategy">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitStrategy</span></span><a class="headerlink" href="#app.core.rate_limiting.RateLimitStrategy" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Strategy for determining the rate limit key.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitStrategy.IP">
+<span class="sig-name descname"><span class="pre">IP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ip'</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitStrategy.IP" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitStrategy.USER">
+<span class="sig-name descname"><span class="pre">USER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user'</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitStrategy.USER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitStrategy.COMBINED">
+<span class="sig-name descname"><span class="pre">COMBINED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'combined'</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitStrategy.COMBINED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.rate_limiting.check_rate_limit">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">check_rate_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_requests</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_seconds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.check_rate_limit" title="Link to this definition"></a></dt>
+<dd><p>Check if a rate limit has been exceeded.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The rate limit key.
+max_requests: The maximum number of requests allowed in the time window.
+window_seconds: The time window in seconds.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[bool, int, int]: A tuple containing a boolean indicating if the rate limit has been</dt><dd><p>exceeded, the current request count, and the reset time in seconds.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>max_requests</strong> (<em>int</em>)</p></li>
+<li><p><strong>window_seconds</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.rate_limiting.get_ttl">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">get_ttl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.get_ttl" title="Link to this definition"></a></dt>
+<dd><p>Get the TTL of a key in Redis.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The key to get the TTL for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>int: The TTL in seconds, or 0 if the key doesn’t exist or an error occurs.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitingException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCode.SECURITY_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">429</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../exceptions/base/index.html#app.core.exceptions.base.AppException" title="app.core.exceptions.base.AppException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.exceptions.base.AppException</span></code></a></p>
+<p>Base exception for rate limiting errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="../exceptions/base/index.html#app.core.exceptions.base.ErrorCode" title="app.core.exceptions.base.ErrorCode"><em>app.core.exceptions.base.ErrorCode</em></a>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitExceededException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitExceededException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rate</span> <span class="pre">limit</span> <span class="pre">exceeded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitExceededException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.rate_limiting.RateLimitingException" title="app.core.rate_limiting.RateLimitingException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingException</span></code></a></p>
+<p>Exception raised when a rate limit is exceeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>headers</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>reset_seconds</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingServiceException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitingServiceException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingServiceException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.rate_limiting.RateLimitingException" title="app.core.rate_limiting.RateLimitingException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingException</span></code></a></p>
+<p>Exception raised when the rate limiting service encounters an error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingConfigurationException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitingConfigurationException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingConfigurationException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.rate_limiting.RateLimitingException" title="app.core.rate_limiting.RateLimitingException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitingException</span></code></a></p>
+<p>Exception raised when the rate limiting configuration is invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">RateLimitingService</span></span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService._initialized">
+<span class="sig-name descname"><span class="pre">_initialized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService._initialized" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService._limiter">
+<span class="sig-name descname"><span class="pre">_limiter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="limiter/index.html#app.core.rate_limiting.limiter.RateLimiter" title="app.core.rate_limiting.limiter.RateLimiter"><span class="pre">app.core.rate_limiting.limiter.RateLimiter</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService._limiter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the rate limiting service.</p>
+<p>If already initialized, this method does nothing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shut down the rate limiting service.</p>
+<p>If not initialized, this method does nothing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService.is_rate_limited">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_rate_limited</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService.is_rate_limited" title="Link to this definition"></a></dt>
+<dd><p>Check if a key is rate limited.</p>
+<dl>
+<dt>Args:</dt><dd><p>key: The key to check.
+rule: Optional rate limit rule to apply. If not provided,</p>
+<blockquote>
+<div><p>the default rule will be used.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>Whether the key is rate limited (True if limited)</p></li>
+<li><p>The current count for the key</p></li>
+<li><p>The maximum allowed count (limit)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>RateLimitingServiceException: If the service is not initialized.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>rule</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService.get_key_for_request">
+<span class="sig-name descname"><span class="pre">get_key_for_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService.get_key_for_request" title="Link to this definition"></a></dt>
+<dd><p>Generate a rate limit key for a request.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request: The request to generate a key for.
+rule: The rate limit rule that defines the key strategy.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A string key for rate limiting.</p>
+</dd>
+<dt>Raises:</dt><dd><p>RateLimitingServiceException: If the service is not initialized.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>fastapi.Request</em>)</p></li>
+<li><p><strong>rule</strong> (<a class="reference internal" href="models/index.html#app.core.rate_limiting.models.RateLimitRule" title="app.core.rate_limiting.models.RateLimitRule"><em>app.core.rate_limiting.models.RateLimitRule</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.rate_limiting.RateLimitingService._ensure_initialized">
+<span class="sig-name descname"><span class="pre">_ensure_initialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.RateLimitingService._ensure_initialized" title="Link to this definition"></a></dt>
+<dd><p>Ensure the service is initialized.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>RateLimitingServiceException: If the service is not initialized.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.rate_limiting.get_rate_limiting_service">
+<span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">get_rate_limiting_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.get_rate_limiting_service" title="Link to this definition"></a></dt>
+<dd><p>Get or create the rate limiting service singleton.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The rate limiting service instance.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.core.rate_limiting.RateLimitingService" title="app.core.rate_limiting.RateLimitingService">RateLimitingService</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.rate_limiting.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the rate limiting system.</p>
+<p>This function is called during application startup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.rate_limiting.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.rate_limiting.</span></span><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.rate_limiting.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shut down the rate limiting system.</p>
+<p>This function is called during application shutdown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../permissions/utils/index.html" class="btn btn-neutral float-left" title="app.core.permissions.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="exceptions/index.html" class="btn btn-neutral float-right" title="app.core.rate_limiting.exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

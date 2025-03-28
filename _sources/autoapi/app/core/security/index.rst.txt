@@ -1,0 +1,1052 @@
+app.core.security
+=================
+
+.. py:module:: app.core.security
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/security/api_keys/index
+   /autoapi/app/core/security/csrf/index
+   /autoapi/app/core/security/dependencies/index
+   /autoapi/app/core/security/encryption/index
+   /autoapi/app/core/security/models/index
+   /autoapi/app/core/security/passwords/index
+   /autoapi/app/core/security/tokens/index
+   /autoapi/app/core/security/validation/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.oauth2_scheme
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.ApiKeyManager
+   app.core.security.CsrfManager
+   app.core.security.EncryptionManager
+   app.core.security.ApiKeyData
+   app.core.security.PasswordPolicy
+   app.core.security.SecurityViolation
+   app.core.security.TokenClaimsModel
+   app.core.security.TokenPair
+   app.core.security.TokenType
+   app.core.security.PasswordManager
+   app.core.security.TokenManager
+   app.core.security.ValidationManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.generate_api_key
+   app.core.security.verify_api_key
+   app.core.security.generate_csrf_token
+   app.core.security.validate_csrf_token
+   app.core.security.decrypt_data
+   app.core.security.encrypt_data
+   app.core.security.generate_secure_token
+   app.core.security.get_password_hash
+   app.core.security.validate_password_policy
+   app.core.security.verify_password
+   app.core.security.add_token_to_blacklist
+   app.core.security.create_token
+   app.core.security.create_token_pair
+   app.core.security.decode_token
+   app.core.security.is_token_blacklisted
+   app.core.security.refresh_tokens
+   app.core.security.revoke_token
+   app.core.security.detect_suspicious_content
+   app.core.security.get_security_headers
+   app.core.security.is_trusted_ip
+   app.core.security.is_valid_enum_value
+   app.core.security.is_valid_hostname
+   app.core.security.moderate_content
+   app.core.security.sanitize_input
+   app.core.security.validate_json_input
+   app.core.security.get_current_user_id
+   app.core.security.get_token_from_header
+
+
+Package Contents
+----------------
+
+.. py:class:: ApiKeyManager
+
+   Manager for API key-related functionality.
+
+
+   .. py:method:: generate_api_key(user_id, name, permissions = None)
+
+      Generate a new API key.
+
+      Args:
+          user_id: The user ID.
+          name: The name of the API key.
+          permissions: Optional list of permissions.
+
+      Returns:
+          ApiKeyData: The generated API key data.
+
+
+
+   .. py:method:: verify_api_key(api_key, stored_hash)
+
+      Verify an API key against its stored hash.
+
+      Args:
+          api_key: The API key to verify.
+          stored_hash: The stored hash to verify against.
+
+      Returns:
+          bool: True if the API key is valid, False otherwise.
+
+
+
+   .. py:method:: parse_api_key(api_key)
+
+      Parse an API key to extract its ID.
+
+      Args:
+          api_key: The API key to parse.
+
+      Returns:
+          Optional[str]: The API key ID, or None if parsing fails.
+
+
+
+.. py:function:: generate_api_key(user_id, name, permissions = None)
+
+   Generate a new API key.
+
+   Args:
+       user_id: The user ID.
+       name: The name of the API key.
+       permissions: Optional list of permissions.
+
+   Returns:
+       ApiKeyData: The generated API key data.
+
+
+.. py:function:: verify_api_key(api_key, stored_hash)
+
+   Verify an API key against its stored hash.
+
+   Args:
+       api_key: The API key to verify.
+       stored_hash: The stored hash to verify against.
+
+   Returns:
+       bool: True if the API key is valid, False otherwise.
+
+
+.. py:class:: CsrfManager
+
+   Manager for CSRF token-related functionality.
+
+
+   .. py:attribute:: secret_key
+
+
+   .. py:attribute:: token_expiry
+
+
+   .. py:method:: generate_token(session_id)
+
+      Generate a CSRF token.
+
+      Args:
+          session_id: The session ID to bind the token to.
+
+      Returns:
+          str: The generated CSRF token.
+
+
+
+   .. py:method:: parse_token(token)
+
+      Parse a CSRF token.
+
+      Args:
+          token: The token to parse.
+
+      Returns:
+          Optional[Tuple[str, int, str, str]]: A tuple containing the parsed token parts,
+              or None if parsing fails.
+
+
+
+   .. py:method:: validate_token(token, session_id)
+
+      Validate a CSRF token.
+
+      Args:
+          token: The token to validate.
+          session_id: The session ID to validate against.
+
+      Returns:
+          bool: True if the token is valid, False otherwise.
+
+
+
+.. py:function:: generate_csrf_token(session_id)
+
+   Generate a CSRF token.
+
+   Args:
+       session_id: The session ID to bind the token to.
+
+   Returns:
+       str: The generated CSRF token.
+
+
+.. py:function:: validate_csrf_token(token, session_id)
+
+   Validate a CSRF token.
+
+   Args:
+       token: The token to validate.
+       session_id: The session ID to validate against.
+
+   Returns:
+       bool: True if the token is valid, False otherwise.
+
+
+.. py:class:: EncryptionManager
+
+   Manager for encryption-related functionality.
+
+
+   .. py:method:: _setup_encryption()
+
+      Set up encryption with a derived key.
+
+
+
+   .. py:method:: encrypt_data(data)
+
+      Encrypt data.
+
+      Args:
+          data: The data to encrypt.
+
+      Returns:
+          str: The encrypted data as a base64-encoded string.
+
+
+
+   .. py:method:: decrypt_data(encrypted_data)
+
+      Decrypt data.
+
+      Args:
+          encrypted_data: The encrypted data as a base64-encoded string.
+
+      Returns:
+          Union[str, dict]: The decrypted data.
+
+
+
+   .. py:method:: generate_secure_token(length = 32)
+
+      Generate a cryptographically secure random token.
+
+      Args:
+          length: The length of the token in bytes.
+
+      Returns:
+          str: The generated token.
+
+
+
+.. py:function:: decrypt_data(encrypted_data)
+
+   Decrypt data.
+
+   Args:
+       encrypted_data: The encrypted data as a base64-encoded string.
+
+   Returns:
+       Union[str, dict]: The decrypted data.
+
+   Raises:
+       SecurityException: If decryption fails.
+
+
+.. py:function:: encrypt_data(data)
+
+   Encrypt data.
+
+   Args:
+       data: The data to encrypt.
+
+   Returns:
+       str: The encrypted data as a base64-encoded string.
+
+   Raises:
+       SecurityException: If encryption fails.
+
+
+.. py:function:: generate_secure_token(length = 32)
+
+   Generate a cryptographically secure random token.
+
+   Args:
+       length: The length of the token in bytes.
+
+   Returns:
+       str: The generated token.
+
+   Raises:
+       SecurityException: If token generation fails.
+       ValueError: If the token length is too short.
+
+
+.. py:class:: ApiKeyData
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing API key data.
+
+
+   .. py:attribute:: api_key
+      :type:  str
+
+
+   .. py:attribute:: key_id
+      :type:  str
+
+
+   .. py:attribute:: hashed_secret
+      :type:  str
+
+
+   .. py:attribute:: token
+      :type:  str
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: created_at
+      :type:  str
+
+
+   .. py:attribute:: permissions
+      :type:  List[str]
+      :value: []
+
+
+
+.. py:class:: PasswordPolicy
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing password policy settings.
+
+
+   .. py:attribute:: min_length
+      :type:  int
+      :value: 8
+
+
+
+   .. py:attribute:: require_uppercase
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: require_lowercase
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: require_digit
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: require_special_char
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: max_length
+      :type:  int
+      :value: 128
+
+
+
+   .. py:attribute:: prevent_common_passwords
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: password_history_count
+      :type:  int
+      :value: 5
+
+
+
+   .. py:attribute:: max_failed_attempts
+      :type:  int
+      :value: 5
+
+
+
+   .. py:attribute:: lockout_duration_minutes
+      :type:  int
+      :value: 30
+
+
+
+   .. py:attribute:: password_expiry_days
+      :type:  Optional[int]
+      :value: 90
+
+
+
+.. py:class:: SecurityViolation
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of security violations that can occur.
+
+
+   .. py:attribute:: INVALID_TOKEN
+      :value: 'invalid_token'
+
+
+
+   .. py:attribute:: EXPIRED_TOKEN
+      :value: 'expired_token'
+
+
+
+   .. py:attribute:: CSRF_VIOLATION
+      :value: 'csrf_violation'
+
+
+
+   .. py:attribute:: RATE_LIMIT_EXCEEDED
+      :value: 'rate_limit_exceeded'
+
+
+
+   .. py:attribute:: BRUTE_FORCE_ATTEMPT
+      :value: 'brute_force_attempt'
+
+
+
+   .. py:attribute:: SUSPICIOUS_ACTIVITY
+      :value: 'suspicious_activity'
+
+
+
+   .. py:attribute:: UNAUTHORIZED_ACCESS
+      :value: 'unauthorized_access'
+
+
+
+   .. py:attribute:: INVALID_IP
+      :value: 'invalid_ip'
+
+
+
+   .. py:attribute:: PERMISSION_VIOLATION
+      :value: 'permission_violation'
+
+
+
+   .. py:attribute:: INJECTION_ATTEMPT
+      :value: 'injection_attempt'
+
+
+
+   .. py:attribute:: XSS_ATTEMPT
+      :value: 'xss_attempt'
+
+
+
+.. py:class:: TokenClaimsModel
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing the claims in a JWT token.
+
+
+   .. py:attribute:: sub
+      :type:  str
+
+
+   .. py:attribute:: exp
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: iat
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: jti
+      :type:  str
+
+
+   .. py:attribute:: type
+      :type:  str
+
+
+   .. py:attribute:: role
+      :type:  Optional[str]
+
+
+   .. py:attribute:: permissions
+      :type:  Optional[List[str]]
+
+
+   .. py:attribute:: user_data
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: TokenPair
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing an access and refresh token pair.
+
+
+   .. py:attribute:: access_token
+      :type:  str
+
+
+   .. py:attribute:: refresh_token
+      :type:  str
+
+
+   .. py:attribute:: token_type
+      :type:  str
+
+
+   .. py:attribute:: expires_in
+      :type:  int
+
+
+.. py:class:: TokenType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of tokens used in the system.
+
+
+   .. py:attribute:: ACCESS
+      :value: 'access'
+
+
+
+   .. py:attribute:: REFRESH
+      :value: 'refresh'
+
+
+
+   .. py:attribute:: RESET_PASSWORD
+      :value: 'reset_password'
+
+
+
+   .. py:attribute:: EMAIL_VERIFICATION
+      :value: 'email_verification'
+
+
+
+   .. py:attribute:: INVITATION
+      :value: 'invitation'
+
+
+
+   .. py:attribute:: API_KEY
+      :value: 'api_key'
+
+
+
+   .. py:attribute:: CSRF
+      :value: 'csrf'
+
+
+
+   .. py:attribute:: SESSION
+      :value: 'session'
+
+
+
+.. py:class:: PasswordManager
+
+   Manager for password-related functionality.
+
+
+   .. py:attribute:: policy
+
+
+   .. py:attribute:: common_passwords
+      :type:  Set[str]
+
+
+   .. py:attribute:: password_regex
+
+
+   .. py:method:: _load_common_passwords_sync()
+
+      Load common passwords from a file.
+
+
+
+   .. py:method:: validate_password_policy(password, user_id = None)
+      :async:
+
+
+      Validate a password against the password policy.
+
+      Args:
+          password: The password to validate.
+          user_id: Optional user ID for password history checks.
+
+      Returns:
+          Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the password
+              is valid and an optional error message if it's not.
+
+
+
+   .. py:method:: hash_password(password)
+
+      Hash a password using bcrypt.
+
+      Args:
+          password: The password to hash.
+
+      Returns:
+          str: The hashed password.
+
+
+
+   .. py:method:: verify_password(plain_password, hashed_password)
+
+      Verify a password against its hash.
+
+      Args:
+          plain_password: The plain text password.
+          hashed_password: The hashed password to verify against.
+
+      Returns:
+          bool: True if the password matches the hash, False otherwise.
+
+
+
+.. py:function:: get_password_hash(password)
+
+   Hash a password using bcrypt.
+
+   Args:
+       password: The password to hash.
+
+   Returns:
+       str: The hashed password.
+
+
+.. py:function:: validate_password_policy(password, user_id = None)
+   :async:
+
+
+   Validate a password against the password policy.
+
+   Args:
+       password: The password to validate.
+       user_id: Optional user ID for password history checks.
+
+   Returns:
+       Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the password
+           is valid and an optional error message if it's not.
+
+
+.. py:function:: verify_password(plain_password, hashed_password)
+
+   Verify a password against its hash.
+
+   Args:
+       plain_password: The plain text password.
+       hashed_password: The hashed password to verify against.
+
+   Returns:
+       bool: True if the password matches the hash, False otherwise.
+
+
+.. py:class:: TokenManager
+
+   Manager for token-related functionality.
+
+
+   .. py:attribute:: token_blacklist_prefix
+      :value: 'token:blacklist:'
+
+
+
+.. py:function:: add_token_to_blacklist(token_jti, expires_at)
+   :async:
+
+
+   Add a token to the blacklist.
+
+   Args:
+       token_jti: The JWT ID of the token.
+       expires_at: The expiration time of the token.
+
+
+.. py:function:: create_token(subject, token_type, expires_delta = None, role = '', permissions = None, user_data = None)
+
+   Create a JWT token.
+
+   Args:
+       subject: The subject of the token (usually the user ID).
+       token_type: The type of token to create.
+       expires_delta: Optional expiration time delta.
+       role: Optional user role.
+       permissions: Optional list of permissions.
+       user_data: Optional additional user data.
+
+   Returns:
+       str: The encoded JWT token.
+
+
+.. py:function:: create_token_pair(user_id, role, permissions = None, user_data = None)
+
+   Create an access and refresh token pair.
+
+   Args:
+       user_id: The user ID.
+       role: The user role.
+       permissions: Optional list of permissions.
+       user_data: Optional additional user data.
+
+   Returns:
+       TokenPair: A model containing the access and refresh tokens.
+
+
+.. py:function:: decode_token(token)
+   :async:
+
+
+   Decode and validate a JWT token.
+
+   Args:
+       token: The token to decode.
+
+   Returns:
+       TokenClaimsModel: The decoded token claims.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:function:: is_token_blacklisted(token_jti)
+   :async:
+
+
+   Check if a token is blacklisted.
+
+   Args:
+       token_jti: The JWT ID of the token.
+
+   Returns:
+       bool: True if the token is blacklisted, False otherwise.
+
+
+.. py:function:: refresh_tokens(refresh_token)
+   :async:
+
+
+   Refresh an access token using a refresh token.
+
+   Args:
+       refresh_token: The refresh token.
+
+   Returns:
+       TokenPair: A new token pair.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:function:: revoke_token(token)
+   :async:
+
+
+   Revoke a token by adding it to the blacklist.
+
+   Args:
+       token: The token to revoke.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:class:: ValidationManager
+
+   Manager for input validation and sanitization.
+
+
+   .. py:attribute:: allowed_hosts
+      :type:  Set[str]
+
+
+   .. py:attribute:: trusted_proxies
+      :type:  Set[str]
+
+
+   .. py:attribute:: patterns
+
+
+   .. py:attribute:: suspicious_patterns
+      :value: ['<script.*?>', 'javascript:', 'eval\\(', 'document\\.cookie', 'localStorage', 'sessionStorage',...
+
+
+
+   .. py:attribute:: suspicious_regex
+
+
+   .. py:method:: is_valid_hostname(hostname)
+
+      Validate a hostname.
+
+      Args:
+          hostname: The hostname to validate.
+
+      Returns:
+          bool: True if the hostname is valid, False otherwise.
+
+
+
+   .. py:method:: is_trusted_ip(ip_address)
+
+      Check if an IP address is in the trusted proxies list.
+
+      Args:
+          ip_address: The IP address to check.
+
+      Returns:
+          bool: True if the IP address is trusted, False otherwise.
+
+
+
+   .. py:method:: is_valid_enum_value(enum_class, value)
+
+      Check if a value is a valid member of an Enum class.
+
+      Args:
+          enum_class: The Enum class to check against.
+          value: The value to check.
+
+      Returns:
+          bool: True if the value is a valid enum member, False otherwise.
+
+
+
+   .. py:method:: sanitize_input(input_str)
+
+      Sanitize user input by escaping HTML characters.
+
+      Args:
+          input_str: The input string to sanitize.
+
+      Returns:
+          str: The sanitized string.
+
+
+
+   .. py:method:: detect_suspicious_content(content)
+
+      Detect potentially malicious content.
+
+      Args:
+          content: The content to check.
+
+      Returns:
+          bool: True if suspicious content is detected, False otherwise.
+
+
+
+   .. py:method:: validate_json_input(json_data)
+
+      Validate JSON input for suspicious content.
+
+      Args:
+          json_data: The JSON data to validate.
+
+      Returns:
+          bool: True if the JSON is valid and safe, False otherwise.
+
+
+
+   .. py:method:: moderate_content(content, content_type = 'text')
+
+      Moderate content for inappropriate or harmful material.
+
+      Args:
+          content: The content to moderate.
+          content_type: The type of content (text, image, etc.)
+
+      Returns:
+          Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the content
+              is acceptable and an optional reason if it's not.
+
+
+
+   .. py:method:: get_security_headers()
+
+      Get security headers for HTTP responses.
+
+      Returns:
+          Dict[str, str]: A dictionary of security headers.
+
+
+
+.. py:function:: detect_suspicious_content(content)
+
+   Detect potentially malicious content.
+
+   Args:
+       content: The content to check.
+
+   Returns:
+       bool: True if suspicious content is detected, False otherwise.
+
+
+.. py:function:: get_security_headers()
+
+   Get security headers for HTTP responses.
+
+   Returns:
+       Dict[str, str]: A dictionary of security headers.
+
+
+.. py:function:: is_trusted_ip(ip_address)
+
+   Check if an IP address is in the trusted proxies list.
+
+   Args:
+       ip_address: The IP address to check.
+
+   Returns:
+       bool: True if the IP address is trusted, False otherwise.
+
+
+.. py:function:: is_valid_enum_value(enum_class, value)
+
+   Check if a value is a valid member of an Enum class.
+
+   Args:
+       enum_class: The Enum class to check against.
+       value: The value to check.
+
+   Returns:
+       bool: True if the value is a valid enum member, False otherwise.
+
+
+.. py:function:: is_valid_hostname(hostname)
+
+   Validate a hostname.
+
+   Args:
+       hostname: The hostname to validate.
+
+   Returns:
+       bool: True if the hostname is valid, False otherwise.
+
+
+.. py:function:: moderate_content(content, content_type = 'text')
+
+   Moderate content for inappropriate or harmful material.
+
+   Args:
+       content: The content to moderate.
+       content_type: The type of content (text, image, etc.)
+
+   Returns:
+       Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the content
+           is acceptable and an optional reason if it's not.
+
+
+.. py:function:: sanitize_input(input_str)
+
+   Sanitize user input by escaping HTML characters.
+
+   Args:
+       input_str: The input string to sanitize.
+
+   Returns:
+       str: The sanitized string.
+
+
+.. py:function:: validate_json_input(json_data)
+
+   Validate JSON input for suspicious content and structure.
+
+   Args:
+       json_data: The JSON data to validate.
+
+   Returns:
+       bool: True if the JSON is valid and safe, False otherwise.
+
+
+.. py:function:: get_current_user_id(token = Depends(get_token_from_header))
+   :async:
+
+
+   Get the current user ID from a token.
+
+   Args:
+       token: The token to decode.
+
+   Returns:
+       str: The user ID.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+
+.. py:function:: get_token_from_header(token = Depends(oauth2_scheme))
+   :async:
+
+
+   Get a token from the Authorization header.
+
+   Args:
+       token: The token from the OAuth2 scheme.
+
+   Returns:
+       str: The token.
+
+
+.. py:data:: oauth2_scheme
+

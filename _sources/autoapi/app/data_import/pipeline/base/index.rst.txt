@@ -1,0 +1,65 @@
+app.data_import.pipeline.base
+=============================
+
+.. py:module:: app.data_import.pipeline.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.pipeline.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.pipeline.base.Pipeline
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: Pipeline
+
+   Bases: :py:obj:`Protocol`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol for data import pipelines.
+
+
+   .. py:attribute:: connector
+      :type:  Union[app.data_import.connectors.base.Connector, app.data_import.connectors.filemaker_connector.FileMakerConnector, app.data_import.connectors.file_connector.FileConnector]
+
+
+   .. py:attribute:: processor
+      :type:  app.data_import.processors.base.Processor[T]
+
+
+   .. py:attribute:: importer
+      :type:  app.data_import.importers.base.Importer[T]
+
+
+   .. py:method:: run(query, **params)
+      :async:
+
+
+      Run the complete ETL pipeline.
+
+      Args:
+          query: Query string or identifier for the data to extract
+          params: Additional parameters for the query
+
+      Returns:
+          Dictionary with pipeline execution statistics
+
+      Raises:
+          Exception: If any stage of the pipeline fails
+
+
+

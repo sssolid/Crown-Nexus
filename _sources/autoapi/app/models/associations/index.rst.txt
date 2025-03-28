@@ -1,0 +1,49 @@
+app.models.associations
+=======================
+
+.. py:module:: app.models.associations
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.models.associations.product_fitment_association
+   app.models.associations.product_media_association
+   app.models.associations.product_tariff_code_association
+   app.models.associations.product_unspsc_association
+   app.models.associations.product_country_origin_association
+   app.models.associations.product_hardware_association
+   app.models.associations.product_interchange_association
+   app.models.associations.product_packaging_association
+   app.models.associations.product_color_association
+   app.models.associations.product_construction_type_association
+   app.models.associations.product_texture_association
+
+
+Module Contents
+---------------
+
+.. py:data:: product_fitment_association
+
+.. py:data:: product_media_association
+
+.. py:data:: product_tariff_code_association
+
+.. py:data:: product_unspsc_association
+
+.. py:data:: product_country_origin_association
+
+.. py:data:: product_hardware_association
+
+.. py:data:: product_interchange_association
+
+.. py:data:: product_packaging_association
+
+.. py:data:: product_color_association
+
+.. py:data:: product_construction_type_association
+
+.. py:data:: product_texture_association
+

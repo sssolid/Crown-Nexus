@@ -1,0 +1,102 @@
+app.domains.company.repository
+==============================
+
+.. py:module:: app.domains.company.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.company.repository.CompanyRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: CompanyRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.company.schemas.Company`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Company entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Company entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_name(name)
+      :async:
+
+
+      Find a company by its name.
+
+      Args:
+          name: The company name to search for.
+
+      Returns:
+          The company if found, None otherwise.
+
+
+
+   .. py:method:: find_by_account_number(account_number)
+      :async:
+
+
+      Find a company by its account number.
+
+      Args:
+          account_number: The account number to search for.
+
+      Returns:
+          The company if found, None otherwise.
+
+
+
+   .. py:method:: find_by_industry(industry)
+      :async:
+
+
+      Find companies by industry.
+
+      Args:
+          industry: The industry to filter by.
+
+      Returns:
+          List of companies in the specified industry.
+
+
+
+   .. py:method:: get_active_companies(page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of active companies.
+
+      Args:
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: ensure_exists(company_id)
+      :async:
+
+
+      Ensure a company exists by ID, raising an exception if not found.
+
+      Args:
+          company_id: The company ID to check.
+
+      Returns:
+          The company if found.
+
+      Raises:
+          ResourceNotFoundException: If the company is not found.
+
+
+

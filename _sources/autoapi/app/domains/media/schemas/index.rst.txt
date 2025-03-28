@@ -1,0 +1,265 @@
+app.domains.media.schemas
+=========================
+
+.. py:module:: app.domains.media.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.schemas.MediaBase
+   app.domains.media.schemas.MediaCreate
+   app.domains.media.schemas.MediaUpdate
+   app.domains.media.schemas.MediaInDB
+   app.domains.media.schemas.Media
+   app.domains.media.schemas.MediaListResponse
+   app.domains.media.schemas.FileUploadResponse
+   app.domains.media.schemas.FileUploadError
+
+
+Module Contents
+---------------
+
+.. py:class:: MediaBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for media data.
+
+   Attributes:
+       filename: Original name of the file.
+       media_type: Type of media.
+       visibility: Visibility setting.
+       file_metadata: Additional metadata about the file.
+
+
+   .. py:attribute:: filename
+      :type:  str
+
+
+   .. py:attribute:: media_type
+      :type:  app.domains.media.models.MediaType
+
+
+   .. py:attribute:: visibility
+      :type:  app.domains.media.models.MediaVisibility
+
+
+   .. py:attribute:: file_metadata
+      :type:  Dict[str, Any]
+
+
+.. py:class:: MediaCreate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for creating new media.
+
+   Note: Filename is handled by the file upload process.
+
+
+   .. py:attribute:: media_type
+      :type:  app.domains.media.models.MediaType
+
+
+   .. py:attribute:: visibility
+      :type:  app.domains.media.models.MediaVisibility
+
+
+   .. py:attribute:: file_metadata
+      :type:  Dict[str, Any]
+
+
+.. py:class:: MediaUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating existing media.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: filename
+      :type:  Optional[str]
+
+
+   .. py:attribute:: media_type
+      :type:  Optional[app.domains.media.models.MediaType]
+
+
+   .. py:attribute:: visibility
+      :type:  Optional[app.domains.media.models.MediaVisibility]
+
+
+   .. py:attribute:: file_metadata
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: is_approved
+      :type:  Optional[bool]
+
+
+.. py:class:: MediaInDB
+
+   Bases: :py:obj:`MediaBase`
+
+
+   Schema for media data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: file_path
+      :type:  str
+
+
+   .. py:attribute:: file_size
+      :type:  int
+
+
+   .. py:attribute:: mime_type
+      :type:  str
+
+
+   .. py:attribute:: uploaded_by_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: is_approved
+      :type:  bool
+
+
+   .. py:attribute:: approved_by_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: approved_at
+      :type:  Optional[datetime.datetime]
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Media
+
+   Bases: :py:obj:`MediaInDB`
+
+
+   Schema for complete media data in API responses.
+
+   Includes derived fields like URLs.
+
+   Attributes:
+       url: URL to access the file.
+       thumbnail_url: URL to access the thumbnail if available.
+
+
+   .. py:attribute:: url
+      :type:  str
+
+
+   .. py:attribute:: thumbnail_url
+      :type:  Optional[str]
+
+
+   .. py:method:: model_post_init(__context)
+
+      Post-initialization hook to set URLs.
+
+      Args:
+          __context: Initialization context (unused).
+
+
+
+.. py:class:: MediaListResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated list of media.
+
+   Attributes:
+       items: List of media items.
+       total: Total number of items.
+       page: Current page number.
+       page_size: Number of items per page.
+       pages: Total number of pages.
+
+
+   .. py:attribute:: items
+      :type:  List[Media]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+
+.. py:class:: FileUploadResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for file upload response.
+
+   Attributes:
+       media: Media object for the uploaded file.
+       message: Success message.
+
+
+   .. py:attribute:: media
+      :type:  Media
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+.. py:class:: FileUploadError
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for file upload error.
+
+   Attributes:
+       error: Error message.
+       detail: Detailed error information.
+
+
+   .. py:attribute:: error
+      :type:  str
+
+
+   .. py:attribute:: detail
+      :type:  Optional[str]
+
+

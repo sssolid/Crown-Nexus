@@ -1,0 +1,121 @@
+app.middleware.security
+=======================
+
+.. py:module:: app.middleware.security
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.middleware.security.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.middleware.security.SecurityHeadersMiddleware
+   app.middleware.security.SecureRequestMiddleware
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: SecurityHeadersMiddleware(app, content_security_policy = None, permissions_policy = None, expect_ct = None)
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware for adding security headers to responses.
+
+   This middleware adds headers such as Content-Security-Policy,
+   X-Frame-Options, and other security-related headers to responses.
+
+
+   .. py:attribute:: content_security_policy
+      :type:  str
+
+
+   .. py:attribute:: permissions_policy
+      :type:  str
+
+
+   .. py:attribute:: expect_ct
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+      Process the request, adding security headers to the response.
+
+      Args:
+          request: The incoming request
+          call_next: The next middleware in the chain
+
+      Returns:
+          The response with added security headers
+
+
+
+.. py:class:: SecureRequestMiddleware(app, block_suspicious_requests = True)
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware for blocking suspicious requests.
+
+   This middleware checks incoming requests for suspicious patterns
+   and blocks them if detected.
+
+
+   .. py:attribute:: block_suspicious_requests
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: suspicious_patterns
+      :type:  list[str]
+      :value: ['../../', '<script', 'eval(', 'SELECT ']
+
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+      Process the request, checking for suspicious patterns.
+
+      Args:
+          request: The incoming request
+          call_next: The next middleware in the chain
+
+      Returns:
+          The response if the request is not suspicious
+
+      Raises:
+          SecurityException: If the request is suspicious and blocking is enabled
+
+
+
+   .. py:method:: _is_suspicious_request(request)
+
+      Check if a request contains suspicious patterns.
+
+      Args:
+          request: The request to check
+
+      Returns:
+          True if the request is suspicious, False otherwise
+
+
+

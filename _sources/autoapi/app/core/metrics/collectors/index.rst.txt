@@ -1,0 +1,169 @@
+app.core.metrics.collectors
+===========================
+
+.. py:module:: app.core.metrics.collectors
+
+.. autoapi-nested-parse::
+
+   Metric collectors for different metric types.
+
+   This module provides classes for collecting different types of metrics
+   (counters, gauges, histograms, summaries) with a consistent interface.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.metrics.collectors.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.metrics.collectors.MetricCollector
+   app.core.metrics.collectors.CounterCollector
+   app.core.metrics.collectors.GaugeCollector
+   app.core.metrics.collectors.HistogramCollector
+   app.core.metrics.collectors.SummaryCollector
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: MetricCollector(name, description, labelnames = None, namespace = None, subsystem = None)
+
+   Base class for metric collectors.
+
+
+   .. py:attribute:: name
+
+
+   .. py:attribute:: description
+
+
+   .. py:attribute:: labelnames
+      :value: []
+
+
+
+   .. py:attribute:: namespace
+      :value: None
+
+
+
+   .. py:attribute:: subsystem
+      :value: None
+
+
+
+.. py:class:: CounterCollector(name, description, labelnames = None, namespace = None, subsystem = None)
+
+   Bases: :py:obj:`MetricCollector`
+
+
+   Collector for counter metrics.
+
+
+   .. py:attribute:: counter
+
+
+   .. py:method:: increment(amount = 1.0, labels = None)
+
+      Increment the counter.
+
+      Args:
+          amount: Amount to increment by
+          labels: Optional label values
+
+
+
+.. py:class:: GaugeCollector(name, description, labelnames = None, namespace = None, subsystem = None)
+
+   Bases: :py:obj:`MetricCollector`
+
+
+   Collector for gauge metrics.
+
+
+   .. py:attribute:: gauge
+
+
+   .. py:method:: set(value, labels = None)
+
+      Set the gauge value.
+
+      Args:
+          value: Value to set
+          labels: Optional label values
+
+
+
+   .. py:method:: increment(amount = 1.0, labels = None)
+
+      Increment the gauge.
+
+      Args:
+          amount: Amount to increment by
+          labels: Optional label values
+
+
+
+   .. py:method:: decrement(amount = 1.0, labels = None)
+
+      Decrement the gauge.
+
+      Args:
+          amount: Amount to decrement by
+          labels: Optional label values
+
+
+
+.. py:class:: HistogramCollector(name, description, labelnames = None, buckets = None, namespace = None, subsystem = None)
+
+   Bases: :py:obj:`MetricCollector`
+
+
+   Collector for histogram metrics.
+
+
+   .. py:attribute:: histogram
+
+
+   .. py:method:: observe(value, labels = None)
+
+      Record an observation.
+
+      Args:
+          value: Value to observe
+          labels: Optional label values
+
+
+
+.. py:class:: SummaryCollector(name, description, labelnames = None, namespace = None, subsystem = None)
+
+   Bases: :py:obj:`MetricCollector`
+
+
+   Collector for summary metrics.
+
+
+   .. py:attribute:: summary
+
+
+   .. py:method:: observe(value, labels = None)
+
+      Record an observation.
+
+      Args:
+          value: Value to observe
+          labels: Optional label values
+
+
+

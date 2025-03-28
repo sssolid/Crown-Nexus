@@ -1,0 +1,141 @@
+app.core.metrics.trackers
+=========================
+
+.. py:module:: app.core.metrics.trackers
+
+.. autoapi-nested-parse::
+
+   Specialized trackers for common metric collection scenarios.
+
+   This module provides high-level trackers for common use cases like HTTP requests,
+   database operations, service calls, and cache operations.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.metrics.trackers.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.metrics.trackers.HttpTracker
+   app.core.metrics.trackers.DatabaseTracker
+   app.core.metrics.trackers.ServiceTracker
+   app.core.metrics.trackers.CacheTracker
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: HttpTracker(increment_counter_func, observe_histogram_func, increment_error_func)
+
+   Tracker for HTTP request metrics.
+
+
+   .. py:attribute:: increment_counter
+
+
+   .. py:attribute:: observe_histogram
+
+
+   .. py:attribute:: increment_error
+
+
+   .. py:method:: track_request(method, endpoint, status_code, duration, error_code = None)
+
+      Track HTTP request metrics.
+
+      Args:
+          method: HTTP method
+          endpoint: Request endpoint
+          status_code: Response status code
+          duration: Request duration in seconds
+          error_code: Optional error code if request failed
+
+
+
+.. py:class:: DatabaseTracker(increment_counter_func, observe_histogram_func, increment_error_func)
+
+   Tracker for database operation metrics.
+
+
+   .. py:attribute:: increment_counter
+
+
+   .. py:attribute:: observe_histogram
+
+
+   .. py:attribute:: increment_error
+
+
+   .. py:method:: track_query(operation, entity, duration, error = None)
+
+      Track database query metrics.
+
+      Args:
+          operation: Database operation (e.g., SELECT, INSERT)
+          entity: Entity being queried
+          duration: Query duration in seconds
+          error: Optional error message if query failed
+
+
+
+.. py:class:: ServiceTracker(increment_counter_func, observe_histogram_func, increment_error_func)
+
+   Tracker for service call metrics.
+
+
+   .. py:attribute:: increment_counter
+
+
+   .. py:attribute:: observe_histogram
+
+
+   .. py:attribute:: increment_error
+
+
+   .. py:method:: track_call(component, action, duration, error = None)
+
+      Track service call metrics.
+
+      Args:
+          component: Service component name
+          action: Action being performed
+          duration: Call duration in seconds
+          error: Optional error message if call failed
+
+
+
+.. py:class:: CacheTracker(increment_counter_func, observe_histogram_func)
+
+   Tracker for cache operation metrics.
+
+
+   .. py:attribute:: increment_counter
+
+
+   .. py:attribute:: observe_histogram
+
+
+   .. py:method:: track_operation(operation, backend, hit, duration, component = 'unknown')
+
+      Track cache operation metrics.
+
+      Args:
+          operation: Cache operation (get, set, delete)
+          backend: Cache backend (memory, redis)
+          hit: Whether the operation was a cache hit
+          duration: Operation duration in seconds
+          component: Component using the cache
+
+
+

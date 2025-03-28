@@ -1,0 +1,434 @@
+app.domains.chat.service
+========================
+
+.. py:module:: app.domains.chat.service
+
+.. autoapi-nested-parse::
+
+   Module for chat functionality including rooms and messages.
+
+   This module provides the ChatService class which handles chat room creation,
+   message management, and member access control.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.chat.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.chat.service.ChatService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ChatService(db)
+
+   Service for managing chat functionality including rooms, messages, and reactions.
+
+   This service handles all operations related to chat, including:
+   - Creating and managing chat rooms
+   - Sending and retrieving messages
+   - User permissions within chat rooms
+   - Message reactions
+   - Read status tracking
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: create_room(name, room_type, creator_id, company_id = None, members = None)
+      :async:
+
+
+      Create a new chat room.
+
+      Args:
+          name: Optional name for the chat room
+          room_type: Type of chat room (DIRECT, GROUP, COMPANY, SUPPORT)
+          creator_id: User ID of the room creator
+          company_id: Optional company ID for company rooms
+          members: Optional list of initial members for the room
+
+      Returns:
+          The newly created ChatRoom instance
+
+      Raises:
+          ValidationException: If the input data is invalid
+          DatabaseException: If a database error occurs
+          BusinessException: If there's a logical error creating the room
+
+
+
+   .. py:method:: get_room(room_id)
+      :async:
+
+
+      Get a chat room by ID.
+
+      Args:
+          room_id: The ID of the room to retrieve
+
+      Returns:
+          The ChatRoom instance if found, None otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_room_with_members(room_id)
+      :async:
+
+
+      Get a chat room by ID with its members loaded.
+
+      Args:
+          room_id: The ID of the room to retrieve
+
+      Returns:
+          The ChatRoom instance with members if found, None otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_user_rooms(user_id)
+      :async:
+
+
+      Get all chat rooms for a user.
+
+      Args:
+          user_id: The ID of the user
+
+      Returns:
+          List of chat room data dictionaries with metadata
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_room_info(room_id)
+      :async:
+
+
+      Get detailed information about a chat room.
+
+      Args:
+          room_id: The ID of the room
+
+      Returns:
+          Dictionary with room information and members
+
+      Raises:
+          ResourceNotFoundException: If the room doesn't exist
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: check_room_access(user_id, room_id)
+      :async:
+
+
+      Check if a user has access to a chat room.
+
+      Args:
+          user_id: ID of the user
+          room_id: ID of the room
+
+      Returns:
+          True if the user has access, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: create_message(room_id, sender_id, content, message_type = 'text', metadata = None)
+      :async:
+
+
+      Create a new message in a chat room.
+
+      Args:
+          room_id: ID of the chat room
+          sender_id: ID of the message sender
+          content: Message content
+          message_type: Type of message (default: "text")
+          metadata: Optional metadata for the message
+
+      Returns:
+          The created ChatMessage instance
+
+      Raises:
+          ValidationException: If the input data is invalid
+          DatabaseException: If a database error occurs
+          BusinessException: If there's a logical error creating the message
+
+
+
+   .. py:method:: edit_message(message_id, content)
+      :async:
+
+
+      Edit an existing message.
+
+      Args:
+          message_id: ID of the message to edit
+          content: New content for the message
+
+      Returns:
+          Tuple of (success status, updated message if successful)
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: delete_message(message_id)
+      :async:
+
+
+      Soft delete a message.
+
+      Args:
+          message_id: ID of the message to delete
+
+      Returns:
+          True if the operation was successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: check_message_permission(message_id, user_id, require_admin = False)
+      :async:
+
+
+      Check if a user has permission to modify a message.
+
+      Args:
+          message_id: ID of the message
+          user_id: ID of the user
+          require_admin: Whether to require admin privileges
+
+      Returns:
+          True if the user has permission, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: mark_as_read(user_id, room_id, last_read_id)
+      :async:
+
+
+      Mark messages in a room as read up to a specific message.
+
+      Args:
+          user_id: ID of the user
+          room_id: ID of the chat room
+          last_read_id: ID of the last read message
+
+      Returns:
+          True if successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_unread_count(room_id, user_id, last_read_at = None)
+      :async:
+
+
+      Get count of unread messages for a user in a room.
+
+      Args:
+          room_id: ID of the chat room
+          user_id: ID of the user
+          last_read_at: Optional timestamp of last read message
+
+      Returns:
+          Count of unread messages
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_message_history(room_id, before_id = None, limit = 50)
+      :async:
+
+
+      Get message history for a chat room.
+
+      Args:
+          room_id: ID of the chat room
+          before_id: Optional ID of message to get history before
+          limit: Maximum number of messages to return
+
+      Returns:
+          List of formatted message dictionaries
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: add_reaction(message_id, user_id, reaction)
+      :async:
+
+
+      Add a reaction to a message.
+
+      Args:
+          message_id: ID of the message
+          user_id: ID of the user adding the reaction
+          reaction: Reaction string/emoji
+
+      Returns:
+          True if successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: remove_reaction(message_id, user_id, reaction)
+      :async:
+
+
+      Remove a reaction from a message.
+
+      Args:
+          message_id: ID of the message
+          user_id: ID of the user removing the reaction
+          reaction: Reaction string/emoji
+
+      Returns:
+          True if successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: add_member(room_id, user_id, role = ChatMemberRole.MEMBER)
+      :async:
+
+
+      Add a member to a chat room.
+
+      Args:
+          room_id: ID of the chat room
+          user_id: ID of the user to add
+          role: Role of the user in the room
+
+      Returns:
+          True if successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: remove_member(room_id, user_id)
+      :async:
+
+
+      Remove a member from a chat room.
+
+      Args:
+          room_id: ID of the chat room
+          user_id: ID of the user to remove
+
+      Returns:
+          True if successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: update_member_role(room_id, user_id, role)
+      :async:
+
+
+      Update a member's role in a chat room.
+
+      Args:
+          room_id: ID of the chat room
+          user_id: ID of the user
+          role: New role for the user
+
+      Returns:
+          True if successful, False otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: find_direct_chat(user_id1, user_id2)
+      :async:
+
+
+      Find a direct chat room between two users.
+
+      Args:
+          user_id1: ID of the first user
+          user_id2: ID of the second user
+
+      Returns:
+          Room ID if found, None otherwise
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: create_direct_chat(user_id1, user_id2)
+      :async:
+
+
+      Create a direct chat room between two users or return existing one.
+
+      Args:
+          user_id1: ID of the first user
+          user_id2: ID of the second user
+
+      Returns:
+          ID of the created/existing direct chat room
+
+      Raises:
+          ValidationException: If the input data is invalid
+          DatabaseException: If a database error occurs
+          BusinessException: If there's a logical error creating the room
+
+
+
+   .. py:method:: register()
+      :classmethod:
+
+
+      Register this service with the service registry.
+
+
+

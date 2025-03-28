@@ -1,0 +1,250 @@
+app.core.security.validation
+============================
+
+.. py:module:: app.core.security.validation
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.validation.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.validation.ValidationManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.validation.is_valid_hostname
+   app.core.security.validation.is_trusted_ip
+   app.core.security.validation.is_valid_enum_value
+   app.core.security.validation.sanitize_input
+   app.core.security.validation.validate_json_input
+   app.core.security.validation.detect_suspicious_content
+   app.core.security.validation.moderate_content
+   app.core.security.validation.get_security_headers
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: is_valid_hostname(hostname)
+
+   Validate a hostname.
+
+   Args:
+       hostname: The hostname to validate.
+
+   Returns:
+       bool: True if the hostname is valid, False otherwise.
+
+
+.. py:function:: is_trusted_ip(ip_address)
+
+   Check if an IP address is in the trusted proxies list.
+
+   Args:
+       ip_address: The IP address to check.
+
+   Returns:
+       bool: True if the IP address is trusted, False otherwise.
+
+
+.. py:function:: is_valid_enum_value(enum_class, value)
+
+   Check if a value is a valid member of an Enum class.
+
+   Args:
+       enum_class: The Enum class to check against.
+       value: The value to check.
+
+   Returns:
+       bool: True if the value is a valid enum member, False otherwise.
+
+
+.. py:function:: sanitize_input(input_str)
+
+   Sanitize user input by escaping HTML characters.
+
+   Args:
+       input_str: The input string to sanitize.
+
+   Returns:
+       str: The sanitized string.
+
+
+.. py:function:: validate_json_input(json_data)
+
+   Validate JSON input for suspicious content and structure.
+
+   Args:
+       json_data: The JSON data to validate.
+
+   Returns:
+       bool: True if the JSON is valid and safe, False otherwise.
+
+
+.. py:function:: detect_suspicious_content(content)
+
+   Detect potentially malicious content.
+
+   Args:
+       content: The content to check.
+
+   Returns:
+       bool: True if suspicious content is detected, False otherwise.
+
+
+.. py:function:: moderate_content(content, content_type = 'text')
+
+   Moderate content for inappropriate or harmful material.
+
+   Args:
+       content: The content to moderate.
+       content_type: The type of content (text, image, etc.)
+
+   Returns:
+       Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the content
+           is acceptable and an optional reason if it's not.
+
+
+.. py:function:: get_security_headers()
+
+   Get security headers for HTTP responses.
+
+   Returns:
+       Dict[str, str]: A dictionary of security headers.
+
+
+.. py:class:: ValidationManager
+
+   Manager for input validation and sanitization.
+
+
+   .. py:attribute:: allowed_hosts
+      :type:  Set[str]
+
+
+   .. py:attribute:: trusted_proxies
+      :type:  Set[str]
+
+
+   .. py:attribute:: patterns
+
+
+   .. py:attribute:: suspicious_patterns
+      :value: ['<script.*?>', 'javascript:', 'eval\\(', 'document\\.cookie', 'localStorage', 'sessionStorage',...
+
+
+
+   .. py:attribute:: suspicious_regex
+
+
+   .. py:method:: is_valid_hostname(hostname)
+
+      Validate a hostname.
+
+      Args:
+          hostname: The hostname to validate.
+
+      Returns:
+          bool: True if the hostname is valid, False otherwise.
+
+
+
+   .. py:method:: is_trusted_ip(ip_address)
+
+      Check if an IP address is in the trusted proxies list.
+
+      Args:
+          ip_address: The IP address to check.
+
+      Returns:
+          bool: True if the IP address is trusted, False otherwise.
+
+
+
+   .. py:method:: is_valid_enum_value(enum_class, value)
+
+      Check if a value is a valid member of an Enum class.
+
+      Args:
+          enum_class: The Enum class to check against.
+          value: The value to check.
+
+      Returns:
+          bool: True if the value is a valid enum member, False otherwise.
+
+
+
+   .. py:method:: sanitize_input(input_str)
+
+      Sanitize user input by escaping HTML characters.
+
+      Args:
+          input_str: The input string to sanitize.
+
+      Returns:
+          str: The sanitized string.
+
+
+
+   .. py:method:: detect_suspicious_content(content)
+
+      Detect potentially malicious content.
+
+      Args:
+          content: The content to check.
+
+      Returns:
+          bool: True if suspicious content is detected, False otherwise.
+
+
+
+   .. py:method:: validate_json_input(json_data)
+
+      Validate JSON input for suspicious content.
+
+      Args:
+          json_data: The JSON data to validate.
+
+      Returns:
+          bool: True if the JSON is valid and safe, False otherwise.
+
+
+
+   .. py:method:: moderate_content(content, content_type = 'text')
+
+      Moderate content for inappropriate or harmful material.
+
+      Args:
+          content: The content to moderate.
+          content_type: The type of content (text, image, etc.)
+
+      Returns:
+          Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the content
+              is acceptable and an optional reason if it's not.
+
+
+
+   .. py:method:: get_security_headers()
+
+      Get security headers for HTTP responses.
+
+      Returns:
+          Dict[str, str]: A dictionary of security headers.
+
+
+

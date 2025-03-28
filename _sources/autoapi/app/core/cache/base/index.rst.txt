@@ -1,0 +1,139 @@
+app.core.cache.base
+===================
+
+.. py:module:: app.core.cache.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.cache.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.cache.base.CacheBackend
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: CacheBackend
+
+   Bases: :py:obj:`Protocol`, :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol defining cache backend interface.
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the cache backend.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the cache backend.
+
+
+
+   .. py:method:: get(key, default = None)
+      :async:
+
+
+      Get value from cache by key.
+
+
+
+   .. py:method:: set(key, value, ttl = None)
+      :async:
+
+
+      Set value in cache with optional TTL.
+
+
+
+   .. py:method:: delete(key)
+      :async:
+
+
+      Delete key from cache.
+
+
+
+   .. py:method:: exists(key)
+      :async:
+
+
+      Check if key exists in cache.
+
+
+
+   .. py:method:: clear()
+      :async:
+
+
+      Clear all cache entries.
+
+
+
+   .. py:method:: invalidate_pattern(pattern)
+      :async:
+
+
+      Invalidate all keys matching a pattern.
+
+
+
+   .. py:method:: get_many(keys)
+      :async:
+
+
+      Get multiple values from the cache.
+
+
+
+   .. py:method:: set_many(mapping, ttl = None)
+      :async:
+
+
+      Set multiple values in the cache.
+
+
+
+   .. py:method:: delete_many(keys)
+      :async:
+
+
+      Delete multiple values from the cache.
+
+
+
+   .. py:method:: incr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      Increment a counter in the cache.
+
+
+
+   .. py:method:: decr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      Decrement a counter in the cache.
+
+
+

@@ -1,0 +1,120 @@
+app.domains.api_key.models
+==========================
+
+.. py:module:: app.domains.api_key.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.api_key.models.ApiKey
+
+
+Module Contents
+---------------
+
+.. py:class:: ApiKey
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   API Key entity for API authentication.
+
+   Attributes:
+       id: Unique identifier.
+       user_id: ID of the user who owns the key.
+       key_id: Public identifier for the API key.
+       hashed_secret: Hashed secret part of the API key.
+       name: Human-readable name for the key.
+       is_active: Whether the key is active.
+       last_used_at: When the key was last used.
+       expires_at: When the key expires.
+       permissions: Specific permissions granted to the key.
+       extra_metadata: Additional metadata about the key.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'api_key'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: user_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: key_id
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: hashed_secret
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: last_used_at
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: expires_at
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: permissions
+      :type:  sqlalchemy.orm.Mapped[Optional[List[str]]]
+
+
+   .. py:attribute:: extra_metadata
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: user
+      :type:  sqlalchemy.orm.Mapped[app.domains.users.models.User]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ApiKey instance.
+
+      Returns:
+          String representation including id, user_id, and name.
+
+
+
+   .. py:method:: to_dict(include_secret = False)
+
+      Convert the API key to a dictionary.
+
+      Args:
+          include_secret: Whether to include the hashed secret.
+
+      Returns:
+          Dictionary representation of the API key.
+
+
+

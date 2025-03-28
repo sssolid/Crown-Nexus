@@ -1,0 +1,364 @@
+app.core.pagination
+===================
+
+.. py:module:: app.core.pagination
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/pagination/base/index
+   /autoapi/app/core/pagination/exceptions/index
+   /autoapi/app/core/pagination/factory/index
+   /autoapi/app/core/pagination/manager/index
+   /autoapi/app/core/pagination/providers/index
+   /autoapi/app/core/pagination/service/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.pagination.CursorPaginationParams
+   app.core.pagination.OffsetPaginationParams
+   app.core.pagination.PaginationResult
+   app.core.pagination.SortDirection
+   app.core.pagination.SortField
+   app.core.pagination.InvalidCursorException
+   app.core.pagination.InvalidPaginationParamsException
+   app.core.pagination.InvalidSortFieldException
+   app.core.pagination.PaginationException
+   app.core.pagination.PaginationService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.pagination.initialize
+   app.core.pagination.paginate_with_cursor
+   app.core.pagination.paginate_with_offset
+   app.core.pagination.shutdown
+   app.core.pagination.get_pagination_service
+
+
+Package Contents
+----------------
+
+.. py:class:: CursorPaginationParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for cursor-based pagination.
+
+
+   .. py:attribute:: cursor
+      :type:  Optional[str]
+
+
+   .. py:attribute:: limit
+      :type:  int
+
+
+   .. py:attribute:: sort
+      :type:  Optional[List[SortField]]
+
+
+.. py:class:: OffsetPaginationParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for offset-based pagination.
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: sort
+      :type:  Optional[List[SortField]]
+
+
+.. py:class:: PaginationResult(items, total = 0, page = None, page_size = None, pages = None, next_cursor = None, has_next = False, has_prev = False)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`R`\ ]
+
+
+   Result of a pagination operation.
+
+
+   .. py:attribute:: items
+
+
+   .. py:attribute:: total
+      :value: 0
+
+
+
+   .. py:attribute:: page
+      :value: None
+
+
+
+   .. py:attribute:: page_size
+      :value: None
+
+
+
+   .. py:attribute:: pages
+      :value: None
+
+
+
+   .. py:attribute:: next_cursor
+      :value: None
+
+
+
+   .. py:attribute:: has_next
+      :value: False
+
+
+
+   .. py:attribute:: has_prev
+      :value: False
+
+
+
+   .. py:method:: to_dict()
+
+      Convert the pagination result to a dictionary.
+
+      Returns:
+          Dictionary representation of the pagination result
+
+
+
+.. py:class:: SortDirection
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Sort direction options.
+
+
+   .. py:attribute:: ASC
+      :value: 'asc'
+
+
+
+   .. py:attribute:: DESC
+      :value: 'desc'
+
+
+
+.. py:class:: SortField
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model for sort field configuration.
+
+
+   .. py:attribute:: field
+      :type:  str
+
+
+   .. py:attribute:: direction
+      :type:  SortDirection
+
+
+.. py:class:: InvalidCursorException(message = 'Invalid pagination cursor', cursor = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`PaginationException`
+
+
+   Exception raised when a pagination cursor is invalid.
+
+
+.. py:class:: InvalidPaginationParamsException(message, params, details = None, original_exception = None)
+
+   Bases: :py:obj:`PaginationException`
+
+
+   Exception raised when pagination parameters are invalid.
+
+
+.. py:class:: InvalidSortFieldException(field, model, message = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`PaginationException`
+
+
+   Exception raised when a sort field is invalid.
+
+
+.. py:class:: PaginationException(message, code = ErrorCode.BUSINESS_LOGIC_ERROR, details = None, status_code = 400, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for pagination errors.
+
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the pagination system.
+
+
+.. py:function:: paginate_with_cursor(db, model_class, query, params, transform_func = None, response_model = None)
+   :async:
+
+
+   Paginate query results using cursor-based pagination.
+
+   Args:
+       db: Database session
+       model_class: SQLAlchemy model class
+       query: SQLAlchemy select query
+       params: Cursor pagination parameters
+       transform_func: Optional function to transform each result item
+       response_model: Optional Pydantic model to convert results
+
+   Returns:
+       PaginationResult with paginated items and metadata
+
+   Raises:
+       InvalidCursorException: If the cursor is invalid
+       InvalidPaginationParamsException: If pagination parameters are invalid
+       ValidationException: If other validation errors occur
+
+
+.. py:function:: paginate_with_offset(db, model_class, query, params, transform_func = None, response_model = None)
+   :async:
+
+
+   Paginate query results using offset-based pagination.
+
+   Args:
+       db: Database session
+       model_class: SQLAlchemy model class
+       query: SQLAlchemy select query
+       params: Offset pagination parameters
+       transform_func: Optional function to transform each result item
+       response_model: Optional Pydantic model to convert results
+
+   Returns:
+       PaginationResult with paginated items and metadata
+
+   Raises:
+       InvalidPaginationParamsException: If pagination parameters are invalid
+       ValidationException: If other validation errors occur
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shutdown the pagination system and clean up resources.
+
+
+.. py:class:: PaginationService(db = None)
+
+   Service for handling pagination operations.
+
+   This service provides methods for paginating query results using both
+   offset-based and cursor-based pagination strategies.
+
+
+   .. py:attribute:: db
+      :value: None
+
+
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the pagination service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the pagination service.
+
+
+
+   .. py:method:: paginate_with_offset(model_class, query, params, transform_func = None, response_model = None, db = None)
+      :async:
+
+
+      Paginate query results using offset-based pagination.
+
+      Args:
+          model_class: SQLAlchemy model class
+          query: SQLAlchemy select query
+          params: Offset pagination parameters
+          transform_func: Optional function to transform each result item
+          response_model: Optional Pydantic model to convert results
+          db: Optional database session (overrides the one set in constructor)
+
+      Returns:
+          PaginationResult with paginated items and metadata
+
+      Raises:
+          ValueError: If no database session is provided
+          InvalidPaginationParamsException: If pagination parameters are invalid
+
+
+
+   .. py:method:: paginate_with_cursor(model_class, query, params, transform_func = None, response_model = None, db = None)
+      :async:
+
+
+      Paginate query results using cursor-based pagination.
+
+      Args:
+          model_class: SQLAlchemy model class
+          query: SQLAlchemy select query
+          params: Cursor pagination parameters
+          transform_func: Optional function to transform each result item
+          response_model: Optional Pydantic model to convert results
+          db: Optional database session (overrides the one set in constructor)
+
+      Returns:
+          PaginationResult with paginated items and metadata
+
+      Raises:
+          ValueError: If no database session is provided
+          InvalidCursorException: If the cursor is invalid
+          InvalidPaginationParamsException: If pagination parameters are invalid
+
+
+
+.. py:function:: get_pagination_service(db = None)
+
+   Get or create a pagination service instance.
+
+   Args:
+       db: Optional database session
+
+   Returns:
+       PaginationService instance
+
+

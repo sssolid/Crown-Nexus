@@ -1,0 +1,860 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.api.v1.endpoints.products &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.api.v1.endpoints.search" href="../search/index.html" />
+    <link rel="prev" title="app.api.v1.endpoints.media" href="../media/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.api</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.api.v1</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.api.v1.endpoints</a></li>
+      <li class="breadcrumb-item active">app.api.v1.endpoints.products</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/api/v1/endpoints/products/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.api.v1.endpoints.products">
+<span id="app-api-v1-endpoints-products"></span><h1>app.api.v1.endpoints.products<a class="headerlink" href="#module-app.api.v1.endpoints.products" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.router" title="app.api.v1.endpoints.products.router"><code class="xref py py-obj docutils literal notranslate"><span class="pre">router</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.read_products" title="app.api.v1.endpoints.products.read_products"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_products</span></code></a>(db, current_user[, search, vintage, ...])</p></td>
+<td><p>Retrieve products with filtering.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_product" title="app.api.v1.endpoints.products.create_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_product</span></code></a>(db, product_in, current_user)</p></td>
+<td><p>Create new product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.read_product" title="app.api.v1.endpoints.products.read_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_product</span></code></a>(product_id, db, current_user)</p></td>
+<td><p>Get product by ID.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.update_product" title="app.api.v1.endpoints.products.update_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_product</span></code></a>(product_id, product_in, db, current_user)</p></td>
+<td><p>Update a product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.delete_product" title="app.api.v1.endpoints.products.delete_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_product</span></code></a>(product_id, db, current_user)</p></td>
+<td><p>Delete a product.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_product_description" title="app.api.v1.endpoints.products.create_product_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_product_description</span></code></a>(product_id, description_in, ...)</p></td>
+<td><p>Add a description to a product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.update_product_description" title="app.api.v1.endpoints.products.update_product_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_product_description</span></code></a>(product_id, description_id, ...)</p></td>
+<td><p>Update a product description.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.delete_product_description" title="app.api.v1.endpoints.products.delete_product_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_product_description</span></code></a>(product_id, description_id, ...)</p></td>
+<td><p>Delete a product description.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_product_marketing" title="app.api.v1.endpoints.products.create_product_marketing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_product_marketing</span></code></a>(product_id, marketing_in, db, ...)</p></td>
+<td><p>Add marketing content to a product.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.update_product_marketing" title="app.api.v1.endpoints.products.update_product_marketing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_product_marketing</span></code></a>(product_id, marketing_id, ...)</p></td>
+<td><p>Update product marketing content.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.delete_product_marketing" title="app.api.v1.endpoints.products.delete_product_marketing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_product_marketing</span></code></a>(product_id, marketing_id, db, ...)</p></td>
+<td><p>Delete product marketing content.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_product_measurement" title="app.api.v1.endpoints.products.create_product_measurement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_product_measurement</span></code></a>(product_id, measurement_in, ...)</p></td>
+<td><p>Add measurements to a product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_product_stock" title="app.api.v1.endpoints.products.create_product_stock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_product_stock</span></code></a>(product_id, stock_in, db, ...)</p></td>
+<td><p>Add stock information to a product.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.update_product_stock" title="app.api.v1.endpoints.products.update_product_stock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_product_stock</span></code></a>(product_id, stock_id, stock_in, ...)</p></td>
+<td><p>Update product stock information.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.delete_product_stock" title="app.api.v1.endpoints.products.delete_product_stock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_product_stock</span></code></a>(product_id, stock_id, db, ...)</p></td>
+<td><p>Delete product stock information.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_product_supersession" title="app.api.v1.endpoints.products.create_product_supersession"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_product_supersession</span></code></a>(product_id, ...)</p></td>
+<td><p>Create a product supersession.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.delete_product_supersession" title="app.api.v1.endpoints.products.delete_product_supersession"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_product_supersession</span></code></a>(product_id, ...)</p></td>
+<td><p>Delete a product supersession.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.read_brands" title="app.api.v1.endpoints.products.read_brands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_brands</span></code></a>(db, current_user[, skip, limit])</p></td>
+<td><p>Retrieve brands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.create_brand" title="app.api.v1.endpoints.products.create_brand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_brand</span></code></a>(db, brand_in, current_user)</p></td>
+<td><p>Create new brand.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.read_brand" title="app.api.v1.endpoints.products.read_brand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_brand</span></code></a>(brand_id, db, current_user)</p></td>
+<td><p>Get brand by ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.update_brand" title="app.api.v1.endpoints.products.update_brand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_brand</span></code></a>(brand_id, brand_in, db, current_user)</p></td>
+<td><p>Update a brand.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.products.delete_brand" title="app.api.v1.endpoints.products.delete_brand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_brand</span></code></a>(brand_id, db, current_user)</p></td>
+<td><p>Delete a brand.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.router">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">router</span></span><a class="headerlink" href="#app.api.v1.endpoints.products.router" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.read_products">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">read_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vintage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">late_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">universal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.read_products" title="Link to this definition"></a></dt>
+<dd><p>Retrieve products with filtering.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+search: Search term for product part number or application
+vintage: Filter by vintage flag
+late_model: Filter by late model flag
+soft: Filter by soft good flag
+universal: Filter by universal fit flag
+is_active: Filter by active status
+skip: Number of products to skip
+limit: Maximum number of products to return
+page: Page number
+page_size: Number of items per page</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductListResponse: Paginated list of products</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>search</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>vintage</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>late_model</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>soft</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>universal</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>is_active</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>skip</strong> (<em>int</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_product" title="Link to this definition"></a></dt>
+<dd><p>Create new product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+product_in: Product data
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Product: Created product</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>product_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductCreate" title="app.domains.products.schemas.ProductCreate"><em>app.domains.products.schemas.ProductCreate</em></a>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.read_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">read_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.read_product" title="Link to this definition"></a></dt>
+<dd><p>Get product by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+db: Database session
+current_user: Current authenticated user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Product: Product with specified ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.update_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">update_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.update_product" title="Link to this definition"></a></dt>
+<dd><p>Update a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+product_in: Updated product data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Product: Updated product</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>product_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductUpdate" title="app.domains.products.schemas.ProductUpdate"><em>app.domains.products.schemas.ProductUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.delete_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">delete_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.delete_product" title="Link to this definition"></a></dt>
+<dd><p>Delete a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_product_description">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_product_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_product_description" title="Link to this definition"></a></dt>
+<dd><p>Add a description to a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+description_in: Description data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductDescription: Created description</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>description_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductDescriptionCreate" title="app.domains.products.schemas.ProductDescriptionCreate"><em>app.domains.products.schemas.ProductDescriptionCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.update_product_description">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">update_product_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.update_product_description" title="Link to this definition"></a></dt>
+<dd><p>Update a product description.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+description_id: Description ID
+description_in: Updated description data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductDescription: Updated description</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>description_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>description_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductDescriptionUpdate" title="app.domains.products.schemas.ProductDescriptionUpdate"><em>app.domains.products.schemas.ProductDescriptionUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.delete_product_description">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">delete_product_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.delete_product_description" title="Link to this definition"></a></dt>
+<dd><p>Delete a product description.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+description_id: Description ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>description_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_product_marketing">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_product_marketing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marketing_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_product_marketing" title="Link to this definition"></a></dt>
+<dd><p>Add marketing content to a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+marketing_in: Marketing data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductMarketing: Created marketing content</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>marketing_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductMarketingCreate" title="app.domains.products.schemas.ProductMarketingCreate"><em>app.domains.products.schemas.ProductMarketingCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.update_product_marketing">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">update_product_marketing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marketing_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marketing_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.update_product_marketing" title="Link to this definition"></a></dt>
+<dd><p>Update product marketing content.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+marketing_id: Marketing content ID
+marketing_in: Updated marketing data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductMarketing: Updated marketing content</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>marketing_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>marketing_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductMarketingUpdate" title="app.domains.products.schemas.ProductMarketingUpdate"><em>app.domains.products.schemas.ProductMarketingUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.delete_product_marketing">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">delete_product_marketing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marketing_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.delete_product_marketing" title="Link to this definition"></a></dt>
+<dd><p>Delete product marketing content.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+marketing_id: Marketing content ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>marketing_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_product_measurement">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_product_measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_product_measurement" title="Link to this definition"></a></dt>
+<dd><p>Add measurements to a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+measurement_in: Measurement data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductMeasurement: Created measurement</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>measurement_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductMeasurementCreate" title="app.domains.products.schemas.ProductMeasurementCreate"><em>app.domains.products.schemas.ProductMeasurementCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_product_stock">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_product_stock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_product_stock" title="Link to this definition"></a></dt>
+<dd><p>Add stock information to a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+stock_in: Stock data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductStock: Created stock information</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>stock_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductStockCreate" title="app.domains.products.schemas.ProductStockCreate"><em>app.domains.products.schemas.ProductStockCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.update_product_stock">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">update_product_stock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.update_product_stock" title="Link to this definition"></a></dt>
+<dd><p>Update product stock information.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+stock_id: Stock ID
+stock_in: Updated stock data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductStock: Updated stock information</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>stock_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>stock_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductStockUpdate" title="app.domains.products.schemas.ProductStockUpdate"><em>app.domains.products.schemas.ProductStockUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.delete_product_stock">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">delete_product_stock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.delete_product_stock" title="Link to this definition"></a></dt>
+<dd><p>Delete product stock information.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+stock_id: Stock ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>stock_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_product_supersession">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_product_supersession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supersession_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_product_supersession" title="Link to this definition"></a></dt>
+<dd><p>Create a product supersession.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+supersession_in: Supersession data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>ProductSupersession: Created supersession</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>supersession_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.ProductSupersessionCreate" title="app.domains.products.schemas.ProductSupersessionCreate"><em>app.domains.products.schemas.ProductSupersessionCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.delete_product_supersession">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">delete_product_supersession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supersession_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.delete_product_supersession" title="Link to this definition"></a></dt>
+<dd><p>Delete a product supersession.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+supersession_id: Supersession ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>supersession_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.read_brands">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">read_brands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.read_brands" title="Link to this definition"></a></dt>
+<dd><p>Retrieve brands.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+skip: Number of brands to skip
+limit: Maximum number of brands to return</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[Brand]: List of brands</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>skip</strong> (<em>int</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.create_brand">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">create_brand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brand_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.create_brand" title="Link to this definition"></a></dt>
+<dd><p>Create new brand.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+brand_in: Brand data
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Brand: Created brand</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>brand_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.BrandCreate" title="app.domains.products.schemas.BrandCreate"><em>app.domains.products.schemas.BrandCreate</em></a>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.read_brand">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">read_brand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brand_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.read_brand" title="Link to this definition"></a></dt>
+<dd><p>Get brand by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>brand_id: Brand ID
+db: Database session
+current_user: Current authenticated user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Brand: Brand with specified ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>brand_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.update_brand">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">update_brand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brand_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brand_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.update_brand" title="Link to this definition"></a></dt>
+<dd><p>Update a brand.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>brand_id: Brand ID
+brand_in: Updated brand data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Brand: Updated brand</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>brand_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>brand_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.BrandUpdate" title="app.domains.products.schemas.BrandUpdate"><em>app.domains.products.schemas.BrandUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.products.delete_brand">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.products.</span></span><span class="sig-name descname"><span class="pre">delete_brand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brand_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.products.delete_brand" title="Link to this definition"></a></dt>
+<dd><p>Delete a brand.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>brand_id: Brand ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>brand_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../media/index.html" class="btn btn-neutral float-left" title="app.api.v1.endpoints.media" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../search/index.html" class="btn btn-neutral float-right" title="app.api.v1.endpoints.search" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

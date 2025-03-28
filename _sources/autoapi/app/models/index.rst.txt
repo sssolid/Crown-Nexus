@@ -1,0 +1,23 @@
+app.models
+==========
+
+.. py:module:: app.models
+
+.. autoapi-nested-parse::
+
+   Models package.
+
+   This module serves as the entry point to the models package.
+   It should NOT import any models directly to avoid circular imports.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/models/associations/index
+
+

@@ -1,0 +1,119 @@
+app.data_import.connectors.file_connector
+=========================================
+
+.. py:module:: app.data_import.connectors.file_connector
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.connectors.file_connector.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.connectors.file_connector.FileConnectionConfig
+   app.data_import.connectors.file_connector.FileConnector
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: FileConnectionConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for file connections.
+
+
+   .. py:attribute:: file_path
+      :type:  str
+
+
+   .. py:attribute:: file_type
+      :type:  Literal['csv', 'json']
+
+
+   .. py:attribute:: encoding
+      :type:  str
+
+
+   .. py:attribute:: csv_delimiter
+      :type:  str
+
+
+   .. py:attribute:: csv_quotechar
+      :type:  str
+
+
+   .. py:method:: validate_file_path(v)
+
+
+   .. py:method:: validate_file_type(v, values)
+
+
+.. py:class:: FileConnector(config)
+
+   Connector for file-based data sources (CSV, JSON).
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: file_data
+      :type:  Optional[List[Dict[str, Any]]]
+      :value: None
+
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish connection to the file.
+
+      This method loads the file data into memory.
+
+      Raises:
+          ConfigurationException: If the file cannot be loaded
+
+
+
+   .. py:method:: extract(query = '', limit = None, **params)
+      :async:
+
+
+      Extract data from the file.
+
+      The query parameter is optional for file connectors and can be used
+      to filter the data based on specific criteria.
+
+      Args:
+          query: Optional filter criteria
+          limit: Maximum number of records to retrieve
+          params: Additional parameters
+
+      Returns:
+          List of records as dictionaries
+
+      Raises:
+          ConfigurationException: If extraction fails
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Close the connection (clear file data from memory).
+
+
+

@@ -1,0 +1,84 @@
+app.fitment.exceptions
+======================
+
+.. py:module:: app.fitment.exceptions
+
+.. autoapi-nested-parse::
+
+   Custom exceptions for the fitment module.
+
+   This module defines custom exceptions for handling
+   application-specific errors in the fitment module.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.fitment.exceptions.FitmentError
+   app.fitment.exceptions.ParsingError
+   app.fitment.exceptions.ValidationError
+   app.fitment.exceptions.MappingError
+   app.fitment.exceptions.DatabaseError
+   app.fitment.exceptions.ConfigurationError
+
+
+Module Contents
+---------------
+
+.. py:exception:: FitmentError(message, details = None)
+
+   Bases: :py:obj:`Exception`
+
+
+   Base class for all fitment module exceptions.
+
+
+   .. py:attribute:: message
+
+
+   .. py:attribute:: details
+
+
+.. py:exception:: ParsingError(message, details = None)
+
+   Bases: :py:obj:`FitmentError`
+
+
+   Exception raised when parsing a fitment string fails.
+
+
+.. py:exception:: ValidationError(message, details = None)
+
+   Bases: :py:obj:`FitmentError`
+
+
+   Exception raised when validating a fitment fails.
+
+
+.. py:exception:: MappingError(message, details = None)
+
+   Bases: :py:obj:`FitmentError`
+
+
+   Exception raised when mapping a fitment fails.
+
+
+.. py:exception:: DatabaseError(message, details = None)
+
+   Bases: :py:obj:`FitmentError`
+
+
+   Exception raised when a database operation fails.
+
+
+.. py:exception:: ConfigurationError(message, details = None)
+
+   Bases: :py:obj:`FitmentError`
+
+
+   Exception raised when configuration is invalid or missing.
+
+

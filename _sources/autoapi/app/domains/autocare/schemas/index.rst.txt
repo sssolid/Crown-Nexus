@@ -1,0 +1,311 @@
+app.domains.autocare.schemas
+============================
+
+.. py:module:: app.domains.autocare.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.schemas.FileFormat
+   app.domains.autocare.schemas.ImportMode
+   app.domains.autocare.schemas.DataType
+   app.domains.autocare.schemas.AutocareImportParams
+   app.domains.autocare.schemas.AutocareExportParams
+   app.domains.autocare.schemas.FitmentSearchParams
+   app.domains.autocare.schemas.PaginatedResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: FileFormat
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   File formats for import and export operations.
+
+   Attributes:
+       ACES_XML: ACES XML format
+       PIES_XML: PIES XML format
+       CSV: Comma-separated values
+       EXCEL: Microsoft Excel format
+       JSON: JSON format
+
+
+   .. py:attribute:: ACES_XML
+      :value: 'aces_xml'
+
+
+
+   .. py:attribute:: PIES_XML
+      :value: 'pies_xml'
+
+
+
+   .. py:attribute:: CSV
+      :value: 'csv'
+
+
+
+   .. py:attribute:: EXCEL
+      :value: 'excel'
+
+
+
+   .. py:attribute:: JSON
+      :value: 'json'
+
+
+
+.. py:class:: ImportMode
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Import modes for data ingestion.
+
+   Attributes:
+       REPLACE: Replace existing data
+       MERGE: Merge with existing data
+       UPDATE: Update existing data only
+       INSERT: Insert new data only
+
+
+   .. py:attribute:: REPLACE
+      :value: 'replace'
+
+
+
+   .. py:attribute:: MERGE
+      :value: 'merge'
+
+
+
+   .. py:attribute:: UPDATE
+      :value: 'update'
+
+
+
+   .. py:attribute:: INSERT
+      :value: 'insert'
+
+
+
+.. py:class:: DataType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of data to import or export.
+
+   Attributes:
+       VEHICLES: Vehicle data
+       PARTS: Part data
+       FITMENTS: Fitment mapping data
+       ALL: All data types
+
+
+   .. py:attribute:: VEHICLES
+      :value: 'vehicles'
+
+
+
+   .. py:attribute:: PARTS
+      :value: 'parts'
+
+
+
+   .. py:attribute:: FITMENTS
+      :value: 'fitments'
+
+
+
+   .. py:attribute:: ALL
+      :value: 'all'
+
+
+
+.. py:class:: AutocareImportParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for importing data.
+
+   Attributes:
+       file_path: Path to the import file
+       format: Format of the import file
+       mode: Import mode
+       data_type: Type of data to import
+       validate: Whether to validate data before import
+       options: Additional import options
+
+
+   .. py:attribute:: file_path
+      :type:  str
+
+
+   .. py:attribute:: format
+      :type:  FileFormat
+
+
+   .. py:attribute:: mode
+      :type:  ImportMode
+
+
+   .. py:attribute:: data_type
+      :type:  DataType
+
+
+   .. py:attribute:: validate
+      :type:  bool
+
+
+   .. py:attribute:: options
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: AutocareExportParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for exporting data.
+
+   Attributes:
+       file_path: Path to the export file
+       format: Format of the export file
+       data_type: Type of data to export
+       filters: Filters to apply to the data
+       options: Additional export options
+
+
+   .. py:attribute:: file_path
+      :type:  str
+
+
+   .. py:attribute:: format
+      :type:  FileFormat
+
+
+   .. py:attribute:: data_type
+      :type:  DataType
+
+
+   .. py:attribute:: filters
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: options
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: FitmentSearchParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for searching fitment data.
+
+   Attributes:
+       year: Vehicle year
+       make: Vehicle make
+       model: Vehicle model
+       submodel: Vehicle submodel
+       part_number: Part number
+       part_type: Part type
+       brand: Brand
+       page: Page number
+       page_size: Page size
+
+
+   .. py:attribute:: year
+      :type:  Optional[int]
+
+
+   .. py:attribute:: make
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model
+      :type:  Optional[str]
+
+
+   .. py:attribute:: submodel
+      :type:  Optional[str]
+
+
+   .. py:attribute:: part_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: part_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: brand
+      :type:  Optional[str]
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:method:: validate_search_criteria()
+
+      Validate that at least one search criterion is provided.
+
+      Returns:
+          The validated model
+
+      Raises:
+          ValueError: If no search criteria are provided
+
+
+
+.. py:class:: PaginatedResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for paginated responses.
+
+   Attributes:
+       items: List of items
+       total: Total number of items
+       page: Current page number
+       page_size: Number of items per page
+       pages: Total number of pages
+
+
+   .. py:attribute:: items
+      :type:  List[Any]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+
+   .. py:attribute:: model_config
+
+

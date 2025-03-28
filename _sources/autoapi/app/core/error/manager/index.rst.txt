@@ -1,0 +1,207 @@
+app.core.error.manager
+======================
+
+.. py:module:: app.core.error.manager
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.error.manager.logger
+   app.core.error.manager.T
+   app.core.error.manager._reporters
+   app.core.error.manager._initialized
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.error.manager.register_reporter
+   app.core.error.manager.report_error
+   app.core.error.manager.resource_not_found
+   app.core.error.manager.resource_already_exists
+   app.core.error.manager.validation_error
+   app.core.error.manager.permission_denied
+   app.core.error.manager.business_logic_error
+   app.core.error.manager.ensure_not_none
+   app.core.error.manager.create_error_context
+   app.core.error.manager.handle_exception
+   app.core.error.manager.error_context_decorator
+   app.core.error.manager.initialize
+   app.core.error.manager.shutdown
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: _reporters
+   :type:  List[app.core.error.base.ErrorReporter]
+   :value: []
+
+
+.. py:data:: _initialized
+   :type:  bool
+   :value: False
+
+
+.. py:function:: register_reporter(reporter)
+
+   Register an error reporter.
+
+   Args:
+       reporter: The error reporter to register
+
+
+.. py:function:: report_error(exception, context)
+   :async:
+
+
+   Report an error using all registered reporters.
+
+   Args:
+       exception: The exception to report
+       context: Context information about the error
+
+
+.. py:function:: resource_not_found(resource_type, resource_id, message = None)
+
+   Create a resource not found exception.
+
+   Args:
+       resource_type: Type of resource that was not found
+       resource_id: ID of the resource that was not found
+       message: Optional custom error message
+
+   Returns:
+       A configured ResourceNotFoundException
+
+
+.. py:function:: resource_already_exists(resource_type, identifier, field = 'id', message = None)
+
+   Create a resource already exists exception.
+
+   Args:
+       resource_type: Type of resource that already exists
+       identifier: Identifier of the resource
+       field: Field name of the identifier (default: 'id')
+       message: Optional custom error message
+
+   Returns:
+       A configured ResourceAlreadyExistsException
+
+
+.. py:function:: validation_error(field, message, error_type = 'invalid_value')
+
+   Create a validation error exception.
+
+   Args:
+       field: Field that failed validation
+       message: Error message
+       error_type: Type of validation error
+
+   Returns:
+       A configured ValidationException
+
+
+.. py:function:: permission_denied(action, resource_type, permission)
+
+   Create a permission denied exception.
+
+   Args:
+       action: Action that was attempted
+       resource_type: Type of resource being accessed
+       permission: Permission that was required
+
+   Returns:
+       A configured PermissionDeniedException
+
+
+.. py:function:: business_logic_error(message, details = None)
+
+   Create a business logic error exception.
+
+   Args:
+       message: Error message
+       details: Additional error details
+
+   Returns:
+       A configured BusinessException
+
+
+.. py:function:: ensure_not_none(value, resource_type, resource_id, message = None)
+
+   Ensure a value is not None, raising an exception if it is.
+
+   Args:
+       value: Value to check
+       resource_type: Type of resource being checked
+       resource_id: ID of the resource being checked
+       message: Optional custom error message
+
+   Returns:
+       The value, if it is not None
+
+   Raises:
+       ResourceNotFoundException: If the value is None
+
+
+.. py:function:: create_error_context(function_name = None, args = None, kwargs = None, user_id = None, request_id = None)
+
+   Create an error context from the current call frame.
+
+   Args:
+       function_name: Optional name of the function
+       args: Optional positional arguments
+       kwargs: Optional keyword arguments
+       user_id: Optional user ID
+       request_id: Optional request ID
+
+   Returns:
+       A configured ErrorContext
+
+
+.. py:function:: handle_exception(exception, request_id = None, user_id = None, function_name = None)
+
+   Handle an exception by reporting it.
+
+   Args:
+       exception: The exception to handle
+       request_id: Optional request ID
+       user_id: Optional user ID
+       function_name: Optional function name
+
+
+.. py:function:: error_context_decorator(user_id_param = None, request_id_param = None)
+
+   Decorator that adds error handling to a function.
+
+   Args:
+       user_id_param: Optional parameter name for user ID
+       request_id_param: Optional parameter name for request ID
+
+   Returns:
+       A decorator function
+
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the error handling system.
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shut down the error handling system.
+
+

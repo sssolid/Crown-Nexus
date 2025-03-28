@@ -1,0 +1,715 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.validation.manager &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.core.validation.service" href="../service/index.html" />
+    <link rel="prev" title="app.core.validation.factory" href="../factory/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.validation</a></li>
+      <li class="breadcrumb-item active">app.core.validation.manager</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/validation/manager/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.validation.manager">
+<span id="app-core-validation-manager"></span><h1>app.core.validation.manager<a class="headerlink" href="#module-app.core.validation.manager" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.logger" title="app.core.validation.manager.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_data" title="app.core.validation.manager.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a>(data, schema_class)</p></td>
+<td><p>Validate data against a Pydantic schema.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_model" title="app.core.validation.manager.validate_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_model</span></code></a>(model[, include, exclude])</p></td>
+<td><p>Validate an existing Pydantic model instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_email" title="app.core.validation.manager.validate_email"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_email</span></code></a>(email)</p></td>
+<td><p>Validate an email address.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_phone" title="app.core.validation.manager.validate_phone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_phone</span></code></a>(phone)</p></td>
+<td><p>Validate a phone number.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_date" title="app.core.validation.manager.validate_date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_date</span></code></a>(value[, min_date, max_date, format_str])</p></td>
+<td><p>Validate a date value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_length" title="app.core.validation.manager.validate_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_length</span></code></a>(value[, min_length, max_length])</p></td>
+<td><p>Validate string length.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_range" title="app.core.validation.manager.validate_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_range</span></code></a>(value[, min_value, max_value])</p></td>
+<td><p>Validate numeric range.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_regex" title="app.core.validation.manager.validate_regex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_regex</span></code></a>(value, pattern)</p></td>
+<td><p>Validate string against a regex pattern.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_required" title="app.core.validation.manager.validate_required"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_required</span></code></a>(value)</p></td>
+<td><p>Validate that a value is not None or empty.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_unique" title="app.core.validation.manager.validate_unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_unique</span></code></a>(field, value, model, db[, exclude_id])</p></td>
+<td><p>Validate that a field value is unique in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_url" title="app.core.validation.manager.validate_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_url</span></code></a>(url)</p></td>
+<td><p>Validate a URL.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_uuid" title="app.core.validation.manager.validate_uuid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_uuid</span></code></a>(value)</p></td>
+<td><p>Validate a UUID string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_credit_card" title="app.core.validation.manager.validate_credit_card"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_credit_card</span></code></a>(card_number)</p></td>
+<td><p>Validate a credit card number.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_ip_address" title="app.core.validation.manager.validate_ip_address"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_ip_address</span></code></a>(ip[, version])</p></td>
+<td><p>Validate an IP address.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_password_strength" title="app.core.validation.manager.validate_password_strength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_password_strength</span></code></a>(password[, min_length, ...])</p></td>
+<td><p>Validate password strength.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_enum" title="app.core.validation.manager.validate_enum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_enum</span></code></a>(value, enum_class)</p></td>
+<td><p>Validate that a value is a valid enum value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.validate_composite" title="app.core.validation.manager.validate_composite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_composite</span></code></a>(data, rules)</p></td>
+<td><p>Validate data against multiple validation rules.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.create_validator" title="app.core.validation.manager.create_validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_validator</span></code></a>(rule_type, **params)</p></td>
+<td><p>Create a validator function for a specific rule type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.register_validator" title="app.core.validation.manager.register_validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_validator</span></code></a>(name, validator_class)</p></td>
+<td><p>Register a custom validator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.manager.initialize" title="app.core.validation.manager.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>()</p></td>
+<td><p>Initialize the validation system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.manager.shutdown" title="app.core.validation.manager.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>()</p></td>
+<td><p>Shutdown the validation system.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.validation.manager.logger">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.validation.manager.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_data">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_data" title="Link to this definition"></a></dt>
+<dd><p>Validate data against a Pydantic schema.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: The data to validate
+schema_class: The Pydantic model class to validate against</p>
+</dd>
+<dt>Returns:</dt><dd><p>BaseModel: The validated model instance</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If validation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>schema_class</strong> (<em>Type</em><em>[</em><em>pydantic.BaseModel</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pydantic.BaseModel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_model">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_model" title="Link to this definition"></a></dt>
+<dd><p>Validate an existing Pydantic model instance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>model: The model instance to validate
+include: Optional set of fields to include in validation
+exclude: Optional set of fields to exclude from validation</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If validation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>pydantic.BaseModel</em>)</p></li>
+<li><p><strong>include</strong> (<em>Optional</em><em>[</em><em>Set</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>exclude</strong> (<em>Optional</em><em>[</em><em>Set</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_email">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_email" title="Link to this definition"></a></dt>
+<dd><p>Validate an email address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email: The email address to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>email</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_phone">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_phone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_phone" title="Link to this definition"></a></dt>
+<dd><p>Validate a phone number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>phone: The phone number to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>phone</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_date">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_date" title="Link to this definition"></a></dt>
+<dd><p>Validate a date value.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The date to validate (string, date, or datetime)
+min_date: Optional minimum allowed date
+max_date: Optional maximum allowed date
+format_str: Optional date format string for parsing string dates</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime.date</em><em>, </em><em>datetime.datetime</em><em>]</em>)</p></li>
+<li><p><strong>min_date</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime.date</em><em>, </em><em>datetime.datetime</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>max_date</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime.date</em><em>, </em><em>datetime.datetime</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>format_str</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_length">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_length" title="Link to this definition"></a></dt>
+<dd><p>Validate string length.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The string to validate
+min_length: Optional minimum length
+max_length: Optional maximum length</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>str</em>)</p></li>
+<li><p><strong>min_length</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>max_length</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_range">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_range" title="Link to this definition"></a></dt>
+<dd><p>Validate numeric range.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The number to validate
+min_value: Optional minimum value
+max_value: Optional maximum value</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>)</p></li>
+<li><p><strong>min_value</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>max_value</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_regex">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_regex" title="Link to this definition"></a></dt>
+<dd><p>Validate string against a regex pattern.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The string to validate
+pattern: The regex pattern to validate against</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>str</em>)</p></li>
+<li><p><strong>pattern</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_required">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_required" title="Link to this definition"></a></dt>
+<dd><p>Validate that a value is not None or empty.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The value to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_unique">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_unique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_unique" title="Link to this definition"></a></dt>
+<dd><p>Validate that a field value is unique in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>field: The field name to check
+value: The field value to check
+model: The SQLAlchemy model class
+db: The database session
+exclude_id: Optional ID to exclude from the uniqueness check</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if unique, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>str</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>model</strong> (<em>Any</em>)</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>exclude_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_url">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_url" title="Link to this definition"></a></dt>
+<dd><p>Validate a URL.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>url: The URL to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_uuid">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_uuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_uuid" title="Link to this definition"></a></dt>
+<dd><p>Validate a UUID string.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The UUID string to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_credit_card">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_credit_card</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">card_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_credit_card" title="Link to this definition"></a></dt>
+<dd><p>Validate a credit card number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>card_number: The credit card number to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card_number</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_ip_address">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_ip_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_ip_address" title="Link to this definition"></a></dt>
+<dd><p>Validate an IP address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ip: The IP address to validate
+version: Optional IP version (4 or 6)</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> (<em>str</em>)</p></li>
+<li><p><strong>version</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_password_strength">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_password_strength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_lowercase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_uppercase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_digit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_special</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_password_strength" title="Link to this definition"></a></dt>
+<dd><p>Validate password strength.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password: The password to validate
+min_length: Minimum password length
+require_lowercase: Whether to require lowercase letters
+require_uppercase: Whether to require uppercase letters
+require_digit: Whether to require digits
+require_special: Whether to require special characters</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>password</strong> (<em>str</em>)</p></li>
+<li><p><strong>min_length</strong> (<em>int</em>)</p></li>
+<li><p><strong>require_lowercase</strong> (<em>bool</em>)</p></li>
+<li><p><strong>require_uppercase</strong> (<em>bool</em>)</p></li>
+<li><p><strong>require_digit</strong> (<em>bool</em>)</p></li>
+<li><p><strong>require_special</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_enum">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_enum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_enum" title="Link to this definition"></a></dt>
+<dd><p>Validate that a value is a valid enum value.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The value to validate
+enum_class: The enum class to validate against</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if valid, False otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>enum_class</strong> (<em>Type</em><em>[</em><em>enum.Enum</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.validate_composite">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">validate_composite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.validate_composite" title="Link to this definition"></a></dt>
+<dd><p>Validate data against multiple validation rules.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: The data to validate
+rules: Dictionary mapping field names to validation rules</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[bool, List[Dict[str, Any]]]: A tuple containing a boolean indicating</dt><dd><p>validation success and a list of validation errors</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>rules</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, List[Dict[str, Any]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.create_validator">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">create_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.create_validator" title="Link to this definition"></a></dt>
+<dd><p>Create a validator function for a specific rule type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>rule_type: The type of validator to create
+<a href="#id1"><span class="problematic" id="id2">**</span></a>params: Additional parameters for the validator</p>
+</dd>
+<dt>Returns:</dt><dd><p>Callable[[Any], bool]: A function that takes a value and returns a boolean</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If the validator type is not supported</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rule_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>params</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[Any], bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.register_validator">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">register_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validator_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.register_validator" title="Link to this definition"></a></dt>
+<dd><p>Register a custom validator.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: The name to register the validator under
+validator_class: The validator class to register</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If a validator with the same name is already registered</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>validator_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><em>app.core.validation.base.Validator</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the validation system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.validation.manager.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.manager.</span></span><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.manager.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shutdown the validation system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../factory/index.html" class="btn btn-neutral float-left" title="app.core.validation.factory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../service/index.html" class="btn btn-neutral float-right" title="app.core.validation.service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

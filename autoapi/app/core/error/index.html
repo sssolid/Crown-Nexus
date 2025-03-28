@@ -1,0 +1,732 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.error &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.core.error.base" href="base/index.html" />
+    <link rel="prev" title="app.core.dependency_manager" href="../dependency_manager/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core</a></li>
+      <li class="breadcrumb-item active">app.core.error</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/core/error/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.error">
+<span id="app-core-error"></span><h1>app.core.error<a class="headerlink" href="#module-app.core.error" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="base/index.html">app.core.error.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="factory/index.html">app.core.error.factory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manager/index.html">app.core.error.manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reporters/index.html">app.core.error.reporters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service/index.html">app.core.error.service</a></li>
+</ul>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.ErrorContext" title="app.core.error.ErrorContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorContext</span></code></a></p></td>
+<td><p>Context information for error reporting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.ErrorReporter" title="app.core.error.ErrorReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorReporter</span></code></a></p></td>
+<td><p>Protocol for error reporters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.ErrorReporterFactory" title="app.core.error.ErrorReporterFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorReporterFactory</span></code></a></p></td>
+<td><p>Factory for creating error reporters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.LoggingErrorReporter" title="app.core.error.LoggingErrorReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LoggingErrorReporter</span></code></a></p></td>
+<td><p>Error reporter that logs errors using the application logging system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.DatabaseErrorReporter" title="app.core.error.DatabaseErrorReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseErrorReporter</span></code></a></p></td>
+<td><p>Error reporter that stores errors in a database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.ExternalServiceReporter" title="app.core.error.ExternalServiceReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExternalServiceReporter</span></code></a></p></td>
+<td><p>Error reporter that sends errors to an external service.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.register_reporter" title="app.core.error.register_reporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_reporter</span></code></a>(reporter)</p></td>
+<td><p>Register an error reporter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.report_error" title="app.core.error.report_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">report_error</span></code></a>(exception, context)</p></td>
+<td><p>Report an error using all registered reporters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.resource_not_found" title="app.core.error.resource_not_found"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resource_not_found</span></code></a>(resource_type, resource_id[, message])</p></td>
+<td><p>Create a resource not found exception.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.resource_already_exists" title="app.core.error.resource_already_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resource_already_exists</span></code></a>(resource_type, identifier[, ...])</p></td>
+<td><p>Create a resource already exists exception.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.validation_error" title="app.core.error.validation_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validation_error</span></code></a>(field, message[, error_type])</p></td>
+<td><p>Create a validation error exception.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.permission_denied" title="app.core.error.permission_denied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permission_denied</span></code></a>(action, resource_type, permission)</p></td>
+<td><p>Create a permission denied exception.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.business_logic_error" title="app.core.error.business_logic_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">business_logic_error</span></code></a>(message[, details])</p></td>
+<td><p>Create a business logic error exception.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.ensure_not_none" title="app.core.error.ensure_not_none"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_not_none</span></code></a>(value, resource_type, resource_id[, ...])</p></td>
+<td><p>Ensure a value is not None, raising an exception if it is.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.handle_exception" title="app.core.error.handle_exception"><code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_exception</span></code></a>(exception[, request_id, user_id, ...])</p></td>
+<td><p>Handle an exception by reporting it.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.error.initialize" title="app.core.error.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>()</p></td>
+<td><p>Initialize the error handling system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.error.shutdown" title="app.core.error.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>()</p></td>
+<td><p>Shut down the error handling system.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">ErrorContext</span></span><a class="headerlink" href="#app.core.error.ErrorContext" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Context information for error reporting.</p>
+<p>Contains details about where and how an error occurred, including
+function information, arguments, and request context.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.function">
+<span class="sig-name descname"><span class="pre">function</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.error.ErrorContext.function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.args">
+<span class="sig-name descname"><span class="pre">args</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.error.ErrorContext.args" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.error.ErrorContext.kwargs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.error.ErrorContext.user_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.request_id">
+<span class="sig-name descname"><span class="pre">request_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.error.ErrorContext.request_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.Config">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#app.core.error.ErrorContext.Config" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.Config.arbitrary_types_allowed">
+<span class="sig-name descname"><span class="pre">arbitrary_types_allowed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.error.ErrorContext.Config.arbitrary_types_allowed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ErrorContext.Config.extra">
+<span class="sig-name descname"><span class="pre">extra</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'allow'</span></em><a class="headerlink" href="#app.core.error.ErrorContext.Config.extra" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.ErrorReporter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">ErrorReporter</span></span><a class="headerlink" href="#app.core.error.ErrorReporter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol for error reporters.</p>
+<p>Error reporters are responsible for reporting errors to various
+destinations (logs, databases, external services, etc.).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.ErrorReporter.report_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">report_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ErrorReporter.report_error" title="Link to this definition"></a></dt>
+<dd><p>Report an error with context information.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exception: The exception to report
+context: Context information about the error</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception</strong> (<em>Exception</em>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="#app.core.error.ErrorContext" title="app.core.error.ErrorContext"><em>ErrorContext</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.ErrorReporterFactory">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">ErrorReporterFactory</span></span><a class="headerlink" href="#app.core.error.ErrorReporterFactory" title="Link to this definition"></a></dt>
+<dd><p>Factory for creating error reporters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.ErrorReporterFactory.create_reporter">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_reporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ErrorReporterFactory.create_reporter" title="Link to this definition"></a></dt>
+<dd><p>Create an error reporter of the specified type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>reporter_type: Type of reporter to create (“logging”, “database”, or “external”)
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Additional arguments to pass to the reporter constructor</p>
+</dd>
+<dt>Returns:</dt><dd><p>An ErrorReporter instance</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the reporter type is not supported</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reporter_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter">app.core.error.base.ErrorReporter</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.ErrorReporterFactory.create_default_reporters">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_default_reporters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ErrorReporterFactory.create_default_reporters" title="Link to this definition"></a></dt>
+<dd><p>Create the default set of error reporters based on configuration settings.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of ErrorReporter instances</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter">app.core.error.base.ErrorReporter</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.ErrorReporterFactory.create_reporter_by_name">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_reporter_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ErrorReporterFactory.create_reporter_by_name" title="Link to this definition"></a></dt>
+<dd><p>Create an error reporter by name based on configuration settings.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>reporter_name: Name of the reporter to create</p>
+</dd>
+<dt>Returns:</dt><dd><p>An ErrorReporter instance or None if the reporter is not configured</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reporter_name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter">app.core.error.base.ErrorReporter</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.register_reporter">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">register_reporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.register_reporter" title="Link to this definition"></a></dt>
+<dd><p>Register an error reporter.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>reporter: The error reporter to register</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reporter</strong> (<a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter"><em>app.core.error.base.ErrorReporter</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.report_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">report_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.report_error" title="Link to this definition"></a></dt>
+<dd><p>Report an error using all registered reporters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exception: The exception to report
+context: Context information about the error</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception</strong> (<em>Exception</em>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="base/index.html#app.core.error.base.ErrorContext" title="app.core.error.base.ErrorContext"><em>app.core.error.base.ErrorContext</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.resource_not_found">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">resource_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.resource_not_found" title="Link to this definition"></a></dt>
+<dd><p>Create a resource not found exception.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>resource_type: Type of resource that was not found
+resource_id: ID of the resource that was not found
+message: Optional custom error message</p>
+</dd>
+<dt>Returns:</dt><dd><p>A configured ResourceNotFoundException</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resource_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>message</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions/index.html#app.core.exceptions.ResourceNotFoundException" title="app.core.exceptions.ResourceNotFoundException">app.core.exceptions.ResourceNotFoundException</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.resource_already_exists">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">resource_already_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.resource_already_exists" title="Link to this definition"></a></dt>
+<dd><p>Create a resource already exists exception.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>resource_type: Type of resource that already exists
+identifier: Identifier of the resource
+field: Field name of the identifier (default: ‘id’)
+message: Optional custom error message</p>
+</dd>
+<dt>Returns:</dt><dd><p>A configured ResourceAlreadyExistsException</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resource_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>identifier</strong> (<em>str</em>)</p></li>
+<li><p><strong>field</strong> (<em>str</em>)</p></li>
+<li><p><strong>message</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions/index.html#app.core.exceptions.ResourceAlreadyExistsException" title="app.core.exceptions.ResourceAlreadyExistsException">app.core.exceptions.ResourceAlreadyExistsException</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.validation_error">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">validation_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'invalid_value'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.validation_error" title="Link to this definition"></a></dt>
+<dd><p>Create a validation error exception.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>field: Field that failed validation
+message: Error message
+error_type: Type of validation error</p>
+</dd>
+<dt>Returns:</dt><dd><p>A configured ValidationException</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>str</em>)</p></li>
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>error_type</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions/index.html#app.core.exceptions.ValidationException" title="app.core.exceptions.ValidationException">app.core.exceptions.ValidationException</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.permission_denied">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">permission_denied</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permission</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.permission_denied" title="Link to this definition"></a></dt>
+<dd><p>Create a permission denied exception.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>action: Action that was attempted
+resource_type: Type of resource being accessed
+permission: Permission that was required</p>
+</dd>
+<dt>Returns:</dt><dd><p>A configured PermissionDeniedException</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>str</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>permission</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions/index.html#app.core.exceptions.PermissionDeniedException" title="app.core.exceptions.PermissionDeniedException">app.core.exceptions.PermissionDeniedException</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.business_logic_error">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">business_logic_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.business_logic_error" title="Link to this definition"></a></dt>
+<dd><p>Create a business logic error exception.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message: Error message
+details: Additional error details</p>
+</dd>
+<dt>Returns:</dt><dd><p>A configured BusinessException</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions/index.html#app.core.exceptions.BusinessException" title="app.core.exceptions.BusinessException">app.core.exceptions.BusinessException</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.ensure_not_none">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">ensure_not_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ensure_not_none" title="Link to this definition"></a></dt>
+<dd><p>Ensure a value is not None, raising an exception if it is.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: Value to check
+resource_type: Type of resource being checked
+resource_id: ID of the resource being checked
+message: Optional custom error message</p>
+</dd>
+<dt>Returns:</dt><dd><p>The value, if it is not None</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the value is None</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Optional</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>message</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.handle_exception">
+<span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">handle_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.handle_exception" title="Link to this definition"></a></dt>
+<dd><p>Handle an exception by reporting it.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exception: The exception to handle
+request_id: Optional request ID
+user_id: Optional user ID
+function_name: Optional function name</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception</strong> (<em>Exception</em>)</p></li>
+<li><p><strong>request_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>function_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the error handling system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.error.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shut down the error handling system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.LoggingErrorReporter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">LoggingErrorReporter</span></span><a class="headerlink" href="#app.core.error.LoggingErrorReporter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.error.base.ErrorReporter</span></code></a></p>
+<p>Error reporter that logs errors using the application logging system.</p>
+<p>This reporter formats error information and logs it via the structured
+logging system, ensuring consistent error logging across the application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.LoggingErrorReporter.report_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">report_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.LoggingErrorReporter.report_error" title="Link to this definition"></a></dt>
+<dd><p>Report an error by logging it.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exception: The exception to report
+context: Context information about the error</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception</strong> (<em>Exception</em>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="base/index.html#app.core.error.base.ErrorContext" title="app.core.error.base.ErrorContext"><em>app.core.error.base.ErrorContext</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.DatabaseErrorReporter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">DatabaseErrorReporter</span></span><a class="headerlink" href="#app.core.error.DatabaseErrorReporter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.error.base.ErrorReporter</span></code></a></p>
+<p>Error reporter that stores errors in a database.</p>
+<p>This reporter formats error information and stores it in a database
+for later analysis and reporting.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.DatabaseErrorReporter.report_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">report_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.DatabaseErrorReporter.report_error" title="Link to this definition"></a></dt>
+<dd><p>Report an error by storing it in a database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exception: The exception to report
+context: Context information about the error</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception</strong> (<em>Exception</em>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="base/index.html#app.core.error.base.ErrorContext" title="app.core.error.base.ErrorContext"><em>app.core.error.base.ErrorContext</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.error.ExternalServiceReporter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.error.</span></span><span class="sig-name descname"><span class="pre">ExternalServiceReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ExternalServiceReporter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base/index.html#app.core.error.base.ErrorReporter" title="app.core.error.base.ErrorReporter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.error.base.ErrorReporter</span></code></a></p>
+<p>Error reporter that sends errors to an external service.</p>
+<p>This reporter formats error information and sends it to an external
+error tracking or monitoring service via HTTP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_url</strong> (<em>str</em>)</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ExternalServiceReporter.service_url">
+<span class="sig-name descname"><span class="pre">service_url</span></span><a class="headerlink" href="#app.core.error.ExternalServiceReporter.service_url" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ExternalServiceReporter.api_key">
+<span class="sig-name descname"><span class="pre">api_key</span></span><a class="headerlink" href="#app.core.error.ExternalServiceReporter.api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.error.ExternalServiceReporter.headers">
+<span class="sig-name descname"><span class="pre">headers</span></span><a class="headerlink" href="#app.core.error.ExternalServiceReporter.headers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.error.ExternalServiceReporter.report_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">report_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.error.ExternalServiceReporter.report_error" title="Link to this definition"></a></dt>
+<dd><p>Report an error by sending it to an external service.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exception: The exception to report
+context: Context information about the error</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception</strong> (<em>Exception</em>)</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="base/index.html#app.core.error.base.ErrorContext" title="app.core.error.base.ErrorContext"><em>app.core.error.base.ErrorContext</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../dependency_manager/index.html" class="btn btn-neutral float-left" title="app.core.dependency_manager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="base/index.html" class="btn btn-neutral float-right" title="app.core.error.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

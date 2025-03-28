@@ -1,0 +1,180 @@
+app.utils.redis_manager
+=======================
+
+.. py:module:: app.utils.redis_manager
+
+.. autoapi-nested-parse::
+
+   Core Redis utility functions with proper error handling and structured logging.
+
+   This module provides functions for interacting with Redis, including connection management,
+   caching operations, and utility functions to simplify common Redis operations.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.utils.redis_manager.logger
+   app.utils.redis_manager.T
+   app.utils.redis_manager._redis_pool
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.utils.redis_manager.get_redis_pool
+   app.utils.redis_manager.get_redis_client
+   app.utils.redis_manager.set_key
+   app.utils.redis_manager.get_key
+   app.utils.redis_manager.delete_key
+   app.utils.redis_manager.increment_counter
+   app.utils.redis_manager.rate_limit_check
+   app.utils.redis_manager.publish_message
+   app.utils.redis_manager.cache_get_or_set
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: _redis_pool
+   :type:  Optional[redis.asyncio.connection.ConnectionPool]
+   :value: None
+
+
+.. py:function:: get_redis_pool()
+   :async:
+
+
+   Get or create a Redis connection pool.
+
+   Returns:
+       ConnectionPool: A Redis connection pool instance.
+
+   Raises:
+       ServiceException: If unable to connect to Redis.
+
+
+.. py:function:: get_redis_client()
+   :async:
+
+
+   Get a Redis client from the connection pool.
+
+   Returns:
+       Redis: A Redis client instance.
+
+   Raises:
+       ServiceException: If unable to connect to Redis.
+
+
+.. py:function:: set_key(key, value, ttl = None)
+   :async:
+
+
+   Set a key in Redis with optional TTL.
+
+   Args:
+       key: The Redis key.
+       value: The value to store (will be JSON serialized).
+       ttl: Optional TTL in seconds.
+
+   Returns:
+       bool: True if successful, False otherwise.
+
+
+.. py:function:: get_key(key, default = None)
+   :async:
+
+
+   Get a key from Redis.
+
+   Args:
+       key: The Redis key.
+       default: Default value if key doesn't exist.
+
+   Returns:
+       The stored value or default.
+
+
+.. py:function:: delete_key(key)
+   :async:
+
+
+   Delete a key from Redis.
+
+   Args:
+       key: The Redis key.
+
+   Returns:
+       bool: True if key was deleted, False otherwise.
+
+
+.. py:function:: increment_counter(key, amount = 1, ttl = None)
+   :async:
+
+
+   Increment a counter in Redis.
+
+   Args:
+       key: The Redis key.
+       amount: Amount to increment by.
+       ttl: Optional TTL in seconds.
+
+   Returns:
+       int: New counter value, or None if operation failed.
+
+
+.. py:function:: rate_limit_check(key, limit, window)
+   :async:
+
+
+   Check if a rate limit has been exceeded.
+
+   Args:
+       key: The rate limit key.
+       limit: Maximum number of operations in the window.
+       window: Time window in seconds.
+
+   Returns:
+       tuple: (is_limited, current_count)
+
+
+.. py:function:: publish_message(channel, message)
+   :async:
+
+
+   Publish a message to a Redis channel.
+
+   Args:
+       channel: Redis channel name.
+       message: Message to publish (will be JSON serialized).
+
+   Returns:
+       bool: True if message was published to at least one subscriber.
+
+
+.. py:function:: cache_get_or_set(key, callback, ttl = 3600, force_refresh = False)
+   :async:
+
+
+   Get a value from Redis or set it using the callback.
+
+   Args:
+       key: Redis key.
+       callback: Async function to call if key doesn't exist.
+       ttl: TTL in seconds.
+       force_refresh: Force refresh the cache.
+
+   Returns:
+       The cached or newly computed value.
+
+

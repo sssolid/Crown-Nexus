@@ -1,0 +1,68 @@
+app.core.validation.db
+======================
+
+.. py:module:: app.core.validation.db
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.validation.db.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.validation.db.UniqueValidator
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: UniqueValidator(db)
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator that checks if a value is unique in the database.
+
+   This validator requires an async database session and must be used
+   with the validate_async method.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: validate_async(value, field, model, exclude_id = None, **kwargs)
+      :async:
+
+
+      Asynchronously validate that a value is unique in the database.
+
+      Args:
+          value: The value to check for uniqueness
+          field: The field name in the model
+          model: The SQLAlchemy model class
+          exclude_id: Optional ID to exclude from the uniqueness check
+          **kwargs: Additional keyword arguments
+
+      Returns:
+          ValidationResult: The validation result
+
+
+
+   .. py:method:: validate(value, field = '', model = None, exclude_id = None, **kwargs)
+
+      Synchronous validation method - not supported.
+
+      Raises:
+          ValidationException: Always, as this validator requires async operations
+
+
+

@@ -1,0 +1,202 @@
+app.domains.autocare.pcdb.schemas
+=================================
+
+.. py:module:: app.domains.autocare.pcdb.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.pcdb.schemas.Category
+   app.domains.autocare.pcdb.schemas.SubCategory
+   app.domains.autocare.pcdb.schemas.Position
+   app.domains.autocare.pcdb.schemas.Part
+   app.domains.autocare.pcdb.schemas.PartDetail
+   app.domains.autocare.pcdb.schemas.PartSearchParameters
+   app.domains.autocare.pcdb.schemas.PartSearchResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: Category
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part category data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: category_id
+      :type:  int
+
+
+   .. py:attribute:: category_name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SubCategory
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part subcategory data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: subcategory_id
+      :type:  int
+
+
+   .. py:attribute:: subcategory_name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Position
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part position data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: position_id
+      :type:  int
+
+
+   .. py:attribute:: position
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Part
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  int
+
+
+   .. py:attribute:: part_terminology_name
+      :type:  str
+
+
+   .. py:attribute:: parts_description_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PartDetail
+
+   Bases: :py:obj:`Part`
+
+
+   Schema for detailed part data.
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+   .. py:attribute:: categories
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: positions
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: superseded_by
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: supersedes
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PartSearchParameters
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for part search parameters.
+
+
+   .. py:attribute:: search_term
+      :type:  str
+
+
+   .. py:attribute:: categories
+      :type:  Optional[List[int]]
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+.. py:class:: PartSearchResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated part search response.
+
+
+   .. py:attribute:: items
+      :type:  List[Part]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+

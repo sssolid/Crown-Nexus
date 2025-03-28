@@ -1,0 +1,98 @@
+app.services.base_service.permissions
+=====================================
+
+.. py:module:: app.services.base_service.permissions
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.base_service.permissions.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.base_service.permissions.PermissionHelper
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: PermissionHelper
+
+   Helper for permission-related operations.
+
+
+   .. py:method:: get_user(db, user_id)
+      :staticmethod:
+
+      :async:
+
+
+      Get user by ID.
+
+      Args:
+          db: Database session
+          user_id: User ID
+
+      Returns:
+          User: User model
+
+      Raises:
+          AuthenticationException: If user not found
+
+
+
+   .. py:method:: check_owner_permission(user_id, entity_user_id, owner_field = 'user_id')
+      :staticmethod:
+
+
+      Check if a user is the owner of an entity.
+
+      Args:
+          user_id: User ID to check
+          entity_user_id: User ID from the entity
+          owner_field: Field name containing the owner ID
+
+      Returns:
+          bool: True if user is the owner, False otherwise
+
+
+
+   .. py:method:: has_any_permission(user, permissions)
+      :staticmethod:
+
+
+      Check if a user has any of the specified permissions.
+
+      Args:
+          user: User to check permissions for
+          permissions: List of permissions to check
+
+      Returns:
+          bool: True if user has any permission, False otherwise
+
+
+
+   .. py:method:: has_all_permissions(user, permissions)
+      :staticmethod:
+
+
+      Check if a user has all specified permissions.
+
+      Args:
+          user: User to check permissions for
+          permissions: List of permissions to check
+
+      Returns:
+          bool: True if user has all permissions, False otherwise
+
+
+

@@ -1,0 +1,94 @@
+app.db.session
+==============
+
+.. py:module:: app.db.session
+
+.. autoapi-nested-parse::
+
+   Database session management module.
+
+   This module provides utilities for creating and managing database sessions
+   using SQLAlchemy's async functionality. It configures the engine with
+   appropriate connection pooling and provides session factory functions.
+
+   The module exports:
+   - An async engine instance configured from application settings
+   - A session maker configured for async operations
+   - A dependency provider for FastAPI route functions
+   - A context manager for use in scripts and background tasks
+
+   Usage:
+       For FastAPI route dependencies:
+       ```python
+       from fastapi import Depends
+       from app.db.session import get_db
+
+       @router.get("/items")
+       async def get_items(db: AsyncSession = Depends(get_db)):
+           # Use db session here
+           ...
+       ```
+
+       For scripts and context managers:
+       ```python
+       from app.db.session import get_db_context
+
+       async def some_task():
+           async with get_db_context() as db:
+               # Use db session here
+               ...
+       ```
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.db.session.engine
+   app.db.session.async_session_maker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.db.session.get_db
+   app.db.session.get_db_context
+
+
+Module Contents
+---------------
+
+.. py:data:: engine
+
+.. py:data:: async_session_maker
+
+.. py:function:: get_db()
+   :async:
+
+
+   Get a database session.
+
+   This dependency provides an async database session that automatically
+   rolls back any failed transactions and closes the session when done.
+
+   Yields:
+       AsyncSession: Database session
+
+
+.. py:function:: get_db_context()
+   :async:
+
+
+   Context manager for database sessions.
+
+   This is useful for scripts that need to handle their own transactions
+   and session lifecycle outside of FastAPI's dependency injection.
+
+   Yields:
+       AsyncSession: Database session
+
+

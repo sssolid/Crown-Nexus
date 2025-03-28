@@ -1,0 +1,100 @@
+app.api.v1.endpoints.auth
+=========================
+
+.. py:module:: app.api.v1.endpoints.auth
+
+.. autoapi-nested-parse::
+
+   Authentication API endpoints.
+
+   This module provides endpoints for user authentication and token management:
+   - Login endpoint for retrieving JWT tokens
+   - Token validation endpoint
+   - Current user information endpoint
+
+   The endpoints implement OAuth2 password flow for compatibility with
+   standard authentication libraries and tools.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.auth.router
+   app.api.v1.endpoints.auth.oauth2_scheme
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.auth.login_for_access_token
+   app.api.v1.endpoints.auth.validate_token
+   app.api.v1.endpoints.auth.read_users_me
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:data:: oauth2_scheme
+
+.. py:function:: login_for_access_token(db, form_data)
+   :async:
+
+
+   OAuth2 compatible token login endpoint.
+
+   This endpoint authenticates a user and provides a JWT access token
+   for use in subsequent requests. It conforms to the OAuth2 password
+   flow specification.
+
+   Args:
+       db: Database session
+       form_data: Form data with username (email) and password
+
+   Returns:
+       Dict: JWT access token and type
+
+   Raises:
+       HTTPException: If authentication fails due to invalid credentials
+           or inactive user account
+
+
+.. py:function:: validate_token(token)
+   :async:
+
+
+   Validate a JWT token.
+
+   This endpoint verifies if a token is valid and active.
+   It's useful for client applications to check token validity
+   without making a full API request.
+
+   Args:
+       token: Decoded token payload (via dependency)
+
+   Returns:
+       dict: Token validation status
+
+
+.. py:function:: read_users_me(current_user)
+   :async:
+
+
+   Get current user information.
+
+   This endpoint returns information about the currently
+   authenticated user based on their JWT token.
+
+   Args:
+       current_user: Current authenticated user (via dependency)
+
+   Returns:
+       User: Current user information
+
+

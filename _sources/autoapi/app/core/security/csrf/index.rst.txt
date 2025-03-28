@@ -1,0 +1,108 @@
+app.core.security.csrf
+======================
+
+.. py:module:: app.core.security.csrf
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.csrf.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.csrf.CsrfManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.csrf.generate_csrf_token
+   app.core.security.csrf.validate_csrf_token
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: generate_csrf_token(session_id)
+
+   Generate a CSRF token.
+
+   Args:
+       session_id: The session ID to bind the token to.
+
+   Returns:
+       str: The generated CSRF token.
+
+
+.. py:function:: validate_csrf_token(token, session_id)
+
+   Validate a CSRF token.
+
+   Args:
+       token: The token to validate.
+       session_id: The session ID to validate against.
+
+   Returns:
+       bool: True if the token is valid, False otherwise.
+
+
+.. py:class:: CsrfManager
+
+   Manager for CSRF token-related functionality.
+
+
+   .. py:attribute:: secret_key
+
+
+   .. py:attribute:: token_expiry
+
+
+   .. py:method:: generate_token(session_id)
+
+      Generate a CSRF token.
+
+      Args:
+          session_id: The session ID to bind the token to.
+
+      Returns:
+          str: The generated CSRF token.
+
+
+
+   .. py:method:: parse_token(token)
+
+      Parse a CSRF token.
+
+      Args:
+          token: The token to parse.
+
+      Returns:
+          Optional[Tuple[str, int, str, str]]: A tuple containing the parsed token parts,
+              or None if parsing fails.
+
+
+
+   .. py:method:: validate_token(token, session_id)
+
+      Validate a CSRF token.
+
+      Args:
+          token: The token to validate.
+          session_id: The session ID to validate against.
+
+      Returns:
+          bool: True if the token is valid, False otherwise.
+
+
+

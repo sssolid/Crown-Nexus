@@ -1,0 +1,139 @@
+app.core.security.encryption
+============================
+
+.. py:module:: app.core.security.encryption
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.encryption.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.encryption.EncryptionManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.encryption.encrypt_data
+   app.core.security.encryption.decrypt_data
+   app.core.security.encryption.generate_secure_token
+   app.core.security.encryption._get_cipher
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: encrypt_data(data)
+
+   Encrypt data.
+
+   Args:
+       data: The data to encrypt.
+
+   Returns:
+       str: The encrypted data as a base64-encoded string.
+
+   Raises:
+       SecurityException: If encryption fails.
+
+
+.. py:function:: decrypt_data(encrypted_data)
+
+   Decrypt data.
+
+   Args:
+       encrypted_data: The encrypted data as a base64-encoded string.
+
+   Returns:
+       Union[str, dict]: The decrypted data.
+
+   Raises:
+       SecurityException: If decryption fails.
+
+
+.. py:function:: generate_secure_token(length = 32)
+
+   Generate a cryptographically secure random token.
+
+   Args:
+       length: The length of the token in bytes.
+
+   Returns:
+       str: The generated token.
+
+   Raises:
+       SecurityException: If token generation fails.
+       ValueError: If the token length is too short.
+
+
+.. py:function:: _get_cipher()
+
+   Get or create a Fernet cipher using the application secret key.
+
+   Returns:
+       Fernet: A configured Fernet cipher.
+
+   Raises:
+       ConfigurationException: If the cipher cannot be created.
+
+
+.. py:class:: EncryptionManager
+
+   Manager for encryption-related functionality.
+
+
+   .. py:method:: _setup_encryption()
+
+      Set up encryption with a derived key.
+
+
+
+   .. py:method:: encrypt_data(data)
+
+      Encrypt data.
+
+      Args:
+          data: The data to encrypt.
+
+      Returns:
+          str: The encrypted data as a base64-encoded string.
+
+
+
+   .. py:method:: decrypt_data(encrypted_data)
+
+      Decrypt data.
+
+      Args:
+          encrypted_data: The encrypted data as a base64-encoded string.
+
+      Returns:
+          Union[str, dict]: The decrypted data.
+
+
+
+   .. py:method:: generate_secure_token(length = 32)
+
+      Generate a cryptographically secure random token.
+
+      Args:
+          length: The length of the token in bytes.
+
+      Returns:
+          str: The generated token.
+
+
+

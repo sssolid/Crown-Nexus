@@ -1,0 +1,72 @@
+app.fitment.dependencies
+========================
+
+.. py:module:: app.fitment.dependencies
+
+.. autoapi-nested-parse::
+
+   Dependencies for the fitment module.
+
+   This module provides dependency injection functions for FastAPI endpoints.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.fitment.dependencies.get_fitment_db_service
+   app.fitment.dependencies._resolve_file_path
+   app.fitment.dependencies.get_fitment_mapping_engine
+   app.fitment.dependencies.initialize_mapping_engine
+
+
+Module Contents
+---------------
+
+.. py:function:: get_fitment_db_service()
+
+   Get a singleton instance of the FitmentDBService.
+
+   Returns:
+       FitmentDBService instance
+
+   Raises:
+       ConfigurationError: If required configuration is missing
+
+
+.. py:function:: _resolve_file_path(file_path)
+
+   Resolve a file path to an absolute path, trying several common locations.
+
+   Args:
+       file_path: The file path to resolve
+
+   Returns:
+       The resolved absolute file path
+
+   Raises:
+       ConfigurationError: If the file cannot be found
+
+
+.. py:function:: get_fitment_mapping_engine()
+
+   Get a singleton instance of the FitmentMappingEngine.
+
+   Returns:
+       FitmentMappingEngine instance
+
+   Raises:
+       ConfigurationError: If required configuration is missing
+
+
+.. py:function:: initialize_mapping_engine()
+   :async:
+
+
+   Initialize the mapping engine with database mappings.
+
+   This should be called during application startup.
+
+

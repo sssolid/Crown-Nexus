@@ -1,0 +1,486 @@
+app.domains.compliance.models
+=============================
+
+.. py:module:: app.domains.compliance.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.compliance.models.ChemicalType
+   app.domains.compliance.models.ExposureScenario
+   app.domains.compliance.models.ApprovalStatus
+   app.domains.compliance.models.TransportRestriction
+   app.domains.compliance.models.Prop65Chemical
+   app.domains.compliance.models.Warning
+   app.domains.compliance.models.ProductChemical
+   app.domains.compliance.models.ProductDOTApproval
+   app.domains.compliance.models.HazardousMaterial
+
+
+Module Contents
+---------------
+
+.. py:class:: ChemicalType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of chemicals for regulatory compliance.
+
+   Attributes:
+       CARCINOGEN: Cancer-causing chemicals.
+       REPRODUCTIVE_TOXICANT: Chemicals harmful to reproduction.
+       BOTH: Chemicals that are both carcinogenic and reproductive toxicants.
+
+
+   .. py:attribute:: CARCINOGEN
+      :value: 'Carcinogen'
+
+
+
+   .. py:attribute:: REPRODUCTIVE_TOXICANT
+      :value: 'Reproductive Toxicant'
+
+
+
+   .. py:attribute:: BOTH
+      :value: 'Both'
+
+
+
+.. py:class:: ExposureScenario
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Scenarios for potential chemical exposure.
+
+   Attributes:
+       CONSUMER: Exposure to general consumers.
+       OCCUPATIONAL: Exposure in occupational settings.
+       ENVIRONMENTAL: Environmental exposure.
+
+
+   .. py:attribute:: CONSUMER
+      :value: 'Consumer'
+
+
+
+   .. py:attribute:: OCCUPATIONAL
+      :value: 'Occupational'
+
+
+
+   .. py:attribute:: ENVIRONMENTAL
+      :value: 'Environmental'
+
+
+
+.. py:class:: ApprovalStatus
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Status of regulatory approvals.
+
+   Attributes:
+       APPROVED: Fully approved.
+       PENDING: Approval pending.
+       REVOKED: Approval revoked.
+       NOT_REQUIRED: Approval not required.
+
+
+   .. py:attribute:: APPROVED
+      :value: 'Approved'
+
+
+
+   .. py:attribute:: PENDING
+      :value: 'Pending'
+
+
+
+   .. py:attribute:: REVOKED
+      :value: 'Revoked'
+
+
+
+   .. py:attribute:: NOT_REQUIRED
+      :value: 'Not Required'
+
+
+
+.. py:class:: TransportRestriction
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Restrictions on product transportation methods.
+
+   Attributes:
+       NONE: No restrictions.
+       AIR: Air transport restricted.
+       GROUND: Ground transport restricted.
+       SEA: Sea transport restricted.
+       ALL: All transport methods restricted.
+
+
+   .. py:attribute:: NONE
+      :value: 'NONE'
+
+
+
+   .. py:attribute:: AIR
+      :value: 'AIR'
+
+
+
+   .. py:attribute:: GROUND
+      :value: 'GROUND'
+
+
+
+   .. py:attribute:: SEA
+      :value: 'SEA'
+
+
+
+   .. py:attribute:: ALL
+      :value: 'ALL'
+
+
+
+.. py:class:: Prop65Chemical
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   California Proposition 65 chemical entity.
+
+   Attributes:
+       id: Unique identifier.
+       name: Chemical name.
+       cas_number: CAS Registry Number (unique chemical identifier).
+       type: Type of chemical hazard.
+       exposure_limit: Safe harbor exposure limit if applicable.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'prop65_chemical'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: cas_number
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: type
+      :type:  sqlalchemy.orm.Mapped[ChemicalType]
+
+
+   .. py:attribute:: exposure_limit
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: warnings
+      :type:  sqlalchemy.orm.Mapped[List[Warning]]
+
+
+   .. py:attribute:: products
+      :type:  sqlalchemy.orm.Mapped[List[ProductChemical]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Prop65Chemical instance.
+
+      Returns:
+          String representation including name and CAS number.
+
+
+
+.. py:class:: Warning
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Warning entity for products containing regulated chemicals.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the product requiring the warning.
+       chemical_id: ID of the chemical in the warning.
+       warning_text: Text of the warning label.
+       last_updated: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'warning'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: chemical_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: warning_text
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: last_updated
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[app.domains.products.models.Product]
+
+
+   .. py:attribute:: chemical
+      :type:  sqlalchemy.orm.Mapped[Prop65Chemical]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Warning instance.
+
+      Returns:
+          String representation including product ID and chemical ID.
+
+
+
+.. py:class:: ProductChemical
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product-chemical association entity.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the product containing the chemical.
+       chemical_id: ID of the chemical in the product.
+       exposure_scenario: Type of exposure scenario.
+       warning_required: Whether a warning label is required.
+       warning_label: Text of the required warning label if applicable.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_chemical'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: chemical_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: exposure_scenario
+      :type:  sqlalchemy.orm.Mapped[ExposureScenario]
+
+
+   .. py:attribute:: warning_required
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: warning_label
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[app.domains.products.models.Product]
+
+
+   .. py:attribute:: chemical
+      :type:  sqlalchemy.orm.Mapped[Prop65Chemical]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductChemical instance.
+
+      Returns:
+          String representation including product ID and chemical ID.
+
+
+
+.. py:class:: ProductDOTApproval
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Department of Transportation approval entity for products.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the approved product.
+       approval_status: Status of the approval.
+       approval_number: DOT approval number if applicable.
+       approved_by: Name of the approver.
+       approval_date: Date of approval.
+       expiration_date: Expiration date of the approval.
+       reason: Reason for the approval status.
+       changed_by_id: ID of the user who last changed the approval.
+       changed_at: When the approval was last changed.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_dot_approval'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: approval_status
+      :type:  sqlalchemy.orm.Mapped[ApprovalStatus]
+
+
+   .. py:attribute:: approval_number
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: approved_by
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: approval_date
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.date]]
+
+
+   .. py:attribute:: expiration_date
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.date]]
+
+
+   .. py:attribute:: reason
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: changed_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: changed_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[app.domains.products.models.Product]
+
+
+   .. py:attribute:: changed_by
+      :type:  sqlalchemy.orm.Mapped[Optional[app.domains.users.models.User]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductDOTApproval instance.
+
+      Returns:
+          String representation including product ID and approval status.
+
+
+
+.. py:class:: HazardousMaterial
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Hazardous material information entity for products.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the hazardous product.
+       un_number: UN number for hazardous material.
+       hazard_class: DOT hazard class.
+       packing_group: Packing group (I, II, III).
+       handling_instructions: Special handling instructions.
+       restricted_transport: Transport restrictions.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'hazardous_material'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: un_number
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: hazard_class
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: packing_group
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: handling_instructions
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: restricted_transport
+      :type:  sqlalchemy.orm.Mapped[TransportRestriction]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[app.domains.products.models.Product]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of HazardousMaterial instance.
+
+      Returns:
+          String representation including product ID.
+
+
+

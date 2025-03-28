@@ -1,0 +1,109 @@
+app.domains.model_mapping.models
+================================
+
+.. py:module:: app.domains.model_mapping.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.model_mapping.models.ModelMapping
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelMapping
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model mapping entity for vehicle model translation.
+
+   Attributes:
+       id: Unique auto-incrementing identifier.
+       pattern: Pattern to match in vehicle text.
+       mapping: Mapping in format 'Make|VehicleCode|Model'.
+       priority: Priority for mapping (higher values are processed first).
+       active: Whether this mapping is active.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'model_mapping'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: pattern
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: mapping
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: priority
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ModelMapping instance.
+
+      Returns:
+          String representation including id, pattern, and mapping.
+
+
+
+   .. py:property:: make
+      :type: str
+
+
+      Get the make part of the mapping.
+
+      Returns:
+          The make value or empty string if not available.
+
+
+
+   .. py:property:: vehicle_code
+      :type: str
+
+
+      Get the vehicle code part of the mapping.
+
+      Returns:
+          The vehicle code value or empty string if not available.
+
+
+
+   .. py:property:: model
+      :type: str
+
+
+      Get the model part of the mapping.
+
+      Returns:
+          The model value or empty string if not available.
+
+
+

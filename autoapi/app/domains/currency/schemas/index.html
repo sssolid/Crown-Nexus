@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.currency.schemas &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.currency.service" href="../service/index.html" />
+    <link rel="prev" title="app.domains.currency.repository" href="../repository/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.currency</a></li>
+      <li class="breadcrumb-item active">app.domains.currency.schemas</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/currency/schemas/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.currency.schemas">
+<span id="app-domains-currency-schemas"></span><h1>app.domains.currency.schemas<a class="headerlink" href="#module-app.domains.currency.schemas" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.currency.schemas.CurrencyBase" title="app.domains.currency.schemas.CurrencyBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CurrencyBase</span></code></a></p></td>
+<td><p>Base schema for currency data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.currency.schemas.CurrencyCreate" title="app.domains.currency.schemas.CurrencyCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CurrencyCreate</span></code></a></p></td>
+<td><p>Schema for creating a new currency.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.currency.schemas.CurrencyUpdate" title="app.domains.currency.schemas.CurrencyUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CurrencyUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing currency.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.currency.schemas.CurrencyRead" title="app.domains.currency.schemas.CurrencyRead"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CurrencyRead</span></code></a></p></td>
+<td><p>Schema for currency data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.currency.schemas.ExchangeRateBase" title="app.domains.currency.schemas.ExchangeRateBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExchangeRateBase</span></code></a></p></td>
+<td><p>Base schema for exchange rate data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.currency.schemas.ExchangeRateCreate" title="app.domains.currency.schemas.ExchangeRateCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExchangeRateCreate</span></code></a></p></td>
+<td><p>Schema for creating a new exchange rate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.currency.schemas.ExchangeRateRead" title="app.domains.currency.schemas.ExchangeRateRead"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExchangeRateRead</span></code></a></p></td>
+<td><p>Schema for exchange rate data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.currency.schemas.ConversionRequest" title="app.domains.currency.schemas.ConversionRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConversionRequest</span></code></a></p></td>
+<td><p>Schema for currency conversion request.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.currency.schemas.ConversionResponse" title="app.domains.currency.schemas.ConversionResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConversionResponse</span></code></a></p></td>
+<td><p>Schema for currency conversion response.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">CurrencyBase</span></span><a class="headerlink" href="#app.domains.currency.schemas.CurrencyBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for currency data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>code: ISO 4217 currency code.
+name: Currency name.
+symbol: Currency symbol.
+is_active: Whether the currency is active.
+is_base: Whether this is the base currency.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyBase.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyBase.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyBase.symbol">
+<span class="sig-name descname"><span class="pre">symbol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyBase.symbol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyBase.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyBase.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyBase.is_base">
+<span class="sig-name descname"><span class="pre">is_base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyBase.is_base" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">CurrencyCreate</span></span><a class="headerlink" href="#app.domains.currency.schemas.CurrencyCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.currency.schemas.CurrencyBase" title="app.domains.currency.schemas.CurrencyBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CurrencyBase</span></code></a></p>
+<p>Schema for creating a new currency.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">CurrencyUpdate</span></span><a class="headerlink" href="#app.domains.currency.schemas.CurrencyUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing currency.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyUpdate.symbol">
+<span class="sig-name descname"><span class="pre">symbol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyUpdate.symbol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyUpdate.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyUpdate.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyUpdate.is_base">
+<span class="sig-name descname"><span class="pre">is_base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyUpdate.is_base" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyRead">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">CurrencyRead</span></span><a class="headerlink" href="#app.domains.currency.schemas.CurrencyRead" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.currency.schemas.CurrencyBase" title="app.domains.currency.schemas.CurrencyBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CurrencyBase</span></code></a></p>
+<p>Schema for currency data in API responses.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyRead.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyRead.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyRead.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyRead.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyRead.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.currency.schemas.CurrencyRead.updated_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.CurrencyRead.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.currency.schemas.CurrencyRead.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">ExchangeRateBase</span></span><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for exchange rate data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>source_currency_id: ID of the source currency.
+target_currency_id: ID of the target currency.
+rate: Exchange rate value.
+effective_date: When the rate became effective.
+data_source: API or source that provided the rate.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateBase.source_currency_id">
+<span class="sig-name descname"><span class="pre">source_currency_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateBase.source_currency_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateBase.target_currency_id">
+<span class="sig-name descname"><span class="pre">target_currency_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateBase.target_currency_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateBase.rate">
+<span class="sig-name descname"><span class="pre">rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateBase.rate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateBase.effective_date">
+<span class="sig-name descname"><span class="pre">effective_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateBase.effective_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateBase.data_source">
+<span class="sig-name descname"><span class="pre">data_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateBase.data_source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">ExchangeRateCreate</span></span><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.currency.schemas.ExchangeRateBase" title="app.domains.currency.schemas.ExchangeRateBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExchangeRateBase</span></code></a></p>
+<p>Schema for creating a new exchange rate.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">ExchangeRateRead</span></span><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.currency.schemas.ExchangeRateBase" title="app.domains.currency.schemas.ExchangeRateBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExchangeRateBase</span></code></a></p>
+<p>Schema for exchange rate data in API responses.</p>
+<p>Includes database-specific fields and related currencies.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead.fetched_at">
+<span class="sig-name descname"><span class="pre">fetched_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead.fetched_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead.source_currency">
+<span class="sig-name descname"><span class="pre">source_currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.currency.schemas.CurrencyRead" title="app.domains.currency.schemas.CurrencyRead"><span class="pre">CurrencyRead</span></a></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead.source_currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead.target_currency">
+<span class="sig-name descname"><span class="pre">target_currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.domains.currency.schemas.CurrencyRead" title="app.domains.currency.schemas.CurrencyRead"><span class="pre">CurrencyRead</span></a></em><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead.target_currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ExchangeRateRead.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.currency.schemas.ExchangeRateRead.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">ConversionRequest</span></span><a class="headerlink" href="#app.domains.currency.schemas.ConversionRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for currency conversion request.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>source_currency: Source currency code.
+target_currency: Target currency code.
+amount: Amount to convert.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionRequest.source_currency">
+<span class="sig-name descname"><span class="pre">source_currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionRequest.source_currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionRequest.target_currency">
+<span class="sig-name descname"><span class="pre">target_currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionRequest.target_currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionRequest.amount">
+<span class="sig-name descname"><span class="pre">amount</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionRequest.amount" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionRequest.validate_currency_code">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_currency_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.currency.schemas.ConversionRequest.validate_currency_code" title="Link to this definition"></a></dt>
+<dd><p>Validate and normalize currency codes.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: The currency code to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Uppercase version of the currency code.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.currency.schemas.</span></span><span class="sig-name descname"><span class="pre">ConversionResponse</span></span><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for currency conversion response.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>source_currency: Source currency code.
+target_currency: Target currency code.
+source_amount: Original amount.
+converted_amount: Converted amount.
+exchange_rate: Exchange rate used.
+timestamp: Conversion timestamp.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse.source_currency">
+<span class="sig-name descname"><span class="pre">source_currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse.source_currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse.target_currency">
+<span class="sig-name descname"><span class="pre">target_currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse.target_currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse.source_amount">
+<span class="sig-name descname"><span class="pre">source_amount</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse.source_amount" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse.converted_amount">
+<span class="sig-name descname"><span class="pre">converted_amount</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse.converted_amount" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse.exchange_rate">
+<span class="sig-name descname"><span class="pre">exchange_rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse.exchange_rate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.currency.schemas.ConversionResponse.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.currency.schemas.ConversionResponse.timestamp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../repository/index.html" class="btn btn-neutral float-left" title="app.domains.currency.repository" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../service/index.html" class="btn btn-neutral float-right" title="app.domains.currency.service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

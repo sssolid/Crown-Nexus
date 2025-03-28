@@ -1,0 +1,85 @@
+app.core.metrics.decorators
+===========================
+
+.. py:module:: app.core.metrics.decorators
+
+.. autoapi-nested-parse::
+
+   Metric decorators for measuring function performance.
+
+   This module provides decorators for easily instrumenting functions and methods
+   with metrics, tracking execution time and call counts.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.metrics.decorators.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.metrics.decorators.timer
+   app.core.metrics.decorators.timed
+   app.core.metrics.decorators.async_timed
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: timer(metric_type, name, observe_func, labels = None, track_in_progress = False, track_in_progress_func = None, in_progress_metric = None)
+
+   Context manager for timing operations.
+
+   Args:
+       metric_type: Type of metric (histogram or summary)
+       name: Metric name
+       observe_func: Function to call for recording observations
+       labels: Optional label values
+       track_in_progress: Whether to track in-progress operations
+       track_in_progress_func: Function to call for tracking in-progress operations
+       in_progress_metric: Optional name of gauge metric for tracking in-progress operations
+
+
+.. py:function:: timed(metric_type, name, observe_func, labels_func = None, track_in_progress = False, track_in_progress_func = None, in_progress_metric = None)
+
+   Decorator for timing function execution.
+
+   Args:
+       metric_type: Type of metric (histogram or summary)
+       name: Metric name
+       observe_func: Function to call for recording observations
+       labels_func: Optional function to generate label values from function args
+       track_in_progress: Whether to track in-progress operations
+       track_in_progress_func: Function to call for tracking in-progress operations
+       in_progress_metric: Optional name of gauge metric for tracking in-progress operations
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: async_timed(metric_type, name, observe_func, labels_func = None, track_in_progress = False, track_in_progress_func = None, in_progress_metric = None)
+
+   Decorator for timing async function execution.
+
+   Args:
+       metric_type: Type of metric (histogram or summary)
+       name: Metric name
+       observe_func: Function to call for recording observations
+       labels_func: Optional function to generate label values from function args
+       track_in_progress: Whether to track in-progress operations
+       track_in_progress_func: Function to call for tracking in-progress operations
+       in_progress_metric: Optional name of gauge metric for tracking in-progress operations
+
+   Returns:
+       Decorator function
+
+

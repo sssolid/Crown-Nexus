@@ -1,0 +1,15 @@
+app.repositories
+================
+
+.. py:module:: app.repositories
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/repositories/base/index
+
+

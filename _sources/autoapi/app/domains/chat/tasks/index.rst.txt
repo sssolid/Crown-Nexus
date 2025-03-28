@@ -1,0 +1,99 @@
+app.domains.chat.tasks
+======================
+
+.. py:module:: app.domains.chat.tasks
+
+.. autoapi-nested-parse::
+
+   Celery worker for background tasks.
+
+   This module configures the Celery worker for asynchronous background tasks:
+   - Message notifications
+   - Chat analytics
+   - Content moderation
+   - Scheduled operations
+
+   These background tasks help offload CPU-intensive or time-consuming
+   operations from the main application thread.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.chat.tasks.logger
+   app.domains.chat.tasks.celery_app
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.chat.tasks.process_message_notifications
+   app.domains.chat.tasks.analyze_chat_activity
+   app.domains.chat.tasks.moderate_message_content
+   app.domains.chat.tasks.update_user_presence
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: celery_app
+
+.. py:function:: process_message_notifications(self, message_id, room_id, sender_id, recipients, message_preview)
+
+   Process and send message notifications.
+
+   Args:
+       message_id: The message ID
+       room_id: The room ID
+       sender_id: ID of the message sender
+       recipients: List of recipient user IDs
+       message_preview: Preview text for notification
+
+   Returns:
+       dict: Task result information
+
+
+.. py:function:: analyze_chat_activity(self, room_id, time_period = 'day')
+
+   Analyze chat activity for a room.
+
+   Args:
+       room_id: The room ID
+       time_period: Time period for analysis ("day", "week", "month")
+
+   Returns:
+       dict: Analysis results
+
+
+.. py:function:: moderate_message_content(self, message_id, content, sender_id, room_id)
+
+   Moderate message content for prohibited content.
+
+   Args:
+       message_id: The message ID
+       content: Message content to moderate
+       sender_id: ID of the message sender
+       room_id: The room ID
+
+   Returns:
+       dict: Moderation results
+
+
+.. py:function:: update_user_presence(self)
+
+   Update user presence status based on activity.
+
+   This task runs periodically to update user online status
+   based on their last activity.
+
+   Returns:
+       dict: Task result information
+
+

@@ -1,0 +1,139 @@
+app.core.pagination.service
+===========================
+
+.. py:module:: app.core.pagination.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.pagination.service.logger
+   app.core.pagination.service.T
+   app.core.pagination.service.R
+   app.core.pagination.service._pagination_service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.pagination.service.PaginationService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.pagination.service.get_pagination_service
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: R
+
+.. py:class:: PaginationService(db = None)
+
+   Service for handling pagination operations.
+
+   This service provides methods for paginating query results using both
+   offset-based and cursor-based pagination strategies.
+
+
+   .. py:attribute:: db
+      :value: None
+
+
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the pagination service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the pagination service.
+
+
+
+   .. py:method:: paginate_with_offset(model_class, query, params, transform_func = None, response_model = None, db = None)
+      :async:
+
+
+      Paginate query results using offset-based pagination.
+
+      Args:
+          model_class: SQLAlchemy model class
+          query: SQLAlchemy select query
+          params: Offset pagination parameters
+          transform_func: Optional function to transform each result item
+          response_model: Optional Pydantic model to convert results
+          db: Optional database session (overrides the one set in constructor)
+
+      Returns:
+          PaginationResult with paginated items and metadata
+
+      Raises:
+          ValueError: If no database session is provided
+          InvalidPaginationParamsException: If pagination parameters are invalid
+
+
+
+   .. py:method:: paginate_with_cursor(model_class, query, params, transform_func = None, response_model = None, db = None)
+      :async:
+
+
+      Paginate query results using cursor-based pagination.
+
+      Args:
+          model_class: SQLAlchemy model class
+          query: SQLAlchemy select query
+          params: Cursor pagination parameters
+          transform_func: Optional function to transform each result item
+          response_model: Optional Pydantic model to convert results
+          db: Optional database session (overrides the one set in constructor)
+
+      Returns:
+          PaginationResult with paginated items and metadata
+
+      Raises:
+          ValueError: If no database session is provided
+          InvalidCursorException: If the cursor is invalid
+          InvalidPaginationParamsException: If pagination parameters are invalid
+
+
+
+.. py:data:: _pagination_service
+   :type:  Optional[PaginationService]
+   :value: None
+
+
+.. py:function:: get_pagination_service(db = None)
+
+   Get or create a pagination service instance.
+
+   Args:
+       db: Optional database session
+
+   Returns:
+       PaginationService instance
+
+

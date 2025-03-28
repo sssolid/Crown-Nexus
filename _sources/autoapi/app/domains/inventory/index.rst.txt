@@ -1,0 +1,20 @@
+app.domains.inventory
+=====================
+
+.. py:module:: app.domains.inventory
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/inventory/exceptions/index
+   /autoapi/app/domains/inventory/handlers/index
+   /autoapi/app/domains/inventory/models/index
+   /autoapi/app/domains/inventory/repository/index
+   /autoapi/app/domains/inventory/schemas/index
+   /autoapi/app/domains/inventory/service/index
+
+

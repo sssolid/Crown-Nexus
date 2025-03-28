@@ -1,0 +1,29 @@
+app.api.v1.router
+=================
+
+.. py:module:: app.api.v1.router
+
+.. autoapi-nested-parse::
+
+   API router configuration.
+
+   This module configures the FastAPI router for v1 of the API,
+   organizing routes by feature area and applying appropriate tags
+   for API documentation. It serves as the central point for including
+   all endpoint routers in the application.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.router.api_router
+
+
+Module Contents
+---------------
+
+.. py:data:: api_router
+

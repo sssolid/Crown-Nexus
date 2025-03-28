@@ -1,0 +1,83 @@
+app.middleware.rate_limiting
+============================
+
+.. py:module:: app.middleware.rate_limiting
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.middleware.rate_limiting.logger
+   app.middleware.rate_limiting.HAS_METRICS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.middleware.rate_limiting.RateLimitMiddleware
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: HAS_METRICS
+   :value: True
+
+
+.. py:class:: RateLimitMiddleware(app, rules = None, use_redis = True, enable_headers = True, block_exceeding_requests = True)
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware that applies rate limiting to incoming requests.
+
+   This middleware checks requests against configured rate limit rules
+   and rejects requests that exceed the limits.
+
+
+   .. py:attribute:: rules
+      :type:  List[app.core.rate_limiting.models.RateLimitRule]
+
+
+   .. py:attribute:: rate_limiter
+      :type:  app.core.rate_limiting.limiter.RateLimiter
+
+
+   .. py:attribute:: enable_headers
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: block_exceeding_requests
+      :type:  bool
+      :value: True
+
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+      Process the request and apply rate limiting.
+
+      Args:
+          request: The incoming request.
+          call_next: The next middleware or route handler.
+
+      Returns:
+          The response from the next middleware or route handler,
+          or a 429 response if the rate limit is exceeded.
+
+      Raises:
+          RateLimitException: If the rate limit is exceeded and
+              block_exceeding_requests is True.
+
+
+

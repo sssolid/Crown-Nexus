@@ -1,0 +1,217 @@
+app.api.deps
+============
+
+.. py:module:: app.api.deps
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.deps.logger
+   app.api.deps.PaginationParams
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.deps.get_audit_service
+   app.api.deps.rate_limit
+   app.api.deps.get_current_user
+   app.api.deps.get_current_active_user
+   app.api.deps.get_admin_user
+   app.api.deps.get_manager_user
+   app.api.deps.get_optional_user
+   app.api.deps.get_current_user_ws
+   app.api.deps.require_permissions
+   app.api.deps.require_permission
+   app.api.deps.get_pagination
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: PaginationParams
+
+.. py:function:: get_audit_service(db = Depends(get_db))
+   :async:
+
+
+   Get an instance of the audit service.
+
+   Args:
+       db: Database session
+
+   Returns:
+       AuditService: The audit service instance
+
+
+.. py:function:: rate_limit(requests_per_window = 10, window_seconds = 60)
+
+   Rate limiting dependency for specific endpoints.
+
+   Args:
+       requests_per_window: Number of allowed requests per window
+       window_seconds: Time window in seconds
+
+   Returns:
+       Callable: Dependency function
+
+
+.. py:function:: get_current_user(db = Depends(get_db), token = Depends(oauth2_scheme))
+   :async:
+
+
+   Get the current authenticated user.
+
+   This dependency validates the JWT token, decodes it, and retrieves
+   the corresponding user from the database.
+
+   Args:
+       db: Database session
+       token: JWT token
+
+   Returns:
+       User: Authenticated user
+
+   Raises:
+       AuthenticationException: If authentication fails
+
+
+.. py:function:: get_current_active_user(current_user = Depends(get_current_user))
+   :async:
+
+
+   Get the current active user.
+
+   This dependency builds on get_current_user and ensures the user is active
+   in the system.
+
+   Args:
+       current_user: Current authenticated user
+
+   Returns:
+       User: Current active user
+
+   Raises:
+       AuthenticationException: If user is inactive
+
+
+.. py:function:: get_admin_user(current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Get the current active admin user.
+
+   This dependency builds on get_current_active_user and ensures the user
+   has admin role.
+
+   Args:
+       current_user: Current authenticated user
+
+   Returns:
+       User: Current active admin user
+
+   Raises:
+       PermissionDeniedException: If user is not an admin
+
+
+.. py:function:: get_manager_user(current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Get the current active manager or admin user.
+
+   This dependency builds on get_current_active_user and ensures the user
+   has manager or admin role.
+
+   Args:
+       current_user: Current authenticated user
+
+   Returns:
+       User: Current active manager or admin user
+
+   Raises:
+       PermissionDeniedException: If user is not a manager or admin
+
+
+.. py:function:: get_optional_user(db = Depends(get_db), token = Depends(optional_oauth2_scheme))
+   :async:
+
+
+   Get the current user if authenticated, otherwise None.
+
+   This dependency is useful for endpoints that can be accessed both by
+   authenticated and anonymous users, with different behavior.
+
+   Args:
+       db: Database session
+       token: Optional JWT token
+
+   Returns:
+       Optional[User]: Authenticated user or None
+
+
+.. py:function:: get_current_user_ws(websocket, db = Depends(get_db))
+   :async:
+
+
+   Get the current authenticated user from WebSocket connection.
+
+   This dependency extracts the JWT token from WebSocket query parameters
+   or cookies, validates it, and returns the corresponding user.
+
+   Args:
+       websocket: WebSocket connection
+       db: Database session
+
+   Returns:
+       User: Authenticated user
+
+   Raises:
+       WebSocketDisconnect: If authentication fails
+
+
+.. py:function:: require_permissions(permissions, require_all = True)
+
+   Dependency to require specific permissions.
+
+   Args:
+       permissions: List of required permissions
+       require_all: Whether all permissions are required (AND) or any (OR)
+
+   Returns:
+       Callable: Dependency function
+
+
+.. py:function:: require_permission(permission)
+
+   Dependency to require a specific permission.
+
+   Args:
+       permission: Required permission
+
+   Returns:
+       Callable: Dependency function
+
+
+.. py:function:: get_pagination(page = Query(1, ge=1, description='Page number'), page_size = Query(20, ge=1, le=100, description='Items per page'))
+
+   Get pagination parameters.
+
+   This dependency generates pagination parameters based on page number
+   and size, with validation to ensure reasonable values.
+
+   Args:
+       page: Page number (starting from 1)
+       page_size: Number of items per page (max 100)
+
+   Returns:
+       Dict: Pagination parameters
+
+

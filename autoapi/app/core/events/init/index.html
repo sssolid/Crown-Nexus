@@ -1,0 +1,601 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.events.init &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.core.exceptions" href="../../exceptions/index.html" />
+    <link rel="prev" title="app.core.events.backend" href="../backend/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.events</a></li>
+      <li class="breadcrumb-item active">app.core.events.init</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/events/init/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.events.init">
+<span id="app-core-events-init"></span><h1>app.core.events.init<a class="headerlink" href="#module-app.core.events.init" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.logger" title="app.core.events.init.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init.EventHandler" title="app.core.events.init.EventHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventHandler</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init._event_backend" title="app.core.events.init._event_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_event_backend</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init._pending_handlers" title="app.core.events.init._pending_handlers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_pending_handlers</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init._is_initialized" title="app.core.events.init._is_initialized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_initialized</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.EventBackendType" title="app.core.events.init.EventBackendType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventBackendType</span></code></a></p></td>
+<td><p>Types of event backends supported.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init.EventPublisher" title="app.core.events.init.EventPublisher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventPublisher</span></code></a></p></td>
+<td><p>Protocol defining the interface for publishing events.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.EventSubscriber" title="app.core.events.init.EventSubscriber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventSubscriber</span></code></a></p></td>
+<td><p>Protocol defining the interface for subscribing to events.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init.EventBackend" title="app.core.events.init.EventBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventBackend</span></code></a></p></td>
+<td><p>Abstract base class for event backend implementations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.CeleryEventBackend" title="app.core.events.init.CeleryEventBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CeleryEventBackend</span></code></a></p></td>
+<td><p>Celery implementation of the event backend.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init.MemoryEventBackend" title="app.core.events.init.MemoryEventBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MemoryEventBackend</span></code></a></p></td>
+<td><p>In-memory implementation of the event backend for testing or simple apps.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.init_event_backend" title="app.core.events.init.init_event_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_event_backend</span></code></a>(backend_type, **kwargs)</p></td>
+<td><p>Initialize the event backend.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init.get_event_backend" title="app.core.events.init.get_event_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_event_backend</span></code></a>()</p></td>
+<td><p>Get the configured event backend.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.subscribe_to_event" title="app.core.events.init.subscribe_to_event"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subscribe_to_event</span></code></a>(event_name)</p></td>
+<td><p>Decorator to register a handler for a domain event.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init.init_domain_events" title="app.core.events.init.init_domain_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_domain_events</span></code></a>()</p></td>
+<td><p>Initialize domain events by registering all pending handlers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.events.init.publish_event" title="app.core.events.init.publish_event"><code class="xref py py-obj docutils literal notranslate"><span class="pre">publish_event</span></code></a>(event_name, payload)</p></td>
+<td><p>Publish a domain event.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.events.init._import_event_handlers" title="app.core.events.init._import_event_handlers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_import_event_handlers</span></code></a>()</p></td>
+<td><p>Import all domain event handler modules.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.events.init.logger">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.events.init.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.events.init.EventHandler">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">EventHandler</span></span><a class="headerlink" href="#app.core.events.init.EventHandler" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.events.init.EventBackendType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">EventBackendType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.EventBackendType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Types of event backends supported.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.events.init.EventBackendType.CELERY">
+<span class="sig-name descname"><span class="pre">CELERY</span></span><a class="headerlink" href="#app.core.events.init.EventBackendType.CELERY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.events.init.EventBackendType.MEMORY">
+<span class="sig-name descname"><span class="pre">MEMORY</span></span><a class="headerlink" href="#app.core.events.init.EventBackendType.MEMORY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.events.init.EventPublisher">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">EventPublisher</span></span><a class="headerlink" href="#app.core.events.init.EventPublisher" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol defining the interface for publishing events.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.EventPublisher.publish_event">
+<span class="sig-name descname"><span class="pre">publish_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.EventPublisher.publish_event" title="Link to this definition"></a></dt>
+<dd><p>Publish an event to subscribers.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to publish
+payload: Event data to be sent to subscribers</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>payload</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.events.init.EventSubscriber">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">EventSubscriber</span></span><a class="headerlink" href="#app.core.events.init.EventSubscriber" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol defining the interface for subscribing to events.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.EventSubscriber.subscribe">
+<span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.EventSubscriber.subscribe" title="Link to this definition"></a></dt>
+<dd><p>Subscribe a handler to an event.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to subscribe to
+handler: The function to call when the event is published</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>handler</strong> (<em>EventHandler</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.events.init.EventBackend">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">EventBackend</span></span><a class="headerlink" href="#app.core.events.init.EventBackend" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#app.core.events.init.EventPublisher" title="app.core.events.init.EventPublisher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventPublisher</span></code></a>, <a class="reference internal" href="#app.core.events.init.EventSubscriber" title="app.core.events.init.EventSubscriber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventSubscriber</span></code></a></p>
+<p>Abstract base class for event backend implementations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.EventBackend.publish_event">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">publish_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.EventBackend.publish_event" title="Link to this definition"></a></dt>
+<dd><p>Publish an event to subscribers.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to publish
+payload: Event data to be sent to subscribers</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>payload</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.EventBackend.subscribe">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.EventBackend.subscribe" title="Link to this definition"></a></dt>
+<dd><p>Subscribe a handler to an event.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to subscribe to
+handler: The function to call when the event is published</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>handler</strong> (<em>EventHandler</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.events.init.CeleryEventBackend">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">CeleryEventBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">celery_app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.CeleryEventBackend" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.events.init.EventBackend" title="app.core.events.init.EventBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventBackend</span></code></a></p>
+<p>Celery implementation of the event backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>celery_app</strong> (<em>Any</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.events.init.CeleryEventBackend.celery_app">
+<span class="sig-name descname"><span class="pre">celery_app</span></span><a class="headerlink" href="#app.core.events.init.CeleryEventBackend.celery_app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.events.init.CeleryEventBackend.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.events.init.CeleryEventBackend.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.CeleryEventBackend.publish_event">
+<span class="sig-name descname"><span class="pre">publish_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.CeleryEventBackend.publish_event" title="Link to this definition"></a></dt>
+<dd><p>Publish an event using Celery tasks.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to publish
+payload: Event data to be sent to subscribers</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>payload</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.CeleryEventBackend.subscribe">
+<span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.CeleryEventBackend.subscribe" title="Link to this definition"></a></dt>
+<dd><p>Subscribe a handler to an event using Celery task decoration.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to subscribe to
+handler: The function to call when the event is published</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>handler</strong> (<em>EventHandler</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.events.init.MemoryEventBackend">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">MemoryEventBackend</span></span><a class="headerlink" href="#app.core.events.init.MemoryEventBackend" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.events.init.EventBackend" title="app.core.events.init.EventBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EventBackend</span></code></a></p>
+<p>In-memory implementation of the event backend for testing or simple apps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.events.init.MemoryEventBackend.handlers">
+<span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">EventHandler</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.events.init.MemoryEventBackend.handlers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.events.init.MemoryEventBackend.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.events.init.MemoryEventBackend.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.MemoryEventBackend.publish_event">
+<span class="sig-name descname"><span class="pre">publish_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.MemoryEventBackend.publish_event" title="Link to this definition"></a></dt>
+<dd><p>Publish an event to all subscribers immediately in-process.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to publish
+payload: Event data to be sent to subscribers</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>payload</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.events.init.MemoryEventBackend.subscribe">
+<span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.MemoryEventBackend.subscribe" title="Link to this definition"></a></dt>
+<dd><p>Subscribe a handler to an event for in-memory processing.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to subscribe to
+handler: The function to call when the event is published</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>handler</strong> (<em>EventHandler</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.events.init._event_backend">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">_event_backend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.core.events.init.EventBackend" title="app.core.events.init.EventBackend"><span class="pre">EventBackend</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.events.init._event_backend" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.events.init._pending_handlers">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">_pending_handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">EventHandler</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.events.init._pending_handlers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.events.init._is_initialized">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">_is_initialized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.core.events.init._is_initialized" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.events.init.init_event_backend">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">init_event_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.init_event_backend" title="Link to this definition"></a></dt>
+<dd><p>Initialize the event backend.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>backend_type: Type of event backend to use
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Additional arguments for the backend</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>backend_type</strong> (<a class="reference internal" href="#app.core.events.init.EventBackendType" title="app.core.events.init.EventBackendType"><em>EventBackendType</em></a>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.events.init.get_event_backend">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">get_event_backend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.get_event_backend" title="Link to this definition"></a></dt>
+<dd><p>Get the configured event backend.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The configured event backend instance</p>
+</dd>
+<dt>Raises:</dt><dd><p>RuntimeError: If event backend is not initialized</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.core.events.init.EventBackend" title="app.core.events.init.EventBackend">EventBackend</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.events.init.subscribe_to_event">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">subscribe_to_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.subscribe_to_event" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register a handler for a domain event.</p>
+<p>During application initialization, this will store the handler for later registration.
+After the event system is initialized, handlers will be registered with the backend.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: Name of the event to subscribe to</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event_name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[EventHandler], EventHandler]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.events.init.init_domain_events">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">init_domain_events</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.init_domain_events" title="Link to this definition"></a></dt>
+<dd><p>Initialize domain events by registering all pending handlers.</p>
+<p>This should be called after the event backend is initialized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.events.init.publish_event">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">publish_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init.publish_event" title="Link to this definition"></a></dt>
+<dd><p>Publish a domain event.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_name: The name of the event to publish
+payload: Event data to be sent to subscribers</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>payload</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.events.init._import_event_handlers">
+<span class="sig-prename descclassname"><span class="pre">app.core.events.init.</span></span><span class="sig-name descname"><span class="pre">_import_event_handlers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.events.init._import_event_handlers" title="Link to this definition"></a></dt>
+<dd><p>Import all domain event handler modules.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../backend/index.html" class="btn btn-neutral float-left" title="app.core.events.backend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../exceptions/index.html" class="btn btn-neutral float-right" title="app.core.exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

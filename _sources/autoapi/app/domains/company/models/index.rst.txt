@@ -1,0 +1,121 @@
+app.domains.company.models
+==========================
+
+.. py:module:: app.domains.company.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.company.models.Company
+
+
+Module Contents
+---------------
+
+.. py:class:: Company
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Company entity representing a business organization.
+
+   Attributes:
+       id: Unique identifier.
+       name: Company name.
+       headquarters_address_id: ID of the headquarters address.
+       billing_address_id: ID of the billing address.
+       shipping_address_id: ID of the shipping address.
+       account_number: Unique account identifier.
+       account_type: Type of account (client, supplier, etc).
+       industry: Industry sector.
+       is_active: Whether the company is active.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'company'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: headquarters_address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: billing_address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: shipping_address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: account_number
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: account_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: industry
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: headquarters_address
+
+
+   .. py:attribute:: billing_address
+
+
+   .. py:attribute:: shipping_address
+
+
+   .. py:attribute:: users
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.users.models.User]]
+
+
+   .. py:attribute:: brands
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.Brand]]
+
+
+   .. py:attribute:: chat_rooms
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.chat.models.ChatRoom]]
+
+
+   .. py:attribute:: audit_logs
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.audit.models.AuditLog]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Company instance.
+
+      Returns:
+          String representation including name and account type.
+
+
+

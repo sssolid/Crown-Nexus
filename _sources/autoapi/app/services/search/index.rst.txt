@@ -1,0 +1,142 @@
+app.services.search
+===================
+
+.. py:module:: app.services.search
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/services/search/base/index
+   /autoapi/app/services/search/factory/index
+   /autoapi/app/services/search/providers/index
+   /autoapi/app/services/search/service/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.search.SearchService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.services.search.get_search_service
+
+
+Package Contents
+----------------
+
+.. py:class:: SearchService(db)
+
+   Bases: :py:obj:`app.services.interfaces.ServiceInterface`
+
+
+   Service for searching various entity types.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the search service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the search service.
+
+
+
+   .. py:method:: search_products(search_term = None, attributes = None, is_active = None, page = 1, page_size = 20, use_elasticsearch = True)
+      :async:
+
+
+      Search for products matching the given criteria.
+
+      Args:
+          search_term: Text to search for in product name, description, etc.
+          attributes: Product attributes to filter by
+          is_active: Filter by active status
+          page: Page number for pagination
+          page_size: Items per page
+          use_elasticsearch: Whether to use Elasticsearch or database search
+
+      Returns:
+          Dict containing search results and pagination info
+
+      Raises:
+          DatabaseException: If the search operation fails
+
+
+
+   .. py:method:: search_fitments(search_term = None, year = None, make = None, model = None, engine = None, transmission = None, page = 1, page_size = 20, use_elasticsearch = True)
+      :async:
+
+
+      Search for fitments matching the given criteria.
+
+      Args:
+          search_term: Text to search for
+          year: Filter by year
+          make: Filter by make
+          model: Filter by model
+          engine: Filter by engine
+          transmission: Filter by transmission
+          page: Page number for pagination
+          page_size: Items per page
+          use_elasticsearch: Whether to use Elasticsearch or database search
+
+      Returns:
+          Dict containing search results and pagination info
+
+      Raises:
+          DatabaseException: If the search operation fails
+
+
+
+   .. py:method:: global_search(search_term, entity_types = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search across multiple entity types.
+
+      Args:
+          search_term: Text to search for
+          entity_types: Types of entities to search
+          page: Page number for pagination
+          page_size: Items per page
+
+      Returns:
+          Dict containing search results for each entity type
+
+
+
+.. py:function:: get_search_service(db)
+
+   Factory function to get SearchService
+
+   Args:
+       db: Database session
+
+   Returns:
+       SearchService instance
+
+

@@ -1,0 +1,18 @@
+app.db.base
+===========
+
+.. py:module:: app.db.base
+
+.. autoapi-nested-parse::
+
+   SQLAlchemy models import module.
+
+   This module imports all SQLAlchemy models to ensure they're registered
+   with the declarative base. This is particularly important for Alembic
+   to detect models correctly when generating migrations.
+
+   This file should be imported by Alembic and not directly by application code.
+   The application should import models from their individual modules instead.
+
+
+

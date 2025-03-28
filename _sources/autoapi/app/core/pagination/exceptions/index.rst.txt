@@ -1,0 +1,52 @@
+app.core.pagination.exceptions
+==============================
+
+.. py:module:: app.core.pagination.exceptions
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.pagination.exceptions.PaginationException
+   app.core.pagination.exceptions.InvalidPaginationParamsException
+   app.core.pagination.exceptions.InvalidCursorException
+   app.core.pagination.exceptions.InvalidSortFieldException
+
+
+Module Contents
+---------------
+
+.. py:class:: PaginationException(message, code = ErrorCode.BUSINESS_LOGIC_ERROR, details = None, status_code = 400, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for pagination errors.
+
+
+.. py:class:: InvalidPaginationParamsException(message, params, details = None, original_exception = None)
+
+   Bases: :py:obj:`PaginationException`
+
+
+   Exception raised when pagination parameters are invalid.
+
+
+.. py:class:: InvalidCursorException(message = 'Invalid pagination cursor', cursor = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`PaginationException`
+
+
+   Exception raised when a pagination cursor is invalid.
+
+
+.. py:class:: InvalidSortFieldException(field, model, message = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`PaginationException`
+
+
+   Exception raised when a sort field is invalid.
+
+

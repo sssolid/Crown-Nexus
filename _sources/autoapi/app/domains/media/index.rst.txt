@@ -1,0 +1,19 @@
+app.domains.media
+=================
+
+.. py:module:: app.domains.media
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/media/exceptions/index
+   /autoapi/app/domains/media/models/index
+   /autoapi/app/domains/media/repository/index
+   /autoapi/app/domains/media/schemas/index
+   /autoapi/app/domains/media/service/index
+
+

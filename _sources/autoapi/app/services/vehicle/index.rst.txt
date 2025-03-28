@@ -1,0 +1,213 @@
+app.services.vehicle
+====================
+
+.. py:module:: app.services.vehicle
+
+.. autoapi-nested-parse::
+
+   Vehicle data service for managing vehicle information and fitment data.
+
+   This module provides the VehicleDataService for retrieving vehicle details like years,
+   makes, models, etc., validating fitments, and decoding VINs.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.vehicle.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.vehicle.VehicleDataService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.services.vehicle.get_vehicle_service
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: VehicleDataService(db)
+
+   Service for managing vehicle data and fitment information.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: get_years()
+      :async:
+
+
+      Get all available vehicle years.
+
+      Returns:
+          List[int]: A list of years in descending order.
+
+      Raises:
+          DatabaseException: If there's an error executing the database query.
+
+
+
+   .. py:method:: get_makes(year = None)
+      :async:
+
+
+      Get vehicle makes, optionally filtered by year.
+
+      Args:
+          year: Optional year filter.
+
+      Returns:
+          List[str]: A list of makes in alphabetical order.
+
+      Raises:
+          DatabaseException: If there's an error executing the database query.
+
+
+
+   .. py:method:: get_models(make = None, year = None)
+      :async:
+
+
+      Get vehicle models, optionally filtered by make and/or year.
+
+      Args:
+          make: Optional make filter.
+          year: Optional year filter.
+
+      Returns:
+          List[str]: A list of models in alphabetical order.
+
+      Raises:
+          DatabaseException: If there's an error executing the database query.
+
+
+
+   .. py:method:: get_engines(make = None, model = None, year = None)
+      :async:
+
+
+      Get vehicle engines, optionally filtered by make, model, and/or year.
+
+      Args:
+          make: Optional make filter.
+          model: Optional model filter.
+          year: Optional year filter.
+
+      Returns:
+          List[str]: A list of engines in alphabetical order.
+
+      Raises:
+          DatabaseException: If there's an error executing the database query.
+
+
+
+   .. py:method:: get_transmissions(make = None, model = None, year = None, engine = None)
+      :async:
+
+
+      Get vehicle transmissions, optionally filtered by make, model, year, and/or engine.
+
+      Args:
+          make: Optional make filter.
+          model: Optional model filter.
+          year: Optional year filter.
+          engine: Optional engine filter.
+
+      Returns:
+          List[str]: A list of transmissions in alphabetical order.
+
+      Raises:
+          DatabaseException: If there's an error executing the database query.
+
+
+
+   .. py:method:: validate_fitment(year, make, model, engine = None, transmission = None)
+      :async:
+
+
+      Validate if a specific vehicle fitment exists.
+
+      Args:
+          year: Vehicle year.
+          make: Vehicle make.
+          model: Vehicle model.
+          engine: Optional engine type.
+          transmission: Optional transmission type.
+
+      Returns:
+          bool: True if the fitment exists, False otherwise.
+
+      Raises:
+          DatabaseException: If there's an error executing the database query.
+
+
+
+   .. py:method:: decode_vin(vin)
+      :async:
+
+
+      Decode a Vehicle Identification Number (VIN).
+
+      Args:
+          vin: The 17-character VIN to decode.
+
+      Returns:
+          Dict containing vehicle information, or None if invalid VIN.
+
+      Raises:
+          ValidationException: If the VIN format is invalid.
+          ExternalServiceException: If an external VIN decoding service fails.
+
+
+
+   .. py:method:: standardize_make(make)
+      :async:
+
+
+      Standardize a vehicle make name.
+
+      Args:
+          make: The make name to standardize.
+
+      Returns:
+          Standardized make name.
+
+
+
+   .. py:method:: register()
+      :classmethod:
+
+
+      Register this service with the service registry.
+
+
+
+.. py:function:: get_vehicle_service(db = Depends(get_db))
+   :async:
+
+
+   Dependency for getting the vehicle service.
+
+   Args:
+       db: Database session.
+
+   Returns:
+       VehicleDataService instance.
+
+

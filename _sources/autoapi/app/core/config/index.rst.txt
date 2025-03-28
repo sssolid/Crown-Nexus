@@ -1,0 +1,169 @@
+app.core.config
+===============
+
+.. py:module:: app.core.config
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/config/base/index
+   /autoapi/app/core/config/celery/index
+   /autoapi/app/core/config/currency/index
+   /autoapi/app/core/config/database/index
+   /autoapi/app/core/config/fitment/index
+   /autoapi/app/core/config/integrations/index
+   /autoapi/app/core/config/media/index
+   /autoapi/app/core/config/security/index
+   /autoapi/app/core/config/settings/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.config.settings
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.Environment
+   app.core.config.LogLevel
+   app.core.config.Settings
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.config.get_settings
+
+
+Package Contents
+----------------
+
+.. py:class:: Environment
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Application environment enumeration.
+
+
+   .. py:attribute:: DEVELOPMENT
+      :value: 'development'
+
+
+
+   .. py:attribute:: STAGING
+      :value: 'staging'
+
+
+
+   .. py:attribute:: PRODUCTION
+      :value: 'production'
+
+
+
+.. py:class:: LogLevel
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Log level enumeration.
+
+
+   .. py:attribute:: DEBUG
+      :value: 'DEBUG'
+
+
+
+   .. py:attribute:: INFO
+      :value: 'INFO'
+
+
+
+   .. py:attribute:: WARNING
+      :value: 'WARNING'
+
+
+
+   .. py:attribute:: ERROR
+      :value: 'ERROR'
+
+
+
+   .. py:attribute:: CRITICAL
+      :value: 'CRITICAL'
+
+
+
+.. py:class:: Settings
+
+   Bases: :py:obj:`app.core.config.base.BaseAppSettings`, :py:obj:`app.core.config.database.DatabaseSettings`, :py:obj:`app.core.config.security.SecuritySettings`, :py:obj:`app.core.config.media.MediaSettings`, :py:obj:`app.core.config.fitment.FitmentSettings`, :py:obj:`app.core.config.currency.CurrencySettings`, :py:obj:`app.core.config.celery.CelerySettings`
+
+
+   Combined application settings.
+
+   This class combines all modular settings into a single settings class
+   for application-wide use, with any cross-module validations.
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: setup_celery_urls()
+
+      Set up Celery broker and result backend URLs if not provided.
+
+
+
+   .. py:method:: model_dump(**kwargs)
+
+      Get settings as a dictionary.
+
+
+
+   .. py:property:: as400
+      :type: AS400Settings
+
+
+      Access AS400 settings.
+
+      This allows accessing AS400 settings through the main settings object
+      while keeping them modularly separated.
+
+      Returns:
+          AS400Settings: The AS400 settings object
+
+
+
+   .. py:property:: elasticsearch
+      :type: ElasticsearchSettings
+
+
+      Access Elasticsearch settings.
+
+      This allows accessing Elasticsearch settings through the main settings object
+      while keeping them modularly separated.
+
+      Returns:
+          ElasticsearchSettings: The Elasticsearch settings object
+
+
+
+.. py:function:: get_settings()
+
+   Get application settings with caching.
+
+
+.. py:data:: settings
+

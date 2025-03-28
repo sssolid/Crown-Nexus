@@ -1,0 +1,16 @@
+app.domains.sync_history
+========================
+
+.. py:module:: app.domains.sync_history
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/sync_history/models/index
+   /autoapi/app/domains/sync_history/repository/index
+
+

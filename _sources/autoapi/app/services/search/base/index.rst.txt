@@ -1,0 +1,78 @@
+app.services.search.base
+========================
+
+.. py:module:: app.services.search.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.search.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.search.base.SearchProvider
+   app.services.search.base.SearchResult
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: SearchProvider
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for search providers.
+
+
+   .. py:method:: search(search_term, filters, page, page_size, **kwargs)
+      :async:
+
+
+      Search for entities matching the criteria.
+
+      Args:
+          search_term: Text to search for
+          filters: Filters to apply
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          **kwargs: Additional search parameters
+
+      Returns:
+          Dict containing search results and pagination info
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the search provider.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the search provider.
+
+
+
+.. py:class:: SearchResult
+
+   Bases: :py:obj:`Dict`\ [\ :py:obj:`str`\ , :py:obj:`Any`\ ]
+
+
+   Type for search results.
+
+

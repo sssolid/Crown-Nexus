@@ -1,0 +1,230 @@
+app.api.v1.endpoints.search
+===========================
+
+.. py:module:: app.api.v1.endpoints.search
+
+.. autoapi-nested-parse::
+
+   Global search API endpoints.
+
+   This module provides endpoints for searching across the application:
+   - Full-text search across products, fitments, and categories
+   - Advanced filtering options
+   - Faceted search results
+   - Type-ahead suggestions
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.search.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.search.global_search
+   app.api.v1.endpoints.search.search_products
+   app.api.v1.endpoints.search.search_fitments
+   app.api.v1.endpoints.search.get_vehicle_years
+   app.api.v1.endpoints.search.get_vehicle_makes
+   app.api.v1.endpoints.search.get_vehicle_models
+   app.api.v1.endpoints.search.get_vehicle_engines
+   app.api.v1.endpoints.search.get_vehicle_transmissions
+   app.api.v1.endpoints.search.validate_vehicle_fitment
+   app.api.v1.endpoints.search.decode_vin
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: global_search(db, current_user, search_service, q = Query(..., description='Search query'), entity_types = Query(None, description='Entity types to search (products, fitments, categories)'), page = Query(1, ge=1, description='Page number'), page_size = Query(20, ge=1, le=100, description='Items per page'))
+   :async:
+
+
+   Perform a global search across multiple entity types.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       search_service: Search service
+       q: Search query
+       entity_types: Entity types to search
+       page: Page number
+       page_size: Items per page
+
+   Returns:
+       Dict[str, Any]: Search results grouped by entity type
+
+
+.. py:function:: search_products(db, current_user, search_service, q = Query(None, description='Search query'), is_active = Query(None, description='Active status'), page = Query(1, ge=1, description='Page number'), page_size = Query(20, ge=1, le=100, description='Items per page'), use_elasticsearch = Query(True, description='Use Elasticsearch if available'))
+   :async:
+
+
+   Search for products with filtering.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       search_service: Search service
+       q: Search query
+       is_active: Active status filter
+       page: Page number
+       page_size: Items per page
+       use_elasticsearch: Whether to use Elasticsearch
+
+   Returns:
+       Dict[str, Any]: Search results with pagination
+
+
+.. py:function:: search_fitments(db, current_user, search_service, q = Query(None, description='Search query'), year = Query(None, description='Vehicle year'), make = Query(None, description='Vehicle make'), model = Query(None, description='Vehicle model'), engine = Query(None, description='Vehicle engine'), transmission = Query(None, description='Vehicle transmission'), page = Query(1, ge=1, description='Page number'), page_size = Query(20, ge=1, le=100, description='Items per page'))
+   :async:
+
+
+   Search for fitments with filtering.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       search_service: Search service
+       q: Search query
+       year: Vehicle year filter
+       make: Vehicle make filter
+       model: Vehicle model filter
+       engine: Vehicle engine filter
+       transmission: Vehicle transmission filter
+       page: Page number
+       page_size: Items per page
+
+   Returns:
+       Dict[str, Any]: Search results with pagination
+
+
+.. py:function:: get_vehicle_years(db, current_user, vehicle_service)
+   :async:
+
+
+   Get all available vehicle years.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+
+   Returns:
+       List[int]: List of years
+
+
+.. py:function:: get_vehicle_makes(db, current_user, vehicle_service, year = Query(None, description='Filter by year'))
+   :async:
+
+
+   Get all available vehicle makes.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+       year: Filter by year
+
+   Returns:
+       List[str]: List of makes
+
+
+.. py:function:: get_vehicle_models(db, current_user, vehicle_service, make = Query(None, description='Filter by make'), year = Query(None, description='Filter by year'))
+   :async:
+
+
+   Get all available vehicle models.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+       make: Filter by make
+       year: Filter by year
+
+   Returns:
+       List[str]: List of models
+
+
+.. py:function:: get_vehicle_engines(db, current_user, vehicle_service, make = Query(None, description='Filter by make'), model = Query(None, description='Filter by model'), year = Query(None, description='Filter by year'))
+   :async:
+
+
+   Get all available vehicle engines.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+       make: Filter by make
+       model: Filter by model
+       year: Filter by year
+
+   Returns:
+       List[str]: List of engines
+
+
+.. py:function:: get_vehicle_transmissions(db, current_user, vehicle_service, make = Query(None, description='Filter by make'), model = Query(None, description='Filter by model'), year = Query(None, description='Filter by year'), engine = Query(None, description='Filter by engine'))
+   :async:
+
+
+   Get all available vehicle transmissions.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+       make: Filter by make
+       model: Filter by model
+       year: Filter by year
+       engine: Filter by engine
+
+   Returns:
+       List[str]: List of transmissions
+
+
+.. py:function:: validate_vehicle_fitment(db, current_user, vehicle_service, year, make, model, engine = None, transmission = None)
+   :async:
+
+
+   Validate if a fitment combination exists.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+       year: Vehicle year
+       make: Vehicle make
+       model: Vehicle model
+       engine: Vehicle engine
+       transmission: Vehicle transmission
+
+   Returns:
+       dict: Validation result
+
+
+.. py:function:: decode_vin(vin, db, current_user, vehicle_service)
+   :async:
+
+
+   Decode a Vehicle Identification Number (VIN).
+
+   Args:
+       vin: Vehicle Identification Number
+       db: Database session
+       current_user: Current authenticated user
+       vehicle_service: Vehicle data service
+
+   Returns:
+       Dict[str, Any]: Decoded vehicle data
+
+

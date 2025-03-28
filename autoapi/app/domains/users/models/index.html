@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.users.models &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.users.repository" href="../repository/index.html" />
+    <link rel="prev" title="app.domains.users.handlers" href="../handlers/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.users</a></li>
+      <li class="breadcrumb-item active">app.domains.users.models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/users/models/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.users.models">
+<span id="app-domains-users-models"></span><h1>app.domains.users.models<a class="headerlink" href="#module-app.domains.users.models" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.users.models.pwd_context" title="app.domains.users.models.pwd_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pwd_context</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.users.models.UserRole" title="app.domains.users.models.UserRole"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UserRole</span></code></a></p></td>
+<td><p>Enumeration of user roles in the system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.users.models.User" title="app.domains.users.models.User"><code class="xref py py-obj docutils literal notranslate"><span class="pre">User</span></code></a></p></td>
+<td><p>User entity representing a system user.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.users.models.verify_password" title="app.domains.users.models.verify_password"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_password</span></code></a>(plain_password, hashed_password)</p></td>
+<td><p>Verify if a plain password matches a hash.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.users.models.get_password_hash" title="app.domains.users.models.get_password_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_password_hash</span></code></a>(password)</p></td>
+<td><p>Generate a hash from a plain-text password.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.users.models.create_access_token" title="app.domains.users.models.create_access_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_access_token</span></code></a>(subject, role[, expires_delta])</p></td>
+<td><p>Create a JWT access token for a user.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.users.models.UserRole">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.users.models.</span></span><span class="sig-name descname"><span class="pre">UserRole</span></span><a class="headerlink" href="#app.domains.users.models.UserRole" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Enumeration of user roles in the system.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>ADMIN: Administrator role with full system access.
+MANAGER: Manager role with elevated permissions.
+CLIENT: Standard client user.
+DISTRIBUTOR: Distributor with specific permissions.
+READ_ONLY: User with read-only access.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.UserRole.ADMIN">
+<span class="sig-name descname"><span class="pre">ADMIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'admin'</span></em><a class="headerlink" href="#app.domains.users.models.UserRole.ADMIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.UserRole.MANAGER">
+<span class="sig-name descname"><span class="pre">MANAGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'manager'</span></em><a class="headerlink" href="#app.domains.users.models.UserRole.MANAGER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.UserRole.CLIENT">
+<span class="sig-name descname"><span class="pre">CLIENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'client'</span></em><a class="headerlink" href="#app.domains.users.models.UserRole.CLIENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.UserRole.DISTRIBUTOR">
+<span class="sig-name descname"><span class="pre">DISTRIBUTOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'distributor'</span></em><a class="headerlink" href="#app.domains.users.models.UserRole.DISTRIBUTOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.UserRole.READ_ONLY">
+<span class="sig-name descname"><span class="pre">READ_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'read_only'</span></em><a class="headerlink" href="#app.domains.users.models.UserRole.READ_ONLY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.users.models.User">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.users.models.</span></span><span class="sig-name descname"><span class="pre">User</span></span><a class="headerlink" href="#app.domains.users.models.User" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>User entity representing a system user.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>id: Unique identifier.
+email: User’s email address (unique).
+hashed_password: Securely hashed password.
+full_name: User’s full name.
+role: User’s role in the system.
+is_active: Whether the user account is active.
+company_id: ID of the associated company.
+created_at: Creation timestamp.
+updated_at: Last update timestamp.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user'</span></em><a class="headerlink" href="#app.domains.users.models.User.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.email" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.hashed_password">
+<span class="sig-name descname"><span class="pre">hashed_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.hashed_password" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.full_name">
+<span class="sig-name descname"><span class="pre">full_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.full_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.domains.users.models.UserRole" title="app.domains.users.models.UserRole"><span class="pre">UserRole</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.role" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.company_id">
+<span class="sig-name descname"><span class="pre">company_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.company_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.updated_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.company">
+<span class="sig-name descname"><span class="pre">company</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../company/models/index.html#app.domains.company.models.Company" title="app.domains.company.models.Company"><span class="pre">app.domains.company.models.Company</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.company" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.chat_memberships">
+<span class="sig-name descname"><span class="pre">chat_memberships</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../chat/models/index.html#app.domains.chat.models.ChatMember" title="app.domains.chat.models.ChatMember"><span class="pre">app.domains.chat.models.ChatMember</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.chat_memberships" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.api_keys">
+<span class="sig-name descname"><span class="pre">api_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../api_key/models/index.html#app.domains.api_key.models.ApiKey" title="app.domains.api_key.models.ApiKey"><span class="pre">app.domains.api_key.models.ApiKey</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.api_keys" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.audit_logs">
+<span class="sig-name descname"><span class="pre">audit_logs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../audit/models/index.html#app.domains.audit.models.AuditLog" title="app.domains.audit.models.AuditLog"><span class="pre">AuditLog</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.users.models.User.audit_logs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.uploaded_media">
+<span class="sig-name descname"><span class="pre">uploaded_media</span></span><a class="headerlink" href="#app.domains.users.models.User.uploaded_media" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.users.models.User.approved_media">
+<span class="sig-name descname"><span class="pre">approved_media</span></span><a class="headerlink" href="#app.domains.users.models.User.approved_media" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.users.models.User.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.users.models.User.__repr__" title="Link to this definition"></a></dt>
+<dd><p>Return string representation of User instance.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>String representation including email and role.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.domains.users.models.pwd_context">
+<span class="sig-prename descclassname"><span class="pre">app.domains.users.models.</span></span><span class="sig-name descname"><span class="pre">pwd_context</span></span><a class="headerlink" href="#app.domains.users.models.pwd_context" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.domains.users.models.verify_password">
+<span class="sig-prename descclassname"><span class="pre">app.domains.users.models.</span></span><span class="sig-name descname"><span class="pre">verify_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plain_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.users.models.verify_password" title="Link to this definition"></a></dt>
+<dd><p>Verify if a plain password matches a hash.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>plain_password: The plain-text password to verify.
+hashed_password: The hashed password to compare against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the password matches, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plain_password</strong> (<em>str</em>)</p></li>
+<li><p><strong>hashed_password</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.domains.users.models.get_password_hash">
+<span class="sig-prename descclassname"><span class="pre">app.domains.users.models.</span></span><span class="sig-name descname"><span class="pre">get_password_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.users.models.get_password_hash" title="Link to this definition"></a></dt>
+<dd><p>Generate a hash from a plain-text password.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password: The plain-text password to hash.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The hashed password.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.domains.users.models.create_access_token">
+<span class="sig-prename descclassname"><span class="pre">app.domains.users.models.</span></span><span class="sig-name descname"><span class="pre">create_access_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.users.models.create_access_token" title="Link to this definition"></a></dt>
+<dd><p>Create a JWT access token for a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>subject: The subject (user ID) for the token.
+role: The user’s role.
+expires_delta: Optional custom expiration time delta.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The encoded JWT token string.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>uuid.UUID</em><em>]</em>)</p></li>
+<li><p><strong>role</strong> (<a class="reference internal" href="#app.domains.users.models.UserRole" title="app.domains.users.models.UserRole"><em>UserRole</em></a>)</p></li>
+<li><p><strong>expires_delta</strong> (<em>Optional</em><em>[</em><em>datetime.timedelta</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../handlers/index.html" class="btn btn-neutral float-left" title="app.domains.users.handlers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../repository/index.html" class="btn btn-neutral float-right" title="app.domains.users.repository" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

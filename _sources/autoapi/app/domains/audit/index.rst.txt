@@ -1,0 +1,18 @@
+app.domains.audit
+=================
+
+.. py:module:: app.domains.audit
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/audit/models/index
+   /autoapi/app/domains/audit/repository/index
+   /autoapi/app/domains/audit/schemas/index
+   /autoapi/app/domains/audit/service/index
+
+

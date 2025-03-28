@@ -1,0 +1,41 @@
+app.domains.products.service
+============================
+
+.. py:module:: app.domains.products.service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.products.service.ProductService
+
+
+Module Contents
+---------------
+
+.. py:class:: ProductService(db)
+
+   Service for product operations.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: get_product(product_id)
+      :async:
+
+
+      Get product by ID.
+
+
+
+   .. py:method:: create_product(data)
+      :async:
+
+
+      Create a new product.
+
+
+

@@ -1,0 +1,808 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.autocare.padb.models &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.domains.autocare.padb.repository" href="../repository/index.html" />
+    <link rel="prev" title="app.domains.autocare.padb" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains.autocare</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.autocare.padb</a></li>
+      <li class="breadcrumb-item active">app.domains.autocare.padb.models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/domains/autocare/padb/models/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.autocare.padb.models">
+<span id="app-domains-autocare-padb-models"></span><h1>app.domains.autocare.padb.models<a class="headerlink" href="#module-app.domains.autocare.padb.models" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.PartAttribute" title="app.domains.autocare.padb.models.PartAttribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartAttribute</span></code></a></p></td>
+<td><p>Model for part attribute definitions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.MetaData" title="app.domains.autocare.padb.models.MetaData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetaData</span></code></a></p></td>
+<td><p>Model for attribute metadata definitions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.MeasurementGroup" title="app.domains.autocare.padb.models.MeasurementGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeasurementGroup</span></code></a></p></td>
+<td><p>Model for measurement groupings.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.MetaUOMCode" title="app.domains.autocare.padb.models.MetaUOMCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetaUOMCode</span></code></a></p></td>
+<td><p>Model for units of measure codes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.PartAttributeAssignment" title="app.domains.autocare.padb.models.PartAttributeAssignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartAttributeAssignment</span></code></a></p></td>
+<td><p>Model for assignments between parts, attributes, and metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment" title="app.domains.autocare.padb.models.MetaUomCodeAssignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetaUomCodeAssignment</span></code></a></p></td>
+<td><p>Model for assignments between attributes and UOM codes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.ValidValue" title="app.domains.autocare.padb.models.ValidValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidValue</span></code></a></p></td>
+<td><p>Model for valid values for attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.ValidValueAssignment" title="app.domains.autocare.padb.models.ValidValueAssignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidValueAssignment</span></code></a></p></td>
+<td><p>Model for assignments between attributes and valid values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.Style" title="app.domains.autocare.padb.models.Style"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Style</span></code></a></p></td>
+<td><p>Model for style definitions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.PartAttributeStyle" title="app.domains.autocare.padb.models.PartAttributeStyle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartAttributeStyle</span></code></a></p></td>
+<td><p>Model for part attribute styling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.PartTypeStyle" title="app.domains.autocare.padb.models.PartTypeStyle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartTypeStyle</span></code></a></p></td>
+<td><p>Model for part type styling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.padb.models.PAdbVersion" title="app.domains.autocare.padb.models.PAdbVersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PAdbVersion</span></code></a></p></td>
+<td><p>Model for PAdb version tracking.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">PartAttribute</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for part attribute definitions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_part_attribute'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.pa_id">
+<span class="sig-name descname"><span class="pre">pa_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.pa_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.pa_name">
+<span class="sig-name descname"><span class="pre">pa_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.pa_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.pa_descr">
+<span class="sig-name descname"><span class="pre">pa_descr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.pa_descr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.assignments">
+<span class="sig-name descname"><span class="pre">assignments</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.assignments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttribute.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttribute.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">MetaData</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for attribute metadata definitions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_metadata'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.meta_id">
+<span class="sig-name descname"><span class="pre">meta_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.meta_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.meta_name">
+<span class="sig-name descname"><span class="pre">meta_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.meta_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.meta_descr">
+<span class="sig-name descname"><span class="pre">meta_descr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.meta_descr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.meta_format">
+<span class="sig-name descname"><span class="pre">meta_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.meta_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.data_type">
+<span class="sig-name descname"><span class="pre">data_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.data_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.min_length">
+<span class="sig-name descname"><span class="pre">min_length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.min_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.max_length">
+<span class="sig-name descname"><span class="pre">max_length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.max_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.assignments">
+<span class="sig-name descname"><span class="pre">assignments</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.assignments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaData.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaData.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">MeasurementGroup</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for measurement groupings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_measurement_group'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup.measurement_group_id">
+<span class="sig-name descname"><span class="pre">measurement_group_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup.measurement_group_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup.measurement_group_name">
+<span class="sig-name descname"><span class="pre">measurement_group_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup.measurement_group_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup.uom_codes">
+<span class="sig-name descname"><span class="pre">uom_codes</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup.uom_codes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MeasurementGroup.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.MeasurementGroup.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">MetaUOMCode</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for units of measure codes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_meta_uom_code'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.meta_uom_id">
+<span class="sig-name descname"><span class="pre">meta_uom_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.meta_uom_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.uom_code">
+<span class="sig-name descname"><span class="pre">uom_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.uom_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.uom_description">
+<span class="sig-name descname"><span class="pre">uom_description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.uom_description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.uom_label">
+<span class="sig-name descname"><span class="pre">uom_label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.uom_label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.measurement_group_id">
+<span class="sig-name descname"><span class="pre">measurement_group_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.measurement_group_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.measurement_group">
+<span class="sig-name descname"><span class="pre">measurement_group</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.measurement_group" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.assignments">
+<span class="sig-name descname"><span class="pre">assignments</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.assignments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUOMCode.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUOMCode.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">PartAttributeAssignment</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for assignments between parts, attributes, and metadata.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_part_attribute_assignment'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.papt_id">
+<span class="sig-name descname"><span class="pre">papt_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.papt_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.part_terminology_id">
+<span class="sig-name descname"><span class="pre">part_terminology_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.part_terminology_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.pa_id">
+<span class="sig-name descname"><span class="pre">pa_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.pa_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.meta_id">
+<span class="sig-name descname"><span class="pre">meta_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.meta_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.part">
+<span class="sig-name descname"><span class="pre">part</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.part" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.attribute">
+<span class="sig-name descname"><span class="pre">attribute</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.attribute" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.uom_assignments">
+<span class="sig-name descname"><span class="pre">uom_assignments</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.uom_assignments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.valid_value_assignments">
+<span class="sig-name descname"><span class="pre">valid_value_assignments</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.valid_value_assignments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.style">
+<span class="sig-name descname"><span class="pre">style</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.style" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeAssignment.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeAssignment.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">MetaUomCodeAssignment</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for assignments between attributes and UOM codes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_meta_uom_code_assignment'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.meta_uom_code_assignment_id">
+<span class="sig-name descname"><span class="pre">meta_uom_code_assignment_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.meta_uom_code_assignment_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.papt_id">
+<span class="sig-name descname"><span class="pre">papt_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.papt_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.meta_uom_id">
+<span class="sig-name descname"><span class="pre">meta_uom_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.meta_uom_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.attribute_assignment">
+<span class="sig-name descname"><span class="pre">attribute_assignment</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.attribute_assignment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.meta_uom">
+<span class="sig-name descname"><span class="pre">meta_uom</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.meta_uom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.MetaUomCodeAssignment.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.MetaUomCodeAssignment.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">ValidValue</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for valid values for attributes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_valid_value'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue.valid_value_id">
+<span class="sig-name descname"><span class="pre">valid_value_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue.valid_value_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue.valid_value">
+<span class="sig-name descname"><span class="pre">valid_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue.valid_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue.assignments">
+<span class="sig-name descname"><span class="pre">assignments</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue.assignments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValue.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValue.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">ValidValueAssignment</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for assignments between attributes and valid values.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_valid_value_assignment'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.valid_value_assignment_id">
+<span class="sig-name descname"><span class="pre">valid_value_assignment_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.valid_value_assignment_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.papt_id">
+<span class="sig-name descname"><span class="pre">papt_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.papt_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.valid_value_id">
+<span class="sig-name descname"><span class="pre">valid_value_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.valid_value_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.attribute_assignment">
+<span class="sig-name descname"><span class="pre">attribute_assignment</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.attribute_assignment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.valid_value">
+<span class="sig-name descname"><span class="pre">valid_value</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.valid_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.ValidValueAssignment.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.ValidValueAssignment.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">Style</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.Style" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for style definitions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_style'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.Style.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.Style.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.style_id">
+<span class="sig-name descname"><span class="pre">style_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.Style.style_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.style_name">
+<span class="sig-name descname"><span class="pre">style_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.Style.style_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.part_attribute_styles">
+<span class="sig-name descname"><span class="pre">part_attribute_styles</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.Style.part_attribute_styles" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.part_type_styles">
+<span class="sig-name descname"><span class="pre">part_type_styles</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.Style.part_type_styles" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.Style.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.Style.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">PartAttributeStyle</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for part attribute styling.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_part_attribute_style'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.style_id">
+<span class="sig-name descname"><span class="pre">style_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.style_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.papt_id">
+<span class="sig-name descname"><span class="pre">papt_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.papt_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.style">
+<span class="sig-name descname"><span class="pre">style</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.style" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.attribute_assignment">
+<span class="sig-name descname"><span class="pre">attribute_assignment</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.attribute_assignment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartAttributeStyle.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.PartAttributeStyle.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">PartTypeStyle</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for part type styling.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_part_type_style'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.style_id">
+<span class="sig-name descname"><span class="pre">style_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.style_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.part_terminology_id">
+<span class="sig-name descname"><span class="pre">part_terminology_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.part_terminology_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.style">
+<span class="sig-name descname"><span class="pre">style</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.style" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.part">
+<span class="sig-name descname"><span class="pre">part</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.part" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PartTypeStyle.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.PartTypeStyle.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PAdbVersion">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.padb.models.</span></span><span class="sig-name descname"><span class="pre">PAdbVersion</span></span><a class="headerlink" href="#app.domains.autocare.padb.models.PAdbVersion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../db/base_class/index.html#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.db.base_class.Base</span></code></a></p>
+<p>Model for PAdb version tracking.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PAdbVersion.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autocare_padb_version'</span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PAdbVersion.__tablename__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PAdbVersion.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PAdbVersion.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PAdbVersion.version_date">
+<span class="sig-name descname"><span class="pre">version_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PAdbVersion.version_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PAdbVersion.is_current">
+<span class="sig-name descname"><span class="pre">is_current</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.autocare.padb.models.PAdbVersion.is_current" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.padb.models.PAdbVersion.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.padb.models.PAdbVersion.__repr__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="app.domains.autocare.padb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../repository/index.html" class="btn btn-neutral float-right" title="app.domains.autocare.padb.repository" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

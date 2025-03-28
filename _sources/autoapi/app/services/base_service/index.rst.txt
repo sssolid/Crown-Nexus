@@ -1,0 +1,695 @@
+app.services.base_service
+=========================
+
+.. py:module:: app.services.base_service
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/services/base_service/contracts/index
+   /autoapi/app/services/base_service/operations/index
+   /autoapi/app/services/base_service/permissions/index
+   /autoapi/app/services/base_service/service/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.base_service.BaseServiceProtocol
+   app.services.base_service.PermissionHelper
+   app.services.base_service.BaseService
+
+
+Package Contents
+----------------
+
+.. py:class:: BaseServiceProtocol
+
+   Bases: :py:obj:`app.services.interfaces.CrudServiceInterface`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ ], :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ ]
+
+
+   Protocol defining the interface for base service functionality.
+
+
+   .. py:method:: validate_create(data, user_id = None)
+      :async:
+
+
+      Validate data before creation.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_update(entity, data, user_id = None)
+      :async:
+
+
+      Validate data before update.
+
+      Args:
+          entity: Existing entity
+          data: Updated data
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_delete(entity, user_id = None)
+      :async:
+
+
+      Validate before deletion.
+
+      Args:
+          entity: Entity to delete
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: before_create(data, user_id = None)
+      :async:
+
+
+      Hook before entity creation.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_create(entity, user_id = None)
+      :async:
+
+
+      Hook after entity creation.
+
+      Args:
+          entity: Created entity
+          user_id: Current user ID
+
+
+
+   .. py:method:: before_update(entity, data, user_id = None)
+      :async:
+
+
+      Hook before entity update.
+
+      Args:
+          entity: Existing entity
+          data: Updated data
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_update(updated_entity, original_entity, user_id = None)
+      :async:
+
+
+      Hook after entity update.
+
+      Args:
+          updated_entity: Updated entity
+          original_entity: Original entity before update
+          user_id: Current user ID
+
+
+
+   .. py:method:: before_delete(entity, user_id = None)
+      :async:
+
+
+      Hook before entity deletion.
+
+      Args:
+          entity: Entity to delete
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_delete(entity, user_id = None)
+      :async:
+
+
+      Hook after entity deletion.
+
+      Args:
+          entity: Deleted entity
+          user_id: Current user ID
+
+
+
+.. py:class:: PermissionHelper
+
+   Helper for permission-related operations.
+
+
+   .. py:method:: get_user(db, user_id)
+      :staticmethod:
+
+      :async:
+
+
+      Get user by ID.
+
+      Args:
+          db: Database session
+          user_id: User ID
+
+      Returns:
+          User: User model
+
+      Raises:
+          AuthenticationException: If user not found
+
+
+
+   .. py:method:: check_owner_permission(user_id, entity_user_id, owner_field = 'user_id')
+      :staticmethod:
+
+
+      Check if a user is the owner of an entity.
+
+      Args:
+          user_id: User ID to check
+          entity_user_id: User ID from the entity
+          owner_field: Field name containing the owner ID
+
+      Returns:
+          bool: True if user is the owner, False otherwise
+
+
+
+   .. py:method:: has_any_permission(user, permissions)
+      :staticmethod:
+
+
+      Check if a user has any of the specified permissions.
+
+      Args:
+          user: User to check permissions for
+          permissions: List of permissions to check
+
+      Returns:
+          bool: True if user has any permission, False otherwise
+
+
+
+   .. py:method:: has_all_permissions(user, permissions)
+      :staticmethod:
+
+
+      Check if a user has all specified permissions.
+
+      Args:
+          user: User to check permissions for
+          permissions: List of permissions to check
+
+      Returns:
+          bool: True if user has all permissions, False otherwise
+
+
+
+.. py:class:: BaseService(db, model_class, create_schema, update_schema, response_schema, repository_class = BaseRepository)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ , :py:obj:`ID`\ ], :py:obj:`app.services.base_service.contracts.BaseServiceProtocol`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ ]
+
+
+   Base service for CRUD operations on entities.
+
+   This service provides standardized CRUD operations with:
+   - Integrated permissions checking
+   - Transaction management
+   - Error handling
+   - Validation
+   - Event dispatching
+   - Logging
+
+   Attributes:
+       db: AsyncSession for database operations
+       model: SQLAlchemy model class
+       repository: Repository for database operations
+       create_schema: Pydantic model for create operations
+       update_schema: Pydantic model for update operations
+       response_schema: Pydantic model for responses
+       required_create_permission: Permission required for create operations
+       required_read_permission: Permission required for read operations
+       required_update_permission: Permission required for update operations
+       required_delete_permission: Permission required for delete operations
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: create_schema
+
+
+   .. py:attribute:: update_schema
+
+
+   .. py:attribute:: response_schema
+
+
+   .. py:attribute:: repository
+
+
+   .. py:attribute:: create_update_ops
+
+
+   .. py:attribute:: read_delete_ops
+
+
+   .. py:attribute:: pagination_service
+
+
+   .. py:attribute:: logger
+
+
+   .. py:attribute:: required_create_permission
+      :type:  Optional[app.core.permissions.Permission]
+      :value: None
+
+
+
+   .. py:attribute:: required_read_permission
+      :type:  Optional[app.core.permissions.Permission]
+      :value: None
+
+
+
+   .. py:attribute:: required_update_permission
+      :type:  Optional[app.core.permissions.Permission]
+      :value: None
+
+
+
+   .. py:attribute:: required_delete_permission
+      :type:  Optional[app.core.permissions.Permission]
+      :value: None
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize service resources.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Release service resources.
+
+
+
+   .. py:method:: create(data, user_id = None)
+      :async:
+
+
+      Create new entity.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+      Returns:
+          T: Created entity
+
+      Raises:
+          ValidationException: If validation fails
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: create_with_schema(schema, user_id = None)
+      :async:
+
+
+      Create a new entity using a Pydantic schema.
+
+      Args:
+          schema: Create schema
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          T: The created entity
+
+
+
+   .. py:method:: delete(id, user_id = None, hard_delete = False)
+      :async:
+
+
+      Delete entity.
+
+      Args:
+          id: Entity ID
+          user_id: Current user ID
+          hard_delete: Whether to permanently delete
+
+      Returns:
+          bool: True if deleted
+
+      Raises:
+          ResourceNotFoundException: If entity not found
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: get(id, user_id = None)
+      :async:
+
+
+      Get entity by ID with permission check.
+
+      Args:
+          id: Entity ID
+          user_id: Current user ID
+
+      Returns:
+          T: Entity
+
+      Raises:
+          ResourceNotFoundException: If entity not found
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: get_by_id(id, user_id = None)
+      :async:
+
+
+      Get entity by ID without raising exceptions.
+
+      Args:
+          id: Entity ID
+          user_id: Current user ID
+
+      Returns:
+          Optional[T]: Entity or None if not found
+
+
+
+   .. py:method:: get_multi(user_id = None, page = 1, page_size = 20, filters = None, order_by = None)
+      :async:
+
+
+      Get multiple entities with pagination.
+
+      Args:
+          user_id: Current user ID
+          page: Page number
+          page_size: Items per page
+          filters: Filters to apply
+          order_by: Field to order by
+
+      Returns:
+          Dict[str, Any]: Paginated results
+
+      Raises:
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: get_all(page = 1, page_size = 20, filters = None, user_id = None)
+      :async:
+
+
+      Get all entities with pagination.
+
+      Args:
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          filters: Optional filters to apply
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          Dict[str, Any]: Paginated results
+
+
+
+   .. py:method:: update(id, data, user_id = None)
+      :async:
+
+
+      Update entity.
+
+      Args:
+          id: Entity ID
+          data: Updated data
+          user_id: Current user ID
+
+      Returns:
+          T: Updated entity
+
+      Raises:
+          ResourceNotFoundException: If entity not found
+          ValidationException: If validation fails
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: update_with_schema(id, schema, user_id = None)
+      :async:
+
+
+      Update an existing entity using a Pydantic schema.
+
+      Args:
+          id: Entity ID
+          schema: Update schema
+          user_id: Optional user ID for permission checks
+
+      Returns:
+          Optional[T]: The updated entity if found, None otherwise
+
+
+
+   .. py:method:: get_paginated(user_id, params, filters = None)
+      :async:
+
+
+      Get paginated entities using offset-based pagination.
+
+      Args:
+          user_id: Current user ID
+          params: Pagination parameters
+          filters: Filters to apply
+
+      Returns:
+          PaginationResult[R]: Paginated results
+
+      Raises:
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: get_paginated_with_cursor(user_id, params, filters = None)
+      :async:
+
+
+      Get paginated entities using cursor-based pagination.
+
+      Args:
+          user_id: Current user ID
+          params: Pagination parameters
+          filters: Filters to apply
+
+      Returns:
+          PaginationResult[R]: Paginated results
+
+      Raises:
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: to_response(entity)
+      :async:
+
+
+      Convert entity to response model.
+
+      Args:
+          entity: Entity to convert
+
+      Returns:
+          R: Response model
+
+
+
+   .. py:method:: to_response_multi(entities)
+      :async:
+
+
+      Convert multiple entities to response models.
+
+      Args:
+          entities: Entities to convert
+
+      Returns:
+          List[R]: Response models
+
+
+
+   .. py:method:: apply_filters(filters, user_id = None)
+      :async:
+
+
+      Apply custom filters based on business logic.
+
+      This method can be overridden in subclasses to add additional filters
+      based on the user, entity type, or other business rules.
+
+      Args:
+          filters: Base filters to apply
+          user_id: Current user ID
+
+      Returns:
+          Dict[str, Any]: Updated filters
+
+
+
+   .. py:method:: validate_create(data, user_id = None)
+      :async:
+
+
+      Validate data before creation.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_update(entity, data, user_id = None)
+      :async:
+
+
+      Validate data before update.
+
+      Args:
+          entity: Existing entity
+          data: Updated data
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_delete(entity, user_id = None)
+      :async:
+
+
+      Validate before deletion.
+
+      Args:
+          entity: Entity to delete
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: before_create(data, user_id = None)
+      :async:
+
+
+      Hook before entity creation.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_create(entity, user_id = None)
+      :async:
+
+
+      Hook after entity creation.
+
+      Args:
+          entity: Created entity
+          user_id: Current user ID
+
+
+
+   .. py:method:: before_update(entity, data, user_id = None)
+      :async:
+
+
+      Hook before entity update.
+
+      Args:
+          entity: Existing entity
+          data: Updated data
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_update(updated_entity, original_entity, user_id = None)
+      :async:
+
+
+      Hook after entity update.
+
+      Args:
+          updated_entity: Updated entity
+          original_entity: Original entity before update
+          user_id: Current user ID
+
+
+
+   .. py:method:: before_delete(entity, user_id = None)
+      :async:
+
+
+      Hook before entity deletion.
+
+      Args:
+          entity: Entity to delete
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_delete(entity, user_id = None)
+      :async:
+
+
+      Hook after entity deletion.
+
+      Args:
+          entity: Deleted entity
+          user_id: Current user ID
+
+
+

@@ -1,0 +1,110 @@
+app.api.v1.endpoints.currency
+=============================
+
+.. py:module:: app.api.v1.endpoints.currency
+
+.. autoapi-nested-parse::
+
+   Currency API endpoints.
+
+   This module provides API endpoints for:
+   - Retrieving currency information
+   - Getting exchange rates
+   - Converting between currencies
+   - Managing currency settings
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.currency.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.currency.read_currencies
+   app.api.v1.endpoints.currency.read_exchange_rates
+   app.api.v1.endpoints.currency.convert_currency
+   app.api.v1.endpoints.currency.trigger_exchange_rate_update
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: read_currencies(db, current_user, active_only = True)
+   :async:
+
+
+   Get list of available currencies.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       active_only: Whether to return only active currencies (default: True)
+
+   Returns:
+       List[CurrencyRead]: List of currencies
+
+
+.. py:function:: read_exchange_rates(db, current_user, source_code = None, target_code = None, limit = 10)
+   :async:
+
+
+   Get exchange rates with optional filtering.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       source_code: Source currency code
+       target_code: Target currency code
+       limit: Maximum number of rates to return (default: 10)
+
+   Returns:
+       List[ExchangeRateRead]: List of exchange rates
+
+
+.. py:function:: convert_currency(conversion, db, current_user)
+   :async:
+
+
+   Convert an amount between currencies.
+
+   Args:
+       conversion: Conversion request parameters
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       ConversionResponse: Conversion result
+
+   Raises:
+       HTTPException: If currencies not found or conversion fails
+
+
+.. py:function:: trigger_exchange_rate_update(background_tasks, db, current_user, async_update = Query(True, description='Whether to update rates asynchronously'))
+   :async:
+
+
+   Trigger an update of exchange rates.
+
+   Args:
+       background_tasks: Background tasks
+       db: Database session
+       current_user: Current authenticated admin user
+       async_update: Whether to update asynchronously or wait for completion
+
+   Returns:
+       Dict[str, Any]: Result of the operation
+
+   Raises:
+       HTTPException: If update fails
+
+

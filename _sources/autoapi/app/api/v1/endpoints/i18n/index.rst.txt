@@ -1,0 +1,54 @@
+app.api.v1.endpoints.i18n
+=========================
+
+.. py:module:: app.api.v1.endpoints.i18n
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.i18n.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.i18n.get_messages
+   app.api.v1.endpoints.i18n.get_current_locale
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: get_messages(locale)
+   :async:
+
+
+   Get all translation messages for a specific locale.
+
+   Args:
+       locale: Locale code (e.g., 'en', 'es')
+
+   Returns:
+       Dict[str, Dict[str, str]]: Translation messages for the requested locale
+
+
+.. py:function:: get_current_locale(locale)
+   :async:
+
+
+   Get the current locale based on the request.
+
+   Args:
+       locale: Current locale from dependency
+
+   Returns:
+       Dict[str, str]: Current locale information
+
+

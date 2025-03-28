@@ -1,0 +1,405 @@
+app.api.v1.endpoints.products
+=============================
+
+.. py:module:: app.api.v1.endpoints.products
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.products.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.products.read_products
+   app.api.v1.endpoints.products.create_product
+   app.api.v1.endpoints.products.read_product
+   app.api.v1.endpoints.products.update_product
+   app.api.v1.endpoints.products.delete_product
+   app.api.v1.endpoints.products.create_product_description
+   app.api.v1.endpoints.products.update_product_description
+   app.api.v1.endpoints.products.delete_product_description
+   app.api.v1.endpoints.products.create_product_marketing
+   app.api.v1.endpoints.products.update_product_marketing
+   app.api.v1.endpoints.products.delete_product_marketing
+   app.api.v1.endpoints.products.create_product_measurement
+   app.api.v1.endpoints.products.create_product_stock
+   app.api.v1.endpoints.products.update_product_stock
+   app.api.v1.endpoints.products.delete_product_stock
+   app.api.v1.endpoints.products.create_product_supersession
+   app.api.v1.endpoints.products.delete_product_supersession
+   app.api.v1.endpoints.products.read_brands
+   app.api.v1.endpoints.products.create_brand
+   app.api.v1.endpoints.products.read_brand
+   app.api.v1.endpoints.products.update_brand
+   app.api.v1.endpoints.products.delete_brand
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: read_products(db, current_user, search = None, vintage = None, late_model = None, soft = None, universal = None, is_active = None, skip = 0, limit = 100, page = 1, page_size = 20)
+   :async:
+
+
+   Retrieve products with filtering.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       search: Search term for product part number or application
+       vintage: Filter by vintage flag
+       late_model: Filter by late model flag
+       soft: Filter by soft good flag
+       universal: Filter by universal fit flag
+       is_active: Filter by active status
+       skip: Number of products to skip
+       limit: Maximum number of products to return
+       page: Page number
+       page_size: Number of items per page
+
+   Returns:
+       ProductListResponse: Paginated list of products
+
+
+.. py:function:: create_product(db, product_in, current_user)
+   :async:
+
+
+   Create new product.
+
+   Args:
+       db: Database session
+       product_in: Product data
+       current_user: Current authenticated admin user
+
+   Returns:
+       Product: Created product
+
+
+.. py:function:: read_product(product_id, db, current_user)
+   :async:
+
+
+   Get product by ID.
+
+   Args:
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       Product: Product with specified ID
+
+
+.. py:function:: update_product(product_id, product_in, db, current_user)
+   :async:
+
+
+   Update a product.
+
+   Args:
+       product_id: Product ID
+       product_in: Updated product data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       Product: Updated product
+
+
+.. py:function:: delete_product(product_id, db, current_user)
+   :async:
+
+
+   Delete a product.
+
+   Args:
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: create_product_description(product_id, description_in, db, current_user)
+   :async:
+
+
+   Add a description to a product.
+
+   Args:
+       product_id: Product ID
+       description_in: Description data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductDescription: Created description
+
+
+.. py:function:: update_product_description(product_id, description_id, description_in, db, current_user)
+   :async:
+
+
+   Update a product description.
+
+   Args:
+       product_id: Product ID
+       description_id: Description ID
+       description_in: Updated description data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductDescription: Updated description
+
+
+.. py:function:: delete_product_description(product_id, description_id, db, current_user)
+   :async:
+
+
+   Delete a product description.
+
+   Args:
+       product_id: Product ID
+       description_id: Description ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: create_product_marketing(product_id, marketing_in, db, current_user)
+   :async:
+
+
+   Add marketing content to a product.
+
+   Args:
+       product_id: Product ID
+       marketing_in: Marketing data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductMarketing: Created marketing content
+
+
+.. py:function:: update_product_marketing(product_id, marketing_id, marketing_in, db, current_user)
+   :async:
+
+
+   Update product marketing content.
+
+   Args:
+       product_id: Product ID
+       marketing_id: Marketing content ID
+       marketing_in: Updated marketing data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductMarketing: Updated marketing content
+
+
+.. py:function:: delete_product_marketing(product_id, marketing_id, db, current_user)
+   :async:
+
+
+   Delete product marketing content.
+
+   Args:
+       product_id: Product ID
+       marketing_id: Marketing content ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: create_product_measurement(product_id, measurement_in, db, current_user)
+   :async:
+
+
+   Add measurements to a product.
+
+   Args:
+       product_id: Product ID
+       measurement_in: Measurement data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductMeasurement: Created measurement
+
+
+.. py:function:: create_product_stock(product_id, stock_in, db, current_user)
+   :async:
+
+
+   Add stock information to a product.
+
+   Args:
+       product_id: Product ID
+       stock_in: Stock data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductStock: Created stock information
+
+
+.. py:function:: update_product_stock(product_id, stock_id, stock_in, db, current_user)
+   :async:
+
+
+   Update product stock information.
+
+   Args:
+       product_id: Product ID
+       stock_id: Stock ID
+       stock_in: Updated stock data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductStock: Updated stock information
+
+
+.. py:function:: delete_product_stock(product_id, stock_id, db, current_user)
+   :async:
+
+
+   Delete product stock information.
+
+   Args:
+       product_id: Product ID
+       stock_id: Stock ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: create_product_supersession(product_id, supersession_in, db, current_user)
+   :async:
+
+
+   Create a product supersession.
+
+   Args:
+       product_id: Product ID
+       supersession_in: Supersession data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       ProductSupersession: Created supersession
+
+
+.. py:function:: delete_product_supersession(product_id, supersession_id, db, current_user)
+   :async:
+
+
+   Delete a product supersession.
+
+   Args:
+       product_id: Product ID
+       supersession_id: Supersession ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: read_brands(db, current_user, skip = 0, limit = 100)
+   :async:
+
+
+   Retrieve brands.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       skip: Number of brands to skip
+       limit: Maximum number of brands to return
+
+   Returns:
+       List[Brand]: List of brands
+
+
+.. py:function:: create_brand(db, brand_in, current_user)
+   :async:
+
+
+   Create new brand.
+
+   Args:
+       db: Database session
+       brand_in: Brand data
+       current_user: Current authenticated admin user
+
+   Returns:
+       Brand: Created brand
+
+
+.. py:function:: read_brand(brand_id, db, current_user)
+   :async:
+
+
+   Get brand by ID.
+
+   Args:
+       brand_id: Brand ID
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       Brand: Brand with specified ID
+
+
+.. py:function:: update_brand(brand_id, brand_in, db, current_user)
+   :async:
+
+
+   Update a brand.
+
+   Args:
+       brand_id: Brand ID
+       brand_in: Updated brand data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       Brand: Updated brand
+
+
+.. py:function:: delete_brand(brand_id, db, current_user)
+   :async:
+
+
+   Delete a brand.
+
+   Args:
+       brand_id: Brand ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+

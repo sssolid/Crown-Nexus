@@ -1,0 +1,1745 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.security &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.core.security.api_keys" href="api_keys/index.html" />
+    <link rel="prev" title="app.core.rate_limiting.utils" href="../rate_limiting/utils/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core</a></li>
+      <li class="breadcrumb-item active">app.core.security</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/core/security/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.security">
+<span id="app-core-security"></span><h1>app.core.security<a class="headerlink" href="#module-app.core.security" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_keys/index.html">app.core.security.api_keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csrf/index.html">app.core.security.csrf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies/index.html">app.core.security.dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="encryption/index.html">app.core.security.encryption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/index.html">app.core.security.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="passwords/index.html">app.core.security.passwords</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tokens/index.html">app.core.security.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation/index.html">app.core.security.validation</a></li>
+</ul>
+</div>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.oauth2_scheme" title="app.core.security.oauth2_scheme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">oauth2_scheme</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.ApiKeyManager" title="app.core.security.ApiKeyManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApiKeyManager</span></code></a></p></td>
+<td><p>Manager for API key-related functionality.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.CsrfManager" title="app.core.security.CsrfManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CsrfManager</span></code></a></p></td>
+<td><p>Manager for CSRF token-related functionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.EncryptionManager" title="app.core.security.EncryptionManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EncryptionManager</span></code></a></p></td>
+<td><p>Manager for encryption-related functionality.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.ApiKeyData" title="app.core.security.ApiKeyData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApiKeyData</span></code></a></p></td>
+<td><p>Model representing API key data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.PasswordPolicy" title="app.core.security.PasswordPolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PasswordPolicy</span></code></a></p></td>
+<td><p>Model representing password policy settings.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.SecurityViolation" title="app.core.security.SecurityViolation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SecurityViolation</span></code></a></p></td>
+<td><p>Types of security violations that can occur.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.TokenClaimsModel" title="app.core.security.TokenClaimsModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenClaimsModel</span></code></a></p></td>
+<td><p>Model representing the claims in a JWT token.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.TokenPair" title="app.core.security.TokenPair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenPair</span></code></a></p></td>
+<td><p>Model representing an access and refresh token pair.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.TokenType" title="app.core.security.TokenType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenType</span></code></a></p></td>
+<td><p>Types of tokens used in the system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.PasswordManager" title="app.core.security.PasswordManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PasswordManager</span></code></a></p></td>
+<td><p>Manager for password-related functionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.TokenManager" title="app.core.security.TokenManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenManager</span></code></a></p></td>
+<td><p>Manager for token-related functionality.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.ValidationManager" title="app.core.security.ValidationManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidationManager</span></code></a></p></td>
+<td><p>Manager for input validation and sanitization.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.generate_api_key" title="app.core.security.generate_api_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_api_key</span></code></a>(user_id, name[, permissions])</p></td>
+<td><p>Generate a new API key.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.verify_api_key" title="app.core.security.verify_api_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_api_key</span></code></a>(api_key, stored_hash)</p></td>
+<td><p>Verify an API key against its stored hash.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.generate_csrf_token" title="app.core.security.generate_csrf_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_csrf_token</span></code></a>(session_id)</p></td>
+<td><p>Generate a CSRF token.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.validate_csrf_token" title="app.core.security.validate_csrf_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_csrf_token</span></code></a>(token, session_id)</p></td>
+<td><p>Validate a CSRF token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.decrypt_data" title="app.core.security.decrypt_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decrypt_data</span></code></a>(encrypted_data)</p></td>
+<td><p>Decrypt data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.encrypt_data" title="app.core.security.encrypt_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">encrypt_data</span></code></a>(data)</p></td>
+<td><p>Encrypt data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.generate_secure_token" title="app.core.security.generate_secure_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_secure_token</span></code></a>([length])</p></td>
+<td><p>Generate a cryptographically secure random token.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.get_password_hash" title="app.core.security.get_password_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_password_hash</span></code></a>(password)</p></td>
+<td><p>Hash a password using bcrypt.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.validate_password_policy" title="app.core.security.validate_password_policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_password_policy</span></code></a>(password[, user_id])</p></td>
+<td><p>Validate a password against the password policy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.verify_password" title="app.core.security.verify_password"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_password</span></code></a>(plain_password, hashed_password)</p></td>
+<td><p>Verify a password against its hash.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.add_token_to_blacklist" title="app.core.security.add_token_to_blacklist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_token_to_blacklist</span></code></a>(token_jti, expires_at)</p></td>
+<td><p>Add a token to the blacklist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.create_token" title="app.core.security.create_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_token</span></code></a>(subject, token_type[, expires_delta, ...])</p></td>
+<td><p>Create a JWT token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.create_token_pair" title="app.core.security.create_token_pair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_token_pair</span></code></a>(user_id, role[, permissions, user_data])</p></td>
+<td><p>Create an access and refresh token pair.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.decode_token" title="app.core.security.decode_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_token</span></code></a>(token)</p></td>
+<td><p>Decode and validate a JWT token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.is_token_blacklisted" title="app.core.security.is_token_blacklisted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_token_blacklisted</span></code></a>(token_jti)</p></td>
+<td><p>Check if a token is blacklisted.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.refresh_tokens" title="app.core.security.refresh_tokens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh_tokens</span></code></a>(refresh_token)</p></td>
+<td><p>Refresh an access token using a refresh token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.revoke_token" title="app.core.security.revoke_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">revoke_token</span></code></a>(token)</p></td>
+<td><p>Revoke a token by adding it to the blacklist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.detect_suspicious_content" title="app.core.security.detect_suspicious_content"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_suspicious_content</span></code></a>(content)</p></td>
+<td><p>Detect potentially malicious content.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.get_security_headers" title="app.core.security.get_security_headers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_security_headers</span></code></a>()</p></td>
+<td><p>Get security headers for HTTP responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.is_trusted_ip" title="app.core.security.is_trusted_ip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_trusted_ip</span></code></a>(ip_address)</p></td>
+<td><p>Check if an IP address is in the trusted proxies list.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.is_valid_enum_value" title="app.core.security.is_valid_enum_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_valid_enum_value</span></code></a>(enum_class, value)</p></td>
+<td><p>Check if a value is a valid member of an Enum class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.is_valid_hostname" title="app.core.security.is_valid_hostname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_valid_hostname</span></code></a>(hostname)</p></td>
+<td><p>Validate a hostname.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.moderate_content" title="app.core.security.moderate_content"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moderate_content</span></code></a>(content[, content_type])</p></td>
+<td><p>Moderate content for inappropriate or harmful material.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.sanitize_input" title="app.core.security.sanitize_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sanitize_input</span></code></a>(input_str)</p></td>
+<td><p>Sanitize user input by escaping HTML characters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.validate_json_input" title="app.core.security.validate_json_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_json_input</span></code></a>(json_data)</p></td>
+<td><p>Validate JSON input for suspicious content and structure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.security.get_current_user_id" title="app.core.security.get_current_user_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_current_user_id</span></code></a>([token])</p></td>
+<td><p>Get the current user ID from a token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.security.get_token_from_header" title="app.core.security.get_token_from_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_token_from_header</span></code></a>([token])</p></td>
+<td><p>Get a token from the Authorization header.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">ApiKeyManager</span></span><a class="headerlink" href="#app.core.security.ApiKeyManager" title="Link to this definition"></a></dt>
+<dd><p>Manager for API key-related functionality.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyManager.generate_api_key">
+<span class="sig-name descname"><span class="pre">generate_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permissions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ApiKeyManager.generate_api_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a new API key.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID.
+name: The name of the API key.
+permissions: Optional list of permissions.</p>
+</dd>
+<dt>Returns:</dt><dd><p>ApiKeyData: The generated API key data.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>permissions</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="models/index.html#app.core.security.models.ApiKeyData" title="app.core.security.models.ApiKeyData">app.core.security.models.ApiKeyData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyManager.verify_api_key">
+<span class="sig-name descname"><span class="pre">verify_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stored_hash</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ApiKeyManager.verify_api_key" title="Link to this definition"></a></dt>
+<dd><p>Verify an API key against its stored hash.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>api_key: The API key to verify.
+stored_hash: The stored hash to verify against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the API key is valid, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<em>str</em>)</p></li>
+<li><p><strong>stored_hash</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyManager.parse_api_key">
+<span class="sig-name descname"><span class="pre">parse_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ApiKeyManager.parse_api_key" title="Link to this definition"></a></dt>
+<dd><p>Parse an API key to extract its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>api_key: The API key to parse.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Optional[str]: The API key ID, or None if parsing fails.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_key</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.generate_api_key">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">generate_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permissions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.generate_api_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a new API key.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID.
+name: The name of the API key.
+permissions: Optional list of permissions.</p>
+</dd>
+<dt>Returns:</dt><dd><p>ApiKeyData: The generated API key data.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>permissions</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="models/index.html#app.core.security.models.ApiKeyData" title="app.core.security.models.ApiKeyData">app.core.security.models.ApiKeyData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.verify_api_key">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">verify_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stored_hash</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.verify_api_key" title="Link to this definition"></a></dt>
+<dd><p>Verify an API key against its stored hash.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>api_key: The API key to verify.
+stored_hash: The stored hash to verify against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the API key is valid, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<em>str</em>)</p></li>
+<li><p><strong>stored_hash</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.CsrfManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">CsrfManager</span></span><a class="headerlink" href="#app.core.security.CsrfManager" title="Link to this definition"></a></dt>
+<dd><p>Manager for CSRF token-related functionality.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.CsrfManager.secret_key">
+<span class="sig-name descname"><span class="pre">secret_key</span></span><a class="headerlink" href="#app.core.security.CsrfManager.secret_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.CsrfManager.token_expiry">
+<span class="sig-name descname"><span class="pre">token_expiry</span></span><a class="headerlink" href="#app.core.security.CsrfManager.token_expiry" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.CsrfManager.generate_token">
+<span class="sig-name descname"><span class="pre">generate_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.CsrfManager.generate_token" title="Link to this definition"></a></dt>
+<dd><p>Generate a CSRF token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>session_id: The session ID to bind the token to.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The generated CSRF token.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session_id</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.CsrfManager.parse_token">
+<span class="sig-name descname"><span class="pre">parse_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.CsrfManager.parse_token" title="Link to this definition"></a></dt>
+<dd><p>Parse a CSRF token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token to parse.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Optional[Tuple[str, int, str, str]]: A tuple containing the parsed token parts,</dt><dd><p>or None if parsing fails.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[Tuple[str, int, str, str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.CsrfManager.validate_token">
+<span class="sig-name descname"><span class="pre">validate_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.CsrfManager.validate_token" title="Link to this definition"></a></dt>
+<dd><p>Validate a CSRF token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token to validate.
+session_id: The session ID to validate against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the token is valid, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> (<em>str</em>)</p></li>
+<li><p><strong>session_id</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.generate_csrf_token">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">generate_csrf_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.generate_csrf_token" title="Link to this definition"></a></dt>
+<dd><p>Generate a CSRF token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>session_id: The session ID to bind the token to.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The generated CSRF token.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session_id</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.validate_csrf_token">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">validate_csrf_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.validate_csrf_token" title="Link to this definition"></a></dt>
+<dd><p>Validate a CSRF token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token to validate.
+session_id: The session ID to validate against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the token is valid, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> (<em>str</em>)</p></li>
+<li><p><strong>session_id</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.EncryptionManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">EncryptionManager</span></span><a class="headerlink" href="#app.core.security.EncryptionManager" title="Link to this definition"></a></dt>
+<dd><p>Manager for encryption-related functionality.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.EncryptionManager._setup_encryption">
+<span class="sig-name descname"><span class="pre">_setup_encryption</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.EncryptionManager._setup_encryption" title="Link to this definition"></a></dt>
+<dd><p>Set up encryption with a derived key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.EncryptionManager.encrypt_data">
+<span class="sig-name descname"><span class="pre">encrypt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.EncryptionManager.encrypt_data" title="Link to this definition"></a></dt>
+<dd><p>Encrypt data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: The data to encrypt.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encrypted data as a base64-encoded string.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>bytes</em><em>, </em><em>dict</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.EncryptionManager.decrypt_data">
+<span class="sig-name descname"><span class="pre">decrypt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encrypted_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.EncryptionManager.decrypt_data" title="Link to this definition"></a></dt>
+<dd><p>Decrypt data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>encrypted_data: The encrypted data as a base64-encoded string.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Union[str, dict]: The decrypted data.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>encrypted_data</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Union[str, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.EncryptionManager.generate_secure_token">
+<span class="sig-name descname"><span class="pre">generate_secure_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.EncryptionManager.generate_secure_token" title="Link to this definition"></a></dt>
+<dd><p>Generate a cryptographically secure random token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>length: The length of the token in bytes.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The generated token.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.decrypt_data">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">decrypt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encrypted_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.decrypt_data" title="Link to this definition"></a></dt>
+<dd><p>Decrypt data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>encrypted_data: The encrypted data as a base64-encoded string.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Union[str, dict]: The decrypted data.</p>
+</dd>
+<dt>Raises:</dt><dd><p>SecurityException: If decryption fails.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>encrypted_data</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Union[str, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.encrypt_data">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">encrypt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.encrypt_data" title="Link to this definition"></a></dt>
+<dd><p>Encrypt data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: The data to encrypt.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encrypted data as a base64-encoded string.</p>
+</dd>
+<dt>Raises:</dt><dd><p>SecurityException: If encryption fails.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>bytes</em><em>, </em><em>dict</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.generate_secure_token">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">generate_secure_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.generate_secure_token" title="Link to this definition"></a></dt>
+<dd><p>Generate a cryptographically secure random token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>length: The length of the token in bytes.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The generated token.</p>
+</dd>
+<dt>Raises:</dt><dd><p>SecurityException: If token generation fails.
+ValueError: If the token length is too short.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">ApiKeyData</span></span><a class="headerlink" href="#app.core.security.ApiKeyData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Model representing API key data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.api_key">
+<span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.key_id">
+<span class="sig-name descname"><span class="pre">key_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.key_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.hashed_secret">
+<span class="sig-name descname"><span class="pre">hashed_secret</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.hashed_secret" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.token">
+<span class="sig-name descname"><span class="pre">token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.token" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ApiKeyData.permissions">
+<span class="sig-name descname"><span class="pre">permissions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#app.core.security.ApiKeyData.permissions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">PasswordPolicy</span></span><a class="headerlink" href="#app.core.security.PasswordPolicy" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Model representing password policy settings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.min_length">
+<span class="sig-name descname"><span class="pre">min_length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.min_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.require_uppercase">
+<span class="sig-name descname"><span class="pre">require_uppercase</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.require_uppercase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.require_lowercase">
+<span class="sig-name descname"><span class="pre">require_lowercase</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.require_lowercase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.require_digit">
+<span class="sig-name descname"><span class="pre">require_digit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.require_digit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.require_special_char">
+<span class="sig-name descname"><span class="pre">require_special_char</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.require_special_char" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.max_length">
+<span class="sig-name descname"><span class="pre">max_length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.max_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.prevent_common_passwords">
+<span class="sig-name descname"><span class="pre">prevent_common_passwords</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.prevent_common_passwords" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.password_history_count">
+<span class="sig-name descname"><span class="pre">password_history_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.password_history_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.max_failed_attempts">
+<span class="sig-name descname"><span class="pre">max_failed_attempts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.max_failed_attempts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.lockout_duration_minutes">
+<span class="sig-name descname"><span class="pre">lockout_duration_minutes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.lockout_duration_minutes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordPolicy.password_expiry_days">
+<span class="sig-name descname"><span class="pre">password_expiry_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">90</span></em><a class="headerlink" href="#app.core.security.PasswordPolicy.password_expiry_days" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">SecurityViolation</span></span><a class="headerlink" href="#app.core.security.SecurityViolation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Types of security violations that can occur.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.INVALID_TOKEN">
+<span class="sig-name descname"><span class="pre">INVALID_TOKEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_token'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.INVALID_TOKEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.EXPIRED_TOKEN">
+<span class="sig-name descname"><span class="pre">EXPIRED_TOKEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'expired_token'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.EXPIRED_TOKEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.CSRF_VIOLATION">
+<span class="sig-name descname"><span class="pre">CSRF_VIOLATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'csrf_violation'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.CSRF_VIOLATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.RATE_LIMIT_EXCEEDED">
+<span class="sig-name descname"><span class="pre">RATE_LIMIT_EXCEEDED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rate_limit_exceeded'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.RATE_LIMIT_EXCEEDED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.BRUTE_FORCE_ATTEMPT">
+<span class="sig-name descname"><span class="pre">BRUTE_FORCE_ATTEMPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'brute_force_attempt'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.BRUTE_FORCE_ATTEMPT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.SUSPICIOUS_ACTIVITY">
+<span class="sig-name descname"><span class="pre">SUSPICIOUS_ACTIVITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'suspicious_activity'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.SUSPICIOUS_ACTIVITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.UNAUTHORIZED_ACCESS">
+<span class="sig-name descname"><span class="pre">UNAUTHORIZED_ACCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unauthorized_access'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.UNAUTHORIZED_ACCESS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.INVALID_IP">
+<span class="sig-name descname"><span class="pre">INVALID_IP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_ip'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.INVALID_IP" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.PERMISSION_VIOLATION">
+<span class="sig-name descname"><span class="pre">PERMISSION_VIOLATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'permission_violation'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.PERMISSION_VIOLATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.INJECTION_ATTEMPT">
+<span class="sig-name descname"><span class="pre">INJECTION_ATTEMPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'injection_attempt'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.INJECTION_ATTEMPT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.SecurityViolation.XSS_ATTEMPT">
+<span class="sig-name descname"><span class="pre">XSS_ATTEMPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'xss_attempt'</span></em><a class="headerlink" href="#app.core.security.SecurityViolation.XSS_ATTEMPT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">TokenClaimsModel</span></span><a class="headerlink" href="#app.core.security.TokenClaimsModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Model representing the claims in a JWT token.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.sub">
+<span class="sig-name descname"><span class="pre">sub</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.sub" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.exp">
+<span class="sig-name descname"><span class="pre">exp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.exp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.iat">
+<span class="sig-name descname"><span class="pre">iat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.iat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.jti">
+<span class="sig-name descname"><span class="pre">jti</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.jti" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.role" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.permissions">
+<span class="sig-name descname"><span class="pre">permissions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.permissions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenClaimsModel.user_data">
+<span class="sig-name descname"><span class="pre">user_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.security.TokenClaimsModel.user_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.TokenPair">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">TokenPair</span></span><a class="headerlink" href="#app.core.security.TokenPair" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Model representing an access and refresh token pair.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenPair.access_token">
+<span class="sig-name descname"><span class="pre">access_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.TokenPair.access_token" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenPair.refresh_token">
+<span class="sig-name descname"><span class="pre">refresh_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.TokenPair.refresh_token" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenPair.token_type">
+<span class="sig-name descname"><span class="pre">token_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.security.TokenPair.token_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenPair.expires_in">
+<span class="sig-name descname"><span class="pre">expires_in</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#app.core.security.TokenPair.expires_in" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.TokenType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">TokenType</span></span><a class="headerlink" href="#app.core.security.TokenType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Types of tokens used in the system.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.ACCESS">
+<span class="sig-name descname"><span class="pre">ACCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'access'</span></em><a class="headerlink" href="#app.core.security.TokenType.ACCESS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.REFRESH">
+<span class="sig-name descname"><span class="pre">REFRESH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'refresh'</span></em><a class="headerlink" href="#app.core.security.TokenType.REFRESH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.RESET_PASSWORD">
+<span class="sig-name descname"><span class="pre">RESET_PASSWORD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'reset_password'</span></em><a class="headerlink" href="#app.core.security.TokenType.RESET_PASSWORD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.EMAIL_VERIFICATION">
+<span class="sig-name descname"><span class="pre">EMAIL_VERIFICATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'email_verification'</span></em><a class="headerlink" href="#app.core.security.TokenType.EMAIL_VERIFICATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.INVITATION">
+<span class="sig-name descname"><span class="pre">INVITATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invitation'</span></em><a class="headerlink" href="#app.core.security.TokenType.INVITATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.API_KEY">
+<span class="sig-name descname"><span class="pre">API_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'api_key'</span></em><a class="headerlink" href="#app.core.security.TokenType.API_KEY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.CSRF">
+<span class="sig-name descname"><span class="pre">CSRF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'csrf'</span></em><a class="headerlink" href="#app.core.security.TokenType.CSRF" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenType.SESSION">
+<span class="sig-name descname"><span class="pre">SESSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'session'</span></em><a class="headerlink" href="#app.core.security.TokenType.SESSION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">PasswordManager</span></span><a class="headerlink" href="#app.core.security.PasswordManager" title="Link to this definition"></a></dt>
+<dd><p>Manager for password-related functionality.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager.policy">
+<span class="sig-name descname"><span class="pre">policy</span></span><a class="headerlink" href="#app.core.security.PasswordManager.policy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager.common_passwords">
+<span class="sig-name descname"><span class="pre">common_passwords</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.security.PasswordManager.common_passwords" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager.password_regex">
+<span class="sig-name descname"><span class="pre">password_regex</span></span><a class="headerlink" href="#app.core.security.PasswordManager.password_regex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager._load_common_passwords_sync">
+<span class="sig-name descname"><span class="pre">_load_common_passwords_sync</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.PasswordManager._load_common_passwords_sync" title="Link to this definition"></a></dt>
+<dd><p>Load common passwords from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager.validate_password_policy">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_password_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.PasswordManager.validate_password_policy" title="Link to this definition"></a></dt>
+<dd><p>Validate a password against the password policy.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password: The password to validate.
+user_id: Optional user ID for password history checks.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the password</dt><dd><p>is valid and an optional error message if it’s not.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>password</strong> (<em>str</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, Optional[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager.hash_password">
+<span class="sig-name descname"><span class="pre">hash_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.PasswordManager.hash_password" title="Link to this definition"></a></dt>
+<dd><p>Hash a password using bcrypt.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password: The password to hash.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The hashed password.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.PasswordManager.verify_password">
+<span class="sig-name descname"><span class="pre">verify_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plain_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.PasswordManager.verify_password" title="Link to this definition"></a></dt>
+<dd><p>Verify a password against its hash.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>plain_password: The plain text password.
+hashed_password: The hashed password to verify against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the password matches the hash, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plain_password</strong> (<em>str</em>)</p></li>
+<li><p><strong>hashed_password</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.get_password_hash">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">get_password_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.get_password_hash" title="Link to this definition"></a></dt>
+<dd><p>Hash a password using bcrypt.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password: The password to hash.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The hashed password.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.validate_password_policy">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">validate_password_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.validate_password_policy" title="Link to this definition"></a></dt>
+<dd><p>Validate a password against the password policy.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>password: The password to validate.
+user_id: Optional user ID for password history checks.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the password</dt><dd><p>is valid and an optional error message if it’s not.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>password</strong> (<em>str</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, Optional[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.verify_password">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">verify_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plain_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.verify_password" title="Link to this definition"></a></dt>
+<dd><p>Verify a password against its hash.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>plain_password: The plain text password.
+hashed_password: The hashed password to verify against.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the password matches the hash, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plain_password</strong> (<em>str</em>)</p></li>
+<li><p><strong>hashed_password</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.TokenManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">TokenManager</span></span><a class="headerlink" href="#app.core.security.TokenManager" title="Link to this definition"></a></dt>
+<dd><p>Manager for token-related functionality.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.TokenManager.token_blacklist_prefix">
+<span class="sig-name descname"><span class="pre">token_blacklist_prefix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'token:blacklist:'</span></em><a class="headerlink" href="#app.core.security.TokenManager.token_blacklist_prefix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.add_token_to_blacklist">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">add_token_to_blacklist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token_jti</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_at</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.add_token_to_blacklist" title="Link to this definition"></a></dt>
+<dd><p>Add a token to the blacklist.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token_jti: The JWT ID of the token.
+expires_at: The expiration time of the token.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token_jti</strong> (<em>str</em>)</p></li>
+<li><p><strong>expires_at</strong> (<em>datetime.datetime</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.create_token">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">create_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permissions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.create_token" title="Link to this definition"></a></dt>
+<dd><p>Create a JWT token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>subject: The subject of the token (usually the user ID).
+token_type: The type of token to create.
+expires_delta: Optional expiration time delta.
+role: Optional user role.
+permissions: Optional list of permissions.
+user_data: Optional additional user data.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The encoded JWT token.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>token_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>expires_delta</strong> (<em>Optional</em><em>[</em><em>datetime.timedelta</em><em>]</em>)</p></li>
+<li><p><strong>role</strong> (<em>str</em>)</p></li>
+<li><p><strong>permissions</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>user_data</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.create_token_pair">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">create_token_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permissions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.create_token_pair" title="Link to this definition"></a></dt>
+<dd><p>Create an access and refresh token pair.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID.
+role: The user role.
+permissions: Optional list of permissions.
+user_data: Optional additional user data.</p>
+</dd>
+<dt>Returns:</dt><dd><p>TokenPair: A model containing the access and refresh tokens.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>role</strong> (<em>str</em>)</p></li>
+<li><p><strong>permissions</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>user_data</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="models/index.html#app.core.security.models.TokenPair" title="app.core.security.models.TokenPair">app.core.security.models.TokenPair</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.decode_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">decode_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.decode_token" title="Link to this definition"></a></dt>
+<dd><p>Decode and validate a JWT token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token to decode.</p>
+</dd>
+<dt>Returns:</dt><dd><p>TokenClaimsModel: The decoded token claims.</p>
+</dd>
+<dt>Raises:</dt><dd><p>AuthenticationException: If the token is invalid.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="models/index.html#app.core.security.models.TokenClaimsModel" title="app.core.security.models.TokenClaimsModel">app.core.security.models.TokenClaimsModel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.is_token_blacklisted">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">is_token_blacklisted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token_jti</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.is_token_blacklisted" title="Link to this definition"></a></dt>
+<dd><p>Check if a token is blacklisted.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token_jti: The JWT ID of the token.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the token is blacklisted, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token_jti</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.refresh_tokens">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">refresh_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.refresh_tokens" title="Link to this definition"></a></dt>
+<dd><p>Refresh an access token using a refresh token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>refresh_token: The refresh token.</p>
+</dd>
+<dt>Returns:</dt><dd><p>TokenPair: A new token pair.</p>
+</dd>
+<dt>Raises:</dt><dd><p>AuthenticationException: If the token is invalid.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>refresh_token</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="models/index.html#app.core.security.models.TokenPair" title="app.core.security.models.TokenPair">app.core.security.models.TokenPair</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.revoke_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">revoke_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.revoke_token" title="Link to this definition"></a></dt>
+<dd><p>Revoke a token by adding it to the blacklist.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token to revoke.</p>
+</dd>
+<dt>Raises:</dt><dd><p>AuthenticationException: If the token is invalid.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">ValidationManager</span></span><a class="headerlink" href="#app.core.security.ValidationManager" title="Link to this definition"></a></dt>
+<dd><p>Manager for input validation and sanitization.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.allowed_hosts">
+<span class="sig-name descname"><span class="pre">allowed_hosts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.security.ValidationManager.allowed_hosts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.trusted_proxies">
+<span class="sig-name descname"><span class="pre">trusted_proxies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.security.ValidationManager.trusted_proxies" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.patterns">
+<span class="sig-name descname"><span class="pre">patterns</span></span><a class="headerlink" href="#app.core.security.ValidationManager.patterns" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.suspicious_patterns">
+<span class="sig-name descname"><span class="pre">suspicious_patterns</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['&lt;script.*?&gt;',</span> <span class="pre">'javascript:',</span> <span class="pre">'eval\\(',</span> <span class="pre">'document\\.cookie',</span> <span class="pre">'localStorage',</span> <span class="pre">'sessionStorage',...</span></em><a class="headerlink" href="#app.core.security.ValidationManager.suspicious_patterns" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.suspicious_regex">
+<span class="sig-name descname"><span class="pre">suspicious_regex</span></span><a class="headerlink" href="#app.core.security.ValidationManager.suspicious_regex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.is_valid_hostname">
+<span class="sig-name descname"><span class="pre">is_valid_hostname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.is_valid_hostname" title="Link to this definition"></a></dt>
+<dd><p>Validate a hostname.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>hostname: The hostname to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the hostname is valid, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hostname</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.is_trusted_ip">
+<span class="sig-name descname"><span class="pre">is_trusted_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip_address</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.is_trusted_ip" title="Link to this definition"></a></dt>
+<dd><p>Check if an IP address is in the trusted proxies list.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ip_address: The IP address to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the IP address is trusted, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ip_address</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.is_valid_enum_value">
+<span class="sig-name descname"><span class="pre">is_valid_enum_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enum_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.is_valid_enum_value" title="Link to this definition"></a></dt>
+<dd><p>Check if a value is a valid member of an Enum class.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>enum_class: The Enum class to check against.
+value: The value to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the value is a valid enum member, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>enum_class</strong> (<em>Type</em><em>[</em><em>enum.Enum</em><em>]</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.sanitize_input">
+<span class="sig-name descname"><span class="pre">sanitize_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.sanitize_input" title="Link to this definition"></a></dt>
+<dd><p>Sanitize user input by escaping HTML characters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>input_str: The input string to sanitize.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The sanitized string.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_str</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.detect_suspicious_content">
+<span class="sig-name descname"><span class="pre">detect_suspicious_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.detect_suspicious_content" title="Link to this definition"></a></dt>
+<dd><p>Detect potentially malicious content.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>content: The content to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if suspicious content is detected, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>content</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.validate_json_input">
+<span class="sig-name descname"><span class="pre">validate_json_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.validate_json_input" title="Link to this definition"></a></dt>
+<dd><p>Validate JSON input for suspicious content.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>json_data: The JSON data to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the JSON is valid and safe, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_data</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.moderate_content">
+<span class="sig-name descname"><span class="pre">moderate_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'text'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.moderate_content" title="Link to this definition"></a></dt>
+<dd><p>Moderate content for inappropriate or harmful material.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>content: The content to moderate.
+content_type: The type of content (text, image, etc.)</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the content</dt><dd><p>is acceptable and an optional reason if it’s not.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content</strong> (<em>str</em>)</p></li>
+<li><p><strong>content_type</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, Optional[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.security.ValidationManager.get_security_headers">
+<span class="sig-name descname"><span class="pre">get_security_headers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.ValidationManager.get_security_headers" title="Link to this definition"></a></dt>
+<dd><p>Get security headers for HTTP responses.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dict[str, str]: A dictionary of security headers.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.detect_suspicious_content">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">detect_suspicious_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.detect_suspicious_content" title="Link to this definition"></a></dt>
+<dd><p>Detect potentially malicious content.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>content: The content to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if suspicious content is detected, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>content</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.get_security_headers">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">get_security_headers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.get_security_headers" title="Link to this definition"></a></dt>
+<dd><p>Get security headers for HTTP responses.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dict[str, str]: A dictionary of security headers.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.is_trusted_ip">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">is_trusted_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip_address</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.is_trusted_ip" title="Link to this definition"></a></dt>
+<dd><p>Check if an IP address is in the trusted proxies list.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ip_address: The IP address to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the IP address is trusted, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ip_address</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.is_valid_enum_value">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">is_valid_enum_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enum_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.is_valid_enum_value" title="Link to this definition"></a></dt>
+<dd><p>Check if a value is a valid member of an Enum class.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>enum_class: The Enum class to check against.
+value: The value to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the value is a valid enum member, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>enum_class</strong> (<em>Type</em><em>[</em><em>enum.Enum</em><em>]</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.is_valid_hostname">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">is_valid_hostname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.is_valid_hostname" title="Link to this definition"></a></dt>
+<dd><p>Validate a hostname.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>hostname: The hostname to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the hostname is valid, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hostname</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.moderate_content">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">moderate_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'text'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.moderate_content" title="Link to this definition"></a></dt>
+<dd><p>Moderate content for inappropriate or harmful material.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>content: The content to moderate.
+content_type: The type of content (text, image, etc.)</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the content</dt><dd><p>is acceptable and an optional reason if it’s not.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content</strong> (<em>str</em>)</p></li>
+<li><p><strong>content_type</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, Optional[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.sanitize_input">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">sanitize_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.sanitize_input" title="Link to this definition"></a></dt>
+<dd><p>Sanitize user input by escaping HTML characters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>input_str: The input string to sanitize.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The sanitized string.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_str</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.validate_json_input">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">validate_json_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.validate_json_input" title="Link to this definition"></a></dt>
+<dd><p>Validate JSON input for suspicious content and structure.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>json_data: The JSON data to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the JSON is valid and safe, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_data</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.get_current_user_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">get_current_user_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_token_from_header)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.get_current_user_id" title="Link to this definition"></a></dt>
+<dd><p>Get the current user ID from a token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token to decode.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The user ID.</p>
+</dd>
+<dt>Raises:</dt><dd><p>AuthenticationException: If the token is invalid.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.security.get_token_from_header">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">get_token_from_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(oauth2_scheme)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.security.get_token_from_header" title="Link to this definition"></a></dt>
+<dd><p>Get a token from the Authorization header.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token: The token from the OAuth2 scheme.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The token.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.security.oauth2_scheme">
+<span class="sig-prename descclassname"><span class="pre">app.core.security.</span></span><span class="sig-name descname"><span class="pre">oauth2_scheme</span></span><a class="headerlink" href="#app.core.security.oauth2_scheme" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../rate_limiting/utils/index.html" class="btn btn-neutral float-left" title="app.core.rate_limiting.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_keys/index.html" class="btn btn-neutral float-right" title="app.core.security.api_keys" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

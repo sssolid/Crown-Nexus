@@ -1,0 +1,6 @@
+app.domains.inventory.service
+=============================
+
+.. py:module:: app.domains.inventory.service
+
+

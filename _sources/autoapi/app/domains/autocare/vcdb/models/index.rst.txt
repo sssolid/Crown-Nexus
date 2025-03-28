@@ -1,0 +1,2954 @@
+app.domains.autocare.vcdb.models
+================================
+
+.. py:module:: app.domains.autocare.vcdb.models
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.vcdb.models.vehicle_to_drive_type
+   app.domains.autocare.vcdb.models.vehicle_to_brake_config
+   app.domains.autocare.vcdb.models.vehicle_to_bed_config
+   app.domains.autocare.vcdb.models.vehicle_to_body_style_config
+   app.domains.autocare.vcdb.models.vehicle_to_mfr_body_code
+   app.domains.autocare.vcdb.models.vehicle_to_engine_config
+   app.domains.autocare.vcdb.models.vehicle_to_spring_type_config
+   app.domains.autocare.vcdb.models.vehicle_to_steering_config
+   app.domains.autocare.vcdb.models.vehicle_to_transmission
+   app.domains.autocare.vcdb.models.vehicle_to_wheel_base
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.vcdb.models.Make
+   app.domains.autocare.vcdb.models.Year
+   app.domains.autocare.vcdb.models.Model
+   app.domains.autocare.vcdb.models.VehicleType
+   app.domains.autocare.vcdb.models.VehicleTypeGroup
+   app.domains.autocare.vcdb.models.SubModel
+   app.domains.autocare.vcdb.models.Region
+   app.domains.autocare.vcdb.models.PublicationStage
+   app.domains.autocare.vcdb.models.BaseVehicle
+   app.domains.autocare.vcdb.models.Vehicle
+   app.domains.autocare.vcdb.models.DriveType
+   app.domains.autocare.vcdb.models.BrakeType
+   app.domains.autocare.vcdb.models.BrakeSystem
+   app.domains.autocare.vcdb.models.BrakeABS
+   app.domains.autocare.vcdb.models.BrakeConfig
+   app.domains.autocare.vcdb.models.BedType
+   app.domains.autocare.vcdb.models.BedLength
+   app.domains.autocare.vcdb.models.BedConfig
+   app.domains.autocare.vcdb.models.BodyType
+   app.domains.autocare.vcdb.models.BodyNumDoors
+   app.domains.autocare.vcdb.models.BodyStyleConfig
+   app.domains.autocare.vcdb.models.MfrBodyCode
+   app.domains.autocare.vcdb.models.EngineBlock
+   app.domains.autocare.vcdb.models.EngineBoreStroke
+   app.domains.autocare.vcdb.models.EngineBase
+   app.domains.autocare.vcdb.models.Aspiration
+   app.domains.autocare.vcdb.models.FuelType
+   app.domains.autocare.vcdb.models.CylinderHeadType
+   app.domains.autocare.vcdb.models.EngineDesignation
+   app.domains.autocare.vcdb.models.EngineVIN
+   app.domains.autocare.vcdb.models.EngineVersion
+   app.domains.autocare.vcdb.models.Mfr
+   app.domains.autocare.vcdb.models.IgnitionSystemType
+   app.domains.autocare.vcdb.models.Valves
+   app.domains.autocare.vcdb.models.FuelDeliveryType
+   app.domains.autocare.vcdb.models.FuelDeliverySubType
+   app.domains.autocare.vcdb.models.FuelSystemControlType
+   app.domains.autocare.vcdb.models.FuelSystemDesign
+   app.domains.autocare.vcdb.models.FuelDeliveryConfig
+   app.domains.autocare.vcdb.models.PowerOutput
+   app.domains.autocare.vcdb.models.EngineConfig
+   app.domains.autocare.vcdb.models.SpringType
+   app.domains.autocare.vcdb.models.SpringTypeConfig
+   app.domains.autocare.vcdb.models.SteeringType
+   app.domains.autocare.vcdb.models.SteeringSystem
+   app.domains.autocare.vcdb.models.SteeringConfig
+   app.domains.autocare.vcdb.models.TransmissionType
+   app.domains.autocare.vcdb.models.TransmissionNumSpeeds
+   app.domains.autocare.vcdb.models.TransmissionControlType
+   app.domains.autocare.vcdb.models.TransmissionBase
+   app.domains.autocare.vcdb.models.TransmissionMfrCode
+   app.domains.autocare.vcdb.models.ElecControlled
+   app.domains.autocare.vcdb.models.Transmission
+   app.domains.autocare.vcdb.models.WheelBase
+   app.domains.autocare.vcdb.models.VCdbVersion
+
+
+Module Contents
+---------------
+
+.. py:class:: Make
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Make entity representing vehicle manufacturers.
+
+   Attributes:
+       id: Primary key.
+       make_id: VCdb specific ID.
+       name: Make name.
+       vehicles: Relationship to vehicles.
+       base_vehicles: Relationship to base vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_make'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: make_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: vehicles
+
+
+   .. py:attribute:: base_vehicles
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Make instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Year
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Year entity representing vehicle model years.
+
+   Attributes:
+       id: Primary key.
+       year_id: VCdb specific ID.
+       year: The actual year value.
+       base_vehicles: Relationship to base vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_year'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: year_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: year
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: base_vehicles
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Year instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Model
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model entity representing vehicle models.
+
+   Attributes:
+       id: Primary key.
+       model_id: VCdb specific ID.
+       name: Model name.
+       vehicle_type_id: Reference to vehicle type.
+       base_vehicles: Relationship to base vehicles.
+       vehicle_type: Relationship to vehicle type.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_model'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: model_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: vehicle_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: base_vehicles
+
+
+   .. py:attribute:: vehicle_type
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Model instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: VehicleType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   VehicleType entity representing types of vehicles.
+
+   Attributes:
+       id: Primary key.
+       vehicle_type_id: VCdb specific ID.
+       name: Vehicle type name.
+       vehicle_type_group_id: Optional reference to vehicle type group.
+       models: Relationship to models.
+       vehicle_type_group: Relationship to vehicle type group.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_vehicle_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: vehicle_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: vehicle_type_group_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: models
+
+
+   .. py:attribute:: vehicle_type_group
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of VehicleType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: VehicleTypeGroup
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   VehicleTypeGroup entity representing groups of vehicle types.
+
+   Attributes:
+       id: Primary key.
+       vehicle_type_group_id: VCdb specific ID.
+       name: Vehicle type group name.
+       vehicle_types: Relationship to vehicle types.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_vehicle_type_group'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: vehicle_type_group_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: vehicle_types
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of VehicleTypeGroup instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: SubModel
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   SubModel entity representing vehicle submodels.
+
+   Attributes:
+       id: Primary key.
+       submodel_id: VCdb specific ID.
+       name: Submodel name.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_submodel'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: submodel_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: vehicles
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of SubModel instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Region
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Region entity representing geographic regions.
+
+   Attributes:
+       id: Primary key.
+       region_id: VCdb specific ID.
+       parent_id: Optional reference to parent region.
+       abbr: Region abbreviation.
+       name: Region name.
+       children: Relationship to child regions.
+       parent: Relationship to parent region.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_region'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: region_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: parent_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: abbr
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: children
+
+
+   .. py:attribute:: parent
+
+
+   .. py:attribute:: vehicles
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Region instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: PublicationStage
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   PublicationStage entity representing publication stages for vehicle data.
+
+   Attributes:
+       id: Primary key.
+       publication_stage_id: VCdb specific ID.
+       name: Publication stage name.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_publication_stage'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: publication_stage_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: vehicles
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of PublicationStage instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BaseVehicle
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BaseVehicle entity representing basic vehicle identification.
+
+   Attributes:
+       id: Primary key.
+       base_vehicle_id: VCdb specific ID.
+       year_id: Reference to year.
+       make_id: Reference to make.
+       model_id: Reference to model.
+       year: Relationship to year.
+       make: Relationship to make.
+       model: Relationship to model.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_base_vehicle'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: year_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: make_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: model_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: year
+
+
+   .. py:attribute:: make
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: vehicles
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BaseVehicle instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Vehicle
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Vehicle entity representing specific vehicle configurations.
+
+   Attributes:
+       id: Primary key.
+       vehicle_id: VCdb specific ID.
+       base_vehicle_id: Reference to base vehicle.
+       submodel_id: Reference to submodel.
+       region_id: Reference to region.
+       source: Data source information.
+       publication_stage_id: Reference to publication stage.
+       publication_stage_source: Source of publication stage.
+       publication_stage_date: Date of publication stage.
+       base_vehicle: Relationship to base vehicle.
+       submodel: Relationship to submodel.
+       region: Relationship to region.
+       publication_stage: Relationship to publication stage.
+       make: Relationship to make (through base_vehicle).
+       year: Year value (through base_vehicle.year).
+       model: Model name (through base_vehicle.model).
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_vehicle'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: vehicle_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: submodel_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: region_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: source
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: publication_stage_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: publication_stage_source
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: publication_stage_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: base_vehicle
+
+
+   .. py:attribute:: submodel
+
+
+   .. py:attribute:: region
+
+
+   .. py:attribute:: publication_stage
+
+
+   .. py:attribute:: drive_types
+
+
+   .. py:attribute:: brake_configs
+
+
+   .. py:attribute:: bed_configs
+
+
+   .. py:attribute:: body_style_configs
+
+
+   .. py:attribute:: mfr_body_codes
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:attribute:: spring_type_configs
+
+
+   .. py:attribute:: steering_configs
+
+
+   .. py:attribute:: transmissions
+
+
+   .. py:attribute:: wheel_bases
+
+
+   .. py:property:: make
+      :type: Make
+
+
+      Get the make of this vehicle.
+
+      Returns:
+          Make object.
+
+
+
+   .. py:property:: year
+      :type: int
+
+
+      Get the year of this vehicle.
+
+      Returns:
+          Year value.
+
+
+
+   .. py:property:: model
+      :type: str
+
+
+      Get the model of this vehicle.
+
+      Returns:
+          Model name.
+
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Vehicle instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: DriveType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   DriveType entity representing types of drive systems.
+
+   Attributes:
+       id: Primary key.
+       drive_type_id: VCdb specific ID.
+       name: Drive type name.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_drive_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: drive_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of DriveType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_drive_type
+
+.. py:class:: BrakeType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BrakeType entity representing types of brake systems.
+
+   Attributes:
+       id: Primary key.
+       brake_type_id: VCdb specific ID.
+       name: Brake type name.
+       front_brake_configs: Relationship to brake configs (as front).
+       rear_brake_configs: Relationship to brake configs (as rear).
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_brake_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: brake_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: front_brake_configs
+
+
+   .. py:attribute:: rear_brake_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BrakeType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BrakeSystem
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BrakeSystem entity representing brake system configurations.
+
+   Attributes:
+       id: Primary key.
+       brake_system_id: VCdb specific ID.
+       name: Brake system name.
+       brake_configs: Relationship to brake configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_brake_system'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: brake_system_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: brake_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BrakeSystem instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BrakeABS
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BrakeABS entity representing ABS configurations.
+
+   Attributes:
+       id: Primary key.
+       brake_abs_id: VCdb specific ID.
+       name: ABS configuration name.
+       brake_configs: Relationship to brake configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_brake_abs'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: brake_abs_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: brake_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BrakeABS instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BrakeConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BrakeConfig entity representing complete brake configurations.
+
+   Attributes:
+       id: Primary key.
+       brake_config_id: VCdb specific ID.
+       front_brake_type_id: Reference to front brake type.
+       rear_brake_type_id: Reference to rear brake type.
+       brake_system_id: Reference to brake system.
+       brake_abs_id: Reference to ABS configuration.
+       front_brake_type: Relationship to front brake type.
+       rear_brake_type: Relationship to rear brake type.
+       brake_system: Relationship to brake system.
+       brake_abs: Relationship to ABS configuration.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_brake_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: brake_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: front_brake_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: rear_brake_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: brake_system_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: brake_abs_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: front_brake_type
+
+
+   .. py:attribute:: rear_brake_type
+
+
+   .. py:attribute:: brake_system
+
+
+   .. py:attribute:: brake_abs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BrakeConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_brake_config
+
+.. py:class:: BedType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BedType entity representing types of vehicle beds.
+
+   Attributes:
+       id: Primary key.
+       bed_type_id: VCdb specific ID.
+       name: Bed type name.
+       bed_configs: Relationship to bed configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_bed_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: bed_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: bed_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BedType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BedLength
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BedLength entity representing bed length measurements.
+
+   Attributes:
+       id: Primary key.
+       bed_length_id: VCdb specific ID.
+       length: Bed length in imperial units.
+       length_metric: Bed length in metric units.
+       bed_configs: Relationship to bed configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_bed_length'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: bed_length_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: length
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: length_metric
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: bed_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BedLength instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BedConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BedConfig entity representing bed configurations.
+
+   Attributes:
+       id: Primary key.
+       bed_config_id: VCdb specific ID.
+       bed_length_id: Reference to bed length.
+       bed_type_id: Reference to bed type.
+       bed_length: Relationship to bed length.
+       bed_type: Relationship to bed type.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_bed_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: bed_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: bed_length_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: bed_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: bed_length
+
+
+   .. py:attribute:: bed_type
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BedConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_bed_config
+
+.. py:class:: BodyType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BodyType entity representing types of vehicle bodies.
+
+   Attributes:
+       id: Primary key.
+       body_type_id: VCdb specific ID.
+       name: Body type name.
+       body_style_configs: Relationship to body style configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_body_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: body_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: body_style_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BodyType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BodyNumDoors
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BodyNumDoors entity representing number of doors.
+
+   Attributes:
+       id: Primary key.
+       body_num_doors_id: VCdb specific ID.
+       num_doors: Number of doors string.
+       body_style_configs: Relationship to body style configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_body_num_doors'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: body_num_doors_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: num_doors
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: body_style_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BodyNumDoors instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: BodyStyleConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   BodyStyleConfig entity representing body style configurations.
+
+   Attributes:
+       id: Primary key.
+       body_style_config_id: VCdb specific ID.
+       body_num_doors_id: Reference to body number of doors.
+       body_type_id: Reference to body type.
+       body_num_doors: Relationship to body number of doors.
+       body_type: Relationship to body type.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_body_style_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: body_style_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: body_num_doors_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: body_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: body_num_doors
+
+
+   .. py:attribute:: body_type
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of BodyStyleConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_body_style_config
+
+.. py:class:: MfrBodyCode
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   MfrBodyCode entity representing manufacturer body codes.
+
+   Attributes:
+       id: Primary key.
+       mfr_body_code_id: VCdb specific ID.
+       code: Body code value.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_mfr_body_code'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: mfr_body_code_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of MfrBodyCode instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_mfr_body_code
+
+.. py:class:: EngineBlock
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineBlock entity representing engine block specifications.
+
+   Attributes:
+       id: Primary key.
+       engine_block_id: VCdb specific ID.
+       liter: Engine size in liters.
+       cc: Engine size in cubic centimeters.
+       cid: Engine size in cubic inches displacement.
+       cylinders: Number of cylinders.
+       block_type: Engine block type.
+       engine_bases: Relationship to engine bases.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_block'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_block_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: liter
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: cc
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: cid
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: cylinders
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: block_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_bases
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineBlock instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: EngineBoreStroke
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineBoreStroke entity representing engine bore and stroke measurements.
+
+   Attributes:
+       id: Primary key.
+       engine_bore_stroke_id: VCdb specific ID.
+       bore_in: Bore measurement in inches.
+       bore_metric: Bore measurement in metric.
+       stroke_in: Stroke measurement in inches.
+       stroke_metric: Stroke measurement in metric.
+       engine_bases: Relationship to engine bases.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_bore_stroke'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_bore_stroke_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: bore_in
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: bore_metric
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: stroke_in
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: stroke_metric
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_bases
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineBoreStroke instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: EngineBase
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineBase entity representing base engine specifications.
+
+   Attributes:
+       id: Primary key.
+       engine_base_id: VCdb specific ID.
+       engine_block_id: Reference to engine block.
+       engine_bore_stroke_id: Reference to engine bore stroke.
+       engine_block: Relationship to engine block.
+       engine_bore_stroke: Relationship to engine bore stroke.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_base'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_base_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_block_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_bore_stroke_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_block
+
+
+   .. py:attribute:: engine_bore_stroke
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineBase instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Aspiration
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Aspiration entity representing engine aspiration types.
+
+   Attributes:
+       id: Primary key.
+       aspiration_id: VCdb specific ID.
+       name: Aspiration type name.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_aspiration'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: aspiration_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Aspiration instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: FuelType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   FuelType entity representing fuel types.
+
+   Attributes:
+       id: Primary key.
+       fuel_type_id: VCdb specific ID.
+       name: Fuel type name.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fuel_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: fuel_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of FuelType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: CylinderHeadType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   CylinderHeadType entity representing cylinder head types.
+
+   Attributes:
+       id: Primary key.
+       cylinder_head_type_id: VCdb specific ID.
+       name: Cylinder head type name.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_cylinder_head_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: cylinder_head_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of CylinderHeadType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: EngineDesignation
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineDesignation entity representing engine designation codes.
+
+   Attributes:
+       id: Primary key.
+       engine_designation_id: VCdb specific ID.
+       name: Engine designation name.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_designation'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_designation_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineDesignation instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: EngineVIN
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineVIN entity representing engine VIN codes.
+
+   Attributes:
+       id: Primary key.
+       engine_vin_id: VCdb specific ID.
+       code: Engine VIN code.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_vin'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_vin_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineVIN instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: EngineVersion
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineVersion entity representing engine versions.
+
+   Attributes:
+       id: Primary key.
+       engine_version_id: VCdb specific ID.
+       version: Engine version value.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_version'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_version_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: version
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineVersion instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Mfr
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Mfr entity representing manufacturers.
+
+   Attributes:
+       id: Primary key.
+       mfr_id: VCdb specific ID.
+       name: Manufacturer name.
+       engine_configs: Relationship to engine configs (as engine manufacturer).
+       transmission_configs: Relationship to transmission configs (as transmission manufacturer).
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_mfr'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: mfr_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:attribute:: transmission_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Mfr instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: IgnitionSystemType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   IgnitionSystemType entity representing ignition system types.
+
+   Attributes:
+       id: Primary key.
+       ignition_system_type_id: VCdb specific ID.
+       name: Ignition system type name.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_ignition_system_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: ignition_system_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of IgnitionSystemType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Valves
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Valves entity representing number of engine valves.
+
+   Attributes:
+       id: Primary key.
+       valves_id: VCdb specific ID.
+       valves_per_engine: Number of valves per engine.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_valves'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: valves_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: valves_per_engine
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Valves instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: FuelDeliveryType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   FuelDeliveryType entity representing fuel delivery types.
+
+   Attributes:
+       id: Primary key.
+       fuel_delivery_type_id: VCdb specific ID.
+       name: Fuel delivery type name.
+       fuel_delivery_configs: Relationship to fuel delivery configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fuel_delivery_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: fuel_delivery_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: fuel_delivery_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of FuelDeliveryType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: FuelDeliverySubType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   FuelDeliverySubType entity representing fuel delivery subtypes.
+
+   Attributes:
+       id: Primary key.
+       fuel_delivery_subtype_id: VCdb specific ID.
+       name: Fuel delivery subtype name.
+       fuel_delivery_configs: Relationship to fuel delivery configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fuel_delivery_subtype'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: fuel_delivery_subtype_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: fuel_delivery_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of FuelDeliverySubType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: FuelSystemControlType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   FuelSystemControlType entity representing fuel system control types.
+
+   Attributes:
+       id: Primary key.
+       fuel_system_control_type_id: VCdb specific ID.
+       name: Fuel system control type name.
+       fuel_delivery_configs: Relationship to fuel delivery configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fuel_system_control_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: fuel_system_control_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: fuel_delivery_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of FuelSystemControlType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: FuelSystemDesign
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   FuelSystemDesign entity representing fuel system design types.
+
+   Attributes:
+       id: Primary key.
+       fuel_system_design_id: VCdb specific ID.
+       name: Fuel system design name.
+       fuel_delivery_configs: Relationship to fuel delivery configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fuel_system_design'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: fuel_system_design_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: fuel_delivery_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of FuelSystemDesign instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: FuelDeliveryConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   FuelDeliveryConfig entity representing fuel delivery configurations.
+
+   Attributes:
+       id: Primary key.
+       fuel_delivery_config_id: VCdb specific ID.
+       fuel_delivery_type_id: Reference to fuel delivery type.
+       fuel_delivery_subtype_id: Reference to fuel delivery subtype.
+       fuel_system_control_type_id: Reference to fuel system control type.
+       fuel_system_design_id: Reference to fuel system design.
+       fuel_delivery_type: Relationship to fuel delivery type.
+       fuel_delivery_subtype: Relationship to fuel delivery subtype.
+       fuel_system_control_type: Relationship to fuel system control type.
+       fuel_system_design: Relationship to fuel system design.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_fuel_delivery_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: fuel_delivery_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_delivery_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_delivery_subtype_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_system_control_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_system_design_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_delivery_type
+
+
+   .. py:attribute:: fuel_delivery_subtype
+
+
+   .. py:attribute:: fuel_system_control_type
+
+
+   .. py:attribute:: fuel_system_design
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of FuelDeliveryConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: PowerOutput
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   PowerOutput entity representing engine power output measurements.
+
+   Attributes:
+       id: Primary key.
+       power_output_id: VCdb specific ID.
+       horsepower: Horsepower value.
+       kilowatt: Kilowatt value.
+       engine_configs: Relationship to engine configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_power_output'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: power_output_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: horsepower
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: kilowatt
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of PowerOutput instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: EngineConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   EngineConfig entity representing complete engine configurations.
+
+   Attributes:
+       id: Primary key.
+       engine_config_id: VCdb specific ID.
+       engine_base_id: Reference to engine base.
+       engine_designation_id: Reference to engine designation.
+       engine_vin_id: Reference to engine VIN.
+       valves_id: Reference to valves.
+       fuel_delivery_config_id: Reference to fuel delivery config.
+       aspiration_id: Reference to aspiration.
+       cylinder_head_type_id: Reference to cylinder head type.
+       fuel_type_id: Reference to fuel type.
+       ignition_system_type_id: Reference to ignition system type.
+       engine_mfr_id: Reference to engine manufacturer.
+       engine_version_id: Reference to engine version.
+       power_output_id: Reference to power output.
+       engine_base: Relationship to engine base.
+       engine_designation: Relationship to engine designation.
+       engine_vin: Relationship to engine VIN.
+       valves: Relationship to valves.
+       fuel_delivery_config: Relationship to fuel delivery config.
+       aspiration: Relationship to aspiration.
+       cylinder_head_type: Relationship to cylinder head type.
+       fuel_type: Relationship to fuel type.
+       ignition_system_type: Relationship to ignition system type.
+       engine_mfr: Relationship to engine manufacturer.
+       engine_version: Relationship to engine version.
+       power_output: Relationship to power output.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_engine_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: engine_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_base_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_designation_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_vin_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: valves_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_delivery_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: aspiration_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: cylinder_head_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: fuel_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: ignition_system_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_mfr_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_version_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: power_output_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: engine_base
+
+
+   .. py:attribute:: engine_designation
+
+
+   .. py:attribute:: engine_vin
+
+
+   .. py:attribute:: valves
+
+
+   .. py:attribute:: fuel_delivery_config
+
+
+   .. py:attribute:: aspiration
+
+
+   .. py:attribute:: cylinder_head_type
+
+
+   .. py:attribute:: fuel_type
+
+
+   .. py:attribute:: ignition_system_type
+
+
+   .. py:attribute:: engine_mfr
+
+
+   .. py:attribute:: engine_version
+
+
+   .. py:attribute:: power_output
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of EngineConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_engine_config
+
+.. py:class:: SpringType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   SpringType entity representing spring types.
+
+   Attributes:
+       id: Primary key.
+       spring_type_id: VCdb specific ID.
+       name: Spring type name.
+       front_spring_configs: Relationship to spring configs (as front).
+       rear_spring_configs: Relationship to spring configs (as rear).
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_spring_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: spring_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: front_spring_configs
+
+
+   .. py:attribute:: rear_spring_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of SpringType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: SpringTypeConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   SpringTypeConfig entity representing spring type configurations.
+
+   Attributes:
+       id: Primary key.
+       spring_type_config_id: VCdb specific ID.
+       front_spring_type_id: Reference to front spring type.
+       rear_spring_type_id: Reference to rear spring type.
+       front_spring_type: Relationship to front spring type.
+       rear_spring_type: Relationship to rear spring type.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_spring_type_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: spring_type_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: front_spring_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: rear_spring_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: front_spring_type
+
+
+   .. py:attribute:: rear_spring_type
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of SpringTypeConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_spring_type_config
+
+.. py:class:: SteeringType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   SteeringType entity representing steering types.
+
+   Attributes:
+       id: Primary key.
+       steering_type_id: VCdb specific ID.
+       name: Steering type name.
+       steering_configs: Relationship to steering configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_steering_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: steering_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: steering_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of SteeringType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: SteeringSystem
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   SteeringSystem entity representing steering systems.
+
+   Attributes:
+       id: Primary key.
+       steering_system_id: VCdb specific ID.
+       name: Steering system name.
+       steering_configs: Relationship to steering configs.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_steering_system'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: steering_system_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: steering_configs
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of SteeringSystem instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: SteeringConfig
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   SteeringConfig entity representing steering configurations.
+
+   Attributes:
+       id: Primary key.
+       steering_config_id: VCdb specific ID.
+       steering_type_id: Reference to steering type.
+       steering_system_id: Reference to steering system.
+       steering_type: Relationship to steering type.
+       steering_system: Relationship to steering system.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_steering_config'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: steering_config_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: steering_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: steering_system_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: steering_type
+
+
+   .. py:attribute:: steering_system
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of SteeringConfig instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_steering_config
+
+.. py:class:: TransmissionType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   TransmissionType entity representing transmission types.
+
+   Attributes:
+       id: Primary key.
+       transmission_type_id: VCdb specific ID.
+       name: Transmission type name.
+       transmission_bases: Relationship to transmission bases.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_transmission_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: transmission_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: transmission_bases
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of TransmissionType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: TransmissionNumSpeeds
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   TransmissionNumSpeeds entity representing number of transmission speeds.
+
+   Attributes:
+       id: Primary key.
+       transmission_num_speeds_id: VCdb specific ID.
+       num_speeds: Number of speeds value.
+       transmission_bases: Relationship to transmission bases.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_transmission_num_speeds'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: transmission_num_speeds_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: num_speeds
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: transmission_bases
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of TransmissionNumSpeeds instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: TransmissionControlType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   TransmissionControlType entity representing transmission control types.
+
+   Attributes:
+       id: Primary key.
+       transmission_control_type_id: VCdb specific ID.
+       name: Transmission control type name.
+       transmission_bases: Relationship to transmission bases.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_transmission_control_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: transmission_control_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: transmission_bases
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of TransmissionControlType instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: TransmissionBase
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   TransmissionBase entity representing base transmission specifications.
+
+   Attributes:
+       id: Primary key.
+       transmission_base_id: VCdb specific ID.
+       transmission_type_id: Reference to transmission type.
+       transmission_num_speeds_id: Reference to transmission number of speeds.
+       transmission_control_type_id: Reference to transmission control type.
+       transmission_type: Relationship to transmission type.
+       transmission_num_speeds: Relationship to transmission number of speeds.
+       transmission_control_type: Relationship to transmission control type.
+       transmissions: Relationship to transmissions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_transmission_base'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: transmission_base_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_num_speeds_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_control_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_type
+
+
+   .. py:attribute:: transmission_num_speeds
+
+
+   .. py:attribute:: transmission_control_type
+
+
+   .. py:attribute:: transmissions
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of TransmissionBase instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: TransmissionMfrCode
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   TransmissionMfrCode entity representing transmission manufacturer codes.
+
+   Attributes:
+       id: Primary key.
+       transmission_mfr_code_id: VCdb specific ID.
+       code: Manufacturer code value.
+       transmissions: Relationship to transmissions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_transmission_mfr_code'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: transmission_mfr_code_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: transmissions
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of TransmissionMfrCode instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: ElecControlled
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   ElecControlled entity representing electronic controlled status.
+
+   Attributes:
+       id: Primary key.
+       elec_controlled_id: VCdb specific ID.
+       value: Electronic controlled value.
+       transmissions: Relationship to transmissions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_elec_controlled'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: elec_controlled_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: value
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: transmissions
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ElecControlled instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:class:: Transmission
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Transmission entity representing complete transmission configurations.
+
+   Attributes:
+       id: Primary key.
+       transmission_id: VCdb specific ID.
+       transmission_base_id: Reference to transmission base.
+       transmission_mfr_code_id: Reference to transmission manufacturer code.
+       elec_controlled_id: Reference to electronic controlled status.
+       transmission_mfr_id: Reference to transmission manufacturer.
+       transmission_base: Relationship to transmission base.
+       transmission_mfr_code: Relationship to transmission manufacturer code.
+       elec_controlled: Relationship to electronic controlled status.
+       transmission_mfr: Relationship to transmission manufacturer.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_transmission'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: transmission_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_base_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_mfr_code_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: elec_controlled_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_mfr_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: transmission_base
+
+
+   .. py:attribute:: transmission_mfr_code
+
+
+   .. py:attribute:: elec_controlled
+
+
+   .. py:attribute:: transmission_mfr
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Transmission instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_transmission
+
+.. py:class:: WheelBase
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   WheelBase entity representing wheelbase measurements.
+
+   Attributes:
+       id: Primary key.
+       wheel_base_id: VCdb specific ID.
+       wheel_base: Wheelbase measurement in imperial units.
+       wheel_base_metric: Wheelbase measurement in metric units.
+       vehicles: Relationship to vehicles.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_wheel_base'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: wheel_base_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: wheel_base
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: wheel_base_metric
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of WheelBase instance.
+
+      Returns:
+          String representation.
+
+
+
+.. py:data:: vehicle_to_wheel_base
+
+.. py:class:: VCdbVersion
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   VCdbVersion entity representing VCdb version information.
+
+   Attributes:
+       id: Primary key.
+       version_date: Date of the version.
+       is_current: Whether this is the current version.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_vcdb_version'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: version_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: is_current
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of VCdbVersion instance.
+
+      Returns:
+          String representation.
+
+
+

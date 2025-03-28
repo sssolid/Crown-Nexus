@@ -1,0 +1,274 @@
+app.domains.currency.schemas
+============================
+
+.. py:module:: app.domains.currency.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.currency.schemas.CurrencyBase
+   app.domains.currency.schemas.CurrencyCreate
+   app.domains.currency.schemas.CurrencyUpdate
+   app.domains.currency.schemas.CurrencyRead
+   app.domains.currency.schemas.ExchangeRateBase
+   app.domains.currency.schemas.ExchangeRateCreate
+   app.domains.currency.schemas.ExchangeRateRead
+   app.domains.currency.schemas.ConversionRequest
+   app.domains.currency.schemas.ConversionResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: CurrencyBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for currency data.
+
+   Attributes:
+       code: ISO 4217 currency code.
+       name: Currency name.
+       symbol: Currency symbol.
+       is_active: Whether the currency is active.
+       is_base: Whether this is the base currency.
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: symbol
+      :type:  Optional[str]
+
+
+   .. py:attribute:: is_active
+      :type:  bool
+
+
+   .. py:attribute:: is_base
+      :type:  bool
+
+
+.. py:class:: CurrencyCreate
+
+   Bases: :py:obj:`CurrencyBase`
+
+
+   Schema for creating a new currency.
+
+
+.. py:class:: CurrencyUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing currency.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: symbol
+      :type:  Optional[str]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: is_base
+      :type:  Optional[bool]
+
+
+.. py:class:: CurrencyRead
+
+   Bases: :py:obj:`CurrencyBase`
+
+
+   Schema for currency data in API responses.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ExchangeRateBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for exchange rate data.
+
+   Attributes:
+       source_currency_id: ID of the source currency.
+       target_currency_id: ID of the target currency.
+       rate: Exchange rate value.
+       effective_date: When the rate became effective.
+       data_source: API or source that provided the rate.
+
+
+   .. py:attribute:: source_currency_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: target_currency_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: rate
+      :type:  float
+
+
+   .. py:attribute:: effective_date
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: data_source
+      :type:  Optional[str]
+
+
+.. py:class:: ExchangeRateCreate
+
+   Bases: :py:obj:`ExchangeRateBase`
+
+
+   Schema for creating a new exchange rate.
+
+
+.. py:class:: ExchangeRateRead
+
+   Bases: :py:obj:`ExchangeRateBase`
+
+
+   Schema for exchange rate data in API responses.
+
+   Includes database-specific fields and related currencies.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fetched_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: source_currency
+      :type:  CurrencyRead
+
+
+   .. py:attribute:: target_currency
+      :type:  CurrencyRead
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ConversionRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for currency conversion request.
+
+   Attributes:
+       source_currency: Source currency code.
+       target_currency: Target currency code.
+       amount: Amount to convert.
+
+
+   .. py:attribute:: source_currency
+      :type:  str
+
+
+   .. py:attribute:: target_currency
+      :type:  str
+
+
+   .. py:attribute:: amount
+      :type:  float
+
+
+   .. py:method:: validate_currency_code(v)
+      :classmethod:
+
+
+      Validate and normalize currency codes.
+
+      Args:
+          v: The currency code to validate.
+
+      Returns:
+          Uppercase version of the currency code.
+
+
+
+.. py:class:: ConversionResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for currency conversion response.
+
+   Attributes:
+       source_currency: Source currency code.
+       target_currency: Target currency code.
+       source_amount: Original amount.
+       converted_amount: Converted amount.
+       exchange_rate: Exchange rate used.
+       timestamp: Conversion timestamp.
+
+
+   .. py:attribute:: source_currency
+      :type:  str
+
+
+   .. py:attribute:: target_currency
+      :type:  str
+
+
+   .. py:attribute:: source_amount
+      :type:  float
+
+
+   .. py:attribute:: converted_amount
+      :type:  float
+
+
+   .. py:attribute:: exchange_rate
+      :type:  float
+
+
+   .. py:attribute:: timestamp
+      :type:  datetime.datetime
+
+

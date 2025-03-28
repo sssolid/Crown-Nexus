@@ -1,0 +1,305 @@
+app.core.exceptions.base
+========================
+
+.. py:module:: app.core.exceptions.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.exceptions.base.logger
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.core.exceptions.base.AppException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.exceptions.base.ErrorCategory
+   app.core.exceptions.base.ErrorCode
+   app.core.exceptions.base.ErrorSeverity
+   app.core.exceptions.base.ErrorDetail
+   app.core.exceptions.base.ErrorResponse
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ErrorCategory
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Categories of errors in the application.
+
+
+   .. py:attribute:: VALIDATION
+      :value: 'validation'
+
+
+
+   .. py:attribute:: AUTH
+      :value: 'auth'
+
+
+
+   .. py:attribute:: RESOURCE
+      :value: 'resource'
+
+
+
+   .. py:attribute:: SYSTEM
+      :value: 'system'
+
+
+
+   .. py:attribute:: BUSINESS
+      :value: 'business'
+
+
+
+.. py:class:: ErrorCode
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Specific error codes for different error scenarios.
+
+
+   .. py:attribute:: RESOURCE_NOT_FOUND
+      :value: 'RESOURCE_NOT_FOUND'
+
+
+
+   .. py:attribute:: RESOURCE_ALREADY_EXISTS
+      :value: 'RESOURCE_ALREADY_EXISTS'
+
+
+
+   .. py:attribute:: AUTHENTICATION_FAILED
+      :value: 'AUTHENTICATION_FAILED'
+
+
+
+   .. py:attribute:: PERMISSION_DENIED
+      :value: 'PERMISSION_DENIED'
+
+
+
+   .. py:attribute:: VALIDATION_ERROR
+      :value: 'VALIDATION_ERROR'
+
+
+
+   .. py:attribute:: BAD_REQUEST
+      :value: 'BAD_REQUEST'
+
+
+
+   .. py:attribute:: BUSINESS_LOGIC_ERROR
+      :value: 'BUSINESS_LOGIC_ERROR'
+
+
+
+   .. py:attribute:: INVALID_STATE
+      :value: 'INVALID_STATE'
+
+
+
+   .. py:attribute:: OPERATION_NOT_ALLOWED
+      :value: 'OPERATION_NOT_ALLOWED'
+
+
+
+   .. py:attribute:: DATABASE_ERROR
+      :value: 'DATABASE_ERROR'
+
+
+
+   .. py:attribute:: NETWORK_ERROR
+      :value: 'NETWORK_ERROR'
+
+
+
+   .. py:attribute:: SERVICE_ERROR
+      :value: 'SERVICE_ERROR'
+
+
+
+   .. py:attribute:: CONFIGURATION_ERROR
+      :value: 'CONFIGURATION_ERROR'
+
+
+
+   .. py:attribute:: SECURITY_ERROR
+      :value: 'SECURITY_ERROR'
+
+
+
+   .. py:attribute:: UNKNOWN_ERROR
+      :value: 'UNKNOWN_ERROR'
+
+
+
+.. py:class:: ErrorSeverity
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Severity levels for errors.
+
+
+   .. py:attribute:: WARNING
+      :value: 'warning'
+
+
+
+   .. py:attribute:: ERROR
+      :value: 'error'
+
+
+
+   .. py:attribute:: CRITICAL
+      :value: 'critical'
+
+
+
+.. py:class:: ErrorDetail
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Detailed information about a specific error.
+
+
+   .. py:attribute:: loc
+      :type:  List[str]
+
+
+   .. py:attribute:: msg
+      :type:  str
+
+
+   .. py:attribute:: type
+      :type:  str
+
+
+.. py:class:: ErrorResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Standardized error response model.
+
+
+   .. py:attribute:: success
+      :type:  bool
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: data
+      :type:  Optional[Any]
+
+
+   .. py:attribute:: details
+      :type:  List[ErrorDetail]
+
+
+   .. py:attribute:: meta
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: timestamp
+      :type:  Optional[str]
+
+
+   .. py:method:: validate_details(v)
+      :classmethod:
+
+
+      Validate and transform error details.
+
+      Args:
+          v: The input value to validate
+
+      Returns:
+          Processed list of error details
+
+
+
+.. py:exception:: AppException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, severity = ErrorSeverity.ERROR, category = ErrorCategory.SYSTEM, original_exception = None)
+
+   Bases: :py:obj:`Exception`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+   .. py:attribute:: message
+
+
+   .. py:attribute:: code
+
+
+   .. py:attribute:: details
+
+
+   .. py:attribute:: status_code
+      :value: 500
+
+
+
+   .. py:attribute:: severity
+
+
+   .. py:attribute:: category
+
+
+   .. py:attribute:: original_exception
+      :value: None
+
+
+
+   .. py:method:: to_response(request_id = None)
+
+      Convert the exception to a standardized error response.
+
+      Args:
+          request_id: Optional request ID to include in the response
+
+      Returns:
+          Formatted error response object
+
+
+
+   .. py:method:: log(request_id = None)
+
+      Log the exception with appropriate severity and context.
+
+      Args:
+          request_id: Optional request ID for correlation
+
+
+

@@ -1,0 +1,409 @@
+app.services.as400_sync_service
+===============================
+
+.. py:module:: app.services.as400_sync_service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.as400_sync_service.logger
+   app.services.as400_sync_service.as400_sync_service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.as400_sync_service.SyncEntityType
+   app.services.as400_sync_service.SyncStatus
+   app.services.as400_sync_service.SyncLog
+   app.services.as400_sync_service.AS400SyncService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: SyncEntityType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of entities that can be synchronized from AS400.
+
+
+   .. py:attribute:: PRODUCT
+      :value: 'product'
+
+
+
+   .. py:attribute:: MEASUREMENT
+      :value: 'measurement'
+
+
+
+   .. py:attribute:: STOCK
+      :value: 'stock'
+
+
+
+   .. py:attribute:: PRICING
+      :value: 'pricing'
+
+
+
+   .. py:attribute:: MANUFACTURER
+      :value: 'manufacturer'
+
+
+
+   .. py:attribute:: CUSTOMER
+      :value: 'customer'
+
+
+
+   .. py:attribute:: ORDER
+      :value: 'order'
+
+
+
+.. py:class:: SyncStatus
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Status of synchronization operations.
+
+
+   .. py:attribute:: PENDING
+      :value: 'pending'
+
+
+
+   .. py:attribute:: RUNNING
+      :value: 'running'
+
+
+
+   .. py:attribute:: COMPLETED
+      :value: 'completed'
+
+
+
+   .. py:attribute:: FAILED
+      :value: 'failed'
+
+
+
+   .. py:attribute:: CANCELLED
+      :value: 'cancelled'
+
+
+
+.. py:class:: SyncLog(entity_type, status = SyncStatus.PENDING, records_processed = 0, records_created = 0, records_updated = 0, records_failed = 0, started_at = None, completed_at = None, error_message = None)
+
+   Log entry for a synchronization operation.
+
+
+   .. py:attribute:: entity_type
+
+
+   .. py:attribute:: status
+
+
+   .. py:attribute:: records_processed
+      :value: 0
+
+
+
+   .. py:attribute:: records_created
+      :value: 0
+
+
+
+   .. py:attribute:: records_updated
+      :value: 0
+
+
+
+   .. py:attribute:: records_failed
+      :value: 0
+
+
+
+   .. py:attribute:: started_at
+
+
+   .. py:attribute:: completed_at
+      :value: None
+
+
+
+   .. py:attribute:: error_message
+      :value: None
+
+
+
+   .. py:method:: complete(status, records_processed, records_created, records_updated, records_failed, error_message = None)
+
+      Mark the sync as complete.
+
+      Args:
+          status: Final status
+          records_processed: Number of records processed
+          records_created: Number of records created
+          records_updated: Number of records updated
+          records_failed: Number of records that failed
+          error_message: Error message if any
+
+
+
+.. py:class:: AS400SyncService
+
+   Service for managing AS400 data synchronization.
+
+   This service orchestrates the synchronization of data from AS400 to the
+   application database, handling scheduling, execution, and monitoring.
+
+
+   .. py:attribute:: _instance
+      :type:  Optional[AS400SyncService]
+      :value: None
+
+
+
+   .. py:attribute:: _lock
+
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:attribute:: _sync_history
+      :type:  List[SyncLog]
+      :value: []
+
+
+
+   .. py:attribute:: _active_syncs
+      :type:  Set[SyncEntityType]
+
+
+   .. py:attribute:: _last_sync_times
+      :type:  Dict[SyncEntityType, datetime.datetime]
+
+
+   .. py:attribute:: _scheduled_tasks
+      :type:  Dict[SyncEntityType, asyncio.Task]
+
+
+   .. py:method:: get_instance()
+      :classmethod:
+
+
+      Get the singleton instance of AS400SyncService.
+
+      Returns:
+          The singleton instance
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the sync service.
+
+      This method should be called during application startup.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the sync service.
+
+      This method should be called during application shutdown.
+
+
+
+   .. py:method:: schedule_sync(entity_type, delay_seconds = None)
+      :async:
+
+
+      Schedule a sync for a specific entity type.
+
+      Args:
+          entity_type: Type of entity to sync
+          delay_seconds: Delay before executing sync
+
+
+
+   .. py:method:: run_sync(entity_type, force = False)
+      :async:
+
+
+      Run a synchronization operation.
+
+      Args:
+          entity_type: Type of entity to sync
+          force: Whether to force sync regardless of schedule
+
+      Returns:
+          Dictionary with sync results
+
+
+
+   .. py:method:: get_sync_status(entity_type = None)
+      :async:
+
+
+      Get the status of all or a specific sync operation.
+
+      Args:
+          entity_type: Optional entity type to get status for
+
+      Returns:
+          Dictionary with sync status
+
+
+
+   .. py:method:: _schedule_sync_task(entity_type, delay_seconds)
+      :async:
+
+
+      Background task for scheduling sync operations.
+
+      Args:
+          entity_type: Type of entity to sync
+          delay_seconds: Delay before executing sync
+
+
+
+   .. py:method:: _run_entity_sync(entity_type, db)
+      :async:
+
+
+      Run sync for a specific entity type.
+
+      Args:
+          entity_type: Type of entity to sync
+          db: Database session
+
+      Returns:
+          Dictionary with sync results
+
+
+
+   .. py:method:: _sync_products(connector, db)
+      :async:
+
+
+      Synchronize product data from AS400.
+
+      Args:
+          connector: AS400 connector
+          db: Database session
+
+      Returns:
+          Dictionary with sync results
+
+
+
+   .. py:method:: _sync_measurements(connector, db)
+      :async:
+
+
+      Synchronize product measurement data from AS400.
+
+      Args:
+          connector: AS400 connector
+          db: Database session
+
+      Returns:
+          Dictionary with sync results
+
+
+
+   .. py:method:: _sync_inventory(connector, db)
+      :async:
+
+
+      Synchronize product inventory/stock data from AS400.
+
+      Args:
+          connector: AS400 connector
+          db: Database session
+
+      Returns:
+          Dictionary with sync results
+
+
+
+   .. py:method:: _sync_pricing(connector, db)
+      :async:
+
+
+      Synchronize product pricing data from AS400.
+
+      Args:
+          connector: AS400 connector
+          db: Database session
+
+      Returns:
+          Dictionary with sync results
+
+
+
+   .. py:method:: _get_product_id_map(db)
+      :async:
+
+
+      Get a mapping of product part numbers to IDs.
+
+      Args:
+          db: Database session
+
+      Returns:
+          Dictionary mapping part numbers to product IDs
+
+
+
+   .. py:method:: _get_warehouse_id_map(db)
+      :async:
+
+
+      Get a mapping of warehouse codes to IDs.
+
+      Args:
+          db: Database session
+
+      Returns:
+          Dictionary mapping warehouse codes to IDs
+
+
+
+   .. py:method:: _log_sync_audit(db, entity_type, result)
+      :async:
+
+
+      Log sync operation to audit log.
+
+      Args:
+          db: Database session
+          entity_type: Type of entity synced
+          result: Sync result
+
+
+
+.. py:data:: as400_sync_service
+   :value: None
+
+

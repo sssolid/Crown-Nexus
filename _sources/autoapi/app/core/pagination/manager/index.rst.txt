@@ -1,0 +1,115 @@
+app.core.pagination.manager
+===========================
+
+.. py:module:: app.core.pagination.manager
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.pagination.manager.logger
+   app.core.pagination.manager.HAS_METRICS
+   app.core.pagination.manager.T
+   app.core.pagination.manager.R
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.pagination.manager.initialize
+   app.core.pagination.manager.shutdown
+   app.core.pagination.manager.paginate_with_offset
+   app.core.pagination.manager.paginate_with_cursor
+   app.core.pagination.manager._create_default_transform_func
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: HAS_METRICS
+   :value: True
+
+
+.. py:data:: T
+
+.. py:data:: R
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the pagination system.
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shutdown the pagination system and clean up resources.
+
+
+.. py:function:: paginate_with_offset(db, model_class, query, params, transform_func = None, response_model = None)
+   :async:
+
+
+   Paginate query results using offset-based pagination.
+
+   Args:
+       db: Database session
+       model_class: SQLAlchemy model class
+       query: SQLAlchemy select query
+       params: Offset pagination parameters
+       transform_func: Optional function to transform each result item
+       response_model: Optional Pydantic model to convert results
+
+   Returns:
+       PaginationResult with paginated items and metadata
+
+   Raises:
+       InvalidPaginationParamsException: If pagination parameters are invalid
+       ValidationException: If other validation errors occur
+
+
+.. py:function:: paginate_with_cursor(db, model_class, query, params, transform_func = None, response_model = None)
+   :async:
+
+
+   Paginate query results using cursor-based pagination.
+
+   Args:
+       db: Database session
+       model_class: SQLAlchemy model class
+       query: SQLAlchemy select query
+       params: Cursor pagination parameters
+       transform_func: Optional function to transform each result item
+       response_model: Optional Pydantic model to convert results
+
+   Returns:
+       PaginationResult with paginated items and metadata
+
+   Raises:
+       InvalidCursorException: If the cursor is invalid
+       InvalidPaginationParamsException: If pagination parameters are invalid
+       ValidationException: If other validation errors occur
+
+
+.. py:function:: _create_default_transform_func(response_model)
+
+   Create a default transform function for converting database models to response models.
+
+   Args:
+       response_model: Pydantic model class for the response
+
+   Returns:
+       A function that transforms database models to response models
+
+   Raises:
+       ValueError: If response_model is None
+
+

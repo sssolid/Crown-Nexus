@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.chat.service_DUPLICATEMAYBE &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.chat.tasks" href="../tasks/index.html" />
+    <link rel="prev" title="app.domains.chat.service" href="../service/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.chat</a></li>
+      <li class="breadcrumb-item active">app.domains.chat.service_DUPLICATEMAYBE</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/chat/service_DUPLICATEMAYBE/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.chat.service_DUPLICATEMAYBE">
+<span id="app-domains-chat-service-duplicatemaybe"></span><h1>app.domains.chat.service_DUPLICATEMAYBE<a class="headerlink" href="#module-app.domains.chat.service_DUPLICATEMAYBE" title="Link to this heading"></a></h1>
+<p>Chat service for managing chat rooms, messages, and members.</p>
+<p>This module provides the ChatService for creating and managing chat rooms,
+sending and receiving messages, and controlling member access.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.chat.service_DUPLICATEMAYBE.logger" title="app.domains.chat.service_DUPLICATEMAYBE.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService" title="app.domains.chat.service_DUPLICATEMAYBE.ChatService"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChatService</span></code></a></p></td>
+<td><p>Service for managing chat rooms and messages.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.logger">
+<span class="sig-prename descclassname"><span class="pre">app.domains.chat.service_DUPLICATEMAYBE.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.chat.service_DUPLICATEMAYBE.</span></span><span class="sig-name descname"><span class="pre">ChatService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService" title="Link to this definition"></a></dt>
+<dd><p>Service for managing chat rooms and messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.create_room">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_room</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">room_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creator_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">company_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.create_room" title="Link to this definition"></a></dt>
+<dd><p>Create a new chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Room name.
+room_type: Type of chat room.
+creator_id: ID of the user creating the room.
+company_id: ID of the company if this is a company room.
+members: List of member data to add to the room.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The newly created chat room.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If the room type or member data is invalid.
+BusinessException: If there’s an error creating the room.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>room_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>creator_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>company_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>members</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.get_room">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_room</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.get_room" title="Link to this definition"></a></dt>
+<dd><p>Get a chat room by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chat room, or None if not found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error retrieving the room.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>room_id</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.get_room_with_members">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_room_with_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.get_room_with_members" title="Link to this definition"></a></dt>
+<dd><p>Get a chat room with its members.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chat room with members loaded, or None if not found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error retrieving the room.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>room_id</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatRoom" title="app.domains.chat.models.ChatRoom">app.domains.chat.models.ChatRoom</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.check_room_access">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_room_access</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.check_room_access" title="Link to this definition"></a></dt>
+<dd><p>Check if a user has access to a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The user ID.
+room_id: The chat room ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the user has access, False otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error checking access.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.create_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.create_message" title="Link to this definition"></a></dt>
+<dd><p>Create a new chat message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+sender_id: The sender user ID.
+content: Message content.
+message_type: Type of message.
+metadata: Additional message metadata.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The created chat message.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If the message type is invalid.
+BusinessException: If there’s an error creating the message.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>sender_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>content</strong> (<em>str</em>)</p></li>
+<li><p><strong>message_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>metadata</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.edit_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.edit_message" title="Link to this definition"></a></dt>
+<dd><p>Edit a chat message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+content: New message content.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple of (success, updated_message).</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error editing the message.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>content</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[bool, Optional[<a class="reference internal" href="../models/index.html#app.domains.chat.models.ChatMessage" title="app.domains.chat.models.ChatMessage">app.domains.chat.models.ChatMessage</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.delete_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.delete_message" title="Link to this definition"></a></dt>
+<dd><p>Delete a chat message (soft delete).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if successful, False otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error deleting the message.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message_id</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.check_message_permission">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_message_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_admin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.check_message_permission" title="Link to this definition"></a></dt>
+<dd><p>Check if a user has permission to manage a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message_id: The message ID.
+user_id: The user ID.
+require_admin: Whether to require admin role.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the user has permission, False otherwise.</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error checking permission.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>require_admin</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.get_message_history">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_message_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.get_message_history" title="Link to this definition"></a></dt>
+<dd><p>Get chat message history for a room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: The chat room ID.
+before_id: Get messages before this message ID.
+limit: Maximum number of messages to return.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of formatted message dictionaries.</p>
+</dd>
+<dt>Raises:</dt><dd><p>BusinessException: If there’s an error retrieving messages.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>before_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.chat.service_DUPLICATEMAYBE.ChatService.register">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.chat.service_DUPLICATEMAYBE.ChatService.register" title="Link to this definition"></a></dt>
+<dd><p>Register this service with the service registry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../service/index.html" class="btn btn-neutral float-left" title="app.domains.chat.service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tasks/index.html" class="btn btn-neutral float-right" title="app.domains.chat.tasks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

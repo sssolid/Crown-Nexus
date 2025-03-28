@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.api.v1.endpoints.chat &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.api.v1.endpoints.currency" href="../currency/index.html" />
+    <link rel="prev" title="app.api.v1.endpoints.auth" href="../auth/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.api</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.api.v1</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.api.v1.endpoints</a></li>
+      <li class="breadcrumb-item active">app.api.v1.endpoints.chat</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/api/v1/endpoints/chat/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.api.v1.endpoints.chat">
+<span id="app-api-v1-endpoints-chat"></span><h1>app.api.v1.endpoints.chat<a class="headerlink" href="#module-app.api.v1.endpoints.chat" title="Link to this heading"></a></h1>
+<p>Chat API endpoints.</p>
+<p>This module provides API endpoints for chat functionality including:
+- Chat room management (create, get, join, leave)
+- Messages (send, edit, delete)
+- Member management (add, remove, update roles)
+- Reading status (mark as read)</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.router" title="app.api.v1.endpoints.chat.router"><code class="xref py py-obj docutils literal notranslate"><span class="pre">router</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.logger" title="app.api.v1.endpoints.chat.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.CreateRoomRequest" title="app.api.v1.endpoints.chat.CreateRoomRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreateRoomRequest</span></code></a></p></td>
+<td><p>Request model for creating a chat room.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.AddMemberRequest" title="app.api.v1.endpoints.chat.AddMemberRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AddMemberRequest</span></code></a></p></td>
+<td><p>Request model for adding a member to a chat room.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.UpdateMemberRequest" title="app.api.v1.endpoints.chat.UpdateMemberRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UpdateMemberRequest</span></code></a></p></td>
+<td><p>Request model for updating a member's role in a chat room.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.CreateDirectChatRequest" title="app.api.v1.endpoints.chat.CreateDirectChatRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreateDirectChatRequest</span></code></a></p></td>
+<td><p>Request model for creating a direct chat between two users.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.CreateMessageRequest" title="app.api.v1.endpoints.chat.CreateMessageRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreateMessageRequest</span></code></a></p></td>
+<td><p>Request model for creating a new message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.EditMessageRequest" title="app.api.v1.endpoints.chat.EditMessageRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EditMessageRequest</span></code></a></p></td>
+<td><p>Request model for editing a message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.ReactionRequest" title="app.api.v1.endpoints.chat.ReactionRequest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReactionRequest</span></code></a></p></td>
+<td><p>Request model for adding/removing a reaction to a message.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.create_room" title="app.api.v1.endpoints.chat.create_room"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_room</span></code></a>(request[, db, current_user])</p></td>
+<td><p>Create a new chat room.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.get_rooms" title="app.api.v1.endpoints.chat.get_rooms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rooms</span></code></a>([db, current_user])</p></td>
+<td><p>Get all chat rooms for the current user.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.get_room" title="app.api.v1.endpoints.chat.get_room"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_room</span></code></a>(room_id[, db, current_user])</p></td>
+<td><p>Get a specific chat room by ID.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.add_room_member" title="app.api.v1.endpoints.chat.add_room_member"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_room_member</span></code></a>(room_id, request[, db, current_user])</p></td>
+<td><p>Add a member to a chat room.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.update_room_member" title="app.api.v1.endpoints.chat.update_room_member"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_room_member</span></code></a>(room_id, user_id, request[, db, ...])</p></td>
+<td><p>Update a member's role in a chat room.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.remove_room_member" title="app.api.v1.endpoints.chat.remove_room_member"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_room_member</span></code></a>(room_id, user_id[, db, current_user])</p></td>
+<td><p>Remove a member from a chat room.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.get_room_messages" title="app.api.v1.endpoints.chat.get_room_messages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_room_messages</span></code></a>(room_id[, before_id, limit, db, ...])</p></td>
+<td><p>Get messages for a chat room.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.create_message" title="app.api.v1.endpoints.chat.create_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_message</span></code></a>(room_id, request[, db, current_user])</p></td>
+<td><p>Create a new message in a chat room.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.edit_message" title="app.api.v1.endpoints.chat.edit_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_message</span></code></a>(room_id, message_id, request[, db, ...])</p></td>
+<td><p>Edit an existing message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.delete_message" title="app.api.v1.endpoints.chat.delete_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_message</span></code></a>(room_id, message_id[, db, current_user])</p></td>
+<td><p>Delete a message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.add_reaction" title="app.api.v1.endpoints.chat.add_reaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_reaction</span></code></a>(room_id, message_id, request[, db, ...])</p></td>
+<td><p>Add a reaction to a message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.remove_reaction" title="app.api.v1.endpoints.chat.remove_reaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_reaction</span></code></a>(room_id, message_id, reaction[, db, ...])</p></td>
+<td><p>Remove a reaction from a message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.chat.create_direct_chat" title="app.api.v1.endpoints.chat.create_direct_chat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_direct_chat</span></code></a>(request[, db, current_user])</p></td>
+<td><p>Create or get a direct chat between two users.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.router">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">router</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.router" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.logger">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateRoomRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">CreateRoomRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateRoomRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for creating a chat room.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateRoomRequest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateRoomRequest.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateRoomRequest.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateRoomRequest.type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateRoomRequest.company_id">
+<span class="sig-name descname"><span class="pre">company_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateRoomRequest.company_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateRoomRequest.members">
+<span class="sig-name descname"><span class="pre">members</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateRoomRequest.members" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateRoomRequest.validate_type">
+<span class="sig-name descname"><span class="pre">validate_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateRoomRequest.validate_type" title="Link to this definition"></a></dt>
+<dd><p>Validate that the room type is valid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: Room type value to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>The validated room type</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the room type is not valid</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.AddMemberRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">AddMemberRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.AddMemberRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for adding a member to a chat room.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.AddMemberRequest.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.AddMemberRequest.user_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.AddMemberRequest.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.AddMemberRequest.role" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.AddMemberRequest.validate_role">
+<span class="sig-name descname"><span class="pre">validate_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.AddMemberRequest.validate_role" title="Link to this definition"></a></dt>
+<dd><p>Validate that the member role is valid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: Role value to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>The validated role</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the role is not valid</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.UpdateMemberRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">UpdateMemberRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.UpdateMemberRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for updating a member’s role in a chat room.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.UpdateMemberRequest.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.UpdateMemberRequest.role" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.UpdateMemberRequest.validate_role">
+<span class="sig-name descname"><span class="pre">validate_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.UpdateMemberRequest.validate_role" title="Link to this definition"></a></dt>
+<dd><p>Validate that the member role is valid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: Role value to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>The validated role</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the role is not valid</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateDirectChatRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">CreateDirectChatRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateDirectChatRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for creating a direct chat between two users.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateDirectChatRequest.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateDirectChatRequest.user_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateMessageRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">CreateMessageRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateMessageRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for creating a new message.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateMessageRequest.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateMessageRequest.content" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateMessageRequest.message_type">
+<span class="sig-name descname"><span class="pre">message_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateMessageRequest.message_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateMessageRequest.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateMessageRequest.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.CreateMessageRequest.validate_message_type">
+<span class="sig-name descname"><span class="pre">validate_message_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.CreateMessageRequest.validate_message_type" title="Link to this definition"></a></dt>
+<dd><p>Validate that the message type is valid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: Message type value to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>The validated message type</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the message type is not valid</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.EditMessageRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">EditMessageRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.EditMessageRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for editing a message.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.EditMessageRequest.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.EditMessageRequest.content" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.ReactionRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">ReactionRequest</span></span><a class="headerlink" href="#app.api.v1.endpoints.chat.ReactionRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Request model for adding/removing a reaction to a message.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.ReactionRequest.reaction">
+<span class="sig-name descname"><span class="pre">reaction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.api.v1.endpoints.chat.ReactionRequest.reaction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.create_room">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">create_room</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.create_room" title="Link to this definition"></a></dt>
+<dd><p>Create a new chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request: Room creation request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with the created room information</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If validation fails or an error occurs during room creation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.CreateRoomRequest" title="app.api.v1.endpoints.chat.CreateRoomRequest"><em>CreateRoomRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.get_rooms">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">get_rooms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.get_rooms" title="Link to this definition"></a></dt>
+<dd><p>Get all chat rooms for the current user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response containing the list of rooms</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If an error occurs during fetching rooms</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.get_room">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">get_room</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.get_room" title="Link to this definition"></a></dt>
+<dd><p>Get a specific chat room by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response containing the room information</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the room is not found or the user doesn’t have access</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.add_room_member">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">add_room_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.add_room_member" title="Link to this definition"></a></dt>
+<dd><p>Add a member to a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+request: Member addition request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with success status and message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If validation fails, the room is not found, or the user lacks permissions</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.AddMemberRequest" title="app.api.v1.endpoints.chat.AddMemberRequest"><em>AddMemberRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.update_room_member">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">update_room_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.update_room_member" title="Link to this definition"></a></dt>
+<dd><p>Update a member’s role in a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+user_id: ID of the user to update
+request: Role update request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with success status and message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If validation fails, the room/member is not found, or the user lacks permissions</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.UpdateMemberRequest" title="app.api.v1.endpoints.chat.UpdateMemberRequest"><em>UpdateMemberRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.remove_room_member">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">remove_room_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.remove_room_member" title="Link to this definition"></a></dt>
+<dd><p>Remove a member from a chat room.</p>
+<p>Users can remove themselves (leave the room) or admins can remove any member.
+Owners can only be removed by other owners.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+user_id: ID of the user to remove
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with success status and message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the room/member is not found or the user lacks permissions</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.get_room_messages">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">get_room_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(50,</span> <span class="pre">ge=1,</span> <span class="pre">le=100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.get_room_messages" title="Link to this definition"></a></dt>
+<dd><p>Get messages for a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+before_id: Optional message ID to get messages before (for pagination)
+limit: Maximum number of messages to return
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response containing the list of messages</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the room is not found or the user doesn’t have access</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>before_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.create_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">create_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.create_message" title="Link to this definition"></a></dt>
+<dd><p>Create a new message in a chat room.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+request: Message creation request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response containing the created message information</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the room is not found, the user doesn’t have access, or validation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.CreateMessageRequest" title="app.api.v1.endpoints.chat.CreateMessageRequest"><em>CreateMessageRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.edit_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">edit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.edit_message" title="Link to this definition"></a></dt>
+<dd><p>Edit an existing message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+message_id: ID of the message to edit
+request: Message edit request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with the updated message information</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the message is not found or the user doesn’t have permission to edit it</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>message_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.EditMessageRequest" title="app.api.v1.endpoints.chat.EditMessageRequest"><em>EditMessageRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.delete_message">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">delete_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.delete_message" title="Link to this definition"></a></dt>
+<dd><p>Delete a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+message_id: ID of the message to delete
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with success status and message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the message is not found or the user doesn’t have permission to delete it</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>message_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.add_reaction">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">add_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.add_reaction" title="Link to this definition"></a></dt>
+<dd><p>Add a reaction to a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+message_id: ID of the message
+request: Reaction request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with success status and message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the message is not found or the user doesn’t have access to the room</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>message_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.ReactionRequest" title="app.api.v1.endpoints.chat.ReactionRequest"><em>ReactionRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.remove_reaction">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">remove_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">room_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.remove_reaction" title="Link to this definition"></a></dt>
+<dd><p>Remove a reaction from a message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>room_id: ID of the chat room
+message_id: ID of the message
+reaction: Reaction emoji or code to remove
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response with success status and message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the message is not found or the user doesn’t have access to the room</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>message_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>reaction</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.chat.create_direct_chat">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.chat.</span></span><span class="sig-name descname"><span class="pre">create_direct_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_active_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.chat.create_direct_chat" title="Link to this definition"></a></dt>
+<dd><p>Create or get a direct chat between two users.</p>
+<p>If a direct chat already exists between the users, it returns the existing chat.
+Otherwise, it creates a new direct chat.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request: Direct chat creation request data
+db: Database session
+current_user: Authenticated user making the request</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response containing the direct chat room information</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the target user doesn’t exist or an error occurs</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<a class="reference internal" href="#app.api.v1.endpoints.chat.CreateDirectChatRequest" title="app.api.v1.endpoints.chat.CreateDirectChatRequest"><em>CreateDirectChatRequest</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>app.db.session.AsyncSession</em>)</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.responses.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../auth/index.html" class="btn btn-neutral float-left" title="app.api.v1.endpoints.auth" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../currency/index.html" class="btn btn-neutral float-right" title="app.api.v1.endpoints.currency" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

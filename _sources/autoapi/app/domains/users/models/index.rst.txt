@@ -1,0 +1,205 @@
+app.domains.users.models
+========================
+
+.. py:module:: app.domains.users.models
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.users.models.pwd_context
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.users.models.UserRole
+   app.domains.users.models.User
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.users.models.verify_password
+   app.domains.users.models.get_password_hash
+   app.domains.users.models.create_access_token
+
+
+Module Contents
+---------------
+
+.. py:class:: UserRole
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Enumeration of user roles in the system.
+
+   Attributes:
+       ADMIN: Administrator role with full system access.
+       MANAGER: Manager role with elevated permissions.
+       CLIENT: Standard client user.
+       DISTRIBUTOR: Distributor with specific permissions.
+       READ_ONLY: User with read-only access.
+
+
+   .. py:attribute:: ADMIN
+      :value: 'admin'
+
+
+
+   .. py:attribute:: MANAGER
+      :value: 'manager'
+
+
+
+   .. py:attribute:: CLIENT
+      :value: 'client'
+
+
+
+   .. py:attribute:: DISTRIBUTOR
+      :value: 'distributor'
+
+
+
+   .. py:attribute:: READ_ONLY
+      :value: 'read_only'
+
+
+
+.. py:class:: User
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   User entity representing a system user.
+
+   Attributes:
+       id: Unique identifier.
+       email: User's email address (unique).
+       hashed_password: Securely hashed password.
+       full_name: User's full name.
+       role: User's role in the system.
+       is_active: Whether the user account is active.
+       company_id: ID of the associated company.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'user'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: email
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: hashed_password
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: full_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: role
+      :type:  sqlalchemy.orm.Mapped[UserRole]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: company_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: company
+      :type:  sqlalchemy.orm.Mapped[Optional[app.domains.company.models.Company]]
+
+
+   .. py:attribute:: chat_memberships
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.chat.models.ChatMember]]
+
+
+   .. py:attribute:: api_keys
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.api_key.models.ApiKey]]
+
+
+   .. py:attribute:: audit_logs
+      :type:  sqlalchemy.orm.Mapped[List[AuditLog]]
+
+
+   .. py:attribute:: uploaded_media
+
+
+   .. py:attribute:: approved_media
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of User instance.
+
+      Returns:
+          String representation including email and role.
+
+
+
+.. py:data:: pwd_context
+
+.. py:function:: verify_password(plain_password, hashed_password)
+
+   Verify if a plain password matches a hash.
+
+   Args:
+       plain_password: The plain-text password to verify.
+       hashed_password: The hashed password to compare against.
+
+   Returns:
+       True if the password matches, False otherwise.
+
+
+.. py:function:: get_password_hash(password)
+
+   Generate a hash from a plain-text password.
+
+   Args:
+       password: The plain-text password to hash.
+
+   Returns:
+       The hashed password.
+
+
+.. py:function:: create_access_token(subject, role, expires_delta = None)
+
+   Create a JWT access token for a user.
+
+   Args:
+       subject: The subject (user ID) for the token.
+       role: The user's role.
+       expires_delta: Optional custom expiration time delta.
+
+   Returns:
+       The encoded JWT token string.
+
+

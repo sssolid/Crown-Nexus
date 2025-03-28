@@ -1,0 +1,1043 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.reference.schemas &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.security" href="../../security/index.html" />
+    <link rel="prev" title="app.domains.reference.repository" href="../repository/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.reference</a></li>
+      <li class="breadcrumb-item active">app.domains.reference.schemas</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/reference/schemas/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.reference.schemas">
+<span id="app-domains-reference-schemas"></span><h1>app.domains.reference.schemas<a class="headerlink" href="#module-app.domains.reference.schemas" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ColorBase" title="app.domains.reference.schemas.ColorBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorBase</span></code></a></p></td>
+<td><p>Base schema for Color data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ColorCreate" title="app.domains.reference.schemas.ColorCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Color.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ColorUpdate" title="app.domains.reference.schemas.ColorUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Color.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ColorInDB" title="app.domains.reference.schemas.ColorInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorInDB</span></code></a></p></td>
+<td><p>Schema for Color data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.Color" title="app.domains.reference.schemas.Color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Color</span></code></a></p></td>
+<td><p>Schema for complete Color data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeBase" title="app.domains.reference.schemas.ConstructionTypeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeBase</span></code></a></p></td>
+<td><p>Base schema for ConstructionType data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeCreate" title="app.domains.reference.schemas.ConstructionTypeCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeCreate</span></code></a></p></td>
+<td><p>Schema for creating a new ConstructionType.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeUpdate" title="app.domains.reference.schemas.ConstructionTypeUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing ConstructionType.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeInDB" title="app.domains.reference.schemas.ConstructionTypeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeInDB</span></code></a></p></td>
+<td><p>Schema for ConstructionType data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.ConstructionType" title="app.domains.reference.schemas.ConstructionType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionType</span></code></a></p></td>
+<td><p>Schema for complete ConstructionType data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TextureBase" title="app.domains.reference.schemas.TextureBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureBase</span></code></a></p></td>
+<td><p>Base schema for Texture data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TextureCreate" title="app.domains.reference.schemas.TextureCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Texture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TextureUpdate" title="app.domains.reference.schemas.TextureUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Texture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TextureInDB" title="app.domains.reference.schemas.TextureInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureInDB</span></code></a></p></td>
+<td><p>Schema for Texture data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.Texture" title="app.domains.reference.schemas.Texture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Texture</span></code></a></p></td>
+<td><p>Schema for complete Texture data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeBase" title="app.domains.reference.schemas.PackagingTypeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeBase</span></code></a></p></td>
+<td><p>Base schema for PackagingType data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeCreate" title="app.domains.reference.schemas.PackagingTypeCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeCreate</span></code></a></p></td>
+<td><p>Schema for creating a new PackagingType.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeUpdate" title="app.domains.reference.schemas.PackagingTypeUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing PackagingType.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeInDB" title="app.domains.reference.schemas.PackagingTypeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeInDB</span></code></a></p></td>
+<td><p>Schema for PackagingType data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.PackagingType" title="app.domains.reference.schemas.PackagingType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingType</span></code></a></p></td>
+<td><p>Schema for complete PackagingType data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.HardwareBase" title="app.domains.reference.schemas.HardwareBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareBase</span></code></a></p></td>
+<td><p>Base schema for Hardware data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.HardwareCreate" title="app.domains.reference.schemas.HardwareCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Hardware.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.HardwareUpdate" title="app.domains.reference.schemas.HardwareUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Hardware.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.HardwareInDB" title="app.domains.reference.schemas.HardwareInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareInDB</span></code></a></p></td>
+<td><p>Schema for Hardware data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.Hardware" title="app.domains.reference.schemas.Hardware"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Hardware</span></code></a></p></td>
+<td><p>Schema for complete Hardware data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TariffCodeBase" title="app.domains.reference.schemas.TariffCodeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeBase</span></code></a></p></td>
+<td><p>Base schema for TariffCode data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TariffCodeCreate" title="app.domains.reference.schemas.TariffCodeCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeCreate</span></code></a></p></td>
+<td><p>Schema for creating a new TariffCode.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TariffCodeUpdate" title="app.domains.reference.schemas.TariffCodeUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing TariffCode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TariffCodeInDB" title="app.domains.reference.schemas.TariffCodeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeInDB</span></code></a></p></td>
+<td><p>Schema for TariffCode data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.TariffCode" title="app.domains.reference.schemas.TariffCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCode</span></code></a></p></td>
+<td><p>Schema for complete TariffCode data in API responses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeBase" title="app.domains.reference.schemas.UnspscCodeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeBase</span></code></a></p></td>
+<td><p>Base schema for UnspscCode data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeCreate" title="app.domains.reference.schemas.UnspscCodeCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeCreate</span></code></a></p></td>
+<td><p>Schema for creating a new UnspscCode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeUpdate" title="app.domains.reference.schemas.UnspscCodeUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing UnspscCode.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeInDB" title="app.domains.reference.schemas.UnspscCodeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeInDB</span></code></a></p></td>
+<td><p>Schema for UnspscCode data as stored in the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.UnspscCode" title="app.domains.reference.schemas.UnspscCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCode</span></code></a></p></td>
+<td><p>Schema for complete UnspscCode data in API responses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.WarehouseBase" title="app.domains.reference.schemas.WarehouseBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseBase</span></code></a></p></td>
+<td><p>Base schema for Warehouse data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.WarehouseCreate" title="app.domains.reference.schemas.WarehouseCreate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseCreate</span></code></a></p></td>
+<td><p>Schema for creating a new Warehouse.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.WarehouseUpdate" title="app.domains.reference.schemas.WarehouseUpdate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseUpdate</span></code></a></p></td>
+<td><p>Schema for updating an existing Warehouse.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.reference.schemas.WarehouseInDB" title="app.domains.reference.schemas.WarehouseInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseInDB</span></code></a></p></td>
+<td><p>Schema for Warehouse data as stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.reference.schemas.Warehouse" title="app.domains.reference.schemas.Warehouse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Warehouse</span></code></a></p></td>
+<td><p>Schema for complete Warehouse data in API responses.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ColorBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.ColorBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Color data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Color name.
+hex_code: Hexadecimal color code.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.ColorBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorBase.hex_code">
+<span class="sig-name descname"><span class="pre">hex_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.ColorBase.hex_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorBase.validate_hex_code">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_hex_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.reference.schemas.ColorBase.validate_hex_code" title="Link to this definition"></a></dt>
+<dd><p>Validate hex code format.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: The hex code to validate or None.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Validated hex code or None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the hex code format is invalid.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ColorCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.ColorCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.ColorBase" title="app.domains.reference.schemas.ColorBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorBase</span></code></a></p>
+<p>Schema for creating a new Color.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ColorUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.ColorUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Color.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.ColorUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorUpdate.hex_code">
+<span class="sig-name descname"><span class="pre">hex_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.ColorUpdate.hex_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorUpdate.validate_hex_code">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_hex_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.reference.schemas.ColorUpdate.validate_hex_code" title="Link to this definition"></a></dt>
+<dd><p>Validate hex code format if provided.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: The hex code to validate or None.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Validated hex code or None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If the hex code format is invalid.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ColorInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.ColorInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.ColorBase" title="app.domains.reference.schemas.ColorBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorBase</span></code></a></p>
+<p>Schema for Color data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.ColorInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.ColorInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ColorInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.ColorInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.Color">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">Color</span></span><a class="headerlink" href="#app.domains.reference.schemas.Color" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.ColorInDB" title="app.domains.reference.schemas.ColorInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorInDB</span></code></a></p>
+<p>Schema for complete Color data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ConstructionTypeBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for ConstructionType data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Construction type name.
+description: Description of the construction type.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ConstructionTypeCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeBase" title="app.domains.reference.schemas.ConstructionTypeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeBase</span></code></a></p>
+<p>Schema for creating a new ConstructionType.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ConstructionTypeUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing ConstructionType.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ConstructionTypeInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeBase" title="app.domains.reference.schemas.ConstructionTypeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeBase</span></code></a></p>
+<p>Schema for ConstructionType data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionTypeInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.ConstructionTypeInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.ConstructionType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">ConstructionType</span></span><a class="headerlink" href="#app.domains.reference.schemas.ConstructionType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.ConstructionTypeInDB" title="app.domains.reference.schemas.ConstructionTypeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructionTypeInDB</span></code></a></p>
+<p>Schema for complete ConstructionType data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TextureBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.TextureBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Texture data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Texture name.
+description: Description of the texture.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.TextureBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TextureBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TextureCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.TextureCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.TextureBase" title="app.domains.reference.schemas.TextureBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureBase</span></code></a></p>
+<p>Schema for creating a new Texture.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TextureUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.TextureUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Texture.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TextureUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TextureUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TextureInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.TextureInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.TextureBase" title="app.domains.reference.schemas.TextureBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureBase</span></code></a></p>
+<p>Schema for Texture data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.TextureInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.TextureInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TextureInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.TextureInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.Texture">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">Texture</span></span><a class="headerlink" href="#app.domains.reference.schemas.Texture" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.TextureInDB" title="app.domains.reference.schemas.TextureInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextureInDB</span></code></a></p>
+<p>Schema for complete Texture data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">PackagingTypeBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for PackagingType data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Packaging type name.
+pies_code: PIES standard code.
+description: Description of the packaging type.
+source: Source of the packaging type data.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeBase.pies_code">
+<span class="sig-name descname"><span class="pre">pies_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeBase.pies_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeBase.source">
+<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeBase.source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">PackagingTypeCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeBase" title="app.domains.reference.schemas.PackagingTypeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeBase</span></code></a></p>
+<p>Schema for creating a new PackagingType.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">PackagingTypeUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing PackagingType.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeUpdate.pies_code">
+<span class="sig-name descname"><span class="pre">pies_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeUpdate.pies_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeUpdate.source">
+<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeUpdate.source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">PackagingTypeInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeBase" title="app.domains.reference.schemas.PackagingTypeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeBase</span></code></a></p>
+<p>Schema for PackagingType data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingTypeInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.PackagingTypeInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.PackagingType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">PackagingType</span></span><a class="headerlink" href="#app.domains.reference.schemas.PackagingType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.PackagingTypeInDB" title="app.domains.reference.schemas.PackagingTypeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PackagingTypeInDB</span></code></a></p>
+<p>Schema for complete PackagingType data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">HardwareBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.HardwareBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Hardware data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Hardware item name.
+description: Description of the hardware item.
+part_number: Manufacturer part number.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareBase.part_number">
+<span class="sig-name descname"><span class="pre">part_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareBase.part_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">HardwareCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.HardwareCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.HardwareBase" title="app.domains.reference.schemas.HardwareBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareBase</span></code></a></p>
+<p>Schema for creating a new Hardware.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">HardwareUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.HardwareUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Hardware.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareUpdate.part_number">
+<span class="sig-name descname"><span class="pre">part_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareUpdate.part_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">HardwareInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.HardwareInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.HardwareBase" title="app.domains.reference.schemas.HardwareBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareBase</span></code></a></p>
+<p>Schema for Hardware data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.HardwareInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.HardwareInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.HardwareInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.Hardware">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">Hardware</span></span><a class="headerlink" href="#app.domains.reference.schemas.Hardware" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.HardwareInDB" title="app.domains.reference.schemas.HardwareInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardwareInDB</span></code></a></p>
+<p>Schema for complete Hardware data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TariffCodeBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for TariffCode data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>code: Tariff code number.
+description: Description of the tariff code.
+country_id: ID of the country this tariff applies to.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeBase.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeBase.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeBase.country_id">
+<span class="sig-name descname"><span class="pre">country_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeBase.country_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TariffCodeCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.TariffCodeBase" title="app.domains.reference.schemas.TariffCodeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeBase</span></code></a></p>
+<p>Schema for creating a new TariffCode.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TariffCodeUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing TariffCode.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeUpdate.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeUpdate.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeUpdate.country_id">
+<span class="sig-name descname"><span class="pre">country_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeUpdate.country_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TariffCodeInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.TariffCodeBase" title="app.domains.reference.schemas.TariffCodeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeBase</span></code></a></p>
+<p>Schema for TariffCode data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCodeInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.TariffCodeInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">TariffCode</span></span><a class="headerlink" href="#app.domains.reference.schemas.TariffCode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.TariffCodeInDB" title="app.domains.reference.schemas.TariffCodeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TariffCodeInDB</span></code></a></p>
+<p>Schema for complete TariffCode data in API responses.</p>
+<p>Includes related entities like country details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.TariffCode.country">
+<span class="sig-name descname"><span class="pre">country</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.TariffCode.country" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">UnspscCodeBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for UnspscCode data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>code: UNSPSC code number.
+description: Description of the code.
+segment: Segment description.
+family: Family description.
+<a href="#id1"><span class="problematic" id="id2">class_</span></a>: Class description.
+commodity: Commodity description.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase.segment">
+<span class="sig-name descname"><span class="pre">segment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase.segment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase.family">
+<span class="sig-name descname"><span class="pre">family</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase.family" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase.class_">
+<span class="sig-name descname"><span class="pre">class_</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase.class_" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeBase.commodity">
+<span class="sig-name descname"><span class="pre">commodity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeBase.commodity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">UnspscCodeCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeBase" title="app.domains.reference.schemas.UnspscCodeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeBase</span></code></a></p>
+<p>Schema for creating a new UnspscCode.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">UnspscCodeUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing UnspscCode.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate.segment">
+<span class="sig-name descname"><span class="pre">segment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate.segment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate.family">
+<span class="sig-name descname"><span class="pre">family</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate.family" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate.class_">
+<span class="sig-name descname"><span class="pre">class_</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate.class_" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeUpdate.commodity">
+<span class="sig-name descname"><span class="pre">commodity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeUpdate.commodity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">UnspscCodeInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeBase" title="app.domains.reference.schemas.UnspscCodeBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeBase</span></code></a></p>
+<p>Schema for UnspscCode data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCodeInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.UnspscCodeInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.UnspscCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">UnspscCode</span></span><a class="headerlink" href="#app.domains.reference.schemas.UnspscCode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.UnspscCodeInDB" title="app.domains.reference.schemas.UnspscCodeInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnspscCodeInDB</span></code></a></p>
+<p>Schema for complete UnspscCode data in API responses.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">WarehouseBase</span></span><a class="headerlink" href="#app.domains.reference.schemas.WarehouseBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Base schema for Warehouse data.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>name: Warehouse name.
+address_id: ID of the warehouse address.
+is_active: Whether the warehouse is active.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseBase.address_id">
+<span class="sig-name descname"><span class="pre">address_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseBase.address_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseBase.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseBase.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseCreate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">WarehouseCreate</span></span><a class="headerlink" href="#app.domains.reference.schemas.WarehouseCreate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.WarehouseBase" title="app.domains.reference.schemas.WarehouseBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseBase</span></code></a></p>
+<p>Schema for creating a new Warehouse.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseUpdate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">WarehouseUpdate</span></span><a class="headerlink" href="#app.domains.reference.schemas.WarehouseUpdate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Schema for updating an existing Warehouse.</p>
+<p>All fields are optional to allow partial updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseUpdate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseUpdate.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseUpdate.address_id">
+<span class="sig-name descname"><span class="pre">address_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseUpdate.address_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseUpdate.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseUpdate.is_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseInDB">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">WarehouseInDB</span></span><a class="headerlink" href="#app.domains.reference.schemas.WarehouseInDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.WarehouseBase" title="app.domains.reference.schemas.WarehouseBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseBase</span></code></a></p>
+<p>Schema for Warehouse data as stored in the database.</p>
+<p>Includes database-specific fields like ID and timestamps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseInDB.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseInDB.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseInDB.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span></em><a class="headerlink" href="#app.domains.reference.schemas.WarehouseInDB.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.WarehouseInDB.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><a class="headerlink" href="#app.domains.reference.schemas.WarehouseInDB.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.Warehouse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.reference.schemas.</span></span><span class="sig-name descname"><span class="pre">Warehouse</span></span><a class="headerlink" href="#app.domains.reference.schemas.Warehouse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.reference.schemas.WarehouseInDB" title="app.domains.reference.schemas.WarehouseInDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseInDB</span></code></a></p>
+<p>Schema for complete Warehouse data in API responses.</p>
+<p>Includes related entities like address details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.reference.schemas.Warehouse.address">
+<span class="sig-name descname"><span class="pre">address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.reference.schemas.Warehouse.address" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../repository/index.html" class="btn btn-neutral float-left" title="app.domains.reference.repository" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../security/index.html" class="btn btn-neutral float-right" title="app.domains.security" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

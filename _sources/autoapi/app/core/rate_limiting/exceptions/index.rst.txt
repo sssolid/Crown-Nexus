@@ -1,0 +1,52 @@
+app.core.rate_limiting.exceptions
+=================================
+
+.. py:module:: app.core.rate_limiting.exceptions
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.exceptions.RateLimitingException
+   app.core.rate_limiting.exceptions.RateLimitExceededException
+   app.core.rate_limiting.exceptions.RateLimitingServiceException
+   app.core.rate_limiting.exceptions.RateLimitingConfigurationException
+
+
+Module Contents
+---------------
+
+.. py:class:: RateLimitingException(message, code = ErrorCode.SECURITY_ERROR, details = None, status_code = 429, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for rate limiting errors.
+
+
+.. py:class:: RateLimitExceededException(message = 'Rate limit exceeded', details = None, headers = None, reset_seconds = None, original_exception = None)
+
+   Bases: :py:obj:`RateLimitingException`
+
+
+   Exception raised when a rate limit is exceeded.
+
+
+.. py:class:: RateLimitingServiceException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`RateLimitingException`
+
+
+   Exception raised when the rate limiting service encounters an error.
+
+
+.. py:class:: RateLimitingConfigurationException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`RateLimitingException`
+
+
+   Exception raised when the rate limiting configuration is invalid.
+
+

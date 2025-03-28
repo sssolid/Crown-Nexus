@@ -1,0 +1,6 @@
+app.domains.inventory.handlers
+==============================
+
+.. py:module:: app.domains.inventory.handlers
+
+

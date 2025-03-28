@@ -1,0 +1,375 @@
+app.core.rate_limiting
+======================
+
+.. py:module:: app.core.rate_limiting
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/rate_limiting/exceptions/index
+   /autoapi/app/core/rate_limiting/limiter/index
+   /autoapi/app/core/rate_limiting/models/index
+   /autoapi/app/core/rate_limiting/rate_limiter/index
+   /autoapi/app/core/rate_limiting/service/index
+   /autoapi/app/core/rate_limiting/utils/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.RateLimiter
+   app.core.rate_limiting.RateLimitRule
+   app.core.rate_limiting.RateLimitStrategy
+   app.core.rate_limiting.RateLimitingException
+   app.core.rate_limiting.RateLimitExceededException
+   app.core.rate_limiting.RateLimitingServiceException
+   app.core.rate_limiting.RateLimitingConfigurationException
+   app.core.rate_limiting.RateLimitingService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.check_rate_limit
+   app.core.rate_limiting.get_ttl
+   app.core.rate_limiting.get_rate_limiting_service
+   app.core.rate_limiting.initialize
+   app.core.rate_limiting.shutdown
+
+
+Package Contents
+----------------
+
+.. py:class:: RateLimiter(use_redis = None, prefix = 'ratelimit', default_rule = None)
+
+   Rate limiter that enforces rate limits for various keys.
+
+   Supports both in-memory and Redis-based rate limiting with different
+   strategies for generating rate limit keys.
+
+
+   .. py:attribute:: use_redis
+      :type:  bool
+      :value: None
+
+
+
+   .. py:attribute:: prefix
+      :type:  str
+      :value: 'ratelimit'
+
+
+
+   .. py:attribute:: default_rule
+      :type:  app.core.rate_limiting.models.RateLimitRule
+
+
+   .. py:attribute:: _counters
+      :type:  Dict[str, Dict[float, int]]
+
+
+   .. py:method:: is_rate_limited(key, rule = None)
+      :async:
+
+
+      Check if a key is rate limited.
+
+      Args:
+          key: The key to check.
+          rule: Optional rate limit rule to apply. If not provided,
+              the default rule will be used.
+
+      Returns:
+          A tuple containing:
+              - Whether the key is rate limited (True if limited)
+              - The current count for the key
+              - The maximum allowed count (limit)
+
+
+
+   .. py:method:: _check_in_memory(key, rule)
+      :async:
+
+
+      Check if a key is rate limited using in-memory storage.
+
+      Args:
+          key: The key to check.
+          rule: The rate limit rule to apply.
+
+      Returns:
+          A tuple containing:
+              - Whether the key is rate limited (True if limited)
+              - The current count for the key
+              - The maximum allowed count (limit)
+
+
+
+   .. py:method:: get_key_for_request(request, rule)
+
+      Generate a rate limit key for a request.
+
+      Args:
+          request: The request to generate a key for.
+          rule: The rate limit rule that defines the key strategy.
+
+      Returns:
+          A string key for rate limiting.
+
+
+
+   .. py:method:: _get_window_key(key, rule)
+
+      Generate a window-specific key for rate limiting.
+
+      Args:
+          key: The base key to use.
+          rule: The rate limit rule that defines the window.
+
+      Returns:
+          A string key with the window information.
+
+
+
+.. py:class:: RateLimitRule
+
+   Rule configuration for rate limiting.
+
+   Attributes:
+       requests_per_window: Maximum number of requests allowed in the window.
+       window_seconds: Size of the window in seconds.
+       strategy: Strategy for determining the rate limit key.
+       burst_multiplier: Multiplier for burst allowance above the limit.
+       path_pattern: Pattern to match request paths this rule applies to.
+           If None, applies to all paths.
+       exclude_paths: List of path prefixes to exclude from rate limiting.
+
+
+   .. py:attribute:: requests_per_window
+      :type:  int
+
+
+   .. py:attribute:: window_seconds
+      :type:  int
+
+
+   .. py:attribute:: strategy
+      :type:  RateLimitStrategy
+
+
+   .. py:attribute:: burst_multiplier
+      :type:  float
+      :value: 1.5
+
+
+
+   .. py:attribute:: path_pattern
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: exclude_paths
+      :type:  List[str]
+      :value: []
+
+
+
+.. py:class:: RateLimitStrategy
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Strategy for determining the rate limit key.
+
+
+   .. py:attribute:: IP
+      :value: 'ip'
+
+
+
+   .. py:attribute:: USER
+      :value: 'user'
+
+
+
+   .. py:attribute:: COMBINED
+      :value: 'combined'
+
+
+
+.. py:function:: check_rate_limit(key, max_requests, window_seconds)
+   :async:
+
+
+   Check if a rate limit has been exceeded.
+
+   Args:
+       key: The rate limit key.
+       max_requests: The maximum number of requests allowed in the time window.
+       window_seconds: The time window in seconds.
+
+   Returns:
+       Tuple[bool, int, int]: A tuple containing a boolean indicating if the rate limit has been
+           exceeded, the current request count, and the reset time in seconds.
+
+
+.. py:function:: get_ttl(key)
+   :async:
+
+
+   Get the TTL of a key in Redis.
+
+   Args:
+       key: The key to get the TTL for.
+
+   Returns:
+       int: The TTL in seconds, or 0 if the key doesn't exist or an error occurs.
+
+
+.. py:class:: RateLimitingException(message, code = ErrorCode.SECURITY_ERROR, details = None, status_code = 429, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for rate limiting errors.
+
+
+.. py:class:: RateLimitExceededException(message = 'Rate limit exceeded', details = None, headers = None, reset_seconds = None, original_exception = None)
+
+   Bases: :py:obj:`RateLimitingException`
+
+
+   Exception raised when a rate limit is exceeded.
+
+
+.. py:class:: RateLimitingServiceException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`RateLimitingException`
+
+
+   Exception raised when the rate limiting service encounters an error.
+
+
+.. py:class:: RateLimitingConfigurationException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`RateLimitingException`
+
+
+   Exception raised when the rate limiting configuration is invalid.
+
+
+.. py:class:: RateLimitingService
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:attribute:: _limiter
+      :type:  Optional[app.core.rate_limiting.limiter.RateLimiter]
+      :value: None
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the rate limiting service.
+
+      If already initialized, this method does nothing.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the rate limiting service.
+
+      If not initialized, this method does nothing.
+
+
+
+   .. py:method:: is_rate_limited(key, rule = None)
+      :async:
+
+
+      Check if a key is rate limited.
+
+      Args:
+          key: The key to check.
+          rule: Optional rate limit rule to apply. If not provided,
+              the default rule will be used.
+
+      Returns:
+          A tuple containing:
+              - Whether the key is rate limited (True if limited)
+              - The current count for the key
+              - The maximum allowed count (limit)
+
+      Raises:
+          RateLimitingServiceException: If the service is not initialized.
+
+
+
+   .. py:method:: get_key_for_request(request, rule)
+
+      Generate a rate limit key for a request.
+
+      Args:
+          request: The request to generate a key for.
+          rule: The rate limit rule that defines the key strategy.
+
+      Returns:
+          A string key for rate limiting.
+
+      Raises:
+          RateLimitingServiceException: If the service is not initialized.
+
+
+
+   .. py:method:: _ensure_initialized()
+
+      Ensure the service is initialized.
+
+      Raises:
+          RateLimitingServiceException: If the service is not initialized.
+
+
+
+.. py:function:: get_rate_limiting_service()
+
+   Get or create the rate limiting service singleton.
+
+   Returns:
+       The rate limiting service instance.
+
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the rate limiting system.
+
+   This function is called during application startup.
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shut down the rate limiting system.
+
+   This function is called during application shutdown.
+
+

@@ -1,0 +1,666 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.compliance.repository &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.domains.compliance.schemas" href="../schemas/index.html" />
+    <link rel="prev" title="app.domains.compliance.models" href="../models/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.compliance</a></li>
+      <li class="breadcrumb-item active">app.domains.compliance.repository</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/domains/compliance/repository/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.compliance.repository">
+<span id="app-domains-compliance-repository"></span><h1>app.domains.compliance.repository<a class="headerlink" href="#module-app.domains.compliance.repository" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.compliance.repository.Prop65ChemicalRepository" title="app.domains.compliance.repository.Prop65ChemicalRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Prop65ChemicalRepository</span></code></a></p></td>
+<td><p>Repository for Prop65Chemical entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.compliance.repository.WarningRepository" title="app.domains.compliance.repository.WarningRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarningRepository</span></code></a></p></td>
+<td><p>Repository for Warning entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.compliance.repository.ProductChemicalRepository" title="app.domains.compliance.repository.ProductChemicalRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductChemicalRepository</span></code></a></p></td>
+<td><p>Repository for ProductChemical entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.compliance.repository.ProductDOTApprovalRepository" title="app.domains.compliance.repository.ProductDOTApprovalRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDOTApprovalRepository</span></code></a></p></td>
+<td><p>Repository for ProductDOTApproval entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.compliance.repository.HazardousMaterialRepository" title="app.domains.compliance.repository.HazardousMaterialRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HazardousMaterialRepository</span></code></a></p></td>
+<td><p>Repository for HazardousMaterial entity operations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.Prop65ChemicalRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.compliance.repository.</span></span><span class="sig-name descname"><span class="pre">Prop65ChemicalRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.Prop65ChemicalRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Prop65Chemical" title="app.domains.compliance.models.Prop65Chemical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.compliance.models.Prop65Chemical</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Prop65Chemical entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+Prop65Chemical entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.Prop65ChemicalRepository.find_by_cas_number">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_cas_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cas_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.Prop65ChemicalRepository.find_by_cas_number" title="Link to this definition"></a></dt>
+<dd><p>Find a chemical by its CAS number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cas_number: The CAS number to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chemical if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cas_number</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Prop65Chemical" title="app.domains.compliance.models.Prop65Chemical">app.domains.compliance.models.Prop65Chemical</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.Prop65ChemicalRepository.find_by_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.Prop65ChemicalRepository.find_by_name" title="Link to this definition"></a></dt>
+<dd><p>Find chemicals by name (partial match).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: The chemical name to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of chemicals with matching names.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Prop65Chemical" title="app.domains.compliance.models.Prop65Chemical">app.domains.compliance.models.Prop65Chemical</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.Prop65ChemicalRepository.get_by_type">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemical_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.Prop65ChemicalRepository.get_by_type" title="Link to this definition"></a></dt>
+<dd><p>Get chemicals of a specific type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>chemical_type: The chemical type to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of chemicals of the specified type.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chemical_type</strong> (<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ChemicalType" title="app.domains.compliance.models.ChemicalType"><em>app.domains.compliance.models.ChemicalType</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Prop65Chemical" title="app.domains.compliance.models.Prop65Chemical">app.domains.compliance.models.Prop65Chemical</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.Prop65ChemicalRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemical_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.Prop65ChemicalRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a chemical exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>chemical_id: The chemical ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The chemical if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the chemical is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chemical_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.compliance.models.Prop65Chemical" title="app.domains.compliance.models.Prop65Chemical">app.domains.compliance.models.Prop65Chemical</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.WarningRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.compliance.repository.</span></span><span class="sig-name descname"><span class="pre">WarningRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.WarningRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Warning" title="app.domains.compliance.models.Warning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.compliance.models.Warning</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Warning entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+Warning entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.WarningRepository.get_by_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.WarningRepository.get_by_product" title="Link to this definition"></a></dt>
+<dd><p>Get warnings for a specific product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: The product ID to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of warnings for the product.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>product_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Warning" title="app.domains.compliance.models.Warning">app.domains.compliance.models.Warning</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.WarningRepository.get_by_chemical">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_chemical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemical_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.WarningRepository.get_by_chemical" title="Link to this definition"></a></dt>
+<dd><p>Get warnings for a specific chemical.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>chemical_id: The chemical ID to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of warnings for the chemical.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chemical_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.Warning" title="app.domains.compliance.models.Warning">app.domains.compliance.models.Warning</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.WarningRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warning_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.WarningRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a warning exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>warning_id: The warning ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The warning if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the warning is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warning_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.compliance.models.Warning" title="app.domains.compliance.models.Warning">app.domains.compliance.models.Warning</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductChemicalRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.compliance.repository.</span></span><span class="sig-name descname"><span class="pre">ProductChemicalRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductChemicalRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductChemical" title="app.domains.compliance.models.ProductChemical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.compliance.models.ProductChemical</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for ProductChemical entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+ProductChemical entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductChemicalRepository.find_by_product_and_chemical">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_product_and_chemical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductChemicalRepository.find_by_product_and_chemical" title="Link to this definition"></a></dt>
+<dd><p>Find a product chemical association by product and chemical IDs.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: The product ID.
+chemical_id: The chemical ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The product chemical association if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>uuid.UUID</em>)</p></li>
+<li><p><strong>chemical_id</strong> (<em>uuid.UUID</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductChemical" title="app.domains.compliance.models.ProductChemical">app.domains.compliance.models.ProductChemical</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductChemicalRepository.get_by_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductChemicalRepository.get_by_product" title="Link to this definition"></a></dt>
+<dd><p>Get chemical associations for a specific product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: The product ID to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of product chemical associations for the product.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>product_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductChemical" title="app.domains.compliance.models.ProductChemical">app.domains.compliance.models.ProductChemical</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductChemicalRepository.get_by_exposure_scenario">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_exposure_scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductChemicalRepository.get_by_exposure_scenario" title="Link to this definition"></a></dt>
+<dd><p>Get product chemical associations with a specific exposure scenario.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>scenario: The exposure scenario to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of product chemical associations with the specified scenario.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scenario</strong> (<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ExposureScenario" title="app.domains.compliance.models.ExposureScenario"><em>app.domains.compliance.models.ExposureScenario</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductChemical" title="app.domains.compliance.models.ProductChemical">app.domains.compliance.models.ProductChemical</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductChemicalRepository.get_products_with_warnings">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_products_with_warnings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductChemicalRepository.get_products_with_warnings" title="Link to this definition"></a></dt>
+<dd><p>Get IDs of products that require warnings.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of product IDs that require warnings.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[uuid.UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductChemicalRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">association_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductChemicalRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a product chemical association exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>association_id: The association ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The product chemical association if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the association is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>association_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductChemical" title="app.domains.compliance.models.ProductChemical">app.domains.compliance.models.ProductChemical</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductDOTApprovalRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.compliance.repository.</span></span><span class="sig-name descname"><span class="pre">ProductDOTApprovalRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductDOTApprovalRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductDOTApproval" title="app.domains.compliance.models.ProductDOTApproval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.compliance.models.ProductDOTApproval</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for ProductDOTApproval entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+ProductDOTApproval entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductDOTApprovalRepository.find_by_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductDOTApprovalRepository.find_by_product" title="Link to this definition"></a></dt>
+<dd><p>Find a DOT approval for a specific product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: The product ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The DOT approval if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>product_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductDOTApproval" title="app.domains.compliance.models.ProductDOTApproval">app.domains.compliance.models.ProductDOTApproval</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductDOTApprovalRepository.find_by_approval_number">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_approval_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">approval_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductDOTApprovalRepository.find_by_approval_number" title="Link to this definition"></a></dt>
+<dd><p>Find a DOT approval by approval number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>approval_number: The approval number to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The DOT approval if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>approval_number</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductDOTApproval" title="app.domains.compliance.models.ProductDOTApproval">app.domains.compliance.models.ProductDOTApproval</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductDOTApprovalRepository.get_by_status">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductDOTApprovalRepository.get_by_status" title="Link to this definition"></a></dt>
+<dd><p>Get DOT approvals with a specific status.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>status: The approval status to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of DOT approvals with the specified status.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>status</strong> (<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ApprovalStatus" title="app.domains.compliance.models.ApprovalStatus"><em>app.domains.compliance.models.ApprovalStatus</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductDOTApproval" title="app.domains.compliance.models.ProductDOTApproval">app.domains.compliance.models.ProductDOTApproval</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductDOTApprovalRepository.get_expiring_soon">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_expiring_soon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductDOTApprovalRepository.get_expiring_soon" title="Link to this definition"></a></dt>
+<dd><p>Get DOT approvals that are expiring soon.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>days: Number of days to consider “soon”.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of DOT approvals expiring within the specified number of days.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>days</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductDOTApproval" title="app.domains.compliance.models.ProductDOTApproval">app.domains.compliance.models.ProductDOTApproval</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.ProductDOTApprovalRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">approval_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.ProductDOTApprovalRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure a DOT approval exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>approval_id: The approval ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The DOT approval if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the approval is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>approval_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.compliance.models.ProductDOTApproval" title="app.domains.compliance.models.ProductDOTApproval">app.domains.compliance.models.ProductDOTApproval</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.HazardousMaterialRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.compliance.repository.</span></span><span class="sig-name descname"><span class="pre">HazardousMaterialRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.HazardousMaterialRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.HazardousMaterial" title="app.domains.compliance.models.HazardousMaterial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.compliance.models.HazardousMaterial</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for HazardousMaterial entity operations.</p>
+<p>Provides methods for querying, creating, updating, and deleting
+HazardousMaterial entities, extending the generic BaseRepository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.HazardousMaterialRepository.find_by_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.HazardousMaterialRepository.find_by_product" title="Link to this definition"></a></dt>
+<dd><p>Find hazardous material information for a specific product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: The product ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The hazardous material information if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>product_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.HazardousMaterial" title="app.domains.compliance.models.HazardousMaterial">app.domains.compliance.models.HazardousMaterial</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.HazardousMaterialRepository.find_by_un_number">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_un_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">un_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.HazardousMaterialRepository.find_by_un_number" title="Link to this definition"></a></dt>
+<dd><p>Find hazardous materials by UN number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>un_number: The UN number to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of hazardous materials with the specified UN number.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>un_number</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.HazardousMaterial" title="app.domains.compliance.models.HazardousMaterial">app.domains.compliance.models.HazardousMaterial</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.HazardousMaterialRepository.get_by_hazard_class">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_hazard_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hazard_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.HazardousMaterialRepository.get_by_hazard_class" title="Link to this definition"></a></dt>
+<dd><p>Get hazardous materials with a specific hazard class.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>hazard_class: The hazard class to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of hazardous materials with the specified hazard class.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hazard_class</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.compliance.models.HazardousMaterial" title="app.domains.compliance.models.HazardousMaterial">app.domains.compliance.models.HazardousMaterial</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.compliance.repository.HazardousMaterialRepository.ensure_exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hazmat_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.compliance.repository.HazardousMaterialRepository.ensure_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensure hazardous material information exists by ID, raising an exception if not found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>hazmat_id: The hazardous material ID to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The hazardous material information if found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If the information is not found.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hazmat_id</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.compliance.models.HazardousMaterial" title="app.domains.compliance.models.HazardousMaterial">app.domains.compliance.models.HazardousMaterial</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../models/index.html" class="btn btn-neutral float-left" title="app.domains.compliance.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../schemas/index.html" class="btn btn-neutral float-right" title="app.domains.compliance.schemas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+app.core.config.fitment
+=======================
+
+.. py:module:: app.core.config.fitment
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.fitment.FitmentSettings
+
+
+Module Contents
+---------------
+
+.. py:class:: FitmentSettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Fitment database and processing settings.
+
+
+   .. py:attribute:: VCDB_PATH
+      :type:  str
+      :value: 'data/vcdb.accdb'
+
+
+
+   .. py:attribute:: PCDB_PATH
+      :type:  str
+      :value: 'data/pcdb.accdb'
+
+
+
+   .. py:attribute:: MODEL_MAPPINGS_PATH
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: FITMENT_DB_URL
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: FITMENT_LOG_LEVEL
+      :type:  str
+      :value: 'INFO'
+
+
+
+   .. py:attribute:: FITMENT_CACHE_SIZE
+      :type:  int
+      :value: 100
+
+
+
+   .. py:attribute:: ENVIRONMENT
+      :type:  app.core.config.base.Environment
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: validate_fitment_paths()
+
+      Validate fitment file paths in production.
+
+
+

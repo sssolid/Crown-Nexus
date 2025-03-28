@@ -1,0 +1,54 @@
+app.domains.currency.tasks
+==========================
+
+.. py:module:: app.domains.currency.tasks
+
+.. autoapi-nested-parse::
+
+   Celery tasks for currency operations.
+
+   This module defines Celery tasks for:
+   - Fetching and updating exchange rates
+   - Monitoring API usage
+   - Handling currency-related background operations
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.currency.tasks.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.currency.tasks.update_exchange_rates
+   app.domains.currency.tasks.init_currencies
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: update_exchange_rates(self)
+
+   Update exchange rates from the API.
+
+   Returns:
+       Dict[str, Optional[int]]: Result of the operation
+
+
+.. py:function:: init_currencies()
+
+   Initialize currencies in the database.
+
+   Returns:
+       Dict[str, Optional[int]]: Result of the operation
+
+

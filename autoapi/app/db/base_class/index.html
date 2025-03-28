@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.db.base_class &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.db.session" href="../session/index.html" />
+    <link rel="prev" title="app.db.base" href="../base/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.db</a></li>
+      <li class="breadcrumb-item active">app.db.base_class</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/db/base_class/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.db.base_class">
+<span id="app-db-base-class"></span><h1>app.db.base_class<a class="headerlink" href="#module-app.db.base_class" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.base_class.logger" title="app.db.base_class.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.base_class.T" title="app.db.base_class.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.base_class.Base" title="app.db.base_class.Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Base</span></code></a></p></td>
+<td><p>Enhanced base class for all database models.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.db.base_class.logger">
+<span class="sig-prename descclassname"><span class="pre">app.db.base_class.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.db.base_class.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.db.base_class.T">
+<span class="sig-prename descclassname"><span class="pre">app.db.base_class.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#app.db.base_class.T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.db.base_class.Base">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.base_class.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><a class="headerlink" href="#app.db.base_class.Base" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">sqlalchemy.orm.DeclarativeBase</span></code></p>
+<p>Enhanced base class for all database models.</p>
+<p>This class provides common functionality for all models, including:
+- Automatic table name generation
+- Audit fields (created_at, updated_at, created_by_id, updated_by_id)
+- Soft deletion support
+- JSON serialization via the to_dict() method
+- Helper methods for common query operations</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.db.base_class.Base.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.db.base_class.Base.created_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.db.base_class.Base.updated_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.is_deleted">
+<span class="sig-name descname"><span class="pre">is_deleted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.db.base_class.Base.is_deleted" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.created_by_id">
+<span class="sig-name descname"><span class="pre">created_by_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.db.base_class.Base.created_by_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.updated_by_id">
+<span class="sig-name descname"><span class="pre">updated_by_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlalchemy.orm.Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.db.base_class.Base.updated_by_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.__exclude_from_dict__">
+<span class="sig-name descname"><span class="pre">__exclude_from_dict__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['is_deleted']</span></em><a class="headerlink" href="#app.db.base_class.Base.__exclude_from_dict__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.db.base_class.Base.__include_relationships__">
+<span class="sig-name descname"><span class="pre">__include_relationships__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.db.base_class.Base.__include_relationships__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.__tablename__" title="Link to this definition"></a></dt>
+<dd><p>Generate table name automatically from class name.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>str: Table name as lowercase class name</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_relationships</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert model instance to dictionary.</p>
+<p>This method provides a consistent way to serialize models for API responses.
+It respects the exclude_from_dict and include_relationships configurations.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>exclude: Additional fields to exclude from the result
+include_relationships: Override __include_relationships__ setting</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Dictionary representation of model</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exclude</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>include_relationships</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.get_columns">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.get_columns" title="Link to this definition"></a></dt>
+<dd><p>Get a list of column names for this model.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List[str]: Column names</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.from_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Create a new instance from a dictionary.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: Dictionary containing model data</p>
+</dd>
+<dt>Returns:</dt><dd><p>T: New model instance</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.filter_by_id">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filter_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.filter_by_id" title="Link to this definition"></a></dt>
+<dd><p>Create a query to filter by id.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>id_value: UUID primary key to filter by</p>
+</dd>
+<dt>Returns:</dt><dd><p>Select: SQLAlchemy select statement filtered by id</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id_value</strong> (<em>uuid.UUID</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sqlalchemy.sql.expression.Select</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.active_only">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">active_only</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.active_only" title="Link to this definition"></a></dt>
+<dd><p>Create a query for non-deleted records only.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Select: SQLAlchemy select statement filtered to non-deleted records</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sqlalchemy.sql.expression.Select</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.soft_delete">
+<span class="sig-name descname"><span class="pre">soft_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.soft_delete" title="Link to this definition"></a></dt>
+<dd><p>Mark the record as deleted without removing from database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: ID of the user performing the deletion</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.restore">
+<span class="sig-name descname"><span class="pre">restore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.restore" title="Link to this definition"></a></dt>
+<dd><p>Restore a soft-deleted record.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: ID of the user restoring the record</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.update_from_dict">
+<span class="sig-name descname"><span class="pre">update_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.update_from_dict" title="Link to this definition"></a></dt>
+<dd><p>Update model attributes from dictionary.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: Dictionary containing values to update
+user_id: ID of the user performing the update
+exclude: Fields to exclude from update</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>)</p></li>
+<li><p><strong>exclude</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.db.base_class.Base.get_relationships">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_relationships</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.base_class.Base.get_relationships" title="Link to this definition"></a></dt>
+<dd><p>Get relationships defined on this model.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Dictionary of relationship names and their properties</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../base/index.html" class="btn btn-neutral float-left" title="app.db.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../session/index.html" class="btn btn-neutral float-right" title="app.db.session" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

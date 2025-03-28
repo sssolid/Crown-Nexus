@@ -1,0 +1,75 @@
+app.core.error.factory
+======================
+
+.. py:module:: app.core.error.factory
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.error.factory.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.error.factory.ErrorReporterFactory
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ErrorReporterFactory
+
+   Factory for creating error reporters.
+
+
+   .. py:method:: create_reporter(reporter_type, **kwargs)
+      :classmethod:
+
+
+      Create an error reporter of the specified type.
+
+      Args:
+          reporter_type: Type of reporter to create ("logging", "database", or "external")
+          **kwargs: Additional arguments to pass to the reporter constructor
+
+      Returns:
+          An ErrorReporter instance
+
+      Raises:
+          ValueError: If the reporter type is not supported
+
+
+
+   .. py:method:: create_default_reporters()
+      :classmethod:
+
+
+      Create the default set of error reporters based on configuration settings.
+
+      Returns:
+          List of ErrorReporter instances
+
+
+
+   .. py:method:: create_reporter_by_name(reporter_name)
+      :classmethod:
+
+
+      Create an error reporter by name based on configuration settings.
+
+      Args:
+          reporter_name: Name of the reporter to create
+
+      Returns:
+          An ErrorReporter instance or None if the reporter is not configured
+
+
+

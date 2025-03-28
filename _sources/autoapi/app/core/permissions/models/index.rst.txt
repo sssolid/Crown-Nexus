@@ -1,0 +1,203 @@
+app.core.permissions.models
+===========================
+
+.. py:module:: app.core.permissions.models
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.permissions.models.ROLE_PERMISSIONS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.permissions.models.UserRole
+   app.core.permissions.models.Permission
+
+
+Module Contents
+---------------
+
+.. py:class:: UserRole
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   User roles in the system.
+
+
+   .. py:attribute:: ADMIN
+      :value: 'admin'
+
+
+
+   .. py:attribute:: MANAGER
+      :value: 'manager'
+
+
+
+   .. py:attribute:: CLIENT
+      :value: 'client'
+
+
+
+   .. py:attribute:: DISTRIBUTOR
+      :value: 'distributor'
+
+
+
+   .. py:attribute:: READ_ONLY
+      :value: 'read_only'
+
+
+
+.. py:class:: Permission
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Permission types for the application.
+
+   This enum defines all available permissions in the system.
+   Permissions follow a resource:action format.
+
+
+   .. py:attribute:: USER_CREATE
+      :value: 'user:create'
+
+
+
+   .. py:attribute:: USER_READ
+      :value: 'user:read'
+
+
+
+   .. py:attribute:: USER_UPDATE
+      :value: 'user:update'
+
+
+
+   .. py:attribute:: USER_DELETE
+      :value: 'user:delete'
+
+
+
+   .. py:attribute:: USER_ADMIN
+      :value: 'user:admin'
+
+
+
+   .. py:attribute:: PRODUCT_CREATE
+      :value: 'product:create'
+
+
+
+   .. py:attribute:: PRODUCT_READ
+      :value: 'product:read'
+
+
+
+   .. py:attribute:: PRODUCT_UPDATE
+      :value: 'product:update'
+
+
+
+   .. py:attribute:: PRODUCT_DELETE
+      :value: 'product:delete'
+
+
+
+   .. py:attribute:: PRODUCT_ADMIN
+      :value: 'product:admin'
+
+
+
+   .. py:attribute:: MEDIA_CREATE
+      :value: 'media:create'
+
+
+
+   .. py:attribute:: MEDIA_READ
+      :value: 'media:read'
+
+
+
+   .. py:attribute:: MEDIA_UPDATE
+      :value: 'media:update'
+
+
+
+   .. py:attribute:: MEDIA_DELETE
+      :value: 'media:delete'
+
+
+
+   .. py:attribute:: MEDIA_ADMIN
+      :value: 'media:admin'
+
+
+
+   .. py:attribute:: FITMENT_CREATE
+      :value: 'fitment:create'
+
+
+
+   .. py:attribute:: FITMENT_READ
+      :value: 'fitment:read'
+
+
+
+   .. py:attribute:: FITMENT_UPDATE
+      :value: 'fitment:update'
+
+
+
+   .. py:attribute:: FITMENT_DELETE
+      :value: 'fitment:delete'
+
+
+
+   .. py:attribute:: FITMENT_ADMIN
+      :value: 'fitment:admin'
+
+
+
+   .. py:attribute:: COMPANY_CREATE
+      :value: 'company:create'
+
+
+
+   .. py:attribute:: COMPANY_READ
+      :value: 'company:read'
+
+
+
+   .. py:attribute:: COMPANY_UPDATE
+      :value: 'company:update'
+
+
+
+   .. py:attribute:: COMPANY_DELETE
+      :value: 'company:delete'
+
+
+
+   .. py:attribute:: COMPANY_ADMIN
+      :value: 'company:admin'
+
+
+
+   .. py:attribute:: SYSTEM_ADMIN
+      :value: 'system:admin'
+
+
+
+.. py:data:: ROLE_PERMISSIONS
+   :type:  Dict[app.domains.users.models.UserRole, Set[Permission]]
+

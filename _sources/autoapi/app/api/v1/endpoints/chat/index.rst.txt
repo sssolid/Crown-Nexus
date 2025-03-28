@@ -1,0 +1,488 @@
+app.api.v1.endpoints.chat
+=========================
+
+.. py:module:: app.api.v1.endpoints.chat
+
+.. autoapi-nested-parse::
+
+   Chat API endpoints.
+
+   This module provides API endpoints for chat functionality including:
+   - Chat room management (create, get, join, leave)
+   - Messages (send, edit, delete)
+   - Member management (add, remove, update roles)
+   - Reading status (mark as read)
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.chat.router
+   app.api.v1.endpoints.chat.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.chat.CreateRoomRequest
+   app.api.v1.endpoints.chat.AddMemberRequest
+   app.api.v1.endpoints.chat.UpdateMemberRequest
+   app.api.v1.endpoints.chat.CreateDirectChatRequest
+   app.api.v1.endpoints.chat.CreateMessageRequest
+   app.api.v1.endpoints.chat.EditMessageRequest
+   app.api.v1.endpoints.chat.ReactionRequest
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.chat.create_room
+   app.api.v1.endpoints.chat.get_rooms
+   app.api.v1.endpoints.chat.get_room
+   app.api.v1.endpoints.chat.add_room_member
+   app.api.v1.endpoints.chat.update_room_member
+   app.api.v1.endpoints.chat.remove_room_member
+   app.api.v1.endpoints.chat.get_room_messages
+   app.api.v1.endpoints.chat.create_message
+   app.api.v1.endpoints.chat.edit_message
+   app.api.v1.endpoints.chat.delete_message
+   app.api.v1.endpoints.chat.add_reaction
+   app.api.v1.endpoints.chat.remove_reaction
+   app.api.v1.endpoints.chat.create_direct_chat
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:data:: logger
+
+.. py:class:: CreateRoomRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for creating a chat room.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: type
+      :type:  str
+
+
+   .. py:attribute:: company_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: members
+      :type:  Optional[List[Dict[str, Any]]]
+
+
+   .. py:method:: validate_type(v)
+
+      Validate that the room type is valid.
+
+      Args:
+          v: Room type value to validate
+
+      Returns:
+          The validated room type
+
+      Raises:
+          ValueError: If the room type is not valid
+
+
+
+.. py:class:: AddMemberRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for adding a member to a chat room.
+
+
+   .. py:attribute:: user_id
+      :type:  str
+
+
+   .. py:attribute:: role
+      :type:  str
+
+
+   .. py:method:: validate_role(v)
+
+      Validate that the member role is valid.
+
+      Args:
+          v: Role value to validate
+
+      Returns:
+          The validated role
+
+      Raises:
+          ValueError: If the role is not valid
+
+
+
+.. py:class:: UpdateMemberRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for updating a member's role in a chat room.
+
+
+   .. py:attribute:: role
+      :type:  str
+
+
+   .. py:method:: validate_role(v)
+
+      Validate that the member role is valid.
+
+      Args:
+          v: Role value to validate
+
+      Returns:
+          The validated role
+
+      Raises:
+          ValueError: If the role is not valid
+
+
+
+.. py:class:: CreateDirectChatRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for creating a direct chat between two users.
+
+
+   .. py:attribute:: user_id
+      :type:  str
+
+
+.. py:class:: CreateMessageRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for creating a new message.
+
+
+   .. py:attribute:: content
+      :type:  str
+
+
+   .. py:attribute:: message_type
+      :type:  str
+
+
+   .. py:attribute:: metadata
+      :type:  Dict[str, Any]
+
+
+   .. py:method:: validate_message_type(v)
+
+      Validate that the message type is valid.
+
+      Args:
+          v: Message type value to validate
+
+      Returns:
+          The validated message type
+
+      Raises:
+          ValueError: If the message type is not valid
+
+
+
+.. py:class:: EditMessageRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for editing a message.
+
+
+   .. py:attribute:: content
+      :type:  str
+
+
+.. py:class:: ReactionRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Request model for adding/removing a reaction to a message.
+
+
+   .. py:attribute:: reaction
+      :type:  str
+
+
+.. py:function:: create_room(request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Create a new chat room.
+
+   Args:
+       request: Room creation request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with the created room information
+
+   Raises:
+       HTTPException: If validation fails or an error occurs during room creation
+
+
+.. py:function:: get_rooms(db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Get all chat rooms for the current user.
+
+   Args:
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response containing the list of rooms
+
+   Raises:
+       HTTPException: If an error occurs during fetching rooms
+
+
+.. py:function:: get_room(room_id, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Get a specific chat room by ID.
+
+   Args:
+       room_id: ID of the chat room
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response containing the room information
+
+   Raises:
+       HTTPException: If the room is not found or the user doesn't have access
+
+
+.. py:function:: add_room_member(room_id, request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Add a member to a chat room.
+
+   Args:
+       room_id: ID of the chat room
+       request: Member addition request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with success status and message
+
+   Raises:
+       HTTPException: If validation fails, the room is not found, or the user lacks permissions
+
+
+.. py:function:: update_room_member(room_id, user_id, request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Update a member's role in a chat room.
+
+   Args:
+       room_id: ID of the chat room
+       user_id: ID of the user to update
+       request: Role update request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with success status and message
+
+   Raises:
+       HTTPException: If validation fails, the room/member is not found, or the user lacks permissions
+
+
+.. py:function:: remove_room_member(room_id, user_id, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Remove a member from a chat room.
+
+   Users can remove themselves (leave the room) or admins can remove any member.
+   Owners can only be removed by other owners.
+
+   Args:
+       room_id: ID of the chat room
+       user_id: ID of the user to remove
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with success status and message
+
+   Raises:
+       HTTPException: If the room/member is not found or the user lacks permissions
+
+
+.. py:function:: get_room_messages(room_id, before_id = None, limit = Query(50, ge=1, le=100), db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Get messages for a chat room.
+
+   Args:
+       room_id: ID of the chat room
+       before_id: Optional message ID to get messages before (for pagination)
+       limit: Maximum number of messages to return
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response containing the list of messages
+
+   Raises:
+       HTTPException: If the room is not found or the user doesn't have access
+
+
+.. py:function:: create_message(room_id, request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Create a new message in a chat room.
+
+   Args:
+       room_id: ID of the chat room
+       request: Message creation request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response containing the created message information
+
+   Raises:
+       HTTPException: If the room is not found, the user doesn't have access, or validation fails
+
+
+.. py:function:: edit_message(room_id, message_id, request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Edit an existing message.
+
+   Args:
+       room_id: ID of the chat room
+       message_id: ID of the message to edit
+       request: Message edit request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with the updated message information
+
+   Raises:
+       HTTPException: If the message is not found or the user doesn't have permission to edit it
+
+
+.. py:function:: delete_message(room_id, message_id, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Delete a message.
+
+   Args:
+       room_id: ID of the chat room
+       message_id: ID of the message to delete
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with success status and message
+
+   Raises:
+       HTTPException: If the message is not found or the user doesn't have permission to delete it
+
+
+.. py:function:: add_reaction(room_id, message_id, request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Add a reaction to a message.
+
+   Args:
+       room_id: ID of the chat room
+       message_id: ID of the message
+       request: Reaction request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with success status and message
+
+   Raises:
+       HTTPException: If the message is not found or the user doesn't have access to the room
+
+
+.. py:function:: remove_reaction(room_id, message_id, reaction, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Remove a reaction from a message.
+
+   Args:
+       room_id: ID of the chat room
+       message_id: ID of the message
+       reaction: Reaction emoji or code to remove
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response with success status and message
+
+   Raises:
+       HTTPException: If the message is not found or the user doesn't have access to the room
+
+
+.. py:function:: create_direct_chat(request, db = Depends(get_db), current_user = Depends(get_current_active_user))
+   :async:
+
+
+   Create or get a direct chat between two users.
+
+   If a direct chat already exists between the users, it returns the existing chat.
+   Otherwise, it creates a new direct chat.
+
+   Args:
+       request: Direct chat creation request data
+       db: Database session
+       current_user: Authenticated user making the request
+
+   Returns:
+       Response containing the direct chat room information
+
+   Raises:
+       HTTPException: If the target user doesn't exist or an error occurs
+
+

@@ -1,0 +1,165 @@
+app.domains.currency.models
+===========================
+
+.. py:module:: app.domains.currency.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.currency.models.Currency
+   app.domains.currency.models.ExchangeRate
+
+
+Module Contents
+---------------
+
+.. py:class:: Currency
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Currency entity representing a monetary currency.
+
+   Attributes:
+       id: Unique identifier.
+       code: ISO 4217 currency code.
+       name: Currency name.
+       symbol: Currency symbol.
+       is_active: Whether the currency is active.
+       is_base: Whether this is the base currency.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'currency'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: symbol
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: is_base
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: source_rates
+      :type:  sqlalchemy.orm.Mapped[List[ExchangeRate]]
+
+
+   .. py:attribute:: target_rates
+      :type:  sqlalchemy.orm.Mapped[List[ExchangeRate]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Currency instance.
+
+      Returns:
+          String representation including code and name.
+
+
+
+.. py:class:: ExchangeRate
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Exchange rate between two currencies.
+
+   Attributes:
+       id: Unique identifier.
+       source_currency_id: ID of the source currency.
+       target_currency_id: ID of the target currency.
+       rate: Exchange rate value.
+       effective_date: When the rate became effective.
+       fetched_at: When the rate was fetched.
+       data_source: API or source that provided the rate.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'exchange_rate'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: source_currency_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: target_currency_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: rate
+      :type:  sqlalchemy.orm.Mapped[float]
+
+
+   .. py:attribute:: effective_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: fetched_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: data_source
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: source_currency
+      :type:  sqlalchemy.orm.Mapped[Currency]
+
+
+   .. py:attribute:: target_currency
+      :type:  sqlalchemy.orm.Mapped[Currency]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ExchangeRate instance.
+
+      Returns:
+          String representation including source, target, and rate.
+
+
+

@@ -1,0 +1,1137 @@
+app.core.validation
+===================
+
+.. py:module:: app.core.validation
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/validation/base/index
+   /autoapi/app/core/validation/db/index
+   /autoapi/app/core/validation/factory/index
+   /autoapi/app/core/validation/manager/index
+   /autoapi/app/core/validation/service/index
+   /autoapi/app/core/validation/validators/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.validation.ValidationResult
+   app.core.validation.Validator
+   app.core.validation.UniqueValidator
+   app.core.validation.ValidatorFactory
+   app.core.validation.ValidationService
+   app.core.validation.CreditCardValidator
+   app.core.validation.DateValidator
+   app.core.validation.EmailValidator
+   app.core.validation.EnumValidator
+   app.core.validation.IPAddressValidator
+   app.core.validation.LengthValidator
+   app.core.validation.PasswordValidator
+   app.core.validation.PhoneValidator
+   app.core.validation.RangeValidator
+   app.core.validation.RegexValidator
+   app.core.validation.RequiredValidator
+   app.core.validation.URLValidator
+   app.core.validation.UUIDValidator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.validation.validate_data
+   app.core.validation.validate_model
+   app.core.validation.validate_email
+   app.core.validation.validate_phone
+   app.core.validation.validate_date
+   app.core.validation.validate_length
+   app.core.validation.validate_range
+   app.core.validation.validate_regex
+   app.core.validation.validate_required
+   app.core.validation.validate_unique
+   app.core.validation.validate_url
+   app.core.validation.validate_uuid
+   app.core.validation.validate_credit_card
+   app.core.validation.validate_ip_address
+   app.core.validation.validate_password_strength
+   app.core.validation.validate_enum
+   app.core.validation.validate_composite
+   app.core.validation.create_validator
+   app.core.validation.register_validator
+   app.core.validation.initialize
+   app.core.validation.shutdown
+   app.core.validation.get_validation_service
+
+
+Package Contents
+----------------
+
+.. py:class:: ValidationResult
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Result of a validation operation.
+
+   This class represents the result of a validation operation, including
+   whether the validation was successful and any validation errors.
+
+
+   .. py:attribute:: is_valid
+      :type:  bool
+
+
+   .. py:attribute:: errors
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:property:: has_errors
+      :type: bool
+
+
+      Check if there are any validation errors.
+
+      Returns:
+          bool: True if there are errors, False otherwise
+
+
+
+   .. py:property:: error_messages
+      :type: List[str]
+
+
+      Get a list of error messages.
+
+      Returns:
+          List[str]: List of error message strings
+
+
+
+   .. py:method:: add_error(msg, error_type, loc = None, **context)
+
+      Add an error to the validation result.
+
+      Args:
+          msg: The error message
+          error_type: The type of error
+          loc: Optional location of the error (field name or path)
+          **context: Additional context for the error
+
+
+
+.. py:class:: Validator
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for validators.
+
+   Validators must implement the validate method, which takes a value
+   and optional additional parameters and returns a ValidationResult.
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a value.
+
+      Args:
+          value: The value to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+   .. py:method:: validate_async(value, **kwargs)
+      :abstractmethod:
+
+      :async:
+
+
+      Asynchronously validate a value.
+
+      This method is optional. Validators that require async operations
+      should implement this method. Default implementation raises NotImplementedError.
+
+      Args:
+          value: The value to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+      Raises:
+          NotImplementedError: If the validator doesn't support async validation
+
+
+
+.. py:class:: UniqueValidator(db)
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator that checks if a value is unique in the database.
+
+   This validator requires an async database session and must be used
+   with the validate_async method.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: validate_async(value, field, model, exclude_id = None, **kwargs)
+      :async:
+
+
+      Asynchronously validate that a value is unique in the database.
+
+      Args:
+          value: The value to check for uniqueness
+          field: The field name in the model
+          model: The SQLAlchemy model class
+          exclude_id: Optional ID to exclude from the uniqueness check
+          **kwargs: Additional keyword arguments
+
+      Returns:
+          ValidationResult: The validation result
+
+
+
+   .. py:method:: validate(value, field = '', model = None, exclude_id = None, **kwargs)
+
+      Synchronous validation method - not supported.
+
+      Raises:
+          ValidationException: Always, as this validator requires async operations
+
+
+
+.. py:class:: ValidatorFactory
+
+   Factory for creating validator instances.
+
+   This class provides methods to register and create different types of validators.
+
+
+   .. py:attribute:: _validators
+      :type:  Dict[str, Type[app.core.validation.base.Validator]]
+
+
+   .. py:method:: register_validator(name, validator_class)
+      :classmethod:
+
+
+      Register a new validator type.
+
+      Args:
+          name: The name to register the validator under
+          validator_class: The validator class to register
+
+      Raises:
+          ValidationException: If a validator with the same name is already registered
+
+
+
+   .. py:method:: create_validator(validator_type, **options)
+      :classmethod:
+
+
+      Create a validator instance of the specified type.
+
+      Args:
+          validator_type: The type of validator to create
+          **options: Additional options for the validator
+
+      Returns:
+          Validator: An instance of the requested validator
+
+      Raises:
+          ValidationException: If the validator type is not supported
+
+
+
+   .. py:method:: get_available_validators()
+      :classmethod:
+
+
+      Get a list of all available validator types.
+
+      Returns:
+          List[str]: List of registered validator type names
+
+
+
+.. py:function:: validate_data(data, schema_class)
+
+   Validate data against a Pydantic schema.
+
+   Args:
+       data: The data to validate
+       schema_class: The Pydantic model class to validate against
+
+   Returns:
+       BaseModel: The validated model instance
+
+   Raises:
+       ValidationException: If validation fails
+
+
+.. py:function:: validate_model(model, include = None, exclude = None)
+
+   Validate an existing Pydantic model instance.
+
+   Args:
+       model: The model instance to validate
+       include: Optional set of fields to include in validation
+       exclude: Optional set of fields to exclude from validation
+
+   Raises:
+       ValidationException: If validation fails
+
+
+.. py:function:: validate_email(email)
+
+   Validate an email address.
+
+   Args:
+       email: The email address to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_phone(phone)
+
+   Validate a phone number.
+
+   Args:
+       phone: The phone number to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_date(value, min_date = None, max_date = None, format_str = None)
+
+   Validate a date value.
+
+   Args:
+       value: The date to validate (string, date, or datetime)
+       min_date: Optional minimum allowed date
+       max_date: Optional maximum allowed date
+       format_str: Optional date format string for parsing string dates
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_length(value, min_length = None, max_length = None)
+
+   Validate string length.
+
+   Args:
+       value: The string to validate
+       min_length: Optional minimum length
+       max_length: Optional maximum length
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_range(value, min_value = None, max_value = None)
+
+   Validate numeric range.
+
+   Args:
+       value: The number to validate
+       min_value: Optional minimum value
+       max_value: Optional maximum value
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_regex(value, pattern)
+
+   Validate string against a regex pattern.
+
+   Args:
+       value: The string to validate
+       pattern: The regex pattern to validate against
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_required(value)
+
+   Validate that a value is not None or empty.
+
+   Args:
+       value: The value to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_unique(field, value, model, db, exclude_id = None)
+   :async:
+
+
+   Validate that a field value is unique in the database.
+
+   Args:
+       field: The field name to check
+       value: The field value to check
+       model: The SQLAlchemy model class
+       db: The database session
+       exclude_id: Optional ID to exclude from the uniqueness check
+
+   Returns:
+       bool: True if unique, False otherwise
+
+
+.. py:function:: validate_url(url)
+
+   Validate a URL.
+
+   Args:
+       url: The URL to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_uuid(value)
+
+   Validate a UUID string.
+
+   Args:
+       value: The UUID string to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_credit_card(card_number)
+
+   Validate a credit card number.
+
+   Args:
+       card_number: The credit card number to validate
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_ip_address(ip, version = None)
+
+   Validate an IP address.
+
+   Args:
+       ip: The IP address to validate
+       version: Optional IP version (4 or 6)
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_password_strength(password, min_length = 8, require_lowercase = True, require_uppercase = True, require_digit = True, require_special = True)
+
+   Validate password strength.
+
+   Args:
+       password: The password to validate
+       min_length: Minimum password length
+       require_lowercase: Whether to require lowercase letters
+       require_uppercase: Whether to require uppercase letters
+       require_digit: Whether to require digits
+       require_special: Whether to require special characters
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_enum(value, enum_class)
+
+   Validate that a value is a valid enum value.
+
+   Args:
+       value: The value to validate
+       enum_class: The enum class to validate against
+
+   Returns:
+       bool: True if valid, False otherwise
+
+
+.. py:function:: validate_composite(data, rules)
+
+   Validate data against multiple validation rules.
+
+   Args:
+       data: The data to validate
+       rules: Dictionary mapping field names to validation rules
+
+   Returns:
+       Tuple[bool, List[Dict[str, Any]]]: A tuple containing a boolean indicating
+           validation success and a list of validation errors
+
+
+.. py:function:: create_validator(rule_type, **params)
+
+   Create a validator function for a specific rule type.
+
+   Args:
+       rule_type: The type of validator to create
+       **params: Additional parameters for the validator
+
+   Returns:
+       Callable[[Any], bool]: A function that takes a value and returns a boolean
+
+   Raises:
+       ValidationException: If the validator type is not supported
+
+
+.. py:function:: register_validator(name, validator_class)
+
+   Register a custom validator.
+
+   Args:
+       name: The name to register the validator under
+       validator_class: The validator class to register
+
+   Raises:
+       ValidationException: If a validator with the same name is already registered
+
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the validation system.
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shutdown the validation system.
+
+
+.. py:class:: ValidationService(db = None)
+
+   Service for performing validations throughout the application.
+
+   This service provides a high-level interface to the validation system,
+   with methods for validating different types of data.
+
+
+   .. py:attribute:: db
+      :value: None
+
+
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the validation service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the validation service.
+
+
+
+   .. py:method:: validate_data(data, schema_class)
+
+      Validate data against a Pydantic schema.
+
+      Args:
+          data: The data to validate
+          schema_class: The Pydantic model class to validate against
+
+      Returns:
+          BaseModel: The validated model instance
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_model(model, include = None, exclude = None)
+
+      Validate an existing Pydantic model instance.
+
+      Args:
+          model: The model instance to validate
+          include: Optional set of fields to include in validation
+          exclude: Optional set of fields to exclude from validation
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_email(email)
+
+      Validate an email address.
+
+      Args:
+          email: The email address to validate
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_phone(phone)
+
+      Validate a phone number.
+
+      Args:
+          phone: The phone number to validate
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_date(value, min_date = None, max_date = None, format_str = None)
+
+      Validate a date value.
+
+      Args:
+          value: The date to validate (string, date, or datetime)
+          min_date: Optional minimum allowed date
+          max_date: Optional maximum allowed date
+          format_str: Optional date format string for parsing string dates
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_length(value, min_length = None, max_length = None)
+
+      Validate string length.
+
+      Args:
+          value: The string to validate
+          min_length: Optional minimum length
+          max_length: Optional maximum length
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_range(value, min_value = None, max_value = None)
+
+      Validate numeric range.
+
+      Args:
+          value: The number to validate
+          min_value: Optional minimum value
+          max_value: Optional maximum value
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_regex(value, pattern)
+
+      Validate string against a regex pattern.
+
+      Args:
+          value: The string to validate
+          pattern: The regex pattern to validate against
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_required(value)
+
+      Validate that a value is not None or empty.
+
+      Args:
+          value: The value to validate
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_unique(field, value, model, exclude_id = None)
+      :async:
+
+
+      Validate that a field value is unique in the database.
+
+      Args:
+          field: The field name to check
+          value: The field value to check
+          model: The SQLAlchemy model class
+          exclude_id: Optional ID to exclude from the uniqueness check
+
+      Returns:
+          bool: True if unique, False otherwise
+
+      Raises:
+          ValidationException: If no database session is available
+
+
+
+   .. py:method:: validate_url(url)
+
+      Validate a URL.
+
+      Args:
+          url: The URL to validate
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_uuid(value)
+
+      Validate a UUID string.
+
+      Args:
+          value: The UUID string to validate
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_credit_card(card_number)
+
+      Validate a credit card number.
+
+      Args:
+          card_number: The credit card number to validate
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_ip_address(ip, version = None)
+
+      Validate an IP address.
+
+      Args:
+          ip: The IP address to validate
+          version: Optional IP version (4 or 6)
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_password_strength(password, min_length = 8, require_lowercase = True, require_uppercase = True, require_digit = True, require_special = True)
+
+      Validate password strength.
+
+      Args:
+          password: The password to validate
+          min_length: Minimum password length
+          require_lowercase: Whether to require lowercase letters
+          require_uppercase: Whether to require uppercase letters
+          require_digit: Whether to require digits
+          require_special: Whether to require special characters
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_enum(value, enum_class)
+
+      Validate that a value is a valid enum value.
+
+      Args:
+          value: The value to validate
+          enum_class: The enum class to validate against
+
+      Returns:
+          bool: True if valid, False otherwise
+
+
+
+   .. py:method:: validate_composite(data, rules)
+
+      Validate data against multiple validation rules.
+
+      Args:
+          data: The data to validate
+          rules: Dictionary mapping field names to validation rules
+
+      Returns:
+          Tuple[bool, List[Dict[str, Any]]]: A tuple containing a boolean indicating
+              validation success and a list of validation errors
+
+
+
+   .. py:method:: create_validator(validator_type, **options)
+
+      Create a validator instance.
+
+      Args:
+          validator_type: The type of validator to create
+          **options: Additional options for the validator
+
+      Returns:
+          Validator: The validator instance
+
+      Raises:
+          ValidationException: If the validator type is not supported
+
+
+
+   .. py:method:: get_available_validators()
+
+      Get a list of all available validator types.
+
+      Returns:
+          List[str]: List of registered validator type names
+
+
+
+.. py:function:: get_validation_service(db = None)
+
+   Get the validation service instance.
+
+   This function is intended to be used with the dependency injection system.
+
+   Args:
+       db: Optional database session
+
+   Returns:
+       ValidationService: The validation service instance
+
+
+.. py:class:: CreditCardValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for credit card numbers.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a credit card number using the Luhn algorithm.
+
+      Args:
+          value: The credit card number to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: DateValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for dates.
+
+
+   .. py:method:: validate(value, min_date = None, max_date = None, format_str = None, **kwargs)
+
+      Validate a date.
+
+      Args:
+          value: The date to validate
+          min_date: Optional minimum date
+          max_date: Optional maximum date
+          format_str: Optional date format string for parsing string dates
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: EmailValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for email addresses.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate an email address.
+
+      Args:
+          value: The email address to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: EnumValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for enum values.
+
+
+   .. py:method:: validate(value, enum_class, **kwargs)
+
+      Validate that a value is a valid enum member.
+
+      Args:
+          value: The value to validate
+          enum_class: The Enum class to validate against
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: IPAddressValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for IP addresses.
+
+
+   .. py:method:: validate(value, version = None, **kwargs)
+
+      Validate an IP address.
+
+      Args:
+          value: The IP address to validate
+          version: Optional IP version (4 or 6)
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: LengthValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for string length.
+
+
+   .. py:method:: validate(value, min_length = None, max_length = None, **kwargs)
+
+      Validate the length of a string.
+
+      Args:
+          value: The string to validate
+          min_length: Optional minimum length
+          max_length: Optional maximum length
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: PasswordValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for password strength.
+
+
+   .. py:method:: validate(value, min_length = 8, require_lowercase = True, require_uppercase = True, require_digit = True, require_special = True, **kwargs)
+
+      Validate password strength.
+
+      Args:
+          value: The password to validate
+          min_length: Minimum password length
+          require_lowercase: Whether to require at least one lowercase letter
+          require_uppercase: Whether to require at least one uppercase letter
+          require_digit: Whether to require at least one digit
+          require_special: Whether to require at least one special character
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: PhoneValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for phone numbers.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a phone number.
+
+      Args:
+          value: The phone number to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: RangeValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for numeric ranges.
+
+
+   .. py:method:: validate(value, min_value = None, max_value = None, **kwargs)
+
+      Validate a numeric value against a range.
+
+      Args:
+          value: The number to validate
+          min_value: Optional minimum value
+          max_value: Optional maximum value
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: RegexValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for regex patterns.
+
+
+   .. py:method:: validate(value, pattern, **kwargs)
+
+      Validate a string against a regex pattern.
+
+      Args:
+          value: The string to validate
+          pattern: The regex pattern to validate against
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: RequiredValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for required values.
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate that a value is not empty.
+
+      Args:
+          value: The value to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: URLValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for URLs.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a URL.
+
+      Args:
+          value: The URL to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: UUIDValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for UUIDs.
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a UUID.
+
+      Args:
+          value: The UUID string to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+

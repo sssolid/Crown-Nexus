@@ -1,0 +1,511 @@
+app.fitment.models
+==================
+
+.. py:module:: app.fitment.models
+
+.. autoapi-nested-parse::
+
+   Fitment data models for the Crown Nexus platform.
+
+   This module contains Pydantic models for representing fitment data,
+   VCDB and PCDB entities, and validation schemas for part application strings.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.models.Position
+   app.fitment.models.PositionGroup
+   app.fitment.models.Vehicle
+   app.fitment.models.PartFitment
+   app.fitment.models.PartApplication
+   app.fitment.models.ModelMapping
+   app.fitment.models.MappingRule
+   app.fitment.models.ValidationStatus
+   app.fitment.models.ValidationResult
+   app.fitment.models.PartTerminology
+   app.fitment.models.PCDBPosition
+   app.fitment.models.VCDBVehicle
+
+
+Module Contents
+---------------
+
+.. py:class:: Position
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Automotive part position enumeration.
+
+
+   .. py:attribute:: FRONT
+      :value: 'Front'
+
+
+
+   .. py:attribute:: REAR
+      :value: 'Rear'
+
+
+
+   .. py:attribute:: LEFT
+      :value: 'Left'
+
+
+
+   .. py:attribute:: RIGHT
+      :value: 'Right'
+
+
+
+   .. py:attribute:: UPPER
+      :value: 'Upper'
+
+
+
+   .. py:attribute:: LOWER
+      :value: 'Lower'
+
+
+
+   .. py:attribute:: INNER
+      :value: 'Inner'
+
+
+
+   .. py:attribute:: OUTER
+      :value: 'Outer'
+
+
+
+   .. py:attribute:: CENTER
+      :value: 'Center'
+
+
+
+   .. py:attribute:: NA
+      :value: 'N/A'
+
+
+
+   .. py:attribute:: VARIES
+      :value: 'Varies with Application'
+
+
+
+.. py:class:: PositionGroup
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Group of positions for a part.
+
+
+   .. py:attribute:: front_rear
+      :type:  Position
+
+
+   .. py:attribute:: left_right
+      :type:  Position
+
+
+   .. py:attribute:: upper_lower
+      :type:  Position
+
+
+   .. py:attribute:: inner_outer
+      :type:  Position
+
+
+.. py:class:: Vehicle
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Vehicle information model.
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:attribute:: year
+      :type:  int
+
+
+   .. py:attribute:: make
+      :type:  str
+
+
+   .. py:attribute:: model
+      :type:  str
+
+
+   .. py:attribute:: submodel
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: engine
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: transmission
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: attributes
+      :type:  Dict[str, str]
+
+
+   .. py:property:: full_name
+      :type: str
+
+
+      Generate a complete vehicle description.
+
+
+
+.. py:class:: PartFitment
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Represents a vehicle fitment for a specific part.
+
+
+   .. py:attribute:: vehicle
+      :type:  Vehicle
+
+
+   .. py:attribute:: positions
+      :type:  PositionGroup
+
+
+   .. py:attribute:: additional_attributes
+      :type:  Dict[str, str]
+
+
+   .. py:attribute:: vcdb_vehicle_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: pcdb_position_ids
+      :type:  List[int]
+
+
+   .. py:attribute:: notes
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: PartApplication
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Raw part application string with parsing capabilities.
+
+
+   .. py:attribute:: raw_text
+      :type:  str
+
+
+   .. py:attribute:: year_range
+      :type:  Optional[tuple[int, int]]
+      :value: None
+
+
+
+   .. py:attribute:: vehicle_text
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: position_text
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: additional_notes
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: parse_application()
+
+      Parse the raw application text into structured components.
+
+
+
+.. py:class:: ModelMapping
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Database model mapping rule.
+
+
+   .. py:attribute:: id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: pattern
+      :type:  str
+
+
+   .. py:attribute:: mapping
+      :type:  str
+
+
+   .. py:attribute:: priority
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: active
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: created_at
+      :type:  Optional[datetime.datetime]
+      :value: None
+
+
+
+   .. py:attribute:: updated_at
+      :type:  Optional[datetime.datetime]
+      :value: None
+
+
+
+   .. py:property:: make
+      :type: str
+
+
+      Extract make from mapping string.
+
+
+
+   .. py:property:: vehicle_code
+      :type: str
+
+
+      Extract vehicle code from mapping string.
+
+
+
+   .. py:property:: model
+      :type: str
+
+
+      Extract model from mapping string.
+
+
+
+.. py:class:: MappingRule
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Rule for mapping vehicle model text to structured data.
+
+
+   .. py:attribute:: pattern
+      :type:  str
+
+
+   .. py:attribute:: make
+      :type:  str
+
+
+   .. py:attribute:: models
+      :type:  List[Dict[str, str]]
+
+
+   .. py:attribute:: priority
+      :type:  int
+      :value: 0
+
+
+
+.. py:class:: ValidationStatus(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Status of a validation result.
+
+
+   .. py:attribute:: VALID
+
+
+   .. py:attribute:: WARNING
+
+
+   .. py:attribute:: ERROR
+
+
+.. py:class:: ValidationResult
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Result of validating a part fitment.
+
+
+   .. py:attribute:: status
+      :type:  ValidationStatus
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+   .. py:attribute:: fitment
+      :type:  Optional[PartFitment]
+      :value: None
+
+
+
+   .. py:attribute:: original_text
+      :type:  str
+
+
+   .. py:attribute:: suggestions
+      :type:  List[str]
+
+
+.. py:class:: PartTerminology
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   PCDB part terminology information.
+
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: category_id
+      :type:  int
+
+
+   .. py:attribute:: subcategory_id
+      :type:  int
+
+
+   .. py:attribute:: valid_positions
+      :type:  List[int]
+
+
+.. py:class:: PCDBPosition
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   PCDB position information.
+
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: front_rear
+      :type:  Optional[Literal['Front', 'Rear', 'N/A']]
+      :value: None
+
+
+
+   .. py:attribute:: left_right
+      :type:  Optional[Literal['Left', 'Right', 'N/A']]
+      :value: None
+
+
+
+   .. py:attribute:: upper_lower
+      :type:  Optional[Literal['Upper', 'Lower', 'N/A']]
+      :value: None
+
+
+
+   .. py:attribute:: inner_outer
+      :type:  Optional[Literal['Inner', 'Outer', 'N/A']]
+      :value: None
+
+
+
+.. py:class:: VCDBVehicle
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   VCDB vehicle information.
+
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  int
+
+
+   .. py:attribute:: submodel_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: region_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: year
+      :type:  int
+
+
+   .. py:attribute:: make
+      :type:  str
+
+
+   .. py:attribute:: model
+      :type:  str
+
+
+   .. py:attribute:: submodel
+      :type:  Optional[str]
+      :value: None
+
+
+

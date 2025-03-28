@@ -1,0 +1,165 @@
+app.domains.currency.service
+============================
+
+.. py:module:: app.domains.currency.service
+
+.. autoapi-nested-parse::
+
+   Currency service for fetching and managing exchange rates.
+
+   This module provides service functions for:
+   - Fetching exchange rates from external APIs
+   - Storing rates in the database
+   - Converting between currencies
+   - Managing the rate update schedule
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.currency.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.currency.service.ExchangeRateService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ExchangeRateService
+
+   Service for fetching and managing currency exchange rates.
+
+
+   .. py:attribute:: API_URL
+      :value: 'https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}'
+
+
+
+   .. py:attribute:: DATA_SOURCE
+      :value: 'exchangerate-api.com'
+
+
+
+   .. py:method:: fetch_latest_rates(db, base_currency = 'USD')
+      :classmethod:
+
+      :async:
+
+
+      Fetch the latest exchange rates from the API.
+
+      Args:
+          db: Database session
+          base_currency: Base currency code (default: USD)
+
+      Returns:
+          Dict[str, float]: Dictionary of currency codes to rates
+
+      Raises:
+          ValueError: If API key is missing or invalid
+          httpx.RequestError: If request fails
+          httpx.HTTPStatusError: If API returns error status
+
+
+
+   .. py:method:: update_exchange_rates(db, force = False)
+      :classmethod:
+
+      :async:
+
+
+      Update exchange rates in the database.
+
+      Args:
+          db: Database session
+          force: Force update even if not due yet
+
+      Returns:
+          int: Number of rates updated
+
+      Raises:
+          ValueError: If API returns invalid data
+          SQLAlchemyError: If database operations fail
+
+
+
+   .. py:method:: _is_update_due(db)
+      :classmethod:
+
+      :async:
+
+
+      Check if an update is due based on the last update time.
+
+      Args:
+          db: Database session
+
+      Returns:
+          bool: True if update is due, False otherwise
+
+
+
+   .. py:method:: _get_base_currency_code(db)
+      :classmethod:
+
+      :async:
+
+
+      Get the base currency code from the database.
+
+      Args:
+          db: Database session
+
+      Returns:
+          str: Base currency code (defaults to USD if not found)
+
+
+
+   .. py:method:: get_latest_exchange_rate(db, source_code, target_code)
+      :classmethod:
+
+      :async:
+
+
+      Get the latest exchange rate between two currencies.
+
+      Args:
+          db: Database session
+          source_code: Source currency code
+          target_code: Target currency code
+
+      Returns:
+          Optional[float]: Exchange rate or None if not found
+
+
+
+   .. py:method:: convert_amount(db, amount, source_code, target_code)
+      :classmethod:
+
+      :async:
+
+
+      Convert an amount from one currency to another.
+
+      Args:
+          db: Database session
+          amount: Amount to convert
+          source_code: Source currency code
+          target_code: Target currency code
+
+      Returns:
+          Optional[float]: Converted amount or None if rate not found
+
+
+

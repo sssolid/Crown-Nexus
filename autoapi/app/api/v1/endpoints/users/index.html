@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.api.v1.endpoints.users &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.api.v1.router" href="../../router/index.html" />
+    <link rel="prev" title="app.api.v1.endpoints.search" href="../search/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.api</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.api.v1</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.api.v1.endpoints</a></li>
+      <li class="breadcrumb-item active">app.api.v1.endpoints.users</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/api/v1/endpoints/users/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.api.v1.endpoints.users">
+<span id="app-api-v1-endpoints-users"></span><h1>app.api.v1.endpoints.users<a class="headerlink" href="#module-app.api.v1.endpoints.users" title="Link to this heading"></a></h1>
+<p>User management API endpoints.</p>
+<p>This module provides endpoints for user management operations:
+- User listing with filtering
+- User creation, retrieval, update, and deletion
+- Company management
+- User profile management</p>
+<p>These endpoints implement proper authorization checks to ensure
+users can only access and modify appropriate resources.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.router" title="app.api.v1.endpoints.users.router"><code class="xref py py-obj docutils literal notranslate"><span class="pre">router</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.read_users" title="app.api.v1.endpoints.users.read_users"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_users</span></code></a>(db, current_user[, skip, limit, role, ...])</p></td>
+<td><p>Retrieve users with filtering options.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.create_user" title="app.api.v1.endpoints.users.create_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_user</span></code></a>(user_in, db, current_user)</p></td>
+<td><p>Create new user.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.read_user_me" title="app.api.v1.endpoints.users.read_user_me"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_user_me</span></code></a>(current_user, db)</p></td>
+<td><p>Get current user.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.read_user" title="app.api.v1.endpoints.users.read_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_user</span></code></a>(user_id, db, current_user)</p></td>
+<td><p>Get user by ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.update_user" title="app.api.v1.endpoints.users.update_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_user</span></code></a>(user_id, user_in, db, current_user)</p></td>
+<td><p>Update a user.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.delete_user" title="app.api.v1.endpoints.users.delete_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_user</span></code></a>(user_id, db, current_user)</p></td>
+<td><p>Delete a user.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.read_companies" title="app.api.v1.endpoints.users.read_companies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_companies</span></code></a>(db, current_user[, skip, limit, is_active])</p></td>
+<td><p>Retrieve companies with filtering options.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.create_company" title="app.api.v1.endpoints.users.create_company"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_company</span></code></a>(company_in, db, current_user)</p></td>
+<td><p>Create new company.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.read_company" title="app.api.v1.endpoints.users.read_company"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_company</span></code></a>(company_id, db, current_user)</p></td>
+<td><p>Get company by ID.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.update_company" title="app.api.v1.endpoints.users.update_company"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_company</span></code></a>(company_id, company_in, db, current_user)</p></td>
+<td><p>Update a company.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.users.delete_company" title="app.api.v1.endpoints.users.delete_company"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_company</span></code></a>(company_id, db, current_user)</p></td>
+<td><p>Delete a company.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.router">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">router</span></span><a class="headerlink" href="#app.api.v1.endpoints.users.router" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.read_users">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">read_users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">company_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.read_users" title="Link to this definition"></a></dt>
+<dd><p>Retrieve users with filtering options.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated admin user
+skip: Number of users to skip
+limit: Maximum number of users to return
+role: Filter by user role
+company_id: Filter by company ID
+is_active: Filter by active status</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[User]: List of users</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>skip</strong> (<em>int</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+<li><p><strong>role</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.UserRole" title="app.domains.users.models.UserRole"><em>app.domains.users.models.UserRole</em></a><em>]</em>)</p></li>
+<li><p><strong>company_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>is_active</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.create_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.create_user" title="Link to this definition"></a></dt>
+<dd><p>Create new user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_in: User data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: Created user</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If email already exists or company not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_in</strong> (<a class="reference internal" href="../../../../domains/users/schemas/index.html#app.domains.users.schemas.UserCreate" title="app.domains.users.schemas.UserCreate"><em>app.domains.users.schemas.UserCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.read_user_me">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">read_user_me</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.read_user_me" title="Link to this definition"></a></dt>
+<dd><p>Get current user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>current_user: Current authenticated user
+db: Database session</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: Current user with company information</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.read_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">read_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.read_user" title="Link to this definition"></a></dt>
+<dd><p>Get user by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: User ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: User with specified ID</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If user not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.update_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">update_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.update_user" title="Link to this definition"></a></dt>
+<dd><p>Update a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: User ID
+user_in: Updated user data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>User: Updated user</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If user not found or company not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>user_in</strong> (<a class="reference internal" href="../../../../domains/users/schemas/index.html#app.domains.users.schemas.UserUpdate" title="app.domains.users.schemas.UserUpdate"><em>app.domains.users.schemas.UserUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.delete_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">delete_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.delete_user" title="Link to this definition"></a></dt>
+<dd><p>Delete a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: User ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If user not found or is the current user</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.read_companies">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">read_companies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.read_companies" title="Link to this definition"></a></dt>
+<dd><p>Retrieve companies with filtering options.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated admin user
+skip: Number of companies to skip
+limit: Maximum number of companies to return
+is_active: Filter by active status</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[Company]: List of companies</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>skip</strong> (<em>int</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+<li><p><strong>is_active</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.create_company">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">create_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.create_company" title="Link to this definition"></a></dt>
+<dd><p>Create new company.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>company_in: Company data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Company: Created company</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If account number already exists</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>company_in</strong> (<a class="reference internal" href="../../../../domains/company/schemas/index.html#app.domains.company.schemas.CompanyCreate" title="app.domains.company.schemas.CompanyCreate"><em>app.domains.company.schemas.CompanyCreate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.read_company">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">read_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.read_company" title="Link to this definition"></a></dt>
+<dd><p>Get company by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>company_id: Company ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Company: Company with specified ID</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If company not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>company_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.update_company">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">update_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">company_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.update_company" title="Link to this definition"></a></dt>
+<dd><p>Update a company.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>company_id: Company ID
+company_in: Updated company data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Company: Updated company</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If company not found or account number already exists</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>company_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>company_in</strong> (<a class="reference internal" href="../../../../domains/company/schemas/index.html#app.domains.company.schemas.CompanyUpdate" title="app.domains.company.schemas.CompanyUpdate"><em>app.domains.company.schemas.CompanyUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.users.delete_company">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.users.</span></span><span class="sig-name descname"><span class="pre">delete_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.users.delete_company" title="Link to this definition"></a></dt>
+<dd><p>Delete a company.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>company_id: Company ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If company not found or has associated users</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>company_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../search/index.html" class="btn btn-neutral float-left" title="app.api.v1.endpoints.search" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../router/index.html" class="btn btn-neutral float-right" title="app.api.v1.router" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

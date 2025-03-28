@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.db.utils &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.domains" href="../../domains/index.html" />
+    <link rel="prev" title="app.db.session" href="../session/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.db</a></li>
+      <li class="breadcrumb-item active">app.db.utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/db/utils/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.db.utils">
+<span id="app-db-utils"></span><h1>app.db.utils<a class="headerlink" href="#module-app.db.utils" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.logger" title="app.db.utils.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.T" title="app.db.utils.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.F" title="app.db.utils.F"><code class="xref py py-obj docutils literal notranslate"><span class="pre">F</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.transaction" title="app.db.utils.transaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transaction</span></code></a>(db)</p></td>
+<td><p>Context manager for database transactions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.transactional" title="app.db.utils.transactional"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transactional</span></code></a>(func)</p></td>
+<td><p>Decorator for functions that should execute within a transaction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.execute_query" title="app.db.utils.execute_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">execute_query</span></code></a>(db, query)</p></td>
+<td><p>Execute a query with error handling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.get_by_id" title="app.db.utils.get_by_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_id</span></code></a>(db, model, id_value)</p></td>
+<td><p>Get a database object by ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.get_by_ids" title="app.db.utils.get_by_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_ids</span></code></a>(db, model, ids)</p></td>
+<td><p>Get multiple database objects by their IDs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.create_object" title="app.db.utils.create_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_object</span></code></a>(db, model, obj_in)</p></td>
+<td><p>Create a new database object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.update_object" title="app.db.utils.update_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_object</span></code></a>(db, model, id_value, obj_in[, user_id])</p></td>
+<td><p>Update a database object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.delete_object" title="app.db.utils.delete_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_object</span></code></a>(db, model, id_value[, user_id, hard_delete])</p></td>
+<td><p>Delete a database object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.count_query" title="app.db.utils.count_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_query</span></code></a>(db, query)</p></td>
+<td><p>Count the results of a query.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.paginate" title="app.db.utils.paginate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paginate</span></code></a>(db, query[, page, page_size, load_items])</p></td>
+<td><p>Paginate query results.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.bulk_create" title="app.db.utils.bulk_create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bulk_create</span></code></a>(db, model, objects)</p></td>
+<td><p>Create multiple database objects in a single operation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.bulk_update" title="app.db.utils.bulk_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bulk_update</span></code></a>(db, model, id_field, objects)</p></td>
+<td><p>Update multiple database objects in a single operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.upsert" title="app.db.utils.upsert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upsert</span></code></a>(db, model, data, unique_fields)</p></td>
+<td><p>Update an existing object or create a new one if it doesn't exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.track_db_query" title="app.db.utils.track_db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_query</span></code></a>(operation[, entity])</p></td>
+<td><p>Decorator to track database query performance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.track_db_transaction" title="app.db.utils.track_db_transaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_transaction</span></code></a>()</p></td>
+<td><p>Decorator to track database transaction performance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.track_db_select" title="app.db.utils.track_db_select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_select</span></code></a>([entity])</p></td>
+<td><p>Decorator to track database select query performance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.track_db_insert" title="app.db.utils.track_db_insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_insert</span></code></a>([entity])</p></td>
+<td><p>Decorator to track database insert query performance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.db.utils.track_db_update" title="app.db.utils.track_db_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_update</span></code></a>([entity])</p></td>
+<td><p>Decorator to track database update query performance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.db.utils.track_db_delete" title="app.db.utils.track_db_delete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_delete</span></code></a>([entity])</p></td>
+<td><p>Decorator to track database delete query performance.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.db.utils.logger">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.db.utils.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.db.utils.T">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#app.db.utils.T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.db.utils.F">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">F</span></span><a class="headerlink" href="#app.db.utils.F" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.transaction">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.transaction" title="Link to this definition"></a></dt>
+<dd><p>Context manager for database transactions.</p>
+<p>This creates a transaction context that automatically handles commits and rollbacks.
+If the session is already in a transaction, it will use the existing transaction.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session</p>
+</dd>
+<dt>Yields:</dt><dd><p>The database session</p>
+</dd>
+<dt>Raises:</dt><dd><p>TransactionException: If a database error occurs during the transaction</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>AsyncGenerator[sqlalchemy.ext.asyncio.AsyncSession, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.transactional">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">transactional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.transactional" title="Link to this definition"></a></dt>
+<dd><p>Decorator for functions that should execute within a transaction.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>func: The function to wrap</p>
+</dd>
+<dt>Returns:</dt><dd><p>The wrapped function</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If no database session is provided
+TransactionException: If a database error occurs during the transaction</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>F</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>F</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.execute_query">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">execute_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.execute_query" title="Link to this definition"></a></dt>
+<dd><p>Execute a query with error handling.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+query: The query to execute</p>
+</dd>
+<dt>Returns:</dt><dd><p>The query result</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the query execution fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>query</strong> (<em>Union</em><em>[</em><em>sqlalchemy.sql.Select</em><em>, </em><em>sqlalchemy.sql.expression.Insert</em><em>, </em><em>sqlalchemy.sql.expression.Update</em><em>, </em><em>sqlalchemy.sql.expression.Delete</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.get_by_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">get_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.get_by_id" title="Link to this definition"></a></dt>
+<dd><p>Get a database object by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+id_value: The ID value to look up</p>
+</dd>
+<dt>Returns:</dt><dd><p>The database object, or None if not found</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If a database error occurs</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>id_value</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.get_by_ids">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">get_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.get_by_ids" title="Link to this definition"></a></dt>
+<dd><p>Get multiple database objects by their IDs.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+ids: The list of IDs to look up</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of database objects</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If a database error occurs</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>ids</strong> (<em>List</em><em>[</em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.create_object">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">create_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.create_object" title="Link to this definition"></a></dt>
+<dd><p>Create a new database object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+obj_in: The object data</p>
+</dd>
+<dt>Returns:</dt><dd><p>The created database object</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the object creation fails
+DataIntegrityException: If a unique constraint is violated</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>obj_in</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.update_object">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">update_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.update_object" title="Link to this definition"></a></dt>
+<dd><p>Update a database object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+id_value: The ID of the object to update
+obj_in: The update data
+user_id: Optional user ID for tracking who made the update</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated database object, or None if not found</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the update fails
+DataIntegrityException: If a unique constraint is violated</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>id_value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>obj_in</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.delete_object">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">delete_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hard_delete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.delete_object" title="Link to this definition"></a></dt>
+<dd><p>Delete a database object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+id_value: The ID of the object to delete
+user_id: Optional user ID for tracking who performed the deletion
+hard_delete: Whether to permanently delete the object</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the object was deleted, False if not found</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the deletion fails
+DataIntegrityException: If the object is referenced by other objects</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>id_value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>hard_delete</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.count_query">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">count_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.count_query" title="Link to this definition"></a></dt>
+<dd><p>Count the results of a query.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+query: The query to count</p>
+</dd>
+<dt>Returns:</dt><dd><p>The number of results</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the count operation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>query</strong> (<em>sqlalchemy.sql.Select</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.paginate">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">paginate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.paginate" title="Link to this definition"></a></dt>
+<dd><p>Paginate query results.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+query: The query to paginate
+page: The page number (1-based)
+page_size: The number of items per page
+load_items: Whether to load the items or just return metadata</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dictionary with items, total, page, page_size, and pages information</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the pagination operation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>query</strong> (<em>sqlalchemy.sql.Select</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>load_items</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.bulk_create">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">bulk_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.bulk_create" title="Link to this definition"></a></dt>
+<dd><p>Create multiple database objects in a single operation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+objects: List of object data dictionaries</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of created database objects</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the bulk create operation fails
+DataIntegrityException: If a unique constraint is violated</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>objects</strong> (<em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.bulk_update">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">bulk_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.bulk_update" title="Link to this definition"></a></dt>
+<dd><p>Update multiple database objects in a single operation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+id_field: The field used to identify objects
+objects: List of object data dictionaries</p>
+</dd>
+<dt>Returns:</dt><dd><p>Number of updated objects</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the bulk update operation fails
+DataIntegrityException: If a unique constraint is violated</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>id_field</strong> (<em>str</em>)</p></li>
+<li><p><strong>objects</strong> (<em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.upsert">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_fields</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.upsert" title="Link to this definition"></a></dt>
+<dd><p>Update an existing object or create a new one if it doesn’t exist.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: The database session
+model: The model class
+data: The object data
+unique_fields: Fields used to identify an existing object</p>
+</dd>
+<dt>Returns:</dt><dd><p>The created or updated database object</p>
+</dd>
+<dt>Raises:</dt><dd><p>DatabaseException: If the upsert operation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>unique_fields</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.track_db_query">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">track_db_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.track_db_query" title="Link to this definition"></a></dt>
+<dd><p>Decorator to track database query performance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>operation: The type of operation being performed
+entity: The entity being operated on</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>operation</strong> (<em>str</em>)</p></li>
+<li><p><strong>entity</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.track_db_transaction">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">track_db_transaction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.track_db_transaction" title="Link to this definition"></a></dt>
+<dd><p>Decorator to track database transaction performance.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.track_db_select">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">track_db_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.track_db_select" title="Link to this definition"></a></dt>
+<dd><p>Decorator to track database select query performance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: The entity being selected</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entity</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.track_db_insert">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">track_db_insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.track_db_insert" title="Link to this definition"></a></dt>
+<dd><p>Decorator to track database insert query performance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: The entity being inserted</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entity</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.track_db_update">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">track_db_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.track_db_update" title="Link to this definition"></a></dt>
+<dd><p>Decorator to track database update query performance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: The entity being updated</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entity</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.utils.track_db_delete">
+<span class="sig-prename descclassname"><span class="pre">app.db.utils.</span></span><span class="sig-name descname"><span class="pre">track_db_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.db.utils.track_db_delete" title="Link to this definition"></a></dt>
+<dd><p>Decorator to track database delete query performance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: The entity being deleted</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entity</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../session/index.html" class="btn btn-neutral float-left" title="app.db.session" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../domains/index.html" class="btn btn-neutral float-right" title="app.domains" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

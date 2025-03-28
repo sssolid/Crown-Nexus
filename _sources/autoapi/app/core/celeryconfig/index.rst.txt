@@ -1,0 +1,109 @@
+app.core.celeryconfig
+=====================
+
+.. py:module:: app.core.celeryconfig
+
+.. autoapi-nested-parse::
+
+   Celery configuration settings.
+
+   This module contains all Celery configuration settings including:
+   - Broker and result backend
+   - Task serialization
+   - Worker settings
+   - Task routing
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.celeryconfig.broker_url
+   app.core.celeryconfig.result_backend
+   app.core.celeryconfig.task_serializer
+   app.core.celeryconfig.accept_content
+   app.core.celeryconfig.result_serializer
+   app.core.celeryconfig.enable_utc
+   app.core.celeryconfig.timezone
+   app.core.celeryconfig.task_acks_late
+   app.core.celeryconfig.task_reject_on_worker_lost
+   app.core.celeryconfig.task_time_limit
+   app.core.celeryconfig.task_soft_time_limit
+   app.core.celeryconfig.worker_prefetch_multiplier
+   app.core.celeryconfig.worker_concurrency
+   app.core.celeryconfig.worker_max_tasks_per_child
+   app.core.celeryconfig.task_default_queue
+   app.core.celeryconfig.task_queues
+   app.core.celeryconfig.task_routes
+   app.core.celeryconfig.beat_schedule_filename
+
+
+Module Contents
+---------------
+
+.. py:data:: broker_url
+
+.. py:data:: result_backend
+
+.. py:data:: task_serializer
+   :value: 'json'
+
+
+.. py:data:: accept_content
+   :value: ['json']
+
+
+.. py:data:: result_serializer
+   :value: 'json'
+
+
+.. py:data:: enable_utc
+   :value: True
+
+
+.. py:data:: timezone
+   :value: 'UTC'
+
+
+.. py:data:: task_acks_late
+   :value: True
+
+
+.. py:data:: task_reject_on_worker_lost
+   :value: True
+
+
+.. py:data:: task_time_limit
+   :value: 1800
+
+
+.. py:data:: task_soft_time_limit
+   :value: 1500
+
+
+.. py:data:: worker_prefetch_multiplier
+   :value: 1
+
+
+.. py:data:: worker_concurrency
+   :value: 4
+
+
+.. py:data:: worker_max_tasks_per_child
+   :value: 100
+
+
+.. py:data:: task_default_queue
+   :value: 'default'
+
+
+.. py:data:: task_queues
+
+.. py:data:: task_routes
+
+.. py:data:: beat_schedule_filename
+   :value: 'celerybeat-schedule'
+
+

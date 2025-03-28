@@ -1,0 +1,165 @@
+app.domains.company.schemas
+===========================
+
+.. py:module:: app.domains.company.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.company.schemas.CompanyBase
+   app.domains.company.schemas.CompanyCreate
+   app.domains.company.schemas.CompanyUpdate
+   app.domains.company.schemas.CompanyInDB
+   app.domains.company.schemas.Company
+
+
+Module Contents
+---------------
+
+.. py:class:: CompanyBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for company data.
+
+   Attributes:
+       name: Company name.
+       account_number: Optional unique account identifier.
+       account_type: Type of account.
+       industry: Optional industry sector.
+       is_active: Whether the company is active.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: account_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: account_type
+      :type:  str
+
+
+   .. py:attribute:: industry
+      :type:  Optional[str]
+
+
+   .. py:attribute:: is_active
+      :type:  bool
+
+
+.. py:class:: CompanyCreate
+
+   Bases: :py:obj:`CompanyBase`
+
+
+   Schema for creating a new company.
+
+
+.. py:class:: CompanyUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing company.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: account_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: account_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: industry
+      :type:  Optional[str]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: headquarters_address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: billing_address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: shipping_address_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: CompanyInDB
+
+   Bases: :py:obj:`CompanyBase`
+
+
+   Schema for company data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: headquarters_address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: billing_address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: shipping_address_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Company
+
+   Bases: :py:obj:`CompanyInDB`
+
+
+   Schema for complete company data in API responses.
+
+   Includes related entities like addresses.
+
+
+   .. py:attribute:: headquarters_address
+      :type:  Optional[app.domains.location.schemas.Address]
+
+
+   .. py:attribute:: billing_address
+      :type:  Optional[app.domains.location.schemas.Address]
+
+
+   .. py:attribute:: shipping_address
+      :type:  Optional[app.domains.location.schemas.Address]
+
+

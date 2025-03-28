@@ -1,0 +1,20 @@
+app.services
+============
+
+.. py:module:: app.services
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/services/as400_sync_service/index
+   /autoapi/app/services/base_service/index
+   /autoapi/app/services/interfaces/index
+   /autoapi/app/services/search/index
+   /autoapi/app/services/test_service/index
+   /autoapi/app/services/vehicle/index
+
+

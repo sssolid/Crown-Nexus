@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.autocare.qdb.repository &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.domains.autocare.qdb.schemas" href="../schemas/index.html" />
+    <link rel="prev" title="app.domains.autocare.qdb.models" href="../models/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains.autocare</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.autocare.qdb</a></li>
+      <li class="breadcrumb-item active">app.domains.autocare.qdb.repository</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/domains/autocare/qdb/repository/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.autocare.qdb.repository">
+<span id="app-domains-autocare-qdb-repository"></span><h1>app.domains.autocare.qdb.repository<a class="headerlink" href="#module-app.domains.autocare.qdb.repository" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.qdb.repository.QdbRepository" title="app.domains.autocare.qdb.repository.QdbRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QdbRepository</span></code></a></p></td>
+<td><p>Repository for Qdb entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.qdb.repository.QualifierRepository" title="app.domains.autocare.qdb.repository.QualifierRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QualifierRepository</span></code></a></p></td>
+<td><p>Repository for Qualifier entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.qdb.repository.QualifierTypeRepository" title="app.domains.autocare.qdb.repository.QualifierTypeRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QualifierTypeRepository</span></code></a></p></td>
+<td><p>Repository for QualifierType entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.qdb.repository.LanguageRepository" title="app.domains.autocare.qdb.repository.LanguageRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LanguageRepository</span></code></a></p></td>
+<td><p>Repository for Language entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.qdb.repository.GroupNumberRepository" title="app.domains.autocare.qdb.repository.GroupNumberRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GroupNumberRepository</span></code></a></p></td>
+<td><p>Repository for GroupNumber entity operations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.qdb.repository.</span></span><span class="sig-name descname"><span class="pre">QdbRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository" title="Link to this definition"></a></dt>
+<dd><p>Repository for Qdb entity operations.</p>
+<p>Provides methods for querying Qdb data and managing database updates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.qualifier_repo">
+<span class="sig-name descname"><span class="pre">qualifier_repo</span></span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.qualifier_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.qualifier_type_repo">
+<span class="sig-name descname"><span class="pre">qualifier_type_repo</span></span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.qualifier_type_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.language_repo">
+<span class="sig-name descname"><span class="pre">language_repo</span></span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.language_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.group_repo">
+<span class="sig-name descname"><span class="pre">group_repo</span></span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.group_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.get_version">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.get_version" title="Link to this definition"></a></dt>
+<dd><p>Get the current version of the Qdb database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The version date as a string or None if no version is set.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.update_version">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version_date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.update_version" title="Link to this definition"></a></dt>
+<dd><p>Update the current version of the Qdb database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>version_date: The new version date.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated version entity.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version_date</strong> (<em>datetime.datetime</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.QdbVersion" title="app.domains.autocare.qdb.models.QdbVersion">app.domains.autocare.qdb.models.QdbVersion</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QdbRepository.search_qualifiers">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_qualifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualifier_type_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QdbRepository.search_qualifiers" title="Link to this definition"></a></dt>
+<dd><p>Search for qualifiers with optional filters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>search_term: The search term.
+qualifier_type_id: Optional qualifier type ID to filter by.
+language_id: Optional language ID to search translations.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_term</strong> (<em>str</em>)</p></li>
+<li><p><strong>qualifier_type_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>language_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.qdb.repository.</span></span><span class="sig-name descname"><span class="pre">QualifierRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.Qualifier" title="app.domains.autocare.qdb.models.Qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.qdb.models.Qualifier</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Qualifier entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierRepository.get_by_qualifier_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_qualifier_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qualifier_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierRepository.get_by_qualifier_id" title="Link to this definition"></a></dt>
+<dd><p>Get a qualifier by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>qualifier_id: The qualifier ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The qualifier if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qualifier_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.Qualifier" title="app.domains.autocare.qdb.models.Qualifier">app.domains.autocare.qdb.models.Qualifier</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierRepository.search">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualifier_type_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierRepository.search" title="Link to this definition"></a></dt>
+<dd><p>Search for qualifiers with optional filters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>search_term: The search term.
+qualifier_type_id: Optional qualifier type ID to filter by.
+language_id: Optional language ID to search translations.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_term</strong> (<em>str</em>)</p></li>
+<li><p><strong>qualifier_type_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>language_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierRepository.get_translations">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_translations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qualifier_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierRepository.get_translations" title="Link to this definition"></a></dt>
+<dd><p>Get translations for a qualifier.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>qualifier_id: The qualifier ID.
+language_id: Optional language ID to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of translations for the qualifier.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qualifier_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>language_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.QualifierTranslation" title="app.domains.autocare.qdb.models.QualifierTranslation">app.domains.autocare.qdb.models.QualifierTranslation</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierRepository.get_groups">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qualifier_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierRepository.get_groups" title="Link to this definition"></a></dt>
+<dd><p>Get groups for a qualifier.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>qualifier_id: The qualifier ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of groups with group number info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qualifier_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierTypeRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.qdb.repository.</span></span><span class="sig-name descname"><span class="pre">QualifierTypeRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierTypeRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.QualifierType" title="app.domains.autocare.qdb.models.QualifierType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.qdb.models.QualifierType</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for QualifierType entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierTypeRepository.get_by_qualifier_type_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_qualifier_type_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qualifier_type_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierTypeRepository.get_by_qualifier_type_id" title="Link to this definition"></a></dt>
+<dd><p>Get a qualifier type by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>qualifier_type_id: The qualifier type ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The qualifier type if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qualifier_type_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.QualifierType" title="app.domains.autocare.qdb.models.QualifierType">app.domains.autocare.qdb.models.QualifierType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.QualifierTypeRepository.get_all_types">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.QualifierTypeRepository.get_all_types" title="Link to this definition"></a></dt>
+<dd><p>Get all qualifier types.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all qualifier types.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.QualifierType" title="app.domains.autocare.qdb.models.QualifierType">app.domains.autocare.qdb.models.QualifierType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.LanguageRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.qdb.repository.</span></span><span class="sig-name descname"><span class="pre">LanguageRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.LanguageRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.Language" title="app.domains.autocare.qdb.models.Language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.qdb.models.Language</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Language entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.LanguageRepository.get_by_language_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_language_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.LanguageRepository.get_by_language_id" title="Link to this definition"></a></dt>
+<dd><p>Get a language by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>language_id: The language ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The language if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>language_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.Language" title="app.domains.autocare.qdb.models.Language">app.domains.autocare.qdb.models.Language</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.LanguageRepository.get_all_languages">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_languages</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.LanguageRepository.get_all_languages" title="Link to this definition"></a></dt>
+<dd><p>Get all languages.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all languages.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.Language" title="app.domains.autocare.qdb.models.Language">app.domains.autocare.qdb.models.Language</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.GroupNumberRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.qdb.repository.</span></span><span class="sig-name descname"><span class="pre">GroupNumberRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.GroupNumberRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.GroupNumber" title="app.domains.autocare.qdb.models.GroupNumber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.qdb.models.GroupNumber</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for GroupNumber entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.GroupNumberRepository.get_by_group_number_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_group_number_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_number_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.GroupNumberRepository.get_by_group_number_id" title="Link to this definition"></a></dt>
+<dd><p>Get a group number by its ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>group_number_id: The group number ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The group number if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>group_number_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.GroupNumber" title="app.domains.autocare.qdb.models.GroupNumber">app.domains.autocare.qdb.models.GroupNumber</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.GroupNumberRepository.get_all_groups">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.GroupNumberRepository.get_all_groups" title="Link to this definition"></a></dt>
+<dd><p>Get all group numbers.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all group numbers.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.qdb.models.GroupNumber" title="app.domains.autocare.qdb.models.GroupNumber">app.domains.autocare.qdb.models.GroupNumber</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.qdb.repository.GroupNumberRepository.get_qualifiers_by_group">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_qualifiers_by_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_number_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.qdb.repository.GroupNumberRepository.get_qualifiers_by_group" title="Link to this definition"></a></dt>
+<dd><p>Get qualifiers for a specific group.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>group_number_id: The group number ID.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group_number_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../models/index.html" class="btn btn-neutral float-left" title="app.domains.autocare.qdb.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../schemas/index.html" class="btn btn-neutral float-right" title="app.domains.autocare.qdb.schemas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+app.fitment.config
+==================
+
+.. py:module:: app.fitment.config
+
+.. autoapi-nested-parse::
+
+   Configuration for the fitment module.
+
+   This module provides configuration settings and utilities.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.config.FitmentSettings
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.fitment.config.get_settings
+
+
+Module Contents
+---------------
+
+.. py:class:: FitmentSettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Settings for the fitment module.
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:attribute:: vcdb_path
+      :type:  str
+
+
+   .. py:attribute:: pcdb_path
+      :type:  str
+
+
+   .. py:attribute:: db_url
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_mappings_path
+      :type:  Optional[str]
+
+
+   .. py:attribute:: log_level
+      :type:  str
+
+
+   .. py:attribute:: cache_size
+      :type:  int
+
+
+   .. py:method:: validate_file_path(v)
+
+      Validate that a file path exists.
+
+
+
+   .. py:method:: validate_optional_file_path(v)
+
+      Validate that an optional file path exists if provided.
+
+
+
+.. py:function:: get_settings()
+
+   Get the fitment settings.
+
+   Returns:
+       FitmentSettings instance
+
+

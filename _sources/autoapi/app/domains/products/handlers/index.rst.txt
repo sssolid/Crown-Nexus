@@ -1,0 +1,48 @@
+app.domains.products.handlers
+=============================
+
+.. py:module:: app.domains.products.handlers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.products.handlers.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.products.handlers.handle_critical_stock_level
+   app.domains.products.handlers.handle_price_update
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: handle_critical_stock_level(payload)
+   :async:
+
+
+   Mark products as out of stock when inventory is critically low.
+
+   Args:
+       payload: Event data containing stock information
+
+
+.. py:function:: handle_price_update(payload)
+   :async:
+
+
+   Update product prices when pricing information changes.
+
+   Args:
+       payload: Event data containing pricing information
+
+

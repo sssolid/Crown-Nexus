@@ -1,0 +1,149 @@
+app.core.security.passwords
+===========================
+
+.. py:module:: app.core.security.passwords
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.passwords.logger
+   app.core.security.passwords.pwd_context
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.passwords.PasswordManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.passwords.verify_password
+   app.core.security.passwords.get_password_hash
+   app.core.security.passwords.validate_password_policy
+   app.core.security.passwords._load_common_passwords
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: pwd_context
+
+.. py:function:: verify_password(plain_password, hashed_password)
+
+   Verify a password against its hash.
+
+   Args:
+       plain_password: The plain text password.
+       hashed_password: The hashed password to verify against.
+
+   Returns:
+       bool: True if the password matches the hash, False otherwise.
+
+
+.. py:function:: get_password_hash(password)
+
+   Hash a password using bcrypt.
+
+   Args:
+       password: The password to hash.
+
+   Returns:
+       str: The hashed password.
+
+
+.. py:function:: validate_password_policy(password, user_id = None)
+   :async:
+
+
+   Validate a password against the password policy.
+
+   Args:
+       password: The password to validate.
+       user_id: Optional user ID for password history checks.
+
+   Returns:
+       Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the password
+           is valid and an optional error message if it's not.
+
+
+.. py:function:: _load_common_passwords()
+
+   Load common passwords from a file.
+
+   Returns:
+       Set[str]: A set of common passwords.
+
+
+.. py:class:: PasswordManager
+
+   Manager for password-related functionality.
+
+
+   .. py:attribute:: policy
+
+
+   .. py:attribute:: common_passwords
+      :type:  Set[str]
+
+
+   .. py:attribute:: password_regex
+
+
+   .. py:method:: _load_common_passwords_sync()
+
+      Load common passwords from a file.
+
+
+
+   .. py:method:: validate_password_policy(password, user_id = None)
+      :async:
+
+
+      Validate a password against the password policy.
+
+      Args:
+          password: The password to validate.
+          user_id: Optional user ID for password history checks.
+
+      Returns:
+          Tuple[bool, Optional[str]]: A tuple containing a boolean indicating if the password
+              is valid and an optional error message if it's not.
+
+
+
+   .. py:method:: hash_password(password)
+
+      Hash a password using bcrypt.
+
+      Args:
+          password: The password to hash.
+
+      Returns:
+          str: The hashed password.
+
+
+
+   .. py:method:: verify_password(plain_password, hashed_password)
+
+      Verify a password against its hash.
+
+      Args:
+          plain_password: The plain text password.
+          hashed_password: The hashed password to verify against.
+
+      Returns:
+          bool: True if the password matches the hash, False otherwise.
+
+
+

@@ -1,0 +1,106 @@
+app.domains.autocare.exceptions
+===============================
+
+.. py:module:: app.domains.autocare.exceptions
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.exceptions.AutocareException
+   app.domains.autocare.exceptions.InvalidVehicleDataException
+   app.domains.autocare.exceptions.InvalidPartDataException
+   app.domains.autocare.exceptions.MappingNotFoundException
+   app.domains.autocare.exceptions.ImportException
+   app.domains.autocare.exceptions.ExportException
+   app.domains.autocare.exceptions.VCdbException
+   app.domains.autocare.exceptions.PCdbException
+   app.domains.autocare.exceptions.PAdbException
+   app.domains.autocare.exceptions.QdbException
+
+
+Module Contents
+---------------
+
+.. py:exception:: AutocareException(message, details = None)
+
+   Bases: :py:obj:`app.core.exceptions.BusinessException`
+
+
+   Base exception for all autocare domain exceptions.
+
+
+.. py:exception:: InvalidVehicleDataException(message = 'Invalid vehicle data', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when vehicle data is invalid or incomplete.
+
+
+.. py:exception:: InvalidPartDataException(message = 'Invalid part data', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when part data is invalid or incomplete.
+
+
+.. py:exception:: MappingNotFoundException(resource_id, details = None)
+
+   Bases: :py:obj:`app.core.exceptions.ResourceNotFoundException`
+
+
+   Raised when a requested fitment mapping cannot be found.
+
+
+.. py:exception:: ImportException(message = 'Failed to import data', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when importing data from ACES or PIES files fails.
+
+
+.. py:exception:: ExportException(message = 'Failed to export data', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when exporting data to ACES or PIES files fails.
+
+
+.. py:exception:: VCdbException(message = 'VCdb operation failed', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when there's an issue with VCdb data.
+
+
+.. py:exception:: PCdbException(message = 'PCdb operation failed', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when there's an issue with PCdb data.
+
+
+.. py:exception:: PAdbException(message = 'PAdb operation failed', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when there's an issue with PAdb data.
+
+
+.. py:exception:: QdbException(message = 'Qdb operation failed', details = None)
+
+   Bases: :py:obj:`AutocareException`
+
+
+   Raised when there's an issue with Qdb data.
+
+

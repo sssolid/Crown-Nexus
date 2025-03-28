@@ -1,0 +1,510 @@
+app.domains.chat.repository
+===========================
+
+.. py:module:: app.domains.chat.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.chat.repository.ChatRoomRepository
+   app.domains.chat.repository.ChatMemberRepository
+   app.domains.chat.repository.ChatMessageRepository
+   app.domains.chat.repository.MessageReactionRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: ChatRoomRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.chat.models.ChatRoom`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for ChatRoom entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   ChatRoom entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_direct_chat(user1_id, user2_id)
+      :async:
+
+
+      Find a direct chat between two users.
+
+      Args:
+          user1_id: First user ID.
+          user2_id: Second user ID.
+
+      Returns:
+          The direct chat room if found, None otherwise.
+
+
+
+   .. py:method:: get_rooms_for_user(user_id, room_type = None, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of chat rooms for a user.
+
+      Args:
+          user_id: The user ID to filter by.
+          room_type: Optional room type to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_company_rooms(company_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of chat rooms for a company.
+
+      Args:
+          company_id: The company ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: create_direct_chat(user1_id, user2_id)
+      :async:
+
+
+      Create a direct chat between two users.
+
+      Args:
+          user1_id: First user ID.
+          user2_id: Second user ID.
+
+      Returns:
+          Tuple containing (chat room, list of members).
+
+      Raises:
+          BusinessException: If a direct chat already exists between the users.
+
+
+
+   .. py:method:: create_group_chat(name, creator_id, member_ids, company_id = None)
+      :async:
+
+
+      Create a group chat.
+
+      Args:
+          name: Group chat name.
+          creator_id: ID of the user creating the chat.
+          member_ids: List of member user IDs.
+          company_id: Optional company ID to associate with the chat.
+
+      Returns:
+          Tuple containing (chat room, list of members).
+
+      Raises:
+          BusinessException: If no members are provided.
+
+
+
+   .. py:method:: add_members(room_id, user_ids, role = ChatMemberRole.MEMBER, added_by_id = None)
+      :async:
+
+
+      Add members to a chat room.
+
+      Args:
+          room_id: ID of the chat room.
+          user_ids: List of user IDs to add.
+          role: Role to assign to the new members.
+          added_by_id: ID of the user adding the members.
+
+      Returns:
+          List of created member records.
+
+      Raises:
+          ResourceNotFoundException: If the room doesn't exist.
+          PermissionDeniedException: If the user doesn't have permission.
+
+
+
+   .. py:method:: ensure_exists(room_id)
+      :async:
+
+
+      Ensure a chat room exists by ID, raising an exception if not found.
+
+      Args:
+          room_id: The chat room ID to check.
+
+      Returns:
+          The chat room if found.
+
+      Raises:
+          ResourceNotFoundException: If the chat room is not found.
+
+
+
+.. py:class:: ChatMemberRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.chat.models.ChatMember`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for ChatMember entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   ChatMember entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_room_and_user(room_id, user_id)
+      :async:
+
+
+      Find a chat membership for a specific room and user.
+
+      Args:
+          room_id: The chat room ID.
+          user_id: The user ID.
+
+      Returns:
+          The chat member if found, None otherwise.
+
+
+
+   .. py:method:: get_by_room(room_id, active_only = True)
+      :async:
+
+
+      Get all members of a chat room.
+
+      Args:
+          room_id: The chat room ID.
+          active_only: Whether to include only active members.
+
+      Returns:
+          List of chat members in the room.
+
+
+
+   .. py:method:: get_by_user(user_id)
+      :async:
+
+
+      Get all chat memberships for a user.
+
+      Args:
+          user_id: The user ID.
+
+      Returns:
+          List of chat memberships for the user.
+
+
+
+   .. py:method:: update_last_read(room_id, user_id, timestamp = None)
+      :async:
+
+
+      Update the last read timestamp for a member.
+
+      Args:
+          room_id: The chat room ID.
+          user_id: The user ID.
+          timestamp: Optional custom timestamp (defaults to now).
+
+      Returns:
+          The updated member if found, None otherwise.
+
+
+
+   .. py:method:: update_role(room_id, user_id, new_role, updated_by_id)
+      :async:
+
+
+      Update the role of a chat member.
+
+      Args:
+          room_id: The chat room ID.
+          user_id: The user ID.
+          new_role: The new role to assign.
+          updated_by_id: ID of the user making the change.
+
+      Returns:
+          The updated member if found, None otherwise.
+
+      Raises:
+          PermissionDeniedException: If the user doesn't have permission.
+
+
+
+   .. py:method:: remove_member(room_id, user_id, removed_by_id)
+      :async:
+
+
+      Remove a member from a chat room.
+
+      Args:
+          room_id: The chat room ID.
+          user_id: The user ID to remove.
+          removed_by_id: ID of the user performing the removal.
+
+      Returns:
+          True if the member was removed, False otherwise.
+
+      Raises:
+          PermissionDeniedException: If the user doesn't have permission.
+
+
+
+   .. py:method:: ensure_exists(member_id)
+      :async:
+
+
+      Ensure a chat member exists by ID, raising an exception if not found.
+
+      Args:
+          member_id: The chat member ID to check.
+
+      Returns:
+          The chat member if found.
+
+      Raises:
+          ResourceNotFoundException: If the chat member is not found.
+
+
+
+.. py:class:: ChatMessageRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.chat.models.ChatMessage`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for ChatMessage entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   ChatMessage entities, extending the generic BaseRepository.
+
+
+   .. py:method:: get_room_messages(room_id, limit = 50, before_id = None, include_deleted = False)
+      :async:
+
+
+      Get messages for a chat room.
+
+      Args:
+          room_id: The chat room ID.
+          limit: Maximum number of messages to return.
+          before_id: Optional message ID to get messages before.
+          include_deleted: Whether to include deleted messages.
+
+      Returns:
+          List of chat messages.
+
+
+
+   .. py:method:: send_message(room_id, sender_id, content, message_type = MessageType.TEXT, extra_metadata = None)
+      :async:
+
+
+      Send a message to a chat room.
+
+      Args:
+          room_id: The chat room ID.
+          sender_id: The sender user ID.
+          content: The message content.
+          message_type: The message type.
+          extra_metadata: Optional message metadata.
+
+      Returns:
+          The created message.
+
+      Raises:
+          ResourceNotFoundException: If the room doesn't exist.
+          PermissionDeniedException: If the user isn't a member of the room.
+
+
+
+   .. py:method:: edit_message(message_id, new_content, edited_by_id)
+      :async:
+
+
+      Edit a message.
+
+      Args:
+          message_id: The message ID.
+          new_content: The new message content.
+          edited_by_id: ID of the user making the edit.
+
+      Returns:
+          The updated message if found, None otherwise.
+
+      Raises:
+          PermissionDeniedException: If the user doesn't have permission.
+
+
+
+   .. py:method:: delete_message(message_id, deleted_by_id)
+      :async:
+
+
+      Delete a message.
+
+      Args:
+          message_id: The message ID.
+          deleted_by_id: ID of the user deleting the message.
+
+      Returns:
+          The deleted message if found, None otherwise.
+
+      Raises:
+          PermissionDeniedException: If the user doesn't have permission.
+
+
+
+   .. py:method:: check_rate_limit(user_id, room_id, event_type, max_count = 10, window_seconds = 60)
+      :async:
+
+
+      Check if a user has exceeded rate limits for an event type.
+
+      Args:
+          user_id: The user ID.
+          room_id: The chat room ID.
+          event_type: The event type being limited.
+          max_count: Maximum allowed events in the time window.
+          window_seconds: Time window in seconds.
+
+      Raises:
+          RateLimitException: If the rate limit is exceeded.
+
+
+
+   .. py:method:: ensure_exists(message_id)
+      :async:
+
+
+      Ensure a chat message exists by ID, raising an exception if not found.
+
+      Args:
+          message_id: The chat message ID to check.
+
+      Returns:
+          The chat message if found.
+
+      Raises:
+          ResourceNotFoundException: If the chat message is not found.
+
+
+
+.. py:class:: MessageReactionRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.chat.models.MessageReaction`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for MessageReaction entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   MessageReaction entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_message_user_reaction(message_id, user_id, reaction)
+      :async:
+
+
+      Find a reaction by message, user, and reaction type.
+
+      Args:
+          message_id: The message ID.
+          user_id: The user ID.
+          reaction: The reaction string.
+
+      Returns:
+          The reaction if found, None otherwise.
+
+
+
+   .. py:method:: get_by_message(message_id)
+      :async:
+
+
+      Get all reactions for a message.
+
+      Args:
+          message_id: The message ID.
+
+      Returns:
+          List of reactions for the message.
+
+
+
+   .. py:method:: add_reaction(message_id, user_id, reaction)
+      :async:
+
+
+      Add a reaction to a message.
+
+      Args:
+          message_id: The message ID.
+          user_id: The user ID.
+          reaction: The reaction string.
+
+      Returns:
+          The created or existing reaction.
+
+      Raises:
+          ResourceNotFoundException: If the message doesn't exist.
+          PermissionDeniedException: If the user isn't a member of the room.
+
+
+
+   .. py:method:: remove_reaction(message_id, user_id, reaction)
+      :async:
+
+
+      Remove a reaction from a message.
+
+      Args:
+          message_id: The message ID.
+          user_id: The user ID.
+          reaction: The reaction string.
+
+      Returns:
+          True if the reaction was removed, False otherwise.
+
+
+
+   .. py:method:: get_reaction_counts(message_id)
+      :async:
+
+
+      Get counts of each reaction type for a message.
+
+      Args:
+          message_id: The message ID.
+
+      Returns:
+          Dictionary mapping reaction strings to counts.
+
+
+
+   .. py:method:: get_user_reactions(message_id, reaction)
+      :async:
+
+
+      Get user IDs who reacted with a specific reaction to a message.
+
+      Args:
+          message_id: The message ID.
+          reaction: The reaction string.
+
+      Returns:
+          List of user IDs.
+
+
+

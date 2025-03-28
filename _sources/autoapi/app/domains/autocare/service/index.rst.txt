@@ -1,0 +1,266 @@
+app.domains.autocare.service
+============================
+
+.. py:module:: app.domains.autocare.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.service.AutocareService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: AutocareService(db)
+
+   Main service for autocare functionality.
+
+   This service provides high-level operations for importing, exporting,
+   and working with autocare data across all subdomains.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: vcdb_service
+
+
+   .. py:attribute:: pcdb_service
+
+
+   .. py:attribute:: padb_service
+
+
+   .. py:attribute:: qdb_service
+
+
+   .. py:attribute:: fitment_service
+
+
+   .. py:method:: import_data(params)
+      :async:
+
+
+      Import data from an external file.
+
+      Args:
+          params: Import parameters including file path, format, and options
+
+      Returns:
+          Import results including statistics
+
+      Raises:
+          ImportException: If the import fails
+
+
+
+   .. py:method:: export_data(params)
+      :async:
+
+
+      Export data to an external file.
+
+      Args:
+          params: Export parameters including file path, format, and filters
+
+      Returns:
+          Export results including statistics
+
+      Raises:
+          ExportException: If the export fails
+
+
+
+   .. py:method:: update_database(database_type, file_path)
+      :async:
+
+
+      Update a specific autocare database from a file.
+
+      Args:
+          database_type: Type of database to update (vcdb, pcdb, padb, qdb)
+          file_path: Path to the update file
+
+      Returns:
+          Update results including version information
+
+      Raises:
+          AutocareException: If the update fails
+
+
+
+   .. py:method:: get_database_versions()
+      :async:
+
+
+      Get the current versions of all autocare databases.
+
+      Returns:
+          Dictionary mapping database names to version strings
+
+
+
+   .. py:method:: _import_aces_xml(file_path, params)
+      :async:
+
+
+      Import data from an ACES XML file.
+
+      Args:
+          file_path: Path to the ACES XML file
+          params: Import parameters
+
+      Returns:
+          Import results
+
+
+
+   .. py:method:: _import_pies_xml(file_path, params)
+      :async:
+
+
+      Import data from a PIES XML file.
+
+      Args:
+          file_path: Path to the PIES XML file
+          params: Import parameters
+
+      Returns:
+          Import results
+
+
+
+   .. py:method:: _import_csv(file_path, params)
+      :async:
+
+
+      Import data from a CSV file.
+
+      Args:
+          file_path: Path to the CSV file
+          params: Import parameters
+
+      Returns:
+          Import results
+
+
+
+   .. py:method:: _import_excel(file_path, params)
+      :async:
+
+
+      Import data from an Excel file.
+
+      Args:
+          file_path: Path to the Excel file
+          params: Import parameters
+
+      Returns:
+          Import results
+
+
+
+   .. py:method:: _import_json(file_path, params)
+      :async:
+
+
+      Import data from a JSON file.
+
+      Args:
+          file_path: Path to the JSON file
+          params: Import parameters
+
+      Returns:
+          Import results
+
+
+
+   .. py:method:: _export_aces_xml(file_path, params)
+      :async:
+
+
+      Export data to an ACES XML file.
+
+      Args:
+          file_path: Path to the output file
+          params: Export parameters
+
+      Returns:
+          Export results
+
+
+
+   .. py:method:: _export_pies_xml(file_path, params)
+      :async:
+
+
+      Export data to a PIES XML file.
+
+      Args:
+          file_path: Path to the output file
+          params: Export parameters
+
+      Returns:
+          Export results
+
+
+
+   .. py:method:: _export_csv(file_path, params)
+      :async:
+
+
+      Export data to a CSV file.
+
+      Args:
+          file_path: Path to the output file
+          params: Export parameters
+
+      Returns:
+          Export results
+
+
+
+   .. py:method:: _export_excel(file_path, params)
+      :async:
+
+
+      Export data to an Excel file.
+
+      Args:
+          file_path: Path to the output file
+          params: Export parameters
+
+      Returns:
+          Export results
+
+
+
+   .. py:method:: _export_json(file_path, params)
+      :async:
+
+
+      Export data to a JSON file.
+
+      Args:
+          file_path: Path to the output file
+          params: Export parameters
+
+      Returns:
+          Export results
+
+
+

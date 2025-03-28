@@ -1,0 +1,164 @@
+app.domains.currency.repository
+===============================
+
+.. py:module:: app.domains.currency.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.currency.repository.CurrencyRepository
+   app.domains.currency.repository.ExchangeRateRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: CurrencyRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.currency.models.Currency`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Currency entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Currency entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_code(code)
+      :async:
+
+
+      Find a currency by its ISO code.
+
+      Args:
+          code: The ISO 4217 currency code.
+
+      Returns:
+          The currency if found, None otherwise.
+
+
+
+   .. py:method:: get_base_currency()
+      :async:
+
+
+      Get the base currency of the system.
+
+      Returns:
+          The base currency if found, None otherwise.
+
+
+
+   .. py:method:: get_active_currencies()
+      :async:
+
+
+      Get all active currencies.
+
+      Returns:
+          List of active currencies sorted by code.
+
+
+
+   .. py:method:: set_as_base(currency_id)
+      :async:
+
+
+      Set a currency as the base currency.
+
+      This will unset any existing base currency.
+
+      Args:
+          currency_id: The ID of the currency to set as base.
+
+      Returns:
+          The updated currency.
+
+      Raises:
+          ResourceNotFoundException: If the currency is not found.
+          BusinessException: If the currency is not active.
+
+
+
+   .. py:method:: ensure_exists(currency_id)
+      :async:
+
+
+      Ensure a currency exists by ID, raising an exception if not found.
+
+      Args:
+          currency_id: The currency ID to check.
+
+      Returns:
+          The currency if found.
+
+      Raises:
+          ResourceNotFoundException: If the currency is not found.
+
+
+
+.. py:class:: ExchangeRateRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.currency.models.ExchangeRate`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for ExchangeRate entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   ExchangeRate entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_latest_rate(source_currency_id, target_currency_id)
+      :async:
+
+
+      Find the latest exchange rate between two currencies.
+
+      Args:
+          source_currency_id: The source currency ID.
+          target_currency_id: The target currency ID.
+
+      Returns:
+          The latest exchange rate if found, None otherwise.
+
+
+
+   .. py:method:: find_rate_at_date(source_currency_id, target_currency_id, date)
+      :async:
+
+
+      Find the exchange rate between two currencies at a specific date.
+
+      Args:
+          source_currency_id: The source currency ID.
+          target_currency_id: The target currency ID.
+          date: The date to find the rate for.
+
+      Returns:
+          The exchange rate if found, None otherwise.
+
+
+
+   .. py:method:: convert(source_currency_code, target_currency_code, amount)
+      :async:
+
+
+      Convert an amount between two currencies using the latest exchange rate.
+
+      Args:
+          source_currency_code: The source currency code.
+          target_currency_code: The target currency code.
+          amount: The amount to convert.
+
+      Returns:
+          Tuple containing (converted amount, exchange rate, timestamp).
+
+      Raises:
+          ResourceNotFoundException: If either currency is not found.
+          BusinessException: If no exchange rate is found.
+
+
+

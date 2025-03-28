@@ -1,0 +1,51 @@
+app.domains.autocare.handlers
+=============================
+
+.. py:module:: app.domains.autocare.handlers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.handlers.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.autocare.handlers.handle_product_created
+   app.domains.autocare.handlers.handle_autocare_database_updated
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: handle_product_created(payload)
+   :async:
+
+
+   Attempt to map a newly created product to autocare fitments.
+
+   Args:
+       payload: Event data containing product information
+
+
+.. py:function:: handle_autocare_database_updated(payload)
+   :async:
+
+
+   Handle updates to autocare databases.
+
+   This event handler is triggered when any of the autocare databases
+   (VCdb, PCdb, PAdb, Qdb) are updated.
+
+   Args:
+       payload: Event data containing information about the update
+
+

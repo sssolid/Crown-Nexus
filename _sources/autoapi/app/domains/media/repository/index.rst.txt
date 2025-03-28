@@ -1,0 +1,120 @@
+app.domains.media.repository
+============================
+
+.. py:module:: app.domains.media.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.repository.MediaRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: MediaRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.media.models.Media`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Media entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Media entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_filename(filename)
+      :async:
+
+
+      Find media by filename.
+
+      Args:
+          filename: The filename to search for.
+
+      Returns:
+          List of media with matching filename.
+
+
+
+   .. py:method:: find_by_media_type(media_type)
+      :async:
+
+
+      Find media by type.
+
+      Args:
+          media_type: The media type to filter by.
+
+      Returns:
+          List of media of the specified type.
+
+
+
+   .. py:method:: get_by_visibility(visibility, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of media with specified visibility.
+
+      Args:
+          visibility: The visibility to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: approve(media_id, approver_id)
+      :async:
+
+
+      Approve a media item.
+
+      Args:
+          media_id: ID of the media to approve.
+          approver_id: ID of the user approving the media.
+
+      Returns:
+          Updated media if found, None otherwise.
+
+
+
+   .. py:method:: get_by_product(product_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of media for a specific product.
+
+      Args:
+          product_id: The product ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: ensure_exists(media_id)
+      :async:
+
+
+      Ensure a media exists by ID, raising an exception if not found.
+
+      Args:
+          media_id: The media ID to check.
+
+      Returns:
+          The media if found.
+
+      Raises:
+          ResourceNotFoundException: If the media is not found.
+
+
+

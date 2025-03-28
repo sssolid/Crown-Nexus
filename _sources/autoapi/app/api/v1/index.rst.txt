@@ -1,0 +1,16 @@
+app.api.v1
+==========
+
+.. py:module:: app.api.v1
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/api/v1/endpoints/index
+   /autoapi/app/api/v1/router/index
+
+

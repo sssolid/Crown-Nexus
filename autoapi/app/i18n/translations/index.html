@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.i18n.translations &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">app.i18n.translations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/i18n/translations/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.i18n.translations">
+<span id="app-i18n-translations"></span><h1>app.i18n.translations<a class="headerlink" href="#module-app.i18n.translations" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.i18n.translations.i18n_manager" title="app.i18n.translations.i18n_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">i18n_manager</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.i18n.translations.get_translator" title="app.i18n.translations.get_translator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_translator</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.i18n.translations.I18nManager" title="app.i18n.translations.I18nManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">I18nManager</span></code></a></p></td>
+<td><p>Manages internationalization (i18n) for the application.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.i18n.translations.TranslatorDependency" title="app.i18n.translations.TranslatorDependency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TranslatorDependency</span></code></a></p></td>
+<td><p>Dependency that provides a translator function for the current request.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.i18n.translations.I18nMiddleware" title="app.i18n.translations.I18nMiddleware"><code class="xref py py-obj docutils literal notranslate"><span class="pre">I18nMiddleware</span></code></a></p></td>
+<td><p>Middleware to set locale in request state.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.i18n.translations.get_locale" title="app.i18n.translations.get_locale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_locale</span></code></a>(request[, accept_language])</p></td>
+<td><p>Determine the best locale based on the request.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.i18n.translations.</span></span><span class="sig-name descname"><span class="pre">I18nManager</span></span><a class="headerlink" href="#app.i18n.translations.I18nManager" title="Link to this definition"></a></dt>
+<dd><p>Manages internationalization (i18n) for the application.</p>
+<p>Provides functions to translate text based on the current locale.
+Translations are loaded from gettext .mo files.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager.translations">
+<span class="sig-name descname"><span class="pre">translations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">gettext.GNUTranslations</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.i18n.translations.I18nManager.translations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager.default_locale">
+<span class="sig-name descname"><span class="pre">default_locale</span></span><a class="headerlink" href="#app.i18n.translations.I18nManager.default_locale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager.available_locales">
+<span class="sig-name descname"><span class="pre">available_locales</span></span><a class="headerlink" href="#app.i18n.translations.I18nManager.available_locales" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager._load_translations">
+<span class="sig-name descname"><span class="pre">_load_translations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.I18nManager._load_translations" title="Link to this definition"></a></dt>
+<dd><p>Load all available translations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager.gettext">
+<span class="sig-name descname"><span class="pre">gettext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.I18nManager.gettext" title="Link to this definition"></a></dt>
+<dd><p>Translate a message to the specified locale.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message: The message to translate
+locale: The locale to translate to, or None for default</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The translated message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>locale</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nManager.ngettext">
+<span class="sig-name descname"><span class="pre">ngettext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">singular</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plural</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.I18nManager.ngettext" title="Link to this definition"></a></dt>
+<dd><p>Translate singular/plural form based on number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>singular: Singular form
+plural: Plural form
+n: The count determining which form to use
+locale: The locale to translate to, or None for default</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The translated message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>singular</strong> (<em>str</em>)</p></li>
+<li><p><strong>plural</strong> (<em>str</em>)</p></li>
+<li><p><strong>n</strong> (<em>int</em>)</p></li>
+<li><p><strong>locale</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.i18n.translations.i18n_manager">
+<span class="sig-prename descclassname"><span class="pre">app.i18n.translations.</span></span><span class="sig-name descname"><span class="pre">i18n_manager</span></span><a class="headerlink" href="#app.i18n.translations.i18n_manager" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.i18n.translations.get_locale">
+<span class="sig-prename descclassname"><span class="pre">app.i18n.translations.</span></span><span class="sig-name descname"><span class="pre">get_locale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accept_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.get_locale" title="Link to this definition"></a></dt>
+<dd><p>Determine the best locale based on the request.</p>
+<p>Priority:
+1. Query parameter ‘lang’
+2. Accept-Language header
+3. User preferences (if authenticated)
+4. Default locale</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request: FastAPI request object
+accept_language: Accept-Language header</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Best matching locale</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>fastapi.Request</em>)</p></li>
+<li><p><strong>accept_language</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.i18n.translations.TranslatorDependency">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.i18n.translations.</span></span><span class="sig-name descname"><span class="pre">TranslatorDependency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.TranslatorDependency" title="Link to this definition"></a></dt>
+<dd><p>Dependency that provides a translator function for the current request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>locale</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.i18n.translations.TranslatorDependency.locale_override">
+<span class="sig-name descname"><span class="pre">locale_override</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.i18n.translations.TranslatorDependency.locale_override" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.i18n.translations.TranslatorDependency.__call__">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_locale)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.TranslatorDependency.__call__" title="Link to this definition"></a></dt>
+<dd><p>Get translation functions for the current locale.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>locale: The locale from get_locale dependency</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Translation functions</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>locale</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.i18n.translations.get_translator">
+<span class="sig-prename descclassname"><span class="pre">app.i18n.translations.</span></span><span class="sig-name descname"><span class="pre">get_translator</span></span><a class="headerlink" href="#app.i18n.translations.get_translator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nMiddleware">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.i18n.translations.</span></span><span class="sig-name descname"><span class="pre">I18nMiddleware</span></span><a class="headerlink" href="#app.i18n.translations.I18nMiddleware" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">starlette.middleware.base.BaseHTTPMiddleware</span></code></p>
+<p>Middleware to set locale in request state.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.i18n.translations.I18nMiddleware.dispatch">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_next</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.i18n.translations.I18nMiddleware.dispatch" title="Link to this definition"></a></dt>
+<dd><p>Process a request and set locale in request state.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request: FastAPI request
+call_next: Next middleware handler</p>
+</dd>
+<dt>Returns:</dt><dd><p>Response from next middleware</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>fastapi.Request</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

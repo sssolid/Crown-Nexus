@@ -1,0 +1,214 @@
+app.domains.autocare.padb.repository
+====================================
+
+.. py:module:: app.domains.autocare.padb.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.padb.repository.PAdbRepository
+   app.domains.autocare.padb.repository.PartAttributeRepository
+   app.domains.autocare.padb.repository.MetaDataRepository
+   app.domains.autocare.padb.repository.ValidValueRepository
+   app.domains.autocare.padb.repository.MetaUOMCodeRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: PAdbRepository(db)
+
+   Repository for PAdb entity operations.
+
+   Provides methods for querying PAdb data and managing database updates.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: attribute_repo
+
+
+   .. py:attribute:: metadata_repo
+
+
+   .. py:attribute:: valid_value_repo
+
+
+   .. py:attribute:: uom_repo
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current version of the PAdb database.
+
+      Returns:
+          The version date as a string or None if no version is set.
+
+
+
+   .. py:method:: update_version(version_date)
+      :async:
+
+
+      Update the current version of the PAdb database.
+
+      Args:
+          version_date: The new version date.
+
+      Returns:
+          The updated version entity.
+
+
+
+   .. py:method:: get_attributes_for_part(part_terminology_id)
+      :async:
+
+
+      Get all attributes for a specific part.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+
+      Returns:
+          List of attribute assignments with related attribute information.
+
+
+
+.. py:class:: PartAttributeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.padb.models.PartAttribute`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for PartAttribute entity operations.
+
+
+   .. py:method:: get_by_pa_id(pa_id)
+      :async:
+
+
+      Get an attribute by its ID.
+
+      Args:
+          pa_id: The attribute ID.
+
+      Returns:
+          The attribute if found, None otherwise.
+
+
+
+   .. py:method:: search(search_term, page = 1, page_size = 20)
+      :async:
+
+
+      Search for attributes by name.
+
+      Args:
+          search_term: The search term.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+.. py:class:: MetaDataRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.padb.models.MetaData`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for MetaData entity operations.
+
+
+   .. py:method:: get_by_meta_id(meta_id)
+      :async:
+
+
+      Get metadata by its ID.
+
+      Args:
+          meta_id: The metadata ID.
+
+      Returns:
+          The metadata if found, None otherwise.
+
+
+
+.. py:class:: ValidValueRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.padb.models.ValidValue`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for ValidValue entity operations.
+
+
+   .. py:method:: get_by_valid_value_id(valid_value_id)
+      :async:
+
+
+      Get a valid value by its ID.
+
+      Args:
+          valid_value_id: The valid value ID.
+
+      Returns:
+          The valid value if found, None otherwise.
+
+
+
+   .. py:method:: get_for_attribute_assignment(papt_id)
+      :async:
+
+
+      Get valid values for a specific attribute assignment.
+
+      Args:
+          papt_id: The part attribute assignment ID.
+
+      Returns:
+          List of valid values for the specified assignment.
+
+
+
+.. py:class:: MetaUOMCodeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.padb.models.MetaUOMCode`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for MetaUOMCode entity operations.
+
+
+   .. py:method:: get_by_meta_uom_id(meta_uom_id)
+      :async:
+
+
+      Get a UOM code by its ID.
+
+      Args:
+          meta_uom_id: The UOM code ID.
+
+      Returns:
+          The UOM code if found, None otherwise.
+
+
+
+   .. py:method:: get_for_attribute_assignment(papt_id)
+      :async:
+
+
+      Get UOM codes for a specific attribute assignment.
+
+      Args:
+          papt_id: The part attribute assignment ID.
+
+      Returns:
+          List of UOM codes for the specified assignment.
+
+
+

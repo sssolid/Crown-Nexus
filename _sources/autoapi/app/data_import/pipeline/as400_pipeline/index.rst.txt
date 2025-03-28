@@ -1,0 +1,105 @@
+app.data_import.pipeline.as400_pipeline
+=======================================
+
+.. py:module:: app.data_import.pipeline.as400_pipeline
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.pipeline.as400_pipeline.logger
+   app.data_import.pipeline.as400_pipeline.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.pipeline.as400_pipeline.AS400Pipeline
+   app.data_import.pipeline.as400_pipeline.ParallelAS400Pipeline
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: AS400Pipeline(connector, processor, importer, dry_run = False, chunk_size = 1000)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Pipeline for synchronizing data from AS400 to the application database.
+
+   Orchestrates the extract, transform, load (ETL) process for AS400 data.
+
+
+   .. py:attribute:: connector
+
+
+   .. py:attribute:: processor
+
+
+   .. py:attribute:: importer
+
+
+   .. py:attribute:: dry_run
+      :value: False
+
+
+
+   .. py:attribute:: chunk_size
+      :value: 1000
+
+
+
+   .. py:method:: run(query, limit = None, **params)
+      :async:
+
+
+      Run the sync pipeline.
+
+      Args:
+          query: SQL query or table name
+          limit: Maximum number of records to process
+          **params: Additional parameters for query
+
+      Returns:
+          Dictionary with sync results
+
+
+
+.. py:class:: ParallelAS400Pipeline(pipelines, max_workers = 4)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Parallel pipeline for AS400 data synchronization.
+
+   Runs multiple pipelines concurrently for faster processing.
+
+
+   .. py:attribute:: pipelines
+
+
+   .. py:attribute:: max_workers
+      :value: 4
+
+
+
+   .. py:method:: run()
+      :async:
+
+
+      Run all pipelines concurrently.
+
+      Returns:
+          Dictionary with combined results
+
+
+

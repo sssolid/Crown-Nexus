@@ -1,0 +1,6 @@
+app.domains.currency.exceptions
+===============================
+
+.. py:module:: app.domains.currency.exceptions
+
+

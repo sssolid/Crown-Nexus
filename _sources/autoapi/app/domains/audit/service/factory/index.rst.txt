@@ -1,0 +1,88 @@
+app.domains.audit.service.factory
+=================================
+
+.. py:module:: app.domains.audit.service.factory
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.audit.service.factory.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.service.factory.AuditLoggerFactory
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: AuditLoggerFactory
+
+   Factory for creating audit logger instances.
+
+
+   .. py:attribute:: _loggers
+      :type:  Dict[str, Type[app.domains.audit.service.base.AuditLogger]]
+
+
+   .. py:attribute:: _logger_instances
+      :type:  Dict[str, app.domains.audit.service.base.AuditLogger]
+
+
+   .. py:method:: register_logger(name, logger_class)
+      :classmethod:
+
+
+      Register a new audit logger type.
+
+      Args:
+          name: Logger type name
+          logger_class: Logger class
+
+      Raises:
+          ValueError: If a logger with the same name is already registered
+
+
+
+   .. py:method:: create_logger(logger_type, db = None, **kwargs)
+      :classmethod:
+
+
+      Create an audit logger of the specified type.
+
+      Args:
+          logger_type: The type of logger to create
+          db: Optional database session for database loggers
+          **kwargs: Additional logger configuration
+
+      Returns:
+          AuditLogger: The created logger
+
+      Raises:
+          ValueError: If the logger type is not supported
+
+
+
+   .. py:method:: create_default_loggers(db = None)
+      :classmethod:
+
+
+      Create the default set of audit loggers based on application settings.
+
+      Args:
+          db: Optional database session for database loggers
+
+      Returns:
+          List of default audit loggers
+
+
+

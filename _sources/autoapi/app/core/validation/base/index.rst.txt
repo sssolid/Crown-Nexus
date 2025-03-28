@@ -1,0 +1,156 @@
+app.core.validation.base
+========================
+
+.. py:module:: app.core.validation.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.validation.base.T
+   app.core.validation.base.R
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.validation.base.ValidationResult
+   app.core.validation.base.Validator
+   app.core.validation.base.ValidatorFactory
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:data:: R
+
+.. py:class:: ValidationResult
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Result of a validation operation.
+
+   This class represents the result of a validation operation, including
+   whether the validation was successful and any validation errors.
+
+
+   .. py:attribute:: is_valid
+      :type:  bool
+
+
+   .. py:attribute:: errors
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:property:: has_errors
+      :type: bool
+
+
+      Check if there are any validation errors.
+
+      Returns:
+          bool: True if there are errors, False otherwise
+
+
+
+   .. py:property:: error_messages
+      :type: List[str]
+
+
+      Get a list of error messages.
+
+      Returns:
+          List[str]: List of error message strings
+
+
+
+   .. py:method:: add_error(msg, error_type, loc = None, **context)
+
+      Add an error to the validation result.
+
+      Args:
+          msg: The error message
+          error_type: The type of error
+          loc: Optional location of the error (field name or path)
+          **context: Additional context for the error
+
+
+
+.. py:class:: Validator
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for validators.
+
+   Validators must implement the validate method, which takes a value
+   and optional additional parameters and returns a ValidationResult.
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a value.
+
+      Args:
+          value: The value to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+   .. py:method:: validate_async(value, **kwargs)
+      :abstractmethod:
+
+      :async:
+
+
+      Asynchronously validate a value.
+
+      This method is optional. Validators that require async operations
+      should implement this method. Default implementation raises NotImplementedError.
+
+      Args:
+          value: The value to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+      Raises:
+          NotImplementedError: If the validator doesn't support async validation
+
+
+
+.. py:class:: ValidatorFactory
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for validator factories.
+
+   Validator factories must implement the create_validator method, which
+   creates and returns validator instances based on a validator type.
+
+
+   .. py:method:: create_validator(validator_type, **options)
+
+      Create a validator instance.
+
+      Args:
+          validator_type: The type of validator to create
+          **options: Additional options for the validator
+
+      Returns:
+          Validator: An instance of the requested validator
+
+
+

@@ -1,0 +1,69 @@
+app.data_import.processors.base
+===============================
+
+.. py:module:: app.data_import.processors.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.processors.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.processors.base.Processor
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: Processor
+
+   Bases: :py:obj:`Protocol`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol for data processors.
+
+
+   .. py:method:: process(data)
+      :async:
+
+
+      Process raw data into structured data.
+
+      Args:
+          data: List of raw data records
+
+      Returns:
+          List of processed records
+
+      Raises:
+          ValueError: If data cannot be processed
+
+
+
+   .. py:method:: validate(data)
+      :async:
+
+
+      Validate processed data.
+
+      Args:
+          data: List of processed records
+
+      Returns:
+          List of validated records
+
+      Raises:
+          ValidationError: If data fails validation
+
+
+

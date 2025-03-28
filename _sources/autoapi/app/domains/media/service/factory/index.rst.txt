@@ -1,0 +1,59 @@
+app.domains.media.service.factory
+=================================
+
+.. py:module:: app.domains.media.service.factory
+
+.. autoapi-nested-parse::
+
+   Factory module for creating media storage backends.
+
+   This module provides a factory for creating media storage backends based on
+   configuration settings, making it easy to switch between different storage
+   implementations.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.media.service.factory.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.service.factory.StorageBackendFactory
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: StorageBackendFactory
+
+   Factory for creating media storage backends.
+
+
+   .. py:method:: get_backend(backend_type = None)
+      :staticmethod:
+
+
+      Get a storage backend instance based on type.
+
+      Args:
+          backend_type: The type of backend to create.
+              If None, will use the value from settings.MEDIA_STORAGE_TYPE.
+
+      Returns:
+          An instance of MediaStorageBackend.
+
+      Raises:
+          ValueError: If an unsupported backend type is specified.
+
+
+

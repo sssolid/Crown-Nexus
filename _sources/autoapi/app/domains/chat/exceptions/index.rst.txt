@@ -1,0 +1,6 @@
+app.domains.chat.exceptions
+===========================
+
+.. py:module:: app.domains.chat.exceptions
+
+

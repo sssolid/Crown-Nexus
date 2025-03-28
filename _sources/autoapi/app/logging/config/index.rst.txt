@@ -1,0 +1,193 @@
+app.logging.config
+==================
+
+.. py:module:: app.logging.config
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.logging.config.DEFAULT_LOG_LEVEL
+   app.logging.config._logging_initialized
+   app.logging.config._request_context
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.logging.config.RequestIdFilter
+   app.logging.config.UserIdFilter
+   app.logging.config.ConsoleRendererWithLineNumbers
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.logging.config.add_request_id_processor
+   app.logging.config.add_user_id_processor
+   app.logging.config.add_timestamp_processor
+   app.logging.config.add_service_info_processor
+   app.logging.config.get_log_level
+   app.logging.config.get_environment
+   app.logging.config.configure_std_logging
+   app.logging.config.configure_structlog
+   app.logging.config.initialize_logging
+   app.logging.config.reinitialize_logging
+   app.logging.config.shutdown_logging
+   app.logging.config.get_logger
+
+
+Module Contents
+---------------
+
+.. py:data:: DEFAULT_LOG_LEVEL
+   :value: 'INFO'
+
+
+.. py:data:: _logging_initialized
+   :value: False
+
+
+.. py:data:: _request_context
+
+.. py:class:: RequestIdFilter(name='')
+
+   Bases: :py:obj:`logging.Filter`
+
+
+   Filter for adding request ID to log records.
+
+
+   .. py:method:: filter(record)
+
+      Add request ID to log record.
+
+      Args:
+          record: The log record to process
+
+      Returns:
+          bool: Always True to include the record
+
+
+
+.. py:class:: UserIdFilter(name='')
+
+   Bases: :py:obj:`logging.Filter`
+
+
+   Filter for adding user ID to log records.
+
+
+   .. py:method:: filter(record)
+
+      Add user ID to log record.
+
+      Args:
+          record: The log record to process
+
+      Returns:
+          bool: Always True to include the record
+
+
+
+.. py:function:: add_request_id_processor(logger, method_name, event_dict)
+
+   Add request ID to structured log event.
+
+
+.. py:function:: add_user_id_processor(logger, method_name, event_dict)
+
+   Add user ID to structured log event.
+
+
+.. py:function:: add_timestamp_processor(logger, method_name, event_dict)
+
+   Add ISO format timestamp to structured log event.
+
+
+.. py:function:: add_service_info_processor(logger, method_name, event_dict)
+
+   Add service information to structured log event.
+
+
+.. py:class:: ConsoleRendererWithLineNumbers
+
+   Bases: :py:obj:`structlog.dev.ConsoleRenderer`
+
+
+   Custom renderer that includes line numbers in colorized output.
+
+
+   .. py:method:: __call__(logger, name, event_dict)
+
+      Format the event dict with line numbers included.
+
+
+
+.. py:function:: get_log_level()
+
+   Get the configured log level with fallback logic.
+
+   This isolates the settings dependency and provides a fallback.
+
+   Returns:
+       The log level as a string
+
+
+.. py:function:: get_environment()
+
+   Get the application environment with fallback logic.
+
+   Returns:
+       The environment as a string
+
+
+.. py:function:: configure_std_logging()
+
+   Configure standard Python logging.
+
+
+.. py:function:: configure_structlog()
+
+   Configure structlog for structured logging.
+
+
+.. py:function:: initialize_logging()
+
+   Initialize the logging system at import time.
+
+
+.. py:function:: reinitialize_logging()
+   :async:
+
+
+   Reinitialize the logging system asynchronously.
+
+   This can be called from the lifespan to update logging configuration
+   or reload settings if needed.
+
+
+.. py:function:: shutdown_logging()
+   :async:
+
+
+   Shut down the logging system asynchronously.
+
+
+.. py:function:: get_logger(name)
+
+   Get a structured logger for the given name.
+
+   Args:
+       name: The name for the logger
+
+   Returns:
+       A structured logger instance
+
+

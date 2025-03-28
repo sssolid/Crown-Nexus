@@ -1,0 +1,92 @@
+app.core.cache.keys
+===================
+
+.. py:module:: app.core.cache.keys
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.cache.keys.generate_cache_key
+   app.core.cache.keys.generate_model_key
+   app.core.cache.keys.generate_list_key
+   app.core.cache.keys.generate_query_key
+   app.core.cache.keys.parse_pattern
+
+
+Module Contents
+---------------
+
+.. py:function:: generate_cache_key(prefix, func, args, kwargs, skip_args = None, skip_kwargs = None)
+
+   Generate a cache key for a function call.
+
+   This function creates a deterministic key based on the function name,
+   argument values, and keyword argument values. It's used by cache
+   decorators to create unique keys for caching function results.
+
+   Args:
+       prefix: Key prefix
+       func: Function being called
+       args: Positional arguments
+       kwargs: Keyword arguments
+       skip_args: Indices of positional arguments to skip
+       skip_kwargs: Names of keyword arguments to skip
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: generate_model_key(prefix, model_name, model_id, field = None)
+
+   Generate a cache key for a model instance.
+
+   Args:
+       prefix: Key prefix
+       model_name: Model name
+       model_id: Model ID
+       field: Optional field name
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: generate_list_key(prefix, model_name, filters = None)
+
+   Generate a cache key for a list of model instances.
+
+   Args:
+       prefix: Key prefix
+       model_name: Model name
+       filters: Optional filters
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: generate_query_key(prefix, query_name, params = None)
+
+   Generate a cache key for a query result.
+
+   Args:
+       prefix: Key prefix
+       query_name: Query name
+       params: Optional query parameters
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: parse_pattern(pattern)
+
+   Parse a glob pattern into a regex pattern.
+
+   Args:
+       pattern: Glob pattern
+
+   Returns:
+       re.Pattern: Regex pattern
+
+

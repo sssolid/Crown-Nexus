@@ -1,0 +1,107 @@
+app.domains.users.repository
+============================
+
+.. py:module:: app.domains.users.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.users.repository.UserRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: UserRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.users.models.User`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for User entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   User entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_email(email)
+      :async:
+
+
+      Find a user by email address.
+
+      Args:
+          email: The email address to search for.
+
+      Returns:
+          The user if found, None otherwise.
+
+
+
+   .. py:method:: get_by_role(role)
+      :async:
+
+
+      Get all users with a specific role.
+
+      Args:
+          role: The role to filter by.
+
+      Returns:
+          List of users with the specified role.
+
+
+
+   .. py:method:: get_by_company(company_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated list of users for a specific company.
+
+      Args:
+          company_id: The company ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: authenticate(email, password)
+      :async:
+
+
+      Authenticate a user by email and password.
+
+      Args:
+          email: The user's email.
+          password: The plaintext password.
+
+      Returns:
+          The authenticated user.
+
+      Raises:
+          AuthenticationException: If authentication fails.
+
+
+
+   .. py:method:: ensure_exists(user_id)
+      :async:
+
+
+      Ensure a user exists by ID, raising an exception if not found.
+
+      Args:
+          user_id: The user ID to check.
+
+      Returns:
+          The user if found.
+
+      Raises:
+          ResourceNotFoundException: If the user is not found.
+
+
+

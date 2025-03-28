@@ -1,0 +1,158 @@
+app.services.search.providers
+=============================
+
+.. py:module:: app.services.search.providers
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/services/search/providers/database/index
+   /autoapi/app/services/search/providers/elasticsearch/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.search.providers.DatabaseSearchProvider
+   app.services.search.providers.ElasticsearchSearchProvider
+
+
+Package Contents
+----------------
+
+.. py:class:: DatabaseSearchProvider(db, model_class)
+
+   Bases: :py:obj:`app.services.search.base.SearchProvider`
+
+
+   Search provider that queries the database directly.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: model_class
+
+
+   .. py:attribute:: searchable_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the database search provider.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the database search provider.
+
+
+
+   .. py:method:: search(search_term = None, filters = None, page = 1, page_size = 20, **kwargs)
+      :async:
+
+
+      Search for entities in the database.
+
+      Args:
+          search_term: Text to search for
+          filters: Filters to apply
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          **kwargs: Additional search parameters
+
+      Returns:
+          Dict containing search results and pagination info
+
+      Raises:
+          DatabaseException: If the database search fails
+
+
+
+.. py:class:: ElasticsearchSearchProvider(db, model_class, index_name = None)
+
+   Bases: :py:obj:`app.services.search.base.SearchProvider`
+
+
+   Search provider that uses Elasticsearch.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: model_class
+
+
+   .. py:attribute:: index_name
+
+
+   .. py:attribute:: es_client
+      :type:  Optional[elasticsearch.AsyncElasticsearch]
+      :value: None
+
+
+
+   .. py:attribute:: search_fields
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the Elasticsearch search provider.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the Elasticsearch search provider.
+
+
+
+   .. py:method:: search(search_term = None, filters = None, page = 1, page_size = 20, **kwargs)
+      :async:
+
+
+      Search for entities using Elasticsearch.
+
+      Args:
+          search_term: Text to search for
+          filters: Filters to apply
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          **kwargs: Additional search parameters
+
+      Returns:
+          Dict containing search results and pagination info
+
+      Raises:
+          ServiceException: If the Elasticsearch query fails
+          DatabaseException: If fetching entities from database fails
+
+
+

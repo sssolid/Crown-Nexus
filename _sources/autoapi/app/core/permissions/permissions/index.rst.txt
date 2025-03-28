@@ -1,0 +1,25 @@
+app.core.permissions.permissions
+================================
+
+.. py:module:: app.core.permissions.permissions
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.permissions.permissions.require_permission
+   app.core.permissions.permissions.require_permissions
+   app.core.permissions.permissions.require_admin
+
+
+Module Contents
+---------------
+
+.. py:data:: require_permission
+
+.. py:data:: require_permissions
+
+.. py:data:: require_admin
+

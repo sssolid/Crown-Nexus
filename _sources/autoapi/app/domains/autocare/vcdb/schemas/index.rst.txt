@@ -1,0 +1,1750 @@
+app.domains.autocare.vcdb.schemas
+=================================
+
+.. py:module:: app.domains.autocare.vcdb.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.vcdb.schemas.Make
+   app.domains.autocare.vcdb.schemas.VehicleType
+   app.domains.autocare.vcdb.schemas.VehicleTypeGroup
+   app.domains.autocare.vcdb.schemas.Model
+   app.domains.autocare.vcdb.schemas.Year
+   app.domains.autocare.vcdb.schemas.SubModel
+   app.domains.autocare.vcdb.schemas.Region
+   app.domains.autocare.vcdb.schemas.PublicationStage
+   app.domains.autocare.vcdb.schemas.BaseVehicle
+   app.domains.autocare.vcdb.schemas.DriveType
+   app.domains.autocare.vcdb.schemas.BrakeType
+   app.domains.autocare.vcdb.schemas.BrakeSystem
+   app.domains.autocare.vcdb.schemas.BrakeABS
+   app.domains.autocare.vcdb.schemas.BrakeConfig
+   app.domains.autocare.vcdb.schemas.BedType
+   app.domains.autocare.vcdb.schemas.BedLength
+   app.domains.autocare.vcdb.schemas.BedConfig
+   app.domains.autocare.vcdb.schemas.BodyType
+   app.domains.autocare.vcdb.schemas.BodyNumDoors
+   app.domains.autocare.vcdb.schemas.BodyStyleConfig
+   app.domains.autocare.vcdb.schemas.MfrBodyCode
+   app.domains.autocare.vcdb.schemas.EngineBlock
+   app.domains.autocare.vcdb.schemas.EngineBoreStroke
+   app.domains.autocare.vcdb.schemas.EngineBase
+   app.domains.autocare.vcdb.schemas.Aspiration
+   app.domains.autocare.vcdb.schemas.FuelType
+   app.domains.autocare.vcdb.schemas.CylinderHeadType
+   app.domains.autocare.vcdb.schemas.FuelDeliveryType
+   app.domains.autocare.vcdb.schemas.FuelDeliverySubType
+   app.domains.autocare.vcdb.schemas.FuelSystemControlType
+   app.domains.autocare.vcdb.schemas.FuelSystemDesign
+   app.domains.autocare.vcdb.schemas.FuelDeliveryConfig
+   app.domains.autocare.vcdb.schemas.EngineDesignation
+   app.domains.autocare.vcdb.schemas.EngineVIN
+   app.domains.autocare.vcdb.schemas.EngineVersion
+   app.domains.autocare.vcdb.schemas.Valves
+   app.domains.autocare.vcdb.schemas.Mfr
+   app.domains.autocare.vcdb.schemas.IgnitionSystemType
+   app.domains.autocare.vcdb.schemas.PowerOutput
+   app.domains.autocare.vcdb.schemas.EngineConfig
+   app.domains.autocare.vcdb.schemas.SpringType
+   app.domains.autocare.vcdb.schemas.SpringTypeConfig
+   app.domains.autocare.vcdb.schemas.SteeringType
+   app.domains.autocare.vcdb.schemas.SteeringSystem
+   app.domains.autocare.vcdb.schemas.SteeringConfig
+   app.domains.autocare.vcdb.schemas.TransmissionType
+   app.domains.autocare.vcdb.schemas.TransmissionNumSpeeds
+   app.domains.autocare.vcdb.schemas.TransmissionControlType
+   app.domains.autocare.vcdb.schemas.TransmissionBase
+   app.domains.autocare.vcdb.schemas.TransmissionMfrCode
+   app.domains.autocare.vcdb.schemas.ElecControlled
+   app.domains.autocare.vcdb.schemas.Transmission
+   app.domains.autocare.vcdb.schemas.WheelBase
+   app.domains.autocare.vcdb.schemas.Vehicle
+   app.domains.autocare.vcdb.schemas.VehicleDetail
+   app.domains.autocare.vcdb.schemas.VehicleSearchParameters
+   app.domains.autocare.vcdb.schemas.VehicleSearchResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: Make
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle make data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: make_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: VehicleType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: vehicle_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: vehicle_type_group_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: VehicleTypeGroup
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle type group data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: vehicle_type_group_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Model
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle model data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: model_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: vehicle_type_id
+      :type:  int
+
+
+   .. py:attribute:: vehicle_type
+      :type:  Optional[VehicleType]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Year
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle year data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: year_id
+      :type:  int
+
+
+   .. py:attribute:: year
+      :type:  int
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SubModel
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle submodel data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: submodel_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Region
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for region data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: region_id
+      :type:  int
+
+
+   .. py:attribute:: parent_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: abbr
+      :type:  Optional[str]
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PublicationStage
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for publication stage data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: publication_stage_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BaseVehicle
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for base vehicle data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  int
+
+
+   .. py:attribute:: year_id
+      :type:  int
+
+
+   .. py:attribute:: make_id
+      :type:  int
+
+
+   .. py:attribute:: model_id
+      :type:  int
+
+
+   .. py:attribute:: year
+      :type:  Optional[Year]
+
+
+   .. py:attribute:: make
+      :type:  Optional[Make]
+
+
+   .. py:attribute:: model
+      :type:  Optional[Model]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: DriveType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for drive type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: drive_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BrakeType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for brake type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: brake_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BrakeSystem
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for brake system data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: brake_system_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BrakeABS
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for brake ABS data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: brake_abs_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BrakeConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for brake configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: brake_config_id
+      :type:  int
+
+
+   .. py:attribute:: front_brake_type_id
+      :type:  int
+
+
+   .. py:attribute:: rear_brake_type_id
+      :type:  int
+
+
+   .. py:attribute:: brake_system_id
+      :type:  int
+
+
+   .. py:attribute:: brake_abs_id
+      :type:  int
+
+
+   .. py:attribute:: front_brake_type
+      :type:  Optional[BrakeType]
+
+
+   .. py:attribute:: rear_brake_type
+      :type:  Optional[BrakeType]
+
+
+   .. py:attribute:: brake_system
+      :type:  Optional[BrakeSystem]
+
+
+   .. py:attribute:: brake_abs
+      :type:  Optional[BrakeABS]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BedType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for bed type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: bed_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BedLength
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for bed length data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: bed_length_id
+      :type:  int
+
+
+   .. py:attribute:: length
+      :type:  str
+
+
+   .. py:attribute:: length_metric
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BedConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for bed configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: bed_config_id
+      :type:  int
+
+
+   .. py:attribute:: bed_length_id
+      :type:  int
+
+
+   .. py:attribute:: bed_type_id
+      :type:  int
+
+
+   .. py:attribute:: bed_length
+      :type:  Optional[BedLength]
+
+
+   .. py:attribute:: bed_type
+      :type:  Optional[BedType]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BodyType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for body type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: body_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BodyNumDoors
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for body number of doors data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: body_num_doors_id
+      :type:  int
+
+
+   .. py:attribute:: num_doors
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: BodyStyleConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for body style configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: body_style_config_id
+      :type:  int
+
+
+   .. py:attribute:: body_num_doors_id
+      :type:  int
+
+
+   .. py:attribute:: body_type_id
+      :type:  int
+
+
+   .. py:attribute:: body_num_doors
+      :type:  Optional[BodyNumDoors]
+
+
+   .. py:attribute:: body_type
+      :type:  Optional[BodyType]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: MfrBodyCode
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for manufacturer body code data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: mfr_body_code_id
+      :type:  int
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineBlock
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine block data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_block_id
+      :type:  int
+
+
+   .. py:attribute:: liter
+      :type:  str
+
+
+   .. py:attribute:: cc
+      :type:  str
+
+
+   .. py:attribute:: cid
+      :type:  str
+
+
+   .. py:attribute:: cylinders
+      :type:  str
+
+
+   .. py:attribute:: block_type
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineBoreStroke
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine bore and stroke data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_bore_stroke_id
+      :type:  int
+
+
+   .. py:attribute:: bore_in
+      :type:  str
+
+
+   .. py:attribute:: bore_metric
+      :type:  str
+
+
+   .. py:attribute:: stroke_in
+      :type:  str
+
+
+   .. py:attribute:: stroke_metric
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine base data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_base_id
+      :type:  int
+
+
+   .. py:attribute:: engine_block_id
+      :type:  int
+
+
+   .. py:attribute:: engine_bore_stroke_id
+      :type:  int
+
+
+   .. py:attribute:: engine_block
+      :type:  Optional[EngineBlock]
+
+
+   .. py:attribute:: engine_bore_stroke
+      :type:  Optional[EngineBoreStroke]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Aspiration
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for aspiration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: aspiration_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FuelType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fuel type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fuel_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: CylinderHeadType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for cylinder head type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: cylinder_head_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FuelDeliveryType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fuel delivery type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fuel_delivery_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FuelDeliverySubType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fuel delivery subtype data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fuel_delivery_subtype_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FuelSystemControlType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fuel system control type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fuel_system_control_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FuelSystemDesign
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fuel system design data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fuel_system_design_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: FuelDeliveryConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for fuel delivery configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: fuel_delivery_config_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_delivery_type_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_delivery_subtype_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_system_control_type_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_system_design_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_delivery_type
+      :type:  Optional[FuelDeliveryType]
+
+
+   .. py:attribute:: fuel_delivery_subtype
+      :type:  Optional[FuelDeliverySubType]
+
+
+   .. py:attribute:: fuel_system_control_type
+      :type:  Optional[FuelSystemControlType]
+
+
+   .. py:attribute:: fuel_system_design
+      :type:  Optional[FuelSystemDesign]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineDesignation
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine designation data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_designation_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineVIN
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine VIN data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_vin_id
+      :type:  int
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineVersion
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine version data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_version_id
+      :type:  int
+
+
+   .. py:attribute:: version
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Valves
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for valves data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: valves_id
+      :type:  int
+
+
+   .. py:attribute:: valves_per_engine
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Mfr
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for manufacturer data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: mfr_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: IgnitionSystemType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for ignition system type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: ignition_system_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: PowerOutput
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for power output data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: power_output_id
+      :type:  int
+
+
+   .. py:attribute:: horsepower
+      :type:  str
+
+
+   .. py:attribute:: kilowatt
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: EngineConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for engine configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: engine_config_id
+      :type:  int
+
+
+   .. py:attribute:: engine_base_id
+      :type:  int
+
+
+   .. py:attribute:: engine_designation_id
+      :type:  int
+
+
+   .. py:attribute:: engine_vin_id
+      :type:  int
+
+
+   .. py:attribute:: valves_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_delivery_config_id
+      :type:  int
+
+
+   .. py:attribute:: aspiration_id
+      :type:  int
+
+
+   .. py:attribute:: cylinder_head_type_id
+      :type:  int
+
+
+   .. py:attribute:: fuel_type_id
+      :type:  int
+
+
+   .. py:attribute:: ignition_system_type_id
+      :type:  int
+
+
+   .. py:attribute:: engine_mfr_id
+      :type:  int
+
+
+   .. py:attribute:: engine_version_id
+      :type:  int
+
+
+   .. py:attribute:: power_output_id
+      :type:  int
+
+
+   .. py:attribute:: engine_base
+      :type:  Optional[EngineBase]
+
+
+   .. py:attribute:: fuel_type
+      :type:  Optional[FuelType]
+
+
+   .. py:attribute:: aspiration
+      :type:  Optional[Aspiration]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SpringType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for spring type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: spring_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SpringTypeConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for spring type configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: spring_type_config_id
+      :type:  int
+
+
+   .. py:attribute:: front_spring_type_id
+      :type:  int
+
+
+   .. py:attribute:: rear_spring_type_id
+      :type:  int
+
+
+   .. py:attribute:: front_spring_type
+      :type:  Optional[SpringType]
+
+
+   .. py:attribute:: rear_spring_type
+      :type:  Optional[SpringType]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SteeringType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for steering type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: steering_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SteeringSystem
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for steering system data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: steering_system_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: SteeringConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for steering configuration data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: steering_config_id
+      :type:  int
+
+
+   .. py:attribute:: steering_type_id
+      :type:  int
+
+
+   .. py:attribute:: steering_system_id
+      :type:  int
+
+
+   .. py:attribute:: steering_type
+      :type:  Optional[SteeringType]
+
+
+   .. py:attribute:: steering_system
+      :type:  Optional[SteeringSystem]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: TransmissionType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for transmission type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: transmission_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: TransmissionNumSpeeds
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for transmission number of speeds data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: transmission_num_speeds_id
+      :type:  int
+
+
+   .. py:attribute:: num_speeds
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: TransmissionControlType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for transmission control type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: transmission_control_type_id
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: TransmissionBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for transmission base data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: transmission_base_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_type_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_num_speeds_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_control_type_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_type
+      :type:  Optional[TransmissionType]
+
+
+   .. py:attribute:: transmission_num_speeds
+      :type:  Optional[TransmissionNumSpeeds]
+
+
+   .. py:attribute:: transmission_control_type
+      :type:  Optional[TransmissionControlType]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: TransmissionMfrCode
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for transmission manufacturer code data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: transmission_mfr_code_id
+      :type:  int
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ElecControlled
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for electrically controlled data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: elec_controlled_id
+      :type:  int
+
+
+   .. py:attribute:: value
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Transmission
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for transmission data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: transmission_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_base_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_mfr_code_id
+      :type:  int
+
+
+   .. py:attribute:: elec_controlled_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_mfr_id
+      :type:  int
+
+
+   .. py:attribute:: transmission_base
+      :type:  Optional[TransmissionBase]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: WheelBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for wheel base data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: wheel_base_id
+      :type:  int
+
+
+   .. py:attribute:: wheel_base
+      :type:  str
+
+
+   .. py:attribute:: wheel_base_metric
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Vehicle
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for complete vehicle data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: vehicle_id
+      :type:  int
+
+
+   .. py:attribute:: base_vehicle_id
+      :type:  int
+
+
+   .. py:attribute:: submodel_id
+      :type:  int
+
+
+   .. py:attribute:: region_id
+      :type:  int
+
+
+   .. py:attribute:: publication_stage_id
+      :type:  int
+
+
+   .. py:attribute:: base_vehicle
+      :type:  Optional[BaseVehicle]
+
+
+   .. py:attribute:: submodel
+      :type:  Optional[SubModel]
+
+
+   .. py:attribute:: region
+      :type:  Optional[Region]
+
+
+   .. py:attribute:: publication_stage
+      :type:  Optional[PublicationStage]
+
+
+   .. py:attribute:: year
+      :type:  Optional[int]
+
+
+   .. py:attribute:: make
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: VehicleDetail
+
+   Bases: :py:obj:`Vehicle`
+
+
+   Schema for detailed vehicle data with configurations.
+
+
+   .. py:attribute:: engines
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: transmissions
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: drive_types
+      :type:  List[str]
+
+
+   .. py:attribute:: body_styles
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: brake_configs
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: wheel_bases
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: VehicleSearchParameters
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for vehicle search parameters.
+
+
+   .. py:attribute:: year
+      :type:  Optional[int]
+
+
+   .. py:attribute:: make
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model
+      :type:  Optional[str]
+
+
+   .. py:attribute:: submodel
+      :type:  Optional[str]
+
+
+   .. py:attribute:: body_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: engine_config
+      :type:  Optional[int]
+
+
+   .. py:attribute:: transmission_type
+      :type:  Optional[int]
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+.. py:class:: VehicleSearchResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated vehicle search response.
+
+
+   .. py:attribute:: items
+      :type:  List[Vehicle]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+

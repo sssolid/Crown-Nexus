@@ -1,0 +1,17 @@
+app.api
+=======
+
+.. py:module:: app.api
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/api/deps/index
+   /autoapi/app/api/responses/index
+   /autoapi/app/api/v1/index
+
+

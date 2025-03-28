@@ -1,0 +1,19 @@
+app.domains.location
+====================
+
+.. py:module:: app.domains.location
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/location/exceptions/index
+   /autoapi/app/domains/location/models/index
+   /autoapi/app/domains/location/repository/index
+   /autoapi/app/domains/location/schemas/index
+   /autoapi/app/domains/location/service/index
+
+

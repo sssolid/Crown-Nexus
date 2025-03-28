@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.api.v1.endpoints.media &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.api.v1.endpoints.products" href="../products/index.html" />
+    <link rel="prev" title="app.api.v1.endpoints.i18n" href="../i18n/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.api</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.api.v1</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.api.v1.endpoints</a></li>
+      <li class="breadcrumb-item active">app.api.v1.endpoints.media</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/api/v1/endpoints/media/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.api.v1.endpoints.media">
+<span id="app-api-v1-endpoints-media"></span><h1>app.api.v1.endpoints.media<a class="headerlink" href="#module-app.api.v1.endpoints.media" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.router" title="app.api.v1.endpoints.media.router"><code class="xref py py-obj docutils literal notranslate"><span class="pre">router</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.upload_file" title="app.api.v1.endpoints.media.upload_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upload_file</span></code></a>(background_tasks, db, current_user[, ...])</p></td>
+<td><p>Upload a new file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.read_media" title="app.api.v1.endpoints.media.read_media"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_media</span></code></a>(db, current_user[, media_type, visibility, ...])</p></td>
+<td><p>Retrieve media with filtering options.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.read_media_item" title="app.api.v1.endpoints.media.read_media_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_media_item</span></code></a>(media_id, db, current_user)</p></td>
+<td><p>Get media by ID.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.update_media" title="app.api.v1.endpoints.media.update_media"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_media</span></code></a>(media_id, media_in, db, current_user)</p></td>
+<td><p>Update media metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.delete_media" title="app.api.v1.endpoints.media.delete_media"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_media</span></code></a>(media_id, db, current_user)</p></td>
+<td><p>Delete media.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.get_media_file" title="app.api.v1.endpoints.media.get_media_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_media_file</span></code></a>(media_id, db[, current_user])</p></td>
+<td><p>Get the file for media.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.get_media_thumbnail" title="app.api.v1.endpoints.media.get_media_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_media_thumbnail</span></code></a>(media_id, db[, current_user])</p></td>
+<td><p>Get the thumbnail for an image.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.associate_media_with_product" title="app.api.v1.endpoints.media.associate_media_with_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">associate_media_with_product</span></code></a>(media_id, product_id, db, ...)</p></td>
+<td><p>Associate media with a product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.remove_media_from_product" title="app.api.v1.endpoints.media.remove_media_from_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_media_from_product</span></code></a>(media_id, product_id, db, ...)</p></td>
+<td><p>Remove association between media and a product.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.media.get_product_media" title="app.api.v1.endpoints.media.get_product_media"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_product_media</span></code></a>(product_id, db, current_user[, ...])</p></td>
+<td><p>Get media associated with a product.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.router">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">router</span></span><a class="headerlink" href="#app.api.v1.endpoints.media.router" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.upload_file">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">upload_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">background_tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">File(...)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Form(MediaType.IMAGE)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visibility</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Form(MediaVisibility.PRIVATE)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Form('{}')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Form(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.upload_file" title="Link to this definition"></a></dt>
+<dd><p>Upload a new file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>background_tasks: Background tasks
+db: Database session
+current_user: Current authenticated user
+file: Uploaded file
+media_type: Type of media
+visibility: Visibility level
+metadata: Additional metadata as JSON string
+product_id: ID of product to associate with the media</p>
+</dd>
+<dt>Returns:</dt><dd><p>FileUploadResponse: Response with the created media</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>background_tasks</strong> (<em>fastapi.BackgroundTasks</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>file</strong> (<em>fastapi.UploadFile</em>)</p></li>
+<li><p><strong>media_type</strong> (<a class="reference internal" href="../../../../domains/media/models/index.html#app.domains.media.models.MediaType" title="app.domains.media.models.MediaType"><em>app.domains.media.models.MediaType</em></a>)</p></li>
+<li><p><strong>visibility</strong> (<a class="reference internal" href="../../../../domains/media/models/index.html#app.domains.media.models.MediaVisibility" title="app.domains.media.models.MediaVisibility"><em>app.domains.media.models.MediaVisibility</em></a>)</p></li>
+<li><p><strong>metadata</strong> (<em>str</em>)</p></li>
+<li><p><strong>product_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.read_media">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">read_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visibility</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_approved</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.read_media" title="Link to this definition"></a></dt>
+<dd><p>Retrieve media with filtering options.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+media_type: Filter by media type
+visibility: Filter by visibility
+is_approved: Filter by approval status
+product_id: Filter by associated product
+page: Page number
+page_size: Number of items per page</p>
+</dd>
+<dt>Returns:</dt><dd><p>MediaListResponse: Paginated list of media</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>media_type</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../../../domains/media/models/index.html#app.domains.media.models.MediaType" title="app.domains.media.models.MediaType"><em>app.domains.media.models.MediaType</em></a><em>]</em>)</p></li>
+<li><p><strong>visibility</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../../../domains/media/models/index.html#app.domains.media.models.MediaVisibility" title="app.domains.media.models.MediaVisibility"><em>app.domains.media.models.MediaVisibility</em></a><em>]</em>)</p></li>
+<li><p><strong>is_approved</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>product_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.read_media_item">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">read_media_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.read_media_item" title="Link to this definition"></a></dt>
+<dd><p>Get media by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+db: Database session
+current_user: Current authenticated user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Media: Media with specified ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.update_media">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">update_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.update_media" title="Link to this definition"></a></dt>
+<dd><p>Update media metadata.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+media_in: Updated media data
+db: Database session
+current_user: Current authenticated user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Media: Updated media</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>media_in</strong> (<a class="reference internal" href="../../../../domains/media/schemas/index.html#app.domains.media.schemas.MediaUpdate" title="app.domains.media.schemas.MediaUpdate"><em>app.domains.media.schemas.MediaUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.delete_media">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">delete_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.delete_media" title="Link to this definition"></a></dt>
+<dd><p>Delete media.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+db: Database session
+current_user: Current authenticated user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.get_media_file">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">get_media_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_optional_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.get_media_file" title="Link to this definition"></a></dt>
+<dd><p>Get the file for media.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+db: Database session
+current_user: Current authenticated user (optional for public files)</p>
+</dd>
+<dt>Returns:</dt><dd><p>FileResponse: Media file</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.get_media_thumbnail">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">get_media_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_optional_user)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.get_media_thumbnail" title="Link to this definition"></a></dt>
+<dd><p>Get the thumbnail for an image.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+db: Database session
+current_user: Current authenticated user (optional for public files)</p>
+</dd>
+<dt>Returns:</dt><dd><p>FileResponse: Thumbnail file or original file if thumbnail doesn’t exist</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.associate_media_with_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">associate_media_with_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.associate_media_with_product" title="Link to this definition"></a></dt>
+<dd><p>Associate media with a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+product_id: Product ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.remove_media_from_product">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">remove_media_from_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.remove_media_from_product" title="Link to this definition"></a></dt>
+<dd><p>Remove association between media and a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>media_id: Media ID
+product_id: Product ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.media.get_product_media">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.media.</span></span><span class="sig-name descname"><span class="pre">get_product_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.media.get_product_media" title="Link to this definition"></a></dt>
+<dd><p>Get media associated with a product.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>product_id: Product ID
+db: Database session
+current_user: Current authenticated user
+media_type: Filter by media type</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[Media]: List of media associated with the product</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>media_type</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../../../domains/media/models/index.html#app.domains.media.models.MediaType" title="app.domains.media.models.MediaType"><em>app.domains.media.models.MediaType</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../i18n/index.html" class="btn btn-neutral float-left" title="app.api.v1.endpoints.i18n" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../products/index.html" class="btn btn-neutral float-right" title="app.api.v1.endpoints.products" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

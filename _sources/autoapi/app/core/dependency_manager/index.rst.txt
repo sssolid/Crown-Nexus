@@ -1,0 +1,298 @@
+app.core.dependency_manager
+===========================
+
+.. py:module:: app.core.dependency_manager
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.dependency_manager.logger
+   app.core.dependency_manager.T
+   app.core.dependency_manager.dependency_manager
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.dependency_manager.DependencyManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.dependency_manager.get_dependency
+   app.core.dependency_manager.inject_dependency
+   app.core.dependency_manager.register_service
+   app.core.dependency_manager.register_async_service
+   app.core.dependency_manager.register_services
+   app.core.dependency_manager.initialize_services
+   app.core.dependency_manager.shutdown_services
+   app.core.dependency_manager.get_service
+   app.core.dependency_manager.with_dependencies
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: DependencyManager
+
+   Singleton manager for application dependencies and services.
+
+
+   .. py:attribute:: _instance
+      :value: None
+
+
+
+   .. py:attribute:: _dependencies
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: _services
+      :type:  Dict[str, Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: _initialized
+      :type:  Set[str]
+
+
+   .. py:attribute:: _initializing
+      :type:  Set[str]
+
+
+   .. py:attribute:: _dependency_graph
+      :type:  Dict[str, List[str]]
+
+
+   .. py:method:: register_dependency(name, instance)
+
+      Register an existing instance as a dependency.
+
+      Args:
+          name: Name of the dependency
+          instance: The dependency instance
+
+
+
+   .. py:method:: register_service(provider, name)
+
+      Register a service provider function.
+
+      Args:
+          provider: Function that creates the service
+          name: Name of the service
+
+
+
+   .. py:method:: register_dependency_relationship(service_name, depends_on)
+
+      Register dependencies between services for ordered initialization.
+
+      Args:
+          service_name: Name of the dependent service
+          depends_on: Names of services this one depends on
+
+
+
+   .. py:method:: get(name, **kwargs)
+
+      Get or create a dependency by name.
+
+      Args:
+          name: Name of the dependency
+          **kwargs: Additional arguments to pass to the service provider
+
+      Returns:
+          The dependency instance
+
+      Raises:
+          ConfigurationException: If the dependency is not registered
+
+
+
+   .. py:method:: get_instance(cls, **kwargs)
+
+      Get an instance by its class type.
+
+      Args:
+          cls: The class type to get an instance of
+          **kwargs: Additional arguments to pass to the service provider
+
+      Returns:
+          An instance of the specified class
+
+
+
+   .. py:method:: get_all(db = None)
+
+      Get all available services.
+
+      Args:
+          db: Optional database session to pass to service providers
+
+      Returns:
+          Dictionary of service name to service instance
+
+
+
+   .. py:method:: clear()
+
+      Clear all dependency instances.
+
+
+
+   .. py:method:: clear_instance(name)
+
+      Clear a specific dependency instance.
+
+      Args:
+          name: Name of the dependency to clear
+
+
+
+   .. py:method:: _initialize_service(service_name)
+      :async:
+
+
+      Initialize a single service, resolving dependencies as needed.
+
+      Args:
+          service_name: Name of the service to initialize
+
+      Raises:
+          ConfigurationException: If circular dependencies are detected
+
+
+
+   .. py:method:: initialize_services()
+      :async:
+
+
+      Initialize all registered services in dependency order.
+
+
+
+   .. py:method:: shutdown_services()
+      :async:
+
+
+      Shut down all services in reverse initialization order.
+
+
+
+.. py:data:: dependency_manager
+
+.. py:function:: get_dependency(name, **kwargs)
+
+   Get a dependency by name.
+
+   Args:
+       name: Name of the dependency
+       **kwargs: Additional arguments to pass to the service provider
+
+   Returns:
+       The dependency instance
+
+
+.. py:function:: inject_dependency(dependency_name)
+
+   Decorator for injecting dependencies into functions.
+
+   Args:
+       dependency_name: Name of the dependency to inject
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: register_service(provider, name = None)
+
+   Decorator to register a service provider.
+
+   Args:
+       provider: Function that creates the service
+       name: Optional name for the service (defaults to function name)
+
+   Returns:
+       The original provider function
+
+
+.. py:function:: register_async_service(async_provider, name = None)
+
+   Register an async service provider.
+
+   Args:
+       async_provider: Async function that creates the service
+       name: Optional name for the service (defaults to function name)
+
+   Returns:
+       The original async provider function
+
+
+.. py:function:: register_services()
+
+   Register all application services with the dependency manager.
+
+
+.. py:function:: initialize_services()
+   :async:
+
+
+   Initialize all registered services.
+
+
+.. py:function:: shutdown_services()
+   :async:
+
+
+   Shut down all services.
+
+
+.. py:function:: get_service(service_name, db = None)
+
+   Get a service by name.
+
+   Args:
+       service_name: Name of the service to retrieve
+       db: Optional database session to pass to the service provider
+
+   Returns:
+       The service instance with the following type mappings:
+       - "error_service" -> ErrorService
+       - "user_service" -> UserService
+       - "audit_service" -> AuditService
+       - "search_service" -> SearchService
+       - "media_service" -> MediaService
+
+   Examples:
+       ```python
+       # Get error service (returns ErrorService)
+       error_service = get_service("error_service")
+
+       # Get user service with DB session (returns UserService)
+       user_service = get_service("user_service", db=session)
+       ```
+
+
+.. py:function:: with_dependencies(**dependencies)
+
+   Decorator for injecting multiple dependencies into a function.
+
+   Args:
+       **dependencies: Mapping of parameter names to dependency names
+
+   Returns:
+       Decorator function
+
+

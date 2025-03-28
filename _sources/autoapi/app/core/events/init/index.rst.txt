@@ -1,0 +1,269 @@
+app.core.events.init
+====================
+
+.. py:module:: app.core.events.init
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.events.init.logger
+   app.core.events.init.EventHandler
+   app.core.events.init._event_backend
+   app.core.events.init._pending_handlers
+   app.core.events.init._is_initialized
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.events.init.EventBackendType
+   app.core.events.init.EventPublisher
+   app.core.events.init.EventSubscriber
+   app.core.events.init.EventBackend
+   app.core.events.init.CeleryEventBackend
+   app.core.events.init.MemoryEventBackend
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.events.init.init_event_backend
+   app.core.events.init.get_event_backend
+   app.core.events.init.subscribe_to_event
+   app.core.events.init.init_domain_events
+   app.core.events.init.publish_event
+   app.core.events.init._import_event_handlers
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: EventHandler
+
+.. py:class:: EventBackendType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Types of event backends supported.
+
+
+   .. py:attribute:: CELERY
+
+
+   .. py:attribute:: MEMORY
+
+
+.. py:class:: EventPublisher
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for publishing events.
+
+
+   .. py:method:: publish_event(event_name, payload)
+
+      Publish an event to subscribers.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+.. py:class:: EventSubscriber
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for subscribing to events.
+
+
+   .. py:method:: subscribe(event_name, handler)
+
+      Subscribe a handler to an event.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:class:: EventBackend
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`EventPublisher`, :py:obj:`EventSubscriber`
+
+
+   Abstract base class for event backend implementations.
+
+
+   .. py:method:: publish_event(event_name, payload)
+      :abstractmethod:
+
+
+      Publish an event to subscribers.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+   .. py:method:: subscribe(event_name, handler)
+      :abstractmethod:
+
+
+      Subscribe a handler to an event.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:class:: CeleryEventBackend(celery_app)
+
+   Bases: :py:obj:`EventBackend`
+
+
+   Celery implementation of the event backend.
+
+
+   .. py:attribute:: celery_app
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: publish_event(event_name, payload)
+
+      Publish an event using Celery tasks.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+   .. py:method:: subscribe(event_name, handler)
+
+      Subscribe a handler to an event using Celery task decoration.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:class:: MemoryEventBackend
+
+   Bases: :py:obj:`EventBackend`
+
+
+   In-memory implementation of the event backend for testing or simple apps.
+
+
+   .. py:attribute:: handlers
+      :type:  Dict[str, List[EventHandler]]
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: publish_event(event_name, payload)
+
+      Publish an event to all subscribers immediately in-process.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+   .. py:method:: subscribe(event_name, handler)
+
+      Subscribe a handler to an event for in-memory processing.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:data:: _event_backend
+   :type:  Optional[EventBackend]
+   :value: None
+
+
+.. py:data:: _pending_handlers
+   :type:  Dict[str, List[EventHandler]]
+
+.. py:data:: _is_initialized
+   :value: False
+
+
+.. py:function:: init_event_backend(backend_type, **kwargs)
+
+   Initialize the event backend.
+
+   Args:
+       backend_type: Type of event backend to use
+       **kwargs: Additional arguments for the backend
+
+
+.. py:function:: get_event_backend()
+
+   Get the configured event backend.
+
+   Returns:
+       The configured event backend instance
+
+   Raises:
+       RuntimeError: If event backend is not initialized
+
+
+.. py:function:: subscribe_to_event(event_name)
+
+   Decorator to register a handler for a domain event.
+
+   During application initialization, this will store the handler for later registration.
+   After the event system is initialized, handlers will be registered with the backend.
+
+   Args:
+       event_name: Name of the event to subscribe to
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: init_domain_events()
+
+   Initialize domain events by registering all pending handlers.
+
+   This should be called after the event backend is initialized.
+
+
+.. py:function:: publish_event(event_name, payload)
+
+   Publish a domain event.
+
+   Args:
+       event_name: The name of the event to publish
+       payload: Event data to be sent to subscribers
+
+
+.. py:function:: _import_event_handlers()
+
+   Import all domain event handler modules.
+
+

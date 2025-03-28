@@ -1,0 +1,401 @@
+app.core.metrics.base
+=====================
+
+.. py:module:: app.core.metrics.base
+
+.. autoapi-nested-parse::
+
+   Base types and interfaces for the metrics system.
+
+   This module defines common types, enums, and interfaces used throughout
+   the metrics components.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.metrics.base.F
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.metrics.base.MetricType
+   app.core.metrics.base.MetricTag
+   app.core.metrics.base.MetricName
+   app.core.metrics.base.MetricsConfig
+
+
+Module Contents
+---------------
+
+.. py:data:: F
+
+.. py:class:: MetricType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Enum for different types of metrics.
+
+
+   .. py:attribute:: COUNTER
+      :value: 'counter'
+
+
+
+   .. py:attribute:: GAUGE
+      :value: 'gauge'
+
+
+
+   .. py:attribute:: HISTOGRAM
+      :value: 'histogram'
+
+
+
+   .. py:attribute:: SUMMARY
+      :value: 'summary'
+
+
+
+.. py:class:: MetricTag
+
+   Common metric tag names for consistent labeling.
+
+
+   .. py:attribute:: SERVICE
+      :value: 'service'
+
+
+
+   .. py:attribute:: ENVIRONMENT
+      :value: 'environment'
+
+
+
+   .. py:attribute:: VERSION
+      :value: 'version'
+
+
+
+   .. py:attribute:: INSTANCE
+      :value: 'instance'
+
+
+
+   .. py:attribute:: ENDPOINT
+      :value: 'endpoint'
+
+
+
+   .. py:attribute:: METHOD
+      :value: 'method'
+
+
+
+   .. py:attribute:: PATH
+      :value: 'path'
+
+
+
+   .. py:attribute:: STATUS_CODE
+      :value: 'status_code'
+
+
+
+   .. py:attribute:: OPERATION
+      :value: 'operation'
+
+
+
+   .. py:attribute:: ENTITY
+      :value: 'entity'
+
+
+
+   .. py:attribute:: QUERY_TYPE
+      :value: 'query_type'
+
+
+
+   .. py:attribute:: COMPONENT
+      :value: 'component'
+
+
+
+   .. py:attribute:: ACTION
+      :value: 'action'
+
+
+
+   .. py:attribute:: ERROR_TYPE
+      :value: 'error_type'
+
+
+
+   .. py:attribute:: ERROR_CODE
+      :value: 'error_code'
+
+
+
+   .. py:attribute:: RESOURCE_TYPE
+      :value: 'resource_type'
+
+
+
+   .. py:attribute:: RESOURCE_ID
+      :value: 'resource_id'
+
+
+
+   .. py:attribute:: USER_ID
+      :value: 'user_id'
+
+
+
+   .. py:attribute:: USER_ROLE
+      :value: 'user_role'
+
+
+
+   .. py:attribute:: CACHE_HIT
+      :value: 'cache_hit'
+
+
+
+   .. py:attribute:: CACHE_BACKEND
+      :value: 'cache_backend'
+
+
+
+.. py:class:: MetricName
+
+   Common metric names for consistent measurement.
+
+
+   .. py:attribute:: HTTP_REQUESTS_TOTAL
+      :value: 'http_requests_total'
+
+
+
+   .. py:attribute:: HTTP_REQUEST_DURATION_SECONDS
+      :value: 'http_request_duration_seconds'
+
+
+
+   .. py:attribute:: HTTP_REQUEST_SIZE_BYTES
+      :value: 'http_request_size_bytes'
+
+
+
+   .. py:attribute:: HTTP_RESPONSE_SIZE_BYTES
+      :value: 'http_response_size_bytes'
+
+
+
+   .. py:attribute:: HTTP_ERRORS_TOTAL
+      :value: 'http_errors_total'
+
+
+
+   .. py:attribute:: HTTP_IN_PROGRESS
+      :value: 'http_requests_in_progress'
+
+
+
+   .. py:attribute:: DB_QUERIES_TOTAL
+      :value: 'db_queries_total'
+
+
+
+   .. py:attribute:: DB_QUERY_DURATION_SECONDS
+      :value: 'db_query_duration_seconds'
+
+
+
+   .. py:attribute:: DB_CONNECTIONS_TOTAL
+      :value: 'db_connections_total'
+
+
+
+   .. py:attribute:: DB_CONNECTIONS_IN_USE
+      :value: 'db_connections_in_use'
+
+
+
+   .. py:attribute:: DB_TRANSACTION_DURATION_SECONDS
+      :value: 'db_transaction_duration_seconds'
+
+
+
+   .. py:attribute:: DB_ERRORS_TOTAL
+      :value: 'db_errors_total'
+
+
+
+   .. py:attribute:: SERVICE_CALLS_TOTAL
+      :value: 'service_calls_total'
+
+
+
+   .. py:attribute:: SERVICE_CALL_DURATION_SECONDS
+      :value: 'service_call_duration_seconds'
+
+
+
+   .. py:attribute:: SERVICE_ERRORS_TOTAL
+      :value: 'service_errors_total'
+
+
+
+   .. py:attribute:: CACHE_HIT_TOTAL
+      :value: 'cache_hit_total'
+
+
+
+   .. py:attribute:: CACHE_MISS_TOTAL
+      :value: 'cache_miss_total'
+
+
+
+   .. py:attribute:: CACHE_OPERATIONS_TOTAL
+      :value: 'cache_operations_total'
+
+
+
+   .. py:attribute:: CACHE_OPERATION_DURATION_SECONDS
+      :value: 'cache_operation_duration_seconds'
+
+
+
+   .. py:attribute:: USER_LOGINS_TOTAL
+      :value: 'user_logins_total'
+
+
+
+   .. py:attribute:: ORDERS_TOTAL
+      :value: 'orders_total'
+
+
+
+   .. py:attribute:: PRODUCTS_CREATED_TOTAL
+      :value: 'products_created_total'
+
+
+
+   .. py:attribute:: SYSTEM_MEMORY_BYTES
+      :value: 'system_memory_bytes'
+
+
+
+   .. py:attribute:: SYSTEM_CPU_USAGE
+      :value: 'system_cpu_usage'
+
+
+
+   .. py:attribute:: SYSTEM_DISK_USAGE_BYTES
+      :value: 'system_disk_usage_bytes'
+
+
+
+   .. py:attribute:: PROCESS_RESIDENT_MEMORY_BYTES
+      :value: 'process_resident_memory_bytes'
+
+
+
+   .. py:attribute:: PROCESS_VIRTUAL_MEMORY_BYTES
+      :value: 'process_virtual_memory_bytes'
+
+
+
+   .. py:attribute:: PROCESS_CPU_SECONDS_TOTAL
+      :value: 'process_cpu_seconds_total'
+
+
+
+   .. py:attribute:: PROCESS_OPEN_FDS
+      :value: 'process_open_fds'
+
+
+
+.. py:class:: MetricsConfig
+
+   Configuration for the metrics system.
+
+
+   .. py:attribute:: namespace
+      :type:  str
+      :value: 'crown_nexus'
+
+
+
+   .. py:attribute:: subsystem
+      :type:  str
+      :value: 'api'
+
+
+
+   .. py:attribute:: default_labels
+      :type:  Dict[str, str]
+
+
+   .. py:attribute:: default_buckets
+      :type:  List[float]
+      :value: [0.001, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0]
+
+
+
+   .. py:attribute:: enable_prometheus
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: enable_endpoint
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: endpoint_port
+      :type:  int
+      :value: 9090
+
+
+
+   .. py:attribute:: push_gateway
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: push_interval
+      :type:  int
+      :value: 60
+
+
+
+   .. py:attribute:: enable_default_metrics
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: enable_process_metrics
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: enable_platform_metrics
+      :type:  bool
+      :value: True
+
+
+

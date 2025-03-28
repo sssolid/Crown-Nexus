@@ -1,0 +1,203 @@
+app.domains.audit.service.service
+=================================
+
+.. py:module:: app.domains.audit.service.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.audit.service.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.service.service.AuditService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: AuditService(db = None)
+
+   Bases: :py:obj:`app.services.interfaces.ServiceInterface`
+
+
+   Service for recording and retrieving audit logs.
+
+   This service provides methods for logging user and system actions
+   for security, compliance, and troubleshooting purposes.
+
+
+   .. py:attribute:: db
+      :value: None
+
+
+
+   .. py:attribute:: enabled
+
+
+   .. py:attribute:: loggers
+      :type:  List[app.domains.audit.service.base.AuditLogger]
+      :value: []
+
+
+
+   .. py:attribute:: sensitive_fields
+      :type:  List[str]
+      :value: ['password', 'token', 'secret', 'credit_card', 'ssn', 'social_security', 'api_key']
+
+
+
+   .. py:attribute:: anonymize_events
+      :type:  List[app.domains.audit.service.base.AuditEventType]
+
+
+   .. py:attribute:: event_level_mapping
+      :type:  Dict[app.domains.audit.service.base.AuditEventType, app.domains.audit.service.base.AuditLogLevel]
+
+
+   .. py:attribute:: query
+      :value: None
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the audit service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the audit service.
+
+
+
+   .. py:method:: add_logger(logger)
+
+      Add an audit logger to the service.
+
+      Args:
+          logger: The audit logger to add
+
+
+
+   .. py:method:: log_event(event_type, user_id = None, ip_address = None, resource_id = None, resource_type = None, details = None, context = None, level = None, options = None)
+      :async:
+
+
+      Log an audit event.
+
+      Args:
+          event_type: Type of the audit event
+          user_id: ID of the user who performed the action
+          ip_address: IP address of the user
+          resource_id: ID of the resource affected
+          resource_type: Type of the resource affected
+          details: Additional details about the event
+          context: Additional context information
+          level: Severity level of the event
+          options: Audit logging options
+
+      Returns:
+          The ID of the created audit event
+
+
+
+   .. py:method:: get_events(user_id = None, event_type = None, resource_id = None, resource_type = None, start_time = None, end_time = None, level = None, limit = 100, offset = 0, sort_field = 'timestamp', sort_order = 'desc')
+      :async:
+
+
+      Retrieve audit events with filtering.
+
+      Args:
+          user_id: Filter by user ID
+          event_type: Filter by event type
+          resource_id: Filter by resource ID
+          resource_type: Filter by resource type
+          start_time: Filter by start time
+          end_time: Filter by end time
+          level: Filter by log level
+          limit: Maximum number of results to return
+          offset: Result offset for pagination
+          sort_field: Field to sort by
+          sort_order: Sort order ("asc" or "desc")
+
+      Returns:
+          Dictionary with audit log events and total count
+
+
+
+   .. py:method:: get_event_by_id(event_id)
+      :async:
+
+
+      Retrieve a specific audit event by ID.
+
+      Args:
+          event_id: The ID of the audit event to retrieve
+
+      Returns:
+          The audit event or None if not found
+
+
+
+   .. py:method:: get_user_activity(user_id, start_time = None, end_time = None, limit = 100)
+      :async:
+
+
+      Get recent activity for a specific user.
+
+      Args:
+          user_id: The ID of the user
+          start_time: Optional start time filter
+          end_time: Optional end time filter
+          limit: Maximum number of results to return
+
+      Returns:
+          List of audit events for the user
+
+
+
+   .. py:method:: get_resource_history(resource_type, resource_id, limit = 100)
+      :async:
+
+
+      Get history of actions performed on a specific resource.
+
+      Args:
+          resource_type: The type of resource
+          resource_id: The ID of the resource
+          limit: Maximum number of results to return
+
+      Returns:
+          List of audit events for the resource
+
+
+
+   .. py:method:: purge_old_logs(days_to_keep = 90)
+      :async:
+
+
+      Purge audit logs older than the specified number of days.
+
+      Args:
+          days_to_keep: Number of days of logs to keep
+
+      Returns:
+          Number of purged log entries
+
+
+

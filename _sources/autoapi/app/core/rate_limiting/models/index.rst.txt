@@ -1,0 +1,85 @@
+app.core.rate_limiting.models
+=============================
+
+.. py:module:: app.core.rate_limiting.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.models.RateLimitStrategy
+   app.core.rate_limiting.models.RateLimitRule
+
+
+Module Contents
+---------------
+
+.. py:class:: RateLimitStrategy
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Strategy for determining the rate limit key.
+
+
+   .. py:attribute:: IP
+      :value: 'ip'
+
+
+
+   .. py:attribute:: USER
+      :value: 'user'
+
+
+
+   .. py:attribute:: COMBINED
+      :value: 'combined'
+
+
+
+.. py:class:: RateLimitRule
+
+   Rule configuration for rate limiting.
+
+   Attributes:
+       requests_per_window: Maximum number of requests allowed in the window.
+       window_seconds: Size of the window in seconds.
+       strategy: Strategy for determining the rate limit key.
+       burst_multiplier: Multiplier for burst allowance above the limit.
+       path_pattern: Pattern to match request paths this rule applies to.
+           If None, applies to all paths.
+       exclude_paths: List of path prefixes to exclude from rate limiting.
+
+
+   .. py:attribute:: requests_per_window
+      :type:  int
+
+
+   .. py:attribute:: window_seconds
+      :type:  int
+
+
+   .. py:attribute:: strategy
+      :type:  RateLimitStrategy
+
+
+   .. py:attribute:: burst_multiplier
+      :type:  float
+      :value: 1.5
+
+
+
+   .. py:attribute:: path_pattern
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: exclude_paths
+      :type:  List[str]
+      :value: []
+
+
+

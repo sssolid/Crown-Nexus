@@ -1,0 +1,6 @@
+app.domains.chat.handlers
+=========================
+
+.. py:module:: app.domains.chat.handlers
+
+

@@ -1,0 +1,87 @@
+app.main
+========
+
+.. py:module:: app.main
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.main.logger
+   app.main.ExceptionHandlerType
+   app.main.app
+   app.main.media_path
+   app.main.host
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.main.add_typed_middleware
+   app.main.lifespan
+   app.main.log_current_user
+   app.main.health_check
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: add_typed_middleware(app, middleware_class, **options)
+
+   Add middleware with proper type annotations to avoid IDE warnings.
+
+
+.. py:data:: ExceptionHandlerType
+
+.. py:function:: lifespan(app)
+   :async:
+
+
+   Context manager for the application lifespan.
+
+   Handles initialization and shutdown of application components.
+
+   Args:
+       app: The FastAPI application
+
+   Yields:
+       None
+
+
+.. py:data:: app
+
+.. py:data:: media_path
+
+.. py:function:: log_current_user(current_user = Depends(get_current_user))
+   :async:
+
+
+   Dependency for logging the current user.
+
+   Args:
+       current_user: The authenticated user
+
+   Returns:
+       The authenticated user
+
+
+.. py:function:: health_check()
+   :async:
+
+
+   Health check endpoint.
+
+   Returns:
+       A dictionary with health status information
+
+
+.. py:data:: host
+   :value: '0.0.0.0'
+
+

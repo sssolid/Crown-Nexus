@@ -1,0 +1,200 @@
+app.domains.location.models
+===========================
+
+.. py:module:: app.domains.location.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.location.models.Country
+   app.domains.location.models.Address
+
+
+Module Contents
+---------------
+
+.. py:class:: Country
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Country entity representing a geographic country or territory.
+
+   Attributes:
+       id: Unique identifier.
+       name: Country name.
+       iso_alpha_2: ISO 3166-1 alpha-2 code (2 letters).
+       iso_alpha_3: ISO 3166-1 alpha-3 code (3 letters).
+       iso_numeric: ISO 3166-1 numeric code (3 digits).
+       region: Geographic region.
+       subregion: Geographic subregion.
+       currency: ISO 4217 currency code.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'country'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: iso_alpha_2
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: iso_alpha_3
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: iso_numeric
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: region
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: subregion
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: currency
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: addresses
+      :type:  sqlalchemy.orm.Mapped[List[Address]]
+
+
+   .. py:attribute:: manufacturers
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.Manufacturer]]
+
+
+   .. py:attribute:: tariff_codes
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.TariffCode]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Country instance.
+
+      Returns:
+          String representation including name and ISO code.
+
+
+
+.. py:class:: Address
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Address entity representing a physical location.
+
+   Attributes:
+       id: Unique identifier.
+       street: Street address.
+       city: City name.
+       state: State or province.
+       postal_code: Postal or ZIP code.
+       country_id: ID of the associated country.
+       latitude: Geographic latitude.
+       longitude: Geographic longitude.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'address'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: street
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: city
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: state
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: postal_code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: country_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: latitude
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: longitude
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: country
+      :type:  sqlalchemy.orm.Mapped[Country]
+
+
+   .. py:attribute:: warehouses
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Warehouse]]
+
+
+   .. py:attribute:: manufacturers_primary
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.Manufacturer]]
+
+
+   .. py:attribute:: manufacturers_billing
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.Manufacturer]]
+
+
+   .. py:attribute:: manufacturers_shipping
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.products.models.Manufacturer]]
+
+
+   .. py:attribute:: companies_headquarters
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.company.schemas.Company]]
+
+
+   .. py:attribute:: companies_billing
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.company.schemas.Company]]
+
+
+   .. py:attribute:: companies_shipping
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.company.schemas.Company]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Address instance.
+
+      Returns:
+          String representation including street, city, and postal code.
+
+
+

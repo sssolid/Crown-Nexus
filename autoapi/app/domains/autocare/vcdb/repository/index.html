@@ -1,0 +1,1366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.autocare.vcdb.repository &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.domains.autocare.vcdb.schemas" href="../schemas/index.html" />
+    <link rel="prev" title="app.domains.autocare.vcdb.models" href="../models/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains.autocare</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.autocare.vcdb</a></li>
+      <li class="breadcrumb-item active">app.domains.autocare.vcdb.repository</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/domains/autocare/vcdb/repository/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.autocare.vcdb.repository">
+<span id="app-domains-autocare-vcdb-repository"></span><h1>app.domains.autocare.vcdb.repository<a class="headerlink" href="#module-app.domains.autocare.vcdb.repository" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.VCdbRepository" title="app.domains.autocare.vcdb.repository.VCdbRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VCdbRepository</span></code></a></p></td>
+<td><p>Repository for VCdb entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.VehicleRepository" title="app.domains.autocare.vcdb.repository.VehicleRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VehicleRepository</span></code></a></p></td>
+<td><p>Repository for Vehicle entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.BaseVehicleRepository" title="app.domains.autocare.vcdb.repository.BaseVehicleRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseVehicleRepository</span></code></a></p></td>
+<td><p>Repository for BaseVehicle entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.MakeRepository" title="app.domains.autocare.vcdb.repository.MakeRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MakeRepository</span></code></a></p></td>
+<td><p>Repository for Make entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.ModelRepository" title="app.domains.autocare.vcdb.repository.ModelRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelRepository</span></code></a></p></td>
+<td><p>Repository for Model entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.YearRepository" title="app.domains.autocare.vcdb.repository.YearRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">YearRepository</span></code></a></p></td>
+<td><p>Repository for Year entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.SubModelRepository" title="app.domains.autocare.vcdb.repository.SubModelRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubModelRepository</span></code></a></p></td>
+<td><p>Repository for SubModel entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.VehicleTypeRepository" title="app.domains.autocare.vcdb.repository.VehicleTypeRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VehicleTypeRepository</span></code></a></p></td>
+<td><p>Repository for VehicleType entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.RegionRepository" title="app.domains.autocare.vcdb.repository.RegionRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegionRepository</span></code></a></p></td>
+<td><p>Repository for Region entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.EngineConfigRepository" title="app.domains.autocare.vcdb.repository.EngineConfigRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EngineConfigRepository</span></code></a></p></td>
+<td><p>Repository for EngineConfig entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.TransmissionRepository" title="app.domains.autocare.vcdb.repository.TransmissionRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransmissionRepository</span></code></a></p></td>
+<td><p>Repository for Transmission entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.DriveTypeRepository" title="app.domains.autocare.vcdb.repository.DriveTypeRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DriveTypeRepository</span></code></a></p></td>
+<td><p>Repository for DriveType entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.BodyStyleConfigRepository" title="app.domains.autocare.vcdb.repository.BodyStyleConfigRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BodyStyleConfigRepository</span></code></a></p></td>
+<td><p>Repository for BodyStyleConfig entity operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.BrakeConfigRepository" title="app.domains.autocare.vcdb.repository.BrakeConfigRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BrakeConfigRepository</span></code></a></p></td>
+<td><p>Repository for BrakeConfig entity operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.autocare.vcdb.repository.WheelBaseRepository" title="app.domains.autocare.vcdb.repository.WheelBaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WheelBaseRepository</span></code></a></p></td>
+<td><p>Repository for WheelBase entity operations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">VCdbRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository" title="Link to this definition"></a></dt>
+<dd><p>Repository for VCdb entity operations.</p>
+<p>Provides methods for querying VCdb data and managing database updates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.vehicle_repo">
+<span class="sig-name descname"><span class="pre">vehicle_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.vehicle_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.base_vehicle_repo">
+<span class="sig-name descname"><span class="pre">base_vehicle_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.base_vehicle_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.make_repo">
+<span class="sig-name descname"><span class="pre">make_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.make_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.model_repo">
+<span class="sig-name descname"><span class="pre">model_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.model_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.year_repo">
+<span class="sig-name descname"><span class="pre">year_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.year_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.submodel_repo">
+<span class="sig-name descname"><span class="pre">submodel_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.submodel_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.vehicle_type_repo">
+<span class="sig-name descname"><span class="pre">vehicle_type_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.vehicle_type_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.region_repo">
+<span class="sig-name descname"><span class="pre">region_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.region_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.engine_config_repo">
+<span class="sig-name descname"><span class="pre">engine_config_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.engine_config_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.transmission_repo">
+<span class="sig-name descname"><span class="pre">transmission_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.transmission_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.drive_type_repo">
+<span class="sig-name descname"><span class="pre">drive_type_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.drive_type_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.body_style_repo">
+<span class="sig-name descname"><span class="pre">body_style_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.body_style_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.brake_config_repo">
+<span class="sig-name descname"><span class="pre">brake_config_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.brake_config_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.wheel_base_repo">
+<span class="sig-name descname"><span class="pre">wheel_base_repo</span></span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.wheel_base_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.get_version">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.get_version" title="Link to this definition"></a></dt>
+<dd><p>Get the current version of the VCdb database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The version date as a string or None if no version is set.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VCdbRepository.update_version">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version_date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VCdbRepository.update_version" title="Link to this definition"></a></dt>
+<dd><p>Update the current version of the VCdb database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>version_date: The new version date.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated version entity.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version_date</strong> (<em>datetime.datetime</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.VCdbVersion" title="app.domains.autocare.vcdb.models.VCdbVersion">app.domains.autocare.vcdb.models.VCdbVersion</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">VehicleRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Vehicle" title="app.domains.autocare.vcdb.models.Vehicle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.Vehicle</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Vehicle entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleRepository.get_by_vehicle_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_vehicle_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleRepository.get_by_vehicle_id" title="Link to this definition"></a></dt>
+<dd><p>Get a vehicle by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vehicle_id: The vehicle ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The vehicle if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vehicle_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Vehicle" title="app.domains.autocare.vcdb.models.Vehicle">app.domains.autocare.vcdb.models.Vehicle</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleRepository.search">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submodel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleRepository.search" title="Link to this definition"></a></dt>
+<dd><p>Search for vehicles with optional filters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year: Optional vehicle year to filter by.
+make: Optional make name to filter by.
+model: Optional model name to filter by.
+submodel: Optional submodel name to filter by.
+body_type: Optional body type name to filter by.
+engine_config: Optional engine configuration ID to filter by.
+transmission_type: Optional transmission type ID to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>submodel</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>body_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>engine_config</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>transmission_type</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleRepository.get_submodels_by_base_vehicle">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_submodels_by_base_vehicle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_vehicle_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleRepository.get_submodels_by_base_vehicle" title="Link to this definition"></a></dt>
+<dd><p>Get submodels available for a specific base vehicle.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>base_vehicle_id: Base vehicle ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of submodels for the base vehicle.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base_vehicle_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.SubModel" title="app.domains.autocare.vcdb.models.SubModel">app.domains.autocare.vcdb.models.SubModel</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleRepository.get_vehicle_configurations">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_vehicle_configurations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleRepository.get_vehicle_configurations" title="Link to this definition"></a></dt>
+<dd><p>Get all configurations for a specific vehicle.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vehicle_id: Vehicle ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing lists of configurations by type.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vehicle_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, List[Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BaseVehicleRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">BaseVehicleRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BaseVehicleRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BaseVehicle" title="app.domains.autocare.vcdb.models.BaseVehicle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.BaseVehicle</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for BaseVehicle entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BaseVehicleRepository.get_by_base_vehicle_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_base_vehicle_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_vehicle_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BaseVehicleRepository.get_by_base_vehicle_id" title="Link to this definition"></a></dt>
+<dd><p>Get a base vehicle by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>base_vehicle_id: The base vehicle ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The base vehicle if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base_vehicle_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BaseVehicle" title="app.domains.autocare.vcdb.models.BaseVehicle">app.domains.autocare.vcdb.models.BaseVehicle</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BaseVehicleRepository.find_by_year_make_model">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_by_year_make_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BaseVehicleRepository.find_by_year_make_model" title="Link to this definition"></a></dt>
+<dd><p>Find a base vehicle by year, make, and model IDs.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year_id: Year ID.
+make_id: Make ID.
+model_id: Model ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The base vehicle if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>make_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>model_id</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BaseVehicle" title="app.domains.autocare.vcdb.models.BaseVehicle">app.domains.autocare.vcdb.models.BaseVehicle</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BaseVehicleRepository.search_by_criteria">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_by_criteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BaseVehicleRepository.search_by_criteria" title="Link to this definition"></a></dt>
+<dd><p>Search for base vehicles by various criteria.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year: Optional year to filter by.
+make: Optional make name to filter by.
+model: Optional model name to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.MakeRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">MakeRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.MakeRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Make" title="app.domains.autocare.vcdb.models.Make"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.Make</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Make entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.MakeRepository.get_by_make_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_make_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">make_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.MakeRepository.get_by_make_id" title="Link to this definition"></a></dt>
+<dd><p>Get a make by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>make_id: The make ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The make if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>make_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Make" title="app.domains.autocare.vcdb.models.Make">app.domains.autocare.vcdb.models.Make</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.MakeRepository.search_by_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.MakeRepository.search_by_name" title="Link to this definition"></a></dt>
+<dd><p>Search makes by name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: The make name to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of makes matching the search.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Make" title="app.domains.autocare.vcdb.models.Make">app.domains.autocare.vcdb.models.Make</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.MakeRepository.get_by_year">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.MakeRepository.get_by_year" title="Link to this definition"></a></dt>
+<dd><p>Get all makes available for a specific year.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year: Vehicle year.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of makes available for the year.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Make" title="app.domains.autocare.vcdb.models.Make">app.domains.autocare.vcdb.models.Make</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.MakeRepository.get_all_makes">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_makes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.MakeRepository.get_all_makes" title="Link to this definition"></a></dt>
+<dd><p>Get all makes.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all makes.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Make" title="app.domains.autocare.vcdb.models.Make">app.domains.autocare.vcdb.models.Make</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.ModelRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">ModelRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.ModelRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Model" title="app.domains.autocare.vcdb.models.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.Model</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Model entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.ModelRepository.get_by_model_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_model_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.ModelRepository.get_by_model_id" title="Link to this definition"></a></dt>
+<dd><p>Get a model by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>model_id: The model ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The model if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Model" title="app.domains.autocare.vcdb.models.Model">app.domains.autocare.vcdb.models.Model</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.ModelRepository.search_by_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.ModelRepository.search_by_name" title="Link to this definition"></a></dt>
+<dd><p>Search models by name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: The model name to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of models matching the search.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Model" title="app.domains.autocare.vcdb.models.Model">app.domains.autocare.vcdb.models.Model</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.ModelRepository.get_by_year_make">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_year_make</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.ModelRepository.get_by_year_make" title="Link to this definition"></a></dt>
+<dd><p>Get all models available for a specific year and make.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year: Vehicle year.
+make_id: Make ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of models available for the year and make.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>int</em>)</p></li>
+<li><p><strong>make_id</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Model" title="app.domains.autocare.vcdb.models.Model">app.domains.autocare.vcdb.models.Model</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.ModelRepository.get_by_vehicle_type">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_vehicle_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_type_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.ModelRepository.get_by_vehicle_type" title="Link to this definition"></a></dt>
+<dd><p>Get models for a specific vehicle type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vehicle_type_id: Vehicle type ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of models for the vehicle type.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vehicle_type_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Model" title="app.domains.autocare.vcdb.models.Model">app.domains.autocare.vcdb.models.Model</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.YearRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">YearRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.YearRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Year" title="app.domains.autocare.vcdb.models.Year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.Year</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Year entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.YearRepository.get_by_year_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_year_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.YearRepository.get_by_year_id" title="Link to this definition"></a></dt>
+<dd><p>Get a year by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year_id: The year ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The year if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Year" title="app.domains.autocare.vcdb.models.Year">app.domains.autocare.vcdb.models.Year</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.YearRepository.get_by_year">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.YearRepository.get_by_year" title="Link to this definition"></a></dt>
+<dd><p>Get a year entity by the year value.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>year: The year value.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The year entity if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Year" title="app.domains.autocare.vcdb.models.Year">app.domains.autocare.vcdb.models.Year</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.YearRepository.get_all_years">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_years</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.YearRepository.get_all_years" title="Link to this definition"></a></dt>
+<dd><p>Get all available years.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all year entities.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Year" title="app.domains.autocare.vcdb.models.Year">app.domains.autocare.vcdb.models.Year</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.YearRepository.get_year_range">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_year_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.YearRepository.get_year_range" title="Link to this definition"></a></dt>
+<dd><p>Get the minimum and maximum years in the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Tuple containing (min_year, max_year).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.SubModelRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">SubModelRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.SubModelRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.SubModel" title="app.domains.autocare.vcdb.models.SubModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.SubModel</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for SubModel entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.SubModelRepository.get_by_submodel_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_submodel_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submodel_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.SubModelRepository.get_by_submodel_id" title="Link to this definition"></a></dt>
+<dd><p>Get a submodel by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>submodel_id: The submodel ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The submodel if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>submodel_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.SubModel" title="app.domains.autocare.vcdb.models.SubModel">app.domains.autocare.vcdb.models.SubModel</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.SubModelRepository.search_by_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.SubModelRepository.search_by_name" title="Link to this definition"></a></dt>
+<dd><p>Search submodels by name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: The submodel name to search for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of submodels matching the search.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.SubModel" title="app.domains.autocare.vcdb.models.SubModel">app.domains.autocare.vcdb.models.SubModel</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.SubModelRepository.get_all_submodels">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_submodels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.SubModelRepository.get_all_submodels" title="Link to this definition"></a></dt>
+<dd><p>Get all submodels.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all submodels.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.SubModel" title="app.domains.autocare.vcdb.models.SubModel">app.domains.autocare.vcdb.models.SubModel</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleTypeRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">VehicleTypeRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleTypeRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.VehicleType" title="app.domains.autocare.vcdb.models.VehicleType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.VehicleType</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for VehicleType entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleTypeRepository.get_by_vehicle_type_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_vehicle_type_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_type_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleTypeRepository.get_by_vehicle_type_id" title="Link to this definition"></a></dt>
+<dd><p>Get a vehicle type by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vehicle_type_id: The vehicle type ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The vehicle type if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vehicle_type_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.VehicleType" title="app.domains.autocare.vcdb.models.VehicleType">app.domains.autocare.vcdb.models.VehicleType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleTypeRepository.get_by_group">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_type_group_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleTypeRepository.get_by_group" title="Link to this definition"></a></dt>
+<dd><p>Get vehicle types by group.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vehicle_type_group_id: The vehicle type group ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of vehicle types in the group.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vehicle_type_group_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.VehicleType" title="app.domains.autocare.vcdb.models.VehicleType">app.domains.autocare.vcdb.models.VehicleType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.VehicleTypeRepository.get_all_vehicle_types">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_vehicle_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.VehicleTypeRepository.get_all_vehicle_types" title="Link to this definition"></a></dt>
+<dd><p>Get all vehicle types.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all vehicle types.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.VehicleType" title="app.domains.autocare.vcdb.models.VehicleType">app.domains.autocare.vcdb.models.VehicleType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.RegionRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">RegionRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.RegionRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Region" title="app.domains.autocare.vcdb.models.Region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.Region</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Region entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.RegionRepository.get_by_region_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_region_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.RegionRepository.get_by_region_id" title="Link to this definition"></a></dt>
+<dd><p>Get a region by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>region_id: The region ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The region if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>region_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Region" title="app.domains.autocare.vcdb.models.Region">app.domains.autocare.vcdb.models.Region</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.RegionRepository.get_by_parent">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.RegionRepository.get_by_parent" title="Link to this definition"></a></dt>
+<dd><p>Get regions by parent.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>parent_id: The parent region ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of regions with the specified parent.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Region" title="app.domains.autocare.vcdb.models.Region">app.domains.autocare.vcdb.models.Region</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.RegionRepository.get_all_top_level_regions">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_top_level_regions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.RegionRepository.get_all_top_level_regions" title="Link to this definition"></a></dt>
+<dd><p>Get all top-level regions (no parent).</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all top-level regions.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Region" title="app.domains.autocare.vcdb.models.Region">app.domains.autocare.vcdb.models.Region</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.EngineConfigRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">EngineConfigRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.EngineConfigRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.EngineConfig" title="app.domains.autocare.vcdb.models.EngineConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.EngineConfig</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for EngineConfig entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.EngineConfigRepository.get_by_engine_config_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_engine_config_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine_config_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.EngineConfigRepository.get_by_engine_config_id" title="Link to this definition"></a></dt>
+<dd><p>Get an engine configuration by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>engine_config_id: The engine config ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The engine config if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>engine_config_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.EngineConfig" title="app.domains.autocare.vcdb.models.EngineConfig">app.domains.autocare.vcdb.models.EngineConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.EngineConfigRepository.get_by_criteria">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_criteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine_base_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel_type_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspiration_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.EngineConfigRepository.get_by_criteria" title="Link to this definition"></a></dt>
+<dd><p>Get engine configurations by various criteria.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>engine_base_id: Optional engine base ID to filter by.
+fuel_type_id: Optional fuel type ID to filter by.
+aspiration_id: Optional aspiration ID to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>engine_base_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>fuel_type_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>aspiration_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.EngineConfigRepository.get_full_engine_details">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_full_engine_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine_config_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.EngineConfigRepository.get_full_engine_details" title="Link to this definition"></a></dt>
+<dd><p>Get full details for an engine configuration.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>engine_config_id: The engine config ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict with detailed engine information.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>engine_config_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.TransmissionRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">TransmissionRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.TransmissionRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Transmission" title="app.domains.autocare.vcdb.models.Transmission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.Transmission</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for Transmission entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.TransmissionRepository.get_by_transmission_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_transmission_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transmission_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.TransmissionRepository.get_by_transmission_id" title="Link to this definition"></a></dt>
+<dd><p>Get a transmission by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>transmission_id: The transmission ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The transmission if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transmission_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.Transmission" title="app.domains.autocare.vcdb.models.Transmission">app.domains.autocare.vcdb.models.Transmission</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.TransmissionRepository.get_by_criteria">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_criteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transmission_type_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_num_speeds_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_control_type_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.TransmissionRepository.get_by_criteria" title="Link to this definition"></a></dt>
+<dd><p>Get transmissions by various criteria.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>transmission_type_id: Optional transmission type ID to filter by.
+transmission_num_speeds_id: Optional number of speeds ID to filter by.
+transmission_control_type_id: Optional control type ID to filter by.
+page: The page number.
+page_size: The number of items per page.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict containing items, total count, and pagination info.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transmission_type_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>transmission_num_speeds_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>transmission_control_type_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.TransmissionRepository.get_full_transmission_details">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_full_transmission_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transmission_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.TransmissionRepository.get_full_transmission_details" title="Link to this definition"></a></dt>
+<dd><p>Get full details for a transmission.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>transmission_id: The transmission ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict with detailed transmission information.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transmission_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.DriveTypeRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">DriveTypeRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.DriveTypeRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.DriveType" title="app.domains.autocare.vcdb.models.DriveType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.DriveType</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for DriveType entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.DriveTypeRepository.get_by_drive_type_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_drive_type_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drive_type_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.DriveTypeRepository.get_by_drive_type_id" title="Link to this definition"></a></dt>
+<dd><p>Get a drive type by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>drive_type_id: The drive type ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The drive type if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>drive_type_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.DriveType" title="app.domains.autocare.vcdb.models.DriveType">app.domains.autocare.vcdb.models.DriveType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.DriveTypeRepository.get_all_drive_types">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_drive_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.DriveTypeRepository.get_all_drive_types" title="Link to this definition"></a></dt>
+<dd><p>Get all drive types.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all drive types.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.DriveType" title="app.domains.autocare.vcdb.models.DriveType">app.domains.autocare.vcdb.models.DriveType</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BodyStyleConfigRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">BodyStyleConfigRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BodyStyleConfigRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BodyStyleConfig" title="app.domains.autocare.vcdb.models.BodyStyleConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.BodyStyleConfig</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for BodyStyleConfig entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BodyStyleConfigRepository.get_by_body_style_config_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_body_style_config_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_style_config_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BodyStyleConfigRepository.get_by_body_style_config_id" title="Link to this definition"></a></dt>
+<dd><p>Get a body style config by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body_style_config_id: The body style config ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The body style config if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>body_style_config_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BodyStyleConfig" title="app.domains.autocare.vcdb.models.BodyStyleConfig">app.domains.autocare.vcdb.models.BodyStyleConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BodyStyleConfigRepository.get_by_body_type">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_body_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_type_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BodyStyleConfigRepository.get_by_body_type" title="Link to this definition"></a></dt>
+<dd><p>Get body style configs by body type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body_type_id: The body type ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of body style configs with the specified body type.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>body_type_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BodyStyleConfig" title="app.domains.autocare.vcdb.models.BodyStyleConfig">app.domains.autocare.vcdb.models.BodyStyleConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BodyStyleConfigRepository.get_full_body_style_details">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_full_body_style_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_style_config_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BodyStyleConfigRepository.get_full_body_style_details" title="Link to this definition"></a></dt>
+<dd><p>Get full details for a body style configuration.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>body_style_config_id: The body style config ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict with detailed body style information.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>body_style_config_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BrakeConfigRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">BrakeConfigRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BrakeConfigRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BrakeConfig" title="app.domains.autocare.vcdb.models.BrakeConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.BrakeConfig</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for BrakeConfig entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BrakeConfigRepository.get_by_brake_config_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_brake_config_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brake_config_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BrakeConfigRepository.get_by_brake_config_id" title="Link to this definition"></a></dt>
+<dd><p>Get a brake config by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>brake_config_id: The brake config ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The brake config if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>brake_config_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.BrakeConfig" title="app.domains.autocare.vcdb.models.BrakeConfig">app.domains.autocare.vcdb.models.BrakeConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.BrakeConfigRepository.get_full_brake_config_details">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_full_brake_config_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brake_config_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.BrakeConfigRepository.get_full_brake_config_details" title="Link to this definition"></a></dt>
+<dd><p>Get full details for a brake configuration.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>brake_config_id: The brake config ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict with detailed brake configuration information.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>brake_config_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.WheelBaseRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.autocare.vcdb.repository.</span></span><span class="sig-name descname"><span class="pre">WheelBaseRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.WheelBaseRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.repositories.base.BaseRepository</span></code></a>[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.WheelBase" title="app.domains.autocare.vcdb.models.WheelBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.autocare.vcdb.models.WheelBase</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">uuid.UUID</span></code>]</p>
+<p>Repository for WheelBase entity operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.WheelBaseRepository.get_by_wheel_base_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_wheel_base_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wheel_base_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.WheelBaseRepository.get_by_wheel_base_id" title="Link to this definition"></a></dt>
+<dd><p>Get a wheel base by its VCdb ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>wheel_base_id: The wheel base ID.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The wheel base if found, None otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wheel_base_id</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.WheelBase" title="app.domains.autocare.vcdb.models.WheelBase">app.domains.autocare.vcdb.models.WheelBase</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.autocare.vcdb.repository.WheelBaseRepository.get_all_wheel_bases">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all_wheel_bases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.autocare.vcdb.repository.WheelBaseRepository.get_all_wheel_bases" title="Link to this definition"></a></dt>
+<dd><p>Get all wheel bases.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of all wheel bases.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../models/index.html#app.domains.autocare.vcdb.models.WheelBase" title="app.domains.autocare.vcdb.models.WheelBase">app.domains.autocare.vcdb.models.WheelBase</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../models/index.html" class="btn btn-neutral float-left" title="app.domains.autocare.vcdb.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../schemas/index.html" class="btn btn-neutral float-right" title="app.domains.autocare.vcdb.schemas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

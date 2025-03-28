@@ -1,0 +1,920 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.services.base_service.service &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.services.interfaces" href="../../interfaces/index.html" />
+    <link rel="prev" title="app.services.base_service.permissions" href="../permissions/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.services</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.services.base_service</a></li>
+      <li class="breadcrumb-item active">app.services.base_service.service</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/services/base_service/service/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.services.base_service.service">
+<span id="app-services-base-service-service"></span><h1>app.services.base_service.service<a class="headerlink" href="#module-app.services.base_service.service" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.services.base_service.service.logger" title="app.services.base_service.service.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.services.base_service.service.T" title="app.services.base_service.service.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.services.base_service.service.C" title="app.services.base_service.service.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.services.base_service.service.U" title="app.services.base_service.service.U"><code class="xref py py-obj docutils literal notranslate"><span class="pre">U</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.services.base_service.service.R" title="app.services.base_service.service.R"><code class="xref py py-obj docutils literal notranslate"><span class="pre">R</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.services.base_service.service.ID" title="app.services.base_service.service.ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.services.base_service.service.BaseService" title="app.services.base_service.service.BaseService"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseService</span></code></a></p></td>
+<td><p>Base service for CRUD operations on entities.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.base_service.service.logger">
+<span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.services.base_service.service.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.base_service.service.T">
+<span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#app.services.base_service.service.T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.base_service.service.C">
+<span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">C</span></span><a class="headerlink" href="#app.services.base_service.service.C" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.base_service.service.U">
+<span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">U</span></span><a class="headerlink" href="#app.services.base_service.service.U" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.base_service.service.R">
+<span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#app.services.base_service.service.R" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.base_service.service.ID">
+<span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">ID</span></span><a class="headerlink" href="#app.services.base_service.service.ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.base_service.service.</span></span><span class="sig-name descname"><span class="pre">BaseService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BaseRepository</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<a class="reference internal" href="#app.services.base_service.service.T" title="app.services.base_service.service.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.C" title="app.services.base_service.service.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.U" title="app.services.base_service.service.U"><code class="xref py py-obj docutils literal notranslate"><span class="pre">U</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.R" title="app.services.base_service.service.R"><code class="xref py py-obj docutils literal notranslate"><span class="pre">R</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.ID" title="app.services.base_service.service.ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ID</span></code></a>], <a class="reference internal" href="../contracts/index.html#app.services.base_service.contracts.BaseServiceProtocol" title="app.services.base_service.contracts.BaseServiceProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.services.base_service.contracts.BaseServiceProtocol</span></code></a>[<a class="reference internal" href="#app.services.base_service.service.T" title="app.services.base_service.service.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.ID" title="app.services.base_service.service.ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ID</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.C" title="app.services.base_service.service.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.U" title="app.services.base_service.service.U"><code class="xref py py-obj docutils literal notranslate"><span class="pre">U</span></code></a>, <a class="reference internal" href="#app.services.base_service.service.R" title="app.services.base_service.service.R"><code class="xref py py-obj docutils literal notranslate"><span class="pre">R</span></code></a>]</p>
+<p>Base service for CRUD operations on entities.</p>
+<p>This service provides standardized CRUD operations with:
+- Integrated permissions checking
+- Transaction management
+- Error handling
+- Validation
+- Event dispatching
+- Logging</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>db: AsyncSession for database operations
+model: SQLAlchemy model class
+repository: Repository for database operations
+create_schema: Pydantic model for create operations
+update_schema: Pydantic model for update operations
+response_schema: Pydantic model for responses
+required_create_permission: Permission required for create operations
+required_read_permission: Permission required for read operations
+required_update_permission: Permission required for update operations
+required_delete_permission: Permission required for delete operations</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>)</p></li>
+<li><p><strong>model_class</strong> (<em>Type</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>create_schema</strong> (<em>Type</em><em>[</em><em>C</em><em>]</em>)</p></li>
+<li><p><strong>update_schema</strong> (<em>Type</em><em>[</em><em>U</em><em>]</em>)</p></li>
+<li><p><strong>response_schema</strong> (<em>Type</em><em>[</em><em>R</em><em>]</em>)</p></li>
+<li><p><strong>repository_class</strong> (<em>Type</em><em>[</em><a class="reference internal" href="../../../repositories/base/index.html#app.repositories.base.BaseRepository" title="app.repositories.base.BaseRepository"><em>app.repositories.base.BaseRepository</em></a><em>[</em><em>T</em><em>, </em><em>ID</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.create_schema">
+<span class="sig-name descname"><span class="pre">create_schema</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.create_schema" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.update_schema">
+<span class="sig-name descname"><span class="pre">update_schema</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.update_schema" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.response_schema">
+<span class="sig-name descname"><span class="pre">response_schema</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.response_schema" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.repository">
+<span class="sig-name descname"><span class="pre">repository</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.repository" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.create_update_ops">
+<span class="sig-name descname"><span class="pre">create_update_ops</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.create_update_ops" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.read_delete_ops">
+<span class="sig-name descname"><span class="pre">read_delete_ops</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.read_delete_ops" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.pagination_service">
+<span class="sig-name descname"><span class="pre">pagination_service</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.pagination_service" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.services.base_service.service.BaseService.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.required_create_permission">
+<span class="sig-name descname"><span class="pre">required_create_permission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../core/permissions/index.html#app.core.permissions.Permission" title="app.core.permissions.Permission"><span class="pre">app.core.permissions.Permission</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.base_service.service.BaseService.required_create_permission" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.required_read_permission">
+<span class="sig-name descname"><span class="pre">required_read_permission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../core/permissions/index.html#app.core.permissions.Permission" title="app.core.permissions.Permission"><span class="pre">app.core.permissions.Permission</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.base_service.service.BaseService.required_read_permission" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.required_update_permission">
+<span class="sig-name descname"><span class="pre">required_update_permission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../core/permissions/index.html#app.core.permissions.Permission" title="app.core.permissions.Permission"><span class="pre">app.core.permissions.Permission</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.base_service.service.BaseService.required_update_permission" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.required_delete_permission">
+<span class="sig-name descname"><span class="pre">required_delete_permission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../core/permissions/index.html#app.core.permissions.Permission" title="app.core.permissions.Permission"><span class="pre">app.core.permissions.Permission</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.base_service.service.BaseService.required_delete_permission" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize service resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Release service resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.create">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.create" title="Link to this definition"></a></dt>
+<dd><p>Create new entity.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: Entity data
+user_id: Current user ID</p>
+</dd>
+<dt>Returns:</dt><dd><p>T: Created entity</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If validation fails
+PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.create_with_schema">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_with_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.create_with_schema" title="Link to this definition"></a></dt>
+<dd><p>Create a new entity using a Pydantic schema.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>schema: Create schema
+user_id: Optional user ID for permission checks</p>
+</dd>
+<dt>Returns:</dt><dd><p>T: The created entity</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> (<em>C</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.delete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hard_delete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.delete" title="Link to this definition"></a></dt>
+<dd><p>Delete entity.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>id: Entity ID
+user_id: Current user ID
+hard_delete: Whether to permanently delete</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if deleted</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If entity not found
+PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>ID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>hard_delete</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.get">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.get" title="Link to this definition"></a></dt>
+<dd><p>Get entity by ID with permission check.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>id: Entity ID
+user_id: Current user ID</p>
+</dd>
+<dt>Returns:</dt><dd><p>T: Entity</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If entity not found
+PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>ID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.get_by_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.get_by_id" title="Link to this definition"></a></dt>
+<dd><p>Get entity by ID without raising exceptions.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>id: Entity ID
+user_id: Current user ID</p>
+</dd>
+<dt>Returns:</dt><dd><p>Optional[T]: Entity or None if not found</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>ID</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.get_multi">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.get_multi" title="Link to this definition"></a></dt>
+<dd><p>Get multiple entities with pagination.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: Current user ID
+page: Page number
+page_size: Items per page
+filters: Filters to apply
+order_by: Field to order by</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Paginated results</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>filters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>order_by</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.get_all">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.get_all" title="Link to this definition"></a></dt>
+<dd><p>Get all entities with pagination.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>page: Page number (1-indexed)
+page_size: Number of items per page
+filters: Optional filters to apply
+user_id: Optional user ID for permission checks</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Paginated results</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>filters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.update">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.update" title="Link to this definition"></a></dt>
+<dd><p>Update entity.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>id: Entity ID
+data: Updated data
+user_id: Current user ID</p>
+</dd>
+<dt>Returns:</dt><dd><p>T: Updated entity</p>
+</dd>
+<dt>Raises:</dt><dd><p>ResourceNotFoundException: If entity not found
+ValidationException: If validation fails
+PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>ID</em>)</p></li>
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.update_with_schema">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_with_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.update_with_schema" title="Link to this definition"></a></dt>
+<dd><p>Update an existing entity using a Pydantic schema.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>id: Entity ID
+schema: Update schema
+user_id: Optional user ID for permission checks</p>
+</dd>
+<dt>Returns:</dt><dd><p>Optional[T]: The updated entity if found, None otherwise</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>ID</em>)</p></li>
+<li><p><strong>schema</strong> (<em>U</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.get_paginated">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_paginated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.get_paginated" title="Link to this definition"></a></dt>
+<dd><p>Get paginated entities using offset-based pagination.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: Current user ID
+params: Pagination parameters
+filters: Filters to apply</p>
+</dd>
+<dt>Returns:</dt><dd><p>PaginationResult[R]: Paginated results</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>params</strong> (<em>app.schemas.pagination.OffsetPaginationParams</em>)</p></li>
+<li><p><strong>filters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.pagination.PaginationResult[R]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.get_paginated_with_cursor">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_paginated_with_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.get_paginated_with_cursor" title="Link to this definition"></a></dt>
+<dd><p>Get paginated entities using cursor-based pagination.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: Current user ID
+params: Pagination parameters
+filters: Filters to apply</p>
+</dd>
+<dt>Returns:</dt><dd><p>PaginationResult[R]: Paginated results</p>
+</dd>
+<dt>Raises:</dt><dd><p>PermissionDeniedException: If user doesn’t have permission</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>params</strong> (<em>app.schemas.pagination.CursorPaginationParams</em>)</p></li>
+<li><p><strong>filters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>app.schemas.pagination.PaginationResult[R]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.to_response">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.to_response" title="Link to this definition"></a></dt>
+<dd><p>Convert entity to response model.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Entity to convert</p>
+</dd>
+<dt>Returns:</dt><dd><p>R: Response model</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entity</strong> (<em>T</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>R</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.to_response_multi">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_response_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entities</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.to_response_multi" title="Link to this definition"></a></dt>
+<dd><p>Convert multiple entities to response models.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entities: Entities to convert</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[R]: Response models</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entities</strong> (<em>List</em><em>[</em><em>T</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[R]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.apply_filters">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">apply_filters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.apply_filters" title="Link to this definition"></a></dt>
+<dd><p>Apply custom filters based on business logic.</p>
+<p>This method can be overridden in subclasses to add additional filters
+based on the user, entity type, or other business rules.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>filters: Base filters to apply
+user_id: Current user ID</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Updated filters</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filters</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.validate_create">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.validate_create" title="Link to this definition"></a></dt>
+<dd><p>Validate data before creation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: Entity data
+user_id: Current user ID</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If validation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.validate_update">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.validate_update" title="Link to this definition"></a></dt>
+<dd><p>Validate data before update.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Existing entity
+data: Updated data
+user_id: Current user ID</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If validation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.validate_delete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.validate_delete" title="Link to this definition"></a></dt>
+<dd><p>Validate before deletion.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Entity to delete
+user_id: Current user ID</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValidationException: If validation fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.before_create">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.before_create" title="Link to this definition"></a></dt>
+<dd><p>Hook before entity creation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: Entity data
+user_id: Current user ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.after_create">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.after_create" title="Link to this definition"></a></dt>
+<dd><p>Hook after entity creation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Created entity
+user_id: Current user ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.before_update">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.before_update" title="Link to this definition"></a></dt>
+<dd><p>Hook before entity update.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Existing entity
+data: Updated data
+user_id: Current user ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.after_update">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">updated_entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.after_update" title="Link to this definition"></a></dt>
+<dd><p>Hook after entity update.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>updated_entity: Updated entity
+original_entity: Original entity before update
+user_id: Current user ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>updated_entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>original_entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.before_delete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.before_delete" title="Link to this definition"></a></dt>
+<dd><p>Hook before entity deletion.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Entity to delete
+user_id: Current user ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.base_service.service.BaseService.after_delete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.base_service.service.BaseService.after_delete" title="Link to this definition"></a></dt>
+<dd><p>Hook after entity deletion.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>entity: Deleted entity
+user_id: Current user ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<em>T</em>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../permissions/index.html" class="btn btn-neutral float-left" title="app.services.base_service.permissions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../interfaces/index.html" class="btn btn-neutral float-right" title="app.services.interfaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

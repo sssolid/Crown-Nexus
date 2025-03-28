@@ -1,0 +1,117 @@
+app.logging
+===========
+
+.. py:module:: app.logging
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/logging/config/index
+   /autoapi/app/logging/context/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.logging.get_logger
+   app.logging.initialize_logging
+   app.logging.reinitialize_logging
+   app.logging.shutdown_logging
+   app.logging.clear_user_id
+   app.logging.log_execution_time
+   app.logging.log_execution_time_async
+   app.logging.request_context
+   app.logging.set_user_id
+
+
+Package Contents
+----------------
+
+.. py:function:: get_logger(name)
+
+   Get a structured logger for the given name.
+
+   Args:
+       name: The name for the logger
+
+   Returns:
+       A structured logger instance
+
+
+.. py:function:: initialize_logging()
+
+   Initialize the logging system at import time.
+
+
+.. py:function:: reinitialize_logging()
+   :async:
+
+
+   Reinitialize the logging system asynchronously.
+
+   This can be called from the lifespan to update logging configuration
+   or reload settings if needed.
+
+
+.. py:function:: shutdown_logging()
+   :async:
+
+
+   Shut down the logging system asynchronously.
+
+
+.. py:function:: clear_user_id()
+
+   Clear the user ID from the current context.
+
+
+.. py:function:: log_execution_time(logger = None, level = 'info')
+
+   Decorator to log function execution time.
+
+   Args:
+       logger: Optional logger to use (defaults to module logger)
+       level: Log level to use
+
+   Returns:
+       Decorated function
+
+
+.. py:function:: log_execution_time_async(logger = None, level = 'info')
+
+   Decorator to log async function execution time.
+
+   Args:
+       logger: Optional logger to use (defaults to module logger)
+       level: Log level to use
+
+   Returns:
+       Decorated async function
+
+
+.. py:function:: request_context(request_id = None, user_id = None)
+
+   Context manager for tracking request information.
+
+   Args:
+       request_id: Optional request ID (generated if not provided)
+       user_id: Optional user ID
+
+   Yields:
+       The request ID being used
+
+
+.. py:function:: set_user_id(user_id)
+
+   Set the user ID for the current context.
+
+   Args:
+       user_id: The user ID to set
+
+

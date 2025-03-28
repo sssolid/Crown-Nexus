@@ -1,0 +1,200 @@
+app.domains.sync_history.repository
+===================================
+
+.. py:module:: app.domains.sync_history.repository
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.sync_history.repository.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.sync_history.repository.SyncHistoryRepository
+   app.domains.sync_history.repository.SyncEventRepository
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: SyncHistoryRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.sync_history.models.SyncHistory`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for sync history records.
+
+
+   .. py:method:: create_sync(entity_type, source = SyncSource.AS400, triggered_by_id = None, details = None)
+      :async:
+
+
+      Create a new sync history record.
+
+      Args:
+          entity_type: Type of entity being synced
+          source: Source system
+          triggered_by_id: ID of user who triggered the sync
+          details: Additional details
+
+      Returns:
+          Created sync history record
+
+
+
+   .. py:method:: update_sync_status(sync_id, status, records_processed = 0, records_created = 0, records_updated = 0, records_failed = 0, error_message = None, details = None)
+      :async:
+
+
+      Update the status of a sync operation.
+
+      Args:
+          sync_id: ID of sync history record
+          status: New status
+          records_processed: Number of records processed
+          records_created: Number of records created
+          records_updated: Number of records updated
+          records_failed: Number of records failed
+          error_message: Error message if any
+          details: Additional details
+
+      Returns:
+          Updated sync history record
+
+      Raises:
+          ResourceNotFoundException: If sync record not found
+
+
+
+   .. py:method:: add_sync_event(sync_id, event_type, message, details = None)
+      :async:
+
+
+      Add an event to a sync operation.
+
+      Args:
+          sync_id: ID of sync history record
+          event_type: Type of event
+          message: Event message
+          details: Additional details
+
+      Returns:
+          Created sync event
+
+      Raises:
+          ResourceNotFoundException: If sync record not found
+
+
+
+   .. py:method:: get_sync_events(sync_id, limit = 100)
+      :async:
+
+
+      Get events for a sync operation.
+
+      Args:
+          sync_id: ID of sync history record
+          limit: Maximum number of events to return
+
+      Returns:
+          List of sync events
+
+
+
+   .. py:method:: get_latest_syncs(entity_type = None, source = None, status = None, limit = 10)
+      :async:
+
+
+      Get the latest sync operations.
+
+      Args:
+          entity_type: Filter by entity type
+          source: Filter by source
+          status: Filter by status
+          limit: Maximum number of records to return
+
+      Returns:
+          List of sync history records
+
+
+
+   .. py:method:: get_active_syncs(entity_type = None, source = None)
+      :async:
+
+
+      Get currently active sync operations.
+
+      Args:
+          entity_type: Filter by entity type
+          source: Filter by source
+
+      Returns:
+          List of active sync history records
+
+
+
+   .. py:method:: get_sync_stats(days = 30, entity_type = None, source = None)
+      :async:
+
+
+      Get statistics for sync operations.
+
+      Args:
+          days: Number of days to analyze
+          entity_type: Filter by entity type
+          source: Filter by source
+
+      Returns:
+          Dictionary with sync statistics
+
+
+
+   .. py:method:: cancel_active_syncs(entity_type = None, source = None, cancelled_by_id = None)
+      :async:
+
+
+      Cancel active sync operations.
+
+      Args:
+          entity_type: Filter by entity type
+          source: Filter by source
+          cancelled_by_id: ID of user cancelling the syncs
+
+      Returns:
+          Number of syncs cancelled
+
+
+
+.. py:class:: SyncEventRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.sync_history.models.SyncEvent`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for sync events.
+
+
+   .. py:method:: get_events_by_type(event_type, sync_id = None, limit = 100)
+      :async:
+
+
+      Get events by type.
+
+      Args:
+          event_type: Event type
+          sync_id: Optional sync ID to filter by
+          limit: Maximum number of events to return
+
+      Returns:
+          List of sync events
+
+
+

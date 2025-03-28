@@ -1,0 +1,247 @@
+app.api.v1.endpoints.users
+==========================
+
+.. py:module:: app.api.v1.endpoints.users
+
+.. autoapi-nested-parse::
+
+   User management API endpoints.
+
+   This module provides endpoints for user management operations:
+   - User listing with filtering
+   - User creation, retrieval, update, and deletion
+   - Company management
+   - User profile management
+
+   These endpoints implement proper authorization checks to ensure
+   users can only access and modify appropriate resources.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.users.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.users.read_users
+   app.api.v1.endpoints.users.create_user
+   app.api.v1.endpoints.users.read_user_me
+   app.api.v1.endpoints.users.read_user
+   app.api.v1.endpoints.users.update_user
+   app.api.v1.endpoints.users.delete_user
+   app.api.v1.endpoints.users.read_companies
+   app.api.v1.endpoints.users.create_company
+   app.api.v1.endpoints.users.read_company
+   app.api.v1.endpoints.users.update_company
+   app.api.v1.endpoints.users.delete_company
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: read_users(db, current_user, skip = 0, limit = 100, role = None, company_id = None, is_active = None)
+   :async:
+
+
+   Retrieve users with filtering options.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated admin user
+       skip: Number of users to skip
+       limit: Maximum number of users to return
+       role: Filter by user role
+       company_id: Filter by company ID
+       is_active: Filter by active status
+
+   Returns:
+       List[User]: List of users
+
+
+.. py:function:: create_user(user_in, db, current_user)
+   :async:
+
+
+   Create new user.
+
+   Args:
+       user_in: User data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       User: Created user
+
+   Raises:
+       HTTPException: If email already exists or company not found
+
+
+.. py:function:: read_user_me(current_user, db)
+   :async:
+
+
+   Get current user.
+
+   Args:
+       current_user: Current authenticated user
+       db: Database session
+
+   Returns:
+       User: Current user with company information
+
+
+.. py:function:: read_user(user_id, db, current_user)
+   :async:
+
+
+   Get user by ID.
+
+   Args:
+       user_id: User ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       User: User with specified ID
+
+   Raises:
+       HTTPException: If user not found
+
+
+.. py:function:: update_user(user_id, user_in, db, current_user)
+   :async:
+
+
+   Update a user.
+
+   Args:
+       user_id: User ID
+       user_in: Updated user data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       User: Updated user
+
+   Raises:
+       HTTPException: If user not found or company not found
+
+
+.. py:function:: delete_user(user_id, db, current_user)
+   :async:
+
+
+   Delete a user.
+
+   Args:
+       user_id: User ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+   Raises:
+       HTTPException: If user not found or is the current user
+
+
+.. py:function:: read_companies(db, current_user, skip = 0, limit = 100, is_active = None)
+   :async:
+
+
+   Retrieve companies with filtering options.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated admin user
+       skip: Number of companies to skip
+       limit: Maximum number of companies to return
+       is_active: Filter by active status
+
+   Returns:
+       List[Company]: List of companies
+
+
+.. py:function:: create_company(company_in, db, current_user)
+   :async:
+
+
+   Create new company.
+
+   Args:
+       company_in: Company data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       Company: Created company
+
+   Raises:
+       HTTPException: If account number already exists
+
+
+.. py:function:: read_company(company_id, db, current_user)
+   :async:
+
+
+   Get company by ID.
+
+   Args:
+       company_id: Company ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       Company: Company with specified ID
+
+   Raises:
+       HTTPException: If company not found
+
+
+.. py:function:: update_company(company_id, company_in, db, current_user)
+   :async:
+
+
+   Update a company.
+
+   Args:
+       company_id: Company ID
+       company_in: Updated company data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       Company: Updated company
+
+   Raises:
+       HTTPException: If company not found or account number already exists
+
+
+.. py:function:: delete_company(company_id, db, current_user)
+   :async:
+
+
+   Delete a company.
+
+   Args:
+       company_id: Company ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+   Raises:
+       HTTPException: If company not found or has associated users
+
+

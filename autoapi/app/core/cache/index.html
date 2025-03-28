@@ -1,0 +1,1084 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.cache &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.core.cache.backends" href="backends/index.html" />
+    <link rel="prev" title="app.core" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core</a></li>
+      <li class="breadcrumb-item active">app.core.cache</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/core/cache/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.cache">
+<span id="app-core-cache"></span><h1>app.core.cache<a class="headerlink" href="#module-app.core.cache" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="backends/index.html">app.core.cache.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base/index.html">app.core.cache.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorators/index.html">app.core.cache.decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions/index.html">app.core.cache.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keys/index.html">app.core.cache.keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manager/index.html">app.core.cache.manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service/index.html">app.core.cache.service</a></li>
+</ul>
+</div>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.cache_manager" title="app.core.cache.cache_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cache_manager</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.CacheException" title="app.core.cache.CacheException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheException</span></code></a></p></td>
+<td><p>Base exception class for application exceptions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.CacheConnectionException" title="app.core.cache.CacheConnectionException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheConnectionException</span></code></a></p></td>
+<td><p>Base exception class for application exceptions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.CacheOperationException" title="app.core.cache.CacheOperationException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheOperationException</span></code></a></p></td>
+<td><p>Base exception class for application exceptions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.CacheConfigurationException" title="app.core.cache.CacheConfigurationException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheConfigurationException</span></code></a></p></td>
+<td><p>Base exception class for application exceptions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.CacheBackend" title="app.core.cache.CacheBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheBackend</span></code></a></p></td>
+<td><p>Protocol defining cache backend interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.CacheService" title="app.core.cache.CacheService"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheService</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.cached" title="app.core.cache.cached"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cached</span></code></a>([ttl, prefix, backend, skip_args, skip_kwargs, ...])</p></td>
+<td><p>Cache the result of a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.invalidate_cache" title="app.core.cache.invalidate_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invalidate_cache</span></code></a>(pattern[, prefix, backend, tags])</p></td>
+<td><p>Invalidate cache entries matching a pattern after function execution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.cache_aside" title="app.core.cache.cache_aside"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cache_aside</span></code></a>(key_func[, ttl, backend, tags])</p></td>
+<td><p>Implement the cache-aside pattern with a custom key function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.memoize" title="app.core.cache.memoize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">memoize</span></code></a>([ttl, max_size])</p></td>
+<td><p>Memoize a function using in-memory caching.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.generate_cache_key" title="app.core.cache.generate_cache_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_cache_key</span></code></a>(prefix, func, args, kwargs[, ...])</p></td>
+<td><p>Generate a cache key for a function call.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.generate_list_key" title="app.core.cache.generate_list_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_list_key</span></code></a>(prefix, model_name[, filters])</p></td>
+<td><p>Generate a cache key for a list of model instances.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.generate_model_key" title="app.core.cache.generate_model_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_model_key</span></code></a>(prefix, model_name, model_id[, field])</p></td>
+<td><p>Generate a cache key for a model instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.generate_query_key" title="app.core.cache.generate_query_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_query_key</span></code></a>(prefix, query_name[, params])</p></td>
+<td><p>Generate a cache key for a query result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.cache.initialize_cache" title="app.core.cache.initialize_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_cache</span></code></a>()</p></td>
+<td><p>Initialize the cache system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.cache.get_cache_service" title="app.core.cache.get_cache_service"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cache_service</span></code></a>()</p></td>
+<td><p>Get the cache service singleton instance.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">CacheBackend</span></span><a class="headerlink" href="#app.core.cache.CacheBackend" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Protocol defining cache backend interface.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the cache backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shut down the cache backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.get">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.get" title="Link to this definition"></a></dt>
+<dd><p>Get value from cache by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>default</strong> (<em>Optional</em><em>[</em><em>T</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.set">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.set" title="Link to this definition"></a></dt>
+<dd><p>Set value in cache with optional TTL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.delete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.delete" title="Link to this definition"></a></dt>
+<dd><p>Delete key from cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.exists" title="Link to this definition"></a></dt>
+<dd><p>Check if key exists in cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.clear">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.clear" title="Link to this definition"></a></dt>
+<dd><p>Clear all cache entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.invalidate_pattern">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invalidate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.invalidate_pattern" title="Link to this definition"></a></dt>
+<dd><p>Invalidate all keys matching a pattern.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pattern</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.get_many">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.get_many" title="Link to this definition"></a></dt>
+<dd><p>Get multiple values from the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Optional[T]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.set_many">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.set_many" title="Link to this definition"></a></dt>
+<dd><p>Set multiple values in the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mapping</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.delete_many">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.delete_many" title="Link to this definition"></a></dt>
+<dd><p>Delete multiple values from the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.incr">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.incr" title="Link to this definition"></a></dt>
+<dd><p>Increment a counter in the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>amount</strong> (<em>int</em>)</p></li>
+<li><p><strong>default</strong> (<em>int</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheBackend.decr">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheBackend.decr" title="Link to this definition"></a></dt>
+<dd><p>Decrement a counter in the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>amount</strong> (<em>int</em>)</p></li>
+<li><p><strong>default</strong> (<em>int</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.cached">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cache'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.cached" title="Link to this definition"></a></dt>
+<dd><p>Cache the result of a function.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ttl: Time-to-live in seconds (default: 300).
+prefix: Cache key prefix (default: ‘cache’).
+backend: Cache backend to use (default: None, uses default backend).
+skip_args: Argument indexes to skip when generating the cache key.
+skip_kwargs: Keyword argument names to skip when generating the cache key.
+tags: Optional tags for cache invalidation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorated function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>skip_args</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>skip_kwargs</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tags</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.invalidate_cache">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">invalidate_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cache'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.invalidate_cache" title="Link to this definition"></a></dt>
+<dd><p>Invalidate cache entries matching a pattern after function execution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pattern: The pattern to match for invalidation.
+prefix: Cache key prefix (default: ‘cache’).
+backend: Cache backend to use (default: None, uses default backend).
+tags: Optional tags for cache invalidation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorated function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> (<em>str</em>)</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>tags</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.cache_aside">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">cache_aside</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.cache_aside" title="Link to this definition"></a></dt>
+<dd><p>Implement the cache-aside pattern with a custom key function.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key_func: Function that generates a cache key from function arguments.
+ttl: Time-to-live in seconds (default: 300).
+backend: Cache backend to use (default: None, uses default backend).
+tags: Optional tags for cache invalidation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorated function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_func</strong> (<em>Callable</em><em>[</em><em>Ellipsis</em><em>, </em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>tags</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.memoize">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">memoize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.memoize" title="Link to this definition"></a></dt>
+<dd><p>Memoize a function using in-memory caching.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ttl: Time-to-live in seconds (default: None, meaning no expiration).
+max_size: Maximum number of items to keep in cache (default: 128).</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorated function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>max_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[F], F]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.core.cache.CacheException">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">CacheException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCode.UNKNOWN_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../exceptions/base/index.html#app.core.exceptions.base.AppException" title="app.core.exceptions.base.AppException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.exceptions.base.AppException</span></code></a></p>
+<p>Base exception class for application exceptions.</p>
+<p>Provides consistent error handling, formatting, and logging for all
+application exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="../exceptions/base/index.html#app.core.exceptions.base.ErrorCode" title="app.core.exceptions.base.ErrorCode"><em>app.core.exceptions.base.ErrorCode</em></a>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.core.cache.CacheConnectionException">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">CacheConnectionException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheConnectionException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.cache.CacheException" title="app.core.cache.CacheException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheException</span></code></a></p>
+<p>Base exception class for application exceptions.</p>
+<p>Provides consistent error handling, formatting, and logging for all
+application exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.core.cache.CacheOperationException">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">CacheOperationException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheOperationException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.cache.CacheException" title="app.core.cache.CacheException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheException</span></code></a></p>
+<p>Base exception class for application exceptions.</p>
+<p>Provides consistent error handling, formatting, and logging for all
+application exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>operation</strong> (<em>str</em>)</p></li>
+<li><p><strong>key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.core.cache.CacheConfigurationException">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">CacheConfigurationException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheConfigurationException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.cache.CacheException" title="app.core.cache.CacheException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CacheException</span></code></a></p>
+<p>Base exception class for application exceptions.</p>
+<p>Provides consistent error handling, formatting, and logging for all
+application exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.generate_cache_key">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">generate_cache_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.generate_cache_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a cache key for a function call.</p>
+<p>This function creates a deterministic key based on the function name,
+argument values, and keyword argument values. It’s used by cache
+decorators to create unique keys for caching function results.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>prefix: Key prefix
+func: Function being called
+args: Positional arguments
+kwargs: Keyword arguments
+skip_args: Indices of positional arguments to skip
+skip_kwargs: Names of keyword arguments to skip</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Cache key</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>)</p></li>
+<li><p><strong>args</strong> (<em>Tuple</em><em>[</em><em>Any</em><em>, </em><em>Ellipsis</em><em>]</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>skip_args</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>skip_kwargs</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.generate_list_key">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">generate_list_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.generate_list_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a cache key for a list of model instances.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>prefix: Key prefix
+model_name: Model name
+filters: Optional filters</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Cache key</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>filters</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.generate_model_key">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">generate_model_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.generate_model_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a cache key for a model instance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>prefix: Key prefix
+model_name: Model name
+model_id: Model ID
+field: Optional field name</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Cache key</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>model_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>field</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.generate_query_key">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">generate_query_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.generate_query_key" title="Link to this definition"></a></dt>
+<dd><p>Generate a cache key for a query result.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>prefix: Key prefix
+query_name: Query name
+params: Optional query parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Cache key</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> (<em>str</em>)</p></li>
+<li><p><strong>query_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.cache.cache_manager">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">cache_manager</span></span><a class="headerlink" href="#app.core.cache.cache_manager" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.initialize_cache">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">initialize_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.initialize_cache" title="Link to this definition"></a></dt>
+<dd><p>Initialize the cache system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.cache.CacheService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">CacheService</span></span><a class="headerlink" href="#app.core.cache.CacheService" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.cache.CacheService._initialized">
+<span class="sig-name descname"><span class="pre">_initialized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.core.cache.CacheService._initialized" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the cache service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shutdown the cache service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.get">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.get" title="Link to this definition"></a></dt>
+<dd><p>Get a value from the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The cache key.
+default: Default value if key doesn’t exist.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The cached value or default.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>default</strong> (<em>Optional</em><em>[</em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.set">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.set" title="Link to this definition"></a></dt>
+<dd><p>Set a value in the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The cache key.
+value: The value to cache.
+ttl: Optional time-to-live in seconds.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if successful, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.delete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.delete" title="Link to this definition"></a></dt>
+<dd><p>Delete a value from the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The cache key.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if successful, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.exists">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.exists" title="Link to this definition"></a></dt>
+<dd><p>Check if a key exists in the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The cache key.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if key exists, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.clear">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.clear" title="Link to this definition"></a></dt>
+<dd><p>Clear the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if successful, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.invalidate_pattern">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invalidate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.invalidate_pattern" title="Link to this definition"></a></dt>
+<dd><p>Invalidate cache keys matching a pattern.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pattern: The pattern to match.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Number of invalidated keys.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.get_many">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.get_many" title="Link to this definition"></a></dt>
+<dd><p>Get multiple values from the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>keys: List of cache keys.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dictionary of key-value pairs.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Optional[T]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.set_many">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.set_many" title="Link to this definition"></a></dt>
+<dd><p>Set multiple values in the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>mapping: Dictionary of key-value pairs.
+ttl: Optional time-to-live in seconds.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if successful, False otherwise.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mapping</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>T</em><em>]</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.delete_many">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.delete_many" title="Link to this definition"></a></dt>
+<dd><p>Delete multiple values from the cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>keys: List of cache keys.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Number of deleted keys.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.incr">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.incr" title="Link to this definition"></a></dt>
+<dd><p>Increment a counter.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The cache key.
+amount: Amount to increment by.
+default: Default value if key doesn’t exist.
+ttl: Optional time-to-live in seconds.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>New counter value.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>amount</strong> (<em>int</em>)</p></li>
+<li><p><strong>default</strong> (<em>int</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.cache.CacheService.decr">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.CacheService.decr" title="Link to this definition"></a></dt>
+<dd><p>Decrement a counter.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key: The cache key.
+amount: Amount to decrement by.
+default: Default value if key doesn’t exist.
+ttl: Optional time-to-live in seconds.
+backend: Optional backend name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>New counter value.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>amount</strong> (<em>int</em>)</p></li>
+<li><p><strong>default</strong> (<em>int</em>)</p></li>
+<li><p><strong>ttl</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.cache.get_cache_service">
+<span class="sig-prename descclassname"><span class="pre">app.core.cache.</span></span><span class="sig-name descname"><span class="pre">get_cache_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.cache.get_cache_service" title="Link to this definition"></a></dt>
+<dd><p>Get the cache service singleton instance.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The cache service instance.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.core.cache.CacheService" title="app.core.cache.CacheService">CacheService</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="app.core" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="backends/index.html" class="btn btn-neutral float-right" title="app.core.cache.backends" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+app.domains.chat.connection
+===========================
+
+.. py:module:: app.domains.chat.connection
+
+.. autoapi-nested-parse::
+
+   WebSocket connection management.
+
+   This module manages WebSocket connections for the real-time chat system:
+   - Tracking active connections
+   - Sending messages to specific connections
+   - Broadcasting to multiple connections
+   - Connection authentication and validation
+
+   It provides the foundation for real-time communication in the chat system.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.chat.connection.logger
+   app.domains.chat.connection.manager
+   app.domains.chat.connection.redis_manager
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.chat.connection.ConnectionManager
+   app.domains.chat.connection.RedisConnectionManager
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ConnectionManager
+
+   WebSocket connection manager for the chat system.
+
+   This class handles:
+   - Active WebSocket connections
+   - Connection groups by room ID
+   - Message broadcasting
+   - Connection authentication
+
+
+   .. py:attribute:: active_connections
+      :type:  Dict[str, fastapi.WebSocket]
+
+
+   .. py:attribute:: room_connections
+      :type:  Dict[str, Set[str]]
+
+
+   .. py:attribute:: user_connection_ids
+      :type:  Dict[str, Set[str]]
+
+
+   .. py:attribute:: connection_user_ids
+      :type:  Dict[str, str]
+
+
+   .. py:method:: connect(websocket, connection_id, user_id)
+      :async:
+
+
+      Accept a WebSocket connection and register it.
+
+      Args:
+          websocket: The WebSocket connection
+          connection_id: Unique ID for this connection
+          user_id: ID of the authenticated user
+
+
+
+   .. py:method:: disconnect(connection_id)
+
+      Remove a WebSocket connection.
+
+      Args:
+          connection_id: The ID of the connection to remove
+
+
+
+   .. py:method:: join_room(connection_id, room_id)
+
+      Add a connection to a room group.
+
+      Args:
+          connection_id: The connection ID
+          room_id: The room ID to join
+
+
+
+   .. py:method:: leave_room(connection_id, room_id)
+
+      Remove a connection from a room group.
+
+      Args:
+          connection_id: The connection ID
+          room_id: The room ID to leave
+
+
+
+   .. py:method:: send_personal_message(message, connection_id)
+      :async:
+
+
+      Send a message to a specific connection.
+
+      Args:
+          message: The message data to send
+          connection_id: The target connection ID
+
+
+
+   .. py:method:: broadcast_to_room(message, room_id, exclude = None)
+      :async:
+
+
+      Broadcast a message to all connections in a room.
+
+      Args:
+          message: The message data to send
+          room_id: The room ID to broadcast to
+          exclude: Optional connection ID to exclude from broadcast
+
+
+
+   .. py:method:: broadcast_to_user(message, user_id)
+      :async:
+
+
+      Broadcast a message to all connections for a specific user.
+
+      Args:
+          message: The message data to send
+          user_id: The user ID to broadcast to
+
+
+
+   .. py:method:: get_connection_count()
+
+      Get the count of active connections.
+
+      Returns:
+          int: Number of active connections
+
+
+
+   .. py:method:: get_room_connection_count(room_id)
+
+      Get the count of connections in a specific room.
+
+      Args:
+          room_id: The room ID
+
+      Returns:
+          int: Number of connections in the room
+
+
+
+   .. py:method:: get_user_connection_count(user_id)
+
+      Get the count of connections for a specific user.
+
+      Args:
+          user_id: The user ID
+
+      Returns:
+          int: Number of connections for the user
+
+
+
+.. py:data:: manager
+
+.. py:class:: RedisConnectionManager(local_manager)
+
+   Redis-based connection manager for multi-instance scaling.
+
+   This class extends the basic connection manager with Redis Pub/Sub
+   to allow broadcasting messages across multiple application instances.
+
+
+   .. py:attribute:: local_manager
+
+
+   .. py:attribute:: redis_pubsub_channel
+      :value: 'chat:messages'
+
+
+
+   .. py:attribute:: _pubsub_task
+      :value: None
+
+
+
+   .. py:method:: start_pubsub_listener()
+      :async:
+
+
+      Start the Redis Pub/Sub listener task.
+
+
+
+   .. py:method:: _listen_to_redis()
+      :async:
+
+
+      Listen to Redis Pub/Sub messages and forward them to WebSocket clients.
+
+
+
+   .. py:method:: broadcast_to_room(message, room_id, exclude = None)
+      :async:
+
+
+      Broadcast a message to all connections in a room across all instances.
+
+      Args:
+          message: The message data to send
+          room_id: The room ID to broadcast to
+          exclude: Optional connection ID to exclude from broadcast
+
+
+
+   .. py:method:: broadcast_to_user(message, user_id)
+      :async:
+
+
+      Broadcast a message to all connections for a specific user across all instances.
+
+      Args:
+          message: The message data to send
+          user_id: The user ID to broadcast to
+
+
+
+.. py:data:: redis_manager
+

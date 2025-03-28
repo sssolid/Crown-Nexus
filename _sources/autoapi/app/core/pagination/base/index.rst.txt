@@ -1,0 +1,204 @@
+app.core.pagination.base
+========================
+
+.. py:module:: app.core.pagination.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.pagination.base.T
+   app.core.pagination.base.R
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.pagination.base.SortDirection
+   app.core.pagination.base.SortField
+   app.core.pagination.base.OffsetPaginationParams
+   app.core.pagination.base.CursorPaginationParams
+   app.core.pagination.base.PaginationResult
+   app.core.pagination.base.PaginationProvider
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:data:: R
+
+.. py:class:: SortDirection
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Sort direction options.
+
+
+   .. py:attribute:: ASC
+      :value: 'asc'
+
+
+
+   .. py:attribute:: DESC
+      :value: 'desc'
+
+
+
+.. py:class:: SortField
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model for sort field configuration.
+
+
+   .. py:attribute:: field
+      :type:  str
+
+
+   .. py:attribute:: direction
+      :type:  SortDirection
+
+
+.. py:class:: OffsetPaginationParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for offset-based pagination.
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: sort
+      :type:  Optional[List[SortField]]
+
+
+.. py:class:: CursorPaginationParams
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Parameters for cursor-based pagination.
+
+
+   .. py:attribute:: cursor
+      :type:  Optional[str]
+
+
+   .. py:attribute:: limit
+      :type:  int
+
+
+   .. py:attribute:: sort
+      :type:  Optional[List[SortField]]
+
+
+.. py:class:: PaginationResult(items, total = 0, page = None, page_size = None, pages = None, next_cursor = None, has_next = False, has_prev = False)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`R`\ ]
+
+
+   Result of a pagination operation.
+
+
+   .. py:attribute:: items
+
+
+   .. py:attribute:: total
+      :value: 0
+
+
+
+   .. py:attribute:: page
+      :value: None
+
+
+
+   .. py:attribute:: page_size
+      :value: None
+
+
+
+   .. py:attribute:: pages
+      :value: None
+
+
+
+   .. py:attribute:: next_cursor
+      :value: None
+
+
+
+   .. py:attribute:: has_next
+      :value: False
+
+
+
+   .. py:attribute:: has_prev
+      :value: False
+
+
+
+   .. py:method:: to_dict()
+
+      Convert the pagination result to a dictionary.
+
+      Returns:
+          Dictionary representation of the pagination result
+
+
+
+.. py:class:: PaginationProvider
+
+   Bases: :py:obj:`Protocol`, :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`R`\ ]
+
+
+   Protocol for pagination providers.
+
+
+   .. py:method:: paginate_with_offset(query, params, transform_func = None)
+      :async:
+
+
+      Paginate query results using offset-based pagination.
+
+      Args:
+          query: SQLAlchemy select query
+          params: Pagination parameters
+          transform_func: Optional function to transform each result item
+
+      Returns:
+          Paginated results
+
+
+
+   .. py:method:: paginate_with_cursor(query, params, transform_func = None)
+      :async:
+
+
+      Paginate query results using cursor-based pagination.
+
+      Args:
+          query: SQLAlchemy select query
+          params: Pagination parameters
+          transform_func: Optional function to transform each result item
+
+      Returns:
+          Paginated results
+
+
+

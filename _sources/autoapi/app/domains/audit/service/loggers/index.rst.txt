@@ -1,0 +1,197 @@
+app.domains.audit.service.loggers
+=================================
+
+.. py:module:: app.domains.audit.service.loggers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.audit.service.loggers.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.service.loggers.BaseAuditLogger
+   app.domains.audit.service.loggers.LoggingAuditLogger
+   app.domains.audit.service.loggers.FileAuditLogger
+   app.domains.audit.service.loggers.DatabaseAuditLogger
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: BaseAuditLogger
+
+   Base class for audit loggers with common functionality.
+
+
+   .. py:attribute:: logger
+
+
+   .. py:attribute:: sensitive_fields
+      :type:  List[str]
+      :value: ['password', 'token', 'secret', 'credit_card', 'ssn', 'social_security', 'api_key']
+
+
+
+   .. py:attribute:: anonymize_events
+      :type:  List[app.domains.audit.service.base.AuditEventType]
+
+
+   .. py:attribute:: event_level_mapping
+      :type:  Dict[app.domains.audit.service.base.AuditEventType, app.domains.audit.service.base.AuditLogLevel]
+
+
+   .. py:method:: _get_log_level(event_type, level = None)
+
+      Get the appropriate log level for an event type.
+
+      Args:
+          event_type: Type of the audit event
+          level: Explicitly provided level (takes precedence)
+
+      Returns:
+          AuditLogLevel: The determined log level
+
+
+
+   .. py:method:: _anonymize_data(data, sensitive_fields)
+
+      Anonymize sensitive data in audit logs.
+
+      Args:
+          data: The data to anonymize
+          sensitive_fields: List of field names to anonymize
+
+      Returns:
+          Dict[str, Any]: Anonymized data dictionary
+
+
+
+   .. py:method:: _prepare_log_entry(event_id, event_type, level, user_id, ip_address, resource_id, resource_type, details, context, options)
+
+      Prepare a standardized log entry.
+
+      Args:
+          event_id: Generated event ID
+          event_type: Type of the audit event
+          level: Severity level of the event
+          user_id: ID of the user who performed the action
+          ip_address: IP address of the user
+          resource_id: ID of the resource affected
+          resource_type: Type of the resource affected
+          details: Additional details about the event
+          context: Additional context information
+          options: Audit logging options
+
+      Returns:
+          Dict[str, Any]: Standardized log entry
+
+
+
+.. py:class:: LoggingAuditLogger
+
+   Bases: :py:obj:`BaseAuditLogger`, :py:obj:`app.domains.audit.service.base.AuditLogger`
+
+
+   Audit logger that logs events to the application logging system.
+
+
+   .. py:method:: log_event(event_type, user_id = None, ip_address = None, resource_id = None, resource_type = None, details = None, context = None, level = None, options = None)
+      :async:
+
+
+      Log an audit event to the application logging system.
+
+      Args:
+          event_type: Type of the audit event
+          user_id: ID of the user who performed the action
+          ip_address: IP address of the user
+          resource_id: ID of the resource affected
+          resource_type: Type of the resource affected
+          details: Additional details about the event
+          context: Additional context information
+          level: Severity level of the event
+          options: Audit logging options
+
+      Returns:
+          str: The ID of the created audit event
+
+
+
+.. py:class:: FileAuditLogger(file_path)
+
+   Bases: :py:obj:`BaseAuditLogger`, :py:obj:`app.domains.audit.service.base.AuditLogger`
+
+
+   Audit logger that logs events to a file.
+
+
+   .. py:attribute:: file_path
+
+
+   .. py:method:: log_event(event_type, user_id = None, ip_address = None, resource_id = None, resource_type = None, details = None, context = None, level = None, options = None)
+      :async:
+
+
+      Log an audit event to a file.
+
+      Args:
+          event_type: Type of the audit event
+          user_id: ID of the user who performed the action
+          ip_address: IP address of the user
+          resource_id: ID of the resource affected
+          resource_type: Type of the resource affected
+          details: Additional details about the event
+          context: Additional context information
+          level: Severity level of the event
+          options: Audit logging options
+
+      Returns:
+          str: The ID of the created audit event
+
+
+
+.. py:class:: DatabaseAuditLogger(db = None)
+
+   Bases: :py:obj:`BaseAuditLogger`, :py:obj:`app.domains.audit.service.base.AuditLogger`
+
+
+   Audit logger that logs events to the database.
+
+
+   .. py:attribute:: db
+      :value: None
+
+
+
+   .. py:method:: log_event(event_type, user_id = None, ip_address = None, resource_id = None, resource_type = None, details = None, context = None, level = None, options = None)
+      :async:
+
+
+      Log an audit event to the database.
+
+      Args:
+          event_type: Type of the audit event
+          user_id: ID of the user who performed the action
+          ip_address: IP address of the user
+          resource_id: ID of the resource affected
+          resource_type: Type of the resource affected
+          details: Additional details about the event
+          context: Additional context information
+          level: Severity level of the event
+          options: Audit logging options
+
+      Returns:
+          str: The ID of the created audit event
+
+
+

@@ -1,0 +1,76 @@
+app.core.config.integrations.elasticsearch
+==========================================
+
+.. py:module:: app.core.config.integrations.elasticsearch
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.config.integrations.elasticsearch.elasticsearch_settings
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.integrations.elasticsearch.ElasticsearchSettings
+
+
+Module Contents
+---------------
+
+.. py:class:: ElasticsearchSettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Elasticsearch connection and configuration settings.
+
+
+   .. py:attribute:: ELASTICSEARCH_HOST
+      :type:  str
+      :value: 'localhost'
+
+
+
+   .. py:attribute:: ELASTICSEARCH_PORT
+      :type:  int
+      :value: 9200
+
+
+
+   .. py:attribute:: ELASTICSEARCH_USE_SSL
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: ELASTICSEARCH_USERNAME
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: ELASTICSEARCH_PASSWORD
+      :type:  Optional[pydantic.SecretStr]
+      :value: None
+
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:property:: elasticsearch_uri
+      :type: str
+
+
+      Get Elasticsearch connection URI.
+
+
+
+.. py:data:: elasticsearch_settings
+

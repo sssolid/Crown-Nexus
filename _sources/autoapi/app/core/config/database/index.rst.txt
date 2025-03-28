@@ -1,0 +1,114 @@
+app.core.config.database
+========================
+
+.. py:module:: app.core.config.database
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.database.DatabaseSettings
+
+
+Module Contents
+---------------
+
+.. py:class:: DatabaseSettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Database connection settings.
+
+
+   .. py:attribute:: POSTGRES_SERVER
+      :type:  str
+      :value: 'localhost'
+
+
+
+   .. py:attribute:: POSTGRES_USER
+      :type:  str
+      :value: 'postgres'
+
+
+
+   .. py:attribute:: POSTGRES_PASSWORD
+      :type:  str
+      :value: 'postgres'
+
+
+
+   .. py:attribute:: POSTGRES_DB
+      :type:  str
+      :value: 'crown_nexus'
+
+
+
+   .. py:attribute:: POSTGRES_PORT
+      :type:  str
+      :value: '5432'
+
+
+
+   .. py:attribute:: SQLALCHEMY_DATABASE_URI
+      :type:  Optional[pydantic.PostgresDsn]
+      :value: None
+
+
+
+   .. py:attribute:: REDIS_HOST
+      :type:  str
+      :value: 'localhost'
+
+
+
+   .. py:attribute:: REDIS_PORT
+      :type:  int
+      :value: 6379
+
+
+
+   .. py:attribute:: REDIS_PASSWORD
+      :type:  Optional[pydantic.SecretStr]
+      :value: None
+
+
+
+   .. py:attribute:: REDIS_DB
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: REDIS_MAX_CONNECTIONS
+      :type:  int
+      :value: 5000
+
+
+
+   .. py:attribute:: REDIS_URI
+      :type:  str
+      :value: 'redis://localhost:6379/0'
+
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: assemble_db_connection()
+
+      Build the database URI if not provided directly.
+
+
+
+   .. py:property:: redis_uri
+      :type: str
+
+
+      Get Redis connection URI.
+
+
+

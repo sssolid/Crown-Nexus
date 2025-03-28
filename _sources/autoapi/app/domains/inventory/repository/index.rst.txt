@@ -1,0 +1,6 @@
+app.domains.inventory.repository
+================================
+
+.. py:module:: app.domains.inventory.repository
+
+

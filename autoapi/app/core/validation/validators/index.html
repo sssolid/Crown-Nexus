@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.validation.validators &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.data_import" href="../../../data_import/index.html" />
+    <link rel="prev" title="app.core.validation.service" href="../service/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.validation</a></li>
+      <li class="breadcrumb-item active">app.core.validation.validators</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/validation/validators/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.validation.validators">
+<span id="app-core-validation-validators"></span><h1>app.core.validation.validators<a class="headerlink" href="#module-app.core.validation.validators" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.logger" title="app.core.validation.validators.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.EmailValidator" title="app.core.validation.validators.EmailValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EmailValidator</span></code></a></p></td>
+<td><p>Validator for email addresses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.validators.PhoneValidator" title="app.core.validation.validators.PhoneValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PhoneValidator</span></code></a></p></td>
+<td><p>Validator for phone numbers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.DateValidator" title="app.core.validation.validators.DateValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DateValidator</span></code></a></p></td>
+<td><p>Validator for dates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.validators.LengthValidator" title="app.core.validation.validators.LengthValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LengthValidator</span></code></a></p></td>
+<td><p>Validator for string length.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.RangeValidator" title="app.core.validation.validators.RangeValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RangeValidator</span></code></a></p></td>
+<td><p>Validator for numeric ranges.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.validators.RegexValidator" title="app.core.validation.validators.RegexValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegexValidator</span></code></a></p></td>
+<td><p>Validator for regex patterns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.RequiredValidator" title="app.core.validation.validators.RequiredValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RequiredValidator</span></code></a></p></td>
+<td><p>Validator for required values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.validators.URLValidator" title="app.core.validation.validators.URLValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">URLValidator</span></code></a></p></td>
+<td><p>Validator for URLs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.UUIDValidator" title="app.core.validation.validators.UUIDValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UUIDValidator</span></code></a></p></td>
+<td><p>Validator for UUIDs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.validators.CreditCardValidator" title="app.core.validation.validators.CreditCardValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreditCardValidator</span></code></a></p></td>
+<td><p>Validator for credit card numbers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.IPAddressValidator" title="app.core.validation.validators.IPAddressValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPAddressValidator</span></code></a></p></td>
+<td><p>Validator for IP addresses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.validation.validators.PasswordValidator" title="app.core.validation.validators.PasswordValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PasswordValidator</span></code></a></p></td>
+<td><p>Validator for password strength.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.validation.validators.EnumValidator" title="app.core.validation.validators.EnumValidator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EnumValidator</span></code></a></p></td>
+<td><p>Validator for enum values.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.validation.validators.logger">
+<span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.validation.validators.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.EmailValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">EmailValidator</span></span><a class="headerlink" href="#app.core.validation.validators.EmailValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for email addresses.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.validation.validators.EmailValidator.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><a class="headerlink" href="#app.core.validation.validators.EmailValidator.pattern" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.EmailValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.EmailValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate an email address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The email address to validate
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.PhoneValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">PhoneValidator</span></span><a class="headerlink" href="#app.core.validation.validators.PhoneValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for phone numbers.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.validation.validators.PhoneValidator.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><a class="headerlink" href="#app.core.validation.validators.PhoneValidator.pattern" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.PhoneValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.PhoneValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a phone number.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The phone number to validate
+<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.DateValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">DateValidator</span></span><a class="headerlink" href="#app.core.validation.validators.DateValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.DateValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.DateValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a date.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The date to validate
+min_date: Optional minimum date
+max_date: Optional maximum date
+format_str: Optional date format string for parsing string dates
+<a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime.date</em><em>, </em><em>datetime.datetime</em><em>]</em>)</p></li>
+<li><p><strong>min_date</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime.date</em><em>, </em><em>datetime.datetime</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>max_date</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime.date</em><em>, </em><em>datetime.datetime</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>format_str</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.LengthValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">LengthValidator</span></span><a class="headerlink" href="#app.core.validation.validators.LengthValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for string length.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.LengthValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.LengthValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate the length of a string.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The string to validate
+min_length: Optional minimum length
+max_length: Optional maximum length
+<a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>min_length</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>max_length</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.RangeValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">RangeValidator</span></span><a class="headerlink" href="#app.core.validation.validators.RangeValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for numeric ranges.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.RangeValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.RangeValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a numeric value against a range.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The number to validate
+min_value: Optional minimum value
+max_value: Optional maximum value
+<a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>)</p></li>
+<li><p><strong>min_value</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>max_value</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.RegexValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">RegexValidator</span></span><a class="headerlink" href="#app.core.validation.validators.RegexValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for regex patterns.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.RegexValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.RegexValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a string against a regex pattern.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The string to validate
+pattern: The regex pattern to validate against
+<a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>pattern</strong> (<em>str</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.RequiredValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">RequiredValidator</span></span><a class="headerlink" href="#app.core.validation.validators.RequiredValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for required values.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.RequiredValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.RequiredValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate that a value is not empty.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The value to validate
+<a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.URLValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">URLValidator</span></span><a class="headerlink" href="#app.core.validation.validators.URLValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for URLs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.validation.validators.URLValidator.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><a class="headerlink" href="#app.core.validation.validators.URLValidator.pattern" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.URLValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.URLValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a URL.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The URL to validate
+<a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.UUIDValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">UUIDValidator</span></span><a class="headerlink" href="#app.core.validation.validators.UUIDValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for UUIDs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.UUIDValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.UUIDValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a UUID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The UUID string to validate
+<a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.CreditCardValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">CreditCardValidator</span></span><a class="headerlink" href="#app.core.validation.validators.CreditCardValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for credit card numbers.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.validation.validators.CreditCardValidator.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><a class="headerlink" href="#app.core.validation.validators.CreditCardValidator.pattern" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.CreditCardValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.CreditCardValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate a credit card number using the Luhn algorithm.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The credit card number to validate
+<a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.IPAddressValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">IPAddressValidator</span></span><a class="headerlink" href="#app.core.validation.validators.IPAddressValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for IP addresses.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.IPAddressValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.IPAddressValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate an IP address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The IP address to validate
+version: Optional IP version (4 or 6)
+<a href="#id21"><span class="problematic" id="id22">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>version</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.PasswordValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">PasswordValidator</span></span><a class="headerlink" href="#app.core.validation.validators.PasswordValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for password strength.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.PasswordValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_lowercase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_uppercase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_digit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_special</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.PasswordValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate password strength.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The password to validate
+min_length: Minimum password length
+require_lowercase: Whether to require at least one lowercase letter
+require_uppercase: Whether to require at least one uppercase letter
+require_digit: Whether to require at least one digit
+require_special: Whether to require at least one special character
+<a href="#id23"><span class="problematic" id="id24">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>min_length</strong> (<em>int</em>)</p></li>
+<li><p><strong>require_lowercase</strong> (<em>bool</em>)</p></li>
+<li><p><strong>require_uppercase</strong> (<em>bool</em>)</p></li>
+<li><p><strong>require_digit</strong> (<em>bool</em>)</p></li>
+<li><p><strong>require_special</strong> (<em>bool</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.validation.validators.EnumValidator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.validation.validators.</span></span><span class="sig-name descname"><span class="pre">EnumValidator</span></span><a class="headerlink" href="#app.core.validation.validators.EnumValidator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.validation.base.Validator" title="app.core.validation.base.Validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.validation.base.Validator</span></code></a></p>
+<p>Validator for enum values.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.validation.validators.EnumValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum_class</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.validation.validators.EnumValidator.validate" title="Link to this definition"></a></dt>
+<dd><p>Validate that a value is a valid enum member.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value: The value to validate
+enum_class: The Enum class to validate against
+<a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs: Additional validation parameters</p>
+</dd>
+<dt>Returns:</dt><dd><p>ValidationResult: The result of the validation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>enum_class</strong> (<em>Type</em><em>[</em><em>enum.Enum</em><em>]</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.core.validation.base.ValidationResult" title="app.core.validation.base.ValidationResult">app.core.validation.base.ValidationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../service/index.html" class="btn btn-neutral float-left" title="app.core.validation.service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../../data_import/index.html" class="btn btn-neutral float-right" title="app.data_import" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

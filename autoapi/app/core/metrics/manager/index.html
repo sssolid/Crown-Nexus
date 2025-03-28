@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.metrics.manager &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.core.metrics.prometheus" href="../prometheus/index.html" />
+    <link rel="prev" title="app.core.metrics.exceptions" href="../exceptions/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.metrics</a></li>
+      <li class="breadcrumb-item active">app.core.metrics.manager</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/metrics/manager/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.metrics.manager">
+<span id="app-core-metrics-manager"></span><h1>app.core.metrics.manager<a class="headerlink" href="#module-app.core.metrics.manager" title="Link to this heading"></a></h1>
+<p>Core metrics functionality.</p>
+<p>This module provides the main metrics functionality for collecting, tracking,
+and exposing application metrics for monitoring and performance analysis.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.logger" title="app.core.metrics.manager.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._config" title="app.core.metrics.manager._config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_config</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._counters" title="app.core.metrics.manager._counters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_counters</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._gauges" title="app.core.metrics.manager._gauges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_gauges</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._histograms" title="app.core.metrics.manager._histograms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_histograms</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._summaries" title="app.core.metrics.manager._summaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_summaries</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._instance_id" title="app.core.metrics.manager._instance_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_instance_id</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._in_progress" title="app.core.metrics.manager._in_progress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_in_progress</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._prometheus" title="app.core.metrics.manager._prometheus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prometheus</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._http_tracker" title="app.core.metrics.manager._http_tracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_http_tracker</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._db_tracker" title="app.core.metrics.manager._db_tracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_db_tracker</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._service_tracker" title="app.core.metrics.manager._service_tracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_service_tracker</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._cache_tracker" title="app.core.metrics.manager._cache_tracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_cache_tracker</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._initialized" title="app.core.metrics.manager._initialized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_initialized</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager._init_trackers" title="app.core.metrics.manager._init_trackers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_init_trackers</span></code></a>()</p></td>
+<td><p>Initialize specialized metric trackers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager._initialize_default_metrics" title="app.core.metrics.manager._initialize_default_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_initialize_default_metrics</span></code></a>()</p></td>
+<td><p>Initialize default application metrics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.initialize" title="app.core.metrics.manager.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>([config])</p></td>
+<td><p>Initialize the metrics system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.shutdown" title="app.core.metrics.manager.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>()</p></td>
+<td><p>Shutdown the metrics system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.create_counter" title="app.core.metrics.manager.create_counter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_counter</span></code></a>(name, description[, labelnames, ...])</p></td>
+<td><p>Create a new counter metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.create_gauge" title="app.core.metrics.manager.create_gauge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_gauge</span></code></a>(name, description[, labelnames, ...])</p></td>
+<td><p>Create a new gauge metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.create_histogram" title="app.core.metrics.manager.create_histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_histogram</span></code></a>(name, description[, labelnames, ...])</p></td>
+<td><p>Create a new histogram metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.create_summary" title="app.core.metrics.manager.create_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_summary</span></code></a>(name, description[, labelnames, ...])</p></td>
+<td><p>Create a new summary metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.increment_counter" title="app.core.metrics.manager.increment_counter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increment_counter</span></code></a>(name[, amount, labels])</p></td>
+<td><p>Increment a counter metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.set_gauge" title="app.core.metrics.manager.set_gauge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_gauge</span></code></a>(name, value[, labels])</p></td>
+<td><p>Set a gauge metric value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.observe_histogram" title="app.core.metrics.manager.observe_histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observe_histogram</span></code></a>(name, value[, labels])</p></td>
+<td><p>Record an observation in a histogram metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.observe_summary" title="app.core.metrics.manager.observe_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observe_summary</span></code></a>(name, value[, labels])</p></td>
+<td><p>Record an observation in a summary metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.track_in_progress" title="app.core.metrics.manager.track_in_progress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_in_progress</span></code></a>(metric_name, labels[, count])</p></td>
+<td><p>Track in-progress operations using gauges.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.track_request" title="app.core.metrics.manager.track_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_request</span></code></a>(method, endpoint, status_code, duration)</p></td>
+<td><p>Track HTTP request metrics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.track_db_query" title="app.core.metrics.manager.track_db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_db_query</span></code></a>(operation, entity, duration[, error])</p></td>
+<td><p>Track database query metrics.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.track_service_call" title="app.core.metrics.manager.track_service_call"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_service_call</span></code></a>(component, action, duration[, error])</p></td>
+<td><p>Track service call metrics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.track_cache_operation" title="app.core.metrics.manager.track_cache_operation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">track_cache_operation</span></code></a>(operation, backend, hit, duration)</p></td>
+<td><p>Track cache operation metrics.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.timed_function" title="app.core.metrics.manager.timed_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timed_function</span></code></a>(name[, metric_type, labels_func, ...])</p></td>
+<td><p>Create a decorator for timing function execution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.manager.async_timed_function" title="app.core.metrics.manager.async_timed_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">async_timed_function</span></code></a>(name[, metric_type, labels_func, ...])</p></td>
+<td><p>Create a decorator for timing async function execution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.manager.get_current_metrics" title="app.core.metrics.manager.get_current_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_current_metrics</span></code></a>()</p></td>
+<td><p>Get the current values of all metrics.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager.logger">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.metrics.manager.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._config">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../base/index.html#app.core.metrics.base.MetricsConfig" title="app.core.metrics.base.MetricsConfig"><span class="pre">app.core.metrics.base.MetricsConfig</span></a></em><a class="headerlink" href="#app.core.metrics.manager._config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._counters">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_counters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.CounterCollector" title="app.core.metrics.collectors.CounterCollector"><span class="pre">app.core.metrics.collectors.CounterCollector</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.metrics.manager._counters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._gauges">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_gauges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.GaugeCollector" title="app.core.metrics.collectors.GaugeCollector"><span class="pre">app.core.metrics.collectors.GaugeCollector</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.metrics.manager._gauges" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._histograms">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_histograms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.HistogramCollector" title="app.core.metrics.collectors.HistogramCollector"><span class="pre">app.core.metrics.collectors.HistogramCollector</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.metrics.manager._histograms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._summaries">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_summaries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.SummaryCollector" title="app.core.metrics.collectors.SummaryCollector"><span class="pre">app.core.metrics.collectors.SummaryCollector</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.metrics.manager._summaries" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._instance_id">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_instance_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app.core.metrics.manager._instance_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._in_progress">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_in_progress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.metrics.manager._in_progress" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._prometheus">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_prometheus</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../prometheus/index.html#app.core.metrics.prometheus.PrometheusManager" title="app.core.metrics.prometheus.PrometheusManager"><span class="pre">app.core.metrics.prometheus.PrometheusManager</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.metrics.manager._prometheus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._http_tracker">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_http_tracker</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../trackers/index.html#app.core.metrics.trackers.HttpTracker" title="app.core.metrics.trackers.HttpTracker"><span class="pre">app.core.metrics.trackers.HttpTracker</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.metrics.manager._http_tracker" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._db_tracker">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_db_tracker</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../trackers/index.html#app.core.metrics.trackers.DatabaseTracker" title="app.core.metrics.trackers.DatabaseTracker"><span class="pre">app.core.metrics.trackers.DatabaseTracker</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.metrics.manager._db_tracker" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._service_tracker">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_service_tracker</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../trackers/index.html#app.core.metrics.trackers.ServiceTracker" title="app.core.metrics.trackers.ServiceTracker"><span class="pre">app.core.metrics.trackers.ServiceTracker</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.metrics.manager._service_tracker" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._cache_tracker">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_cache_tracker</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../trackers/index.html#app.core.metrics.trackers.CacheTracker" title="app.core.metrics.trackers.CacheTracker"><span class="pre">app.core.metrics.trackers.CacheTracker</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.metrics.manager._cache_tracker" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.manager._initialized">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_initialized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.core.metrics.manager._initialized" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager._init_trackers">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_init_trackers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager._init_trackers" title="Link to this definition"></a></dt>
+<dd><p>Initialize specialized metric trackers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager._initialize_default_metrics">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">_initialize_default_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager._initialize_default_metrics" title="Link to this definition"></a></dt>
+<dd><p>Initialize default application metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.initialize">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the metrics system.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>config: Optional metrics configuration</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.core.metrics.base.MetricsConfig" title="app.core.metrics.base.MetricsConfig"><em>app.core.metrics.base.MetricsConfig</em></a><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.shutdown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shutdown the metrics system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.create_counter">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">create_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelnames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.create_counter" title="Link to this definition"></a></dt>
+<dd><p>Create a new counter metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+description: Metric description
+labelnames: Optional list of label names
+namespace: Optional metric namespace
+subsystem: Optional metric subsystem</p>
+</dd>
+<dt>Returns:</dt><dd><p>CounterCollector object</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>description</strong> (<em>str</em>)</p></li>
+<li><p><strong>labelnames</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>namespace</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>subsystem</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.CounterCollector" title="app.core.metrics.collectors.CounterCollector">app.core.metrics.collectors.CounterCollector</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.create_gauge">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">create_gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelnames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.create_gauge" title="Link to this definition"></a></dt>
+<dd><p>Create a new gauge metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+description: Metric description
+labelnames: Optional list of label names
+namespace: Optional metric namespace
+subsystem: Optional metric subsystem</p>
+</dd>
+<dt>Returns:</dt><dd><p>GaugeCollector object</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>description</strong> (<em>str</em>)</p></li>
+<li><p><strong>labelnames</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>namespace</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>subsystem</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.GaugeCollector" title="app.core.metrics.collectors.GaugeCollector">app.core.metrics.collectors.GaugeCollector</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.create_histogram">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">create_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelnames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buckets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.create_histogram" title="Link to this definition"></a></dt>
+<dd><p>Create a new histogram metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+description: Metric description
+labelnames: Optional list of label names
+buckets: Optional histogram buckets
+namespace: Optional metric namespace
+subsystem: Optional metric subsystem</p>
+</dd>
+<dt>Returns:</dt><dd><p>HistogramCollector object</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>description</strong> (<em>str</em>)</p></li>
+<li><p><strong>labelnames</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>buckets</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>namespace</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>subsystem</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.HistogramCollector" title="app.core.metrics.collectors.HistogramCollector">app.core.metrics.collectors.HistogramCollector</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.create_summary">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">create_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelnames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.create_summary" title="Link to this definition"></a></dt>
+<dd><p>Create a new summary metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+description: Metric description
+labelnames: Optional list of label names
+namespace: Optional metric namespace
+subsystem: Optional metric subsystem</p>
+</dd>
+<dt>Returns:</dt><dd><p>SummaryCollector object</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>description</strong> (<em>str</em>)</p></li>
+<li><p><strong>labelnames</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>namespace</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>subsystem</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../collectors/index.html#app.core.metrics.collectors.SummaryCollector" title="app.core.metrics.collectors.SummaryCollector">app.core.metrics.collectors.SummaryCollector</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.increment_counter">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">increment_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.increment_counter" title="Link to this definition"></a></dt>
+<dd><p>Increment a counter metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+amount: Amount to increment by
+labels: Optional label values</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>amount</strong> (<em>float</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.set_gauge">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">set_gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.set_gauge" title="Link to this definition"></a></dt>
+<dd><p>Set a gauge metric value.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+value: Value to set
+labels: Optional label values</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>value</strong> (<em>float</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.observe_histogram">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">observe_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.observe_histogram" title="Link to this definition"></a></dt>
+<dd><p>Record an observation in a histogram metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+value: Value to observe
+labels: Optional label values</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>value</strong> (<em>float</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.observe_summary">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">observe_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.observe_summary" title="Link to this definition"></a></dt>
+<dd><p>Record an observation in a summary metric.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+value: Value to observe
+labels: Optional label values</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>value</strong> (<em>float</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.track_in_progress">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">track_in_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.track_in_progress" title="Link to this definition"></a></dt>
+<dd><p>Track in-progress operations using gauges.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>metric_name: Name of the gauge metric to update
+labels: Label values that uniquely identify the operation
+count: Number to adjust the gauge by (1 for start, -1 for end)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>count</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.track_request">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">track_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.track_request" title="Link to this definition"></a></dt>
+<dd><p>Track HTTP request metrics.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>method: HTTP method
+endpoint: Request endpoint
+status_code: Response status code
+duration: Request duration in seconds
+error_code: Optional error code if request failed</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>)</p></li>
+<li><p><strong>endpoint</strong> (<em>str</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>duration</strong> (<em>float</em>)</p></li>
+<li><p><strong>error_code</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.track_db_query">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">track_db_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.track_db_query" title="Link to this definition"></a></dt>
+<dd><p>Track database query metrics.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>operation: Database operation (e.g., SELECT, INSERT)
+entity: Entity being queried
+duration: Query duration in seconds
+error: Optional error message if query failed</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>operation</strong> (<em>str</em>)</p></li>
+<li><p><strong>entity</strong> (<em>str</em>)</p></li>
+<li><p><strong>duration</strong> (<em>float</em>)</p></li>
+<li><p><strong>error</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.track_service_call">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">track_service_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.track_service_call" title="Link to this definition"></a></dt>
+<dd><p>Track service call metrics.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>component: Service component name
+action: Action being performed
+duration: Call duration in seconds
+error: Optional error message if call failed</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>component</strong> (<em>str</em>)</p></li>
+<li><p><strong>action</strong> (<em>str</em>)</p></li>
+<li><p><strong>duration</strong> (<em>float</em>)</p></li>
+<li><p><strong>error</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.track_cache_operation">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">track_cache_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'unknown'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.track_cache_operation" title="Link to this definition"></a></dt>
+<dd><p>Track cache operation metrics.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>operation: Cache operation (get, set, delete)
+backend: Cache backend (memory, redis)
+hit: Whether the operation was a cache hit
+duration: Operation duration in seconds
+component: Component using the cache</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>operation</strong> (<em>str</em>)</p></li>
+<li><p><strong>backend</strong> (<em>str</em>)</p></li>
+<li><p><strong>hit</strong> (<em>bool</em>)</p></li>
+<li><p><strong>duration</strong> (<em>float</em>)</p></li>
+<li><p><strong>component</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.timed_function">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">timed_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MetricType.HISTOGRAM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_in_progress_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_progress_metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.timed_function" title="Link to this definition"></a></dt>
+<dd><p>Create a decorator for timing function execution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+metric_type: Type of metric (histogram or summary)
+labels_func: Optional function to generate label values from function args
+track_in_progress_flag: Whether to track in-progress operations
+in_progress_metric: Optional name of gauge metric for tracking in-progress operations</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>metric_type</strong> (<a class="reference internal" href="../base/index.html#app.core.metrics.base.MetricType" title="app.core.metrics.base.MetricType"><em>app.core.metrics.base.MetricType</em></a>)</p></li>
+<li><p><strong>labels_func</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>Ellipsis</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>track_in_progress_flag</strong> (<em>bool</em>)</p></li>
+<li><p><strong>in_progress_metric</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.async_timed_function">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">async_timed_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MetricType.HISTOGRAM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_in_progress_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_progress_metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.async_timed_function" title="Link to this definition"></a></dt>
+<dd><p>Create a decorator for timing async function execution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: Metric name
+metric_type: Type of metric (histogram or summary)
+labels_func: Optional function to generate label values from function args
+track_in_progress_flag: Whether to track in-progress operations
+in_progress_metric: Optional name of gauge metric for tracking in-progress operations</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorator function</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>metric_type</strong> (<a class="reference internal" href="../base/index.html#app.core.metrics.base.MetricType" title="app.core.metrics.base.MetricType"><em>app.core.metrics.base.MetricType</em></a>)</p></li>
+<li><p><strong>labels_func</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>Ellipsis</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>track_in_progress_flag</strong> (<em>bool</em>)</p></li>
+<li><p><strong>in_progress_metric</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.core.metrics.manager.get_current_metrics">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.manager.</span></span><span class="sig-name descname"><span class="pre">get_current_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.core.metrics.manager.get_current_metrics" title="Link to this definition"></a></dt>
+<dd><p>Get the current values of all metrics.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dictionary of metric values by name</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../exceptions/index.html" class="btn btn-neutral float-left" title="app.core.metrics.exceptions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../prometheus/index.html" class="btn btn-neutral float-right" title="app.core.metrics.prometheus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

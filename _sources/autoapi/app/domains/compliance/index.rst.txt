@@ -1,0 +1,17 @@
+app.domains.compliance
+======================
+
+.. py:module:: app.domains.compliance
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/compliance/models/index
+   /autoapi/app/domains/compliance/repository/index
+   /autoapi/app/domains/compliance/schemas/index
+
+

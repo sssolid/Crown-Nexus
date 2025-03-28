@@ -1,0 +1,1147 @@
+app.domains.products.models
+===========================
+
+.. py:module:: app.domains.products.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.products.models.Product
+   app.domains.products.models.ProductDescription
+   app.domains.products.models.ProductMarketing
+   app.domains.products.models.ProductActivity
+   app.domains.products.models.ProductSupersession
+   app.domains.products.models.Brand
+   app.domains.products.models.ProductBrandHistory
+   app.domains.products.models.AttributeDefinition
+   app.domains.products.models.ProductAttribute
+   app.domains.products.models.PriceType
+   app.domains.products.models.ProductPricing
+   app.domains.products.models.Manufacturer
+   app.domains.products.models.ProductMeasurement
+   app.domains.products.models.ProductStock
+   app.domains.products.models.Fitment
+
+
+Module Contents
+---------------
+
+.. py:class:: Product
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product entity representing a sellable item.
+
+   Attributes:
+       id: Unique identifier.
+       part_number: Product part number (unique).
+       part_number_stripped: Normalized version of part number for searching.
+       application: Product application or use case description.
+       vintage: Whether the product is for vintage vehicles.
+       late_model: Whether the product is for late model vehicles.
+       soft: Whether the product is soft (e.g., fabric vs metal).
+       universal: Whether the product is universal (fits multiple applications).
+       search_vector: Full-text search vector.
+       is_active: Whether the product is active in the catalog.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: part_number
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: part_number_stripped
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: application
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: vintage
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: late_model
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: soft
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: universal
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: search_vector
+      :type:  sqlalchemy.orm.Mapped[Optional[Any]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: descriptions
+      :type:  sqlalchemy.orm.Mapped[List[ProductDescription]]
+
+
+   .. py:attribute:: marketing
+      :type:  sqlalchemy.orm.Mapped[List[ProductMarketing]]
+
+
+   .. py:attribute:: activities
+      :type:  sqlalchemy.orm.Mapped[List[ProductActivity]]
+
+
+   .. py:attribute:: superseded_by
+      :type:  sqlalchemy.orm.Mapped[List[ProductSupersession]]
+
+
+   .. py:attribute:: supersedes
+      :type:  sqlalchemy.orm.Mapped[List[ProductSupersession]]
+
+
+   .. py:attribute:: attributes
+      :type:  sqlalchemy.orm.Mapped[List[ProductAttribute]]
+
+
+   .. py:attribute:: pricing
+      :type:  sqlalchemy.orm.Mapped[List[ProductPricing]]
+
+
+   .. py:attribute:: measurements
+      :type:  sqlalchemy.orm.Mapped[List[ProductMeasurement]]
+
+
+   .. py:attribute:: brand_history
+      :type:  sqlalchemy.orm.Mapped[List[ProductBrandHistory]]
+
+
+   .. py:attribute:: stock
+      :type:  sqlalchemy.orm.Mapped[List[ProductStock]]
+
+
+   .. py:attribute:: media
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.media.models.Media]]
+
+
+   .. py:attribute:: fitments
+      :type:  sqlalchemy.orm.Mapped[List[Fitment]]
+
+
+   .. py:attribute:: tariff_codes
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.TariffCode]]
+
+
+   .. py:attribute:: unspsc_codes
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.UnspscCode]]
+
+
+   .. py:attribute:: countries_of_origin
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.location.models.Country]]
+
+
+   .. py:attribute:: hardware_items
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Hardware]]
+
+
+   .. py:attribute:: colors
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Color]]
+
+
+   .. py:attribute:: construction_types
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.ConstructionType]]
+
+
+   .. py:attribute:: textures
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.Texture]]
+
+
+   .. py:attribute:: packaging_types
+      :type:  sqlalchemy.orm.Mapped[List[app.domains.reference.models.PackagingType]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Product instance.
+
+      Returns:
+          String representation including part number.
+
+
+
+.. py:class:: ProductDescription
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product description entity representing a textual description of a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       description_type: Type of description (e.g., short, long, etc.).
+       description: The actual description text.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_description'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: description_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductDescription instance.
+
+      Returns:
+          String representation including description type and product ID.
+
+
+
+.. py:class:: ProductMarketing
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product marketing entity representing marketing content for a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       marketing_type: Type of marketing content (e.g., bullet point, ad copy, etc.).
+       content: The actual marketing content.
+       position: Display order position.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_marketing'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: marketing_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: content
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: position
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductMarketing instance.
+
+      Returns:
+          String representation including marketing type and product ID.
+
+
+
+.. py:class:: ProductActivity
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product activity entity representing status changes for a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       status: Product status (e.g., active, inactive, discontinued, etc.).
+       reason: Reason for the status change.
+       changed_by_id: ID of the user who made the change.
+       changed_at: When the change was made.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_activity'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: status
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: reason
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: changed_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: changed_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: changed_by
+      :type:  sqlalchemy.orm.Mapped[Optional[User]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductActivity instance.
+
+      Returns:
+          String representation including status and product ID.
+
+
+
+.. py:class:: ProductSupersession
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product supersession entity representing when one product replaces another.
+
+   Attributes:
+       id: Unique identifier.
+       old_product_id: ID of the product being replaced.
+       new_product_id: ID of the replacement product.
+       reason: Reason for the supersession.
+       changed_at: When the supersession was created.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_supersession'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: old_product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: new_product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: reason
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: changed_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: old_product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: new_product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductSupersession instance.
+
+      Returns:
+          String representation including old and new product IDs.
+
+
+
+.. py:class:: Brand
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Brand entity representing a product brand.
+
+   Attributes:
+       id: Unique identifier.
+       name: Brand name.
+       parent_company_id: ID of the parent company.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'brand'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: parent_company_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: parent_company
+
+
+   .. py:attribute:: brand_history
+      :type:  sqlalchemy.orm.Mapped[List[ProductBrandHistory]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Brand instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: ProductBrandHistory
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product brand history entity representing brand changes for a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       old_brand_id: ID of the previous brand.
+       new_brand_id: ID of the new brand.
+       changed_by_id: ID of the user who made the change.
+       changed_at: When the change was made.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_brand_history'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: old_brand_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: new_brand_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: changed_by_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: changed_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: old_brand
+      :type:  sqlalchemy.orm.Mapped[Optional[Brand]]
+
+
+   .. py:attribute:: new_brand
+      :type:  sqlalchemy.orm.Mapped[Brand]
+
+
+   .. py:attribute:: changed_by
+      :type:  sqlalchemy.orm.Mapped[Optional[User]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductBrandHistory instance.
+
+      Returns:
+          String representation including product ID and brand change.
+
+
+
+.. py:class:: AttributeDefinition
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Attribute definition entity representing a product attribute type.
+
+   Attributes:
+       id: Unique identifier.
+       name: Attribute name.
+       code: Attribute code (unique).
+       description: Attribute description.
+       data_type: Data type (e.g., string, number, boolean, etc.).
+       is_required: Whether the attribute is required.
+       default_value: Default value for the attribute.
+       validation_regex: Regex for validation of string values.
+       min_value: Minimum allowed value for numeric attributes.
+       max_value: Maximum allowed value for numeric attributes.
+       options: Available options for enum-like attributes.
+       display_order: Display order position.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'attribute_definition'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: code
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: data_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: is_required
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: default_value
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: validation_regex
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: min_value
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: max_value
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: options
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: display_order
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: attributes
+      :type:  sqlalchemy.orm.Mapped[List[ProductAttribute]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of AttributeDefinition instance.
+
+      Returns:
+          String representation including code.
+
+
+
+.. py:class:: ProductAttribute
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product attribute entity representing a specific attribute value for a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       attribute_id: ID of the attribute definition.
+       value_string: String value.
+       value_number: Numeric value.
+       value_boolean: Boolean value.
+       value_date: Date value.
+       value_json: JSON value.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_attribute'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: attribute_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: value_string
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: value_number
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: value_boolean
+      :type:  sqlalchemy.orm.Mapped[Optional[bool]]
+
+
+   .. py:attribute:: value_date
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: value_json
+      :type:  sqlalchemy.orm.Mapped[Optional[Dict[str, Any]]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: attribute
+      :type:  sqlalchemy.orm.Mapped[AttributeDefinition]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductAttribute instance.
+
+      Returns:
+          String representation including product ID and attribute ID.
+
+
+
+.. py:class:: PriceType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Price type entity representing a type of pricing (e.g., retail, wholesale, etc.).
+
+   Attributes:
+       id: Unique identifier.
+       name: Price type name.
+       description: Price type description.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'price_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: pricing
+      :type:  sqlalchemy.orm.Mapped[List[ProductPricing]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of PriceType instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: ProductPricing
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product pricing entity representing a price for a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       pricing_type_id: ID of the price type.
+       manufacturer_id: ID of the manufacturer.
+       price: Price value.
+       currency: Currency code.
+       last_updated: When the price was last updated.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_pricing'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: pricing_type_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: manufacturer_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: price
+      :type:  sqlalchemy.orm.Mapped[float]
+
+
+   .. py:attribute:: currency
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: last_updated
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: pricing_type
+      :type:  sqlalchemy.orm.Mapped[PriceType]
+
+
+   .. py:attribute:: manufacturer
+      :type:  sqlalchemy.orm.Mapped[Optional[Manufacturer]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductPricing instance.
+
+      Returns:
+          String representation including product ID, pricing type, and price.
+
+
+
+.. py:class:: Manufacturer
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Manufacturer entity representing a product manufacturer.
+
+   Attributes:
+       id: Unique identifier.
+       name: Manufacturer name.
+       company_id: ID of the associated company.
+       address_id: ID of the primary address.
+       billing_address_id: ID of the billing address.
+       shipping_address_id: ID of the shipping address.
+       country_id: ID of the country of origin.
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'manufacturer'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: company_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: billing_address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: shipping_address_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: country_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: company
+
+
+   .. py:attribute:: address
+
+
+   .. py:attribute:: billing_address
+
+
+   .. py:attribute:: shipping_address
+
+
+   .. py:attribute:: country
+
+
+   .. py:attribute:: product_pricing
+      :type:  sqlalchemy.orm.Mapped[List[ProductPricing]]
+
+
+   .. py:attribute:: product_measurements
+      :type:  sqlalchemy.orm.Mapped[List[ProductMeasurement]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Manufacturer instance.
+
+      Returns:
+          String representation including name.
+
+
+
+.. py:class:: ProductMeasurement
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product measurement entity representing physical measurements of a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       manufacturer_id: ID of the manufacturer who provided the measurements.
+       length: Length measurement.
+       width: Width measurement.
+       height: Height measurement.
+       weight: Weight measurement.
+       volume: Volume measurement.
+       dimensional_weight: Dimensional weight for shipping calculations.
+       effective_date: When the measurements became effective.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_measurement'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: manufacturer_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: length
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: width
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: height
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: weight
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: volume
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: dimensional_weight
+      :type:  sqlalchemy.orm.Mapped[Optional[float]]
+
+
+   .. py:attribute:: effective_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: manufacturer
+      :type:  sqlalchemy.orm.Mapped[Optional[Manufacturer]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductMeasurement instance.
+
+      Returns:
+          String representation including product ID.
+
+
+
+.. py:class:: ProductStock
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Product stock entity representing inventory levels for a product.
+
+   Attributes:
+       id: Unique identifier.
+       product_id: ID of the associated product.
+       warehouse_id: ID of the warehouse.
+       quantity: Stock quantity.
+       last_updated: When the stock level was last updated.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'product_stock'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: product_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: warehouse_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: quantity
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: last_updated
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: product
+      :type:  sqlalchemy.orm.Mapped[Product]
+
+
+   .. py:attribute:: warehouse
+      :type:  sqlalchemy.orm.Mapped[Warehouse]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ProductStock instance.
+
+      Returns:
+          String representation including product ID, warehouse ID, and quantity.
+
+
+
+.. py:class:: Fitment
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Fitment entity representing vehicle compatibility for a product.
+
+   Attributes:
+       id: Unique identifier.
+       year: Vehicle year.
+       make: Vehicle make.
+       model: Vehicle model.
+       engine: Engine specification.
+       transmission: Transmission specification.
+       attributes: Additional fitment attributes.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'fitment'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: year
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: make
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: model
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: engine
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: transmission
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: attributes
+      :type:  sqlalchemy.orm.Mapped[Dict[str, Any]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: products
+      :type:  sqlalchemy.orm.Mapped[List[Product]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of Fitment instance.
+
+      Returns:
+          String representation including year, make, and model.
+
+
+

@@ -1,0 +1,502 @@
+app.domains.chat.models
+=======================
+
+.. py:module:: app.domains.chat.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.chat.models.ChatRoomType
+   app.domains.chat.models.ChatRoom
+   app.domains.chat.models.ChatMemberRole
+   app.domains.chat.models.ChatMember
+   app.domains.chat.models.MessageType
+   app.domains.chat.models.ChatMessage
+   app.domains.chat.models.MessageReaction
+   app.domains.chat.models.RateLimitLog
+
+
+Module Contents
+---------------
+
+.. py:class:: ChatRoomType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of chat rooms.
+
+   Attributes:
+       DIRECT: One-to-one chat between two users.
+       GROUP: Group chat with multiple users.
+       COMPANY: Company-wide chat.
+       SUPPORT: Support chat with customer service.
+
+
+   .. py:attribute:: DIRECT
+      :value: 'direct'
+
+
+
+   .. py:attribute:: GROUP
+      :value: 'group'
+
+
+
+   .. py:attribute:: COMPANY
+      :value: 'company'
+
+
+
+   .. py:attribute:: SUPPORT
+      :value: 'support'
+
+
+
+.. py:class:: ChatRoom
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Chat room entity representing a conversation space.
+
+   Attributes:
+       id: Unique identifier.
+       name: Optional room name (might be null for direct chats).
+       type: Type of chat room.
+       company_id: ID of the associated company.
+       is_active: Whether the room is active.
+       extra_metadata: Additional metadata about the room.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'chat_room'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: type
+      :type:  sqlalchemy.orm.Mapped[ChatRoomType]
+
+
+   .. py:attribute:: company_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: extra_metadata
+      :type:  sqlalchemy.orm.Mapped[Dict]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: company
+      :type:  sqlalchemy.orm.Mapped[Optional[app.domains.company.schemas.Company]]
+
+
+   .. py:attribute:: messages
+      :type:  sqlalchemy.orm.Mapped[List[ChatMessage]]
+
+
+   .. py:attribute:: members
+      :type:  sqlalchemy.orm.Mapped[List[ChatMember]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ChatRoom instance.
+
+      Returns:
+          String representation including id, name, and type.
+
+
+
+.. py:class:: ChatMemberRole
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Roles of chat room members.
+
+   Attributes:
+       OWNER: Room owner with full control.
+       ADMIN: Administrator with elevated permissions.
+       MEMBER: Regular member.
+       GUEST: Guest with limited permissions.
+
+
+   .. py:attribute:: OWNER
+      :value: 'owner'
+
+
+
+   .. py:attribute:: ADMIN
+      :value: 'admin'
+
+
+
+   .. py:attribute:: MEMBER
+      :value: 'member'
+
+
+
+   .. py:attribute:: GUEST
+      :value: 'guest'
+
+
+
+.. py:class:: ChatMember
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Chat member entity representing a user's membership in a chat room.
+
+   Attributes:
+       id: Unique identifier.
+       room_id: ID of the chat room.
+       user_id: ID of the user.
+       role: Member's role in the room.
+       last_read_at: When the user last read messages in the room.
+       is_active: Whether the membership is active.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'chat_member'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: room_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: user_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: role
+      :type:  sqlalchemy.orm.Mapped[ChatMemberRole]
+
+
+   .. py:attribute:: last_read_at
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: is_active
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: room
+      :type:  sqlalchemy.orm.Mapped[ChatRoom]
+
+
+   .. py:attribute:: user
+      :type:  sqlalchemy.orm.Mapped[app.domains.users.models.User]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ChatMember instance.
+
+      Returns:
+          String representation including id, user ID, room ID, and role.
+
+
+
+.. py:class:: MessageType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of chat messages.
+
+   Attributes:
+       TEXT: Plain text message.
+       IMAGE: Image message.
+       FILE: File attachment message.
+       SYSTEM: System notification message.
+       ACTION: User action message.
+
+
+   .. py:attribute:: TEXT
+      :value: 'text'
+
+
+
+   .. py:attribute:: IMAGE
+      :value: 'image'
+
+
+
+   .. py:attribute:: FILE
+      :value: 'file'
+
+
+
+   .. py:attribute:: SYSTEM
+      :value: 'system'
+
+
+
+   .. py:attribute:: ACTION
+      :value: 'action'
+
+
+
+.. py:class:: ChatMessage
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Chat message entity representing a message in a chat room.
+
+   Attributes:
+       id: Unique identifier.
+       room_id: ID of the chat room.
+       sender_id: ID of the user who sent the message.
+       message_type: Type of message.
+       content_encrypted: Encrypted message content.
+       extra_metadata: Additional metadata about the message.
+       is_deleted: Whether the message was deleted.
+       deleted_at: When the message was deleted.
+       created_at: Creation timestamp.
+       updated_at: Last update timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'chat_message'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: room_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: sender_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: message_type
+      :type:  sqlalchemy.orm.Mapped[MessageType]
+
+
+   .. py:attribute:: content_encrypted
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: extra_metadata
+      :type:  sqlalchemy.orm.Mapped[Dict]
+
+
+   .. py:attribute:: is_deleted
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:attribute:: deleted_at
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.datetime]]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: updated_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: room
+      :type:  sqlalchemy.orm.Mapped[ChatRoom]
+
+
+   .. py:attribute:: sender
+      :type:  sqlalchemy.orm.Mapped[Optional[app.domains.users.models.User]]
+
+
+   .. py:attribute:: reactions
+      :type:  sqlalchemy.orm.Mapped[List[MessageReaction]]
+
+
+   .. py:property:: content
+      :type: str
+
+
+      Get the decrypted message content.
+
+      Returns:
+          Decrypted message content.
+
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of ChatMessage instance.
+
+      Returns:
+          String representation including id, message type, and room ID.
+
+
+
+.. py:class:: MessageReaction
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Message reaction entity representing a user's reaction to a message.
+
+   Attributes:
+       id: Unique identifier.
+       message_id: ID of the message being reacted to.
+       user_id: ID of the user who reacted.
+       reaction: Reaction string (e.g., emoji).
+       created_at: Creation timestamp.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'message_reaction'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: message_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: user_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: reaction
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: created_at
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: message
+      :type:  sqlalchemy.orm.Mapped[ChatMessage]
+
+
+   .. py:attribute:: user
+      :type:  sqlalchemy.orm.Mapped[app.domains.users.models.User]
+
+
+   .. py:attribute:: __table_args__
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of MessageReaction instance.
+
+      Returns:
+          String representation including id, reaction, and user ID.
+
+
+
+.. py:class:: RateLimitLog
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Rate limit log entity for tracking API rate limits.
+
+   Attributes:
+       id: Unique identifier.
+       user_id: ID of the user being rate limited.
+       room_id: ID of the chat room (if applicable).
+       event_type: Type of event being limited.
+       timestamp: When the event occurred.
+       count: Event count.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'rate_limit_log'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: user_id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: room_id
+      :type:  sqlalchemy.orm.Mapped[Optional[uuid.UUID]]
+
+
+   .. py:attribute:: event_type
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: timestamp
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: count
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: user
+      :type:  sqlalchemy.orm.Mapped[app.domains.users.models.User]
+
+
+   .. py:attribute:: room
+      :type:  sqlalchemy.orm.Mapped[Optional[ChatRoom]]
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of RateLimitLog instance.
+
+      Returns:
+          String representation including id, user ID, event type, and count.
+
+
+

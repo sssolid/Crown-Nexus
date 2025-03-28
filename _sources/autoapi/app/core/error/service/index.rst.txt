@@ -1,0 +1,200 @@
+app.core.error.service
+======================
+
+.. py:module:: app.core.error.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.error.service.logger
+   app.core.error.service._error_service
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.error.service.ErrorService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.error.service.get_error_service
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ErrorService
+
+   Service for error handling and reporting.
+
+   This service provides methods for creating and reporting errors,
+   as well as initializing and managing error reporters.
+
+
+   .. py:attribute:: reporters
+      :type:  List[app.core.error.base.ErrorReporter]
+      :value: []
+
+
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the error service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the error service.
+
+
+
+   .. py:method:: register_reporter(reporter)
+      :async:
+
+
+      Register an error reporter.
+
+      Args:
+          reporter: The error reporter to register
+
+
+
+   .. py:method:: register_reporter_by_name(reporter_name)
+      :async:
+
+
+      Register an error reporter by name.
+
+      Args:
+          reporter_name: Name of the reporter to register
+
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error with context.
+
+      Args:
+          exception: The exception to report
+          context: Context information for the error
+
+
+
+   .. py:method:: handle_exception(exception, request_id = None, user_id = None, function_name = None)
+
+      Handle an exception by reporting it.
+
+      Args:
+          exception: The exception to handle
+          request_id: Optional request ID
+          user_id: Optional user ID
+          function_name: Optional function name
+
+
+
+   .. py:method:: resource_not_found(resource_type, resource_id, message = None)
+
+      Create a resource not found exception.
+
+      Args:
+          resource_type: Type of resource that was not found
+          resource_id: ID of the resource that was not found
+          message: Optional custom error message
+
+      Returns:
+          A configured ResourceNotFoundException
+
+
+
+   .. py:method:: resource_already_exists(resource_type, identifier, field = 'id', message = None)
+
+      Create a resource already exists exception.
+
+      Args:
+          resource_type: Type of resource that already exists
+          identifier: Identifier of the resource
+          field: Field name of the identifier (default: 'id')
+          message: Optional custom error message
+
+      Returns:
+          A configured ResourceAlreadyExistsException
+
+
+
+   .. py:method:: validation_error(field, message, error_type = 'invalid_value')
+
+      Create a validation error exception.
+
+      Args:
+          field: Field that failed validation
+          message: Error message
+          error_type: Type of validation error
+
+      Returns:
+          A configured ValidationException
+
+
+
+   .. py:method:: permission_denied(action, resource_type, permission)
+
+      Create a permission denied exception.
+
+      Args:
+          action: Action that was attempted
+          resource_type: Type of resource being accessed
+          permission: Permission that was required
+
+      Returns:
+          A configured PermissionDeniedException
+
+
+
+   .. py:method:: business_logic_error(message, details = None)
+
+      Create a business logic error exception.
+
+      Args:
+          message: Error message
+          details: Additional error details
+
+      Returns:
+          A configured BusinessException
+
+
+
+.. py:data:: _error_service
+   :type:  Optional[ErrorService]
+   :value: None
+
+
+.. py:function:: get_error_service()
+
+   Get the error service singleton.
+
+   Returns:
+       The error service instance
+
+

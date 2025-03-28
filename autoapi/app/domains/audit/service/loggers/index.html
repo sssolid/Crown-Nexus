@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.audit.service.loggers &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.domains.audit.service.query" href="../query/index.html" />
+    <link rel="prev" title="app.domains.audit.service.factory" href="../factory/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains.audit</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.audit.service</a></li>
+      <li class="breadcrumb-item active">app.domains.audit.service.loggers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/domains/audit/service/loggers/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.audit.service.loggers">
+<span id="app-domains-audit-service-loggers"></span><h1>app.domains.audit.service.loggers<a class="headerlink" href="#module-app.domains.audit.service.loggers" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.loggers.logger" title="app.domains.audit.service.loggers.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.loggers.BaseAuditLogger" title="app.domains.audit.service.loggers.BaseAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseAuditLogger</span></code></a></p></td>
+<td><p>Base class for audit loggers with common functionality.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.audit.service.loggers.LoggingAuditLogger" title="app.domains.audit.service.loggers.LoggingAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LoggingAuditLogger</span></code></a></p></td>
+<td><p>Audit logger that logs events to the application logging system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.loggers.FileAuditLogger" title="app.domains.audit.service.loggers.FileAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileAuditLogger</span></code></a></p></td>
+<td><p>Audit logger that logs events to a file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.audit.service.loggers.DatabaseAuditLogger" title="app.domains.audit.service.loggers.DatabaseAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseAuditLogger</span></code></a></p></td>
+<td><p>Audit logger that logs events to the database.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.logger">
+<span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.loggers.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.domains.audit.service.loggers.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.loggers.</span></span><span class="sig-name descname"><span class="pre">BaseAuditLogger</span></span><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger" title="Link to this definition"></a></dt>
+<dd><p>Base class for audit loggers with common functionality.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger.sensitive_fields">
+<span class="sig-name descname"><span class="pre">sensitive_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['password',</span> <span class="pre">'token',</span> <span class="pre">'secret',</span> <span class="pre">'credit_card',</span> <span class="pre">'ssn',</span> <span class="pre">'social_security',</span> <span class="pre">'api_key']</span></em><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger.sensitive_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger.anonymize_events">
+<span class="sig-name descname"><span class="pre">anonymize_events</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><span class="pre">app.domains.audit.service.base.AuditEventType</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger.anonymize_events" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger.event_level_mapping">
+<span class="sig-name descname"><span class="pre">event_level_mapping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><span class="pre">app.domains.audit.service.base.AuditEventType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><span class="pre">app.domains.audit.service.base.AuditLogLevel</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger.event_level_mapping" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger._get_log_level">
+<span class="sig-name descname"><span class="pre">_get_log_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger._get_log_level" title="Link to this definition"></a></dt>
+<dd><p>Get the appropriate log level for an event type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_type: Type of the audit event
+level: Explicitly provided level (takes precedence)</p>
+</dd>
+<dt>Returns:</dt><dd><p>AuditLogLevel: The determined log level</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> (<a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><em>app.domains.audit.service.base.AuditEventType</em></a>)</p></li>
+<li><p><strong>level</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><em>app.domains.audit.service.base.AuditLogLevel</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel">app.domains.audit.service.base.AuditLogLevel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger._anonymize_data">
+<span class="sig-name descname"><span class="pre">_anonymize_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitive_fields</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger._anonymize_data" title="Link to this definition"></a></dt>
+<dd><p>Anonymize sensitive data in audit logs.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: The data to anonymize
+sensitive_fields: List of field names to anonymize</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Anonymized data dictionary</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>sensitive_fields</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.BaseAuditLogger._prepare_log_entry">
+<span class="sig-name descname"><span class="pre">_prepare_log_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.BaseAuditLogger._prepare_log_entry" title="Link to this definition"></a></dt>
+<dd><p>Prepare a standardized log entry.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_id: Generated event ID
+event_type: Type of the audit event
+level: Severity level of the event
+user_id: ID of the user who performed the action
+ip_address: IP address of the user
+resource_id: ID of the resource affected
+resource_type: Type of the resource affected
+details: Additional details about the event
+context: Additional context information
+options: Audit logging options</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Standardized log entry</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>event_type</strong> (<a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><em>app.domains.audit.service.base.AuditEventType</em></a>)</p></li>
+<li><p><strong>level</strong> (<a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><em>app.domains.audit.service.base.AuditLogLevel</em></a>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>ip_address</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditContext" title="app.domains.audit.service.base.AuditContext"><em>app.domains.audit.service.base.AuditContext</em></a><em>]</em>)</p></li>
+<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditOptions" title="app.domains.audit.service.base.AuditOptions"><em>app.domains.audit.service.base.AuditOptions</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.LoggingAuditLogger">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.loggers.</span></span><span class="sig-name descname"><span class="pre">LoggingAuditLogger</span></span><a class="headerlink" href="#app.domains.audit.service.loggers.LoggingAuditLogger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.audit.service.loggers.BaseAuditLogger" title="app.domains.audit.service.loggers.BaseAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseAuditLogger</span></code></a>, <a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogger" title="app.domains.audit.service.base.AuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.audit.service.base.AuditLogger</span></code></a></p>
+<p>Audit logger that logs events to the application logging system.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.LoggingAuditLogger.log_event">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.LoggingAuditLogger.log_event" title="Link to this definition"></a></dt>
+<dd><p>Log an audit event to the application logging system.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_type: Type of the audit event
+user_id: ID of the user who performed the action
+ip_address: IP address of the user
+resource_id: ID of the resource affected
+resource_type: Type of the resource affected
+details: Additional details about the event
+context: Additional context information
+level: Severity level of the event
+options: Audit logging options</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The ID of the created audit event</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> (<a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><em>app.domains.audit.service.base.AuditEventType</em></a>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>ip_address</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditContext" title="app.domains.audit.service.base.AuditContext"><em>app.domains.audit.service.base.AuditContext</em></a><em>]</em>)</p></li>
+<li><p><strong>level</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><em>app.domains.audit.service.base.AuditLogLevel</em></a><em>]</em>)</p></li>
+<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditOptions" title="app.domains.audit.service.base.AuditOptions"><em>app.domains.audit.service.base.AuditOptions</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.FileAuditLogger">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.loggers.</span></span><span class="sig-name descname"><span class="pre">FileAuditLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.FileAuditLogger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.audit.service.loggers.BaseAuditLogger" title="app.domains.audit.service.loggers.BaseAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseAuditLogger</span></code></a>, <a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogger" title="app.domains.audit.service.base.AuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.audit.service.base.AuditLogger</span></code></a></p>
+<p>Audit logger that logs events to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.FileAuditLogger.file_path">
+<span class="sig-name descname"><span class="pre">file_path</span></span><a class="headerlink" href="#app.domains.audit.service.loggers.FileAuditLogger.file_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.FileAuditLogger.log_event">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.FileAuditLogger.log_event" title="Link to this definition"></a></dt>
+<dd><p>Log an audit event to a file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_type: Type of the audit event
+user_id: ID of the user who performed the action
+ip_address: IP address of the user
+resource_id: ID of the resource affected
+resource_type: Type of the resource affected
+details: Additional details about the event
+context: Additional context information
+level: Severity level of the event
+options: Audit logging options</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The ID of the created audit event</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> (<a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><em>app.domains.audit.service.base.AuditEventType</em></a>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>ip_address</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditContext" title="app.domains.audit.service.base.AuditContext"><em>app.domains.audit.service.base.AuditContext</em></a><em>]</em>)</p></li>
+<li><p><strong>level</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><em>app.domains.audit.service.base.AuditLogLevel</em></a><em>]</em>)</p></li>
+<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditOptions" title="app.domains.audit.service.base.AuditOptions"><em>app.domains.audit.service.base.AuditOptions</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.DatabaseAuditLogger">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.loggers.</span></span><span class="sig-name descname"><span class="pre">DatabaseAuditLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.DatabaseAuditLogger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.domains.audit.service.loggers.BaseAuditLogger" title="app.domains.audit.service.loggers.BaseAuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseAuditLogger</span></code></a>, <a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogger" title="app.domains.audit.service.base.AuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.domains.audit.service.base.AuditLogger</span></code></a></p>
+<p>Audit logger that logs events to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>Optional</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.DatabaseAuditLogger.db">
+<span class="sig-name descname"><span class="pre">db</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.loggers.DatabaseAuditLogger.db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.loggers.DatabaseAuditLogger.log_event">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.loggers.DatabaseAuditLogger.log_event" title="Link to this definition"></a></dt>
+<dd><p>Log an audit event to the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_type: Type of the audit event
+user_id: ID of the user who performed the action
+ip_address: IP address of the user
+resource_id: ID of the resource affected
+resource_type: Type of the resource affected
+details: Additional details about the event
+context: Additional context information
+level: Severity level of the event
+options: Audit logging options</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The ID of the created audit event</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> (<a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><em>app.domains.audit.service.base.AuditEventType</em></a>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>ip_address</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditContext" title="app.domains.audit.service.base.AuditContext"><em>app.domains.audit.service.base.AuditContext</em></a><em>]</em>)</p></li>
+<li><p><strong>level</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><em>app.domains.audit.service.base.AuditLogLevel</em></a><em>]</em>)</p></li>
+<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../base/index.html#app.domains.audit.service.base.AuditOptions" title="app.domains.audit.service.base.AuditOptions"><em>app.domains.audit.service.base.AuditOptions</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../factory/index.html" class="btn btn-neutral float-left" title="app.domains.audit.service.factory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../query/index.html" class="btn btn-neutral float-right" title="app.domains.audit.service.query" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

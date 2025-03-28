@@ -1,0 +1,53 @@
+app.data_import.importers.base
+==============================
+
+.. py:module:: app.data_import.importers.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.importers.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.importers.base.Importer
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: Importer
+
+   Bases: :py:obj:`Protocol`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol for data importers.
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import data into the target system.
+
+      Args:
+          data: List of records to import
+
+      Returns:
+          Dictionary with import statistics
+
+      Raises:
+          ValueError: If data cannot be imported
+          DatabaseError: If database operations fail
+
+
+

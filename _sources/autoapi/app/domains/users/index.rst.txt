@@ -1,0 +1,20 @@
+app.domains.users
+=================
+
+.. py:module:: app.domains.users
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/users/exceptions/index
+   /autoapi/app/domains/users/handlers/index
+   /autoapi/app/domains/users/models/index
+   /autoapi/app/domains/users/repository/index
+   /autoapi/app/domains/users/schemas/index
+   /autoapi/app/domains/users/service/index
+
+

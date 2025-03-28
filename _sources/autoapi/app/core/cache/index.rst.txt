@@ -1,0 +1,555 @@
+app.core.cache
+==============
+
+.. py:module:: app.core.cache
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/cache/backends/index
+   /autoapi/app/core/cache/base/index
+   /autoapi/app/core/cache/decorators/index
+   /autoapi/app/core/cache/exceptions/index
+   /autoapi/app/core/cache/keys/index
+   /autoapi/app/core/cache/manager/index
+   /autoapi/app/core/cache/service/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.cache.cache_manager
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.core.cache.CacheException
+   app.core.cache.CacheConnectionException
+   app.core.cache.CacheOperationException
+   app.core.cache.CacheConfigurationException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.cache.CacheBackend
+   app.core.cache.CacheService
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.cache.cached
+   app.core.cache.invalidate_cache
+   app.core.cache.cache_aside
+   app.core.cache.memoize
+   app.core.cache.generate_cache_key
+   app.core.cache.generate_list_key
+   app.core.cache.generate_model_key
+   app.core.cache.generate_query_key
+   app.core.cache.initialize_cache
+   app.core.cache.get_cache_service
+
+
+Package Contents
+----------------
+
+.. py:class:: CacheBackend
+
+   Bases: :py:obj:`Protocol`, :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol defining cache backend interface.
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the cache backend.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shut down the cache backend.
+
+
+
+   .. py:method:: get(key, default = None)
+      :async:
+
+
+      Get value from cache by key.
+
+
+
+   .. py:method:: set(key, value, ttl = None)
+      :async:
+
+
+      Set value in cache with optional TTL.
+
+
+
+   .. py:method:: delete(key)
+      :async:
+
+
+      Delete key from cache.
+
+
+
+   .. py:method:: exists(key)
+      :async:
+
+
+      Check if key exists in cache.
+
+
+
+   .. py:method:: clear()
+      :async:
+
+
+      Clear all cache entries.
+
+
+
+   .. py:method:: invalidate_pattern(pattern)
+      :async:
+
+
+      Invalidate all keys matching a pattern.
+
+
+
+   .. py:method:: get_many(keys)
+      :async:
+
+
+      Get multiple values from the cache.
+
+
+
+   .. py:method:: set_many(mapping, ttl = None)
+      :async:
+
+
+      Set multiple values in the cache.
+
+
+
+   .. py:method:: delete_many(keys)
+      :async:
+
+
+      Delete multiple values from the cache.
+
+
+
+   .. py:method:: incr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      Increment a counter in the cache.
+
+
+
+   .. py:method:: decr(key, amount = 1, default = 0, ttl = None)
+      :async:
+
+
+      Decrement a counter in the cache.
+
+
+
+.. py:function:: cached(ttl = 300, prefix = 'cache', backend = None, skip_args = None, skip_kwargs = None, tags = None)
+
+   Cache the result of a function.
+
+   Args:
+       ttl: Time-to-live in seconds (default: 300).
+       prefix: Cache key prefix (default: 'cache').
+       backend: Cache backend to use (default: None, uses default backend).
+       skip_args: Argument indexes to skip when generating the cache key.
+       skip_kwargs: Keyword argument names to skip when generating the cache key.
+       tags: Optional tags for cache invalidation.
+
+   Returns:
+       Decorated function.
+
+
+.. py:function:: invalidate_cache(pattern, prefix = 'cache', backend = None, tags = None)
+
+   Invalidate cache entries matching a pattern after function execution.
+
+   Args:
+       pattern: The pattern to match for invalidation.
+       prefix: Cache key prefix (default: 'cache').
+       backend: Cache backend to use (default: None, uses default backend).
+       tags: Optional tags for cache invalidation.
+
+   Returns:
+       Decorated function.
+
+
+.. py:function:: cache_aside(key_func, ttl = 300, backend = None, tags = None)
+
+   Implement the cache-aside pattern with a custom key function.
+
+   Args:
+       key_func: Function that generates a cache key from function arguments.
+       ttl: Time-to-live in seconds (default: 300).
+       backend: Cache backend to use (default: None, uses default backend).
+       tags: Optional tags for cache invalidation.
+
+   Returns:
+       Decorated function.
+
+
+.. py:function:: memoize(ttl = None, max_size = 128)
+
+   Memoize a function using in-memory caching.
+
+   Args:
+       ttl: Time-to-live in seconds (default: None, meaning no expiration).
+       max_size: Maximum number of items to keep in cache (default: 128).
+
+   Returns:
+       Decorated function.
+
+
+.. py:exception:: CacheException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:exception:: CacheConnectionException(message, backend, details = None, original_exception = None)
+
+   Bases: :py:obj:`CacheException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:exception:: CacheOperationException(message, operation, key = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`CacheException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:exception:: CacheConfigurationException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`CacheException`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+.. py:function:: generate_cache_key(prefix, func, args, kwargs, skip_args = None, skip_kwargs = None)
+
+   Generate a cache key for a function call.
+
+   This function creates a deterministic key based on the function name,
+   argument values, and keyword argument values. It's used by cache
+   decorators to create unique keys for caching function results.
+
+   Args:
+       prefix: Key prefix
+       func: Function being called
+       args: Positional arguments
+       kwargs: Keyword arguments
+       skip_args: Indices of positional arguments to skip
+       skip_kwargs: Names of keyword arguments to skip
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: generate_list_key(prefix, model_name, filters = None)
+
+   Generate a cache key for a list of model instances.
+
+   Args:
+       prefix: Key prefix
+       model_name: Model name
+       filters: Optional filters
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: generate_model_key(prefix, model_name, model_id, field = None)
+
+   Generate a cache key for a model instance.
+
+   Args:
+       prefix: Key prefix
+       model_name: Model name
+       model_id: Model ID
+       field: Optional field name
+
+   Returns:
+       str: Cache key
+
+
+.. py:function:: generate_query_key(prefix, query_name, params = None)
+
+   Generate a cache key for a query result.
+
+   Args:
+       prefix: Key prefix
+       query_name: Query name
+       params: Optional query parameters
+
+   Returns:
+       str: Cache key
+
+
+.. py:data:: cache_manager
+
+.. py:function:: initialize_cache()
+   :async:
+
+
+   Initialize the cache system.
+
+
+.. py:class:: CacheService
+
+   .. py:attribute:: _initialized
+      :value: False
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize the cache service.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Shutdown the cache service.
+
+
+
+   .. py:method:: get(key, default = None, backend = None)
+      :async:
+
+
+      Get a value from the cache.
+
+      Args:
+          key: The cache key.
+          default: Default value if key doesn't exist.
+          backend: Optional backend name.
+
+      Returns:
+          The cached value or default.
+
+
+
+   .. py:method:: set(key, value, ttl = None, backend = None)
+      :async:
+
+
+      Set a value in the cache.
+
+      Args:
+          key: The cache key.
+          value: The value to cache.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: delete(key, backend = None)
+      :async:
+
+
+      Delete a value from the cache.
+
+      Args:
+          key: The cache key.
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: exists(key, backend = None)
+      :async:
+
+
+      Check if a key exists in the cache.
+
+      Args:
+          key: The cache key.
+          backend: Optional backend name.
+
+      Returns:
+          True if key exists, False otherwise.
+
+
+
+   .. py:method:: clear(backend = None)
+      :async:
+
+
+      Clear the cache.
+
+      Args:
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: invalidate_pattern(pattern, backend = None)
+      :async:
+
+
+      Invalidate cache keys matching a pattern.
+
+      Args:
+          pattern: The pattern to match.
+          backend: Optional backend name.
+
+      Returns:
+          Number of invalidated keys.
+
+
+
+   .. py:method:: get_many(keys, backend = None)
+      :async:
+
+
+      Get multiple values from the cache.
+
+      Args:
+          keys: List of cache keys.
+          backend: Optional backend name.
+
+      Returns:
+          Dictionary of key-value pairs.
+
+
+
+   .. py:method:: set_many(mapping, ttl = None, backend = None)
+      :async:
+
+
+      Set multiple values in the cache.
+
+      Args:
+          mapping: Dictionary of key-value pairs.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          True if successful, False otherwise.
+
+
+
+   .. py:method:: delete_many(keys, backend = None)
+      :async:
+
+
+      Delete multiple values from the cache.
+
+      Args:
+          keys: List of cache keys.
+          backend: Optional backend name.
+
+      Returns:
+          Number of deleted keys.
+
+
+
+   .. py:method:: incr(key, amount = 1, default = 0, ttl = None, backend = None)
+      :async:
+
+
+      Increment a counter.
+
+      Args:
+          key: The cache key.
+          amount: Amount to increment by.
+          default: Default value if key doesn't exist.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          New counter value.
+
+
+
+   .. py:method:: decr(key, amount = 1, default = 0, ttl = None, backend = None)
+      :async:
+
+
+      Decrement a counter.
+
+      Args:
+          key: The cache key.
+          amount: Amount to decrement by.
+          default: Default value if key doesn't exist.
+          ttl: Optional time-to-live in seconds.
+          backend: Optional backend name.
+
+      Returns:
+          New counter value.
+
+
+
+.. py:function:: get_cache_service()
+
+   Get the cache service singleton instance.
+
+   Returns:
+       The cache service instance.
+
+

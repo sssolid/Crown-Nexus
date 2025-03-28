@@ -1,0 +1,54 @@
+app.middleware.response_formatter
+=================================
+
+.. py:module:: app.middleware.response_formatter
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.middleware.response_formatter.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.middleware.response_formatter.ResponseFormatterMiddleware
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ResponseFormatterMiddleware
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware for formatting API responses.
+
+   This middleware ensures all API responses follow a consistent format,
+   with success flag, data, and metadata. It also adds timestamps and
+   request IDs to responses.
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+      Process the request and format the response.
+
+      Args:
+          request: FastAPI request
+          call_next: Next middleware or route handler
+
+      Returns:
+          Response: Formatted response
+
+
+

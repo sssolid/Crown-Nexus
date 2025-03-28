@@ -1,0 +1,372 @@
+app.core.error
+==============
+
+.. py:module:: app.core.error
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/error/base/index
+   /autoapi/app/core/error/factory/index
+   /autoapi/app/core/error/manager/index
+   /autoapi/app/core/error/reporters/index
+   /autoapi/app/core/error/service/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.error.ErrorContext
+   app.core.error.ErrorReporter
+   app.core.error.ErrorReporterFactory
+   app.core.error.LoggingErrorReporter
+   app.core.error.DatabaseErrorReporter
+   app.core.error.ExternalServiceReporter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.error.register_reporter
+   app.core.error.report_error
+   app.core.error.resource_not_found
+   app.core.error.resource_already_exists
+   app.core.error.validation_error
+   app.core.error.permission_denied
+   app.core.error.business_logic_error
+   app.core.error.ensure_not_none
+   app.core.error.handle_exception
+   app.core.error.initialize
+   app.core.error.shutdown
+
+
+Package Contents
+----------------
+
+.. py:class:: ErrorContext
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Context information for error reporting.
+
+   Contains details about where and how an error occurred, including
+   function information, arguments, and request context.
+
+
+   .. py:attribute:: function
+      :type:  str
+
+
+   .. py:attribute:: args
+      :type:  Optional[List[Any]]
+
+
+   .. py:attribute:: kwargs
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: user_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: request_id
+      :type:  Optional[str]
+
+
+   .. py:class:: Config
+
+      .. py:attribute:: arbitrary_types_allowed
+         :value: True
+
+
+
+      .. py:attribute:: extra
+         :value: 'allow'
+
+
+
+
+.. py:class:: ErrorReporter
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for error reporters.
+
+   Error reporters are responsible for reporting errors to various
+   destinations (logs, databases, external services, etc.).
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error with context information.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: ErrorReporterFactory
+
+   Factory for creating error reporters.
+
+
+   .. py:method:: create_reporter(reporter_type, **kwargs)
+      :classmethod:
+
+
+      Create an error reporter of the specified type.
+
+      Args:
+          reporter_type: Type of reporter to create ("logging", "database", or "external")
+          **kwargs: Additional arguments to pass to the reporter constructor
+
+      Returns:
+          An ErrorReporter instance
+
+      Raises:
+          ValueError: If the reporter type is not supported
+
+
+
+   .. py:method:: create_default_reporters()
+      :classmethod:
+
+
+      Create the default set of error reporters based on configuration settings.
+
+      Returns:
+          List of ErrorReporter instances
+
+
+
+   .. py:method:: create_reporter_by_name(reporter_name)
+      :classmethod:
+
+
+      Create an error reporter by name based on configuration settings.
+
+      Args:
+          reporter_name: Name of the reporter to create
+
+      Returns:
+          An ErrorReporter instance or None if the reporter is not configured
+
+
+
+.. py:function:: register_reporter(reporter)
+
+   Register an error reporter.
+
+   Args:
+       reporter: The error reporter to register
+
+
+.. py:function:: report_error(exception, context)
+   :async:
+
+
+   Report an error using all registered reporters.
+
+   Args:
+       exception: The exception to report
+       context: Context information about the error
+
+
+.. py:function:: resource_not_found(resource_type, resource_id, message = None)
+
+   Create a resource not found exception.
+
+   Args:
+       resource_type: Type of resource that was not found
+       resource_id: ID of the resource that was not found
+       message: Optional custom error message
+
+   Returns:
+       A configured ResourceNotFoundException
+
+
+.. py:function:: resource_already_exists(resource_type, identifier, field = 'id', message = None)
+
+   Create a resource already exists exception.
+
+   Args:
+       resource_type: Type of resource that already exists
+       identifier: Identifier of the resource
+       field: Field name of the identifier (default: 'id')
+       message: Optional custom error message
+
+   Returns:
+       A configured ResourceAlreadyExistsException
+
+
+.. py:function:: validation_error(field, message, error_type = 'invalid_value')
+
+   Create a validation error exception.
+
+   Args:
+       field: Field that failed validation
+       message: Error message
+       error_type: Type of validation error
+
+   Returns:
+       A configured ValidationException
+
+
+.. py:function:: permission_denied(action, resource_type, permission)
+
+   Create a permission denied exception.
+
+   Args:
+       action: Action that was attempted
+       resource_type: Type of resource being accessed
+       permission: Permission that was required
+
+   Returns:
+       A configured PermissionDeniedException
+
+
+.. py:function:: business_logic_error(message, details = None)
+
+   Create a business logic error exception.
+
+   Args:
+       message: Error message
+       details: Additional error details
+
+   Returns:
+       A configured BusinessException
+
+
+.. py:function:: ensure_not_none(value, resource_type, resource_id, message = None)
+
+   Ensure a value is not None, raising an exception if it is.
+
+   Args:
+       value: Value to check
+       resource_type: Type of resource being checked
+       resource_id: ID of the resource being checked
+       message: Optional custom error message
+
+   Returns:
+       The value, if it is not None
+
+   Raises:
+       ResourceNotFoundException: If the value is None
+
+
+.. py:function:: handle_exception(exception, request_id = None, user_id = None, function_name = None)
+
+   Handle an exception by reporting it.
+
+   Args:
+       exception: The exception to handle
+       request_id: Optional request ID
+       user_id: Optional user ID
+       function_name: Optional function name
+
+
+.. py:function:: initialize()
+   :async:
+
+
+   Initialize the error handling system.
+
+
+.. py:function:: shutdown()
+   :async:
+
+
+   Shut down the error handling system.
+
+
+.. py:class:: LoggingErrorReporter
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that logs errors using the application logging system.
+
+   This reporter formats error information and logs it via the structured
+   logging system, ensuring consistent error logging across the application.
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error by logging it.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: DatabaseErrorReporter
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that stores errors in a database.
+
+   This reporter formats error information and stores it in a database
+   for later analysis and reporting.
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error by storing it in a database.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: ExternalServiceReporter(service_url, api_key)
+
+   Bases: :py:obj:`app.core.error.base.ErrorReporter`
+
+
+   Error reporter that sends errors to an external service.
+
+   This reporter formats error information and sends it to an external
+   error tracking or monitoring service via HTTP.
+
+
+   .. py:attribute:: service_url
+
+
+   .. py:attribute:: api_key
+
+
+   .. py:attribute:: headers
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error by sending it to an external service.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+

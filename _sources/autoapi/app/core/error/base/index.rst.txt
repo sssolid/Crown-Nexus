@@ -1,0 +1,184 @@
+app.core.error.base
+===================
+
+.. py:module:: app.core.error.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.error.base.logger
+   app.core.error.base.F
+   app.core.error.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.error.base.ErrorContext
+   app.core.error.base.ErrorReporter
+   app.core.error.base.ErrorHandler
+   app.core.error.base.ErrorLogEntry
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: F
+
+.. py:data:: T
+
+.. py:class:: ErrorContext
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Context information for error reporting.
+
+   Contains details about where and how an error occurred, including
+   function information, arguments, and request context.
+
+
+   .. py:attribute:: function
+      :type:  str
+
+
+   .. py:attribute:: args
+      :type:  Optional[List[Any]]
+
+
+   .. py:attribute:: kwargs
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: user_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: request_id
+      :type:  Optional[str]
+
+
+   .. py:class:: Config
+
+      .. py:attribute:: arbitrary_types_allowed
+         :value: True
+
+
+
+      .. py:attribute:: extra
+         :value: 'allow'
+
+
+
+
+.. py:class:: ErrorReporter
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for error reporters.
+
+   Error reporters are responsible for reporting errors to various
+   destinations (logs, databases, external services, etc.).
+
+
+   .. py:method:: report_error(exception, context)
+      :async:
+
+
+      Report an error with context information.
+
+      Args:
+          exception: The exception to report
+          context: Context information about the error
+
+
+
+.. py:class:: ErrorHandler
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for error handlers.
+
+   Error handlers are responsible for handling errors and performing
+   appropriate actions (logging, notifying, etc.).
+
+
+   .. py:method:: handle_error(exception, context)
+      :async:
+
+
+      Handle an error with context information.
+
+      Args:
+          exception: The exception to handle
+          context: Context information about the error
+
+      Returns:
+          Any result from handling the error
+
+
+
+.. py:class:: ErrorLogEntry
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model for storing error log entries.
+
+   Contains detailed information about an error occurrence for
+   storage in logs or databases.
+
+
+   .. py:attribute:: error_id
+      :type:  str
+
+
+   .. py:attribute:: timestamp
+      :type:  str
+
+
+   .. py:attribute:: error_type
+      :type:  str
+
+
+   .. py:attribute:: error_message
+      :type:  str
+
+
+   .. py:attribute:: function
+      :type:  str
+
+
+   .. py:attribute:: traceback
+      :type:  List[str]
+
+
+   .. py:attribute:: user_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: request_id
+      :type:  Optional[str]
+
+
+   .. py:attribute:: context
+      :type:  Dict[str, Any]
+
+
+   .. py:class:: Config
+
+      .. py:attribute:: extra
+         :value: 'allow'
+
+
+
+

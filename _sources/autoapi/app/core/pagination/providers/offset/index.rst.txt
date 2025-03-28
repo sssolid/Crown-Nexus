@@ -1,0 +1,106 @@
+app.core.pagination.providers.offset
+====================================
+
+.. py:module:: app.core.pagination.providers.offset
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.pagination.providers.offset.logger
+   app.core.pagination.providers.offset.T
+   app.core.pagination.providers.offset.R
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.pagination.providers.offset.OffsetPaginationProvider
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: R
+
+.. py:class:: OffsetPaginationProvider(db, model_class)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`R`\ ], :py:obj:`app.core.pagination.base.PaginationProvider`\ [\ :py:obj:`T`\ , :py:obj:`R`\ ]
+
+
+   Offset-based pagination provider implementation.
+
+   This provider implements pagination using the offset-based approach,
+   which is suitable for most use cases where the total count is needed.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: model_class
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: paginate_with_offset(query, params, transform_func = None)
+      :async:
+
+
+      Paginate query results using offset-based pagination.
+
+      Args:
+          query: SQLAlchemy select query
+          params: Offset pagination parameters
+          transform_func: Optional function to transform each result item
+
+      Returns:
+          PaginationResult with paginated items and metadata
+
+      Raises:
+          InvalidSortFieldException: If a sort field is invalid
+
+
+
+   .. py:method:: paginate_with_cursor(query, params, transform_func = None)
+      :abstractmethod:
+
+      :async:
+
+
+      Cursor-based pagination is not supported by this provider.
+
+      Args:
+          query: SQLAlchemy select query
+          params: Cursor pagination parameters
+          transform_func: Optional function to transform each result item
+
+      Raises:
+          NotImplementedError: Always raised because this method is not supported
+
+
+
+   .. py:method:: _apply_sorting(query, sort_fields)
+
+      Apply sorting to the query based on sort fields.
+
+      Args:
+          query: SQLAlchemy select query
+          sort_fields: List of fields to sort by
+
+      Returns:
+          Query with sorting applied
+
+      Raises:
+          InvalidSortFieldException: If a sort field is invalid
+
+
+

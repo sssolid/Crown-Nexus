@@ -1,0 +1,77 @@
+app.data_import.connectors.base
+===============================
+
+.. py:module:: app.data_import.connectors.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.connectors.base.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.connectors.base.Connector
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: Connector
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for data source connectors.
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish connection to the data source.
+
+      Raises:
+          ConnectionError: If connection cannot be established
+
+
+
+   .. py:method:: extract(query, limit = None, **params)
+      :async:
+
+
+      Extract data from the source.
+
+      Args:
+          query: Query string or identifier for the data to extract
+          limit: Maximum number of records to retrieve
+          params: Additional parameters for the query
+
+      Returns:
+          List of records as dictionaries
+
+      Raises:
+          ValueError: If query is invalid
+          ConnectionError: If connection issues occur during extraction
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Close the connection.
+
+      Raises:
+          ConnectionError: If closing the connection fails
+
+
+

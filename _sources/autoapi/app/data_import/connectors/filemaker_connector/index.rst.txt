@@ -1,0 +1,121 @@
+app.data_import.connectors.filemaker_connector
+==============================================
+
+.. py:module:: app.data_import.connectors.filemaker_connector
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.connectors.filemaker_connector.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.connectors.filemaker_connector.FileMakerConnectionConfig
+   app.data_import.connectors.filemaker_connector.FileMakerConnector
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: FileMakerConnectionConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for FileMaker ODBC connection.
+
+
+   .. py:attribute:: dsn
+      :type:  str
+
+
+   .. py:attribute:: username
+      :type:  str
+
+
+   .. py:attribute:: password
+      :type:  str
+
+
+   .. py:attribute:: database
+      :type:  Optional[str]
+
+
+   .. py:attribute:: server
+      :type:  Optional[str]
+
+
+   .. py:attribute:: port
+      :type:  Optional[int]
+
+
+   .. py:attribute:: disable_ssl_verification
+      :type:  bool
+
+
+   .. py:method:: validate_port(v)
+
+
+.. py:class:: FileMakerConnector(config)
+
+   Connector for FileMaker databases using ODBC.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: connection
+      :value: None
+
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish connection to the FileMaker database.
+
+      Raises:
+          DatabaseException: If connection fails
+
+
+
+   .. py:method:: extract(query, limit = None, **params)
+      :async:
+
+
+      Extract data from FileMaker.
+
+      Args:
+          query: SQL query or table/layout name
+          limit: Maximum number of records to retrieve
+          params: Parameters for the query
+
+      Returns:
+          List of records as dictionaries
+
+      Raises:
+          DatabaseException: If extraction fails
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Close the connection to FileMaker.
+
+      Raises:
+          DatabaseException: If closing the connection fails
+
+
+

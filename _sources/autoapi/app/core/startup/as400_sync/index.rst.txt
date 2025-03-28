@@ -1,0 +1,51 @@
+app.core.startup.as400_sync
+===========================
+
+.. py:module:: app.core.startup.as400_sync
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.startup.as400_sync.logger
+   app.core.startup.as400_sync._initialized
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.startup.as400_sync.initialize_as400_sync
+   app.core.startup.as400_sync.shutdown_as400_sync
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: _initialized
+   :value: False
+
+
+.. py:function:: initialize_as400_sync()
+   :async:
+
+
+   Initialize the AS400 sync service.
+
+   This function should be called during application startup.
+
+
+.. py:function:: shutdown_as400_sync()
+   :async:
+
+
+   Shut down the AS400 sync service.
+
+   This function should be called during application shutdown.
+
+

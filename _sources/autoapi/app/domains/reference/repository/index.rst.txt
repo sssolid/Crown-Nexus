@@ -1,0 +1,255 @@
+app.domains.reference.repository
+================================
+
+.. py:module:: app.domains.reference.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.reference.repository.ColorRepository
+   app.domains.reference.repository.WarehouseRepository
+   app.domains.reference.repository.TariffCodeRepository
+   app.domains.reference.repository.UnspscCodeRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: ColorRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.reference.models.Color`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Color entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Color entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_name(name)
+      :async:
+
+
+      Find a color by name.
+
+      Args:
+          name: The color name to search for.
+
+      Returns:
+          The color if found, None otherwise.
+
+
+
+   .. py:method:: find_by_hex(hex_code)
+      :async:
+
+
+      Find a color by hex code.
+
+      Args:
+          hex_code: The hex code to search for.
+
+      Returns:
+          The color if found, None otherwise.
+
+
+
+   .. py:method:: ensure_exists(color_id)
+      :async:
+
+
+      Ensure a color exists by ID, raising an exception if not found.
+
+      Args:
+          color_id: The color ID to check.
+
+      Returns:
+          The color if found.
+
+      Raises:
+          ResourceNotFoundException: If the color is not found.
+
+
+
+.. py:class:: WarehouseRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.reference.models.Warehouse`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Warehouse entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   Warehouse entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_name(name)
+      :async:
+
+
+      Find a warehouse by name.
+
+      Args:
+          name: The warehouse name to search for.
+
+      Returns:
+          The warehouse if found, None otherwise.
+
+
+
+   .. py:method:: get_active_warehouses()
+      :async:
+
+
+      Get all active warehouses.
+
+      Returns:
+          List of active warehouses.
+
+
+
+   .. py:method:: ensure_exists(warehouse_id)
+      :async:
+
+
+      Ensure a warehouse exists by ID, raising an exception if not found.
+
+      Args:
+          warehouse_id: The warehouse ID to check.
+
+      Returns:
+          The warehouse if found.
+
+      Raises:
+          ResourceNotFoundException: If the warehouse is not found.
+
+
+
+.. py:class:: TariffCodeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.reference.models.TariffCode`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for TariffCode entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   TariffCode entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_code(code)
+      :async:
+
+
+      Find tariff codes by code string.
+
+      Args:
+          code: The tariff code to search for.
+
+      Returns:
+          List of matching tariff codes.
+
+
+
+   .. py:method:: get_by_country(country_id)
+      :async:
+
+
+      Get tariff codes for a specific country.
+
+      Args:
+          country_id: The country ID to filter by.
+
+      Returns:
+          List of tariff codes for the country.
+
+
+
+   .. py:method:: ensure_exists(tariff_code_id)
+      :async:
+
+
+      Ensure a tariff code exists by ID, raising an exception if not found.
+
+      Args:
+          tariff_code_id: The tariff code ID to check.
+
+      Returns:
+          The tariff code if found.
+
+      Raises:
+          ResourceNotFoundException: If the tariff code is not found.
+
+
+
+.. py:class:: UnspscCodeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.reference.models.UnspscCode`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for UnspscCode entity operations.
+
+   Provides methods for querying, creating, updating, and deleting
+   UnspscCode entities, extending the generic BaseRepository.
+
+
+   .. py:method:: find_by_code(code)
+      :async:
+
+
+      Find a UNSPSC code by exact code.
+
+      Args:
+          code: The UNSPSC code to search for.
+
+      Returns:
+          The UNSPSC code if found, None otherwise.
+
+
+
+   .. py:method:: find_by_segment(segment)
+      :async:
+
+
+      Find UNSPSC codes by segment.
+
+      Args:
+          segment: The segment to filter by.
+
+      Returns:
+          List of UNSPSC codes in the segment.
+
+
+
+   .. py:method:: find_by_description(description)
+      :async:
+
+
+      Find UNSPSC codes by description (partial match).
+
+      Args:
+          description: The description text to search for.
+
+      Returns:
+          List of UNSPSC codes with matching descriptions.
+
+
+
+   .. py:method:: ensure_exists(unspsc_code_id)
+      :async:
+
+
+      Ensure a UNSPSC code exists by ID, raising an exception if not found.
+
+      Args:
+          unspsc_code_id: The UNSPSC code ID to check.
+
+      Returns:
+          The UNSPSC code if found.
+
+      Raises:
+          ResourceNotFoundException: If the UNSPSC code is not found.
+
+
+

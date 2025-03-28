@@ -1,0 +1,194 @@
+app.data_import.importers.as400_importers
+=========================================
+
+.. py:module:: app.data_import.importers.as400_importers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.importers.as400_importers.logger
+   app.data_import.importers.as400_importers.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.importers.as400_importers.AS400BaseImporter
+   app.data_import.importers.as400_importers.ProductAS400Importer
+   app.data_import.importers.as400_importers.ProductMeasurementImporter
+   app.data_import.importers.as400_importers.ProductStockImporter
+   app.data_import.importers.as400_importers.ProductPricingImporter
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: AS400BaseImporter(db)
+
+   Bases: :py:obj:`app.data_import.importers.base.Importer`\ [\ :py:obj:`T`\ ]
+
+
+   Base class for AS400 data importers.
+
+   Provides common functionality for AS400 data import operations.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: get_existing_entities(id_field, id_values, model)
+      :async:
+
+
+      Get existing entities by their IDs.
+
+      Args:
+          id_field: Field name for the ID
+          id_values: List of ID values to look up
+          model: SQLAlchemy model class
+
+      Returns:
+          Dictionary mapping ID values to entity instances
+
+
+
+   .. py:method:: track_sync(entity_type, created, updated, errors)
+      :async:
+
+
+      Track synchronization statistics.
+
+      Args:
+          entity_type: Type of entity being synced
+          created: Number of created entities
+          updated: Number of updated entities
+          errors: Number of errors
+
+
+
+.. py:class:: ProductAS400Importer
+
+   Bases: :py:obj:`AS400BaseImporter`\ [\ :py:obj:`app.domains.products.schemas.ProductCreate`\ ]
+
+
+   Importer for product data from AS400.
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import product data from AS400.
+
+      Args:
+          data: List of product data to import
+
+      Returns:
+          Dictionary with import results
+
+
+
+   .. py:method:: _create_product(product_data)
+      :async:
+
+
+      Create a new product.
+
+      Args:
+          product_data: Product data to create
+
+      Returns:
+          Created product
+
+
+
+   .. py:method:: _update_product(existing_product, product_data)
+      :async:
+
+
+      Update an existing product.
+
+      Args:
+          existing_product: Existing product to update
+          product_data: New product data
+
+      Returns:
+          Updated product
+
+
+
+.. py:class:: ProductMeasurementImporter
+
+   Bases: :py:obj:`AS400BaseImporter`\ [\ :py:obj:`app.domains.products.schemas.ProductMeasurementCreate`\ ]
+
+
+   Importer for product measurement data from AS400.
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import product measurement data.
+
+      Args:
+          data: List of measurements to import
+
+      Returns:
+          Dictionary with import results
+
+
+
+.. py:class:: ProductStockImporter
+
+   Bases: :py:obj:`AS400BaseImporter`\ [\ :py:obj:`app.domains.products.schemas.ProductStock`\ ]
+
+
+   Importer for product stock/inventory data from AS400.
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import product stock data.
+
+      Args:
+          data: List of stock data to import
+
+      Returns:
+          Dictionary with import results
+
+
+
+.. py:class:: ProductPricingImporter(db)
+
+   Bases: :py:obj:`AS400BaseImporter`\ [\ :py:obj:`Any`\ ]
+
+
+   Importer for product pricing data from AS400.
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import product pricing data.
+
+      Args:
+          data: List of pricing data to import
+
+      Returns:
+          Dictionary with import results
+
+
+

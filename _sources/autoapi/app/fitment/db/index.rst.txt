@@ -1,0 +1,267 @@
+app.fitment.db
+==============
+
+.. py:module:: app.fitment.db
+
+.. autoapi-nested-parse::
+
+   Database access for fitment data.
+
+   This module provides functions to interact with
+   VCDB and PCDB databases for fitment data.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.fitment.db.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.db.AccessDBClient
+   app.fitment.db.FitmentDBService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: AccessDBClient(db_path)
+
+   Client for Microsoft Access databases (VCDB and PCDB).
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: connection_string
+      :value: 'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=Uninferable;'
+
+
+
+   .. py:method:: connect()
+
+      Connect to the Access database.
+
+      Returns:
+          ODBC connection to the database
+
+      Raises:
+          DatabaseError: If connection fails
+
+
+
+   .. py:method:: query(sql, params = None)
+
+      Execute a SQL query on the Access database.
+
+      Args:
+          sql: SQL query to execute
+          params: Optional parameters for the query
+
+      Returns:
+          List of dictionaries representing the query results
+
+      Raises:
+          DatabaseError: If query execution fails
+
+
+
+.. py:class:: FitmentDBService(vcdb_path, pcdb_path, sqlalchemy_url = None)
+
+   Service for database operations related to fitment data.
+
+
+   .. py:attribute:: vcdb_client
+
+
+   .. py:attribute:: pcdb_client
+
+
+   .. py:method:: get_session()
+      :async:
+
+
+      Get an async session for database operations.
+
+      Yields:
+          AsyncSession object
+
+      Raises:
+          DatabaseError: If async database is not configured
+
+
+
+   .. py:method:: get_vcdb_vehicles(year = None, make = None, model = None)
+
+      Get vehicles from VCDB matching the specified criteria.
+
+      Args:
+          year: Optional year to filter by
+          make: Optional make to filter by
+          model: Optional model to filter by
+
+      Returns:
+          List of VCDBVehicle objects
+
+      Raises:
+          DatabaseError: If query fails
+
+
+
+   .. py:method:: get_pcdb_part_terminology(terminology_id)
+
+      Get part terminology information from PCDB.
+
+      Args:
+          terminology_id: ID of the part terminology
+
+      Returns:
+          PartTerminology object
+
+      Raises:
+          DatabaseError: If query fails or part terminology not found
+
+
+
+   .. py:method:: get_pcdb_positions(position_ids = None)
+
+      Get position information from PCDB.
+
+      Args:
+          position_ids: Optional list of position IDs to filter by
+
+      Returns:
+          List of PCDBPosition objects
+
+      Raises:
+          DatabaseError: If query fails
+
+
+
+   .. py:method:: load_model_mappings_from_json(json_path)
+
+      Load model mappings from a JSON file.
+
+      Args:
+          json_path: Path to the JSON file
+
+      Returns:
+          Dictionary of model mappings
+
+      Raises:
+          DatabaseError: If loading fails
+
+
+
+   .. py:method:: get_model_mappings()
+      :async:
+
+
+      Get model mappings from the database.
+
+      Returns:
+          Dictionary of model mappings where keys are patterns and values are lists of mapping strings
+
+      Raises:
+          DatabaseError: If query fails
+
+
+
+   .. py:method:: add_model_mapping(pattern, mapping, priority = 0)
+      :async:
+
+
+      Add a new model mapping to the database.
+
+      Args:
+          pattern: Pattern to match in vehicle text
+          mapping: Mapping string in format "Make|VehicleCode|Model"
+          priority: Optional priority for matching (higher values are processed first)
+
+      Returns:
+          ID of the new mapping
+
+      Raises:
+          DatabaseError: If insert fails
+
+
+
+   .. py:method:: update_model_mapping(mapping_id, **kwargs)
+      :async:
+
+
+      Update an existing model mapping.
+
+      Args:
+          mapping_id: ID of the mapping to update
+          **kwargs: Fields to update (pattern, mapping, priority, active)
+
+      Returns:
+          True if successful
+
+      Raises:
+          DatabaseError: If update fails
+
+
+
+   .. py:method:: delete_model_mapping(mapping_id)
+      :async:
+
+
+      Delete a model mapping.
+
+      Args:
+          mapping_id: ID of the mapping to delete
+
+      Returns:
+          True if successful
+
+      Raises:
+          DatabaseError: If delete fails
+
+
+
+   .. py:method:: import_mappings_from_json(json_data)
+      :async:
+
+
+      Import mappings from a JSON dictionary.
+
+      Args:
+          json_data: Dictionary where keys are patterns and values are lists of mappings
+
+      Returns:
+          Number of mappings imported
+
+      Raises:
+          DatabaseError: If import fails
+
+
+
+   .. py:method:: save_fitment_results(product_id, fitments)
+      :async:
+
+
+      Save fitment results to the database.
+
+      Args:
+          product_id: ID of the product
+          fitments: List of fitment dictionaries
+
+      Returns:
+          True if successful
+
+      Raises:
+          DatabaseError: If saving fails
+
+
+

@@ -1,0 +1,286 @@
+app.core.events.backend
+=======================
+
+.. py:module:: app.core.events.backend
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.events.backend.logger
+   app.core.events.backend.EventHandler
+   app.core.events.backend._event_backend
+   app.core.events.backend._pending_handlers
+   app.core.events.backend._is_initialized
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.events.backend.EventBackendType
+   app.core.events.backend.EventPublisher
+   app.core.events.backend.EventSubscriber
+   app.core.events.backend.EventBackend
+   app.core.events.backend.CeleryEventBackend
+   app.core.events.backend.MemoryEventBackend
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.events.backend.get_event_backend
+   app.core.events.backend.init_event_backend
+   app.core.events.backend.publish_event
+   app.core.events.backend.subscribe_to_event
+   app.core.events.backend.init_domain_events
+   app.core.events.backend.register_event_handlers
+   app.core.events.backend._import_event_handlers
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: EventHandler
+
+.. py:class:: EventBackendType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Types of event backends supported.
+
+
+   .. py:attribute:: CELERY
+
+
+   .. py:attribute:: MEMORY
+
+
+.. py:class:: EventPublisher
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for publishing events.
+
+
+   .. py:method:: publish_event(event_name, payload)
+
+      Publish an event to subscribers.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+.. py:class:: EventSubscriber
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining the interface for subscribing to events.
+
+
+   .. py:method:: subscribe(event_name, handler)
+
+      Subscribe a handler to an event.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:class:: EventBackend
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`EventPublisher`, :py:obj:`EventSubscriber`
+
+
+   Abstract base class for event backend implementations.
+
+
+   .. py:method:: publish_event(event_name, payload)
+      :abstractmethod:
+
+
+      Publish an event to subscribers.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+   .. py:method:: subscribe(event_name, handler)
+      :abstractmethod:
+
+
+      Subscribe a handler to an event.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:class:: CeleryEventBackend(celery_app)
+
+   Bases: :py:obj:`EventBackend`
+
+
+   Celery implementation of the event backend.
+
+
+   .. py:attribute:: celery_app
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: publish_event(event_name, payload)
+
+      Publish an event using Celery tasks.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+   .. py:method:: subscribe(event_name, handler)
+
+      Subscribe a handler to an event using Celery task decoration.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:class:: MemoryEventBackend
+
+   Bases: :py:obj:`EventBackend`
+
+
+   In-memory implementation of the event backend for testing or simple apps.
+
+
+   .. py:attribute:: handlers
+      :type:  Dict[str, List[EventHandler]]
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: publish_event(event_name, payload)
+
+      Publish an event to all subscribers immediately in-process.
+
+      Args:
+          event_name: The name of the event to publish
+          payload: Event data to be sent to subscribers
+
+
+
+   .. py:method:: subscribe(event_name, handler)
+
+      Subscribe a handler to an event for in-memory processing.
+
+      Args:
+          event_name: The name of the event to subscribe to
+          handler: The function to call when the event is published
+
+
+
+.. py:data:: _event_backend
+   :type:  Optional[EventBackend]
+   :value: None
+
+
+.. py:data:: _pending_handlers
+   :type:  Dict[str, List[EventHandler]]
+
+.. py:data:: _is_initialized
+   :value: False
+
+
+.. py:function:: get_event_backend()
+
+   Get the configured event backend.
+
+   Returns:
+       The configured event backend instance.
+
+   Raises:
+       RuntimeError: If the event backend is not initialized
+
+
+.. py:function:: init_event_backend(backend_type, **kwargs)
+
+   Initialize the event backend to use.
+
+   Args:
+       backend_type: Type of event backend to use
+       **kwargs: Additional arguments to pass to the backend constructor
+
+   Returns:
+       The initialized event backend instance
+
+   Raises:
+       ValueError: If an unsupported backend type is requested
+
+
+.. py:function:: publish_event(event_name, payload)
+
+   Publish a domain event.
+
+   Args:
+       event_name: The name of the event to publish
+       payload: Event data to be sent to subscribers
+
+
+.. py:function:: subscribe_to_event(event_name)
+
+   Decorator to subscribe a function to a domain event.
+
+   If the event backend is not yet initialized, handlers will be stored
+   for later registration with init_domain_events().
+
+   Args:
+       event_name: The name of the event to subscribe to
+
+   Returns:
+       Decorator function that registers the handler
+
+
+.. py:function:: init_domain_events()
+
+   Initialize domain events by registering all pending handlers.
+
+   This should be called after the event backend is initialized.
+
+
+.. py:function:: register_event_handlers(*modules)
+
+   Import modules to register their event handlers.
+
+   This function has been deprecated. Use init_domain_events() instead.
+
+   Args:
+       *modules: Module objects to ensure are imported
+
+
+.. py:function:: _import_event_handlers()
+
+   Import all domain event handler modules.
+
+

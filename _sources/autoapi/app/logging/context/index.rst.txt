@@ -1,0 +1,83 @@
+app.logging.context
+===================
+
+.. py:module:: app.logging.context
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.logging.context.F
+   app.logging.context.T
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.logging.context.request_context
+   app.logging.context.set_user_id
+   app.logging.context.clear_user_id
+   app.logging.context.log_execution_time
+   app.logging.context.log_execution_time_async
+
+
+Module Contents
+---------------
+
+.. py:data:: F
+
+.. py:data:: T
+
+.. py:function:: request_context(request_id = None, user_id = None)
+
+   Context manager for tracking request information.
+
+   Args:
+       request_id: Optional request ID (generated if not provided)
+       user_id: Optional user ID
+
+   Yields:
+       The request ID being used
+
+
+.. py:function:: set_user_id(user_id)
+
+   Set the user ID for the current context.
+
+   Args:
+       user_id: The user ID to set
+
+
+.. py:function:: clear_user_id()
+
+   Clear the user ID from the current context.
+
+
+.. py:function:: log_execution_time(logger = None, level = 'info')
+
+   Decorator to log function execution time.
+
+   Args:
+       logger: Optional logger to use (defaults to module logger)
+       level: Log level to use
+
+   Returns:
+       Decorated function
+
+
+.. py:function:: log_execution_time_async(logger = None, level = 'info')
+
+   Decorator to log async function execution time.
+
+   Args:
+       logger: Optional logger to use (defaults to module logger)
+       level: Log level to use
+
+   Returns:
+       Decorated async function
+
+

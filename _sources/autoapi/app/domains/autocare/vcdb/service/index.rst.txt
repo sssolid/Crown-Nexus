@@ -1,0 +1,552 @@
+app.domains.autocare.vcdb.service
+=================================
+
+.. py:module:: app.domains.autocare.vcdb.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.vcdb.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.vcdb.service.VCdbService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: VCdbService(db)
+
+   Service for interacting with VCdb (Vehicle Component Database) data.
+
+   This service provides methods for querying, importing, and managing
+   vehicle data and their components according to Auto Care standards.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: repository
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current VCdb database version.
+
+      Returns:
+          String representation of the version date or a message indicating
+          no version information is available
+
+
+
+   .. py:method:: update_database(file_path)
+      :async:
+
+
+      Update the VCdb database from a file.
+
+      Args:
+          file_path: Path to the file containing VCdb data
+
+      Returns:
+          Dictionary with status information about the update operation
+
+      Raises:
+          VCdbException: If the update operation fails
+
+
+
+   .. py:method:: import_from_aces(file_path, params)
+      :async:
+
+
+      Import vehicle data from an ACES XML file.
+
+      Args:
+          file_path: Path to the ACES XML file
+          params: Import parameters for controlling the import process
+
+      Returns:
+          Dictionary with status information about the import operation
+
+      Raises:
+          VCdbException: If the import operation fails
+
+
+
+   .. py:method:: get_years()
+      :async:
+
+
+      Get all available vehicle years.
+
+      Returns:
+          List of dictionaries containing year information
+
+
+
+   .. py:method:: get_year_range()
+      :async:
+
+
+      Get the range of available vehicle years.
+
+      Returns:
+          Tuple containing the minimum and maximum years in the database
+
+
+
+   .. py:method:: get_makes()
+      :async:
+
+
+      Get all available vehicle makes.
+
+      Returns:
+          List of dictionaries containing make information
+
+
+
+   .. py:method:: get_makes_by_year(year)
+      :async:
+
+
+      Get all makes available for a specific year.
+
+      Args:
+          year: The vehicle year to filter by
+
+      Returns:
+          List of dictionaries containing make information for the specified year
+
+
+
+   .. py:method:: search_makes(search_term)
+      :async:
+
+
+      Search for makes by name.
+
+      Args:
+          search_term: The search term to find in make names
+
+      Returns:
+          List of dictionaries containing matching make information
+
+
+
+   .. py:method:: get_make_by_id(make_id)
+      :async:
+
+
+      Get a specific make by ID.
+
+      Args:
+          make_id: The make ID to retrieve
+
+      Returns:
+          Dictionary containing make information
+
+      Raises:
+          ResourceNotFoundException: If make with the specified ID is not found
+
+
+
+   .. py:method:: get_models_by_year_make(year, make_id)
+      :async:
+
+
+      Get all models for a specific year and make.
+
+      Args:
+          year: The vehicle year
+          make_id: The make ID
+
+      Returns:
+          List of dictionaries containing model information
+
+
+
+   .. py:method:: search_models(search_term)
+      :async:
+
+
+      Search for models by name.
+
+      Args:
+          search_term: The search term to find in model names
+
+      Returns:
+          List of dictionaries containing matching model information
+
+
+
+   .. py:method:: get_model_by_id(model_id)
+      :async:
+
+
+      Get a specific model by ID.
+
+      Args:
+          model_id: The model ID to retrieve
+
+      Returns:
+          Dictionary containing model information
+
+      Raises:
+          ResourceNotFoundException: If model with the specified ID is not found
+
+
+
+   .. py:method:: get_submodels_by_base_vehicle(base_vehicle_id)
+      :async:
+
+
+      Get all submodels for a specific base vehicle.
+
+      Args:
+          base_vehicle_id: The base vehicle ID
+
+      Returns:
+          List of dictionaries containing submodel information
+
+
+
+   .. py:method:: get_all_submodels()
+      :async:
+
+
+      Get all available submodels.
+
+      Returns:
+          List of dictionaries containing submodel information
+
+
+
+   .. py:method:: search_submodels(search_term)
+      :async:
+
+
+      Search for submodels by name.
+
+      Args:
+          search_term: The search term to find in submodel names
+
+      Returns:
+          List of dictionaries containing matching submodel information
+
+
+
+   .. py:method:: get_vehicle_types()
+      :async:
+
+
+      Get all available vehicle types.
+
+      Returns:
+          List of dictionaries containing vehicle type information
+
+
+
+   .. py:method:: get_vehicle_types_by_group(group_id)
+      :async:
+
+
+      Get all vehicle types within a specific group.
+
+      Args:
+          group_id: The vehicle type group ID
+
+      Returns:
+          List of dictionaries containing vehicle type information
+
+
+
+   .. py:method:: get_regions()
+      :async:
+
+
+      Get all top-level regions.
+
+      Returns:
+          List of dictionaries containing region information
+
+
+
+   .. py:method:: get_regions_by_parent(parent_id)
+      :async:
+
+
+      Get all subregions for a parent region.
+
+      Args:
+          parent_id: The parent region ID
+
+      Returns:
+          List of dictionaries containing subregion information
+
+
+
+   .. py:method:: get_base_vehicle(base_vehicle_id)
+      :async:
+
+
+      Get a specific base vehicle by ID.
+
+      Args:
+          base_vehicle_id: The base vehicle ID to retrieve
+
+      Returns:
+          Dictionary containing base vehicle information
+
+      Raises:
+          ResourceNotFoundException: If base vehicle with the specified ID is not found
+
+
+
+   .. py:method:: find_base_vehicle(year_id, make_id, model_id)
+      :async:
+
+
+      Find a base vehicle by its component IDs.
+
+      Args:
+          year_id: The year ID
+          make_id: The make ID
+          model_id: The model ID
+
+      Returns:
+          Dictionary containing base vehicle information or None if not found
+
+
+
+   .. py:method:: search_base_vehicles(year = None, make = None, model = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for base vehicles by criteria.
+
+      Args:
+          year: Optional year to filter by
+          make: Optional make name pattern to filter by
+          model: Optional model name pattern to filter by
+          page: Page number for pagination
+          page_size: Number of items per page
+
+      Returns:
+          Dictionary containing search results and pagination information
+
+
+
+   .. py:method:: search_vehicles(year = None, make = None, model = None, submodel = None, body_type = None, engine_config = None, transmission_type = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for vehicles by criteria.
+
+      Args:
+          year: Optional year to filter by
+          make: Optional make name pattern to filter by
+          model: Optional model name pattern to filter by
+          submodel: Optional submodel name pattern to filter by
+          body_type: Optional body type pattern to filter by
+          engine_config: Optional engine configuration ID to filter by
+          transmission_type: Optional transmission type ID to filter by
+          page: Page number for pagination
+          page_size: Number of items per page
+
+      Returns:
+          Dictionary containing search results and pagination information
+
+
+
+   .. py:method:: get_vehicle_by_id(vehicle_id)
+      :async:
+
+
+      Get a specific vehicle by ID.
+
+      Args:
+          vehicle_id: The vehicle ID to retrieve
+
+      Returns:
+          Dictionary containing basic vehicle information
+
+      Raises:
+          ResourceNotFoundException: If vehicle with the specified ID is not found
+
+
+
+   .. py:method:: get_vehicle_details(vehicle_id)
+      :async:
+
+
+      Get detailed information about a specific vehicle.
+
+      Args:
+          vehicle_id: The vehicle ID to retrieve
+
+      Returns:
+          Dictionary containing detailed vehicle information including
+          engines, transmissions, drive types, and body styles
+
+      Raises:
+          ResourceNotFoundException: If vehicle with the specified ID is not found
+
+
+
+   .. py:method:: get_vehicle_configurations(vehicle_id)
+      :async:
+
+
+      Get all component configurations for a specific vehicle.
+
+      Args:
+          vehicle_id: The vehicle ID to retrieve configurations for
+
+      Returns:
+          Dictionary containing component configurations grouped by type
+
+      Raises:
+          ResourceNotFoundException: If vehicle with the specified ID is not found
+
+
+
+   .. py:method:: get_engine_config(engine_config_id)
+      :async:
+
+
+      Get detailed information about a specific engine configuration.
+
+      Args:
+          engine_config_id: The engine configuration ID to retrieve
+
+      Returns:
+          Dictionary containing detailed engine configuration information
+
+      Raises:
+          ResourceNotFoundException: If engine configuration is not found
+
+
+
+   .. py:method:: search_engine_configs(engine_base_id = None, fuel_type_id = None, aspiration_id = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for engine configurations by criteria.
+
+      Args:
+          engine_base_id: Optional engine base ID to filter by
+          fuel_type_id: Optional fuel type ID to filter by
+          aspiration_id: Optional aspiration ID to filter by
+          page: Page number for pagination
+          page_size: Number of items per page
+
+      Returns:
+          Dictionary containing search results and pagination information
+
+
+
+   .. py:method:: get_transmission(transmission_id)
+      :async:
+
+
+      Get detailed information about a specific transmission.
+
+      Args:
+          transmission_id: The transmission ID to retrieve
+
+      Returns:
+          Dictionary containing detailed transmission information
+
+      Raises:
+          ResourceNotFoundException: If transmission is not found
+
+
+
+   .. py:method:: search_transmissions(transmission_type_id = None, transmission_num_speeds_id = None, transmission_control_type_id = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for transmissions by criteria.
+
+      Args:
+          transmission_type_id: Optional transmission type ID to filter by
+          transmission_num_speeds_id: Optional number of speeds ID to filter by
+          transmission_control_type_id: Optional control type ID to filter by
+          page: Page number for pagination
+          page_size: Number of items per page
+
+      Returns:
+          Dictionary containing search results and pagination information
+
+
+
+   .. py:method:: get_drive_types()
+      :async:
+
+
+      Get all available drive types.
+
+      Returns:
+          List of dictionaries containing drive type information
+
+
+
+   .. py:method:: get_body_style_config(body_style_config_id)
+      :async:
+
+
+      Get detailed information about a specific body style configuration.
+
+      Args:
+          body_style_config_id: The body style configuration ID to retrieve
+
+      Returns:
+          Dictionary containing detailed body style configuration information
+
+      Raises:
+          ResourceNotFoundException: If body style configuration is not found
+
+
+
+   .. py:method:: get_brake_config(brake_config_id)
+      :async:
+
+
+      Get detailed information about a specific brake configuration.
+
+      Args:
+          brake_config_id: The brake configuration ID to retrieve
+
+      Returns:
+          Dictionary containing detailed brake configuration information
+
+      Raises:
+          ResourceNotFoundException: If brake configuration is not found
+
+
+
+   .. py:method:: get_wheel_bases()
+      :async:
+
+
+      Get all available wheel bases.
+
+      Returns:
+          List of dictionaries containing wheel base information
+
+
+

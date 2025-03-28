@@ -1,0 +1,106 @@
+app.data_import.commands.import_products
+========================================
+
+.. py:module:: app.data_import.commands.import_products
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.commands.import_products.logger
+   app.data_import.commands.import_products.app
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.data_import.commands.import_products.import_products
+   app.data_import.commands.import_products._load_connector_config
+   app.data_import.commands.import_products._load_mapping_config
+   app.data_import.commands.import_products._run_import
+   app.data_import.commands.import_products._print_result
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: app
+
+.. py:function:: import_products(source_type = typer.Option('filemaker', '--source', '-s', help='Source type (filemaker or file)'), config_file = typer.Option(None, '--config', '-c', help='Path to configuration JSON file'), query = typer.Option(None, '--query', '-q', help='Query or table name to extract data from'), dry_run = typer.Option(False, '--dry-run', '-d', help="Dry run (extract, process, validate, but don't import)"), output_file = typer.Option(None, '--output', '-o', help='Output file for processed data (dry run only)'), dsn = typer.Option(None, '--dsn', help='FileMaker ODBC DSN'), username = typer.Option(None, '--username', '-u', help='FileMaker username'), password = typer.Option(None, '--password', '-p', help='FileMaker password'), database = typer.Option(None, '--database', '-db', help='FileMaker database name (optional, may be included in DSN)'), file_path = typer.Option(None, '--file', '-f', help='Path to input file (CSV or JSON)'), mapping_file = typer.Option(None, '--mapping', '-m', help='Path to field mapping JSON file'), file_type = typer.Option(None, '--file-type', '-ft', help='File type (csv or json)'), disable_ssl = typer.Option(False, '--disable-ssl-verification', help='Disable SSL certificate verification'), limit = typer.Option(None, '--limit', '-l', help='Limit the number of records to import'))
+
+   Import products from FileMaker or file.
+
+   This command extracts product data from FileMaker or a file,
+   processes and validates it, and imports it into the database.
+
+
+.. py:function:: _load_connector_config(source_type, config_file, dsn, username, password, database, file_path, file_type, disable_ssl = False)
+
+   Load connector configuration from file or command line options.
+
+   Args:
+       source_type: Source type (filemaker or file)
+       config_file: Path to configuration file
+       dsn: FileMaker DSN
+       username: FileMaker username
+       password: FileMaker password
+       database: FileMaker database
+       file_path: Path to input file
+       file_type: File type
+
+   Returns:
+       Connector configuration dictionary
+
+   Raises:
+       ValueError: If required configuration is missing
+
+
+.. py:function:: _load_mapping_config(mapping_file)
+
+   Load field mapping configuration from file.
+
+   Args:
+       mapping_file: Path to mapping file
+
+   Returns:
+       Mapping configuration dictionary
+
+   Raises:
+       ValueError: If mapping file cannot be loaded
+
+
+.. py:function:: _run_import(source_type, connector_config, mapping_config, query, limit, dry_run, output_file)
+   :async:
+
+
+   Run the import pipeline.
+
+   Args:
+       source_type: Source type (filemaker or file)
+       connector_config: Connector configuration
+       mapping_config: Mapping configuration
+       query: Query string
+       dry_run: Dry run flag
+       output_file: Output file path
+
+   Returns:
+       Import result statistics
+
+   Raises:
+       AppException: If import fails
+
+
+.. py:function:: _print_result(result)
+
+   Print import result.
+
+   Args:
+       result: Import result statistics
+
+

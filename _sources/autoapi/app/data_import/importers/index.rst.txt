@@ -1,0 +1,115 @@
+app.data_import.importers
+=========================
+
+.. py:module:: app.data_import.importers
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/data_import/importers/as400_importers/index
+   /autoapi/app/data_import/importers/base/index
+   /autoapi/app/data_import/importers/product_importer/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.importers.Importer
+   app.data_import.importers.ProductImporter
+
+
+Package Contents
+----------------
+
+.. py:class:: Importer
+
+   Bases: :py:obj:`Protocol`\ [\ :py:obj:`T`\ ]
+
+
+   Protocol for data importers.
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import data into the target system.
+
+      Args:
+          data: List of records to import
+
+      Returns:
+          Dictionary with import statistics
+
+      Raises:
+          ValueError: If data cannot be imported
+          DatabaseError: If database operations fail
+
+
+
+.. py:class:: ProductImporter(db)
+
+   Importer for product data.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: _get_existing_products(part_numbers)
+      :async:
+
+
+      Get existing products by part numbers.
+
+      Args:
+          part_numbers: List of part numbers to look up
+
+      Returns:
+          Dictionary mapping part numbers to existing products
+
+      Raises:
+          DatabaseException: If database query fails
+
+
+
+   .. py:method:: _create_or_update_product(product_data, existing_product = None)
+      :async:
+
+
+      Create or update a product.
+
+      Args:
+          product_data: Product data to create or update
+          existing_product: Existing product if updating
+
+      Returns:
+          Tuple of (product, is_new)
+
+      Raises:
+          DatabaseException: If database operation fails
+
+
+
+   .. py:method:: import_data(data)
+      :async:
+
+
+      Import product data into the database.
+
+      Args:
+          data: List of validated product data to import
+
+      Returns:
+          Dictionary with import statistics
+
+      Raises:
+          DatabaseException: If database operations fail
+
+
+

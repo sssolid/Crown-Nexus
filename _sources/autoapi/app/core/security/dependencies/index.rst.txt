@@ -1,0 +1,63 @@
+app.core.security.dependencies
+==============================
+
+.. py:module:: app.core.security.dependencies
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.security.dependencies.logger
+   app.core.security.dependencies.oauth2_scheme
+   app.core.security.dependencies.optional_oauth2_scheme
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.security.dependencies.get_token_from_header
+   app.core.security.dependencies.get_current_user_id
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: oauth2_scheme
+
+.. py:data:: optional_oauth2_scheme
+
+.. py:function:: get_token_from_header(token = Depends(oauth2_scheme))
+   :async:
+
+
+   Get a token from the Authorization header.
+
+   Args:
+       token: The token from the OAuth2 scheme.
+
+   Returns:
+       str: The token.
+
+
+.. py:function:: get_current_user_id(token = Depends(get_token_from_header))
+   :async:
+
+
+   Get the current user ID from a token.
+
+   Args:
+       token: The token to decode.
+
+   Returns:
+       str: The user ID.
+
+   Raises:
+       AuthenticationException: If the token is invalid.
+
+

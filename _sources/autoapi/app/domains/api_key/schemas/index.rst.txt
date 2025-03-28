@@ -1,0 +1,214 @@
+app.domains.api_key.schemas
+===========================
+
+.. py:module:: app.domains.api_key.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.api_key.schemas.ApiKeyBase
+   app.domains.api_key.schemas.ApiKeyCreate
+   app.domains.api_key.schemas.ApiKeyUpdate
+   app.domains.api_key.schemas.ApiKeyInDB
+   app.domains.api_key.schemas.ApiKey
+   app.domains.api_key.schemas.ApiKeyWithSecret
+   app.domains.api_key.schemas.ApiKeyRevokeResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: ApiKeyBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for API key data.
+
+   Attributes:
+       name: Human-readable name for the key.
+       permissions: List of permissions granted to the key.
+       extra_metadata: Additional metadata about the key.
+       expires_at: When the key expires.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: permissions
+      :type:  Optional[List[str]]
+
+
+   .. py:attribute:: extra_metadata
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: expires_at
+      :type:  Optional[datetime.datetime]
+
+
+   .. py:method:: normalize_name(v)
+      :classmethod:
+
+
+      Normalize the API key name.
+
+      Args:
+          v: The name to normalize.
+
+      Returns:
+          Normalized name.
+
+
+
+.. py:class:: ApiKeyCreate
+
+   Bases: :py:obj:`ApiKeyBase`
+
+
+   Schema for creating a new API key.
+
+   Attributes:
+       user_id: ID of the user who will own the key.
+
+
+   .. py:attribute:: user_id
+      :type:  uuid.UUID
+
+
+.. py:class:: ApiKeyUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing API key.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: permissions
+      :type:  Optional[List[str]]
+
+
+   .. py:attribute:: extra_metadata
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: expires_at
+      :type:  Optional[datetime.datetime]
+
+
+   .. py:method:: normalize_name(v)
+      :classmethod:
+
+
+      Normalize the API key name if provided.
+
+      Args:
+          v: The name to normalize or None.
+
+      Returns:
+          Normalized name or None.
+
+
+
+.. py:class:: ApiKeyInDB
+
+   Bases: :py:obj:`ApiKeyBase`
+
+
+   Schema for API key data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: user_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: key_id
+      :type:  str
+
+
+   .. py:attribute:: is_active
+      :type:  bool
+
+
+   .. py:attribute:: last_used_at
+      :type:  Optional[datetime.datetime]
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ApiKey
+
+   Bases: :py:obj:`ApiKeyInDB`
+
+
+   Schema for API key data in API responses.
+
+
+.. py:class:: ApiKeyWithSecret
+
+   Bases: :py:obj:`ApiKey`
+
+
+   Schema for API key including the secret.
+
+   This schema is only used when initially creating an API key.
+
+
+   .. py:attribute:: secret
+      :type:  str
+
+
+.. py:class:: ApiKeyRevokeResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for API key revocation response.
+
+   Attributes:
+       id: ID of the revoked key.
+       revoked: Whether the key was successfully revoked.
+       message: Response message.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: revoked
+      :type:  bool
+
+
+   .. py:attribute:: message
+      :type:  str
+
+

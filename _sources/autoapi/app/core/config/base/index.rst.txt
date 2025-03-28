@@ -1,0 +1,148 @@
+app.core.config.base
+====================
+
+.. py:module:: app.core.config.base
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.base.Environment
+   app.core.config.base.LogLevel
+   app.core.config.base.BaseAppSettings
+
+
+Module Contents
+---------------
+
+.. py:class:: Environment
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Application environment enumeration.
+
+
+   .. py:attribute:: DEVELOPMENT
+      :value: 'development'
+
+
+
+   .. py:attribute:: STAGING
+      :value: 'staging'
+
+
+
+   .. py:attribute:: PRODUCTION
+      :value: 'production'
+
+
+
+.. py:class:: LogLevel
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Log level enumeration.
+
+
+   .. py:attribute:: DEBUG
+      :value: 'DEBUG'
+
+
+
+   .. py:attribute:: INFO
+      :value: 'INFO'
+
+
+
+   .. py:attribute:: WARNING
+      :value: 'WARNING'
+
+
+
+   .. py:attribute:: ERROR
+      :value: 'ERROR'
+
+
+
+   .. py:attribute:: CRITICAL
+      :value: 'CRITICAL'
+
+
+
+.. py:class:: BaseAppSettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Base application settings and configuration.
+
+
+   .. py:attribute:: PROJECT_NAME
+      :type:  str
+      :value: 'Crown Nexus'
+
+
+
+   .. py:attribute:: DESCRIPTION
+      :type:  str
+      :value: 'B2B platform for automotive aftermarket industry'
+
+
+
+   .. py:attribute:: VERSION
+      :type:  str
+      :value: '0.1.0'
+
+
+
+   .. py:attribute:: API_V1_STR
+      :type:  str
+      :value: '/api/v1'
+
+
+
+   .. py:attribute:: ENVIRONMENT
+      :type:  Environment
+
+
+   .. py:attribute:: BASE_DIR
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: DEFAULT_LOCALE
+      :type:  str
+      :value: 'en'
+
+
+
+   .. py:attribute:: AVAILABLE_LOCALES
+      :type:  Union[List[str], str]
+      :value: ['en', 'es', 'fr', 'de']
+
+
+
+   .. py:attribute:: LOG_LEVEL
+      :type:  LogLevel
+
+
+   .. py:attribute:: LOG_FORMAT
+      :type:  str
+      :value: 'text'
+
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: parse_str_to_list(v)
+      :classmethod:
+
+
+      Parse string to list.
+
+
+

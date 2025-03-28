@@ -1,0 +1,29 @@
+app.core
+========
+
+.. py:module:: app.core
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/cache/index
+   /autoapi/app/core/celery_app/index
+   /autoapi/app/core/celeryconfig/index
+   /autoapi/app/core/config/index
+   /autoapi/app/core/dependency_manager/index
+   /autoapi/app/core/error/index
+   /autoapi/app/core/events/index
+   /autoapi/app/core/exceptions/index
+   /autoapi/app/core/metrics/index
+   /autoapi/app/core/pagination/index
+   /autoapi/app/core/permissions/index
+   /autoapi/app/core/rate_limiting/index
+   /autoapi/app/core/security/index
+   /autoapi/app/core/startup/index
+   /autoapi/app/core/validation/index
+
+

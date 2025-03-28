@@ -1,0 +1,208 @@
+app.utils.retry
+===============
+
+.. py:module:: app.utils.retry
+
+.. autoapi-nested-parse::
+
+   Retry utilities for improving resilience of external service calls.
+
+   This module provides decorators and utilities for automatically retrying operations
+   that might fail due to transient issues, such as network timeouts, rate limiting,
+   or temporary service unavailability.
+
+   Features include:
+   - Configurable retry count, delay, and backoff
+   - Support for both synchronous and asynchronous functions
+   - Jitter to prevent thundering herd problems
+   - Exception filtering to retry only on specific errors
+   - Timeout handling for operations
+
+   All functions include proper error handling, logging, and configurable options to
+   ensure external service calls are resilient while maintaining responsiveness.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.utils.retry.logger
+   app.utils.retry.F
+   app.utils.retry.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.utils.retry.RetryableError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.utils.retry.retry
+   app.utils.retry.async_retry
+   app.utils.retry.retry_on_network_errors
+   app.utils.retry.async_retry_on_network_errors
+   app.utils.retry.retry_with_timeout
+   app.utils.retry.async_retry_with_timeout
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: F
+
+.. py:data:: T
+
+.. py:class:: RetryableError
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining retryable error behaviors.
+
+
+   .. py:method:: is_retryable()
+
+      Determine if exception should trigger retry.
+
+
+
+.. py:function:: retry(retries: int = ..., delay: float = ..., backoff_factor: float = ..., jitter: bool = ..., exceptions: Union[Type[Exception], List[Type[Exception]]] = ...) -> Callable[[F], F]
+                 retry(func: F) -> F
+
+   Decorator to retry synchronous functions with exponential backoff.
+
+   Args:
+       func: Function to decorate (for direct use)
+       retries: Maximum number of retry attempts
+       delay: Initial delay between retries in seconds
+       backoff_factor: Multiplier for delay after each retry
+       jitter: Whether to add randomness to delay timing
+       exceptions: Exception type(s) to catch and retry on
+
+   Returns:
+       Callable: Decorated function that will retry on failure
+
+   Examples:
+       # As decorator with default settings
+       @retry
+       def fetch_data():
+           ...
+
+       # As decorator with custom settings
+       @retry(retries=5, delay=0.5, exceptions=[ConnectionError, TimeoutError])
+       def fetch_data():
+           ...
+
+
+.. py:function:: async_retry(func = None, *, retries = 3, delay = 0.1, backoff_factor = 2.0, jitter = True, exceptions = Exception)
+   :async:
+
+
+   Decorator to retry asynchronous functions with exponential backoff.
+
+   Args:
+       func: Function to decorate (for direct use)
+       retries: Maximum number of retry attempts
+       delay: Initial delay between retries in seconds
+       backoff_factor: Multiplier for delay after each retry
+       jitter: Whether to add randomness to delay timing
+       exceptions: Exception type(s) to catch and retry on
+
+   Returns:
+       Callable: Decorated async function that will retry on failure
+
+   Examples:
+       # As decorator with default settings
+       @async_retry
+       async def fetch_data():
+           ...
+
+       # As decorator with custom settings
+       @async_retry(retries=5, delay=0.5, exceptions=[ConnectionError, TimeoutError])
+       async def fetch_data():
+           ...
+
+
+.. py:function:: retry_on_network_errors(retries = 3, delay = 0.5, backoff_factor = 2.0, jitter = True)
+
+   Decorator to retry functions specifically on network-related errors.
+
+   This is a convenience wrapper around retry() with pre-configured exception types
+   for common network errors.
+
+   Args:
+       retries: Maximum number of retry attempts
+       delay: Initial delay between retries in seconds
+       backoff_factor: Multiplier for delay after each retry
+       jitter: Whether to add randomness to delay timing
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: async_retry_on_network_errors(retries = 3, delay = 0.5, backoff_factor = 2.0, jitter = True)
+
+   Decorator to retry async functions specifically on network-related errors.
+
+   This is a convenience wrapper around async_retry() with pre-configured exception types
+   for common network errors.
+
+   Args:
+       retries: Maximum number of retry attempts
+       delay: Initial delay between retries in seconds
+       backoff_factor: Multiplier for delay after each retry
+       jitter: Whether to add randomness to delay timing
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: retry_with_timeout(retries = 3, delay = 0.5, timeout = 5.0, backoff_factor = 2.0, jitter = True, exceptions = Exception)
+
+   Decorator to retry functions with timeout.
+
+   Combines timeout functionality with retry logic.
+
+   Args:
+       retries: Maximum number of retry attempts
+       delay: Initial delay between retries in seconds
+       timeout: Maximum execution time in seconds
+       backoff_factor: Multiplier for delay after each retry
+       jitter: Whether to add randomness to delay timing
+       exceptions: Exception type(s) to catch and retry on
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: async_retry_with_timeout(retries = 3, delay = 0.5, timeout = 5.0, backoff_factor = 2.0, jitter = True, exceptions = Exception)
+   :async:
+
+
+   Decorator to retry async functions with timeout.
+
+   Combines timeout functionality with retry logic for async functions.
+
+   Args:
+       retries: Maximum number of retry attempts
+       delay: Initial delay between retries in seconds
+       timeout: Maximum execution time in seconds
+       backoff_factor: Multiplier for delay after each retry
+       jitter: Whether to add randomness to delay timing
+       exceptions: Exception type(s) to catch and retry on
+
+   Returns:
+       Callable: Decorator function
+
+

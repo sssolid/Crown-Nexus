@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.utils.crypto &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="app.utils.file" href="../file/index.html" />
+    <link rel="prev" title="app.utils.circuit_breaker" href="../circuit_breaker/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.utils</a></li>
+      <li class="breadcrumb-item active">app.utils.crypto</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/app/utils/crypto/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.utils.crypto">
+<span id="app-utils-crypto"></span><h1>app.utils.crypto<a class="headerlink" href="#module-app.utils.crypto" title="Link to this heading"></a></h1>
+<p>Cryptography utility module for handling secure encryption, decryption, and token generation.</p>
+<p>This module provides functions for encrypting and decrypting sensitive data using Fernet
+symmetric encryption, as well as utilities for generating secure random tokens. It uses
+cryptography’s Fernet implementation with PBKDF2HMAC key derivation for enhanced security.</p>
+<p>All functions include proper error handling and logging to ensure security operations
+are traceable and debuggable while maintaining security best practices.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.utils.crypto.logger" title="app.utils.crypto.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.utils.crypto._fernet" title="app.utils.crypto._fernet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_fernet</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.utils.crypto.CryptoError" title="app.utils.crypto.CryptoError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CryptoError</span></code></a></p></td>
+<td><p>Exception raised for cryptographic operations failures.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.utils.crypto._get_encryption_key" title="app.utils.crypto._get_encryption_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_encryption_key</span></code></a>()</p></td>
+<td><p>Generate encryption key using PBKDF2HMAC with SHA-256.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.utils.crypto.encrypt_message" title="app.utils.crypto.encrypt_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">encrypt_message</span></code></a>(message)</p></td>
+<td><p>Encrypt a message using Fernet symmetric encryption.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.utils.crypto.decrypt_message" title="app.utils.crypto.decrypt_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decrypt_message</span></code></a>(encrypted_message)</p></td>
+<td><p>Decrypt a Fernet-encrypted message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.utils.crypto.generate_secure_token" title="app.utils.crypto.generate_secure_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_secure_token</span></code></a>([length])</p></td>
+<td><p>Generate a cryptographically secure random token.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.utils.crypto.logger">
+<span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.utils.crypto.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.utils.crypto.CryptoError">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">CryptoError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCode.SECURITY_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utils.crypto.CryptoError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../core/exceptions/index.html#app.core.exceptions.SecurityException" title="app.core.exceptions.SecurityException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.exceptions.SecurityException</span></code></a></p>
+<p>Exception raised for cryptographic operations failures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="../../core/exceptions/index.html#app.core.exceptions.ErrorCode" title="app.core.exceptions.ErrorCode"><em>app.core.exceptions.ErrorCode</em></a>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utils.crypto._get_encryption_key">
+<span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">_get_encryption_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.utils.crypto._get_encryption_key" title="Link to this definition"></a></dt>
+<dd><p>Generate encryption key using PBKDF2HMAC with SHA-256.</p>
+<p>The key is derived from the application secret key using a salt specified
+in the application settings. This provides protection against rainbow table attacks.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bytes: Base64-encoded encryption key</p>
+</dd>
+<dt>Raises:</dt><dd><p>CryptoError: If key derivation fails
+ConfigurationException: If required settings are missing</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app.utils.crypto._fernet">
+<span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">_fernet</span></span><a class="headerlink" href="#app.utils.crypto._fernet" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utils.crypto.encrypt_message">
+<span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">encrypt_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utils.crypto.encrypt_message" title="Link to this definition"></a></dt>
+<dd><p>Encrypt a message using Fernet symmetric encryption.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>message: Plaintext message to encrypt</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Base64-encoded encrypted message</p>
+</dd>
+<dt>Raises:</dt><dd><p>CryptoError: If encryption fails</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utils.crypto.decrypt_message">
+<span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">decrypt_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encrypted_message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utils.crypto.decrypt_message" title="Link to this definition"></a></dt>
+<dd><p>Decrypt a Fernet-encrypted message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>encrypted_message: Base64-encoded encrypted message</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Decrypted plaintext message</p>
+</dd>
+<dt>Raises:</dt><dd><p>CryptoError: If decryption fails or token is invalid</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>encrypted_message</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utils.crypto.generate_secure_token">
+<span class="sig-prename descclassname"><span class="pre">app.utils.crypto.</span></span><span class="sig-name descname"><span class="pre">generate_secure_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utils.crypto.generate_secure_token" title="Link to this definition"></a></dt>
+<dd><p>Generate a cryptographically secure random token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>length: Length of the token in bytes (resulting hex string will be twice this length)</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Hexadecimal string representation of the random token</p>
+</dd>
+<dt>Raises:</dt><dd><p>CryptoError: If token generation fails
+ValueError: If length is less than 16</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../circuit_breaker/index.html" class="btn btn-neutral float-left" title="app.utils.circuit_breaker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../file/index.html" class="btn btn-neutral float-right" title="app.utils.file" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

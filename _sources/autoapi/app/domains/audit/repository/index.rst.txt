@@ -1,0 +1,183 @@
+app.domains.audit.repository
+============================
+
+.. py:module:: app.domains.audit.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.audit.repository.AuditLogRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: AuditLogRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.audit.models.AuditLog`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for AuditLog entity operations.
+
+   Provides methods for querying, creating, and retrieving
+   AuditLog entities, extending the generic BaseRepository.
+
+
+   .. py:method:: create_log(event_type, level, details = None, user_id = None, ip_address = None, resource_id = None, resource_type = None, request_id = None, user_agent = None, session_id = None, company_id = None, timestamp = None)
+      :async:
+
+
+      Create a new audit log entry.
+
+      Args:
+          event_type: Type of event being audited.
+          level: Log level (info, warning, error).
+          details: Additional details about the event.
+          user_id: ID of the user who performed the action.
+          ip_address: IP address of the user.
+          resource_id: ID of the affected resource.
+          resource_type: Type of the affected resource.
+          request_id: ID of the request that triggered the event.
+          user_agent: User agent of the client.
+          session_id: ID of the user's session.
+          company_id: ID of the company context.
+          timestamp: When the audited event occurred (defaults to now).
+
+      Returns:
+          The created audit log entry.
+
+
+
+   .. py:method:: get_by_user(user_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated audit logs for a specific user.
+
+      Args:
+          user_id: The user ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_by_resource(resource_type, resource_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated audit logs for a specific resource.
+
+      Args:
+          resource_type: The resource type to filter by.
+          resource_id: The resource ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_by_event_type(event_type, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated audit logs for a specific event type.
+
+      Args:
+          event_type: The event type to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_by_level(level, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated audit logs for a specific log level.
+
+      Args:
+          level: The log level to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_by_company(company_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated audit logs for a specific company.
+
+      Args:
+          company_id: The company ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_by_time_range(start_time, end_time = None, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated audit logs within a time range.
+
+      Args:
+          start_time: The start time of the range.
+          end_time: The end time of the range (defaults to now).
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_recent_logs(hours = 24, page = 1, page_size = 20)
+      :async:
+
+
+      Get paginated recent audit logs.
+
+      Args:
+          hours: Number of hours to look back.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: search(search_term, page = 1, page_size = 20)
+      :async:
+
+
+      Search audit logs by various fields.
+
+      Args:
+          search_term: The term to search for.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+

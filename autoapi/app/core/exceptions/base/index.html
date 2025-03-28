@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.exceptions.base &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.core.exceptions.domain" href="../domain/index.html" />
+    <link rel="prev" title="app.core.exceptions" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.exceptions</a></li>
+      <li class="breadcrumb-item active">app.core.exceptions.base</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/exceptions/base/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.exceptions.base">
+<span id="app-core-exceptions-base"></span><h1>app.core.exceptions.base<a class="headerlink" href="#module-app.core.exceptions.base" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.base.logger" title="app.core.exceptions.base.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.base.AppException" title="app.core.exceptions.base.AppException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AppException</span></code></a></p></td>
+<td><p>Base exception class for application exceptions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.base.ErrorCategory" title="app.core.exceptions.base.ErrorCategory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorCategory</span></code></a></p></td>
+<td><p>Categories of errors in the application.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.exceptions.base.ErrorCode" title="app.core.exceptions.base.ErrorCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorCode</span></code></a></p></td>
+<td><p>Specific error codes for different error scenarios.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.base.ErrorSeverity" title="app.core.exceptions.base.ErrorSeverity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorSeverity</span></code></a></p></td>
+<td><p>Severity levels for errors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.exceptions.base.ErrorDetail" title="app.core.exceptions.base.ErrorDetail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorDetail</span></code></a></p></td>
+<td><p>Detailed information about a specific error.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.base.ErrorResponse" title="app.core.exceptions.base.ErrorResponse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ErrorResponse</span></code></a></p></td>
+<td><p>Standardized error response model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.exceptions.base.logger">
+<span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#app.core.exceptions.base.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCategory">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">ErrorCategory</span></span><a class="headerlink" href="#app.core.exceptions.base.ErrorCategory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Categories of errors in the application.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCategory.VALIDATION">
+<span class="sig-name descname"><span class="pre">VALIDATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'validation'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCategory.VALIDATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCategory.AUTH">
+<span class="sig-name descname"><span class="pre">AUTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auth'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCategory.AUTH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCategory.RESOURCE">
+<span class="sig-name descname"><span class="pre">RESOURCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'resource'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCategory.RESOURCE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCategory.SYSTEM">
+<span class="sig-name descname"><span class="pre">SYSTEM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'system'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCategory.SYSTEM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCategory.BUSINESS">
+<span class="sig-name descname"><span class="pre">BUSINESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'business'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCategory.BUSINESS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">ErrorCode</span></span><a class="headerlink" href="#app.core.exceptions.base.ErrorCode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Specific error codes for different error scenarios.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.RESOURCE_NOT_FOUND">
+<span class="sig-name descname"><span class="pre">RESOURCE_NOT_FOUND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RESOURCE_NOT_FOUND'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.RESOURCE_NOT_FOUND" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.RESOURCE_ALREADY_EXISTS">
+<span class="sig-name descname"><span class="pre">RESOURCE_ALREADY_EXISTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RESOURCE_ALREADY_EXISTS'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.RESOURCE_ALREADY_EXISTS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.AUTHENTICATION_FAILED">
+<span class="sig-name descname"><span class="pre">AUTHENTICATION_FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'AUTHENTICATION_FAILED'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.AUTHENTICATION_FAILED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.PERMISSION_DENIED">
+<span class="sig-name descname"><span class="pre">PERMISSION_DENIED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PERMISSION_DENIED'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.PERMISSION_DENIED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.VALIDATION_ERROR">
+<span class="sig-name descname"><span class="pre">VALIDATION_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'VALIDATION_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.VALIDATION_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.BAD_REQUEST">
+<span class="sig-name descname"><span class="pre">BAD_REQUEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BAD_REQUEST'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.BAD_REQUEST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.BUSINESS_LOGIC_ERROR">
+<span class="sig-name descname"><span class="pre">BUSINESS_LOGIC_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BUSINESS_LOGIC_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.BUSINESS_LOGIC_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.INVALID_STATE">
+<span class="sig-name descname"><span class="pre">INVALID_STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_STATE'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.INVALID_STATE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.OPERATION_NOT_ALLOWED">
+<span class="sig-name descname"><span class="pre">OPERATION_NOT_ALLOWED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'OPERATION_NOT_ALLOWED'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.OPERATION_NOT_ALLOWED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.DATABASE_ERROR">
+<span class="sig-name descname"><span class="pre">DATABASE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DATABASE_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.DATABASE_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.NETWORK_ERROR">
+<span class="sig-name descname"><span class="pre">NETWORK_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NETWORK_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.NETWORK_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.SERVICE_ERROR">
+<span class="sig-name descname"><span class="pre">SERVICE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SERVICE_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.SERVICE_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.CONFIGURATION_ERROR">
+<span class="sig-name descname"><span class="pre">CONFIGURATION_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CONFIGURATION_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.CONFIGURATION_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.SECURITY_ERROR">
+<span class="sig-name descname"><span class="pre">SECURITY_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SECURITY_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.SECURITY_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorCode.UNKNOWN_ERROR">
+<span class="sig-name descname"><span class="pre">UNKNOWN_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'UNKNOWN_ERROR'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorCode.UNKNOWN_ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorSeverity">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">ErrorSeverity</span></span><a class="headerlink" href="#app.core.exceptions.base.ErrorSeverity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Severity levels for errors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorSeverity.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'warning'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorSeverity.WARNING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorSeverity.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorSeverity.ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorSeverity.CRITICAL">
+<span class="sig-name descname"><span class="pre">CRITICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'critical'</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorSeverity.CRITICAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorDetail">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">ErrorDetail</span></span><a class="headerlink" href="#app.core.exceptions.base.ErrorDetail" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Detailed information about a specific error.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorDetail.loc">
+<span class="sig-name descname"><span class="pre">loc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorDetail.loc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorDetail.msg">
+<span class="sig-name descname"><span class="pre">msg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorDetail.msg" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorDetail.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorDetail.type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">ErrorResponse</span></span><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Standardized error response model.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.success">
+<span class="sig-name descname"><span class="pre">success</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.success" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.details">
+<span class="sig-name descname"><span class="pre">details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.core.exceptions.base.ErrorDetail" title="app.core.exceptions.base.ErrorDetail"><span class="pre">ErrorDetail</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.details" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.timestamp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.exceptions.base.ErrorResponse.validate_details">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.base.ErrorResponse.validate_details" title="Link to this definition"></a></dt>
+<dd><p>Validate and transform error details.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>v: The input value to validate</p>
+</dd>
+<dt>Returns:</dt><dd><p>Processed list of error details</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#app.core.exceptions.base.ErrorDetail" title="app.core.exceptions.base.ErrorDetail">ErrorDetail</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.base.</span></span><span class="sig-name descname"><span class="pre">AppException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCode.UNKNOWN_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorSeverity.ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCategory.SYSTEM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.base.AppException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base exception class for application exceptions.</p>
+<p>Provides consistent error handling, formatting, and logging for all
+application exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="#app.core.exceptions.base.ErrorCode" title="app.core.exceptions.base.ErrorCode"><em>ErrorCode</em></a>)</p></li>
+<li><p><strong>details</strong> (<em>Any</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>severity</strong> (<a class="reference internal" href="#app.core.exceptions.base.ErrorSeverity" title="app.core.exceptions.base.ErrorSeverity"><em>ErrorSeverity</em></a>)</p></li>
+<li><p><strong>category</strong> (<a class="reference internal" href="#app.core.exceptions.base.ErrorCategory" title="app.core.exceptions.base.ErrorCategory"><em>ErrorCategory</em></a>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#app.core.exceptions.base.AppException.message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.code">
+<span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#app.core.exceptions.base.AppException.code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.details">
+<span class="sig-name descname"><span class="pre">details</span></span><a class="headerlink" href="#app.core.exceptions.base.AppException.details" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.status_code">
+<span class="sig-name descname"><span class="pre">status_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">500</span></em><a class="headerlink" href="#app.core.exceptions.base.AppException.status_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.severity">
+<span class="sig-name descname"><span class="pre">severity</span></span><a class="headerlink" href="#app.core.exceptions.base.AppException.severity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#app.core.exceptions.base.AppException.category" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.original_exception">
+<span class="sig-name descname"><span class="pre">original_exception</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.exceptions.base.AppException.original_exception" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.to_response">
+<span class="sig-name descname"><span class="pre">to_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.base.AppException.to_response" title="Link to this definition"></a></dt>
+<dd><p>Convert the exception to a standardized error response.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request_id: Optional request ID to include in the response</p>
+</dd>
+<dt>Returns:</dt><dd><p>Formatted error response object</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.core.exceptions.base.ErrorResponse" title="app.core.exceptions.base.ErrorResponse">ErrorResponse</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.core.exceptions.base.AppException.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.base.AppException.log" title="Link to this definition"></a></dt>
+<dd><p>Log the exception with appropriate severity and context.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>request_id: Optional request ID for correlation</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="app.core.exceptions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../domain/index.html" class="btn btn-neutral float-right" title="app.core.exceptions.domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

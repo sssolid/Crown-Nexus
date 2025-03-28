@@ -1,0 +1,97 @@
+app.core.exceptions.system
+==========================
+
+.. py:module:: app.core.exceptions.system
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.exceptions.system.SystemException
+   app.core.exceptions.system.DatabaseException
+   app.core.exceptions.system.DataIntegrityException
+   app.core.exceptions.system.TransactionException
+   app.core.exceptions.system.NetworkException
+   app.core.exceptions.system.ServiceException
+   app.core.exceptions.system.ConfigurationException
+   app.core.exceptions.system.SecurityException
+   app.core.exceptions.system.RateLimitException
+
+
+Module Contents
+---------------
+
+.. py:class:: SystemException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for system-related errors.
+
+
+.. py:class:: DatabaseException(message, code = ErrorCode.DATABASE_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when a database operation fails.
+
+
+.. py:class:: DataIntegrityException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`DatabaseException`
+
+
+   Exception raised when a database operation would violate data integrity.
+
+
+.. py:class:: TransactionException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`DatabaseException`
+
+
+   Exception raised when a database transaction fails.
+
+
+.. py:class:: NetworkException(message, details = None, status_code = 503, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when a network operation fails.
+
+
+.. py:class:: ServiceException(message, service_name = None, details = None, status_code = 502, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when an external service call fails.
+
+
+.. py:class:: ConfigurationException(message, component = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when there is an issue with application configuration.
+
+
+.. py:class:: SecurityException(message, details = None, status_code = 403, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when a security-related issue occurs.
+
+
+.. py:class:: RateLimitException(message = 'Rate limit exceeded', details = None, headers = None, original_exception = None)
+
+   Bases: :py:obj:`SecurityException`
+
+
+   Exception raised when a rate limit is exceeded.
+
+

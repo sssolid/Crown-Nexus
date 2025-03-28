@@ -1,0 +1,103 @@
+app.services.test_service
+=========================
+
+.. py:module:: app.services.test_service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.test_service.logger
+   app.services.test_service.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.test_service.TestService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:class:: TestService
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Service for test-related functionality.
+
+   This service provides methods for setting up and tearing down test data,
+   creating test fixtures, and validating test results.
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: setup_test_data(model_class, count = 5)
+      :async:
+
+
+      Set up test data for a model.
+
+      Args:
+          model_class: Model class to create instances of
+          count: Number of instances to create
+
+      Returns:
+          List[T]: List of created model instances
+
+
+
+   .. py:method:: teardown_test_data(model_class, instances)
+      :async:
+
+
+      Clean up test data.
+
+      Args:
+          model_class: Model class of the instances
+          instances: List of model instances to clean up
+
+
+
+   .. py:method:: validate_test_result(actual, expected, ignore_fields = None)
+      :async:
+
+
+      Validate that a test result matches the expected value.
+
+      Args:
+          actual: Actual result from the test
+          expected: Expected result
+          ignore_fields: Fields to ignore during comparison
+
+      Returns:
+          bool: True if the actual result matches the expected result
+
+
+
+   .. py:method:: create_test_token(user_id, role, expires_in = None)
+      :async:
+
+
+      Create a test JWT token.
+
+      Args:
+          user_id: User ID to include in the token
+          role: User role to include in the token
+          expires_in: Token expiration time in seconds
+
+      Returns:
+          str: JWT token
+
+
+

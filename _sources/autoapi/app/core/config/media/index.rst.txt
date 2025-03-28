@@ -1,0 +1,80 @@
+app.core.config.media
+=====================
+
+.. py:module:: app.core.config.media
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.media.MediaSettings
+
+
+Module Contents
+---------------
+
+.. py:class:: MediaSettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Media handling and storage settings.
+
+
+   .. py:attribute:: MEDIA_ROOT
+      :type:  str
+      :value: 'media'
+
+
+
+   .. py:attribute:: MEDIA_URL
+      :type:  str
+      :value: '/media/'
+
+
+
+   .. py:attribute:: MEDIA_STORAGE_TYPE
+      :type:  str
+      :value: 'local'
+
+
+
+   .. py:attribute:: MEDIA_CDN_URL
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: ENVIRONMENT
+      :type:  app.core.config.base.Environment
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: create_media_directories(v)
+      :classmethod:
+
+
+      Create media directories if they don't exist.
+
+
+
+   .. py:method:: validate_storage_type(v)
+      :classmethod:
+
+
+      Validate media storage type.
+
+
+
+   .. py:property:: media_base_url
+      :type: str
+
+
+      Get media base URL.
+
+
+

@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.api.v1.endpoints.fitments &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.api.v1.endpoints.i18n" href="../i18n/index.html" />
+    <link rel="prev" title="app.api.v1.endpoints.currency" href="../currency/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.api</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.api.v1</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.api.v1.endpoints</a></li>
+      <li class="breadcrumb-item active">app.api.v1.endpoints.fitments</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/api/v1/endpoints/fitments/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.api.v1.endpoints.fitments">
+<span id="app-api-v1-endpoints-fitments"></span><h1>app.api.v1.endpoints.fitments<a class="headerlink" href="#module-app.api.v1.endpoints.fitments" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.router" title="app.api.v1.endpoints.fitments.router"><code class="xref py py-obj docutils literal notranslate"><span class="pre">router</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.read_fitments" title="app.api.v1.endpoints.fitments.read_fitments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_fitments</span></code></a>(db, current_user[, year, make, model, ...])</p></td>
+<td><p>Retrieve fitments with filtering options.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.create_fitment" title="app.api.v1.endpoints.fitments.create_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_fitment</span></code></a>(db, fitment_in, current_user)</p></td>
+<td><p>Create new fitment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.read_fitment" title="app.api.v1.endpoints.fitments.read_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_fitment</span></code></a>(fitment_id, db, current_user)</p></td>
+<td><p>Get fitment by ID.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.update_fitment" title="app.api.v1.endpoints.fitments.update_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_fitment</span></code></a>(fitment_id, fitment_in, db, current_user)</p></td>
+<td><p>Update a fitment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.delete_fitment" title="app.api.v1.endpoints.fitments.delete_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_fitment</span></code></a>(fitment_id, db, current_user)</p></td>
+<td><p>Delete a fitment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.read_fitment_products" title="app.api.v1.endpoints.fitments.read_fitment_products"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_fitment_products</span></code></a>(fitment_id, db, current_user[, ...])</p></td>
+<td><p>Get products associated with a fitment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.associate_product_with_fitment" title="app.api.v1.endpoints.fitments.associate_product_with_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">associate_product_with_fitment</span></code></a>(fitment_id, product_id, ...)</p></td>
+<td><p>Associate a product with a fitment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.fitments.remove_product_from_fitment" title="app.api.v1.endpoints.fitments.remove_product_from_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_product_from_fitment</span></code></a>(fitment_id, product_id, ...)</p></td>
+<td><p>Remove association between a product and a fitment.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.router">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">router</span></span><a class="headerlink" href="#app.api.v1.endpoints.fitments.router" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.read_fitments">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">read_fitments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.read_fitments" title="Link to this definition"></a></dt>
+<dd><p>Retrieve fitments with filtering options.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+year: Filter by year
+make: Filter by make
+model: Filter by model
+engine: Filter by engine
+transmission: Filter by transmission
+page: Page number
+page_size: Number of items per page</p>
+</dd>
+<dt>Returns:</dt><dd><p>FitmentListResponse: Paginated list of fitments</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>engine</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>transmission</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.create_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">create_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitment_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.create_fitment" title="Link to this definition"></a></dt>
+<dd><p>Create new fitment.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+fitment_in: Fitment data
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Fitment: Created fitment</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>fitment_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.FitmentCreate" title="app.domains.products.schemas.FitmentCreate"><em>app.domains.products.schemas.FitmentCreate</em></a>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.read_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">read_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.read_fitment" title="Link to this definition"></a></dt>
+<dd><p>Get fitment by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>fitment_id: Fitment ID
+db: Database session
+current_user: Current authenticated user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Fitment: Fitment with specified ID</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitment_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.update_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">update_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitment_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.update_fitment" title="Link to this definition"></a></dt>
+<dd><p>Update a fitment.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>fitment_id: Fitment ID
+fitment_in: Updated fitment data
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>Fitment: Updated fitment</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitment_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>fitment_in</strong> (<a class="reference internal" href="../../../../domains/products/schemas/index.html#app.domains.products.schemas.FitmentUpdate" title="app.domains.products.schemas.FitmentUpdate"><em>app.domains.products.schemas.FitmentUpdate</em></a>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.delete_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">delete_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.delete_fitment" title="Link to this definition"></a></dt>
+<dd><p>Delete a fitment.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>fitment_id: Fitment ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitment_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.read_fitment_products">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">read_fitment_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.read_fitment_products" title="Link to this definition"></a></dt>
+<dd><p>Get products associated with a fitment.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>fitment_id: Fitment ID
+db: Database session
+current_user: Current authenticated user
+skip: Number of products to skip
+limit: Maximum number of products to return</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[Product]: List of products associated with the fitment</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitment_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>skip</strong> (<em>int</em>)</p></li>
+<li><p><strong>limit</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.associate_product_with_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">associate_product_with_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.associate_product_with_fitment" title="Link to this definition"></a></dt>
+<dd><p>Associate a product with a fitment.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>fitment_id: Fitment ID
+product_id: Product ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitment_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.fitments.remove_product_from_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.fitments.</span></span><span class="sig-name descname"><span class="pre">remove_product_from_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.fitments.remove_product_from_fitment" title="Link to this definition"></a></dt>
+<dd><p>Remove association between a product and a fitment.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>fitment_id: Fitment ID
+product_id: Product ID
+db: Database session
+current_user: Current authenticated admin user</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Success message</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitment_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>product_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_admin_user</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../currency/index.html" class="btn btn-neutral float-left" title="app.api.v1.endpoints.currency" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../i18n/index.html" class="btn btn-neutral float-right" title="app.api.v1.endpoints.i18n" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

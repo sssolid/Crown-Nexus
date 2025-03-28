@@ -1,0 +1,165 @@
+app.api.v1.endpoints.fitments
+=============================
+
+.. py:module:: app.api.v1.endpoints.fitments
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.fitments.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.api.v1.endpoints.fitments.read_fitments
+   app.api.v1.endpoints.fitments.create_fitment
+   app.api.v1.endpoints.fitments.read_fitment
+   app.api.v1.endpoints.fitments.update_fitment
+   app.api.v1.endpoints.fitments.delete_fitment
+   app.api.v1.endpoints.fitments.read_fitment_products
+   app.api.v1.endpoints.fitments.associate_product_with_fitment
+   app.api.v1.endpoints.fitments.remove_product_from_fitment
+
+
+Module Contents
+---------------
+
+.. py:data:: router
+
+.. py:function:: read_fitments(db, current_user, year = None, make = None, model = None, engine = None, transmission = None, page = 1, page_size = 20)
+   :async:
+
+
+   Retrieve fitments with filtering options.
+
+   Args:
+       db: Database session
+       current_user: Current authenticated user
+       year: Filter by year
+       make: Filter by make
+       model: Filter by model
+       engine: Filter by engine
+       transmission: Filter by transmission
+       page: Page number
+       page_size: Number of items per page
+
+   Returns:
+       FitmentListResponse: Paginated list of fitments
+
+
+.. py:function:: create_fitment(db, fitment_in, current_user)
+   :async:
+
+
+   Create new fitment.
+
+   Args:
+       db: Database session
+       fitment_in: Fitment data
+       current_user: Current authenticated admin user
+
+   Returns:
+       Fitment: Created fitment
+
+
+.. py:function:: read_fitment(fitment_id, db, current_user)
+   :async:
+
+
+   Get fitment by ID.
+
+   Args:
+       fitment_id: Fitment ID
+       db: Database session
+       current_user: Current authenticated user
+
+   Returns:
+       Fitment: Fitment with specified ID
+
+
+.. py:function:: update_fitment(fitment_id, fitment_in, db, current_user)
+   :async:
+
+
+   Update a fitment.
+
+   Args:
+       fitment_id: Fitment ID
+       fitment_in: Updated fitment data
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       Fitment: Updated fitment
+
+
+.. py:function:: delete_fitment(fitment_id, db, current_user)
+   :async:
+
+
+   Delete a fitment.
+
+   Args:
+       fitment_id: Fitment ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: read_fitment_products(fitment_id, db, current_user, skip = 0, limit = 100)
+   :async:
+
+
+   Get products associated with a fitment.
+
+   Args:
+       fitment_id: Fitment ID
+       db: Database session
+       current_user: Current authenticated user
+       skip: Number of products to skip
+       limit: Maximum number of products to return
+
+   Returns:
+       List[Product]: List of products associated with the fitment
+
+
+.. py:function:: associate_product_with_fitment(fitment_id, product_id, db, current_user)
+   :async:
+
+
+   Associate a product with a fitment.
+
+   Args:
+       fitment_id: Fitment ID
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+
+.. py:function:: remove_product_from_fitment(fitment_id, product_id, db, current_user)
+   :async:
+
+
+   Remove association between a product and a fitment.
+
+   Args:
+       fitment_id: Fitment ID
+       product_id: Product ID
+       db: Database session
+       current_user: Current authenticated admin user
+
+   Returns:
+       dict: Success message
+
+

@@ -1,0 +1,20 @@
+app.domains.currency
+====================
+
+.. py:module:: app.domains.currency
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/currency/exceptions/index
+   /autoapi/app/domains/currency/models/index
+   /autoapi/app/domains/currency/repository/index
+   /autoapi/app/domains/currency/schemas/index
+   /autoapi/app/domains/currency/service/index
+   /autoapi/app/domains/currency/tasks/index
+
+

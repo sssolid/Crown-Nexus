@@ -1,0 +1,358 @@
+app.db.utils
+============
+
+.. py:module:: app.db.utils
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.db.utils.logger
+   app.db.utils.T
+   app.db.utils.F
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.db.utils.transaction
+   app.db.utils.transactional
+   app.db.utils.execute_query
+   app.db.utils.get_by_id
+   app.db.utils.get_by_ids
+   app.db.utils.create_object
+   app.db.utils.update_object
+   app.db.utils.delete_object
+   app.db.utils.count_query
+   app.db.utils.paginate
+   app.db.utils.bulk_create
+   app.db.utils.bulk_update
+   app.db.utils.upsert
+   app.db.utils.track_db_query
+   app.db.utils.track_db_transaction
+   app.db.utils.track_db_select
+   app.db.utils.track_db_insert
+   app.db.utils.track_db_update
+   app.db.utils.track_db_delete
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: F
+
+.. py:function:: transaction(db)
+   :async:
+
+
+   Context manager for database transactions.
+
+   This creates a transaction context that automatically handles commits and rollbacks.
+   If the session is already in a transaction, it will use the existing transaction.
+
+   Args:
+       db: The database session
+
+   Yields:
+       The database session
+
+   Raises:
+       TransactionException: If a database error occurs during the transaction
+
+
+.. py:function:: transactional(func)
+
+   Decorator for functions that should execute within a transaction.
+
+   Args:
+       func: The function to wrap
+
+   Returns:
+       The wrapped function
+
+   Raises:
+       ValueError: If no database session is provided
+       TransactionException: If a database error occurs during the transaction
+
+
+.. py:function:: execute_query(db, query)
+   :async:
+
+
+   Execute a query with error handling.
+
+   Args:
+       db: The database session
+       query: The query to execute
+
+   Returns:
+       The query result
+
+   Raises:
+       DatabaseException: If the query execution fails
+
+
+.. py:function:: get_by_id(db, model, id_value)
+   :async:
+
+
+   Get a database object by ID.
+
+   Args:
+       db: The database session
+       model: The model class
+       id_value: The ID value to look up
+
+   Returns:
+       The database object, or None if not found
+
+   Raises:
+       DatabaseException: If a database error occurs
+
+
+.. py:function:: get_by_ids(db, model, ids)
+   :async:
+
+
+   Get multiple database objects by their IDs.
+
+   Args:
+       db: The database session
+       model: The model class
+       ids: The list of IDs to look up
+
+   Returns:
+       A list of database objects
+
+   Raises:
+       DatabaseException: If a database error occurs
+
+
+.. py:function:: create_object(db, model, obj_in)
+   :async:
+
+
+   Create a new database object.
+
+   Args:
+       db: The database session
+       model: The model class
+       obj_in: The object data
+
+   Returns:
+       The created database object
+
+   Raises:
+       DatabaseException: If the object creation fails
+       DataIntegrityException: If a unique constraint is violated
+
+
+.. py:function:: update_object(db, model, id_value, obj_in, user_id = None)
+   :async:
+
+
+   Update a database object.
+
+   Args:
+       db: The database session
+       model: The model class
+       id_value: The ID of the object to update
+       obj_in: The update data
+       user_id: Optional user ID for tracking who made the update
+
+   Returns:
+       The updated database object, or None if not found
+
+   Raises:
+       DatabaseException: If the update fails
+       DataIntegrityException: If a unique constraint is violated
+
+
+.. py:function:: delete_object(db, model, id_value, user_id = None, hard_delete = False)
+   :async:
+
+
+   Delete a database object.
+
+   Args:
+       db: The database session
+       model: The model class
+       id_value: The ID of the object to delete
+       user_id: Optional user ID for tracking who performed the deletion
+       hard_delete: Whether to permanently delete the object
+
+   Returns:
+       True if the object was deleted, False if not found
+
+   Raises:
+       DatabaseException: If the deletion fails
+       DataIntegrityException: If the object is referenced by other objects
+
+
+.. py:function:: count_query(db, query)
+   :async:
+
+
+   Count the results of a query.
+
+   Args:
+       db: The database session
+       query: The query to count
+
+   Returns:
+       The number of results
+
+   Raises:
+       DatabaseException: If the count operation fails
+
+
+.. py:function:: paginate(db, query, page = 1, page_size = 20, load_items = True)
+   :async:
+
+
+   Paginate query results.
+
+   Args:
+       db: The database session
+       query: The query to paginate
+       page: The page number (1-based)
+       page_size: The number of items per page
+       load_items: Whether to load the items or just return metadata
+
+   Returns:
+       Dictionary with items, total, page, page_size, and pages information
+
+   Raises:
+       DatabaseException: If the pagination operation fails
+
+
+.. py:function:: bulk_create(db, model, objects)
+   :async:
+
+
+   Create multiple database objects in a single operation.
+
+   Args:
+       db: The database session
+       model: The model class
+       objects: List of object data dictionaries
+
+   Returns:
+       List of created database objects
+
+   Raises:
+       DatabaseException: If the bulk create operation fails
+       DataIntegrityException: If a unique constraint is violated
+
+
+.. py:function:: bulk_update(db, model, id_field, objects)
+   :async:
+
+
+   Update multiple database objects in a single operation.
+
+   Args:
+       db: The database session
+       model: The model class
+       id_field: The field used to identify objects
+       objects: List of object data dictionaries
+
+   Returns:
+       Number of updated objects
+
+   Raises:
+       DatabaseException: If the bulk update operation fails
+       DataIntegrityException: If a unique constraint is violated
+
+
+.. py:function:: upsert(db, model, data, unique_fields)
+   :async:
+
+
+   Update an existing object or create a new one if it doesn't exist.
+
+   Args:
+       db: The database session
+       model: The model class
+       data: The object data
+       unique_fields: Fields used to identify an existing object
+
+   Returns:
+       The created or updated database object
+
+   Raises:
+       DatabaseException: If the upsert operation fails
+
+
+.. py:function:: track_db_query(operation, entity = None)
+
+   Decorator to track database query performance.
+
+   Args:
+       operation: The type of operation being performed
+       entity: The entity being operated on
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: track_db_transaction()
+
+   Decorator to track database transaction performance.
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: track_db_select(entity = None)
+
+   Decorator to track database select query performance.
+
+   Args:
+       entity: The entity being selected
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: track_db_insert(entity = None)
+
+   Decorator to track database insert query performance.
+
+   Args:
+       entity: The entity being inserted
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: track_db_update(entity = None)
+
+   Decorator to track database update query performance.
+
+   Args:
+       entity: The entity being updated
+
+   Returns:
+       Decorator function
+
+
+.. py:function:: track_db_delete(entity = None)
+
+   Decorator to track database delete query performance.
+
+   Args:
+       entity: The entity being deleted
+
+   Returns:
+       Decorator function
+
+

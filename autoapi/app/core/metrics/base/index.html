@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.metrics.base &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.core.metrics.collectors" href="../collectors/index.html" />
+    <link rel="prev" title="app.core.metrics" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.metrics</a></li>
+      <li class="breadcrumb-item active">app.core.metrics.base</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/metrics/base/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.metrics.base">
+<span id="app-core-metrics-base"></span><h1>app.core.metrics.base<a class="headerlink" href="#module-app.core.metrics.base" title="Link to this heading"></a></h1>
+<p>Base types and interfaces for the metrics system.</p>
+<p>This module defines common types, enums, and interfaces used throughout
+the metrics components.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.base.F" title="app.core.metrics.base.F"><code class="xref py py-obj docutils literal notranslate"><span class="pre">F</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.base.MetricType" title="app.core.metrics.base.MetricType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricType</span></code></a></p></td>
+<td><p>Enum for different types of metrics.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.base.MetricTag" title="app.core.metrics.base.MetricTag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricTag</span></code></a></p></td>
+<td><p>Common metric tag names for consistent labeling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.metrics.base.MetricName" title="app.core.metrics.base.MetricName"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricName</span></code></a></p></td>
+<td><p>Common metric names for consistent measurement.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.metrics.base.MetricsConfig" title="app.core.metrics.base.MetricsConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricsConfig</span></code></a></p></td>
+<td><p>Configuration for the metrics system.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.core.metrics.base.F">
+<span class="sig-prename descclassname"><span class="pre">app.core.metrics.base.</span></span><span class="sig-name descname"><span class="pre">F</span></span><a class="headerlink" href="#app.core.metrics.base.F" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.metrics.base.</span></span><span class="sig-name descname"><span class="pre">MetricType</span></span><a class="headerlink" href="#app.core.metrics.base.MetricType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Enum for different types of metrics.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricType.COUNTER">
+<span class="sig-name descname"><span class="pre">COUNTER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'counter'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricType.COUNTER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricType.GAUGE">
+<span class="sig-name descname"><span class="pre">GAUGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gauge'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricType.GAUGE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricType.HISTOGRAM">
+<span class="sig-name descname"><span class="pre">HISTOGRAM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'histogram'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricType.HISTOGRAM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricType.SUMMARY">
+<span class="sig-name descname"><span class="pre">SUMMARY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'summary'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricType.SUMMARY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.metrics.base.</span></span><span class="sig-name descname"><span class="pre">MetricTag</span></span><a class="headerlink" href="#app.core.metrics.base.MetricTag" title="Link to this definition"></a></dt>
+<dd><p>Common metric tag names for consistent labeling.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.SERVICE">
+<span class="sig-name descname"><span class="pre">SERVICE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'service'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.SERVICE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.ENVIRONMENT">
+<span class="sig-name descname"><span class="pre">ENVIRONMENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'environment'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.ENVIRONMENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'version'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.VERSION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.INSTANCE">
+<span class="sig-name descname"><span class="pre">INSTANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'instance'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.INSTANCE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.ENDPOINT">
+<span class="sig-name descname"><span class="pre">ENDPOINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'endpoint'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.ENDPOINT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.METHOD">
+<span class="sig-name descname"><span class="pre">METHOD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'method'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.METHOD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.PATH">
+<span class="sig-name descname"><span class="pre">PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'path'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.PATH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.STATUS_CODE">
+<span class="sig-name descname"><span class="pre">STATUS_CODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'status_code'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.STATUS_CODE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.OPERATION">
+<span class="sig-name descname"><span class="pre">OPERATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'operation'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.OPERATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.ENTITY">
+<span class="sig-name descname"><span class="pre">ENTITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entity'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.ENTITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.QUERY_TYPE">
+<span class="sig-name descname"><span class="pre">QUERY_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'query_type'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.QUERY_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.COMPONENT">
+<span class="sig-name descname"><span class="pre">COMPONENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'component'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.COMPONENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.ACTION">
+<span class="sig-name descname"><span class="pre">ACTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'action'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.ACTION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.ERROR_TYPE">
+<span class="sig-name descname"><span class="pre">ERROR_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error_type'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.ERROR_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.ERROR_CODE">
+<span class="sig-name descname"><span class="pre">ERROR_CODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error_code'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.ERROR_CODE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.RESOURCE_TYPE">
+<span class="sig-name descname"><span class="pre">RESOURCE_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'resource_type'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.RESOURCE_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.RESOURCE_ID">
+<span class="sig-name descname"><span class="pre">RESOURCE_ID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'resource_id'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.RESOURCE_ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.USER_ID">
+<span class="sig-name descname"><span class="pre">USER_ID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_id'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.USER_ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.USER_ROLE">
+<span class="sig-name descname"><span class="pre">USER_ROLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_role'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.USER_ROLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.CACHE_HIT">
+<span class="sig-name descname"><span class="pre">CACHE_HIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache_hit'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.CACHE_HIT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricTag.CACHE_BACKEND">
+<span class="sig-name descname"><span class="pre">CACHE_BACKEND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache_backend'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricTag.CACHE_BACKEND" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.metrics.base.</span></span><span class="sig-name descname"><span class="pre">MetricName</span></span><a class="headerlink" href="#app.core.metrics.base.MetricName" title="Link to this definition"></a></dt>
+<dd><p>Common metric names for consistent measurement.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.HTTP_REQUESTS_TOTAL">
+<span class="sig-name descname"><span class="pre">HTTP_REQUESTS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http_requests_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.HTTP_REQUESTS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.HTTP_REQUEST_DURATION_SECONDS">
+<span class="sig-name descname"><span class="pre">HTTP_REQUEST_DURATION_SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http_request_duration_seconds'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.HTTP_REQUEST_DURATION_SECONDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.HTTP_REQUEST_SIZE_BYTES">
+<span class="sig-name descname"><span class="pre">HTTP_REQUEST_SIZE_BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http_request_size_bytes'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.HTTP_REQUEST_SIZE_BYTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.HTTP_RESPONSE_SIZE_BYTES">
+<span class="sig-name descname"><span class="pre">HTTP_RESPONSE_SIZE_BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http_response_size_bytes'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.HTTP_RESPONSE_SIZE_BYTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.HTTP_ERRORS_TOTAL">
+<span class="sig-name descname"><span class="pre">HTTP_ERRORS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http_errors_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.HTTP_ERRORS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.HTTP_IN_PROGRESS">
+<span class="sig-name descname"><span class="pre">HTTP_IN_PROGRESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http_requests_in_progress'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.HTTP_IN_PROGRESS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.DB_QUERIES_TOTAL">
+<span class="sig-name descname"><span class="pre">DB_QUERIES_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_queries_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.DB_QUERIES_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.DB_QUERY_DURATION_SECONDS">
+<span class="sig-name descname"><span class="pre">DB_QUERY_DURATION_SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_query_duration_seconds'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.DB_QUERY_DURATION_SECONDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.DB_CONNECTIONS_TOTAL">
+<span class="sig-name descname"><span class="pre">DB_CONNECTIONS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_connections_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.DB_CONNECTIONS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.DB_CONNECTIONS_IN_USE">
+<span class="sig-name descname"><span class="pre">DB_CONNECTIONS_IN_USE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_connections_in_use'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.DB_CONNECTIONS_IN_USE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.DB_TRANSACTION_DURATION_SECONDS">
+<span class="sig-name descname"><span class="pre">DB_TRANSACTION_DURATION_SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_transaction_duration_seconds'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.DB_TRANSACTION_DURATION_SECONDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.DB_ERRORS_TOTAL">
+<span class="sig-name descname"><span class="pre">DB_ERRORS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'db_errors_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.DB_ERRORS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.SERVICE_CALLS_TOTAL">
+<span class="sig-name descname"><span class="pre">SERVICE_CALLS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'service_calls_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.SERVICE_CALLS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.SERVICE_CALL_DURATION_SECONDS">
+<span class="sig-name descname"><span class="pre">SERVICE_CALL_DURATION_SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'service_call_duration_seconds'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.SERVICE_CALL_DURATION_SECONDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.SERVICE_ERRORS_TOTAL">
+<span class="sig-name descname"><span class="pre">SERVICE_ERRORS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'service_errors_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.SERVICE_ERRORS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.CACHE_HIT_TOTAL">
+<span class="sig-name descname"><span class="pre">CACHE_HIT_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache_hit_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.CACHE_HIT_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.CACHE_MISS_TOTAL">
+<span class="sig-name descname"><span class="pre">CACHE_MISS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache_miss_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.CACHE_MISS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.CACHE_OPERATIONS_TOTAL">
+<span class="sig-name descname"><span class="pre">CACHE_OPERATIONS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache_operations_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.CACHE_OPERATIONS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.CACHE_OPERATION_DURATION_SECONDS">
+<span class="sig-name descname"><span class="pre">CACHE_OPERATION_DURATION_SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache_operation_duration_seconds'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.CACHE_OPERATION_DURATION_SECONDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.USER_LOGINS_TOTAL">
+<span class="sig-name descname"><span class="pre">USER_LOGINS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_logins_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.USER_LOGINS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.ORDERS_TOTAL">
+<span class="sig-name descname"><span class="pre">ORDERS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'orders_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.ORDERS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.PRODUCTS_CREATED_TOTAL">
+<span class="sig-name descname"><span class="pre">PRODUCTS_CREATED_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'products_created_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.PRODUCTS_CREATED_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.SYSTEM_MEMORY_BYTES">
+<span class="sig-name descname"><span class="pre">SYSTEM_MEMORY_BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'system_memory_bytes'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.SYSTEM_MEMORY_BYTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.SYSTEM_CPU_USAGE">
+<span class="sig-name descname"><span class="pre">SYSTEM_CPU_USAGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'system_cpu_usage'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.SYSTEM_CPU_USAGE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.SYSTEM_DISK_USAGE_BYTES">
+<span class="sig-name descname"><span class="pre">SYSTEM_DISK_USAGE_BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'system_disk_usage_bytes'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.SYSTEM_DISK_USAGE_BYTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.PROCESS_RESIDENT_MEMORY_BYTES">
+<span class="sig-name descname"><span class="pre">PROCESS_RESIDENT_MEMORY_BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'process_resident_memory_bytes'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.PROCESS_RESIDENT_MEMORY_BYTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.PROCESS_VIRTUAL_MEMORY_BYTES">
+<span class="sig-name descname"><span class="pre">PROCESS_VIRTUAL_MEMORY_BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'process_virtual_memory_bytes'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.PROCESS_VIRTUAL_MEMORY_BYTES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.PROCESS_CPU_SECONDS_TOTAL">
+<span class="sig-name descname"><span class="pre">PROCESS_CPU_SECONDS_TOTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'process_cpu_seconds_total'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.PROCESS_CPU_SECONDS_TOTAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricName.PROCESS_OPEN_FDS">
+<span class="sig-name descname"><span class="pre">PROCESS_OPEN_FDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'process_open_fds'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricName.PROCESS_OPEN_FDS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.metrics.base.</span></span><span class="sig-name descname"><span class="pre">MetricsConfig</span></span><a class="headerlink" href="#app.core.metrics.base.MetricsConfig" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the metrics system.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.namespace">
+<span class="sig-name descname"><span class="pre">namespace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crown_nexus'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.namespace" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.subsystem">
+<span class="sig-name descname"><span class="pre">subsystem</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'api'</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.subsystem" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.default_labels">
+<span class="sig-name descname"><span class="pre">default_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.default_labels" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.default_buckets">
+<span class="sig-name descname"><span class="pre">default_buckets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0.001,</span> <span class="pre">0.005,</span> <span class="pre">0.01,</span> <span class="pre">0.025,</span> <span class="pre">0.05,</span> <span class="pre">0.075,</span> <span class="pre">0.1,</span> <span class="pre">0.25,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">1.0,</span> <span class="pre">2.5,</span> <span class="pre">5.0,</span> <span class="pre">7.5,</span> <span class="pre">10.0]</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.default_buckets" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.enable_prometheus">
+<span class="sig-name descname"><span class="pre">enable_prometheus</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.enable_prometheus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.enable_endpoint">
+<span class="sig-name descname"><span class="pre">enable_endpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.enable_endpoint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.endpoint_port">
+<span class="sig-name descname"><span class="pre">endpoint_port</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9090</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.endpoint_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.push_gateway">
+<span class="sig-name descname"><span class="pre">push_gateway</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.push_gateway" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.push_interval">
+<span class="sig-name descname"><span class="pre">push_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.push_interval" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.enable_default_metrics">
+<span class="sig-name descname"><span class="pre">enable_default_metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.enable_default_metrics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.enable_process_metrics">
+<span class="sig-name descname"><span class="pre">enable_process_metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.enable_process_metrics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.core.metrics.base.MetricsConfig.enable_platform_metrics">
+<span class="sig-name descname"><span class="pre">enable_platform_metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#app.core.metrics.base.MetricsConfig.enable_platform_metrics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="app.core.metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../collectors/index.html" class="btn btn-neutral float-right" title="app.core.metrics.collectors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

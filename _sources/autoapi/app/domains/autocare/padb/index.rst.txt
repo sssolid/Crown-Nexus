@@ -1,0 +1,18 @@
+app.domains.autocare.padb
+=========================
+
+.. py:module:: app.domains.autocare.padb
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/autocare/padb/models/index
+   /autoapi/app/domains/autocare/padb/repository/index
+   /autoapi/app/domains/autocare/padb/schemas/index
+   /autoapi/app/domains/autocare/padb/service/index
+
+

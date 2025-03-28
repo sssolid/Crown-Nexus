@@ -1,0 +1,563 @@
+app.domains.compliance.schemas
+==============================
+
+.. py:module:: app.domains.compliance.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.compliance.schemas.Prop65ChemicalBase
+   app.domains.compliance.schemas.Prop65ChemicalCreate
+   app.domains.compliance.schemas.Prop65ChemicalUpdate
+   app.domains.compliance.schemas.Prop65ChemicalInDB
+   app.domains.compliance.schemas.Prop65Chemical
+   app.domains.compliance.schemas.WarningBase
+   app.domains.compliance.schemas.WarningCreate
+   app.domains.compliance.schemas.WarningUpdate
+   app.domains.compliance.schemas.WarningInDB
+   app.domains.compliance.schemas.Warning
+   app.domains.compliance.schemas.ProductChemicalBase
+   app.domains.compliance.schemas.ProductChemicalCreate
+   app.domains.compliance.schemas.ProductChemicalUpdate
+   app.domains.compliance.schemas.ProductChemicalInDB
+   app.domains.compliance.schemas.ProductChemical
+   app.domains.compliance.schemas.ProductDOTApprovalBase
+   app.domains.compliance.schemas.ProductDOTApprovalCreate
+   app.domains.compliance.schemas.ProductDOTApprovalUpdate
+   app.domains.compliance.schemas.ProductDOTApprovalInDB
+   app.domains.compliance.schemas.ProductDOTApproval
+   app.domains.compliance.schemas.HazardousMaterialBase
+   app.domains.compliance.schemas.HazardousMaterialCreate
+   app.domains.compliance.schemas.HazardousMaterialUpdate
+   app.domains.compliance.schemas.HazardousMaterialInDB
+   app.domains.compliance.schemas.HazardousMaterial
+
+
+Module Contents
+---------------
+
+.. py:class:: Prop65ChemicalBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Prop65Chemical data.
+
+   Attributes:
+       name: Chemical name.
+       cas_number: CAS Registry Number (unique chemical identifier).
+       type: Type of chemical hazard.
+       exposure_limit: Safe harbor exposure limit if applicable.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: cas_number
+      :type:  str
+
+
+   .. py:attribute:: type
+      :type:  app.domains.compliance.models.ChemicalType
+
+
+   .. py:attribute:: exposure_limit
+      :type:  Optional[float]
+
+
+.. py:class:: Prop65ChemicalCreate
+
+   Bases: :py:obj:`Prop65ChemicalBase`
+
+
+   Schema for creating a new Prop65Chemical.
+
+
+.. py:class:: Prop65ChemicalUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Prop65Chemical.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: cas_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: type
+      :type:  Optional[app.domains.compliance.models.ChemicalType]
+
+
+   .. py:attribute:: exposure_limit
+      :type:  Optional[float]
+
+
+.. py:class:: Prop65ChemicalInDB
+
+   Bases: :py:obj:`Prop65ChemicalBase`
+
+
+   Schema for Prop65Chemical data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Prop65Chemical
+
+   Bases: :py:obj:`Prop65ChemicalInDB`
+
+
+   Schema for complete Prop65Chemical data in API responses.
+
+
+.. py:class:: WarningBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Warning data.
+
+   Attributes:
+       product_id: ID of the product requiring the warning.
+       chemical_id: ID of the chemical in the warning.
+       warning_text: Text of the warning label.
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: chemical_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: warning_text
+      :type:  str
+
+
+.. py:class:: WarningCreate
+
+   Bases: :py:obj:`WarningBase`
+
+
+   Schema for creating a new Warning.
+
+
+.. py:class:: WarningUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Warning.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: warning_text
+      :type:  Optional[str]
+
+
+.. py:class:: WarningInDB
+
+   Bases: :py:obj:`WarningBase`
+
+
+   Schema for Warning data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: last_updated
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Warning
+
+   Bases: :py:obj:`WarningInDB`
+
+
+   Schema for complete Warning data in API responses.
+
+   Includes related entities like chemical and product details.
+
+
+   .. py:attribute:: chemical
+      :type:  Optional[Prop65Chemical]
+
+
+   .. py:attribute:: product
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: ProductChemicalBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductChemical data.
+
+   Attributes:
+       product_id: ID of the product containing the chemical.
+       chemical_id: ID of the chemical in the product.
+       exposure_scenario: Type of exposure scenario.
+       warning_required: Whether a warning label is required.
+       warning_label: Text of the required warning label if applicable.
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: chemical_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: exposure_scenario
+      :type:  app.domains.compliance.models.ExposureScenario
+
+
+   .. py:attribute:: warning_required
+      :type:  bool
+
+
+   .. py:attribute:: warning_label
+      :type:  Optional[str]
+
+
+.. py:class:: ProductChemicalCreate
+
+   Bases: :py:obj:`ProductChemicalBase`
+
+
+   Schema for creating a new ProductChemical.
+
+
+.. py:class:: ProductChemicalUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ProductChemical.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: exposure_scenario
+      :type:  Optional[app.domains.compliance.models.ExposureScenario]
+
+
+   .. py:attribute:: warning_required
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: warning_label
+      :type:  Optional[str]
+
+
+.. py:class:: ProductChemicalInDB
+
+   Bases: :py:obj:`ProductChemicalBase`
+
+
+   Schema for ProductChemical data as stored in the database.
+
+   Includes database-specific fields like ID.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductChemical
+
+   Bases: :py:obj:`ProductChemicalInDB`
+
+
+   Schema for complete ProductChemical data in API responses.
+
+   Includes related entities like chemical and product details.
+
+
+   .. py:attribute:: chemical
+      :type:  Optional[Prop65Chemical]
+
+
+   .. py:attribute:: product
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: ProductDOTApprovalBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductDOTApproval data.
+
+   Attributes:
+       product_id: ID of the approved product.
+       approval_status: Status of the approval.
+       approval_number: DOT approval number if applicable.
+       approved_by: Name of the approver.
+       approval_date: Date of approval.
+       expiration_date: Expiration date of the approval.
+       reason: Reason for the approval status.
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: approval_status
+      :type:  app.domains.compliance.models.ApprovalStatus
+
+
+   .. py:attribute:: approval_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: approved_by
+      :type:  Optional[str]
+
+
+   .. py:attribute:: approval_date
+      :type:  Optional[datetime.date]
+
+
+   .. py:attribute:: expiration_date
+      :type:  Optional[datetime.date]
+
+
+   .. py:attribute:: reason
+      :type:  Optional[str]
+
+
+.. py:class:: ProductDOTApprovalCreate
+
+   Bases: :py:obj:`ProductDOTApprovalBase`
+
+
+   Schema for creating a new ProductDOTApproval.
+
+
+.. py:class:: ProductDOTApprovalUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ProductDOTApproval.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: approval_status
+      :type:  Optional[app.domains.compliance.models.ApprovalStatus]
+
+
+   .. py:attribute:: approval_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: approved_by
+      :type:  Optional[str]
+
+
+   .. py:attribute:: approval_date
+      :type:  Optional[datetime.date]
+
+
+   .. py:attribute:: expiration_date
+      :type:  Optional[datetime.date]
+
+
+   .. py:attribute:: reason
+      :type:  Optional[str]
+
+
+.. py:class:: ProductDOTApprovalInDB
+
+   Bases: :py:obj:`ProductDOTApprovalBase`
+
+
+   Schema for ProductDOTApproval data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: changed_by_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: changed_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductDOTApproval
+
+   Bases: :py:obj:`ProductDOTApprovalInDB`
+
+
+   Schema for complete ProductDOTApproval data in API responses.
+
+   Includes related entities like product and user details.
+
+
+   .. py:attribute:: product
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: changed_by
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: HazardousMaterialBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for HazardousMaterial data.
+
+   Attributes:
+       product_id: ID of the hazardous product.
+       un_number: UN number for hazardous material.
+       hazard_class: DOT hazard class.
+       packing_group: Packing group (I, II, III).
+       handling_instructions: Special handling instructions.
+       restricted_transport: Transport restrictions.
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: un_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: hazard_class
+      :type:  Optional[str]
+
+
+   .. py:attribute:: packing_group
+      :type:  Optional[str]
+
+
+   .. py:attribute:: handling_instructions
+      :type:  Optional[str]
+
+
+   .. py:attribute:: restricted_transport
+      :type:  app.domains.compliance.models.TransportRestriction
+
+
+.. py:class:: HazardousMaterialCreate
+
+   Bases: :py:obj:`HazardousMaterialBase`
+
+
+   Schema for creating a new HazardousMaterial.
+
+
+.. py:class:: HazardousMaterialUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing HazardousMaterial.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: un_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: hazard_class
+      :type:  Optional[str]
+
+
+   .. py:attribute:: packing_group
+      :type:  Optional[str]
+
+
+   .. py:attribute:: handling_instructions
+      :type:  Optional[str]
+
+
+   .. py:attribute:: restricted_transport
+      :type:  Optional[app.domains.compliance.models.TransportRestriction]
+
+
+.. py:class:: HazardousMaterialInDB
+
+   Bases: :py:obj:`HazardousMaterialBase`
+
+
+   Schema for HazardousMaterial data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: HazardousMaterial
+
+   Bases: :py:obj:`HazardousMaterialInDB`
+
+
+   Schema for complete HazardousMaterial data in API responses.
+
+   Includes related entities like product details.
+
+
+   .. py:attribute:: product
+      :type:  Optional[Dict[str, Any]]
+
+

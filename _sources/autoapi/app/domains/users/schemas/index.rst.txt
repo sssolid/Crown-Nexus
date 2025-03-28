@@ -1,0 +1,273 @@
+app.domains.users.schemas
+=========================
+
+.. py:module:: app.domains.users.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.users.schemas.UserRole
+   app.domains.users.schemas.Token
+   app.domains.users.schemas.TokenPayload
+   app.domains.users.schemas.UserBase
+   app.domains.users.schemas.UserCreate
+   app.domains.users.schemas.UserUpdate
+   app.domains.users.schemas.UserInDB
+   app.domains.users.schemas.User
+
+
+Module Contents
+---------------
+
+.. py:class:: UserRole
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Enumeration of user roles in the system.
+
+   Attributes:
+       ADMIN: Administrator role with full system access.
+       MANAGER: Manager role with elevated permissions.
+       CLIENT: Standard client user.
+       DISTRIBUTOR: Distributor with specific permissions.
+       READ_ONLY: User with read-only access.
+
+
+   .. py:attribute:: ADMIN
+      :value: 'admin'
+
+
+
+   .. py:attribute:: MANAGER
+      :value: 'manager'
+
+
+
+   .. py:attribute:: CLIENT
+      :value: 'client'
+
+
+
+   .. py:attribute:: DISTRIBUTOR
+      :value: 'distributor'
+
+
+
+   .. py:attribute:: READ_ONLY
+      :value: 'read_only'
+
+
+
+.. py:class:: Token
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for authentication tokens.
+
+   Attributes:
+       access_token: The JWT access token.
+       token_type: The token type (typically "bearer").
+
+
+   .. py:attribute:: access_token
+      :type:  str
+
+
+   .. py:attribute:: token_type
+      :type:  str
+
+
+.. py:class:: TokenPayload
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for JWT token payload.
+
+   Attributes:
+       sub: Subject (typically user ID).
+       exp: Expiration timestamp.
+       role: User role.
+       iat: Issued at timestamp.
+
+
+   .. py:attribute:: sub
+      :type:  str
+
+
+   .. py:attribute:: exp
+      :type:  int
+
+
+   .. py:attribute:: role
+      :type:  UserRole
+
+
+   .. py:attribute:: iat
+      :type:  Optional[int]
+
+
+.. py:class:: UserBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for user data.
+
+   Attributes:
+       email: User's email address.
+       full_name: User's full name.
+       role: User's role in the system.
+       is_active: Whether the user account is active.
+       company_id: ID of the associated company.
+
+
+   .. py:attribute:: email
+      :type:  pydantic.EmailStr
+
+
+   .. py:attribute:: full_name
+      :type:  str
+
+
+   .. py:attribute:: role
+      :type:  UserRole
+
+
+   .. py:attribute:: is_active
+      :type:  bool
+
+
+   .. py:attribute:: company_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: UserCreate
+
+   Bases: :py:obj:`UserBase`
+
+
+   Schema for creating a new user.
+
+   Extends UserBase to include password.
+
+   Attributes:
+       password: User's plain-text password (will be hashed).
+
+
+   .. py:attribute:: password
+      :type:  str
+
+
+   .. py:method:: password_strength(v)
+      :classmethod:
+
+
+      Validate password strength.
+
+      Args:
+          v: The password to validate.
+
+      Returns:
+          The password if valid.
+
+      Raises:
+          ValueError: If the password doesn't meet strength requirements.
+
+
+
+.. py:class:: UserUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing user.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: email
+      :type:  Optional[pydantic.EmailStr]
+
+
+   .. py:attribute:: full_name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: password
+      :type:  Optional[str]
+
+
+   .. py:attribute:: role
+      :type:  Optional[UserRole]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: company_id
+      :type:  Optional[Union[uuid.UUID, None]]
+
+
+   .. py:method:: password_strength(v)
+      :classmethod:
+
+
+      Validate password strength if provided.
+
+      Args:
+          v: The password to validate or None.
+
+      Returns:
+          The password if valid or None if not provided.
+
+      Raises:
+          ValueError: If the password doesn't meet strength requirements.
+
+
+
+.. py:class:: UserInDB
+
+   Bases: :py:obj:`UserBase`
+
+
+   Schema for user data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: User
+
+   Bases: :py:obj:`UserInDB`
+
+
+   Schema for complete user data in API responses.
+
+   Includes related entities like company details.
+
+
+   .. py:attribute:: company
+      :type:  Optional[app.domains.company.schemas.Company]
+
+

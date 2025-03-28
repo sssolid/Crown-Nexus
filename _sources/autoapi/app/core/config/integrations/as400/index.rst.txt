@@ -1,0 +1,204 @@
+app.core.config.integrations.as400
+==================================
+
+.. py:module:: app.core.config.integrations.as400
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.config.integrations.as400._logger
+   app.core.config.integrations.as400.as400_settings
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.integrations.as400.AS400Settings
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.config.integrations.as400.get_as400_connector_config
+
+
+Module Contents
+---------------
+
+.. py:data:: _logger
+
+.. py:class:: AS400Settings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   AS400 connection and synchronization settings.
+
+   All sensitive settings can be provided via environment variables
+   for enhanced security.
+
+
+   .. py:attribute:: AS400_DSN
+      :type:  str
+
+
+   .. py:attribute:: AS400_USERNAME
+      :type:  str
+
+
+   .. py:attribute:: AS400_PASSWORD
+      :type:  pydantic.SecretStr
+
+
+   .. py:attribute:: AS400_DATABASE
+      :type:  str
+
+
+   .. py:attribute:: AS400_SERVER
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: AS400_PORT
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: AS400_SSL
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: AS400_ALLOWED_TABLES
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: AS400_ALLOWED_SCHEMAS
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: AS400_CONNECTION_TIMEOUT
+      :type:  int
+      :value: 30
+
+
+
+   .. py:attribute:: AS400_QUERY_TIMEOUT
+      :type:  int
+      :value: 60
+
+
+
+   .. py:attribute:: AS400_ENCRYPT_CONNECTION
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: AS400_ENABLE_SSL_PARAM
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: AS400_ENABLE_READONLY_PARAM
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: AS400_SYNC_ENABLED
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: AS400_SYNC_INTERVAL
+      :type:  int
+      :value: 86400
+
+
+
+   .. py:attribute:: AS400_SYNC_TABLES
+      :type:  Dict[str, str]
+
+
+   .. py:attribute:: AS400_BATCH_SIZE
+      :type:  int
+      :value: 1000
+
+
+
+   .. py:attribute:: AS400_MAX_WORKERS
+      :type:  int
+      :value: 4
+
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:method:: parse_str_to_list(v)
+      :classmethod:
+
+
+      Parse string to list of strings if needed.
+
+
+
+   .. py:method:: validate_port(v)
+      :classmethod:
+
+
+      Validate port is within allowed range.
+
+
+
+   .. py:method:: validate_interval(v)
+      :classmethod:
+
+
+      Validate sync interval is reasonable.
+
+
+
+   .. py:method:: parse_sync_tables(v)
+      :classmethod:
+
+
+      Parse sync tables from string if necessary.
+
+
+
+   .. py:method:: parse_boolean(v)
+      :classmethod:
+
+
+      Parse boolean from string if necessary.
+
+
+
+.. py:data:: as400_settings
+
+.. py:function:: get_as400_connector_config()
+
+   Get AS400 connector configuration from settings.
+
+   Returns:
+       Dictionary with AS400 connector configuration
+
+

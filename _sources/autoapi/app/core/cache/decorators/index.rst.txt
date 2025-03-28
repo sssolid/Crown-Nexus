@@ -1,0 +1,97 @@
+app.core.cache.decorators
+=========================
+
+.. py:module:: app.core.cache.decorators
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.cache.decorators.F
+   app.core.cache.decorators.T
+   app.core.cache.decorators.logger
+   app.core.cache.decorators.HAS_METRICS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.cache.decorators.cached
+   app.core.cache.decorators.invalidate_cache
+   app.core.cache.decorators.cache_aside
+   app.core.cache.decorators.memoize
+
+
+Module Contents
+---------------
+
+.. py:data:: F
+
+.. py:data:: T
+
+.. py:data:: logger
+
+.. py:data:: HAS_METRICS
+   :value: True
+
+
+.. py:function:: cached(ttl = 300, prefix = 'cache', backend = None, skip_args = None, skip_kwargs = None, tags = None)
+
+   Cache the result of a function.
+
+   Args:
+       ttl: Time-to-live in seconds (default: 300).
+       prefix: Cache key prefix (default: 'cache').
+       backend: Cache backend to use (default: None, uses default backend).
+       skip_args: Argument indexes to skip when generating the cache key.
+       skip_kwargs: Keyword argument names to skip when generating the cache key.
+       tags: Optional tags for cache invalidation.
+
+   Returns:
+       Decorated function.
+
+
+.. py:function:: invalidate_cache(pattern, prefix = 'cache', backend = None, tags = None)
+
+   Invalidate cache entries matching a pattern after function execution.
+
+   Args:
+       pattern: The pattern to match for invalidation.
+       prefix: Cache key prefix (default: 'cache').
+       backend: Cache backend to use (default: None, uses default backend).
+       tags: Optional tags for cache invalidation.
+
+   Returns:
+       Decorated function.
+
+
+.. py:function:: cache_aside(key_func, ttl = 300, backend = None, tags = None)
+
+   Implement the cache-aside pattern with a custom key function.
+
+   Args:
+       key_func: Function that generates a cache key from function arguments.
+       ttl: Time-to-live in seconds (default: 300).
+       backend: Cache backend to use (default: None, uses default backend).
+       tags: Optional tags for cache invalidation.
+
+   Returns:
+       Decorated function.
+
+
+.. py:function:: memoize(ttl = None, max_size = 128)
+
+   Memoize a function using in-memory caching.
+
+   Args:
+       ttl: Time-to-live in seconds (default: None, meaning no expiration).
+       max_size: Maximum number of items to keep in cache (default: 128).
+
+   Returns:
+       Decorated function.
+
+

@@ -1,0 +1,530 @@
+app.core.exceptions
+===================
+
+.. py:module:: app.core.exceptions
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/exceptions/base/index
+   /autoapi/app/core/exceptions/domain/index
+   /autoapi/app/core/exceptions/handlers/index
+   /autoapi/app/core/exceptions/system/index
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.core.exceptions.AppException
+   app.core.exceptions.AuthException
+   app.core.exceptions.AuthenticationException
+   app.core.exceptions.BusinessException
+   app.core.exceptions.InvalidStateException
+   app.core.exceptions.OperationNotAllowedException
+   app.core.exceptions.PermissionDeniedException
+   app.core.exceptions.ResourceAlreadyExistsException
+   app.core.exceptions.ResourceException
+   app.core.exceptions.ResourceNotFoundException
+   app.core.exceptions.ValidationException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.exceptions.ErrorCategory
+   app.core.exceptions.ErrorCode
+   app.core.exceptions.ErrorDetail
+   app.core.exceptions.ErrorResponse
+   app.core.exceptions.ErrorSeverity
+   app.core.exceptions.ConfigurationException
+   app.core.exceptions.DatabaseException
+   app.core.exceptions.DataIntegrityException
+   app.core.exceptions.NetworkException
+   app.core.exceptions.RateLimitException
+   app.core.exceptions.SecurityException
+   app.core.exceptions.ServiceException
+   app.core.exceptions.SystemException
+   app.core.exceptions.TransactionException
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.exceptions.app_exception_handler
+   app.core.exceptions.generic_exception_handler
+   app.core.exceptions.validation_exception_handler
+
+
+Package Contents
+----------------
+
+.. py:exception:: AppException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, severity = ErrorSeverity.ERROR, category = ErrorCategory.SYSTEM, original_exception = None)
+
+   Bases: :py:obj:`Exception`
+
+
+   Base exception class for application exceptions.
+
+   Provides consistent error handling, formatting, and logging for all
+   application exceptions.
+
+
+   .. py:attribute:: message
+
+
+   .. py:attribute:: code
+
+
+   .. py:attribute:: details
+
+
+   .. py:attribute:: status_code
+      :value: 500
+
+
+
+   .. py:attribute:: severity
+
+
+   .. py:attribute:: category
+
+
+   .. py:attribute:: original_exception
+      :value: None
+
+
+
+   .. py:method:: to_response(request_id = None)
+
+      Convert the exception to a standardized error response.
+
+      Args:
+          request_id: Optional request ID to include in the response
+
+      Returns:
+          Formatted error response object
+
+
+
+   .. py:method:: log(request_id = None)
+
+      Log the exception with appropriate severity and context.
+
+      Args:
+          request_id: Optional request ID for correlation
+
+
+
+.. py:class:: ErrorCategory
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Categories of errors in the application.
+
+
+   .. py:attribute:: VALIDATION
+      :value: 'validation'
+
+
+
+   .. py:attribute:: AUTH
+      :value: 'auth'
+
+
+
+   .. py:attribute:: RESOURCE
+      :value: 'resource'
+
+
+
+   .. py:attribute:: SYSTEM
+      :value: 'system'
+
+
+
+   .. py:attribute:: BUSINESS
+      :value: 'business'
+
+
+
+.. py:class:: ErrorCode
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Specific error codes for different error scenarios.
+
+
+   .. py:attribute:: RESOURCE_NOT_FOUND
+      :value: 'RESOURCE_NOT_FOUND'
+
+
+
+   .. py:attribute:: RESOURCE_ALREADY_EXISTS
+      :value: 'RESOURCE_ALREADY_EXISTS'
+
+
+
+   .. py:attribute:: AUTHENTICATION_FAILED
+      :value: 'AUTHENTICATION_FAILED'
+
+
+
+   .. py:attribute:: PERMISSION_DENIED
+      :value: 'PERMISSION_DENIED'
+
+
+
+   .. py:attribute:: VALIDATION_ERROR
+      :value: 'VALIDATION_ERROR'
+
+
+
+   .. py:attribute:: BAD_REQUEST
+      :value: 'BAD_REQUEST'
+
+
+
+   .. py:attribute:: BUSINESS_LOGIC_ERROR
+      :value: 'BUSINESS_LOGIC_ERROR'
+
+
+
+   .. py:attribute:: INVALID_STATE
+      :value: 'INVALID_STATE'
+
+
+
+   .. py:attribute:: OPERATION_NOT_ALLOWED
+      :value: 'OPERATION_NOT_ALLOWED'
+
+
+
+   .. py:attribute:: DATABASE_ERROR
+      :value: 'DATABASE_ERROR'
+
+
+
+   .. py:attribute:: NETWORK_ERROR
+      :value: 'NETWORK_ERROR'
+
+
+
+   .. py:attribute:: SERVICE_ERROR
+      :value: 'SERVICE_ERROR'
+
+
+
+   .. py:attribute:: CONFIGURATION_ERROR
+      :value: 'CONFIGURATION_ERROR'
+
+
+
+   .. py:attribute:: SECURITY_ERROR
+      :value: 'SECURITY_ERROR'
+
+
+
+   .. py:attribute:: UNKNOWN_ERROR
+      :value: 'UNKNOWN_ERROR'
+
+
+
+.. py:class:: ErrorDetail
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Detailed information about a specific error.
+
+
+   .. py:attribute:: loc
+      :type:  List[str]
+
+
+   .. py:attribute:: msg
+      :type:  str
+
+
+   .. py:attribute:: type
+      :type:  str
+
+
+.. py:class:: ErrorResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Standardized error response model.
+
+
+   .. py:attribute:: success
+      :type:  bool
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: data
+      :type:  Optional[Any]
+
+
+   .. py:attribute:: details
+      :type:  List[ErrorDetail]
+
+
+   .. py:attribute:: meta
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: timestamp
+      :type:  Optional[str]
+
+
+   .. py:method:: validate_details(v)
+      :classmethod:
+
+
+      Validate and transform error details.
+
+      Args:
+          v: The input value to validate
+
+      Returns:
+          Processed list of error details
+
+
+
+.. py:class:: ErrorSeverity
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Severity levels for errors.
+
+
+   .. py:attribute:: WARNING
+      :value: 'warning'
+
+
+
+   .. py:attribute:: ERROR
+      :value: 'error'
+
+
+
+   .. py:attribute:: CRITICAL
+      :value: 'critical'
+
+
+
+.. py:exception:: AuthException(message, code, details = None, status_code = 401, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for authentication and authorization errors.
+
+
+.. py:exception:: AuthenticationException(message = 'Authentication failed', details = None, original_exception = None)
+
+   Bases: :py:obj:`AuthException`
+
+
+   Exception raised when authentication fails.
+
+
+.. py:exception:: BusinessException(message, code = ErrorCode.BUSINESS_LOGIC_ERROR, details = None, status_code = 400, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Exception raised when a business rule is violated.
+
+
+.. py:exception:: InvalidStateException(message, current_state = None, expected_state = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`BusinessException`
+
+
+   Exception raised when an operation is attempted on an entity in an invalid state.
+
+
+.. py:exception:: OperationNotAllowedException(message, operation = None, reason = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`BusinessException`
+
+
+   Exception raised when an operation is not allowed due to business rules.
+
+
+.. py:exception:: PermissionDeniedException(message = 'Permission denied', action = None, resource_type = None, permission = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`AuthException`
+
+
+   Exception raised when a user doesn't have permission for an action.
+
+
+.. py:exception:: ResourceAlreadyExistsException(resource_type, identifier, field = 'id', message = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`ResourceException`
+
+
+   Exception raised when attempting to create a resource that already exists.
+
+
+.. py:exception:: ResourceException(message, code = ErrorCode.RESOURCE_NOT_FOUND, details = None, status_code = 404, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for resource-related errors.
+
+
+.. py:exception:: ResourceNotFoundException(resource_type, resource_id, message = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`ResourceException`
+
+
+   Exception raised when a requested resource is not found.
+
+
+.. py:exception:: ValidationException(message = 'Validation error', errors = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Exception raised when input validation fails.
+
+
+.. py:class:: ConfigurationException(message, component = None, details = None, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when there is an issue with application configuration.
+
+
+.. py:class:: DatabaseException(message, code = ErrorCode.DATABASE_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when a database operation fails.
+
+
+.. py:class:: DataIntegrityException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`DatabaseException`
+
+
+   Exception raised when a database operation would violate data integrity.
+
+
+.. py:class:: NetworkException(message, details = None, status_code = 503, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when a network operation fails.
+
+
+.. py:class:: RateLimitException(message = 'Rate limit exceeded', details = None, headers = None, original_exception = None)
+
+   Bases: :py:obj:`SecurityException`
+
+
+   Exception raised when a rate limit is exceeded.
+
+
+.. py:class:: SecurityException(message, details = None, status_code = 403, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when a security-related issue occurs.
+
+
+.. py:class:: ServiceException(message, service_name = None, details = None, status_code = 502, original_exception = None)
+
+   Bases: :py:obj:`SystemException`
+
+
+   Exception raised when an external service call fails.
+
+
+.. py:class:: SystemException(message, code = ErrorCode.UNKNOWN_ERROR, details = None, status_code = 500, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.base.AppException`
+
+
+   Base exception for system-related errors.
+
+
+.. py:class:: TransactionException(message, details = None, original_exception = None)
+
+   Bases: :py:obj:`DatabaseException`
+
+
+   Exception raised when a database transaction fails.
+
+
+.. py:function:: app_exception_handler(request, exc)
+   :async:
+
+
+   Handle application exceptions.
+
+   Args:
+       request: The request that caused the exception
+       exc: The application exception
+
+   Returns:
+       A formatted JSON response with error details
+
+
+.. py:function:: generic_exception_handler(request, exc)
+   :async:
+
+
+   Handle generic exceptions.
+
+   Args:
+       request: The request that caused the exception
+       exc: The unhandled exception
+
+   Returns:
+       A formatted JSON response with error details
+
+
+.. py:function:: validation_exception_handler(request, exc)
+   :async:
+
+
+   Handle validation exceptions.
+
+   Args:
+       request: The request that caused the exception
+       exc: The validation exception
+
+   Returns:
+       A formatted JSON response with validation error details
+
+

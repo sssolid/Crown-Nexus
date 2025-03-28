@@ -1,0 +1,123 @@
+app.core.rate_limiting.limiter
+==============================
+
+.. py:module:: app.core.rate_limiting.limiter
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.limiter.logger
+   app.core.rate_limiting.limiter.HAS_METRICS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.rate_limiting.limiter.RateLimiter
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: HAS_METRICS
+   :value: True
+
+
+.. py:class:: RateLimiter(use_redis = None, prefix = 'ratelimit', default_rule = None)
+
+   Rate limiter that enforces rate limits for various keys.
+
+   Supports both in-memory and Redis-based rate limiting with different
+   strategies for generating rate limit keys.
+
+
+   .. py:attribute:: use_redis
+      :type:  bool
+      :value: None
+
+
+
+   .. py:attribute:: prefix
+      :type:  str
+      :value: 'ratelimit'
+
+
+
+   .. py:attribute:: default_rule
+      :type:  app.core.rate_limiting.models.RateLimitRule
+
+
+   .. py:attribute:: _counters
+      :type:  Dict[str, Dict[float, int]]
+
+
+   .. py:method:: is_rate_limited(key, rule = None)
+      :async:
+
+
+      Check if a key is rate limited.
+
+      Args:
+          key: The key to check.
+          rule: Optional rate limit rule to apply. If not provided,
+              the default rule will be used.
+
+      Returns:
+          A tuple containing:
+              - Whether the key is rate limited (True if limited)
+              - The current count for the key
+              - The maximum allowed count (limit)
+
+
+
+   .. py:method:: _check_in_memory(key, rule)
+      :async:
+
+
+      Check if a key is rate limited using in-memory storage.
+
+      Args:
+          key: The key to check.
+          rule: The rate limit rule to apply.
+
+      Returns:
+          A tuple containing:
+              - Whether the key is rate limited (True if limited)
+              - The current count for the key
+              - The maximum allowed count (limit)
+
+
+
+   .. py:method:: get_key_for_request(request, rule)
+
+      Generate a rate limit key for a request.
+
+      Args:
+          request: The request to generate a key for.
+          rule: The rate limit rule that defines the key strategy.
+
+      Returns:
+          A string key for rate limiting.
+
+
+
+   .. py:method:: _get_window_key(key, rule)
+
+      Generate a window-specific key for rate limiting.
+
+      Args:
+          key: The base key to use.
+          rule: The rate limit rule that defines the window.
+
+      Returns:
+          A string key with the window information.
+
+
+

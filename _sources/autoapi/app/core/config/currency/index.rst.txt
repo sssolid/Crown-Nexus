@@ -1,0 +1,46 @@
+app.core.config.currency
+========================
+
+.. py:module:: app.core.config.currency
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.config.currency.CurrencySettings
+
+
+Module Contents
+---------------
+
+.. py:class:: CurrencySettings
+
+   Bases: :py:obj:`pydantic_settings.BaseSettings`
+
+
+   Currency and exchange rate settings.
+
+
+   .. py:attribute:: EXCHANGE_RATE_API_KEY
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: EXCHANGE_RATE_UPDATE_FREQUENCY
+      :type:  int
+      :value: 24
+
+
+
+   .. py:attribute:: STORE_INVERSE_RATES
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: model_config
+
+

@@ -1,0 +1,482 @@
+app.domains.autocare.padb.models
+================================
+
+.. py:module:: app.domains.autocare.padb.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.padb.models.PartAttribute
+   app.domains.autocare.padb.models.MetaData
+   app.domains.autocare.padb.models.MeasurementGroup
+   app.domains.autocare.padb.models.MetaUOMCode
+   app.domains.autocare.padb.models.PartAttributeAssignment
+   app.domains.autocare.padb.models.MetaUomCodeAssignment
+   app.domains.autocare.padb.models.ValidValue
+   app.domains.autocare.padb.models.ValidValueAssignment
+   app.domains.autocare.padb.models.Style
+   app.domains.autocare.padb.models.PartAttributeStyle
+   app.domains.autocare.padb.models.PartTypeStyle
+   app.domains.autocare.padb.models.PAdbVersion
+
+
+Module Contents
+---------------
+
+.. py:class:: PartAttribute
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for part attribute definitions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_part_attribute'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: pa_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: pa_name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: pa_descr
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: assignments
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: MetaData
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for attribute metadata definitions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_metadata'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: meta_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: meta_name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: meta_descr
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: meta_format
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: data_type
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: min_length
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: max_length
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: assignments
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: MeasurementGroup
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for measurement groupings.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_measurement_group'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: measurement_group_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: measurement_group_name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: uom_codes
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: MetaUOMCode
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for units of measure codes.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_meta_uom_code'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: meta_uom_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: uom_code
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: uom_description
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: uom_label
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: measurement_group_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: measurement_group
+
+
+   .. py:attribute:: assignments
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartAttributeAssignment
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for assignments between parts, attributes, and metadata.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_part_attribute_assignment'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: papt_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: pa_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: meta_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part
+
+
+   .. py:attribute:: attribute
+
+
+   .. py:attribute:: metadata
+
+
+   .. py:attribute:: uom_assignments
+
+
+   .. py:attribute:: valid_value_assignments
+
+
+   .. py:attribute:: style
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: MetaUomCodeAssignment
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for assignments between attributes and UOM codes.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_meta_uom_code_assignment'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: meta_uom_code_assignment_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: papt_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: meta_uom_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: attribute_assignment
+
+
+   .. py:attribute:: meta_uom
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: ValidValue
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for valid values for attributes.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_valid_value'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: valid_value_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: valid_value
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: assignments
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: ValidValueAssignment
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for assignments between attributes and valid values.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_valid_value_assignment'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: valid_value_assignment_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: papt_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: valid_value_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: attribute_assignment
+
+
+   .. py:attribute:: valid_value
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: Style
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for style definitions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_style'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: style_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: style_name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: part_attribute_styles
+
+
+   .. py:attribute:: part_type_styles
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartAttributeStyle
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for part attribute styling.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_part_attribute_style'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: style_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: papt_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: style
+
+
+   .. py:attribute:: attribute_assignment
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartTypeStyle
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for part type styling.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_part_type_style'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: style_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: style
+
+
+   .. py:attribute:: part
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PAdbVersion
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for PAdb version tracking.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_padb_version'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: version_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: is_current
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:method:: __repr__()
+
+

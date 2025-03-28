@@ -1,0 +1,270 @@
+app.domains.autocare.qdb.repository
+===================================
+
+.. py:module:: app.domains.autocare.qdb.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.qdb.repository.QdbRepository
+   app.domains.autocare.qdb.repository.QualifierRepository
+   app.domains.autocare.qdb.repository.QualifierTypeRepository
+   app.domains.autocare.qdb.repository.LanguageRepository
+   app.domains.autocare.qdb.repository.GroupNumberRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: QdbRepository(db)
+
+   Repository for Qdb entity operations.
+
+   Provides methods for querying Qdb data and managing database updates.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: qualifier_repo
+
+
+   .. py:attribute:: qualifier_type_repo
+
+
+   .. py:attribute:: language_repo
+
+
+   .. py:attribute:: group_repo
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current version of the Qdb database.
+
+      Returns:
+          The version date as a string or None if no version is set.
+
+
+
+   .. py:method:: update_version(version_date)
+      :async:
+
+
+      Update the current version of the Qdb database.
+
+      Args:
+          version_date: The new version date.
+
+      Returns:
+          The updated version entity.
+
+
+
+   .. py:method:: search_qualifiers(search_term, qualifier_type_id = None, language_id = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for qualifiers with optional filters.
+
+      Args:
+          search_term: The search term.
+          qualifier_type_id: Optional qualifier type ID to filter by.
+          language_id: Optional language ID to search translations.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+.. py:class:: QualifierRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.qdb.models.Qualifier`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Qualifier entity operations.
+
+
+   .. py:method:: get_by_qualifier_id(qualifier_id)
+      :async:
+
+
+      Get a qualifier by its ID.
+
+      Args:
+          qualifier_id: The qualifier ID.
+
+      Returns:
+          The qualifier if found, None otherwise.
+
+
+
+   .. py:method:: search(search_term, qualifier_type_id = None, language_id = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for qualifiers with optional filters.
+
+      Args:
+          search_term: The search term.
+          qualifier_type_id: Optional qualifier type ID to filter by.
+          language_id: Optional language ID to search translations.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_translations(qualifier_id, language_id = None)
+      :async:
+
+
+      Get translations for a qualifier.
+
+      Args:
+          qualifier_id: The qualifier ID.
+          language_id: Optional language ID to filter by.
+
+      Returns:
+          List of translations for the qualifier.
+
+
+
+   .. py:method:: get_groups(qualifier_id)
+      :async:
+
+
+      Get groups for a qualifier.
+
+      Args:
+          qualifier_id: The qualifier ID.
+
+      Returns:
+          List of groups with group number info.
+
+
+
+.. py:class:: QualifierTypeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.qdb.models.QualifierType`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for QualifierType entity operations.
+
+
+   .. py:method:: get_by_qualifier_type_id(qualifier_type_id)
+      :async:
+
+
+      Get a qualifier type by its ID.
+
+      Args:
+          qualifier_type_id: The qualifier type ID.
+
+      Returns:
+          The qualifier type if found, None otherwise.
+
+
+
+   .. py:method:: get_all_types()
+      :async:
+
+
+      Get all qualifier types.
+
+      Returns:
+          List of all qualifier types.
+
+
+
+.. py:class:: LanguageRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.qdb.models.Language`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Language entity operations.
+
+
+   .. py:method:: get_by_language_id(language_id)
+      :async:
+
+
+      Get a language by its ID.
+
+      Args:
+          language_id: The language ID.
+
+      Returns:
+          The language if found, None otherwise.
+
+
+
+   .. py:method:: get_all_languages()
+      :async:
+
+
+      Get all languages.
+
+      Returns:
+          List of all languages.
+
+
+
+.. py:class:: GroupNumberRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.qdb.models.GroupNumber`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for GroupNumber entity operations.
+
+
+   .. py:method:: get_by_group_number_id(group_number_id)
+      :async:
+
+
+      Get a group number by its ID.
+
+      Args:
+          group_number_id: The group number ID.
+
+      Returns:
+          The group number if found, None otherwise.
+
+
+
+   .. py:method:: get_all_groups()
+      :async:
+
+
+      Get all group numbers.
+
+      Returns:
+          List of all group numbers.
+
+
+
+   .. py:method:: get_qualifiers_by_group(group_number_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get qualifiers for a specific group.
+
+      Args:
+          group_number_id: The group number ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+

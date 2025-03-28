@@ -1,0 +1,19 @@
+app.domains.company
+===================
+
+.. py:module:: app.domains.company
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/company/exceptions/index
+   /autoapi/app/domains/company/models/index
+   /autoapi/app/domains/company/repository/index
+   /autoapi/app/domains/company/schemas/index
+   /autoapi/app/domains/company/service/index
+
+

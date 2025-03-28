@@ -1,0 +1,1146 @@
+app.domains.products.schemas
+============================
+
+.. py:module:: app.domains.products.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.products.schemas.DescriptionType
+   app.domains.products.schemas.MarketingType
+   app.domains.products.schemas.ProductStatus
+   app.domains.products.schemas.ProductDescriptionBase
+   app.domains.products.schemas.ProductDescriptionCreate
+   app.domains.products.schemas.ProductDescriptionUpdate
+   app.domains.products.schemas.ProductDescriptionInDB
+   app.domains.products.schemas.ProductDescription
+   app.domains.products.schemas.ProductMarketingBase
+   app.domains.products.schemas.ProductMarketingCreate
+   app.domains.products.schemas.ProductMarketingUpdate
+   app.domains.products.schemas.ProductMarketingInDB
+   app.domains.products.schemas.ProductMarketing
+   app.domains.products.schemas.ProductActivityBase
+   app.domains.products.schemas.ProductActivityCreate
+   app.domains.products.schemas.ProductActivityInDB
+   app.domains.products.schemas.ProductActivity
+   app.domains.products.schemas.BrandBase
+   app.domains.products.schemas.BrandCreate
+   app.domains.products.schemas.BrandUpdate
+   app.domains.products.schemas.BrandInDB
+   app.domains.products.schemas.Brand
+   app.domains.products.schemas.ProductSupersessionBase
+   app.domains.products.schemas.ProductSupersessionCreate
+   app.domains.products.schemas.ProductSupersessionUpdate
+   app.domains.products.schemas.ProductSupersessionInDB
+   app.domains.products.schemas.ProductSupersession
+   app.domains.products.schemas.ProductMeasurementBase
+   app.domains.products.schemas.ProductMeasurementCreate
+   app.domains.products.schemas.ProductMeasurementUpdate
+   app.domains.products.schemas.ProductMeasurementInDB
+   app.domains.products.schemas.ProductMeasurement
+   app.domains.products.schemas.ProductStockBase
+   app.domains.products.schemas.ProductStockCreate
+   app.domains.products.schemas.ProductStockUpdate
+   app.domains.products.schemas.ProductStockInDB
+   app.domains.products.schemas.ProductStock
+   app.domains.products.schemas.ProductBase
+   app.domains.products.schemas.ProductCreate
+   app.domains.products.schemas.ProductUpdate
+   app.domains.products.schemas.ProductInDB
+   app.domains.products.schemas.Product
+   app.domains.products.schemas.FitmentBase
+   app.domains.products.schemas.FitmentCreate
+   app.domains.products.schemas.FitmentUpdate
+   app.domains.products.schemas.FitmentInDB
+   app.domains.products.schemas.Fitment
+   app.domains.products.schemas.PaginatedResponse
+   app.domains.products.schemas.ProductListResponse
+   app.domains.products.schemas.FitmentListResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: DescriptionType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of product descriptions.
+
+   Attributes:
+       SHORT: Brief product description.
+       LONG: Detailed product description.
+       KEYWORDS: Keywords for search.
+       SLANG: Colloquial terms for the product.
+       NOTES: Internal notes about the product.
+
+
+   .. py:attribute:: SHORT
+      :value: 'Short'
+
+
+
+   .. py:attribute:: LONG
+      :value: 'Long'
+
+
+
+   .. py:attribute:: KEYWORDS
+      :value: 'Keywords'
+
+
+
+   .. py:attribute:: SLANG
+      :value: 'Slang'
+
+
+
+   .. py:attribute:: NOTES
+      :value: 'Notes'
+
+
+
+.. py:class:: MarketingType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of product marketing content.
+
+   Attributes:
+       BULLET_POINT: Bullet point features.
+       AD_COPY: Advertising copy.
+
+
+   .. py:attribute:: BULLET_POINT
+      :value: 'Bullet Point'
+
+
+
+   .. py:attribute:: AD_COPY
+      :value: 'Ad Copy'
+
+
+
+.. py:class:: ProductStatus
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Product status values.
+
+   Attributes:
+       ACTIVE: Product is active and available.
+       INACTIVE: Product is temporarily inactive.
+       DISCONTINUED: Product is permanently discontinued.
+       OUT_OF_STOCK: Product is out of stock.
+       PENDING: Product is pending approval or release.
+
+
+   .. py:attribute:: ACTIVE
+      :value: 'active'
+
+
+
+   .. py:attribute:: INACTIVE
+      :value: 'inactive'
+
+
+
+   .. py:attribute:: DISCONTINUED
+      :value: 'discontinued'
+
+
+
+   .. py:attribute:: OUT_OF_STOCK
+      :value: 'out_of_stock'
+
+
+
+   .. py:attribute:: PENDING
+      :value: 'pending'
+
+
+
+.. py:class:: ProductDescriptionBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductDescription data.
+
+   Attributes:
+       description_type: Type of description.
+       description: The description text.
+
+
+   .. py:attribute:: description_type
+      :type:  DescriptionType
+
+
+   .. py:attribute:: description
+      :type:  str
+
+
+.. py:class:: ProductDescriptionCreate
+
+   Bases: :py:obj:`ProductDescriptionBase`
+
+
+   Schema for creating a new ProductDescription.
+
+
+.. py:class:: ProductDescriptionUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ProductDescription.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: description_type
+      :type:  Optional[DescriptionType]
+
+
+   .. py:attribute:: description
+      :type:  Optional[str]
+
+
+.. py:class:: ProductDescriptionInDB
+
+   Bases: :py:obj:`ProductDescriptionBase`
+
+
+   Schema for ProductDescription data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductDescription
+
+   Bases: :py:obj:`ProductDescriptionInDB`
+
+
+   Schema for complete ProductDescription data in API responses.
+
+
+.. py:class:: ProductMarketingBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductMarketing data.
+
+   Attributes:
+       marketing_type: Type of marketing content.
+       content: The marketing content.
+       position: Display order position.
+
+
+   .. py:attribute:: marketing_type
+      :type:  MarketingType
+
+
+   .. py:attribute:: content
+      :type:  str
+
+
+   .. py:attribute:: position
+      :type:  Optional[int]
+
+
+.. py:class:: ProductMarketingCreate
+
+   Bases: :py:obj:`ProductMarketingBase`
+
+
+   Schema for creating a new ProductMarketing.
+
+
+.. py:class:: ProductMarketingUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ProductMarketing.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: marketing_type
+      :type:  Optional[MarketingType]
+
+
+   .. py:attribute:: content
+      :type:  Optional[str]
+
+
+   .. py:attribute:: position
+      :type:  Optional[int]
+
+
+.. py:class:: ProductMarketingInDB
+
+   Bases: :py:obj:`ProductMarketingBase`
+
+
+   Schema for ProductMarketing data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductMarketing
+
+   Bases: :py:obj:`ProductMarketingInDB`
+
+
+   Schema for complete ProductMarketing data in API responses.
+
+
+.. py:class:: ProductActivityBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductActivity data.
+
+   Attributes:
+       status: Product status.
+       reason: Reason for the status change.
+
+
+   .. py:attribute:: status
+      :type:  ProductStatus
+
+
+   .. py:attribute:: reason
+      :type:  Optional[str]
+
+
+.. py:class:: ProductActivityCreate
+
+   Bases: :py:obj:`ProductActivityBase`
+
+
+   Schema for creating a new ProductActivity.
+
+
+.. py:class:: ProductActivityInDB
+
+   Bases: :py:obj:`ProductActivityBase`
+
+
+   Schema for ProductActivity data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: changed_by_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: changed_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductActivity
+
+   Bases: :py:obj:`ProductActivityInDB`
+
+
+   Schema for complete ProductActivity data in API responses.
+
+   Includes related entities like user details.
+
+
+   .. py:attribute:: changed_by
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: BrandBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Brand data.
+
+   Attributes:
+       name: Brand name.
+       parent_company_id: ID of the parent company.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: parent_company_id
+      :type:  Optional[uuid.UUID]
+
+
+.. py:class:: BrandCreate
+
+   Bases: :py:obj:`BrandBase`
+
+
+   Schema for creating a new Brand.
+
+
+.. py:class:: BrandUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Brand.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: parent_company_id
+      :type:  Optional[Union[uuid.UUID, None]]
+
+
+.. py:class:: BrandInDB
+
+   Bases: :py:obj:`BrandBase`
+
+
+   Schema for Brand data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Brand
+
+   Bases: :py:obj:`BrandInDB`
+
+
+   Schema for complete Brand data in API responses.
+
+   Includes related entities like parent company details.
+
+
+   .. py:attribute:: parent_company
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: ProductSupersessionBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductSupersession data.
+
+   Attributes:
+       old_product_id: ID of the product being replaced.
+       new_product_id: ID of the replacement product.
+       reason: Reason for the supersession.
+
+
+   .. py:attribute:: old_product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: new_product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: reason
+      :type:  Optional[str]
+
+
+.. py:class:: ProductSupersessionCreate
+
+   Bases: :py:obj:`ProductSupersessionBase`
+
+
+   Schema for creating a new ProductSupersession.
+
+
+.. py:class:: ProductSupersessionUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ProductSupersession.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: reason
+      :type:  Optional[str]
+
+
+.. py:class:: ProductSupersessionInDB
+
+   Bases: :py:obj:`ProductSupersessionBase`
+
+
+   Schema for ProductSupersession data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: changed_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductSupersession
+
+   Bases: :py:obj:`ProductSupersessionInDB`
+
+
+   Schema for complete ProductSupersession data in API responses.
+
+   Includes related entities like product details.
+
+
+   .. py:attribute:: old_product
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: new_product
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: ProductMeasurementBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductMeasurement data.
+
+   Attributes:
+       manufacturer_id: ID of the manufacturer.
+       length: Length measurement.
+       width: Width measurement.
+       height: Height measurement.
+       weight: Weight measurement.
+       volume: Volume measurement.
+       dimensional_weight: Dimensional weight for shipping calculations.
+
+
+   .. py:attribute:: manufacturer_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: length
+      :type:  Optional[float]
+
+
+   .. py:attribute:: width
+      :type:  Optional[float]
+
+
+   .. py:attribute:: height
+      :type:  Optional[float]
+
+
+   .. py:attribute:: weight
+      :type:  Optional[float]
+
+
+   .. py:attribute:: volume
+      :type:  Optional[float]
+
+
+   .. py:attribute:: dimensional_weight
+      :type:  Optional[float]
+
+
+.. py:class:: ProductMeasurementCreate
+
+   Bases: :py:obj:`ProductMeasurementBase`
+
+
+   Schema for creating a new ProductMeasurement.
+
+
+.. py:class:: ProductMeasurementUpdate
+
+   Bases: :py:obj:`ProductMeasurementBase`
+
+
+   Schema for updating an existing ProductMeasurement.
+
+   All fields are optional to allow partial updates.
+
+
+.. py:class:: ProductMeasurementInDB
+
+   Bases: :py:obj:`ProductMeasurementBase`
+
+
+   Schema for ProductMeasurement data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: effective_date
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductMeasurement
+
+   Bases: :py:obj:`ProductMeasurementInDB`
+
+
+   Schema for complete ProductMeasurement data in API responses.
+
+   Includes related entities like manufacturer details.
+
+
+   .. py:attribute:: manufacturer
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: ProductStockBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for ProductStock data.
+
+   Attributes:
+       warehouse_id: ID of the warehouse.
+       quantity: Stock quantity.
+
+
+   .. py:attribute:: warehouse_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: quantity
+      :type:  int
+
+
+.. py:class:: ProductStockCreate
+
+   Bases: :py:obj:`ProductStockBase`
+
+
+   Schema for creating new ProductStock.
+
+
+.. py:class:: ProductStockUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing ProductStock.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: quantity
+      :type:  Optional[int]
+
+
+.. py:class:: ProductStockInDB
+
+   Bases: :py:obj:`ProductStockBase`
+
+
+   Schema for ProductStock data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: product_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: last_updated
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: ProductStock
+
+   Bases: :py:obj:`ProductStockInDB`
+
+
+   Schema for complete ProductStock data in API responses.
+
+   Includes related entities like warehouse details.
+
+
+   .. py:attribute:: warehouse
+      :type:  Dict[str, Any]
+
+
+.. py:class:: ProductBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Product data.
+
+   Attributes:
+       part_number: Product part number.
+       part_number_stripped: Normalized version of part number for searching.
+       application: Product application or use case description.
+       vintage: Whether the product is for vintage vehicles.
+       late_model: Whether the product is for late model vehicles.
+       soft: Whether the product is soft (e.g., fabric vs metal).
+       universal: Whether the product is universal (fits multiple applications).
+       is_active: Whether the product is active in the catalog.
+
+
+   .. py:attribute:: part_number
+      :type:  str
+
+
+   .. py:attribute:: part_number_stripped
+      :type:  Optional[str]
+
+
+   .. py:attribute:: application
+      :type:  Optional[str]
+
+
+   .. py:attribute:: vintage
+      :type:  bool
+
+
+   .. py:attribute:: late_model
+      :type:  bool
+
+
+   .. py:attribute:: soft
+      :type:  bool
+
+
+   .. py:attribute:: universal
+      :type:  bool
+
+
+   .. py:attribute:: is_active
+      :type:  bool
+
+
+   .. py:method:: generate_part_number_stripped()
+
+      Generate normalized part number if not provided.
+
+      Returns:
+          Self with normalized part number.
+
+
+
+.. py:class:: ProductCreate
+
+   Bases: :py:obj:`ProductBase`
+
+
+   Schema for creating a new Product.
+
+   Includes nested creation of related entities.
+
+
+   .. py:attribute:: descriptions
+      :type:  Optional[List[ProductDescriptionCreate]]
+
+
+   .. py:attribute:: marketing
+      :type:  Optional[List[ProductMarketingCreate]]
+
+
+.. py:class:: ProductUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Product.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: part_number
+      :type:  Optional[str]
+
+
+   .. py:attribute:: application
+      :type:  Optional[str]
+
+
+   .. py:attribute:: vintage
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: late_model
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: soft
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: universal
+      :type:  Optional[bool]
+
+
+   .. py:attribute:: is_active
+      :type:  Optional[bool]
+
+
+.. py:class:: ProductInDB
+
+   Bases: :py:obj:`ProductBase`
+
+
+   Schema for Product data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Product
+
+   Bases: :py:obj:`ProductInDB`
+
+
+   Schema for complete Product data in API responses.
+
+   Includes related entities like descriptions, marketing, etc.
+
+
+   .. py:attribute:: descriptions
+      :type:  List[ProductDescription]
+
+
+   .. py:attribute:: marketing
+      :type:  List[ProductMarketing]
+
+
+   .. py:attribute:: activities
+      :type:  List[ProductActivity]
+
+
+   .. py:attribute:: superseded_by
+      :type:  List[ProductSupersession]
+
+
+   .. py:attribute:: supersedes
+      :type:  List[ProductSupersession]
+
+
+   .. py:attribute:: measurements
+      :type:  List[ProductMeasurement]
+
+
+   .. py:attribute:: stock
+      :type:  List[ProductStock]
+
+
+.. py:class:: FitmentBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Fitment data.
+
+   Attributes:
+       year: Vehicle year.
+       make: Vehicle make.
+       model: Vehicle model.
+       engine: Engine specification.
+       transmission: Transmission specification.
+       attributes: Additional fitment attributes.
+
+
+   .. py:attribute:: year
+      :type:  int
+
+
+   .. py:attribute:: make
+      :type:  str
+
+
+   .. py:attribute:: model
+      :type:  str
+
+
+   .. py:attribute:: engine
+      :type:  Optional[str]
+
+
+   .. py:attribute:: transmission
+      :type:  Optional[str]
+
+
+   .. py:attribute:: attributes
+      :type:  Dict[str, Any]
+
+
+   .. py:method:: validate_year(v)
+      :classmethod:
+
+
+      Validate vehicle year.
+
+      Args:
+          v: The year to validate.
+
+      Returns:
+          Validated year.
+
+      Raises:
+          ValueError: If the year is outside valid range.
+
+
+
+.. py:class:: FitmentCreate
+
+   Bases: :py:obj:`FitmentBase`
+
+
+   Schema for creating a new Fitment.
+
+
+.. py:class:: FitmentUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Fitment.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: year
+      :type:  Optional[int]
+
+
+   .. py:attribute:: make
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model
+      :type:  Optional[str]
+
+
+   .. py:attribute:: engine
+      :type:  Optional[str]
+
+
+   .. py:attribute:: transmission
+      :type:  Optional[str]
+
+
+   .. py:attribute:: attributes
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:method:: validate_year(v)
+      :classmethod:
+
+
+      Validate vehicle year if provided.
+
+      Args:
+          v: The year to validate or None.
+
+      Returns:
+          Validated year or None.
+
+      Raises:
+          ValueError: If the year is outside valid range.
+
+
+
+.. py:class:: FitmentInDB
+
+   Bases: :py:obj:`FitmentBase`
+
+
+   Schema for Fitment data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Fitment
+
+   Bases: :py:obj:`FitmentInDB`
+
+
+   Schema for complete Fitment data in API responses.
+
+
+.. py:class:: PaginatedResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for paginated responses.
+
+   Attributes:
+       items: List of items.
+       total: Total number of items.
+       page: Current page number.
+       page_size: Number of items per page.
+       pages: Total number of pages.
+
+
+   .. py:attribute:: items
+      :type:  List[Any]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+
+.. py:class:: ProductListResponse
+
+   Bases: :py:obj:`PaginatedResponse`
+
+
+   Schema for paginated product response.
+
+   Overrides items type to be specifically List[Product].
+
+
+   .. py:attribute:: items
+      :type:  List[Product]
+
+
+.. py:class:: FitmentListResponse
+
+   Bases: :py:obj:`PaginatedResponse`
+
+
+   Schema for paginated fitment response.
+
+   Overrides items type to be specifically List[Fitment].
+
+
+   .. py:attribute:: items
+      :type:  List[Fitment]
+
+

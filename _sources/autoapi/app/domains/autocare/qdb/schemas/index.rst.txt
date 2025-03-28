@@ -1,0 +1,286 @@
+app.domains.autocare.qdb.schemas
+================================
+
+.. py:module:: app.domains.autocare.qdb.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.qdb.schemas.QualifierType
+   app.domains.autocare.qdb.schemas.Language
+   app.domains.autocare.qdb.schemas.QualifierTranslation
+   app.domains.autocare.qdb.schemas.GroupNumber
+   app.domains.autocare.qdb.schemas.QualifierGroup
+   app.domains.autocare.qdb.schemas.Qualifier
+   app.domains.autocare.qdb.schemas.QualifierDetail
+   app.domains.autocare.qdb.schemas.QualifierSearchParameters
+   app.domains.autocare.qdb.schemas.QualifierSearchResponse
+
+
+Module Contents
+---------------
+
+.. py:class:: QualifierType
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for qualifier type data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: qualifier_type_id
+      :type:  int
+
+
+   .. py:attribute:: qualifier_type
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Language
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for language data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: language_id
+      :type:  int
+
+
+   .. py:attribute:: language_name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: dialect_name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: QualifierTranslation
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for qualifier translation data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: qualifier_translation_id
+      :type:  int
+
+
+   .. py:attribute:: qualifier_id
+      :type:  int
+
+
+   .. py:attribute:: language_id
+      :type:  int
+
+
+   .. py:attribute:: translation_text
+      :type:  str
+
+
+   .. py:attribute:: language
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: GroupNumber
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for group number data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: group_number_id
+      :type:  int
+
+
+   .. py:attribute:: group_description
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: QualifierGroup
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for qualifier group data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: qualifier_group_id
+      :type:  int
+
+
+   .. py:attribute:: group_number_id
+      :type:  int
+
+
+   .. py:attribute:: qualifier_id
+      :type:  int
+
+
+   .. py:attribute:: number
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Qualifier
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for qualifier data.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: qualifier_id
+      :type:  int
+
+
+   .. py:attribute:: qualifier_text
+      :type:  Optional[str]
+
+
+   .. py:attribute:: example_text
+      :type:  Optional[str]
+
+
+   .. py:attribute:: qualifier_type_id
+      :type:  int
+
+
+   .. py:attribute:: new_qualifier_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: QualifierDetail
+
+   Bases: :py:obj:`Qualifier`
+
+
+   Schema for detailed qualifier data.
+
+
+   .. py:attribute:: type
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: translations
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: groups
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: superseded_by
+      :type:  Optional[Dict[str, Any]]
+
+
+   .. py:attribute:: when_modified
+      :type:  str
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: QualifierSearchParameters
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for qualifier search parameters.
+
+
+   .. py:attribute:: search_term
+      :type:  str
+
+
+   .. py:attribute:: qualifier_type_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: language_id
+      :type:  Optional[int]
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+.. py:class:: QualifierSearchResponse
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for paginated qualifier search response.
+
+
+   .. py:attribute:: items
+      :type:  List[Qualifier]
+
+
+   .. py:attribute:: total
+      :type:  int
+
+
+   .. py:attribute:: page
+      :type:  int
+
+
+   .. py:attribute:: page_size
+      :type:  int
+
+
+   .. py:attribute:: pages
+      :type:  int
+
+

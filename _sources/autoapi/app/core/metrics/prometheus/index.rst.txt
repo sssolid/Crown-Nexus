@@ -1,0 +1,104 @@
+app.core.metrics.prometheus
+===========================
+
+.. py:module:: app.core.metrics.prometheus
+
+.. autoapi-nested-parse::
+
+   Prometheus integration for metrics.
+
+   This module provides integration with Prometheus for exposing metrics,
+   including HTTP server setup and push gateway support.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.metrics.prometheus.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.metrics.prometheus.PrometheusManager
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: PrometheusManager(config)
+
+   Manager for Prometheus integration.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: initialized
+      :value: False
+
+
+
+   .. py:attribute:: server_started
+      :value: False
+
+
+
+   .. py:attribute:: push_task
+      :type:  Optional[asyncio.Task]
+      :value: None
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize Prometheus integration.
+
+      This sets up the HTTP metrics endpoint and/or push gateway
+      based on configuration.
+
+
+
+   .. py:method:: _start_http_server()
+
+      Start Prometheus HTTP server.
+
+
+
+   .. py:method:: _start_push_loop()
+      :async:
+
+
+      Start loop to periodically push metrics to gateway.
+
+
+
+   .. py:method:: _push_metrics()
+
+      Push metrics to Prometheus push gateway.
+
+
+
+   .. py:method:: _update_process_metrics()
+
+      Update process metrics like memory usage and CPU time.
+
+
+
+   .. py:method:: shutdown()
+      :async:
+
+
+      Clean up Prometheus resources.
+
+
+

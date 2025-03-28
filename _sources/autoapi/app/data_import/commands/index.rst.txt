@@ -1,0 +1,29 @@
+app.data_import.commands
+========================
+
+.. py:module:: app.data_import.commands
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/data_import/commands/import_products/index
+   /autoapi/app/data_import/commands/sync_as400/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.data_import.commands.app
+
+
+Package Contents
+----------------
+
+.. py:data:: app
+

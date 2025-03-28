@@ -1,0 +1,339 @@
+app.core.validation.validators
+==============================
+
+.. py:module:: app.core.validation.validators
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.validation.validators.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.validation.validators.EmailValidator
+   app.core.validation.validators.PhoneValidator
+   app.core.validation.validators.DateValidator
+   app.core.validation.validators.LengthValidator
+   app.core.validation.validators.RangeValidator
+   app.core.validation.validators.RegexValidator
+   app.core.validation.validators.RequiredValidator
+   app.core.validation.validators.URLValidator
+   app.core.validation.validators.UUIDValidator
+   app.core.validation.validators.CreditCardValidator
+   app.core.validation.validators.IPAddressValidator
+   app.core.validation.validators.PasswordValidator
+   app.core.validation.validators.EnumValidator
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: EmailValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for email addresses.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate an email address.
+
+      Args:
+          value: The email address to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: PhoneValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for phone numbers.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a phone number.
+
+      Args:
+          value: The phone number to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: DateValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for dates.
+
+
+   .. py:method:: validate(value, min_date = None, max_date = None, format_str = None, **kwargs)
+
+      Validate a date.
+
+      Args:
+          value: The date to validate
+          min_date: Optional minimum date
+          max_date: Optional maximum date
+          format_str: Optional date format string for parsing string dates
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: LengthValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for string length.
+
+
+   .. py:method:: validate(value, min_length = None, max_length = None, **kwargs)
+
+      Validate the length of a string.
+
+      Args:
+          value: The string to validate
+          min_length: Optional minimum length
+          max_length: Optional maximum length
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: RangeValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for numeric ranges.
+
+
+   .. py:method:: validate(value, min_value = None, max_value = None, **kwargs)
+
+      Validate a numeric value against a range.
+
+      Args:
+          value: The number to validate
+          min_value: Optional minimum value
+          max_value: Optional maximum value
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: RegexValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for regex patterns.
+
+
+   .. py:method:: validate(value, pattern, **kwargs)
+
+      Validate a string against a regex pattern.
+
+      Args:
+          value: The string to validate
+          pattern: The regex pattern to validate against
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: RequiredValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for required values.
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate that a value is not empty.
+
+      Args:
+          value: The value to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: URLValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for URLs.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a URL.
+
+      Args:
+          value: The URL to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: UUIDValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for UUIDs.
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a UUID.
+
+      Args:
+          value: The UUID string to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: CreditCardValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for credit card numbers.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:method:: validate(value, **kwargs)
+
+      Validate a credit card number using the Luhn algorithm.
+
+      Args:
+          value: The credit card number to validate
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: IPAddressValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for IP addresses.
+
+
+   .. py:method:: validate(value, version = None, **kwargs)
+
+      Validate an IP address.
+
+      Args:
+          value: The IP address to validate
+          version: Optional IP version (4 or 6)
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: PasswordValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for password strength.
+
+
+   .. py:method:: validate(value, min_length = 8, require_lowercase = True, require_uppercase = True, require_digit = True, require_special = True, **kwargs)
+
+      Validate password strength.
+
+      Args:
+          value: The password to validate
+          min_length: Minimum password length
+          require_lowercase: Whether to require at least one lowercase letter
+          require_uppercase: Whether to require at least one uppercase letter
+          require_digit: Whether to require at least one digit
+          require_special: Whether to require at least one special character
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+
+.. py:class:: EnumValidator
+
+   Bases: :py:obj:`app.core.validation.base.Validator`
+
+
+   Validator for enum values.
+
+
+   .. py:method:: validate(value, enum_class, **kwargs)
+
+      Validate that a value is a valid enum member.
+
+      Args:
+          value: The value to validate
+          enum_class: The Enum class to validate against
+          **kwargs: Additional validation parameters
+
+      Returns:
+          ValidationResult: The result of the validation
+
+
+

@@ -1,0 +1,284 @@
+app.domains.autocare.qdb.models
+===============================
+
+.. py:module:: app.domains.autocare.qdb.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.qdb.models.QualifierType
+   app.domains.autocare.qdb.models.Qualifier
+   app.domains.autocare.qdb.models.Language
+   app.domains.autocare.qdb.models.QualifierTranslation
+   app.domains.autocare.qdb.models.GroupNumber
+   app.domains.autocare.qdb.models.QualifierGroup
+   app.domains.autocare.qdb.models.QdbVersion
+
+
+Module Contents
+---------------
+
+.. py:class:: QualifierType
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for qualifier types.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_qualifier_type'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: qualifier_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: qualifier_type
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: qualifiers
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: Qualifier
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for qualifiers.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_qualifier'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: qualifier_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: qualifier_text
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: example_text
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: qualifier_type_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: new_qualifier_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: when_modified
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: qualifier_type
+
+
+   .. py:attribute:: translations
+
+
+   .. py:attribute:: groups
+
+
+   .. py:attribute:: superseded_by
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: Language
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for languages.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_language'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: language_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: language_name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: dialect_name
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:attribute:: translations
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: QualifierTranslation
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for qualifier translations.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_qualifier_translation'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: qualifier_translation_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: qualifier_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: language_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: translation_text
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: qualifier
+
+
+   .. py:attribute:: language
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: GroupNumber
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for qualifier group numbers.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_group_number'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: group_number_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: group_description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: qualifier_groups
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: QualifierGroup
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for qualifier groups.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_qualifier_group'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: qualifier_group_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: group_number_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: qualifier_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: group_number
+
+
+   .. py:attribute:: qualifier
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: QdbVersion
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for Qdb version tracking.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_qdb_version'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: version_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: is_current
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:method:: __repr__()
+
+

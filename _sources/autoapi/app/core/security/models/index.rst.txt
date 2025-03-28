@@ -1,0 +1,309 @@
+app.core.security.models
+========================
+
+.. py:module:: app.core.security.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.security.models.TokenType
+   app.core.security.models.SecurityViolation
+   app.core.security.models.TokenClaimsModel
+   app.core.security.models.TokenPair
+   app.core.security.models.ApiKeyData
+   app.core.security.models.PasswordPolicy
+
+
+Module Contents
+---------------
+
+.. py:class:: TokenType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of tokens used in the system.
+
+
+   .. py:attribute:: ACCESS
+      :value: 'access'
+
+
+
+   .. py:attribute:: REFRESH
+      :value: 'refresh'
+
+
+
+   .. py:attribute:: RESET_PASSWORD
+      :value: 'reset_password'
+
+
+
+   .. py:attribute:: EMAIL_VERIFICATION
+      :value: 'email_verification'
+
+
+
+   .. py:attribute:: INVITATION
+      :value: 'invitation'
+
+
+
+   .. py:attribute:: API_KEY
+      :value: 'api_key'
+
+
+
+   .. py:attribute:: CSRF
+      :value: 'csrf'
+
+
+
+   .. py:attribute:: SESSION
+      :value: 'session'
+
+
+
+.. py:class:: SecurityViolation
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Types of security violations that can occur.
+
+
+   .. py:attribute:: INVALID_TOKEN
+      :value: 'invalid_token'
+
+
+
+   .. py:attribute:: EXPIRED_TOKEN
+      :value: 'expired_token'
+
+
+
+   .. py:attribute:: CSRF_VIOLATION
+      :value: 'csrf_violation'
+
+
+
+   .. py:attribute:: RATE_LIMIT_EXCEEDED
+      :value: 'rate_limit_exceeded'
+
+
+
+   .. py:attribute:: BRUTE_FORCE_ATTEMPT
+      :value: 'brute_force_attempt'
+
+
+
+   .. py:attribute:: SUSPICIOUS_ACTIVITY
+      :value: 'suspicious_activity'
+
+
+
+   .. py:attribute:: UNAUTHORIZED_ACCESS
+      :value: 'unauthorized_access'
+
+
+
+   .. py:attribute:: INVALID_IP
+      :value: 'invalid_ip'
+
+
+
+   .. py:attribute:: PERMISSION_VIOLATION
+      :value: 'permission_violation'
+
+
+
+   .. py:attribute:: INJECTION_ATTEMPT
+      :value: 'injection_attempt'
+
+
+
+   .. py:attribute:: XSS_ATTEMPT
+      :value: 'xss_attempt'
+
+
+
+.. py:class:: TokenClaimsModel
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing the claims in a JWT token.
+
+
+   .. py:attribute:: sub
+      :type:  str
+
+
+   .. py:attribute:: exp
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: iat
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: jti
+      :type:  str
+
+
+   .. py:attribute:: type
+      :type:  str
+
+
+   .. py:attribute:: role
+      :type:  Optional[str]
+
+
+   .. py:attribute:: permissions
+      :type:  Optional[List[str]]
+
+
+   .. py:attribute:: user_data
+      :type:  Optional[Dict[str, Any]]
+
+
+.. py:class:: TokenPair
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing an access and refresh token pair.
+
+
+   .. py:attribute:: access_token
+      :type:  str
+
+
+   .. py:attribute:: refresh_token
+      :type:  str
+
+
+   .. py:attribute:: token_type
+      :type:  str
+
+
+   .. py:attribute:: expires_in
+      :type:  int
+
+
+.. py:class:: ApiKeyData
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing API key data.
+
+
+   .. py:attribute:: api_key
+      :type:  str
+
+
+   .. py:attribute:: key_id
+      :type:  str
+
+
+   .. py:attribute:: hashed_secret
+      :type:  str
+
+
+   .. py:attribute:: token
+      :type:  str
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: created_at
+      :type:  str
+
+
+   .. py:attribute:: permissions
+      :type:  List[str]
+      :value: []
+
+
+
+.. py:class:: PasswordPolicy
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Model representing password policy settings.
+
+
+   .. py:attribute:: min_length
+      :type:  int
+      :value: 8
+
+
+
+   .. py:attribute:: require_uppercase
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: require_lowercase
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: require_digit
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: require_special_char
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: max_length
+      :type:  int
+      :value: 128
+
+
+
+   .. py:attribute:: prevent_common_passwords
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: password_history_count
+      :type:  int
+      :value: 5
+
+
+
+   .. py:attribute:: max_failed_attempts
+      :type:  int
+      :value: 5
+
+
+
+   .. py:attribute:: lockout_duration_minutes
+      :type:  int
+      :value: 30
+
+
+
+   .. py:attribute:: password_expiry_days
+      :type:  Optional[int]
+      :value: 90
+
+
+

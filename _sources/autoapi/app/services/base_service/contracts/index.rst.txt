@@ -1,0 +1,167 @@
+app.services.base_service.contracts
+===================================
+
+.. py:module:: app.services.base_service.contracts
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.services.base_service.contracts.T
+   app.services.base_service.contracts.C
+   app.services.base_service.contracts.U
+   app.services.base_service.contracts.R
+   app.services.base_service.contracts.ID
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.base_service.contracts.BaseServiceProtocol
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:data:: C
+
+.. py:data:: U
+
+.. py:data:: R
+
+.. py:data:: ID
+
+.. py:class:: BaseServiceProtocol
+
+   Bases: :py:obj:`app.services.interfaces.CrudServiceInterface`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ ], :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`R`\ ]
+
+
+   Protocol defining the interface for base service functionality.
+
+
+   .. py:method:: validate_create(data, user_id = None)
+      :async:
+
+
+      Validate data before creation.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_update(entity, data, user_id = None)
+      :async:
+
+
+      Validate data before update.
+
+      Args:
+          entity: Existing entity
+          data: Updated data
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: validate_delete(entity, user_id = None)
+      :async:
+
+
+      Validate before deletion.
+
+      Args:
+          entity: Entity to delete
+          user_id: Current user ID
+
+      Raises:
+          ValidationException: If validation fails
+
+
+
+   .. py:method:: before_create(data, user_id = None)
+      :async:
+
+
+      Hook before entity creation.
+
+      Args:
+          data: Entity data
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_create(entity, user_id = None)
+      :async:
+
+
+      Hook after entity creation.
+
+      Args:
+          entity: Created entity
+          user_id: Current user ID
+
+
+
+   .. py:method:: before_update(entity, data, user_id = None)
+      :async:
+
+
+      Hook before entity update.
+
+      Args:
+          entity: Existing entity
+          data: Updated data
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_update(updated_entity, original_entity, user_id = None)
+      :async:
+
+
+      Hook after entity update.
+
+      Args:
+          updated_entity: Updated entity
+          original_entity: Original entity before update
+          user_id: Current user ID
+
+
+
+   .. py:method:: before_delete(entity, user_id = None)
+      :async:
+
+
+      Hook before entity deletion.
+
+      Args:
+          entity: Entity to delete
+          user_id: Current user ID
+
+
+
+   .. py:method:: after_delete(entity, user_id = None)
+      :async:
+
+
+      Hook after entity deletion.
+
+      Args:
+          entity: Deleted entity
+          user_id: Current user ID
+
+
+

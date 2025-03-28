@@ -1,0 +1,220 @@
+app.domains.chat.service_DUPLICATEMAYBE
+=======================================
+
+.. py:module:: app.domains.chat.service_DUPLICATEMAYBE
+
+.. autoapi-nested-parse::
+
+   Chat service for managing chat rooms, messages, and members.
+
+   This module provides the ChatService for creating and managing chat rooms,
+   sending and receiving messages, and controlling member access.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.chat.service_DUPLICATEMAYBE.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.chat.service_DUPLICATEMAYBE.ChatService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ChatService(db)
+
+   Service for managing chat rooms and messages.
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: create_room(name, room_type, creator_id, company_id = None, members = None)
+      :async:
+
+
+      Create a new chat room.
+
+      Args:
+          name: Room name.
+          room_type: Type of chat room.
+          creator_id: ID of the user creating the room.
+          company_id: ID of the company if this is a company room.
+          members: List of member data to add to the room.
+
+      Returns:
+          The newly created chat room.
+
+      Raises:
+          ValidationException: If the room type or member data is invalid.
+          BusinessException: If there's an error creating the room.
+
+
+
+   .. py:method:: get_room(room_id)
+      :async:
+
+
+      Get a chat room by ID.
+
+      Args:
+          room_id: The chat room ID.
+
+      Returns:
+          The chat room, or None if not found.
+
+      Raises:
+          BusinessException: If there's an error retrieving the room.
+
+
+
+   .. py:method:: get_room_with_members(room_id)
+      :async:
+
+
+      Get a chat room with its members.
+
+      Args:
+          room_id: The chat room ID.
+
+      Returns:
+          The chat room with members loaded, or None if not found.
+
+      Raises:
+          BusinessException: If there's an error retrieving the room.
+
+
+
+   .. py:method:: check_room_access(user_id, room_id)
+      :async:
+
+
+      Check if a user has access to a chat room.
+
+      Args:
+          user_id: The user ID.
+          room_id: The chat room ID.
+
+      Returns:
+          True if the user has access, False otherwise.
+
+      Raises:
+          BusinessException: If there's an error checking access.
+
+
+
+   .. py:method:: create_message(room_id, sender_id, content, message_type = 'text', metadata = None)
+      :async:
+
+
+      Create a new chat message.
+
+      Args:
+          room_id: The chat room ID.
+          sender_id: The sender user ID.
+          content: Message content.
+          message_type: Type of message.
+          metadata: Additional message metadata.
+
+      Returns:
+          The created chat message.
+
+      Raises:
+          ValidationException: If the message type is invalid.
+          BusinessException: If there's an error creating the message.
+
+
+
+   .. py:method:: edit_message(message_id, content)
+      :async:
+
+
+      Edit a chat message.
+
+      Args:
+          message_id: The message ID.
+          content: New message content.
+
+      Returns:
+          Tuple of (success, updated_message).
+
+      Raises:
+          BusinessException: If there's an error editing the message.
+
+
+
+   .. py:method:: delete_message(message_id)
+      :async:
+
+
+      Delete a chat message (soft delete).
+
+      Args:
+          message_id: The message ID.
+
+      Returns:
+          True if successful, False otherwise.
+
+      Raises:
+          BusinessException: If there's an error deleting the message.
+
+
+
+   .. py:method:: check_message_permission(message_id, user_id, require_admin = False)
+      :async:
+
+
+      Check if a user has permission to manage a message.
+
+      Args:
+          message_id: The message ID.
+          user_id: The user ID.
+          require_admin: Whether to require admin role.
+
+      Returns:
+          True if the user has permission, False otherwise.
+
+      Raises:
+          BusinessException: If there's an error checking permission.
+
+
+
+   .. py:method:: get_message_history(room_id, before_id = None, limit = 50)
+      :async:
+
+
+      Get chat message history for a room.
+
+      Args:
+          room_id: The chat room ID.
+          before_id: Get messages before this message ID.
+          limit: Maximum number of messages to return.
+
+      Returns:
+          List of formatted message dictionaries.
+
+      Raises:
+          BusinessException: If there's an error retrieving messages.
+
+
+
+   .. py:method:: register()
+      :classmethod:
+
+
+      Register this service with the service registry.
+
+
+

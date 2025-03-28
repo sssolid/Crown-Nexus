@@ -1,0 +1,172 @@
+app.domains.autocare.fitment.repository
+=======================================
+
+.. py:module:: app.domains.autocare.fitment.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.fitment.repository.FitmentMappingRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: FitmentMappingRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.fitment.models.FitmentMapping`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for FitmentMapping entity operations.
+
+
+   .. py:method:: find_by_product(product_id, page = 1, page_size = 20)
+      :async:
+
+
+      Find fitment mappings for a specific product.
+
+      Args:
+          product_id: The product ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: find_by_vehicle(vehicle_id, page = 1, page_size = 20)
+      :async:
+
+
+      Find fitment mappings for a specific vehicle.
+
+      Args:
+          vehicle_id: The vehicle ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: find_by_base_vehicle(base_vehicle_id, page = 1, page_size = 20)
+      :async:
+
+
+      Find fitment mappings for a specific base vehicle.
+
+      Args:
+          base_vehicle_id: The base vehicle ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: find_by_part(part_terminology_id, page = 1, page_size = 20)
+      :async:
+
+
+      Find fitment mappings for a specific part.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: search(product_query = None, is_validated = None, is_manual = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for fitment mappings with various filters.
+
+      Args:
+          product_query: Optional product part number or name to search.
+          is_validated: Optional validation status filter.
+          is_manual: Optional manual entry filter.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: create_with_history(data, user_id = None)
+      :async:
+
+
+      Create a new fitment mapping and record history.
+
+      Args:
+          data: The mapping data.
+          user_id: Optional ID of the user creating the mapping.
+
+      Returns:
+          The created mapping.
+
+
+
+   .. py:method:: update_with_history(id, data, user_id = None)
+      :async:
+
+
+      Update a fitment mapping and record history.
+
+      Args:
+          id: The mapping ID.
+          data: The updated mapping data.
+          user_id: Optional ID of the user updating the mapping.
+
+      Returns:
+          The updated mapping.
+
+      Raises:
+          ResourceNotFoundException: If the mapping is not found.
+
+
+
+   .. py:method:: delete_with_history(id, user_id = None)
+      :async:
+
+
+      Delete a fitment mapping and record history.
+
+      Args:
+          id: The mapping ID.
+          user_id: Optional ID of the user deleting the mapping.
+
+      Raises:
+          ResourceNotFoundException: If the mapping is not found.
+
+
+
+   .. py:method:: get_mapping_history(mapping_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get history for a specific mapping.
+
+      Args:
+          mapping_id: The mapping ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+

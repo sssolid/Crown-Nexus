@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.core.exceptions.system &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="app.core.metrics" href="../../metrics/index.html" />
+    <link rel="prev" title="app.core.exceptions.handlers" href="../handlers/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.core</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.core.exceptions</a></li>
+      <li class="breadcrumb-item active">app.core.exceptions.system</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/app/core/exceptions/system/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.core.exceptions.system">
+<span id="app-core-exceptions-system"></span><h1>app.core.exceptions.system<a class="headerlink" href="#module-app.core.exceptions.system" title="Link to this heading"></a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.system.SystemException" title="app.core.exceptions.system.SystemException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemException</span></code></a></p></td>
+<td><p>Base exception for system-related errors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.exceptions.system.DatabaseException" title="app.core.exceptions.system.DatabaseException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseException</span></code></a></p></td>
+<td><p>Exception raised when a database operation fails.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.system.DataIntegrityException" title="app.core.exceptions.system.DataIntegrityException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataIntegrityException</span></code></a></p></td>
+<td><p>Exception raised when a database operation would violate data integrity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.exceptions.system.TransactionException" title="app.core.exceptions.system.TransactionException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionException</span></code></a></p></td>
+<td><p>Exception raised when a database transaction fails.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.system.NetworkException" title="app.core.exceptions.system.NetworkException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetworkException</span></code></a></p></td>
+<td><p>Exception raised when a network operation fails.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.exceptions.system.ServiceException" title="app.core.exceptions.system.ServiceException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ServiceException</span></code></a></p></td>
+<td><p>Exception raised when an external service call fails.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.system.ConfigurationException" title="app.core.exceptions.system.ConfigurationException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigurationException</span></code></a></p></td>
+<td><p>Exception raised when there is an issue with application configuration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.core.exceptions.system.SecurityException" title="app.core.exceptions.system.SecurityException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SecurityException</span></code></a></p></td>
+<td><p>Exception raised when a security-related issue occurs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.core.exceptions.system.RateLimitException" title="app.core.exceptions.system.RateLimitException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateLimitException</span></code></a></p></td>
+<td><p>Exception raised when a rate limit is exceeded.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.SystemException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">SystemException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCode.UNKNOWN_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.SystemException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#app.core.exceptions.base.AppException" title="app.core.exceptions.base.AppException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app.core.exceptions.base.AppException</span></code></a></p>
+<p>Base exception for system-related errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="../base/index.html#app.core.exceptions.base.ErrorCode" title="app.core.exceptions.base.ErrorCode"><em>app.core.exceptions.base.ErrorCode</em></a>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.DatabaseException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">DatabaseException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ErrorCode.DATABASE_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.DatabaseException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.SystemException" title="app.core.exceptions.system.SystemException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemException</span></code></a></p>
+<p>Exception raised when a database operation fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="../base/index.html#app.core.exceptions.base.ErrorCode" title="app.core.exceptions.base.ErrorCode"><em>app.core.exceptions.base.ErrorCode</em></a>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.DataIntegrityException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">DataIntegrityException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.DataIntegrityException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.DatabaseException" title="app.core.exceptions.system.DatabaseException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseException</span></code></a></p>
+<p>Exception raised when a database operation would violate data integrity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.TransactionException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">TransactionException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.TransactionException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.DatabaseException" title="app.core.exceptions.system.DatabaseException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseException</span></code></a></p>
+<p>Exception raised when a database transaction fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.NetworkException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">NetworkException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">503</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.NetworkException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.SystemException" title="app.core.exceptions.system.SystemException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemException</span></code></a></p>
+<p>Exception raised when a network operation fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.ServiceException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">ServiceException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">502</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.ServiceException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.SystemException" title="app.core.exceptions.system.SystemException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemException</span></code></a></p>
+<p>Exception raised when an external service call fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>service_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.ConfigurationException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">ConfigurationException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.ConfigurationException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.SystemException" title="app.core.exceptions.system.SystemException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemException</span></code></a></p>
+<p>Exception raised when there is an issue with application configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>component</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.SecurityException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">SecurityException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">403</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.SecurityException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.SystemException" title="app.core.exceptions.system.SystemException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemException</span></code></a></p>
+<p>Exception raised when a security-related issue occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.core.exceptions.system.RateLimitException">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.core.exceptions.system.</span></span><span class="sig-name descname"><span class="pre">RateLimitException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rate</span> <span class="pre">limit</span> <span class="pre">exceeded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.core.exceptions.system.RateLimitException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.core.exceptions.system.SecurityException" title="app.core.exceptions.system.SecurityException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SecurityException</span></code></a></p>
+<p>Exception raised when a rate limit is exceeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>headers</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>original_exception</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../handlers/index.html" class="btn btn-neutral float-left" title="app.core.exceptions.handlers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../metrics/index.html" class="btn btn-neutral float-right" title="app.core.metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

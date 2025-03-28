@@ -1,0 +1,97 @@
+app.fitment.validator
+=====================
+
+.. py:module:: app.fitment.validator
+
+.. autoapi-nested-parse::
+
+   Validator for fitment data.
+
+   This module provides validation functionality for fitment data against
+   VCDB and PCDB databases.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.fitment.validator.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.validator.FitmentValidator
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: FitmentValidator(part_terminology_id, pcdb_positions)
+
+   Validator for fitment data against VCDB and PCDB databases.
+
+
+   .. py:attribute:: part_terminology_id
+
+
+   .. py:attribute:: pcdb_positions
+
+
+   .. py:attribute:: position_index
+      :type:  Dict[str, Dict[app.fitment.models.Position, Set[int]]]
+
+
+   .. py:method:: _index_position(position)
+
+      Index a PCDB position by its components.
+
+      Args:
+          position: PCDB position to index
+
+
+
+   .. py:method:: validate_fitment(fitment, available_vehicles)
+
+      Validate a fitment against VCDB and PCDB data.
+
+      Args:
+          fitment: The fitment to validate
+          available_vehicles: List of available VCDB vehicles
+
+      Returns:
+          ValidationResult with status and messages
+
+
+
+   .. py:method:: _validate_vehicle(fitment, available_vehicles)
+
+      Validate a vehicle against VCDB data.
+
+      Args:
+          fitment: The fitment to validate
+          available_vehicles: List of available VCDB vehicles
+
+      Returns:
+          ValidationResult with status and messages
+
+
+
+   .. py:method:: _validate_positions(fitment)
+
+      Validate positions against PCDB data.
+
+      Args:
+          fitment: The fitment to validate
+
+      Returns:
+          ValidationResult with status and messages
+
+
+

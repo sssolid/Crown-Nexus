@@ -1,0 +1,821 @@
+app.domains.autocare.vcdb.repository
+====================================
+
+.. py:module:: app.domains.autocare.vcdb.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.vcdb.repository.VCdbRepository
+   app.domains.autocare.vcdb.repository.VehicleRepository
+   app.domains.autocare.vcdb.repository.BaseVehicleRepository
+   app.domains.autocare.vcdb.repository.MakeRepository
+   app.domains.autocare.vcdb.repository.ModelRepository
+   app.domains.autocare.vcdb.repository.YearRepository
+   app.domains.autocare.vcdb.repository.SubModelRepository
+   app.domains.autocare.vcdb.repository.VehicleTypeRepository
+   app.domains.autocare.vcdb.repository.RegionRepository
+   app.domains.autocare.vcdb.repository.EngineConfigRepository
+   app.domains.autocare.vcdb.repository.TransmissionRepository
+   app.domains.autocare.vcdb.repository.DriveTypeRepository
+   app.domains.autocare.vcdb.repository.BodyStyleConfigRepository
+   app.domains.autocare.vcdb.repository.BrakeConfigRepository
+   app.domains.autocare.vcdb.repository.WheelBaseRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: VCdbRepository(db)
+
+   Repository for VCdb entity operations.
+
+   Provides methods for querying VCdb data and managing database updates.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: vehicle_repo
+
+
+   .. py:attribute:: base_vehicle_repo
+
+
+   .. py:attribute:: make_repo
+
+
+   .. py:attribute:: model_repo
+
+
+   .. py:attribute:: year_repo
+
+
+   .. py:attribute:: submodel_repo
+
+
+   .. py:attribute:: vehicle_type_repo
+
+
+   .. py:attribute:: region_repo
+
+
+   .. py:attribute:: engine_config_repo
+
+
+   .. py:attribute:: transmission_repo
+
+
+   .. py:attribute:: drive_type_repo
+
+
+   .. py:attribute:: body_style_repo
+
+
+   .. py:attribute:: brake_config_repo
+
+
+   .. py:attribute:: wheel_base_repo
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current version of the VCdb database.
+
+      Returns:
+          The version date as a string or None if no version is set.
+
+
+
+   .. py:method:: update_version(version_date)
+      :async:
+
+
+      Update the current version of the VCdb database.
+
+      Args:
+          version_date: The new version date.
+
+      Returns:
+          The updated version entity.
+
+
+
+.. py:class:: VehicleRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.Vehicle`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Vehicle entity operations.
+
+
+   .. py:method:: get_by_vehicle_id(vehicle_id)
+      :async:
+
+
+      Get a vehicle by its VCdb ID.
+
+      Args:
+          vehicle_id: The vehicle ID.
+
+      Returns:
+          The vehicle if found, None otherwise.
+
+
+
+   .. py:method:: search(year = None, make = None, model = None, submodel = None, body_type = None, engine_config = None, transmission_type = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for vehicles with optional filters.
+
+      Args:
+          year: Optional vehicle year to filter by.
+          make: Optional make name to filter by.
+          model: Optional model name to filter by.
+          submodel: Optional submodel name to filter by.
+          body_type: Optional body type name to filter by.
+          engine_config: Optional engine configuration ID to filter by.
+          transmission_type: Optional transmission type ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_submodels_by_base_vehicle(base_vehicle_id)
+      :async:
+
+
+      Get submodels available for a specific base vehicle.
+
+      Args:
+          base_vehicle_id: Base vehicle ID.
+
+      Returns:
+          List of submodels for the base vehicle.
+
+
+
+   .. py:method:: get_vehicle_configurations(vehicle_id)
+      :async:
+
+
+      Get all configurations for a specific vehicle.
+
+      Args:
+          vehicle_id: Vehicle ID.
+
+      Returns:
+          Dict containing lists of configurations by type.
+
+
+
+.. py:class:: BaseVehicleRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.BaseVehicle`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for BaseVehicle entity operations.
+
+
+   .. py:method:: get_by_base_vehicle_id(base_vehicle_id)
+      :async:
+
+
+      Get a base vehicle by its VCdb ID.
+
+      Args:
+          base_vehicle_id: The base vehicle ID.
+
+      Returns:
+          The base vehicle if found, None otherwise.
+
+
+
+   .. py:method:: find_by_year_make_model(year_id, make_id, model_id)
+      :async:
+
+
+      Find a base vehicle by year, make, and model IDs.
+
+      Args:
+          year_id: Year ID.
+          make_id: Make ID.
+          model_id: Model ID.
+
+      Returns:
+          The base vehicle if found, None otherwise.
+
+
+
+   .. py:method:: search_by_criteria(year = None, make = None, model = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for base vehicles by various criteria.
+
+      Args:
+          year: Optional year to filter by.
+          make: Optional make name to filter by.
+          model: Optional model name to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+.. py:class:: MakeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.Make`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Make entity operations.
+
+
+   .. py:method:: get_by_make_id(make_id)
+      :async:
+
+
+      Get a make by its VCdb ID.
+
+      Args:
+          make_id: The make ID.
+
+      Returns:
+          The make if found, None otherwise.
+
+
+
+   .. py:method:: search_by_name(name)
+      :async:
+
+
+      Search makes by name.
+
+      Args:
+          name: The make name to search for.
+
+      Returns:
+          List of makes matching the search.
+
+
+
+   .. py:method:: get_by_year(year)
+      :async:
+
+
+      Get all makes available for a specific year.
+
+      Args:
+          year: Vehicle year.
+
+      Returns:
+          List of makes available for the year.
+
+
+
+   .. py:method:: get_all_makes()
+      :async:
+
+
+      Get all makes.
+
+      Returns:
+          List of all makes.
+
+
+
+.. py:class:: ModelRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.Model`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Model entity operations.
+
+
+   .. py:method:: get_by_model_id(model_id)
+      :async:
+
+
+      Get a model by its VCdb ID.
+
+      Args:
+          model_id: The model ID.
+
+      Returns:
+          The model if found, None otherwise.
+
+
+
+   .. py:method:: search_by_name(name)
+      :async:
+
+
+      Search models by name.
+
+      Args:
+          name: The model name to search for.
+
+      Returns:
+          List of models matching the search.
+
+
+
+   .. py:method:: get_by_year_make(year, make_id)
+      :async:
+
+
+      Get all models available for a specific year and make.
+
+      Args:
+          year: Vehicle year.
+          make_id: Make ID.
+
+      Returns:
+          List of models available for the year and make.
+
+
+
+   .. py:method:: get_by_vehicle_type(vehicle_type_id)
+      :async:
+
+
+      Get models for a specific vehicle type.
+
+      Args:
+          vehicle_type_id: Vehicle type ID.
+
+      Returns:
+          List of models for the vehicle type.
+
+
+
+.. py:class:: YearRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.Year`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Year entity operations.
+
+
+   .. py:method:: get_by_year_id(year_id)
+      :async:
+
+
+      Get a year by its VCdb ID.
+
+      Args:
+          year_id: The year ID.
+
+      Returns:
+          The year if found, None otherwise.
+
+
+
+   .. py:method:: get_by_year(year)
+      :async:
+
+
+      Get a year entity by the year value.
+
+      Args:
+          year: The year value.
+
+      Returns:
+          The year entity if found, None otherwise.
+
+
+
+   .. py:method:: get_all_years()
+      :async:
+
+
+      Get all available years.
+
+      Returns:
+          List of all year entities.
+
+
+
+   .. py:method:: get_year_range()
+      :async:
+
+
+      Get the minimum and maximum years in the database.
+
+      Returns:
+          Tuple containing (min_year, max_year).
+
+
+
+.. py:class:: SubModelRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.SubModel`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for SubModel entity operations.
+
+
+   .. py:method:: get_by_submodel_id(submodel_id)
+      :async:
+
+
+      Get a submodel by its VCdb ID.
+
+      Args:
+          submodel_id: The submodel ID.
+
+      Returns:
+          The submodel if found, None otherwise.
+
+
+
+   .. py:method:: search_by_name(name)
+      :async:
+
+
+      Search submodels by name.
+
+      Args:
+          name: The submodel name to search for.
+
+      Returns:
+          List of submodels matching the search.
+
+
+
+   .. py:method:: get_all_submodels()
+      :async:
+
+
+      Get all submodels.
+
+      Returns:
+          List of all submodels.
+
+
+
+.. py:class:: VehicleTypeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.VehicleType`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for VehicleType entity operations.
+
+
+   .. py:method:: get_by_vehicle_type_id(vehicle_type_id)
+      :async:
+
+
+      Get a vehicle type by its VCdb ID.
+
+      Args:
+          vehicle_type_id: The vehicle type ID.
+
+      Returns:
+          The vehicle type if found, None otherwise.
+
+
+
+   .. py:method:: get_by_group(vehicle_type_group_id)
+      :async:
+
+
+      Get vehicle types by group.
+
+      Args:
+          vehicle_type_group_id: The vehicle type group ID.
+
+      Returns:
+          List of vehicle types in the group.
+
+
+
+   .. py:method:: get_all_vehicle_types()
+      :async:
+
+
+      Get all vehicle types.
+
+      Returns:
+          List of all vehicle types.
+
+
+
+.. py:class:: RegionRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.Region`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Region entity operations.
+
+
+   .. py:method:: get_by_region_id(region_id)
+      :async:
+
+
+      Get a region by its VCdb ID.
+
+      Args:
+          region_id: The region ID.
+
+      Returns:
+          The region if found, None otherwise.
+
+
+
+   .. py:method:: get_by_parent(parent_id)
+      :async:
+
+
+      Get regions by parent.
+
+      Args:
+          parent_id: The parent region ID.
+
+      Returns:
+          List of regions with the specified parent.
+
+
+
+   .. py:method:: get_all_top_level_regions()
+      :async:
+
+
+      Get all top-level regions (no parent).
+
+      Returns:
+          List of all top-level regions.
+
+
+
+.. py:class:: EngineConfigRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.EngineConfig`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for EngineConfig entity operations.
+
+
+   .. py:method:: get_by_engine_config_id(engine_config_id)
+      :async:
+
+
+      Get an engine configuration by its VCdb ID.
+
+      Args:
+          engine_config_id: The engine config ID.
+
+      Returns:
+          The engine config if found, None otherwise.
+
+
+
+   .. py:method:: get_by_criteria(engine_base_id = None, fuel_type_id = None, aspiration_id = None, page = 1, page_size = 20)
+      :async:
+
+
+      Get engine configurations by various criteria.
+
+      Args:
+          engine_base_id: Optional engine base ID to filter by.
+          fuel_type_id: Optional fuel type ID to filter by.
+          aspiration_id: Optional aspiration ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_full_engine_details(engine_config_id)
+      :async:
+
+
+      Get full details for an engine configuration.
+
+      Args:
+          engine_config_id: The engine config ID.
+
+      Returns:
+          Dict with detailed engine information.
+
+
+
+.. py:class:: TransmissionRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.Transmission`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Transmission entity operations.
+
+
+   .. py:method:: get_by_transmission_id(transmission_id)
+      :async:
+
+
+      Get a transmission by its VCdb ID.
+
+      Args:
+          transmission_id: The transmission ID.
+
+      Returns:
+          The transmission if found, None otherwise.
+
+
+
+   .. py:method:: get_by_criteria(transmission_type_id = None, transmission_num_speeds_id = None, transmission_control_type_id = None, page = 1, page_size = 20)
+      :async:
+
+
+      Get transmissions by various criteria.
+
+      Args:
+          transmission_type_id: Optional transmission type ID to filter by.
+          transmission_num_speeds_id: Optional number of speeds ID to filter by.
+          transmission_control_type_id: Optional control type ID to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_full_transmission_details(transmission_id)
+      :async:
+
+
+      Get full details for a transmission.
+
+      Args:
+          transmission_id: The transmission ID.
+
+      Returns:
+          Dict with detailed transmission information.
+
+
+
+.. py:class:: DriveTypeRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.DriveType`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for DriveType entity operations.
+
+
+   .. py:method:: get_by_drive_type_id(drive_type_id)
+      :async:
+
+
+      Get a drive type by its VCdb ID.
+
+      Args:
+          drive_type_id: The drive type ID.
+
+      Returns:
+          The drive type if found, None otherwise.
+
+
+
+   .. py:method:: get_all_drive_types()
+      :async:
+
+
+      Get all drive types.
+
+      Returns:
+          List of all drive types.
+
+
+
+.. py:class:: BodyStyleConfigRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.BodyStyleConfig`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for BodyStyleConfig entity operations.
+
+
+   .. py:method:: get_by_body_style_config_id(body_style_config_id)
+      :async:
+
+
+      Get a body style config by its VCdb ID.
+
+      Args:
+          body_style_config_id: The body style config ID.
+
+      Returns:
+          The body style config if found, None otherwise.
+
+
+
+   .. py:method:: get_by_body_type(body_type_id)
+      :async:
+
+
+      Get body style configs by body type.
+
+      Args:
+          body_type_id: The body type ID.
+
+      Returns:
+          List of body style configs with the specified body type.
+
+
+
+   .. py:method:: get_full_body_style_details(body_style_config_id)
+      :async:
+
+
+      Get full details for a body style configuration.
+
+      Args:
+          body_style_config_id: The body style config ID.
+
+      Returns:
+          Dict with detailed body style information.
+
+
+
+.. py:class:: BrakeConfigRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.BrakeConfig`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for BrakeConfig entity operations.
+
+
+   .. py:method:: get_by_brake_config_id(brake_config_id)
+      :async:
+
+
+      Get a brake config by its VCdb ID.
+
+      Args:
+          brake_config_id: The brake config ID.
+
+      Returns:
+          The brake config if found, None otherwise.
+
+
+
+   .. py:method:: get_full_brake_config_details(brake_config_id)
+      :async:
+
+
+      Get full details for a brake configuration.
+
+      Args:
+          brake_config_id: The brake config ID.
+
+      Returns:
+          Dict with detailed brake configuration information.
+
+
+
+.. py:class:: WheelBaseRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.vcdb.models.WheelBase`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for WheelBase entity operations.
+
+
+   .. py:method:: get_by_wheel_base_id(wheel_base_id)
+      :async:
+
+
+      Get a wheel base by its VCdb ID.
+
+      Args:
+          wheel_base_id: The wheel base ID.
+
+      Returns:
+          The wheel base if found, None otherwise.
+
+
+
+   .. py:method:: get_all_wheel_bases()
+      :async:
+
+
+      Get all wheel bases.
+
+      Returns:
+          List of all wheel bases.
+
+
+

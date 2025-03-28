@@ -1,0 +1,161 @@
+app.domains.media.service.local
+===============================
+
+.. py:module:: app.domains.media.service.local
+
+.. autoapi-nested-parse::
+
+   Local filesystem storage backend implementation.
+
+   This module provides a local filesystem implementation of the MediaStorageBackend
+   protocol, suitable for development and testing environments.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.media.service.local.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.service.local.LocalMediaStorage
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: LocalMediaStorage
+
+   Local filesystem storage backend for development.
+
+
+   .. py:attribute:: ALLOWED_MIME_TYPES
+      :type:  Dict[app.domains.media.models.MediaType, Set[str]]
+
+
+   .. py:attribute:: MAX_FILE_SIZES
+      :type:  Dict[app.domains.media.models.MediaType, int]
+
+
+   .. py:attribute:: DEFAULT_THUMBNAIL_SIZE
+      :type:  Tuple[int, int]
+      :value: (300, 300)
+
+
+
+   .. py:attribute:: media_root
+      :type:  pathlib.Path
+
+
+   .. py:method:: __post_init__()
+
+      Ensure media directories exist.
+
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize storage backend connection.
+
+      For local storage, this is a no-op as directories are created in __post_init__.
+
+
+
+   .. py:method:: save_file(file, destination, media_type, content_type = None)
+      :async:
+
+
+      Save file to local storage asynchronously.
+
+      Args:
+          file: The file to upload (UploadFile, file-like object, or bytes)
+          destination: Relative path where the file should be stored
+          media_type: Type of media being stored
+          content_type: Optional content type override
+
+      Returns:
+          str: URL to access the saved file
+
+      Raises:
+          MediaStorageError: If file saving fails
+          ValueError: If invalid file type or format
+
+
+
+   .. py:method:: get_file_url(file_path)
+      :async:
+
+
+      Get URL for local file.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          str: Public URL to access the file
+
+
+
+   .. py:method:: delete_file(file_path)
+      :async:
+
+
+      Delete file from local storage asynchronously.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          bool: True if file was successfully deleted, False otherwise
+
+      Raises:
+          FileNotFoundError: If the file doesn't exist
+          MediaStorageError: If deletion fails
+
+
+
+   .. py:method:: file_exists(file_path)
+      :async:
+
+
+      Check if a file exists in storage asynchronously.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          bool: True if file exists, False otherwise
+
+
+
+   .. py:method:: generate_thumbnail(file_path, width = 200, height = 200)
+      :async:
+
+
+      Generate a thumbnail for an image file asynchronously.
+
+      Args:
+          file_path: Relative path to the original image
+          width: Desired thumbnail width
+          height: Desired thumbnail height
+
+      Returns:
+          Optional[str]: Path to the thumbnail if successful, None otherwise
+
+      Raises:
+          MediaStorageError: If thumbnail generation fails
+          FileNotFoundError: If the original file doesn't exist
+
+
+

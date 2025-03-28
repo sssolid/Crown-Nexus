@@ -1,0 +1,495 @@
+app.data_import.connectors
+==========================
+
+.. py:module:: app.data_import.connectors
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/data_import/connectors/as400_connector/index
+   /autoapi/app/data_import/connectors/base/index
+   /autoapi/app/data_import/connectors/file_connector/index
+   /autoapi/app/data_import/connectors/filemaker_connector/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.data_import.connectors.Connector
+   app.data_import.connectors.FileConnector
+   app.data_import.connectors.FileConnectionConfig
+   app.data_import.connectors.FileMakerConnector
+   app.data_import.connectors.FileMakerConnectionConfig
+   app.data_import.connectors.AS400Connector
+   app.data_import.connectors.AS400ConnectionConfig
+
+
+Package Contents
+----------------
+
+.. py:class:: Connector
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for data source connectors.
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish connection to the data source.
+
+      Raises:
+          ConnectionError: If connection cannot be established
+
+
+
+   .. py:method:: extract(query, limit = None, **params)
+      :async:
+
+
+      Extract data from the source.
+
+      Args:
+          query: Query string or identifier for the data to extract
+          limit: Maximum number of records to retrieve
+          params: Additional parameters for the query
+
+      Returns:
+          List of records as dictionaries
+
+      Raises:
+          ValueError: If query is invalid
+          ConnectionError: If connection issues occur during extraction
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Close the connection.
+
+      Raises:
+          ConnectionError: If closing the connection fails
+
+
+
+.. py:class:: FileConnector(config)
+
+   Connector for file-based data sources (CSV, JSON).
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: file_data
+      :type:  Optional[List[Dict[str, Any]]]
+      :value: None
+
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish connection to the file.
+
+      This method loads the file data into memory.
+
+      Raises:
+          ConfigurationException: If the file cannot be loaded
+
+
+
+   .. py:method:: extract(query = '', limit = None, **params)
+      :async:
+
+
+      Extract data from the file.
+
+      The query parameter is optional for file connectors and can be used
+      to filter the data based on specific criteria.
+
+      Args:
+          query: Optional filter criteria
+          limit: Maximum number of records to retrieve
+          params: Additional parameters
+
+      Returns:
+          List of records as dictionaries
+
+      Raises:
+          ConfigurationException: If extraction fails
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Close the connection (clear file data from memory).
+
+
+
+.. py:class:: FileConnectionConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for file connections.
+
+
+   .. py:attribute:: file_path
+      :type:  str
+
+
+   .. py:attribute:: file_type
+      :type:  Literal['csv', 'json']
+
+
+   .. py:attribute:: encoding
+      :type:  str
+
+
+   .. py:attribute:: csv_delimiter
+      :type:  str
+
+
+   .. py:attribute:: csv_quotechar
+      :type:  str
+
+
+   .. py:method:: validate_file_path(v)
+
+
+   .. py:method:: validate_file_type(v, values)
+
+
+.. py:class:: FileMakerConnector(config)
+
+   Connector for FileMaker databases using ODBC.
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: connection
+      :value: None
+
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish connection to the FileMaker database.
+
+      Raises:
+          DatabaseException: If connection fails
+
+
+
+   .. py:method:: extract(query, limit = None, **params)
+      :async:
+
+
+      Extract data from FileMaker.
+
+      Args:
+          query: SQL query or table/layout name
+          limit: Maximum number of records to retrieve
+          params: Parameters for the query
+
+      Returns:
+          List of records as dictionaries
+
+      Raises:
+          DatabaseException: If extraction fails
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Close the connection to FileMaker.
+
+      Raises:
+          DatabaseException: If closing the connection fails
+
+
+
+.. py:class:: FileMakerConnectionConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for FileMaker ODBC connection.
+
+
+   .. py:attribute:: dsn
+      :type:  str
+
+
+   .. py:attribute:: username
+      :type:  str
+
+
+   .. py:attribute:: password
+      :type:  str
+
+
+   .. py:attribute:: database
+      :type:  Optional[str]
+
+
+   .. py:attribute:: server
+      :type:  Optional[str]
+
+
+   .. py:attribute:: port
+      :type:  Optional[int]
+
+
+   .. py:attribute:: disable_ssl_verification
+      :type:  bool
+
+
+   .. py:method:: validate_port(v)
+
+
+.. py:class:: AS400Connector(config)
+
+   Secure connector for AS400/iSeries databases.
+
+   Implements multiple security layers:
+   1. SecretStr for password handling
+   2. Whitelist for allowed tables and schemas
+   3. Read-only operations only
+   4. SSL/TLS encryption when available
+   5. Timeouts to prevent hanging connections
+   6. Detailed audit logging
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: connection
+      :value: None
+
+
+
+   .. py:attribute:: _encryption_key
+
+
+   .. py:attribute:: _accessed_tables
+      :type:  Set[str]
+
+
+   .. py:method:: connect()
+      :async:
+
+
+      Establish a secure connection to the AS400 database.
+
+      Raises:
+          SecurityException: If security requirements aren't met
+          DatabaseException: If connection fails
+          ConfigurationException: If configuration is invalid
+
+
+
+   .. py:method:: extract(query, limit = None, **params)
+      :async:
+
+
+      Securely extract data from AS400.
+
+      Args:
+          query: SQL query or table name
+          limit: Maximum number of records to return
+          **params: Query parameters
+
+      Returns:
+          List of dictionaries containing the query results
+
+      Raises:
+          SecurityException: If the query attempts to access unauthorized tables
+          DatabaseException: If the query fails to execute
+
+
+
+   .. py:method:: close()
+      :async:
+
+
+      Safely close the AS400 connection.
+
+      Raises:
+          DatabaseException: If closing the connection fails
+
+
+
+   .. py:method:: _build_connection_string()
+
+      Build a secure connection string for AS400.
+
+      Returns:
+          Connection string with proper security parameters
+
+
+
+   .. py:method:: _validate_and_prepare_query(query, limit)
+
+      Validate query for security and prepare for execution.
+
+      Args:
+          query: The SQL query or table name
+          limit: Maximum records to return
+
+      Returns:
+          Table name if a table-only query, None otherwise
+
+      Raises:
+          SecurityException: If the query is attempting to perform unauthorized operations
+
+
+
+   .. py:method:: _convert_as400_types(row)
+
+      Convert AS400-specific data types to Python types.
+
+      Args:
+          row: Dict containing a database row
+
+      Returns:
+          Dict with converted values
+
+
+
+   .. py:method:: _sanitize_sql_for_logging(query)
+
+      Sanitize SQL query for safe logging.
+
+      Args:
+          query: SQL query
+
+      Returns:
+          Sanitized query
+
+
+
+   .. py:method:: _sanitize_error_message(error_message)
+
+      Sanitize error messages to avoid leaking sensitive information.
+
+      Args:
+          error_message: Original error message
+
+      Returns:
+          Sanitized error message
+
+
+
+   .. py:method:: _get_encryption_key()
+
+      Get or generate encryption key for secure storage.
+
+      Returns:
+          Encryption key
+
+
+
+.. py:class:: AS400ConnectionConfig
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Configuration for connecting to AS400/iSeries databases securely.
+
+
+   .. py:attribute:: dsn
+      :type:  str
+
+
+   .. py:attribute:: username
+      :type:  str
+
+
+   .. py:attribute:: password
+      :type:  pydantic.SecretStr
+
+
+   .. py:attribute:: database
+      :type:  str
+
+
+   .. py:attribute:: server
+      :type:  Optional[str]
+
+
+   .. py:attribute:: port
+      :type:  Optional[int]
+
+
+   .. py:attribute:: ssl
+      :type:  bool
+
+
+   .. py:attribute:: allowed_tables
+      :type:  Optional[List[str]]
+
+
+   .. py:attribute:: allowed_schemas
+      :type:  Optional[List[str]]
+
+
+   .. py:attribute:: connection_timeout
+      :type:  int
+
+
+   .. py:attribute:: query_timeout
+      :type:  int
+
+
+   .. py:attribute:: encrypt_connection
+      :type:  bool
+
+
+   .. py:method:: validate_port(v)
+
+      Validate port is within allowed range.
+
+
+
+   .. py:method:: validate_allowed_lists(v)
+
+      Validate and normalize allowed lists.
+
+
+
+   .. py:class:: Config
+
+      Pydantic config.
+
+
+      .. py:attribute:: validate_assignment
+         :value: True
+
+
+
+      .. py:attribute:: extra
+         :value: 'forbid'
+
+
+
+

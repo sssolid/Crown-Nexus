@@ -1,0 +1,503 @@
+app.domains.autocare.pcdb.models
+================================
+
+.. py:module:: app.domains.autocare.pcdb.models
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.pcdb.models.parts_to_alias
+   app.domains.autocare.pcdb.models.parts_to_use
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.pcdb.models.Parts
+   app.domains.autocare.pcdb.models.PartsDescription
+   app.domains.autocare.pcdb.models.Category
+   app.domains.autocare.pcdb.models.SubCategory
+   app.domains.autocare.pcdb.models.Position
+   app.domains.autocare.pcdb.models.PartCategory
+   app.domains.autocare.pcdb.models.PartPosition
+   app.domains.autocare.pcdb.models.PartsSupersession
+   app.domains.autocare.pcdb.models.CodeMaster
+   app.domains.autocare.pcdb.models.Alias
+   app.domains.autocare.pcdb.models.Use
+   app.domains.autocare.pcdb.models.PCdbVersion
+
+
+Module Contents
+---------------
+
+.. py:class:: Parts
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts terminology.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_parts'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part_terminology_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: parts_description_id
+      :type:  sqlalchemy.orm.Mapped[Optional[int]]
+
+
+   .. py:attribute:: rev_date
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.date]]
+
+
+   .. py:attribute:: description
+
+
+   .. py:attribute:: categories
+
+
+   .. py:attribute:: positions
+
+
+   .. py:attribute:: attributes
+
+
+   .. py:attribute:: supersessions
+
+
+   .. py:attribute:: superseded_by
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartsDescription
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts descriptions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_parts_description'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: parts_description_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: parts_description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: parts
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: Category
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts categories.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_category'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: category_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: category_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: part_categories
+
+
+   .. py:attribute:: code_masters
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: SubCategory
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts subcategories.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_subcategory'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: subcategory_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: subcategory_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: part_categories
+
+
+   .. py:attribute:: code_masters
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: Position
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts positions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_position'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: position_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: position
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: part_positions
+
+
+   .. py:attribute:: code_masters
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartCategory
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts to category mapping.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_part_category'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: part_category_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: subcategory_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: category_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part
+
+
+   .. py:attribute:: subcategory
+
+
+   .. py:attribute:: category
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartPosition
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts to position mapping.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_part_position'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: part_position_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: position_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: rev_date
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.date]]
+
+
+   .. py:attribute:: part
+
+
+   .. py:attribute:: position
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PartsSupersession
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for parts supersession.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_parts_supersession'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: parts_supersession_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: old_part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: old_part_terminology_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: new_part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: new_part_terminology_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:attribute:: rev_date
+      :type:  sqlalchemy.orm.Mapped[Optional[datetime.date]]
+
+
+   .. py:attribute:: note
+      :type:  sqlalchemy.orm.Mapped[Optional[str]]
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: CodeMaster
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for code master which links parts, categories, subcategories, and positions.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_code_master'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: code_master_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: part_terminology_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: category_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: subcategory_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: position_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: rev_date
+      :type:  sqlalchemy.orm.Mapped[datetime.date]
+
+
+   .. py:attribute:: part
+
+
+   .. py:attribute:: category
+
+
+   .. py:attribute:: subcategory
+
+
+   .. py:attribute:: position
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: Alias
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for part aliases.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_alias'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: alias_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: alias_name
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:method:: __repr__()
+
+
+.. py:data:: parts_to_alias
+
+.. py:class:: Use
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for part uses.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_use'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: use_id
+      :type:  sqlalchemy.orm.Mapped[int]
+
+
+   .. py:attribute:: use_description
+      :type:  sqlalchemy.orm.Mapped[str]
+
+
+   .. py:method:: __repr__()
+
+
+.. py:data:: parts_to_use
+
+.. py:class:: PCdbVersion
+
+   Bases: :py:obj:`app.db.base_class.Base`
+
+
+   Model for PCdb version tracking.
+
+
+   .. py:attribute:: __tablename__
+      :value: 'autocare_pcdb_version'
+
+
+
+   .. py:attribute:: id
+      :type:  sqlalchemy.orm.Mapped[uuid.UUID]
+
+
+   .. py:attribute:: version_date
+      :type:  sqlalchemy.orm.Mapped[datetime.datetime]
+
+
+   .. py:attribute:: is_current
+      :type:  sqlalchemy.orm.Mapped[bool]
+
+
+   .. py:method:: __repr__()
+
+

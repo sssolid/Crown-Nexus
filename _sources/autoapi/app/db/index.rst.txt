@@ -1,0 +1,18 @@
+app.db
+======
+
+.. py:module:: app.db
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/db/base/index
+   /autoapi/app/db/base_class/index
+   /autoapi/app/db/session/index
+   /autoapi/app/db/utils/index
+
+

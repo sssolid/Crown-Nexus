@@ -1,0 +1,217 @@
+app.domains.media.service.base
+==============================
+
+.. py:module:: app.domains.media.service.base
+
+.. autoapi-nested-parse::
+
+   Base interfaces and types for the media storage system.
+
+   This module defines the common interfaces, protocols, and type definitions
+   used throughout the media service, ensuring consistent interaction between
+   different storage backends and the main service.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.domains.media.service.base.MediaStorageError
+   app.domains.media.service.base.FileNotFoundError
+   app.domains.media.service.base.StorageConnectionError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.media.service.base.StorageBackendType
+   app.domains.media.service.base.FileMetadata
+   app.domains.media.service.base.MediaStorageBackend
+
+
+Module Contents
+---------------
+
+.. py:class:: StorageBackendType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Enumeration of supported storage backend types.
+
+
+   .. py:attribute:: LOCAL
+      :value: 'local'
+
+
+
+   .. py:attribute:: S3
+      :value: 's3'
+
+
+
+   .. py:attribute:: AZURE
+      :value: 'azure'
+
+
+
+.. py:class:: FileMetadata
+
+   Bases: :py:obj:`TypedDict`
+
+
+   File metadata type definition.
+
+
+   .. py:attribute:: width
+      :type:  Optional[int]
+
+
+   .. py:attribute:: height
+      :type:  Optional[int]
+
+
+   .. py:attribute:: content_type
+      :type:  str
+
+
+   .. py:attribute:: file_size
+      :type:  int
+
+
+   .. py:attribute:: original_filename
+      :type:  str
+
+
+   .. py:attribute:: created_at
+      :type:  str
+
+
+.. py:exception:: MediaStorageError
+
+   Bases: :py:obj:`Exception`
+
+
+   Base exception for media storage errors.
+
+
+.. py:exception:: FileNotFoundError
+
+   Bases: :py:obj:`MediaStorageError`
+
+
+   Exception raised when a file is not found.
+
+
+.. py:exception:: StorageConnectionError
+
+   Bases: :py:obj:`MediaStorageError`
+
+
+   Exception raised when connection to storage fails.
+
+
+.. py:class:: MediaStorageBackend
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol defining media storage backend interface.
+
+
+   .. py:method:: initialize()
+      :async:
+
+
+      Initialize storage backend connection.
+
+
+
+   .. py:method:: save_file(file, destination, media_type, content_type = None)
+      :async:
+
+
+      Save a file to storage and return its public URL.
+
+      Args:
+          file: The file to upload (UploadFile, file-like object, or bytes)
+          destination: Relative path where the file should be stored
+          media_type: Type of media being stored
+          content_type: Optional content type override
+
+      Returns:
+          str: Public URL to access the file
+
+      Raises:
+          MediaStorageError: If saving fails
+
+
+
+   .. py:method:: get_file_url(file_path)
+      :async:
+
+
+      Get the URL for accessing a file.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          str: Public URL to access the file
+
+
+
+   .. py:method:: delete_file(file_path)
+      :async:
+
+
+      Delete a file from storage.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          bool: True if file was successfully deleted, False otherwise
+
+      Raises:
+          MediaStorageError: If deletion fails
+
+
+
+   .. py:method:: file_exists(file_path)
+      :async:
+
+
+      Check if a file exists in storage.
+
+      Args:
+          file_path: Relative path to the file
+
+      Returns:
+          bool: True if file exists, False otherwise
+
+
+
+   .. py:method:: generate_thumbnail(file_path, width = 200, height = 200)
+      :async:
+
+
+      Generate a thumbnail for an image file.
+
+      Args:
+          file_path: Relative path to the original image
+          width: Desired thumbnail width
+          height: Desired thumbnail height
+
+      Returns:
+          Optional[str]: Path to the thumbnail if successful, None otherwise
+
+      Raises:
+          MediaStorageError: If thumbnail generation fails
+
+
+

@@ -1,0 +1,133 @@
+app.fitment.parser
+==================
+
+.. py:module:: app.fitment.parser
+
+.. autoapi-nested-parse::
+
+   Parser for fitment application strings.
+
+   This module provides functionality to parse various formats of
+   fitment application strings into structured data.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.fitment.parser.FitmentParser
+
+
+Module Contents
+---------------
+
+.. py:class:: FitmentParser(model_mappings)
+
+   Parser for fitment strings with configurable rules.
+
+
+   .. py:attribute:: model_mappings
+
+
+   .. py:attribute:: position_patterns
+
+
+   .. py:method:: parse_application(application_text)
+
+      Parse a raw part application text into a structured PartApplication object.
+
+      Args:
+          application_text: Raw application text string
+
+      Returns:
+          PartApplication with extracted components
+
+      Raises:
+          ParsingError: If the application text cannot be parsed
+
+
+
+   .. py:method:: extract_year_range(year_text)
+
+      Extract start and end years from a year range string.
+
+      Args:
+          year_text: Year range text (e.g., "2005-2010")
+
+      Returns:
+          Tuple of (start_year, end_year)
+
+      Raises:
+          ParsingError: If the year range cannot be parsed
+
+
+
+   .. py:method:: expand_year_range(start_year, end_year)
+
+      Expand a year range into a list of individual years.
+
+      Args:
+          start_year: First year in range
+          end_year: Last year in range
+
+      Returns:
+          List of all years in the range (inclusive)
+
+
+
+   .. py:method:: find_model_mapping(vehicle_text)
+
+      Find the appropriate model mapping for the vehicle text.
+
+      Args:
+          vehicle_text: Text describing the vehicle model
+
+      Returns:
+          List of dictionaries with make, model mappings
+
+      Raises:
+          ParsingError: If no mapping is found
+
+
+
+   .. py:method:: extract_positions(position_text)
+
+      Extract position information from the position text.
+
+      Args:
+          position_text: Text describing position (e.g., "Left or Right Front Upper")
+
+      Returns:
+          List of PositionGroup objects representing all position combinations
+
+
+
+   .. py:method:: _expand_position_combinations(result, current_group, multiple_positions, index)
+
+      Recursively expand all position combinations.
+
+      Args:
+          result: List to collect the results
+          current_group: Current position group being built
+          multiple_positions: List of position types with multiple values
+          index: Current index in multiple_positions
+
+
+
+   .. py:method:: process_application(part_app)
+
+      Process a part application into a list of specific part fitments.
+
+      Args:
+          part_app: Parsed part application
+
+      Returns:
+          List of expanded PartFitment objects
+
+      Raises:
+          ParsingError: If processing fails
+
+
+

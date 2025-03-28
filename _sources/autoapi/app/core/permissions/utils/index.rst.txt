@@ -1,0 +1,84 @@
+app.core.permissions.utils
+==========================
+
+.. py:module:: app.core.permissions.utils
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.permissions.utils.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.permissions.utils.get_user_by_id
+   app.core.permissions.utils.check_owner_permission
+   app.core.permissions.utils.has_any_permission
+   app.core.permissions.utils.has_all_permissions
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: get_user_by_id(db, user_id)
+   :async:
+
+
+   Get user by ID.
+
+   Args:
+       db: Database session
+       user_id: User ID
+
+   Returns:
+       User: User model
+
+   Raises:
+       AuthenticationException: If user not found
+
+
+.. py:function:: check_owner_permission(user_id, entity_user_id, owner_field = 'user_id')
+
+   Check if a user is the owner of an entity.
+
+   Args:
+       user_id: User ID to check
+       entity_user_id: User ID from the entity
+       owner_field: Field name containing the owner ID
+
+   Returns:
+       bool: True if user is the owner, False otherwise
+
+
+.. py:function:: has_any_permission(user, permissions)
+
+   Check if a user has any of the specified permissions.
+
+   Args:
+       user: User to check permissions for
+       permissions: List of permissions to check
+
+   Returns:
+       bool: True if user has any permission, False otherwise
+
+
+.. py:function:: has_all_permissions(user, permissions)
+
+   Check if a user has all specified permissions.
+
+   Args:
+       user: User to check permissions for
+       permissions: List of permissions to check
+
+   Returns:
+       bool: True if user has all permissions, False otherwise
+
+

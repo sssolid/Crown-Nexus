@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.domains.audit.service.base &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.domains.audit.service.factory" href="../factory/index.html" />
+    <link rel="prev" title="app.domains.audit.service" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../../api/index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.domains</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.domains.audit</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.domains.audit.service</a></li>
+      <li class="breadcrumb-item active">app.domains.audit.service.base</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/domains/audit/service/base/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.domains.audit.service.base">
+<span id="app-domains-audit-service-base"></span><h1>app.domains.audit.service.base<a class="headerlink" href="#module-app.domains.audit.service.base" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.base.T" title="app.domains.audit.service.base.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuditEventType</span></code></a></p></td>
+<td><p>Enum for different types of audit events.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuditLogLevel</span></code></a></p></td>
+<td><p>Enum for audit log severity levels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.base.AuditContext" title="app.domains.audit.service.base.AuditContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuditContext</span></code></a></p></td>
+<td><p>Context information for an audit event.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.domains.audit.service.base.AuditOptions" title="app.domains.audit.service.base.AuditOptions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuditOptions</span></code></a></p></td>
+<td><p>Options for audit logging.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.domains.audit.service.base.AuditLogger" title="app.domains.audit.service.base.AuditLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuditLogger</span></code></a></p></td>
+<td><p>Protocol for audit loggers.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.T">
+<span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.base.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#app.domains.audit.service.base.T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.base.</span></span><span class="sig-name descname"><span class="pre">AuditEventType</span></span><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Enum for different types of audit events.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_LOGIN">
+<span class="sig-name descname"><span class="pre">USER_LOGIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_login'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_LOGIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_LOGOUT">
+<span class="sig-name descname"><span class="pre">USER_LOGOUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_logout'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_LOGOUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.LOGIN_FAILED">
+<span class="sig-name descname"><span class="pre">LOGIN_FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'login_failed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.LOGIN_FAILED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PASSWORD_RESET_REQUESTED">
+<span class="sig-name descname"><span class="pre">PASSWORD_RESET_REQUESTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'password_reset_requested'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PASSWORD_RESET_REQUESTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PASSWORD_RESET_COMPLETED">
+<span class="sig-name descname"><span class="pre">PASSWORD_RESET_COMPLETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'password_reset_completed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PASSWORD_RESET_COMPLETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.MFA_ENABLED">
+<span class="sig-name descname"><span class="pre">MFA_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mfa_enabled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.MFA_ENABLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.MFA_DISABLED">
+<span class="sig-name descname"><span class="pre">MFA_DISABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mfa_disabled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.MFA_DISABLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.SESSION_EXPIRED">
+<span class="sig-name descname"><span class="pre">SESSION_EXPIRED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'session_expired'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.SESSION_EXPIRED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.API_KEY_CREATED">
+<span class="sig-name descname"><span class="pre">API_KEY_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'api_key_created'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.API_KEY_CREATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.API_KEY_REVOKED">
+<span class="sig-name descname"><span class="pre">API_KEY_REVOKED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'api_key_revoked'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.API_KEY_REVOKED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_CREATED">
+<span class="sig-name descname"><span class="pre">USER_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_created'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_CREATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_UPDATED">
+<span class="sig-name descname"><span class="pre">USER_UPDATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_updated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_UPDATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_DELETED">
+<span class="sig-name descname"><span class="pre">USER_DELETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_deleted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_DELETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_ACTIVATED">
+<span class="sig-name descname"><span class="pre">USER_ACTIVATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_activated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_ACTIVATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_DEACTIVATED">
+<span class="sig-name descname"><span class="pre">USER_DEACTIVATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_deactivated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_DEACTIVATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PASSWORD_CHANGED">
+<span class="sig-name descname"><span class="pre">PASSWORD_CHANGED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'password_changed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PASSWORD_CHANGED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.EMAIL_CHANGED">
+<span class="sig-name descname"><span class="pre">EMAIL_CHANGED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'email_changed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.EMAIL_CHANGED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.USER_PROFILE_UPDATED">
+<span class="sig-name descname"><span class="pre">USER_PROFILE_UPDATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_profile_updated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.USER_PROFILE_UPDATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PERMISSION_CHANGED">
+<span class="sig-name descname"><span class="pre">PERMISSION_CHANGED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'permission_changed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PERMISSION_CHANGED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ROLE_ASSIGNED">
+<span class="sig-name descname"><span class="pre">ROLE_ASSIGNED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'role_assigned'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ROLE_ASSIGNED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ROLE_REVOKED">
+<span class="sig-name descname"><span class="pre">ROLE_REVOKED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'role_revoked'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ROLE_REVOKED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ACCESS_DENIED">
+<span class="sig-name descname"><span class="pre">ACCESS_DENIED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'access_denied'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ACCESS_DENIED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRODUCT_CREATED">
+<span class="sig-name descname"><span class="pre">PRODUCT_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'product_created'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRODUCT_CREATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRODUCT_UPDATED">
+<span class="sig-name descname"><span class="pre">PRODUCT_UPDATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'product_updated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRODUCT_UPDATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRODUCT_DELETED">
+<span class="sig-name descname"><span class="pre">PRODUCT_DELETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'product_deleted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRODUCT_DELETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRODUCT_ACTIVATED">
+<span class="sig-name descname"><span class="pre">PRODUCT_ACTIVATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'product_activated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRODUCT_ACTIVATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRODUCT_DEACTIVATED">
+<span class="sig-name descname"><span class="pre">PRODUCT_DEACTIVATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'product_deactivated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRODUCT_DEACTIVATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRICE_CHANGED">
+<span class="sig-name descname"><span class="pre">PRICE_CHANGED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'price_changed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRICE_CHANGED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.INVENTORY_UPDATED">
+<span class="sig-name descname"><span class="pre">INVENTORY_UPDATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'inventory_updated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.INVENTORY_UPDATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ORDER_CREATED">
+<span class="sig-name descname"><span class="pre">ORDER_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'order_created'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ORDER_CREATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ORDER_UPDATED">
+<span class="sig-name descname"><span class="pre">ORDER_UPDATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'order_updated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ORDER_UPDATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ORDER_CANCELED">
+<span class="sig-name descname"><span class="pre">ORDER_CANCELED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'order_canceled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ORDER_CANCELED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.ORDER_SHIPPED">
+<span class="sig-name descname"><span class="pre">ORDER_SHIPPED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'order_shipped'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.ORDER_SHIPPED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PAYMENT_RECEIVED">
+<span class="sig-name descname"><span class="pre">PAYMENT_RECEIVED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'payment_received'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PAYMENT_RECEIVED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PAYMENT_REFUNDED">
+<span class="sig-name descname"><span class="pre">PAYMENT_REFUNDED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'payment_refunded'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PAYMENT_REFUNDED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.DATA_EXPORTED">
+<span class="sig-name descname"><span class="pre">DATA_EXPORTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_exported'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.DATA_EXPORTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.DATA_IMPORTED">
+<span class="sig-name descname"><span class="pre">DATA_IMPORTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_imported'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.DATA_IMPORTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.DATA_DELETED">
+<span class="sig-name descname"><span class="pre">DATA_DELETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_deleted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.DATA_DELETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.REPORT_GENERATED">
+<span class="sig-name descname"><span class="pre">REPORT_GENERATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'report_generated'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.REPORT_GENERATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.SETTINGS_CHANGED">
+<span class="sig-name descname"><span class="pre">SETTINGS_CHANGED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'settings_changed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.SETTINGS_CHANGED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CONFIGURATION_CHANGED">
+<span class="sig-name descname"><span class="pre">CONFIGURATION_CHANGED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'configuration_changed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CONFIGURATION_CHANGED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.FEATURE_ENABLED">
+<span class="sig-name descname"><span class="pre">FEATURE_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'feature_enabled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.FEATURE_ENABLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.FEATURE_DISABLED">
+<span class="sig-name descname"><span class="pre">FEATURE_DISABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'feature_disabled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.FEATURE_DISABLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.FILE_UPLOADED">
+<span class="sig-name descname"><span class="pre">FILE_UPLOADED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file_uploaded'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.FILE_UPLOADED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.FILE_DOWNLOADED">
+<span class="sig-name descname"><span class="pre">FILE_DOWNLOADED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file_downloaded'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.FILE_DOWNLOADED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.FILE_DELETED">
+<span class="sig-name descname"><span class="pre">FILE_DELETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file_deleted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.FILE_DELETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.EMAIL_SENT">
+<span class="sig-name descname"><span class="pre">EMAIL_SENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'email_sent'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.EMAIL_SENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.SMS_SENT">
+<span class="sig-name descname"><span class="pre">SMS_SENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sms_sent'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.SMS_SENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.NOTIFICATION_SENT">
+<span class="sig-name descname"><span class="pre">NOTIFICATION_SENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'notification_sent'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.NOTIFICATION_SENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CHAT_ROOM_CREATED">
+<span class="sig-name descname"><span class="pre">CHAT_ROOM_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chat_room_created'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CHAT_ROOM_CREATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CHAT_MESSAGE_SENT">
+<span class="sig-name descname"><span class="pre">CHAT_MESSAGE_SENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chat_message_sent'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CHAT_MESSAGE_SENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CHAT_MESSAGE_EDITED">
+<span class="sig-name descname"><span class="pre">CHAT_MESSAGE_EDITED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chat_message_edited'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CHAT_MESSAGE_EDITED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CHAT_MESSAGE_DELETED">
+<span class="sig-name descname"><span class="pre">CHAT_MESSAGE_DELETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chat_message_deleted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CHAT_MESSAGE_DELETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CHAT_MEMBER_ADDED">
+<span class="sig-name descname"><span class="pre">CHAT_MEMBER_ADDED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chat_member_added'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CHAT_MEMBER_ADDED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.CHAT_MEMBER_REMOVED">
+<span class="sig-name descname"><span class="pre">CHAT_MEMBER_REMOVED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chat_member_removed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.CHAT_MEMBER_REMOVED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.EXTERNAL_API_CALLED">
+<span class="sig-name descname"><span class="pre">EXTERNAL_API_CALLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'external_api_called'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.EXTERNAL_API_CALLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.WEBHOOK_RECEIVED">
+<span class="sig-name descname"><span class="pre">WEBHOOK_RECEIVED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'webhook_received'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.WEBHOOK_RECEIVED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.WEBHOOK_PROCESSED">
+<span class="sig-name descname"><span class="pre">WEBHOOK_PROCESSED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'webhook_processed'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.WEBHOOK_PROCESSED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.SYSTEM_STARTED">
+<span class="sig-name descname"><span class="pre">SYSTEM_STARTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'system_started'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.SYSTEM_STARTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.SYSTEM_STOPPED">
+<span class="sig-name descname"><span class="pre">SYSTEM_STOPPED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'system_stopped'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.SYSTEM_STOPPED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.BACKUP_CREATED">
+<span class="sig-name descname"><span class="pre">BACKUP_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'backup_created'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.BACKUP_CREATED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.BACKUP_RESTORED">
+<span class="sig-name descname"><span class="pre">BACKUP_RESTORED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'backup_restored'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.BACKUP_RESTORED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.MAINTENANCE_MODE_ENABLED">
+<span class="sig-name descname"><span class="pre">MAINTENANCE_MODE_ENABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'maintenance_mode_enabled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.MAINTENANCE_MODE_ENABLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.MAINTENANCE_MODE_DISABLED">
+<span class="sig-name descname"><span class="pre">MAINTENANCE_MODE_DISABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'maintenance_mode_disabled'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.MAINTENANCE_MODE_DISABLED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.GDPR_DATA_EXPORT">
+<span class="sig-name descname"><span class="pre">GDPR_DATA_EXPORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gdpr_data_export'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.GDPR_DATA_EXPORT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.GDPR_DATA_DELETED">
+<span class="sig-name descname"><span class="pre">GDPR_DATA_DELETED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gdpr_data_deleted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.GDPR_DATA_DELETED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.TERMS_ACCEPTED">
+<span class="sig-name descname"><span class="pre">TERMS_ACCEPTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'terms_accepted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.TERMS_ACCEPTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditEventType.PRIVACY_POLICY_ACCEPTED">
+<span class="sig-name descname"><span class="pre">PRIVACY_POLICY_ACCEPTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'privacy_policy_accepted'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditEventType.PRIVACY_POLICY_ACCEPTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogLevel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.base.</span></span><span class="sig-name descname"><span class="pre">AuditLogLevel</span></span><a class="headerlink" href="#app.domains.audit.service.base.AuditLogLevel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Enum for audit log severity levels.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogLevel.INFO">
+<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'info'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditLogLevel.INFO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogLevel.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'warning'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditLogLevel.WARNING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogLevel.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditLogLevel.ERROR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogLevel.CRITICAL">
+<span class="sig-name descname"><span class="pre">CRITICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'critical'</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditLogLevel.CRITICAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.base.</span></span><span class="sig-name descname"><span class="pre">AuditContext</span></span><a class="headerlink" href="#app.domains.audit.service.base.AuditContext" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Context information for an audit event.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.user_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.ip_address">
+<span class="sig-name descname"><span class="pre">ip_address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.ip_address" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.user_agent">
+<span class="sig-name descname"><span class="pre">user_agent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.user_agent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.session_id">
+<span class="sig-name descname"><span class="pre">session_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.session_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.request_id">
+<span class="sig-name descname"><span class="pre">request_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.request_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.company_id">
+<span class="sig-name descname"><span class="pre">company_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.company_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.resource_id">
+<span class="sig-name descname"><span class="pre">resource_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.resource_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.resource_type">
+<span class="sig-name descname"><span class="pre">resource_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.resource_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.before_state">
+<span class="sig-name descname"><span class="pre">before_state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.before_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.after_state">
+<span class="sig-name descname"><span class="pre">after_state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.after_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.changes">
+<span class="sig-name descname"><span class="pre">changes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.changes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditContext.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditContext.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditOptions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.base.</span></span><span class="sig-name descname"><span class="pre">AuditOptions</span></span><a class="headerlink" href="#app.domains.audit.service.base.AuditOptions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code></p>
+<p>Options for audit logging.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditOptions.include_request_body">
+<span class="sig-name descname"><span class="pre">include_request_body</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditOptions.include_request_body" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditOptions.sensitive_fields">
+<span class="sig-name descname"><span class="pre">sensitive_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditOptions.sensitive_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditOptions.anonymize_data">
+<span class="sig-name descname"><span class="pre">anonymize_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditOptions.anonymize_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditOptions.capture_before_after">
+<span class="sig-name descname"><span class="pre">capture_before_after</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditOptions.capture_before_after" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditOptions.retention_period">
+<span class="sig-name descname"><span class="pre">retention_period</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">90</span></em><a class="headerlink" href="#app.domains.audit.service.base.AuditOptions.retention_period" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogger">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.domains.audit.service.base.</span></span><span class="sig-name descname"><span class="pre">AuditLogger</span></span><a class="headerlink" href="#app.domains.audit.service.base.AuditLogger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol for audit loggers.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.domains.audit.service.base.AuditLogger.log_event">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.domains.audit.service.base.AuditLogger.log_event" title="Link to this definition"></a></dt>
+<dd><p>Log an audit event.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>event_type: Type of the audit event
+user_id: ID of the user who performed the action
+ip_address: IP address of the user
+resource_id: ID of the resource affected
+resource_type: Type of the resource affected
+details: Additional details about the event
+context: Additional context information
+level: Severity level of the event
+options: Audit logging options</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The ID of the created audit event</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> (<a class="reference internal" href="#app.domains.audit.service.base.AuditEventType" title="app.domains.audit.service.base.AuditEventType"><em>AuditEventType</em></a>)</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>ip_address</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>resource_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>details</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#app.domains.audit.service.base.AuditContext" title="app.domains.audit.service.base.AuditContext"><em>AuditContext</em></a><em>]</em>)</p></li>
+<li><p><strong>level</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#app.domains.audit.service.base.AuditLogLevel" title="app.domains.audit.service.base.AuditLogLevel"><em>AuditLogLevel</em></a><em>]</em>)</p></li>
+<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#app.domains.audit.service.base.AuditOptions" title="app.domains.audit.service.base.AuditOptions"><em>AuditOptions</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="app.domains.audit.service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../factory/index.html" class="btn btn-neutral float-right" title="app.domains.audit.service.factory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+app.core.events
+===============
+
+.. py:module:: app.core.events
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/events/backend/index
+   /autoapi/app/core/events/init/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.events.EventBackendType
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.events.get_event_backend
+   app.core.events.init_domain_events
+   app.core.events.init_event_backend
+   app.core.events.publish_event
+   app.core.events.subscribe_to_event
+   app.core.events.register_event_handlers
+
+
+Package Contents
+----------------
+
+.. py:class:: EventBackendType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Types of event backends supported.
+
+
+   .. py:attribute:: CELERY
+
+
+   .. py:attribute:: MEMORY
+
+
+.. py:function:: get_event_backend()
+
+   Get the configured event backend.
+
+   Returns:
+       The configured event backend instance.
+
+   Raises:
+       RuntimeError: If the event backend is not initialized
+
+
+.. py:function:: init_domain_events()
+
+   Initialize domain events by registering all pending handlers.
+
+   This should be called after the event backend is initialized.
+
+
+.. py:function:: init_event_backend(backend_type, **kwargs)
+
+   Initialize the event backend to use.
+
+   Args:
+       backend_type: Type of event backend to use
+       **kwargs: Additional arguments to pass to the backend constructor
+
+   Returns:
+       The initialized event backend instance
+
+   Raises:
+       ValueError: If an unsupported backend type is requested
+
+
+.. py:function:: publish_event(event_name, payload)
+
+   Publish a domain event.
+
+   Args:
+       event_name: The name of the event to publish
+       payload: Event data to be sent to subscribers
+
+
+.. py:function:: subscribe_to_event(event_name)
+
+   Decorator to subscribe a function to a domain event.
+
+   If the event backend is not yet initialized, handlers will be stored
+   for later registration with init_domain_events().
+
+   Args:
+       event_name: The name of the event to subscribe to
+
+   Returns:
+       Decorator function that registers the handler
+
+
+.. py:function:: register_event_handlers(*modules)
+
+   Import modules to register their event handlers.
+
+   This function has been deprecated. Use init_domain_events() instead.
+
+   Args:
+       *modules: Module objects to ensure are imported
+
+

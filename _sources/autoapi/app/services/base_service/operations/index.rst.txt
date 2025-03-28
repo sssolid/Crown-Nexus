@@ -1,0 +1,290 @@
+app.services.base_service.operations
+====================================
+
+.. py:module:: app.services.base_service.operations
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/services/base_service/operations/create_update/index
+   /autoapi/app/services/base_service/operations/read_delete/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.services.base_service.operations.CreateUpdateOperations
+   app.services.base_service.operations.ReadDeleteOperations
+
+
+Package Contents
+----------------
+
+.. py:class:: CreateUpdateOperations
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`C`\ , :py:obj:`U`\ , :py:obj:`ID`\ ]
+
+
+   Operations for creating and updating entities.
+
+
+   .. py:method:: create(db, repository, data, user_id = None, required_permission = None, validate_func = None, before_func = None, after_func = None, get_user_func = None)
+      :async:
+
+
+      Create new entity.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          data: Entity data
+          user_id: Current user ID
+          required_permission: Required permission for this operation
+          validate_func: Function for validating the data
+          before_func: Function to call before creation
+          after_func: Function to call after creation
+          get_user_func: Function to get user by ID
+
+      Returns:
+          T: Created entity
+
+      Raises:
+          ValidationException: If validation fails
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: create_with_schema(db, repository, schema, user_id = None, required_permission = None, validate_func = None, before_func = None, after_func = None, get_user_func = None)
+      :async:
+
+
+      Create a new entity using a Pydantic schema.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          schema: Create schema
+          user_id: Optional user ID for permission checks
+          required_permission: Required permission for this operation
+          validate_func: Function for validating the data
+          before_func: Function to call before creation
+          after_func: Function to call after creation
+          get_user_func: Function to get user by ID
+
+      Returns:
+          T: The created entity
+
+
+
+   .. py:method:: update(db, repository, id, data, user_id = None, required_permission = None, validate_func = None, before_func = None, after_func = None, get_user_func = None)
+      :async:
+
+
+      Update entity.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          id: Entity ID
+          data: Updated data
+          user_id: Current user ID
+          required_permission: Required permission for this operation
+          validate_func: Function for validating the data
+          before_func: Function to call before update
+          after_func: Function to call after update
+          get_user_func: Function to get user by ID
+
+      Returns:
+          T: Updated entity
+
+      Raises:
+          ResourceNotFoundException: If entity not found
+          ValidationException: If validation fails
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: update_with_schema(db, repository, id, schema, user_id = None, required_permission = None, validate_func = None, before_func = None, after_func = None, get_user_func = None)
+      :async:
+
+
+      Update an existing entity using a Pydantic schema.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          id: Entity ID
+          schema: Update schema
+          user_id: Optional user ID for permission checks
+          required_permission: Required permission for this operation
+          validate_func: Function for validating the data
+          before_func: Function to call before update
+          after_func: Function to call after update
+          get_user_func: Function to get user by ID
+
+      Returns:
+          Optional[T]: The updated entity if found, None otherwise
+
+
+
+.. py:class:: ReadDeleteOperations
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`R`\ , :py:obj:`ID`\ ]
+
+
+   Operations for reading and deleting entities.
+
+
+   .. py:method:: get(db, repository, id, user_id = None, required_permission = None, get_user_func = None)
+      :async:
+
+
+      Get entity by ID with permission check.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          id: Entity ID
+          user_id: Current user ID
+          required_permission: Required permission for this operation
+          get_user_func: Function to get user by ID
+
+      Returns:
+          T: Entity
+
+      Raises:
+          ResourceNotFoundException: If entity not found
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: get_by_id(db, repository, id, user_id = None, required_permission = None, get_user_func = None)
+      :async:
+
+
+      Get entity by ID without raising exceptions.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          id: Entity ID
+          user_id: Current user ID
+          required_permission: Required permission for this operation
+          get_user_func: Function to get user by ID
+
+      Returns:
+          Optional[T]: Entity or None if not found
+
+
+
+   .. py:method:: get_multi(db, repository, user_id = None, page = 1, page_size = 20, filters = None, order_by = None, required_permission = None, get_user_func = None, apply_filters_func = None)
+      :async:
+
+
+      Get multiple entities with pagination.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          user_id: Current user ID
+          page: Page number
+          page_size: Items per page
+          filters: Filters to apply
+          order_by: Field to order by
+          required_permission: Required permission for this operation
+          get_user_func: Function to get user by ID
+          apply_filters_func: Function to apply custom filters
+
+      Returns:
+          Dict[str, Any]: Paginated results
+
+      Raises:
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+   .. py:method:: get_all(db, repository, page = 1, page_size = 20, filters = None, user_id = None, required_permission = None, get_user_func = None, apply_filters_func = None)
+      :async:
+
+
+      Get all entities with pagination.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          page: Page number (1-indexed)
+          page_size: Number of items per page
+          filters: Optional filters to apply
+          user_id: Optional user ID for permission checks
+          required_permission: Required permission for this operation
+          get_user_func: Function to get user by ID
+          apply_filters_func: Function to apply custom filters
+
+      Returns:
+          Dict[str, Any]: Paginated results
+
+
+
+   .. py:method:: to_response(entity, response_model)
+      :async:
+
+
+      Convert entity to response model.
+
+      Args:
+          entity: Entity to convert
+          response_model: Response model class
+
+      Returns:
+          R: Response model
+
+
+
+   .. py:method:: to_response_multi(entities, response_model)
+      :async:
+
+
+      Convert multiple entities to response models.
+
+      Args:
+          entities: Entities to convert
+          response_model: Response model class
+
+      Returns:
+          List[R]: Response models
+
+
+
+   .. py:method:: delete(db, repository, id, user_id = None, hard_delete = False, required_permission = None, validate_func = None, before_func = None, after_func = None, get_user_func = None)
+      :async:
+
+
+      Delete entity.
+
+      Args:
+          db: Database session
+          repository: Repository for database operations
+          id: Entity ID
+          user_id: Current user ID
+          hard_delete: Whether to permanently delete
+          required_permission: Required permission for this operation
+          validate_func: Function for validating the deletion
+          before_func: Function to call before deletion
+          after_func: Function to call after deletion
+          get_user_func: Function to get user by ID
+
+      Returns:
+          bool: True if deleted
+
+      Raises:
+          ResourceNotFoundException: If entity not found
+          PermissionDeniedException: If user doesn't have permission
+
+
+

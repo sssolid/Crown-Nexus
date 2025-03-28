@@ -1,0 +1,19 @@
+app.data_import
+===============
+
+.. py:module:: app.data_import
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/data_import/commands/index
+   /autoapi/app/data_import/connectors/index
+   /autoapi/app/data_import/importers/index
+   /autoapi/app/data_import/pipeline/index
+   /autoapi/app/data_import/processors/index
+
+

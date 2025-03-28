@@ -1,0 +1,6 @@
+app.domains.inventory.schemas
+=============================
+
+.. py:module:: app.domains.inventory.schemas
+
+

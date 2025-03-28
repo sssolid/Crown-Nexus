@@ -1,0 +1,24 @@
+app.domains.chat
+================
+
+.. py:module:: app.domains.chat
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/domains/chat/connection/index
+   /autoapi/app/domains/chat/exceptions/index
+   /autoapi/app/domains/chat/handlers/index
+   /autoapi/app/domains/chat/models/index
+   /autoapi/app/domains/chat/repository/index
+   /autoapi/app/domains/chat/schemas/index
+   /autoapi/app/domains/chat/service/index
+   /autoapi/app/domains/chat/service_DUPLICATEMAYBE/index
+   /autoapi/app/domains/chat/tasks/index
+   /autoapi/app/domains/chat/websocket/index
+
+

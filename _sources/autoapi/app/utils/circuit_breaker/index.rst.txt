@@ -1,0 +1,299 @@
+app.utils.circuit_breaker
+=========================
+
+.. py:module:: app.utils.circuit_breaker
+
+.. autoapi-nested-parse::
+
+   Circuit breaker implementation for preventing cascading failures.
+
+   This module implements the circuit breaker design pattern to prevent cascading failures
+   in distributed systems. It automatically detects failures and temporarily blocks operations
+   that are likely to fail, allowing the failing component to recover.
+
+   Features include:
+   - Configurable failure threshold, success threshold, and timeout
+   - Three states: CLOSED (normal), OPEN (blocking), and HALF-OPEN (testing)
+   - Support for both synchronous and asynchronous functions
+   - Registry of named circuit breakers for centralized management
+   - Fallback function support for graceful degradation
+
+   All functions include proper error handling, logging, and state management to ensure
+   system resilience and fail gracefully when downstream services are unavailable.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.utils.circuit_breaker.logger
+   app.utils.circuit_breaker.F
+   app.utils.circuit_breaker.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.utils.circuit_breaker.CircuitState
+   app.utils.circuit_breaker.CircuitBreakerConfig
+   app.utils.circuit_breaker.CircuitBreaker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.utils.circuit_breaker.circuit_breaker
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: F
+
+.. py:data:: T
+
+.. py:class:: CircuitState(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Possible states of a circuit breaker.
+
+
+   .. py:attribute:: CLOSED
+      :value: 'closed'
+
+
+
+   .. py:attribute:: OPEN
+      :value: 'open'
+
+
+
+   .. py:attribute:: HALF_OPEN
+      :value: 'half_open'
+
+
+
+.. py:class:: CircuitBreakerConfig
+
+   Configuration options for circuit breaker behavior.
+
+
+   .. py:attribute:: failure_threshold
+      :type:  int
+      :value: 5
+
+
+
+   .. py:attribute:: success_threshold
+      :type:  int
+      :value: 3
+
+
+
+   .. py:attribute:: timeout
+      :type:  float
+      :value: 60.0
+
+
+
+   .. py:attribute:: exception_types
+      :type:  List[Type[Exception]]
+
+
+   .. py:attribute:: fallback
+      :type:  Optional[Callable]
+      :value: None
+
+
+
+.. py:class:: CircuitBreaker(name, config = None)
+
+   Circuit breaker implementation to prevent cascading failures.
+
+
+   .. py:attribute:: _breakers
+      :type:  Dict[str, CircuitBreaker]
+
+
+   .. py:attribute:: _lock
+
+
+   .. py:attribute:: name
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: state
+
+
+   .. py:attribute:: failure_count
+      :value: 0
+
+
+
+   .. py:attribute:: success_count
+      :value: 0
+
+
+
+   .. py:attribute:: last_failure_time
+      :value: 0.0
+
+
+
+   .. py:attribute:: last_state_change_time
+
+
+   .. py:method:: get(name)
+      :classmethod:
+
+
+      Get an existing circuit breaker by name.
+
+      Args:
+          name: Name of the circuit breaker
+
+      Returns:
+          CircuitBreaker: The named circuit breaker
+
+      Raises:
+          ValueError: If no circuit breaker with that name exists
+
+
+
+   .. py:method:: get_or_create(name, config = None)
+      :classmethod:
+
+
+      Get an existing circuit breaker or create a new one.
+
+      Args:
+          name: Name of the circuit breaker
+          config: Configuration options for new breaker, or None for defaults
+
+      Returns:
+          CircuitBreaker: The named circuit breaker
+
+
+
+   .. py:method:: reset_all()
+      :classmethod:
+
+
+      Reset all circuit breakers to CLOSED state.
+
+
+
+   .. py:method:: get_all_states()
+      :classmethod:
+
+
+      Get the current state of all circuit breakers.
+
+      Returns:
+          Dict[str, CircuitState]: Map of circuit breaker names to states
+
+
+
+   .. py:method:: reset()
+
+      Reset this circuit breaker to CLOSED state.
+
+
+
+   .. py:method:: check_state()
+
+      Check if circuit state should change based on time elapsed.
+
+      If in OPEN state and timeout has elapsed, transitions to HALF_OPEN.
+
+
+
+   .. py:method:: _transition_to(new_state)
+
+      Transition to a new state with appropriate state reset.
+
+      Args:
+          new_state: The state to transition to
+
+
+
+   .. py:method:: _on_success()
+
+      Handle successful execution.
+
+      Increment success counter and potentially transition state.
+
+
+
+   .. py:method:: _on_failure(exception)
+
+      Handle execution failure.
+
+      Update failure counter, timestamp, and potentially transition state.
+
+      Args:
+          exception: The exception that occurred
+
+
+
+   .. py:method:: __call__(func)
+
+      Decorate function with circuit breaker (synchronous version).
+
+      Args:
+          func: The function to wrap with circuit breaker
+
+      Returns:
+          F: Wrapped function
+
+
+
+   .. py:method:: async_call(func)
+
+      Decorate async function with circuit breaker.
+
+      Args:
+          func: The async function to wrap with circuit breaker
+
+      Returns:
+          F: Wrapped async function
+
+
+
+.. py:function:: circuit_breaker(name, failure_threshold = 5, success_threshold = 3, timeout = 60.0, exception_types = None, fallback = None)
+
+   Decorator factory for applying circuit breaker pattern.
+
+   Args:
+       name: Unique name for the circuit breaker
+       failure_threshold: Number of failures before opening circuit
+       success_threshold: Number of successes before closing circuit
+       timeout: Seconds before trying again after circuit opens
+       exception_types: List of exception types to count as failures
+       fallback: Function to call when circuit is open
+
+   Returns:
+       Callable: Decorator function
+
+   Examples:
+       @circuit_breaker("payment_service", failure_threshold=3)
+       def process_payment(order_id):
+           ...
+
+       @circuit_breaker("user_service", fallback=get_cached_user)
+       async def get_user(user_id):
+           ...
+
+

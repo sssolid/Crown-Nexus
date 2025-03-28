@@ -1,0 +1,23 @@
+app.api.v1.endpoints
+====================
+
+.. py:module:: app.api.v1.endpoints
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/api/v1/endpoints/auth/index
+   /autoapi/app/api/v1/endpoints/chat/index
+   /autoapi/app/api/v1/endpoints/currency/index
+   /autoapi/app/api/v1/endpoints/fitments/index
+   /autoapi/app/api/v1/endpoints/i18n/index
+   /autoapi/app/api/v1/endpoints/media/index
+   /autoapi/app/api/v1/endpoints/products/index
+   /autoapi/app/api/v1/endpoints/search/index
+   /autoapi/app/api/v1/endpoints/users/index
+
+

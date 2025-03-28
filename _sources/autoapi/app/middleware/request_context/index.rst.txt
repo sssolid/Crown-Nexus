@@ -1,0 +1,54 @@
+app.middleware.request_context
+==============================
+
+.. py:module:: app.middleware.request_context
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.middleware.request_context.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.middleware.request_context.RequestContextMiddleware
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: RequestContextMiddleware
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware for setting up request context and logging request information.
+
+   This middleware generates a request ID for each incoming request, logs
+   request and response information, and sets up the thread-local request
+   context for use by other components.
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+      Process the request, setting up context and logging information.
+
+      Args:
+          request: The incoming request
+          call_next: The next middleware in the chain
+
+      Returns:
+          The response from downstream middleware
+
+
+

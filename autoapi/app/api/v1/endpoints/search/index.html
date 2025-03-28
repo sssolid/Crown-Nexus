@@ -1,0 +1,530 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.api.v1.endpoints.search &mdash; Crown Nexus 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="app.api.v1.endpoints.users" href="../users/index.html" />
+    <link rel="prev" title="app.api.v1.endpoints.products" href="../products/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            Crown Nexus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../developer_guide.html">Developer’s Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../../index.html">app</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../../index.html">app.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../commands/index.html">app.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/index.html">app.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data_import/index.html">app.data_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../db/index.html">app.db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../domains/index.html">app.domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../fitment/index.html">app.fitment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../logging/index.html">app.logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../main/index.html">app.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../middleware/index.html">app.middleware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../models/index.html">app.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../repositories/index.html">app.repositories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../schemas/index.html">app.schemas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../services/index.html">app.services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tasks/index.html">app.tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/index.html">app.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Crown Nexus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">app</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">app.api</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">app.api.v1</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">app.api.v1.endpoints</a></li>
+      <li class="breadcrumb-item active">app.api.v1.endpoints.search</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../../_sources/autoapi/app/api/v1/endpoints/search/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-app.api.v1.endpoints.search">
+<span id="app-api-v1-endpoints-search"></span><h1>app.api.v1.endpoints.search<a class="headerlink" href="#module-app.api.v1.endpoints.search" title="Link to this heading"></a></h1>
+<p>Global search API endpoints.</p>
+<p>This module provides endpoints for searching across the application:
+- Full-text search across products, fitments, and categories
+- Advanced filtering options
+- Faceted search results
+- Type-ahead suggestions</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.router" title="app.api.v1.endpoints.search.router"><code class="xref py py-obj docutils literal notranslate"><span class="pre">router</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.global_search" title="app.api.v1.endpoints.search.global_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">global_search</span></code></a>(db, current_user, search_service[, q, ...])</p></td>
+<td><p>Perform a global search across multiple entity types.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.search_products" title="app.api.v1.endpoints.search.search_products"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search_products</span></code></a>(db, current_user, search_service[, q, ...])</p></td>
+<td><p>Search for products with filtering.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.search_fitments" title="app.api.v1.endpoints.search.search_fitments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search_fitments</span></code></a>(db, current_user, search_service[, q, ...])</p></td>
+<td><p>Search for fitments with filtering.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.get_vehicle_years" title="app.api.v1.endpoints.search.get_vehicle_years"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vehicle_years</span></code></a>(db, current_user, vehicle_service)</p></td>
+<td><p>Get all available vehicle years.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.get_vehicle_makes" title="app.api.v1.endpoints.search.get_vehicle_makes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vehicle_makes</span></code></a>(db, current_user, vehicle_service[, ...])</p></td>
+<td><p>Get all available vehicle makes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.get_vehicle_models" title="app.api.v1.endpoints.search.get_vehicle_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vehicle_models</span></code></a>(db, current_user, vehicle_service)</p></td>
+<td><p>Get all available vehicle models.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.get_vehicle_engines" title="app.api.v1.endpoints.search.get_vehicle_engines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vehicle_engines</span></code></a>(db, current_user, vehicle_service)</p></td>
+<td><p>Get all available vehicle engines.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.get_vehicle_transmissions" title="app.api.v1.endpoints.search.get_vehicle_transmissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vehicle_transmissions</span></code></a>(db, current_user, ...[, ...])</p></td>
+<td><p>Get all available vehicle transmissions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.validate_vehicle_fitment" title="app.api.v1.endpoints.search.validate_vehicle_fitment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_vehicle_fitment</span></code></a>(db, current_user, ...[, ...])</p></td>
+<td><p>Validate if a fitment combination exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#app.api.v1.endpoints.search.decode_vin" title="app.api.v1.endpoints.search.decode_vin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_vin</span></code></a>(vin, db, current_user, vehicle_service)</p></td>
+<td><p>Decode a Vehicle Identification Number (VIN).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.router">
+<span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">router</span></span><a class="headerlink" href="#app.api.v1.endpoints.search.router" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.global_search">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">global_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(...,</span> <span class="pre">description='Search</span> <span class="pre">query')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Entity</span> <span class="pre">types</span> <span class="pre">to</span> <span class="pre">search</span> <span class="pre">(products,</span> <span class="pre">fitments,</span> <span class="pre">categories)')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(1,</span> <span class="pre">ge=1,</span> <span class="pre">description='Page</span> <span class="pre">number')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(20,</span> <span class="pre">ge=1,</span> <span class="pre">le=100,</span> <span class="pre">description='Items</span> <span class="pre">per</span> <span class="pre">page')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.global_search" title="Link to this definition"></a></dt>
+<dd><p>Perform a global search across multiple entity types.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+search_service: Search service
+q: Search query
+entity_types: Entity types to search
+page: Page number
+page_size: Items per page</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Search results grouped by entity type</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>search_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/search/index.html#app.services.search.SearchService" title="app.services.search.SearchService"><em>app.services.search.SearchService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_search_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>q</strong> (<em>str</em>)</p></li>
+<li><p><strong>entity_types</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.search_products">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">search_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Search</span> <span class="pre">query')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Active</span> <span class="pre">status')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(1,</span> <span class="pre">ge=1,</span> <span class="pre">description='Page</span> <span class="pre">number')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(20,</span> <span class="pre">ge=1,</span> <span class="pre">le=100,</span> <span class="pre">description='Items</span> <span class="pre">per</span> <span class="pre">page')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_elasticsearch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(True,</span> <span class="pre">description='Use</span> <span class="pre">Elasticsearch</span> <span class="pre">if</span> <span class="pre">available')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.search_products" title="Link to this definition"></a></dt>
+<dd><p>Search for products with filtering.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+search_service: Search service
+q: Search query
+is_active: Active status filter
+page: Page number
+page_size: Items per page
+use_elasticsearch: Whether to use Elasticsearch</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Search results with pagination</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>search_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/search/index.html#app.services.search.SearchService" title="app.services.search.SearchService"><em>app.services.search.SearchService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_search_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>q</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>is_active</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_elasticsearch</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.search_fitments">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">search_fitments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Search</span> <span class="pre">query')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Vehicle</span> <span class="pre">year')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Vehicle</span> <span class="pre">make')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Vehicle</span> <span class="pre">model')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Vehicle</span> <span class="pre">engine')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Vehicle</span> <span class="pre">transmission')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(1,</span> <span class="pre">ge=1,</span> <span class="pre">description='Page</span> <span class="pre">number')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(20,</span> <span class="pre">ge=1,</span> <span class="pre">le=100,</span> <span class="pre">description='Items</span> <span class="pre">per</span> <span class="pre">page')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.search_fitments" title="Link to this definition"></a></dt>
+<dd><p>Search for fitments with filtering.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+search_service: Search service
+q: Search query
+year: Vehicle year filter
+make: Vehicle make filter
+model: Vehicle model filter
+engine: Vehicle engine filter
+transmission: Vehicle transmission filter
+page: Page number
+page_size: Items per page</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Search results with pagination</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>search_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/search/index.html#app.services.search.SearchService" title="app.services.search.SearchService"><em>app.services.search.SearchService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_search_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>q</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>engine</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>transmission</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>page</strong> (<em>int</em>)</p></li>
+<li><p><strong>page_size</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.get_vehicle_years">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">get_vehicle_years</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.get_vehicle_years" title="Link to this definition"></a></dt>
+<dd><p>Get all available vehicle years.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[int]: List of years</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.get_vehicle_makes">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">get_vehicle_makes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">year')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.get_vehicle_makes" title="Link to this definition"></a></dt>
+<dd><p>Get all available vehicle makes.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service
+year: Filter by year</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[str]: List of makes</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.get_vehicle_models">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">get_vehicle_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">make')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">year')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.get_vehicle_models" title="Link to this definition"></a></dt>
+<dd><p>Get all available vehicle models.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service
+make: Filter by make
+year: Filter by year</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[str]: List of models</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.get_vehicle_engines">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">get_vehicle_engines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">make')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">model')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">year')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.get_vehicle_engines" title="Link to this definition"></a></dt>
+<dd><p>Get all available vehicle engines.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service
+make: Filter by make
+model: Filter by model
+year: Filter by year</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[str]: List of engines</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.get_vehicle_transmissions">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">get_vehicle_transmissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">make')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">model')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">year')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None,</span> <span class="pre">description='Filter</span> <span class="pre">by</span> <span class="pre">engine')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.get_vehicle_transmissions" title="Link to this definition"></a></dt>
+<dd><p>Get all available vehicle transmissions.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service
+make: Filter by make
+model: Filter by model
+year: Filter by year
+engine: Filter by engine</p>
+</dd>
+<dt>Returns:</dt><dd><p>List[str]: List of transmissions</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>make</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>engine</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.validate_vehicle_fitment">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">validate_vehicle_fitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.validate_vehicle_fitment" title="Link to this definition"></a></dt>
+<dd><p>Validate if a fitment combination exists.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service
+year: Vehicle year
+make: Vehicle make
+model: Vehicle model
+engine: Vehicle engine
+transmission: Vehicle transmission</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Validation result</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>year</strong> (<em>int</em>)</p></li>
+<li><p><strong>make</strong> (<em>str</em>)</p></li>
+<li><p><strong>model</strong> (<em>str</em>)</p></li>
+<li><p><strong>engine</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>transmission</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.api.v1.endpoints.search.decode_vin">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.api.v1.endpoints.search.</span></span><span class="sig-name descname"><span class="pre">decode_vin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_service</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.api.v1.endpoints.search.decode_vin" title="Link to this definition"></a></dt>
+<dd><p>Decode a Vehicle Identification Number (VIN).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vin: Vehicle Identification Number
+db: Database session
+current_user: Current authenticated user
+vehicle_service: Vehicle data service</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dict[str, Any]: Decoded vehicle data</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vin</strong> (<em>str</em>)</p></li>
+<li><p><strong>db</strong> (<em>Annotated</em><em>[</em><em>sqlalchemy.ext.asyncio.AsyncSession</em><em>, </em><em>Depends</em><em>(</em><em>get_db</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>current_user</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../domains/users/models/index.html#app.domains.users.models.User" title="app.domains.users.models.User"><em>app.domains.users.models.User</em></a><em>, </em><em>Depends</em><em>(</em><em>get_current_active_user</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>vehicle_service</strong> (<em>Annotated</em><em>[</em><a class="reference internal" href="../../../../services/vehicle/index.html#app.services.vehicle.VehicleDataService" title="app.services.vehicle.VehicleDataService"><em>app.services.vehicle.VehicleDataService</em></a><em>, </em><em>Depends</em><em>(</em><em>get_vehicle_service</em><em>)</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../products/index.html" class="btn btn-neutral float-left" title="app.api.v1.endpoints.products" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../users/index.html" class="btn btn-neutral float-right" title="app.api.v1.endpoints.users" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Ryan Serra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

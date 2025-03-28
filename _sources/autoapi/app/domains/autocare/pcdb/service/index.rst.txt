@@ -1,0 +1,136 @@
+app.domains.autocare.pcdb.service
+=================================
+
+.. py:module:: app.domains.autocare.pcdb.service
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.autocare.pcdb.service.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.pcdb.service.PCdbService
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: PCdbService(db)
+
+   Service for PCdb operations.
+
+   Provides methods for importing, exporting, and querying parts data.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: repository
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current version of the PCdb database.
+
+      Returns:
+          The version date as a string.
+
+
+
+   .. py:method:: update_database(file_path)
+      :async:
+
+
+      Update the PCdb database from a file.
+
+      Args:
+          file_path: Path to the update file.
+
+      Returns:
+          Dict with update results information.
+
+
+
+   .. py:method:: import_from_pies(file_path, params)
+      :async:
+
+
+      Import parts data from a PIES XML file.
+
+      Args:
+          file_path: Path to the PIES XML file.
+          params: Import parameters.
+
+      Returns:
+          Dict with import results information.
+
+
+
+   .. py:method:: get_categories()
+      :async:
+
+
+      Get all parts categories.
+
+      Returns:
+          List of categories with their IDs and names.
+
+
+
+   .. py:method:: get_subcategories_by_category(category_id)
+      :async:
+
+
+      Get subcategories for a specific category.
+
+      Args:
+          category_id: The category ID.
+
+      Returns:
+          List of subcategories with their IDs and names.
+
+
+
+   .. py:method:: search_parts(search_term, categories = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for parts with optional category filters.
+
+      Args:
+          search_term: The search term.
+          categories: Optional list of category IDs to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_part_details(part_terminology_id)
+      :async:
+
+
+      Get detailed information about a part.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+
+      Returns:
+          Dict with detailed part information.
+
+
+

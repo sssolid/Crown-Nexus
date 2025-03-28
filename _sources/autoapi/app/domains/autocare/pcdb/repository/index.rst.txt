@@ -1,0 +1,284 @@
+app.domains.autocare.pcdb.repository
+====================================
+
+.. py:module:: app.domains.autocare.pcdb.repository
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.autocare.pcdb.repository.PCdbRepository
+   app.domains.autocare.pcdb.repository.PartsRepository
+   app.domains.autocare.pcdb.repository.CategoryRepository
+   app.domains.autocare.pcdb.repository.SubCategoryRepository
+   app.domains.autocare.pcdb.repository.PositionRepository
+
+
+Module Contents
+---------------
+
+.. py:class:: PCdbRepository(db)
+
+   Repository for PCdb entity operations.
+
+   Provides methods for querying PCdb data and managing database updates.
+
+
+   .. py:attribute:: db
+
+
+   .. py:attribute:: parts_repo
+
+
+   .. py:attribute:: category_repo
+
+
+   .. py:attribute:: subcategory_repo
+
+
+   .. py:attribute:: position_repo
+
+
+   .. py:method:: get_version()
+      :async:
+
+
+      Get the current version of the PCdb database.
+
+      Returns:
+          The version date as a string or None if no version is set.
+
+
+
+   .. py:method:: update_version(version_date)
+      :async:
+
+
+      Update the current version of the PCdb database.
+
+      Args:
+          version_date: The new version date.
+
+      Returns:
+          The updated version entity.
+
+
+
+   .. py:method:: search_parts(search_term, categories = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for parts by term and optional category filters.
+
+      Args:
+          search_term: The search term.
+          categories: Optional list of category IDs to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+.. py:class:: PartsRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.pcdb.models.Parts`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Parts entity operations.
+
+
+   .. py:method:: get_by_terminology_id(part_terminology_id)
+      :async:
+
+
+      Get a part by its terminology ID.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+
+      Returns:
+          The part if found, None otherwise.
+
+
+
+   .. py:method:: search(search_term, categories = None, page = 1, page_size = 20)
+      :async:
+
+
+      Search for parts by term and optional category filters.
+
+      Args:
+          search_term: The search term.
+          categories: Optional list of category IDs to filter by.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_by_category(category_id, page = 1, page_size = 20)
+      :async:
+
+
+      Get parts by category.
+
+      Args:
+          category_id: The category ID.
+          page: The page number.
+          page_size: The number of items per page.
+
+      Returns:
+          Dict containing items, total count, and pagination info.
+
+
+
+   .. py:method:: get_supersessions(part_terminology_id)
+      :async:
+
+
+      Get supersession information for a part.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+
+      Returns:
+          Dict with superseded_by and supersedes lists.
+
+
+
+.. py:class:: CategoryRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.pcdb.models.Category`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Category entity operations.
+
+
+   .. py:method:: get_by_category_id(category_id)
+      :async:
+
+
+      Get a category by its ID.
+
+      Args:
+          category_id: The category ID.
+
+      Returns:
+          The category if found, None otherwise.
+
+
+
+   .. py:method:: get_all_categories()
+      :async:
+
+
+      Get all categories.
+
+      Returns:
+          List of all categories.
+
+
+
+   .. py:method:: search(search_term)
+      :async:
+
+
+      Search for categories by name.
+
+      Args:
+          search_term: The search term.
+
+      Returns:
+          List of matching categories.
+
+
+
+.. py:class:: SubCategoryRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.pcdb.models.SubCategory`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for SubCategory entity operations.
+
+
+   .. py:method:: get_by_subcategory_id(subcategory_id)
+      :async:
+
+
+      Get a subcategory by its ID.
+
+      Args:
+          subcategory_id: The subcategory ID.
+
+      Returns:
+          The subcategory if found, None otherwise.
+
+
+
+   .. py:method:: get_by_category(category_id)
+      :async:
+
+
+      Get subcategories by category.
+
+      Args:
+          category_id: The category ID.
+
+      Returns:
+          List of subcategories in the specified category.
+
+
+
+.. py:class:: PositionRepository(db)
+
+   Bases: :py:obj:`app.repositories.base.BaseRepository`\ [\ :py:obj:`app.domains.autocare.pcdb.models.Position`\ , :py:obj:`uuid.UUID`\ ]
+
+
+   Repository for Position entity operations.
+
+
+   .. py:method:: get_by_position_id(position_id)
+      :async:
+
+
+      Get a position by its ID.
+
+      Args:
+          position_id: The position ID.
+
+      Returns:
+          The position if found, None otherwise.
+
+
+
+   .. py:method:: get_all_positions()
+      :async:
+
+
+      Get all positions.
+
+      Returns:
+          List of all positions.
+
+
+
+   .. py:method:: get_by_part(part_terminology_id)
+      :async:
+
+
+      Get positions for a specific part.
+
+      Args:
+          part_terminology_id: The part terminology ID.
+
+      Returns:
+          List of positions for the specified part.
+
+
+

@@ -1,0 +1,58 @@
+app.middleware.metrics
+======================
+
+.. py:module:: app.middleware.metrics
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.middleware.metrics.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.middleware.metrics.MetricsMiddleware
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: MetricsMiddleware(app)
+
+   Bases: :py:obj:`starlette.middleware.base.BaseHTTPMiddleware`
+
+
+   Middleware for collecting request metrics.
+
+   Automatically tracks HTTP request metrics such as request count,
+   duration, and errors.
+
+
+   .. py:attribute:: _fastapi_app
+
+
+   .. py:method:: dispatch(request, call_next)
+      :async:
+
+
+
+   .. py:method:: _get_endpoint_name(request)
+
+      Extract the endpoint name from the request.
+
+      Args:
+          request: FastAPI request
+
+      Returns:
+          Endpoint name
+
+
+

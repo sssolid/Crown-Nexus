@@ -1,0 +1,119 @@
+app.utils.crypto
+================
+
+.. py:module:: app.utils.crypto
+
+.. autoapi-nested-parse::
+
+   Cryptography utility module for handling secure encryption, decryption, and token generation.
+
+   This module provides functions for encrypting and decrypting sensitive data using Fernet
+   symmetric encryption, as well as utilities for generating secure random tokens. It uses
+   cryptography's Fernet implementation with PBKDF2HMAC key derivation for enhanced security.
+
+   All functions include proper error handling and logging to ensure security operations
+   are traceable and debuggable while maintaining security best practices.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.utils.crypto.logger
+   app.utils.crypto._fernet
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.utils.crypto.CryptoError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.utils.crypto._get_encryption_key
+   app.utils.crypto.encrypt_message
+   app.utils.crypto.decrypt_message
+   app.utils.crypto.generate_secure_token
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: CryptoError(message, code = ErrorCode.SECURITY_ERROR, details = None, original_exception = None)
+
+   Bases: :py:obj:`app.core.exceptions.SecurityException`
+
+
+   Exception raised for cryptographic operations failures.
+
+
+.. py:function:: _get_encryption_key()
+
+   Generate encryption key using PBKDF2HMAC with SHA-256.
+
+   The key is derived from the application secret key using a salt specified
+   in the application settings. This provides protection against rainbow table attacks.
+
+   Returns:
+       bytes: Base64-encoded encryption key
+
+   Raises:
+       CryptoError: If key derivation fails
+       ConfigurationException: If required settings are missing
+
+
+.. py:data:: _fernet
+
+.. py:function:: encrypt_message(message)
+
+   Encrypt a message using Fernet symmetric encryption.
+
+   Args:
+       message: Plaintext message to encrypt
+
+   Returns:
+       str: Base64-encoded encrypted message
+
+   Raises:
+       CryptoError: If encryption fails
+
+
+.. py:function:: decrypt_message(encrypted_message)
+
+   Decrypt a Fernet-encrypted message.
+
+   Args:
+       encrypted_message: Base64-encoded encrypted message
+
+   Returns:
+       str: Decrypted plaintext message
+
+   Raises:
+       CryptoError: If decryption fails or token is invalid
+
+
+.. py:function:: generate_secure_token(length = 32)
+
+   Generate a cryptographically secure random token.
+
+   Args:
+       length: Length of the token in bytes (resulting hex string will be twice this length)
+
+   Returns:
+       str: Hexadecimal string representation of the random token
+
+   Raises:
+       CryptoError: If token generation fails
+       ValueError: If length is less than 16
+
+

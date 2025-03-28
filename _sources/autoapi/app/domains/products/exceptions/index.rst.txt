@@ -1,0 +1,61 @@
+app.domains.products.exceptions
+===============================
+
+.. py:module:: app.domains.products.exceptions
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   app.domains.products.exceptions.ProductNotFoundException
+   app.domains.products.exceptions.DuplicatePartNumberException
+   app.domains.products.exceptions.ProductInactiveException
+   app.domains.products.exceptions.BrandNotFoundException
+   app.domains.products.exceptions.DuplicateBrandNameException
+
+
+Module Contents
+---------------
+
+.. py:exception:: ProductNotFoundException(product_id)
+
+   Bases: :py:obj:`app.core.exceptions.ResourceNotFoundException`
+
+
+   Raised when a product cannot be found.
+
+
+.. py:exception:: DuplicatePartNumberException(part_number)
+
+   Bases: :py:obj:`app.core.exceptions.BusinessException`
+
+
+   Raised when attempting to create a product with an existing part number.
+
+
+.. py:exception:: ProductInactiveException(product_id)
+
+   Bases: :py:obj:`app.core.exceptions.BusinessException`
+
+
+   Raised when attempting operations on an inactive product.
+
+
+.. py:exception:: BrandNotFoundException(brand_id)
+
+   Bases: :py:obj:`app.core.exceptions.ResourceNotFoundException`
+
+
+   Raised when a brand cannot be found.
+
+
+.. py:exception:: DuplicateBrandNameException(name)
+
+   Bases: :py:obj:`app.core.exceptions.BusinessException`
+
+
+   Raised when attempting to create a brand with an existing name.
+
+

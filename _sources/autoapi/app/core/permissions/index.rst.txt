@@ -1,0 +1,395 @@
+app.core.permissions
+====================
+
+.. py:module:: app.core.permissions
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/app/core/permissions/checker/index
+   /autoapi/app/core/permissions/decorators/index
+   /autoapi/app/core/permissions/models/index
+   /autoapi/app/core/permissions/permissions/index
+   /autoapi/app/core/permissions/utils/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.core.permissions.ROLE_PERMISSIONS
+   app.core.permissions.permissions
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.core.permissions.Permission
+   app.core.permissions.UserRole
+   app.core.permissions.PermissionChecker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.core.permissions.require_permission
+   app.core.permissions.require_permissions
+   app.core.permissions.require_admin
+   app.core.permissions.get_user_by_id
+   app.core.permissions.check_owner_permission
+   app.core.permissions.has_any_permission
+   app.core.permissions.has_all_permissions
+
+
+Package Contents
+----------------
+
+.. py:class:: Permission
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   Permission types for the application.
+
+   This enum defines all available permissions in the system.
+   Permissions follow a resource:action format.
+
+
+   .. py:attribute:: USER_CREATE
+      :value: 'user:create'
+
+
+
+   .. py:attribute:: USER_READ
+      :value: 'user:read'
+
+
+
+   .. py:attribute:: USER_UPDATE
+      :value: 'user:update'
+
+
+
+   .. py:attribute:: USER_DELETE
+      :value: 'user:delete'
+
+
+
+   .. py:attribute:: USER_ADMIN
+      :value: 'user:admin'
+
+
+
+   .. py:attribute:: PRODUCT_CREATE
+      :value: 'product:create'
+
+
+
+   .. py:attribute:: PRODUCT_READ
+      :value: 'product:read'
+
+
+
+   .. py:attribute:: PRODUCT_UPDATE
+      :value: 'product:update'
+
+
+
+   .. py:attribute:: PRODUCT_DELETE
+      :value: 'product:delete'
+
+
+
+   .. py:attribute:: PRODUCT_ADMIN
+      :value: 'product:admin'
+
+
+
+   .. py:attribute:: MEDIA_CREATE
+      :value: 'media:create'
+
+
+
+   .. py:attribute:: MEDIA_READ
+      :value: 'media:read'
+
+
+
+   .. py:attribute:: MEDIA_UPDATE
+      :value: 'media:update'
+
+
+
+   .. py:attribute:: MEDIA_DELETE
+      :value: 'media:delete'
+
+
+
+   .. py:attribute:: MEDIA_ADMIN
+      :value: 'media:admin'
+
+
+
+   .. py:attribute:: FITMENT_CREATE
+      :value: 'fitment:create'
+
+
+
+   .. py:attribute:: FITMENT_READ
+      :value: 'fitment:read'
+
+
+
+   .. py:attribute:: FITMENT_UPDATE
+      :value: 'fitment:update'
+
+
+
+   .. py:attribute:: FITMENT_DELETE
+      :value: 'fitment:delete'
+
+
+
+   .. py:attribute:: FITMENT_ADMIN
+      :value: 'fitment:admin'
+
+
+
+   .. py:attribute:: COMPANY_CREATE
+      :value: 'company:create'
+
+
+
+   .. py:attribute:: COMPANY_READ
+      :value: 'company:read'
+
+
+
+   .. py:attribute:: COMPANY_UPDATE
+      :value: 'company:update'
+
+
+
+   .. py:attribute:: COMPANY_DELETE
+      :value: 'company:delete'
+
+
+
+   .. py:attribute:: COMPANY_ADMIN
+      :value: 'company:admin'
+
+
+
+   .. py:attribute:: SYSTEM_ADMIN
+      :value: 'system:admin'
+
+
+
+.. py:class:: UserRole
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   User roles in the system.
+
+
+   .. py:attribute:: ADMIN
+      :value: 'admin'
+
+
+
+   .. py:attribute:: MANAGER
+      :value: 'manager'
+
+
+
+   .. py:attribute:: CLIENT
+      :value: 'client'
+
+
+
+   .. py:attribute:: DISTRIBUTOR
+      :value: 'distributor'
+
+
+
+   .. py:attribute:: READ_ONLY
+      :value: 'read_only'
+
+
+
+.. py:data:: ROLE_PERMISSIONS
+   :type:  Dict[app.domains.users.models.UserRole, Set[Permission]]
+
+.. py:class:: PermissionChecker
+
+   Permission checker for authorization control.
+
+   This class provides methods to check if a user has the required permissions
+   for a given action.
+
+
+   .. py:method:: has_permission(user, permission)
+      :staticmethod:
+
+
+      Check if a user has a specific permission.
+
+      Args:
+          user: User to check
+          permission: Required permission
+
+      Returns:
+          bool: True if user has the permission
+
+
+
+   .. py:method:: has_permissions(user, permissions, require_all = True)
+      :staticmethod:
+
+
+      Check if a user has multiple permissions.
+
+      Args:
+          user: User to check
+          permissions: Required permissions
+          require_all: Whether all permissions are required (AND) or any (OR)
+
+      Returns:
+          bool: True if user has the required permissions
+
+
+
+   .. py:method:: check_object_permission(user, obj, permission, owner_field = 'created_by_id')
+      :staticmethod:
+
+
+      Check if a user has permission for a specific object.
+
+      This allows for object-level permissions where users can perform actions
+      on objects they own, even if they don't have the global permission.
+
+      Args:
+          user: User to check
+          obj: Object to check permissions for
+          permission: Required permission
+          owner_field: Field name that contains the owner ID
+
+      Returns:
+          bool: True if user has permission
+
+
+
+   .. py:method:: ensure_object_permission(user, obj, permission, owner_field = 'created_by_id')
+      :staticmethod:
+
+
+      Ensure a user has permission for a specific object.
+
+      Args:
+          user: User to check
+          obj: Object to check permissions for
+          permission: Required permission
+          owner_field: Field name that contains the owner ID
+
+      Raises:
+          PermissionDeniedException: If user doesn't have permission
+
+
+
+.. py:data:: permissions
+
+.. py:function:: require_permission(permission)
+
+   Decorator to require a specific permission.
+
+   Args:
+       permission: Required permission
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: require_permissions(permissions, require_all = True)
+
+   Decorator to require multiple permissions.
+
+   Args:
+       permissions: Required permissions
+       require_all: Whether all permissions are required (AND) or any (OR)
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: require_admin()
+
+   Decorator to require admin role.
+
+   Returns:
+       Callable: Decorator function
+
+
+.. py:function:: get_user_by_id(db, user_id)
+   :async:
+
+
+   Get user by ID.
+
+   Args:
+       db: Database session
+       user_id: User ID
+
+   Returns:
+       User: User model
+
+   Raises:
+       AuthenticationException: If user not found
+
+
+.. py:function:: check_owner_permission(user_id, entity_user_id, owner_field = 'user_id')
+
+   Check if a user is the owner of an entity.
+
+   Args:
+       user_id: User ID to check
+       entity_user_id: User ID from the entity
+       owner_field: Field name containing the owner ID
+
+   Returns:
+       bool: True if user is the owner, False otherwise
+
+
+.. py:function:: has_any_permission(user, permissions)
+
+   Check if a user has any of the specified permissions.
+
+   Args:
+       user: User to check permissions for
+       permissions: List of permissions to check
+
+   Returns:
+       bool: True if user has any permission, False otherwise
+
+
+.. py:function:: has_all_permissions(user, permissions)
+
+   Check if a user has all specified permissions.
+
+   Args:
+       user: User to check permissions for
+       permissions: List of permissions to check
+
+   Returns:
+       bool: True if user has all permissions, False otherwise
+
+

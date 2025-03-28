@@ -1,0 +1,91 @@
+app.domains.chat.websocket
+==========================
+
+.. py:module:: app.domains.chat.websocket
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.domains.chat.websocket.logger
+   app.domains.chat.websocket.router
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   app.domains.chat.websocket.get_audit_service
+   app.domains.chat.websocket.get_metrics_service
+   app.domains.chat.websocket.get_validation_service
+   app.domains.chat.websocket.websocket_endpoint
+   app.domains.chat.websocket.process_command
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: router
+
+.. py:function:: get_audit_service()
+   :async:
+
+
+   Get the audit service instance.
+
+
+.. py:function:: get_metrics_service()
+   :async:
+
+
+   Get the metrics service instance.
+
+
+.. py:function:: get_validation_service()
+   :async:
+
+
+   Get the validation service instance.
+
+
+.. py:function:: websocket_endpoint(websocket, db = Depends(get_db), current_user = Depends(get_current_user_ws))
+   :async:
+
+
+   WebSocket endpoint for chat functionality.
+
+   This endpoint manages the WebSocket connection for chat clients, handling
+   commands for joining/leaving rooms, sending/receiving messages, and more.
+
+   Args:
+       websocket: The WebSocket connection
+       db: Database session for database operations
+       current_user: The authenticated user
+
+
+.. py:function:: process_command(command, websocket, connection_id, user, chat_service, audit_service)
+   :async:
+
+
+   Process a WebSocket command.
+
+   Args:
+       command: The command to process
+       websocket: The WebSocket connection
+       connection_id: Unique connection identifier
+       user: The authenticated user
+       chat_service: Chat service for chat operations
+       audit_service: Audit service for logging events
+
+   Raises:
+       ValidationException: If the command data is invalid
+       PermissionDeniedException: If the user lacks permission
+       ResourceNotFoundException: If a required resource isn't found
+       BusinessLogicException: If there's a logical error processing the command
+
+

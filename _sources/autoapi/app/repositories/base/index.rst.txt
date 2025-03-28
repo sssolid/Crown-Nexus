@@ -1,0 +1,249 @@
+app.repositories.base
+=====================
+
+.. py:module:: app.repositories.base
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   app.repositories.base.logger
+   app.repositories.base.T
+   app.repositories.base.ID
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.repositories.base.BaseRepository
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: T
+
+.. py:data:: ID
+
+.. py:class:: BaseRepository(model, db)
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`T`\ , :py:obj:`ID`\ ]
+
+
+   Generic repository for database operations.
+
+   This class provides a standard interface for database operations,
+   implementing the repository pattern for clean architecture.
+
+   Attributes:
+       model: SQLAlchemy model class
+       db: Database session
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: db
+
+
+   .. py:method:: get_by_id(id_value)
+      :async:
+
+
+      Get entity by ID.
+
+      Args:
+          id_value: Entity ID
+
+      Returns:
+          Optional[T]: Entity or None if not found
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_by_ids(ids)
+      :async:
+
+
+      Get entities by IDs.
+
+      Args:
+          ids: List of entity IDs
+
+      Returns:
+          List[T]: List of found entities
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: get_all(page = 1, page_size = 100, order_by = None, filters = None)
+      :async:
+
+
+      Get all entities with pagination.
+
+      Args:
+          page: Page number
+          page_size: Page size
+          order_by: Field to order by (prefix with - for descending)
+          filters: Dictionary of field:value pairs for filtering
+
+      Returns:
+          Dict[str, Any]: Paginated results
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: count(filters = None)
+      :async:
+
+
+      Count entities matching filters.
+
+      Args:
+          filters: Dictionary of field:value pairs for filtering
+
+      Returns:
+          int: Count of matching entities
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: create(data)
+      :async:
+
+
+      Create a new entity.
+
+      Args:
+          data: Entity data
+
+      Returns:
+          T: Created entity
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: update(id_value, data, user_id = None)
+      :async:
+
+
+      Update an entity.
+
+      Args:
+          id_value: Entity ID
+          data: Updated data
+          user_id: ID of the user making the update
+
+      Returns:
+          Optional[T]: Updated entity or None if not found
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: delete(id_value, user_id = None, hard_delete = False)
+      :async:
+
+
+      Delete an entity.
+
+      Args:
+          id_value: Entity ID
+          user_id: ID of the user performing the deletion
+          hard_delete: Whether to permanently delete
+
+      Returns:
+          bool: True if deleted, False if not found
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: bulk_create(items)
+      :async:
+
+
+      Create multiple entities.
+
+      Args:
+          items: List of entity data
+
+      Returns:
+          List[T]: Created entities
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: upsert(data, unique_fields)
+      :async:
+
+
+      Insert or update an entity based on unique fields.
+
+      Args:
+          data: Entity data
+          unique_fields: Fields to use for uniqueness check
+
+      Returns:
+          T: Created or updated entity
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: exists(filters)
+      :async:
+
+
+      Check if an entity exists with the given filters.
+
+      Args:
+          filters: Filters to apply
+
+      Returns:
+          bool: True if entity exists
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+
+   .. py:method:: find_one_by(filters)
+      :async:
+
+
+      Find a single entity by filters.
+
+      Args:
+          filters: Filters to apply
+
+      Returns:
+          Optional[T]: Entity or None if not found
+
+      Raises:
+          DatabaseException: If a database error occurs
+
+
+

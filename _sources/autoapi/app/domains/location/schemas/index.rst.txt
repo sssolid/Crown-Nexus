@@ -1,0 +1,445 @@
+app.domains.location.schemas
+============================
+
+.. py:module:: app.domains.location.schemas
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   app.domains.location.schemas.CountryBase
+   app.domains.location.schemas.CountryCreate
+   app.domains.location.schemas.CountryUpdate
+   app.domains.location.schemas.CountryInDB
+   app.domains.location.schemas.Country
+   app.domains.location.schemas.AddressBase
+   app.domains.location.schemas.AddressCreate
+   app.domains.location.schemas.AddressUpdate
+   app.domains.location.schemas.AddressInDB
+   app.domains.location.schemas.Address
+   app.domains.location.schemas.GeocodeRequest
+   app.domains.location.schemas.GeocodeResult
+
+
+Module Contents
+---------------
+
+.. py:class:: CountryBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Country data.
+
+   Attributes:
+       name: Country name.
+       iso_alpha_2: ISO 3166-1 alpha-2 code (2 letters).
+       iso_alpha_3: ISO 3166-1 alpha-3 code (3 letters).
+       iso_numeric: ISO 3166-1 numeric code (3 digits).
+       region: Geographic region.
+       subregion: Geographic subregion.
+       currency: ISO 4217 currency code.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: iso_alpha_2
+      :type:  str
+
+
+   .. py:attribute:: iso_alpha_3
+      :type:  str
+
+
+   .. py:attribute:: iso_numeric
+      :type:  Optional[str]
+
+
+   .. py:attribute:: region
+      :type:  Optional[str]
+
+
+   .. py:attribute:: subregion
+      :type:  Optional[str]
+
+
+   .. py:attribute:: currency
+      :type:  Optional[str]
+
+
+   .. py:method:: uppercase_codes(v)
+      :classmethod:
+
+
+      Convert codes to uppercase if provided.
+
+      Args:
+          v: The code to convert or None.
+
+      Returns:
+          Uppercase code or None.
+
+
+
+.. py:class:: CountryCreate
+
+   Bases: :py:obj:`CountryBase`
+
+
+   Schema for creating a new Country.
+
+
+.. py:class:: CountryUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Country.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: name
+      :type:  Optional[str]
+
+
+   .. py:attribute:: iso_alpha_2
+      :type:  Optional[str]
+
+
+   .. py:attribute:: iso_alpha_3
+      :type:  Optional[str]
+
+
+   .. py:attribute:: iso_numeric
+      :type:  Optional[str]
+
+
+   .. py:attribute:: region
+      :type:  Optional[str]
+
+
+   .. py:attribute:: subregion
+      :type:  Optional[str]
+
+
+   .. py:attribute:: currency
+      :type:  Optional[str]
+
+
+   .. py:method:: uppercase_codes(v)
+      :classmethod:
+
+
+      Convert codes to uppercase if provided.
+
+      Args:
+          v: The code to convert or None.
+
+      Returns:
+          Uppercase code or None.
+
+
+
+.. py:class:: CountryInDB
+
+   Bases: :py:obj:`CountryBase`
+
+
+   Schema for Country data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Country
+
+   Bases: :py:obj:`CountryInDB`
+
+
+   Schema for complete Country data in API responses.
+
+
+.. py:class:: AddressBase
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Base schema for Address data.
+
+   Attributes:
+       street: Street address.
+       city: City name.
+       state: State or province.
+       postal_code: Postal or ZIP code.
+       country_id: ID of the associated country.
+       latitude: Geographic latitude.
+       longitude: Geographic longitude.
+
+
+   .. py:attribute:: street
+      :type:  str
+
+
+   .. py:attribute:: city
+      :type:  str
+
+
+   .. py:attribute:: state
+      :type:  Optional[str]
+
+
+   .. py:attribute:: postal_code
+      :type:  str
+
+
+   .. py:attribute:: country_id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: latitude
+      :type:  Optional[float]
+
+
+   .. py:attribute:: longitude
+      :type:  Optional[float]
+
+
+   .. py:method:: validate_latitude(v)
+      :classmethod:
+
+
+      Validate latitude value if provided.
+
+      Args:
+          v: The latitude to validate or None.
+
+      Returns:
+          Validated latitude or None.
+
+      Raises:
+          ValueError: If the latitude is outside valid range.
+
+
+
+   .. py:method:: validate_longitude(v)
+      :classmethod:
+
+
+      Validate longitude value if provided.
+
+      Args:
+          v: The longitude to validate or None.
+
+      Returns:
+          Validated longitude or None.
+
+      Raises:
+          ValueError: If the longitude is outside valid range.
+
+
+
+.. py:class:: AddressCreate
+
+   Bases: :py:obj:`AddressBase`
+
+
+   Schema for creating a new Address.
+
+
+.. py:class:: AddressUpdate
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for updating an existing Address.
+
+   All fields are optional to allow partial updates.
+
+
+   .. py:attribute:: street
+      :type:  Optional[str]
+
+
+   .. py:attribute:: city
+      :type:  Optional[str]
+
+
+   .. py:attribute:: state
+      :type:  Optional[str]
+
+
+   .. py:attribute:: postal_code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: country_id
+      :type:  Optional[uuid.UUID]
+
+
+   .. py:attribute:: latitude
+      :type:  Optional[float]
+
+
+   .. py:attribute:: longitude
+      :type:  Optional[float]
+
+
+   .. py:method:: validate_latitude(v)
+      :classmethod:
+
+
+      Validate latitude value if provided.
+
+      Args:
+          v: The latitude to validate or None.
+
+      Returns:
+          Validated latitude or None.
+
+      Raises:
+          ValueError: If the latitude is outside valid range.
+
+
+
+   .. py:method:: validate_longitude(v)
+      :classmethod:
+
+
+      Validate longitude value if provided.
+
+      Args:
+          v: The longitude to validate or None.
+
+      Returns:
+          Validated longitude or None.
+
+      Raises:
+          ValueError: If the longitude is outside valid range.
+
+
+
+.. py:class:: AddressInDB
+
+   Bases: :py:obj:`AddressBase`
+
+
+   Schema for Address data as stored in the database.
+
+   Includes database-specific fields like ID and timestamps.
+
+
+   .. py:attribute:: id
+      :type:  uuid.UUID
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime
+
+
+   .. py:attribute:: model_config
+
+
+.. py:class:: Address
+
+   Bases: :py:obj:`AddressInDB`
+
+
+   Schema for complete Address data in API responses.
+
+   Includes related entities like country details.
+
+
+   .. py:attribute:: country
+      :type:  Optional[Country]
+
+
+.. py:class:: GeocodeRequest
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for geocoding request.
+
+   Attributes:
+       address: Full address string to geocode.
+       street: Street address component.
+       city: City component.
+       state: State or province component.
+       postal_code: Postal or ZIP code component.
+       country: Country component.
+
+
+   .. py:attribute:: address
+      :type:  Optional[str]
+
+
+   .. py:attribute:: street
+      :type:  Optional[str]
+
+
+   .. py:attribute:: city
+      :type:  Optional[str]
+
+
+   .. py:attribute:: state
+      :type:  Optional[str]
+
+
+   .. py:attribute:: postal_code
+      :type:  Optional[str]
+
+
+   .. py:attribute:: country
+      :type:  Optional[str]
+
+
+.. py:class:: GeocodeResult
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   Schema for geocoding result.
+
+   Attributes:
+       latitude: Geographic latitude.
+       longitude: Geographic longitude.
+       formatted_address: Formatted address string.
+       confidence: Confidence score (0-100).
+       components: Address components.
+
+
+   .. py:attribute:: latitude
+      :type:  float
+
+
+   .. py:attribute:: longitude
+      :type:  float
+
+
+   .. py:attribute:: formatted_address
+      :type:  str
+
+
+   .. py:attribute:: confidence
+      :type:  int
+
+
+   .. py:attribute:: components
+      :type:  Dict[str, Any]
+
+

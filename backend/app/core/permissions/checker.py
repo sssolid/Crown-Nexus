@@ -1,4 +1,3 @@
-# /app/core/permissions/checker.py
 from __future__ import annotations
 
 """Permission checker for authorization control.
@@ -16,14 +15,14 @@ from app.core.permissions.models import Permission, ROLE_PERMISSIONS
 if TYPE_CHECKING:
     from app.domains.users.models import User
 
-logger = get_logger("app.core.permissions.checkers")
+logger = get_logger("app.core.permissions.checker")
 
 
 class PermissionChecker:
-    """Permission checker for authorization control.
+    """Permission checking functionality for the application.
 
-    This class provides methods to check if a user has the required permissions
-    for a given action.
+    This class provides methods to check if users have specific permissions
+    based on their roles and explicit permissions.
     """
 
     @staticmethod
@@ -31,32 +30,35 @@ class PermissionChecker:
         """Check if a user has a specific permission.
 
         Args:
-            user: User to check
-            permission: Required permission
+            user: The user to check permissions for
+            permission: The permission to check
 
         Returns:
-            bool: True if user has the permission
+            bool: True if the user has the permission
         """
         if not user or not user.is_active:
             return False
 
-        # Get permissions for the user's role
+        # Get permissions from the user's role
         role_permissions = ROLE_PERMISSIONS.get(user.role, set())
 
-        # Check direct permissions (if the model supports it)
+        # Check if permission is in role permissions
+        if permission in role_permissions:
+            return True
+
+        # Check explicit user permissions
         user_permissions = getattr(user, "permissions", [])
         if permission in user_permissions:
             return True
 
-        # Check role-based permissions
+        # Check permissions from any additional roles
         user_roles = getattr(user, "roles", [])
         for role in user_roles:
             role_permissions = getattr(role, "permissions", [])
             if permission in role_permissions:
                 return True
 
-        # Check if user has the required permission from role mapping
-        return permission in role_permissions
+        return False
 
     @staticmethod
     def has_permissions(
@@ -65,21 +67,19 @@ class PermissionChecker:
         """Check if a user has multiple permissions.
 
         Args:
-            user: User to check
-            permissions: Required permissions
-            require_all: Whether all permissions are required (AND) or any (OR)
+            user: The user to check permissions for
+            permissions: List of permissions to check
+            require_all: Whether all permissions are required (True) or any (False)
 
         Returns:
-            bool: True if user has the required permissions
+            bool: True if the user has the required permissions
         """
         if not permissions:
             return True
 
         if require_all:
-            # All permissions are required
             return all(PermissionChecker.has_permission(user, p) for p in permissions)
         else:
-            # Any permission is sufficient
             return any(PermissionChecker.has_permission(user, p) for p in permissions)
 
     @staticmethod
@@ -91,34 +91,32 @@ class PermissionChecker:
     ) -> bool:
         """Check if a user has permission for a specific object.
 
-        This allows for object-level permissions where users can perform actions
-        on objects they own, even if they don't have the global permission.
+        This checks both the permission itself and if the user is the object owner.
 
         Args:
-            user: User to check
-            obj: Object to check permissions for
-            permission: Required permission
-            owner_field: Field name that contains the owner ID
+            user: The user to check
+            obj: The object to check permissions for
+            permission: The permission to check
+            owner_field: The field name containing the owner's ID
 
         Returns:
-            bool: True if user has permission
+            bool: True if the user has permission for this object
         """
-        # Always check if user has the specific permission
+        # If user has the general permission, allow access
         if PermissionChecker.has_permission(user, permission):
             return True
 
-        # Check if user is the owner of the object
-        if hasattr(obj, owner_field):
-            entity_user_id = getattr(obj, owner_field)
+        # Check ownership if it's not an admin-level permission
+        if not str(permission).endswith("admin"):
+            if hasattr(obj, owner_field):
+                entity_user_id = getattr(obj, owner_field)
 
-            # Convert to string if it's a UUID
-            if hasattr(entity_user_id, "hex"):
-                entity_user_id = str(entity_user_id)
+                # Handle UUID conversion if needed
+                if hasattr(entity_user_id, "hex"):
+                    entity_user_id = str(entity_user_id)
 
-            # Check if user is the owner
-            if entity_user_id == str(user.id):
-                # Object ownership trumps permission check for non-admin operations
-                if not permission.endswith("admin"):
+                # If user is the owner, allow access
+                if entity_user_id == str(user.id):
                     return True
 
         return False
@@ -130,41 +128,39 @@ class PermissionChecker:
         permission: Permission,
         owner_field: str = "created_by_id",
     ) -> None:
-        """Ensure a user has permission for a specific object.
+        """Ensure a user has permission for an object, raising an exception if not.
 
         Args:
-            user: User to check
-            obj: Object to check permissions for
-            permission: Required permission
-            owner_field: Field name that contains the owner ID
+            user: The user to check
+            obj: The object to check permissions for
+            permission: The permission to check
+            owner_field: The field indicating object ownership
 
         Raises:
-            PermissionDeniedException: If user doesn't have permission
+            PermissionDeniedException: If the user doesn't have the permission
         """
         if not PermissionChecker.check_object_permission(
             user, obj, permission, owner_field
         ):
-            action = permission.split(":")[-1]
-            resource = permission.split(":")[0]
+            action = str(permission).split(":")[-1]
+            resource = str(permission).split(":")[0]
 
             logger.warning(
-                f"Object permission denied: {user.email} tried to {action} {resource}",
-                extra={
-                    "user_id": str(user.id),
-                    "user_role": user.role,
-                    "permission": permission,
-                    "object_id": getattr(obj, "id", None),
-                    "object_type": obj.__class__.__name__,
-                },
+                f"Object permission denied: {getattr(user, 'email', 'Unknown')} tried to {action} {resource}",
+                user_id=str(getattr(user, "id", "Unknown")),
+                user_role=getattr(user, "role", "Unknown"),
+                permission=str(permission),
+                object_id=getattr(obj, "id", None),
+                object_type=obj.__class__.__name__,
             )
 
             raise PermissionDeniedException(
                 message=f"You don't have permission to {action} this {resource}",
                 action=action,
                 resource_type=resource,
-                permission=permission,
+                permission=str(permission),
             )
 
 
-# Create a singleton instance
+# Create a singleton instance for backward compatibility
 permissions = PermissionChecker()

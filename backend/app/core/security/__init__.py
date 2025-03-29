@@ -3,7 +3,9 @@ from __future__ import annotations
 """Core security module providing fundamental security primitives.
 
 This module exports security functions for authentication, authorization,
-encryption, and data protection used throughout the application.
+encryption, and data protection used throughout the application. It includes
+API key management, CSRF protection, encryption tools, password handling,
+token management, input validation, and the central security service.
 """
 
 from app.core.security.api_keys import ApiKeyManager, generate_api_key, verify_api_key
@@ -28,6 +30,7 @@ from app.core.security.passwords import (
     validate_password_policy,
     verify_password,
 )
+from app.core.security.service import SecurityService, get_security_service
 from app.core.security.tokens import (
     TokenManager,
     add_token_to_blacklist,
@@ -56,18 +59,17 @@ from app.core.security.dependencies import (
 )
 
 __all__ = [
+    # Service
+    "SecurityService",
+    "get_security_service",
     # API Keys
     "ApiKeyManager",
     "generate_api_key",
     "verify_api_key",
-    # CSRF
+    # CSRF Protection
     "CsrfManager",
     "generate_csrf_token",
     "validate_csrf_token",
-    # Dependencies
-    "get_current_user_id",
-    "get_token_from_header",
-    "oauth2_scheme",
     # Encryption
     "EncryptionManager",
     "decrypt_data",
@@ -104,4 +106,8 @@ __all__ = [
     "moderate_content",
     "sanitize_input",
     "validate_json_input",
+    # FastAPI Dependencies
+    "get_current_user_id",
+    "get_token_from_header",
+    "oauth2_scheme",
 ]

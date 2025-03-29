@@ -146,3 +146,6 @@ class SecuritySettings(BaseSettings):
                 f"Invalid rate limit storage: {v}. Must be one of {valid_storage}"
             )
         return v
+
+
+security_settings = SecuritySettings()

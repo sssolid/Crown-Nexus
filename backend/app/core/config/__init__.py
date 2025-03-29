@@ -14,6 +14,13 @@ from app.core.config.base import Environment, LogLevel
 
 # Then export the settings
 from app.core.config.settings import Settings, get_settings, settings
+from app.core.config.integrations import (
+    AS400Settings,
+    ElasticsearchSettings,
+    as400_settings,
+    elasticsearch_settings,
+    get_as400_connector_config,
+)
 
 # NOTE: The imports from integration modules are delayed to avoid circular imports
 # The actual objects are still exported in __all__ for proper module API

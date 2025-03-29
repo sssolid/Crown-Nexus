@@ -72,6 +72,21 @@ class Settings(
         return settings_dict
 
     @property
+    def security(self) -> "SecuritySettings":
+        """
+        Access Security settings.
+
+        This allows accessing Security settings through the main settings object
+        while keeping them modularly separated.
+
+        Returns:
+            SecuritySettings: The Security settings object
+        """
+        from app.core.config.security import security_settings
+
+        return security_settings
+
+    @property
     def as400(self) -> "AS400Settings":
         """
         Access AS400 settings.

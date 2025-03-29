@@ -13,7 +13,9 @@ This guide provides a practical overview of the core systems used throughout the
 8. [Rate Limiting System](#8-rate-limiting-system)
 9. [Cache System](#9-cache-system)
 10. [Event System](#10-event-system)
-11. [Common Patterns and Best Practices](#11-common-patterns-and-best-practices)
+11. [Permission System](#11-permission-system)
+12. [Security System](#12-security-system)
+13. [Common Patterns and Best Practices](#13-common-patterns-and-best-practices)
 
 ## 1. Logging System
 
@@ -429,6 +431,454 @@ class UserService:
         await self.notification_service.notify_profile_update(user_id)
 
         return user
+
+### Metrics in Services
+
+```python
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.metrics_service = get_service("metrics_service")
+        self.logger = get_logger("app.domains.products.service")
+
+    @track_db_select(entity="product")
+    async def search_products(self, query, filters=None):
+        self.logger.info("Searching products", query=query, filters=filters)
+
+        # Track search operation
+        start_time = time.monotonic()
+        result_count = 0
+        error = None
+
+        try:
+            # Perform search
+            products = await self.repository.search(query, filters)
+            result_count = len(products)
+            return products
+        except Exception as e:
+            error = type(e).__name__
+            raise
+        finally:
+            duration = time.monotonic() - start_time
+
+            # Track search metrics
+            self.metrics_service.track_service_call(
+                component="product_service",
+                action="search",
+                duration=duration,
+                error=error
+            )
+
+            # Track result count
+            if not error:
+                self.metrics_service.set_gauge(
+                    "product_search_result_count",
+                    value=result_count,
+                    labels={"query_type": "text" if query else "filter"}
+                )
+```
+
+### Logging Best Practices
+
+1. **Use Structured Logging**
+   ```python
+   # Good - structured and searchable
+   logger.info("User registered", user_id=user.id, email=user.email, registration_source="web")
+
+   # Avoid - unstructured string concatenation
+   logger.info(f"User {user.id} with email {user.email} registered from web")
+   ```
+
+2. **Choose Appropriate Log Levels**
+    - `DEBUG`: Detailed information, typically useful only when diagnosing problems
+    - `INFO`: Confirmation that things are working as expected
+    - `WARNING`: An indication that something unexpected happened, but the application still works
+    - `ERROR`: The application has encountered an error that prevents a function from working
+    - `CRITICAL`: A serious error that prevents the application from continuing to function
+
+3. **Include Context**
+   ```python
+   # Include relevant context with every log
+   logger.info(
+       "Payment processed",
+       user_id=user.id,
+       payment_id=payment.id,
+       amount=payment.amount,
+       status=payment.status
+   )
+   ```
+
+4. **Use Request Context When Available**
+   ```python
+   # Request context is automatically included
+   logger.info("Processing request")  # Will include request_id and user_id automatically
+   ```
+
+5. **Log at Service Boundaries**
+   ```python
+   # Log at service boundaries and important events
+   logger.info("Starting external API call", service="stripe", action="create_payment")
+   try:
+       result = await stripe_client.create_payment(payment_data)
+       logger.info("External API call succeeded", service="stripe", duration_ms=duration)
+       return result
+   except Exception as e:
+       logger.exception("External API call failed", service="stripe", error=str(e))
+       raise
+   ```
+
+6. **Use Decorators for Common Patterns**
+   ```python
+   @log_execution_time()
+   def process_report(report_id):
+       # Complex processing...
+       return result
+   ```
+
+7. **Avoid Sensitive Information**
+   ```python
+   # Don't log passwords, tokens, or other secrets
+   logger.info("User authentication", username=username)  # Good
+   logger.info("User authentication", username=username, password=password)  # BAD!
+   ```
+
+### Caching with Fallback and Metrics
+
+This pattern demonstrates how to implement robust caching with proper fallback mechanisms, metrics tracking, and integration with the error handling system:
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.cache.exceptions import CacheOperationException
+from app.logging import get_logger
+from app.core.error import handle_exception
+import time
+
+logger = get_logger("app.services.product_service")
+
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.cache_service = get_service("cache_service")
+        self.metrics_service = get_service("metrics_service")
+
+    async def get_product_with_details(self, product_id: str):
+        """Get product with complete details, using caching with proper fallback.
+
+        This method demonstrates caching with:
+        1. Proper key generation
+        2. Error handling with fallback
+        3. Metrics tracking
+        4. Cache invalidation on updates
+        """
+        logger.info("Fetching product with details", product_id=product_id)
+
+        # Define cache key
+        cache_key = f"product:details:{product_id}"
+
+        # Start metrics timer
+        start_time = time.monotonic()
+        cache_hit = False
+
+        try:
+            # Try to get from cache first
+            cached_data = await self.cache_service.get(cache_key)
+
+            if cached_data is not None:
+                logger.debug("Cache hit for product details", product_id=product_id)
+                cache_hit = True
+                return cached_data
+
+            logger.debug("Cache miss for product details", product_id=product_id)
+
+            # Get from database
+            product = await self.db.execute(
+                select(Product).where(Product.id == product_id)
+            )
+            product = product.scalar_one_or_none()
+
+            if not product:
+                logger.warning("Product not found", product_id=product_id)
+                return None
+
+            # Get additional data
+            reviews = await self.db.execute(
+                select(Review).where(Review.product_id == product_id)
+            )
+            reviews = list(reviews.scalars().all())
+
+            inventory = await self.inventory_repository.get_levels(product_id)
+            related_products = await self.get_related_products(product_id)
+
+            # Combine into a complete response
+            result = {
+                "product": product.to_dict(),
+                "reviews": [r.to_dict() for r in reviews],
+                "inventory": inventory,
+                "related_products": related_products,
+                "calculated_rating": self._calculate_rating(reviews)
+            }
+
+            # Cache the result (15 minutes TTL)
+            try:
+                await self.cache_service.set(
+                    cache_key,
+                    result,
+                    ttl=900,
+                    tags=["products", f"product:{product_id}"]
+                )
+            except CacheOperationException as cache_err:
+                # Log but don't fail if caching fails
+                logger.warning(
+                    "Failed to cache product details",
+                    product_id=product_id,
+                    error=str(cache_err)
+                )
+
+            return result
+
+        except Exception as e:
+            # Handle and report the exception
+            handle_exception(e, product_id=product_id)
+            logger.error(
+                "Error fetching product details",
+                product_id=product_id,
+                error=str(e)
+            )
+            raise
+
+        finally:
+            # Record metrics regardless of success/failure
+            duration = time.monotonic() - start_time
+            self.metrics_service.observe_histogram(
+                "product_details_duration_seconds",
+                duration,
+                {
+                    "cache_hit": str(cache_hit),
+                    "product_id": product_id[:5]  # First 5 chars for cardinality
+                }
+            )
+
+    async def update_product(self, product_id: str, data: dict, user_id: str):
+        """Update product data and invalidate related caches."""
+        logger.info("Updating product", product_id=product_id, user_id=user_id)
+
+        try:
+            # Update in database
+            product = await self.repository.update(product_id, data, user_id)
+
+            # Invalidate caches
+            try:
+                # Invalidate specific product cache
+                await self.cache_service.delete(f"product:details:{product_id}")
+
+                # Invalidate any list caches that might contain this product
+                await self.cache_service.invalidate_pattern(f"products:list:*")
+
+                # If using Redis with tags
+                redis_backend = self.cache_service._get_backend("redis")
+                if hasattr(redis_backend, "get_set_members"):
+                    # Invalidate all caches tagged with this product
+                    tag_key = f"cache:tag:product:{product_id}"
+                    tagged_keys = await redis_backend.get_set_members(tag_key)
+                    if tagged_keys:
+                        await self.cache_service.delete_many(tagged_keys)
+                        await redis_backend.delete(tag_key)
+
+            except Exception as cache_err:
+                # Log but continue if cache invalidation fails
+                logger.warning(
+                    "Failed to invalidate cache for product update",
+                    product_id=product_id,
+                    error=str(cache_err)
+                )
+
+            # Audit log the update
+            audit_service = get_service("audit_service")
+            await audit_service.log_action(
+                user_id=user_id,
+                action="product_update",
+                resource_id=product_id,
+                details={"fields_updated": list(data.keys())}
+            )
+
+            return product
+
+        except Exception as e:
+            handle_exception(e, product_id=product_id, user_id=user_id)
+            raise
+```
+
+This pattern demonstrates several important practices:
+
+1. **Proper cache key generation** - Using consistent, structured cache keys
+2. **Error handling with fallback** - Gracefully handling cache failures without affecting core functionality
+3. **Cache invalidation strategy** - Both targeted invalidation and pattern-based invalidation
+4. **Metrics tracking** - Recording performance metrics for both cache hits and misses
+5. **Integration with other systems** - Working with logging, metrics, and error handling
+6. **Tag-based invalidation** - Using Redis tags for grouped invalidation
+7. **Audit logging** - Recording significant data changes
+
+### Event-Driven Architecture Patterns
+
+#### Event-Based Workflow
+
+This pattern demonstrates using events to create a decoupled workflow:
+
+```python
+# In OrderService
+async def place_order(self, order_data, user_id):
+    """Create an order and publish events for subsequent processing."""
+    self.logger.info("Creating order", user_id=user_id, items_count=len(order_data["items"]))
+
+    # Create order in database
+    order = Order(
+        user_id=user_id,
+        items=order_data["items"],
+        status="pending",
+        total_amount=calculate_total(order_data["items"])
+    )
+    self.db.add(order)
+    await self.db.commit()
+    await self.db.refresh(order)
+
+    # Publish order created event
+    event_service = get_service("event_service")
+    await event_service.publish(
+        event_name="order.created",
+        payload={
+            "order_id": str(order.id),
+            "user_id": user_id,
+            "items": order_data["items"],
+            "total_amount": order.total_amount
+        }
+    )
+
+    self.logger.info("Order created successfully", order_id=str(order.id))
+    return order
+
+# In InventoryService as an event handler
+@event_service.event_handler("order.created")
+async def reserve_inventory(event):
+    """Reserve inventory items when an order is created."""
+    order_data = event["data"]
+    logger.info("Reserving inventory for order", order_id=order_data["order_id"])
+
+    # Reserve inventory
+    for item in order_data["items"]:
+        await inventory_repository.reserve(
+            product_id=item["product_id"],
+            quantity=item["quantity"],
+            order_id=order_data["order_id"]
+        )
+
+    # Publish inventory reserved event
+    await event_service.publish(
+        event_name="inventory.reserved",
+        payload={
+            "order_id": order_data["order_id"],
+            "user_id": order_data["user_id"],
+            "items": order_data["items"]
+        }
+    )
+
+    logger.info("Inventory reserved for order", order_id=order_data["order_id"])
+
+# In PaymentService as an event handler
+@event_service.event_handler("inventory.reserved")
+async def process_payment(event):
+    """Process payment after inventory is reserved."""
+    order_data = event["data"]
+    logger.info("Processing payment for order", order_id=order_data["order_id"])
+
+    # Get payment details from user profile
+    user = await user_repository.get_by_id(order_data["user_id"])
+
+    # Process payment
+    payment_result = await payment_gateway.process_payment(
+        amount=order_data["total_amount"],
+        payment_method=user.default_payment_method,
+        order_id=order_data["order_id"]
+    )
+
+    if payment_result.success:
+        # Publish payment succeeded event
+        await event_service.publish(
+            event_name="payment.succeeded",
+            payload={
+                "order_id": order_data["order_id"],
+                "payment_id": payment_result.payment_id,
+                "amount": order_data["total_amount"]
+            }
+        )
+        logger.info("Payment succeeded for order", order_id=order_data["order_id"])
+    else:
+        # Publish payment failed event
+        await event_service.publish(
+            event_name="payment.failed",
+            payload={
+                "order_id": order_data["order_id"],
+                "error": payment_result.error,
+                "reason": payment_result.error_message
+            }
+        )
+        logger.error("Payment failed for order", order_id=order_data["order_id"], error=payment_result.error)
+
+# In OrderService as event handlers for payment outcomes
+@event_service.event_handler("payment.succeeded")
+async def finalize_order(event):
+    """Finalize the order after successful payment."""
+    payment_data = event["data"]
+    logger.info("Finalizing order after payment", order_id=payment_data["order_id"])
+
+    # Update order status
+    order = await order_repository.get_by_id(payment_data["order_id"])
+    order.status = "completed"
+    order.payment_id = payment_data["payment_id"]
+    await db.commit()
+
+    # Publish order completed event
+    await event_service.publish(
+        event_name="order.completed",
+        payload={
+            "order_id": payment_data["order_id"],
+            "user_id": order.user_id,
+            "total_amount": payment_data["amount"],
+            "status": "completed"
+        }
+    )
+
+    logger.info("Order finalized successfully", order_id=payment_data["order_id"])
+
+@event_service.event_handler("payment.failed")
+async def handle_payment_failure(event):
+    """Handle payment failure by updating order and releasing inventory."""
+    payment_data = event["data"]
+    logger.info("Handling payment failure", order_id=payment_data["order_id"])
+
+    # Update order status
+    order = await order_repository.get_by_id(payment_data["order_id"])
+    order.status = "payment_failed"
+    order.failure_reason = payment_data["reason"]
+    await db.commit()
+
+    # Publish event to release inventory
+    await event_service.publish(
+        event_name="inventory.release_requested",
+        payload={
+            "order_id": payment_data["order_id"],
+            "reason": "payment_failed"
+        }
+    )
+
+    logger.info("Order marked as payment failed", order_id=payment_data["order_id"])
+```
+
+This event-driven workflow demonstrates several benefits:
+1. **Decoupling** - Each service focuses on its own responsibility
+2. **Scalability** - Services can scale independently
+3. **Resilience** - If one part fails, other parts can continue or retry
+4. **Traceability** - The entire workflow is trackable through events
+5. **Extensibility** - New steps can be added by subscribing to existing events
 ```
 
 ## 5. Validation System
@@ -1943,7 +2393,851 @@ async def initialize_with_celery():
     # Additional Celery-specific configuration can be done here
 ```
 
-## 11. Common Patterns and Best Practices
+## 11. Permission System
+
+The permission system provides a comprehensive framework for authorization, controlling access to resources and actions throughout the application. It supports role-based and permission-based access control with fine-grained control at both resource and object levels.
+
+### Key Features
+- Role-based permission mapping
+- Permission enums for clear, consistent access control
+- Object-level permission checking
+- Permission decorators for endpoint security
+- Integration with metrics, caching, and event systems
+- Comprehensive logging of permission violations
+- Support for both service-level and decorator-based authorization
+- Permission caching for improved performance
+- Declarative permission requirements
+
+### Permission Models
+
+```python
+from app.core.permissions.models import Permission, UserRole, ROLE_PERMISSIONS
+
+# Using predefined permissions
+required_permission = Permission.USER_CREATE
+
+# Check if a role has necessary permissions
+admin_permissions = ROLE_PERMISSIONS[UserRole.ADMIN]
+if Permission.USER_CREATE in admin_permissions:
+    print("Admins can create users")
+
+# Available permissions are defined as enums
+print("Available permissions:")
+for permission in Permission:
+    print(f"- {permission.name}: {permission.value}")
+```
+
+### Basic Permission Checking
+
+```python
+from app.core.permissions.checker import PermissionChecker
+
+# Simple permission check
+def check_user_access(user, permission):
+    if PermissionChecker.has_permission(user, permission):
+        print(f"User has permission: {permission}")
+        return True
+    else:
+        print(f"Permission denied: {permission}")
+        return False
+
+# Check multiple permissions with AND logic
+def check_advanced_access(user, permissions):
+    if PermissionChecker.has_permissions(user, permissions, require_all=True):
+        print("User has all required permissions")
+        return True
+    else:
+        print("User is missing one or more required permissions")
+        return False
+
+# Check multiple permissions with OR logic
+def check_any_permission(user, permissions):
+    if PermissionChecker.has_permissions(user, permissions, require_all=False):
+        print("User has at least one of the required permissions")
+        return True
+    else:
+        print("User has none of the required permissions")
+        return False
+```
+
+### Object-Level Permissions
+
+Object-level permissions allow checking if a user has permissions for a specific resource instance:
+
+```python
+from app.core.permissions.checker import PermissionChecker
+
+# Check if user can access a specific product
+def check_product_access(user, product, permission):
+    if PermissionChecker.check_object_permission(user, product, permission, owner_field="created_by_id"):
+        print(f"User can {permission.name} this product")
+        return True
+    else:
+        print(f"User cannot {permission.name} this product")
+        return False
+
+# Enforce object permission with automatic exception
+def enforce_product_access(user, product, permission):
+    try:
+        PermissionChecker.ensure_object_permission(user, product, permission, owner_field="created_by_id")
+        print(f"Access granted: {permission}")
+        return True
+    except PermissionDeniedException as e:
+        print(f"Access denied: {e}")
+        # Re-raise or handle as needed
+        raise
+```
+
+### Using Permission Decorators
+
+Decorators provide a clean way to enforce permissions on API endpoints:
+
+```python
+from app.core.permissions.decorators import require_permission, require_permissions, require_admin
+from app.core.permissions.models import Permission
+
+# Simple permission requirement
+@router.post("/products/")
+@require_permission(Permission.PRODUCT_CREATE)
+async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_user)):
+    """
+    Create a new product.
+    Requires product:create permission.
+    """
+    return await product_service.create_product(product_data, current_user.id)
+
+# Multiple permission requirements (ALL)
+@router.put("/products/{product_id}")
+@require_permissions([Permission.PRODUCT_UPDATE, Permission.PRODUCT_ADMIN], require_all=True)
+async def update_product(
+    product_id: str,
+    product_data: ProductUpdate,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Update a product.
+    Requires both product:update AND product:admin permissions.
+    """
+    return await product_service.update_product(product_id, product_data, current_user.id)
+
+# Multiple permission requirements (ANY)
+@router.get("/reports/")
+@require_permissions([Permission.PRODUCT_ADMIN, Permission.SYSTEM_ADMIN], require_all=False)
+async def view_reports(current_user: User = Depends(get_current_user)):
+    """
+    View system reports.
+    Requires EITHER product:admin OR system:admin permission.
+    """
+    return await report_service.get_reports()
+
+# Admin-only endpoint
+@router.delete("/users/{user_id}")
+@require_admin()
+async def delete_user(user_id: str, current_user: User = Depends(get_current_user)):
+    """
+    Delete a user.
+    Requires system:admin permission.
+    """
+    return await user_service.delete_user(user_id)
+```
+
+### Permission Service
+
+For more complex permission scenarios or service-level authorization:
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.permissions import get_permission_service
+
+# Get permission service through dependency injection
+@router.get("/products/{product_id}/sensitive-data")
+async def get_product_sensitive_data(
+    product_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    # Get permission service
+    permission_service = get_permission_service(db)
+
+    # Get the product
+    product = await product_repository.get_by_id(db, product_id)
+    if not product:
+        raise ResourceNotFoundException(resource_type="Product", resource_id=product_id)
+
+    # Check object-level permission
+    await permission_service.ensure_object_permission(
+        current_user,
+        product,
+        Permission.PRODUCT_ADMIN,
+        owner_field="created_by_id"
+    )
+
+    # If we get here, the user has permission
+    return await product_service.get_sensitive_data(product_id)
+```
+
+### Permission in Service Classes
+
+```python
+from app.core.dependency_manager import get_service
+
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.permission_service = get_service("permission_service", db=db)
+
+    async def update_product_price(self, product_id: str, new_price: float, user_id: str):
+        # Get the user
+        user = await get_user_by_id(self.db, user_id)
+
+        # Get the product
+        product = await self.repository.get_by_id(product_id)
+        if not product:
+            raise ResourceNotFoundException(resource_type="Product", resource_id=product_id)
+
+        # Check permissions
+        has_permission = await self.permission_service.check_object_permission(
+            user,
+            product,
+            Permission.PRODUCT_UPDATE,
+            owner_field="created_by_id"
+        )
+
+        if not has_permission:
+            # For price changes > 20%, require admin permission
+            price_change_pct = abs(new_price - product.price) / product.price * 100
+            if price_change_pct > 20:
+                await self.permission_service.ensure_permission(
+                    user,
+                    Permission.PRODUCT_ADMIN,
+                    resource_type="Product",
+                    resource_id=product_id
+                )
+
+        # Update the product
+        product.price = new_price
+        await self.repository.save(product)
+
+        return product
+```
+
+### Retrieving User Permissions
+
+```python
+from app.core.dependency_manager import get_service
+
+# Get all permissions for a user
+async def get_user_permissions(user_id: str, db: AsyncSession):
+    permission_service = get_permission_service(db)
+
+    try:
+        # Get all permissions for the user
+        permissions = await permission_service.get_user_permissions(user_id)
+
+        return {
+            "user_id": user_id,
+            "permissions": [p.value for p in permissions]
+        }
+    except Exception as e:
+        logger.error(f"Error retrieving user permissions: {e}", user_id=user_id)
+        handle_exception(e, user_id=user_id)
+        raise
+```
+
+### Utility Functions
+
+```python
+from app.core.permissions.utils import has_any_permission, has_all_permissions, check_owner_permission
+
+# Utility to check ownership
+def is_owner(user_id: str, entity_user_id: str):
+    return check_owner_permission(user_id, entity_user_id)
+
+# Utility to check if user has any of the specified permissions
+def can_perform_any(user, permissions: List[str]):
+    return has_any_permission(user, permissions)
+
+# Utility to check if user has all specified permissions
+def can_perform_all(user, permissions: List[str]):
+    return has_all_permissions(user, permissions)
+```
+
+### Cache Integration
+
+The permission system integrates with the cache system for improved performance:
+
+```python
+# The permission service automatically caches permission checks
+# Cache keys format:
+# - permission:check:{user_id}:{permission}
+# - permissions:user:{user_id}
+
+# Invalidate cached permissions when user roles/permissions change
+async def update_user_role(user_id: str, new_role: UserRole):
+    # Update in database
+    user = await user_repository.get_by_id(user_id)
+    user.role = new_role
+    await db.commit()
+
+    # Invalidate permission cache
+    permission_service = get_permission_service(db)
+    await permission_service.invalidate_permissions_cache(user_id)
+
+    return user
+```
+
+### Metrics Integration
+
+The permission system automatically tracks metrics for monitoring:
+
+```python
+# These metrics are recorded automatically:
+# - permission_check_duration_seconds (histogram)
+# - permission_checks_total (counter)
+# - multiple_permissions_check_duration_seconds (histogram)
+# - multiple_permissions_checks_total (counter)
+# - object_permission_check_duration_seconds (histogram)
+# - object_permission_checks_total (counter)
+# - get_user_permissions_duration_seconds (histogram)
+# - user_permissions_cache_hits_total (counter)
+# - permission_check_cache_hits_total (counter)
+
+# Example metrics queries for Prometheus:
+# - sum by (permission, granted) (rate(permission_checks_total[5m]))
+# - histogram_quantile(0.95, sum by (le) (rate(permission_check_duration_seconds[5m])))
+# - sum by (object_type) (rate(object_permission_checks_total[5m]))
+```
+
+### Events Integration
+
+The permission system publishes events when permission checks fail:
+
+```python
+# The permission service automatically publishes these events:
+# - permission.denied - When a general permission check fails
+# - permission.object_denied - When an object permission check fails
+
+# Example event handler for security monitoring
+@event_service.event_handler("permission.denied")
+async def log_permission_denied(event):
+    data = event["data"]
+    logger.warning(
+        "Permission denied event",
+        user_id=data["user_id"],
+        permission=data["permission"],
+        resource_type=data["resource_type"],
+        resource_id=data["resource_id"],
+        action=data["action"]
+    )
+
+    # Add to security audit log
+    await security_audit_service.log_event(
+        "PERMISSION_DENIED",
+        user_id=data["user_id"],
+        details=data
+    )
+```
+
+## 12. Security System
+
+The security system provides comprehensive security functionality for the application, including authentication, encryption, token management, API key handling, password management, CSRF protection, and input validation.
+
+### Key Features
+- JWT-based authentication with access and refresh tokens
+- Token blacklisting for secure logout
+- API key generation and validation
+- Password hashing, validation, and policy enforcement
+- Data encryption and decryption
+- CSRF token protection
+- Input validation and sanitization
+- Security headers generation
+- Metrics tracking for security operations
+- Integration with event system for security auditing
+- FastAPI dependency functions for authentication
+
+### Token Management
+
+```python
+from app.core.security import create_token, create_token_pair, TokenType, TokenPair
+
+# Create a simple token
+access_token = create_token(
+    subject="user-123",  # User ID
+    token_type=TokenType.ACCESS,
+    role="admin",
+    permissions=["user:read", "user:write"]
+)
+
+# Create a token pair (access + refresh tokens)
+token_pair: TokenPair = create_token_pair(
+    user_id="user-123",
+    role="admin",
+    permissions=["user:read", "user:write"],
+    user_data={"name": "John Doe", "email": "john@example.com"}
+)
+
+print(f"Access token: {token_pair.access_token}")
+print(f"Refresh token: {token_pair.refresh_token}")
+print(f"Expires in: {token_pair.expires_in} seconds")
+```
+
+### Token Validation and Refresh
+
+```python
+from app.core.security import decode_token, refresh_tokens, revoke_token
+
+# Validate a token
+async def validate_user_token(token: str):
+    try:
+        # Decode and validate the token
+        token_data = await decode_token(token)
+
+        # Token is valid, return user information
+        return {
+            "user_id": token_data.sub,
+            "role": token_data.role,
+            "permissions": token_data.permissions,
+            "expires_at": token_data.exp.isoformat()
+        }
+    except AuthenticationException as e:
+        logger.warning(f"Token validation failed: {str(e)}")
+        raise
+
+# Refresh tokens
+async def refresh_user_tokens(refresh_token: str):
+    try:
+        # Refresh tokens (will validate and blacklist the old refresh token)
+        new_tokens = await refresh_tokens(refresh_token)
+        return new_tokens
+    except AuthenticationException as e:
+        logger.warning(f"Token refresh failed: {str(e)}")
+        raise
+
+# Logout (revoke token)
+async def logout_user(token: str, user_id: str):
+    try:
+        # Revoke the token (add to blacklist)
+        await revoke_token(token)
+        return {"success": True, "message": "Logged out successfully"}
+    except Exception as e:
+        logger.error(f"Logout failed: {str(e)}")
+        handle_exception(e, user_id=user_id)
+        raise
+```
+
+### Using the Security Service
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.security import get_security_service
+
+# Get security service through dependency injection
+@router.post("/auth/login")
+async def login(
+    login_data: LoginRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db)
+):
+    # Get security service
+    security_service = get_security_service(db)
+
+    # Validate credentials
+    user = await user_repository.get_by_email(login_data.email)
+    if not user:
+        raise AuthenticationException(message="Invalid credentials")
+
+    # Verify password
+    is_valid = await security_service.verify_password(
+        login_data.password,
+        user.hashed_password,
+        user_id=str(user.id)
+    )
+
+    if not is_valid:
+        raise AuthenticationException(message="Invalid credentials")
+
+    # Create tokens
+    token_pair = await security_service.create_token_pair(
+        user_id=str(user.id),
+        role=user.role,
+        permissions=[p.value for p in user.permissions],
+        user_data={"name": user.name, "email": user.email}
+    )
+
+    # Set CSRF token (for cookie-based auth)
+    csrf_token = security_service.generate_csrf_token(str(user.id))
+    response.set_cookie(
+        key="csrf_token",
+        value=csrf_token,
+        httponly=False,  # Accessible by JavaScript
+        secure=True,
+        samesite="strict"
+    )
+
+    return token_pair
+```
+
+### Password Management
+
+```python
+from app.core.security import get_password_hash, verify_password, validate_password_policy
+
+# Hash a password
+def hash_user_password(plain_password: str):
+    hashed = get_password_hash(plain_password)
+    return hashed
+
+# Verify a password
+def check_user_password(plain_password: str, hashed_password: str):
+    return verify_password(plain_password, hashed_password)
+
+# Validate password against security policy
+async def validate_new_password(password: str, user_id: Optional[str] = None):
+    is_valid, message = await validate_password_policy(password, user_id)
+
+    if not is_valid:
+        raise ValidationException(
+            message="Password policy validation failed",
+            errors=[{
+                "loc": ["password"],
+                "msg": message,
+                "type": "password_policy_error"
+            }]
+        )
+
+    return True
+```
+
+### API Key Management
+
+```python
+from app.core.security import generate_api_key, verify_api_key
+
+# Generate an API key for a user
+def create_user_api_key(user_id: str, name: str, permissions: List[str]):
+    api_key_data = generate_api_key(user_id, name, permissions)
+
+    # Store the hashed key in database (never store the actual key)
+    db_api_key = ApiKey(
+        id=api_key_data.key_id,
+        user_id=user_id,
+        name=name,
+        hashed_secret=api_key_data.hashed_secret,
+        permissions=permissions,
+        created_at=datetime.datetime.now(datetime.UTC)
+    )
+    db.add(db_api_key)
+    await db.commit()
+
+    # Return the API key to the user (this is the only time they'll see it)
+    return {
+        "api_key": api_key_data.api_key,
+        "name": name,
+        "permissions": permissions,
+        "created_at": db_api_key.created_at.isoformat()
+    }
+
+# Verify an API key
+async def verify_user_api_key(api_key: str):
+    # Extract key ID from the API key
+    parts = api_key.split(".")
+    if len(parts) != 2:
+        raise AuthenticationException(message="Invalid API key format")
+
+    key_id, _ = parts
+
+    # Find the stored key data
+    stored_key = await db.execute(select(ApiKey).where(ApiKey.id == key_id))
+    stored_key = stored_key.scalar_one_or_none()
+
+    if not stored_key:
+        raise AuthenticationException(message="Invalid API key")
+
+    # Verify the key
+    if not verify_api_key(api_key, stored_key.hashed_secret):
+        raise AuthenticationException(message="Invalid API key")
+
+    # At this point, the API key is valid
+    return {
+        "user_id": stored_key.user_id,
+        "key_id": stored_key.id,
+        "name": stored_key.name,
+        "permissions": stored_key.permissions
+    }
+```
+
+### CSRF Protection
+
+```python
+from app.core.security import generate_csrf_token, validate_csrf_token
+
+# Generate a CSRF token
+def get_csrf_token(session_id: str):
+    return generate_csrf_token(session_id)
+
+# Validate a CSRF token
+def check_csrf_token(token: str, session_id: str):
+    is_valid = validate_csrf_token(token, session_id)
+
+    if not is_valid:
+        raise SecurityException(
+            message="CSRF validation failed",
+            code=ErrorCode.SECURITY_ERROR,
+            details={"error": "Invalid or expired CSRF token"}
+        )
+
+    return True
+
+# Example of CSRF protection in a FastAPI endpoint
+@router.post("/users/{user_id}/settings")
+async def update_user_settings(
+    user_id: str,
+    settings_data: Dict[str, Any],
+    csrf_token: str = Header(...),
+    current_user_id: str = Depends(get_current_user_id)
+):
+    # Verify user identity
+    if user_id != current_user_id:
+        raise PermissionDeniedException(message="Cannot modify another user's settings")
+
+    # Validate CSRF token
+    security_service = get_security_service()
+    if not security_service.validate_csrf_token(csrf_token, current_user_id):
+        raise SecurityException(message="Invalid CSRF token")
+
+    # Process the request
+    # ...
+
+    return {"success": True}
+```
+
+### Encryption
+
+```python
+from app.core.security import encrypt_data, decrypt_data
+
+# Encrypt sensitive data
+def store_secure_data(user_id: str, sensitive_data: dict):
+    try:
+        # Encrypt the data
+        encrypted = encrypt_data(sensitive_data)
+
+        # Store in database
+        secure_record = UserSecureData(
+            user_id=user_id,
+            encrypted_data=encrypted
+        )
+        db.add(secure_record)
+        await db.commit()
+
+        return {"id": secure_record.id, "success": True}
+    except Exception as e:
+        logger.error(f"Encryption error: {str(e)}")
+        handle_exception(e, user_id=user_id)
+        raise
+
+# Decrypt sensitive data
+def retrieve_secure_data(user_id: str, record_id: str):
+    try:
+        # Get from database
+        record = await db.execute(
+            select(UserSecureData)
+            .where(UserSecureData.id == record_id)
+            .where(UserSecureData.user_id == user_id)
+        )
+        record = record.scalar_one_or_none()
+
+        if not record:
+            raise ResourceNotFoundException(
+                resource_type="UserSecureData",
+                resource_id=record_id
+            )
+
+        # Decrypt the data
+        decrypted = decrypt_data(record.encrypted_data)
+
+        return decrypted
+    except Exception as e:
+        logger.error(f"Decryption error: {str(e)}")
+        handle_exception(e, user_id=user_id)
+        raise
+```
+
+### Input Validation and Sanitization
+
+```python
+from app.core.security.validation import (
+    sanitize_input,
+    detect_suspicious_content,
+    validate_json_input,
+    is_valid_hostname,
+    is_trusted_ip,
+    moderate_content
+)
+
+# Sanitize user input
+def clean_user_input(input_text: str):
+    return sanitize_input(input_text)
+
+# Detect potentially malicious content
+def check_user_content(content: str):
+    if detect_suspicious_content(content):
+        logger.warning("Suspicious content detected", content_length=len(content))
+        raise SecurityException(
+            message="Potentially malicious content detected",
+            code=ErrorCode.SECURITY_ERROR
+        )
+    return content
+
+# Validate JSON input
+def validate_client_json(json_data: Any):
+    if not validate_json_input(json_data):
+        raise ValidationException(
+            message="Invalid JSON data",
+            errors=[{
+                "loc": ["body"],
+                "msg": "Invalid or malicious JSON data",
+                "type": "json_validation_error"
+            }]
+        )
+    return json_data
+
+# Content moderation
+async def moderate_user_content(content: str, content_type: str = "text"):
+    is_allowed, reason = moderate_content(content, content_type)
+
+    if not is_allowed:
+        raise ValidationException(
+            message="Content moderation failed",
+            errors=[{
+                "loc": ["content"],
+                "msg": reason or "Content violates community guidelines",
+                "type": "content_moderation_error"
+            }]
+        )
+
+    return content
+```
+
+### Security Headers
+
+```python
+from app.core.security import get_security_headers
+
+# Middleware to add security headers
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+
+    # Get security headers
+    security_service = get_security_service()
+    security_headers = security_service.get_security_headers()
+
+    # Add headers to response
+    for name, value in security_headers.items():
+        response.headers[name] = value
+
+    return response
+```
+
+### FastAPI Authentication Dependencies
+
+```python
+from app.core.security.dependencies import (
+    get_current_user_id,
+    get_optional_user_id,
+    get_current_user_with_permissions
+)
+
+# Endpoint requiring authentication
+@router.get("/users/me")
+async def get_current_user_profile(
+    current_user_id: str = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    # Get user by ID
+    user = await user_repository.get_by_id(current_user_id)
+
+    if not user:
+        raise ResourceNotFoundException(resource_type="User", resource_id=current_user_id)
+
+    return user.to_response()
+
+# Endpoint with optional authentication
+@router.get("/products/{product_id}")
+async def get_product(
+    product_id: str,
+    user_id: Optional[str] = Depends(get_optional_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    # Get product
+    product = await product_repository.get_by_id(product_id)
+
+    if not product:
+        raise ResourceNotFoundException(resource_type="Product", resource_id=product_id)
+
+    # If user is authenticated, record view
+    if user_id:
+        await product_view_service.record_view(product_id, user_id)
+
+    return product.to_response()
+
+# Endpoint requiring authentication with permissions
+@router.post("/products")
+async def create_product(
+    product_data: ProductCreate,
+    user_data: dict = Depends(get_current_user_with_permissions),
+    db: AsyncSession = Depends(get_db)
+):
+    # Check permission
+    if "product:create" not in user_data["permissions"]:
+        raise PermissionDeniedException(
+            message="You don't have permission to create products",
+            action="create",
+            resource_type="product",
+            permission="product:create"
+        )
+
+    # Create product
+    product = await product_repository.create(product_data, user_data["id"])
+
+    return product.to_response()
+```
+
+### Metrics and Events Integration
+
+```python
+# The security service automatically tracks these metrics:
+# - token_validation_duration_seconds (histogram)
+# - token_validations_total (counter)
+# - tokens_created_total (counter)
+# - token_creation_duration_seconds (histogram)
+# - password_verification_duration_seconds (histogram)
+# - password_verifications_total (counter)
+# - api_keys_created_total (counter)
+# - api_key_verification_duration_seconds (histogram)
+# - csrf_validations_total (counter)
+# - suspicious_content_detections_total (counter)
+
+# The security service publishes these events:
+# - security.token_created - When a token is created
+# - security.token_revoked - When a token is revoked
+# - security.api_key_created - When an API key is created
+# - security.password_verification_failed - When a password verification fails
+
+# Example event handler for monitoring
+@event_service.event_handler("security.token_revoked")
+async def log_token_revocation(event):
+    data = event["data"]
+    logger.info(
+        "Token revoked",
+        user_id=data["user_id"],
+        reason=data["reason"]
+    )
+```
+
+## 13. Common Patterns and Best Practices
 
 This section provides examples of common patterns and best practices for using the various systems together effectively.
 
@@ -1952,10 +3246,10 @@ This section provides examples of common patterns and best practices for using t
 ```python
 @router.get("/products")
 async def list_products(
-    request: Request,
-    page: int = 1,
-    page_size: int = 20,
-    db: AsyncSession = Depends(get_db)
+        request: Request,
+        page: int = 1,
+        page_size: int = 20,
+        db: AsyncSession = Depends(get_db)
 ):
     try:
         # Get product service
@@ -1987,8 +3281,8 @@ async def list_products(
 ```python
 @router.get("/users/{user_id}")
 async def get_user(
-    user_id: str,
-    db: AsyncSession = Depends(get_db)
+        user_id: str,
+        db: AsyncSession = Depends(get_db)
 ):
     try:
         user_service = get_service("user_service", db=db)
@@ -2136,7 +3430,7 @@ class UserService:
         if not is_unique:
             self.logger.warning("Email already exists", email=validated_data.email)
             raise ValidationException(
-                "Validation error",
+                "Validation failed",
                 errors=[{
                     "loc": ["email"],
                     "msg": "Email already registered",
@@ -2601,3 +3895,301 @@ This event-driven workflow demonstrates several benefits:
 3. **Resilience** - If one part fails, other parts can continue or retry
 4. **Traceability** - The entire workflow is trackable through events
 5. **Extensibility** - New steps can be added by subscribing to existing events
+
+### Combining Authentication, Permissions and Business Logic
+
+This pattern demonstrates how to effectively combine authentication, permissions, and business logic in a service method:
+
+```python
+class DocumentService:
+    def __init__(self, db):
+        self.db = db
+        self.logger = get_logger("app.domains.documents.service")
+        self.security_service = get_service("security_service", db=db)
+        self.permission_service = get_service("permission_service", db=db)
+        self.validation_service = get_service("validation_service", db=db)
+        self.cache_service = get_service("cache_service")
+        self.metrics_service = get_service("metrics_service")
+
+    async def share_document(self, document_id: str, share_data: Dict[str, Any], user_id: str):
+        """Share a document with another user or group.
+
+        This method demonstrates combining:
+        1. Authentication validation
+        2. Object-level permission checks
+        3. Business logic validation
+        4. Metrics tracking
+        5. Auditing
+        6. Cache invalidation
+        """
+        start_time = time.monotonic()
+        success = False
+
+        try:
+            self.logger.info("Document share requested", document_id=document_id, user_id=user_id)
+
+            # Get current user
+            user = await get_user_by_id(self.db, user_id)
+
+            # Get the document
+            document = await self.repository.get_by_id(document_id)
+            if not document:
+                raise ResourceNotFoundException(resource_type="Document", resource_id=document_id)
+
+            # Check document permission (requires either document:admin or document:share)
+            await self.permission_service.ensure_object_permission(
+                user,
+                document,
+                Permission.DOCUMENT_SHARE,
+                owner_field="owner_id"
+            )
+
+            # Validate share data
+            validated_data = self.validation_service.validate_data(share_data, DocumentShareSchema)
+
+            # Business logic validations
+            if validated_data.recipient_id == user_id:
+                raise BusinessException(
+                    message="Cannot share a document with yourself",
+                    details={"document_id": document_id}
+                )
+
+            # Check if recipient exists
+            recipient = await get_user_by_id(self.db, validated_data.recipient_id)
+
+            # Check if already shared
+            existing_share = await self.repository.get_share(document_id, validated_data.recipient_id)
+            if existing_share:
+                # Update existing share
+                existing_share.permissions = validated_data.permissions
+                existing_share.updated_at = datetime.datetime.now(datetime.UTC)
+                existing_share.updated_by = user_id
+            else:
+                # Create new share
+                share = DocumentShare(
+                    document_id=document_id,
+                    recipient_id=validated_data.recipient_id,
+                    permissions=validated_data.permissions,
+                    created_by=user_id,
+                    created_at=datetime.datetime.now(datetime.UTC)
+                )
+                self.db.add(share)
+
+            await self.db.commit()
+
+            # Invalidate caches
+            await self.cache_service.delete(f"document:access:{document_id}:{validated_data.recipient_id}")
+            await self.cache_service.delete(f"user:documents:{validated_data.recipient_id}")
+
+            # Audit logging
+            audit_service = get_service("audit_service")
+            await audit_service.log_action(
+                user_id=user_id,
+                action="document_share",
+                resource_type="Document",
+                resource_id=document_id,
+                target_id=validated_data.recipient_id,
+                details={"permissions": validated_data.permissions}
+            )
+
+            # Publish event
+            event_service = get_service("event_service")
+            await event_service.publish(
+                event_name="document.shared",
+                payload={
+                    "document_id": document_id,
+                    "shared_by": user_id,
+                    "shared_with": validated_data.recipient_id,
+                    "permissions": validated_data.permissions,
+                    "document_name": document.name
+                }
+            )
+
+            success = True
+            self.logger.info(
+                "Document shared successfully",
+                document_id=document_id,
+                user_id=user_id,
+                recipient_id=validated_data.recipient_id
+            )
+
+            return {
+                "document_id": document_id,
+                "recipient_id": validated_data.recipient_id,
+                "permissions": validated_data.permissions,
+                "success": True
+            }
+
+        except Exception as e:
+            handle_exception(
+                e,
+                document_id=document_id,
+                user_id=user_id,
+                recipient_id=share_data.get("recipient_id")
+            )
+            raise
+
+        finally:
+            # Record metrics
+            duration = time.monotonic() - start_time
+            self.metrics_service.observe_histogram(
+                "document_share_duration_seconds",
+                duration,
+                {
+                    "success": str(success),
+                    "document_type": getattr(document, "type", "unknown")
+                }
+            )
+            self.metrics_service.increment_counter(
+                "document_shares_total",
+                labels={
+                    "success": str(success),
+                    "document_type": getattr(document, "type", "unknown")
+                }
+            )
+```
+
+This example demonstrates how to effectively layer multiple concerns in a service method:
+
+1. **Authentication** - Verifying the current user
+2. **Permission checking** - Using the permission service for object-level checks
+3. **Data validation** - Validating input data with schemas
+4. **Business logic validation** - Checking additional business rules
+5. **Database operations** - Performing the core functionality
+6. **Cache invalidation** - Clearing affected caches
+7. **Auditing** - Logging important actions for accountability
+8. **Event publishing** - Notifying other parts of the system about the change
+9. **Metrics tracking** - Recording performance and business metrics
+10. **Structured logging** - Providing context at each step
+11. **Error handling** - Proper exception handling and reporting
+
+### Securing API Endpoints with Multiple Layers
+
+This pattern demonstrates securing API endpoints with multiple layers of protection:
+
+```python
+from fastapi import Depends, Request, APIRouter
+from app.core.security.dependencies import get_current_user_id
+from app.core.permissions.decorators import require_permission
+from app.core.security.validation import detect_suspicious_content
+from app.core.exceptions import SecurityException, ErrorCode
+
+router = APIRouter()
+
+# Define multiple security layers
+async def validate_content(request: Request):
+    """Middleware to check for malicious content."""
+    body = await request.json()
+    content = json.dumps(body)
+
+    if detect_suspicious_content(content):
+        raise SecurityException(
+            message="Potentially malicious content detected",
+            code=ErrorCode.SECURITY_ERROR
+        )
+    return body
+
+@router.post("/documents")
+@require_permission(Permission.DOCUMENT_CREATE)  # Permission check
+async def create_document(
+    request: Request,
+    body: Dict[str, Any] = Depends(validate_content),  # Content validation
+    current_user_id: str = Depends(get_current_user_id),  # Authentication
+    db: AsyncSession = Depends(get_db)
+):
+    """Create a new document.
+
+    This endpoint is protected by:
+    1. Authentication (get_current_user_id)
+    2. Permission check (require_permission)
+    3. Content validation (validate_content)
+    4. Rate limiting (RateLimitMiddleware)
+    5. CSRF protection (from security middleware)
+    """
+    security_service = get_security_service()
+
+    # Get CSRF token from header
+    csrf_token = request.headers.get("X-CSRF-Token")
+    if not csrf_token or not security_service.validate_csrf_token(csrf_token, current_user_id):
+        raise SecurityException(message="Invalid CSRF token")
+
+    # Create document
+    document_service = get_service("document_service", db=db)
+    document = await document_service.create_document(body, current_user_id)
+
+    return document
+```
+
+This endpoint is protected by multiple security layers:
+
+1. **Authentication** - Verifying the user's identity with tokens
+2. **Authorization** - Checking permission requirements
+3. **Content validation** - Detecting potentially malicious payloads
+4. **CSRF protection** - Preventing cross-site request forgery attacks
+5. **Rate limiting** - Protecting against abuse (applied via middleware)
+
+### Feature Flags and Progressive Rollouts
+
+This pattern demonstrates how to implement feature flags for controlled feature rollouts:
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.features import Flag, FeatureTarget
+
+class NotificationService:
+    def __init__(self, db):
+        self.db = db
+        self.logger = get_logger("app.services.notification")
+        self.feature_service = get_service("feature_service")
+
+    async def send_notification(self, user_id: str, message: str, channel: str = "email"):
+        """Send a notification to a user.
+
+        This method uses feature flags to control rollout of new channels.
+        """
+        self.logger.info("Sending notification", user_id=user_id, channel=channel)
+
+        # Check if push notifications are enabled for this user
+        if channel == "push" and not await self.feature_service.is_enabled(
+            Flag.PUSH_NOTIFICATIONS,
+            target=FeatureTarget.USER,
+            target_id=user_id
+        ):
+            self.logger.info("Push notifications not enabled for user, falling back to email", user_id=user_id)
+            channel = "email"
+
+        # Check if we should use the new notification pipeline
+        use_new_pipeline = await self.feature_service.is_enabled(
+            Flag.NEW_NOTIFICATION_PIPELINE,
+            target=FeatureTarget.GLOBAL
+        )
+
+        if use_new_pipeline:
+            self.logger.info("Using new notification pipeline", user_id=user_id)
+            result = await self._send_notification_v2(user_id, message, channel)
+        else:
+            result = await self._send_notification_v1(user_id, message, channel)
+
+        # If new SMS channel is enabled, send SMS as well for important notifications
+        if (
+            message.startswith("IMPORTANT") and
+            await self.feature_service.is_enabled(
+                Flag.SMS_NOTIFICATIONS,
+                target=FeatureTarget.USER,
+                target_id=user_id,
+                percentage=10  # Only 10% of users
+            )
+        ):
+            self.logger.info("Sending additional SMS for important notification", user_id=user_id)
+            await self._send_sms(user_id, message)
+
+        return result
+```
+
+This pattern demonstrates how to use feature flags for:
+
+1. **User-based targeting** - Enabling features for specific users
+2. **Percentage rollouts** - Gradually rolling out to a percentage of users
+3. **Global flags** - Enabling/disabling features system-wide
+4. **Graceful fallbacks** - Providing alternative behaviors when features aren't enabled
+5. **Progressive deployment** - Testing new implementations alongside existing ones

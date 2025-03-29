@@ -1,6 +1,6 @@
-# Developer's Guide: Logging, Error Handling, Dependency Management, Validation, and Metrics Systems
+# Developer's Guide: Application Core Systems
 
-This guide provides a practical overview of the logging, error handling, exception, dependency management, validation, metrics, and rate limiting systems. Use it as a reference when implementing these components in your code.
+This guide provides a practical overview of the core systems used throughout the application. Use it as a reference when implementing features and integrating with these systems.
 
 ## Table of Contents
 1. [Logging System](#1-logging-system)
@@ -11,8 +11,9 @@ This guide provides a practical overview of the logging, error handling, excepti
 6. [Metrics System](#6-metrics-system)
 7. [Pagination System](#7-pagination-system)
 8. [Rate Limiting System](#8-rate-limiting-system)
-9. [Common Patterns](#9-common-patterns)
-10. [Cache System](#10-cache-system)
+9. [Cache System](#9-cache-system)
+10. [Event System](#10-event-system)
+11. [Common Patterns and Best Practices](#11-common-patterns-and-best-practices)
 
 ## 1. Logging System
 
@@ -1418,7 +1419,533 @@ The rate limiting system automatically integrates with the metrics system to tra
 # - histogram_quantile(0.95, sum(rate_limiting_check_duration_seconds_bucket) by (le)) # 95th percentile rate limit check duration
 ```
 
-## 9. Common Patterns
+## 9. Cache System
+
+The cache system provides a flexible, configurable caching mechanism that supports multiple backends (memory, Redis, etc.) and offers various caching strategies.
+
+### Key Features
+- Multiple cache backends (Memory, Redis, Null)
+- Key generation utilities for consistent caching
+- Function decorators for easy caching
+- Integration with metrics system
+- Customizable TTL (time-to-live)
+- Cache invalidation patterns
+- Tagged caching for bulk invalidation
+- Exception handling and resilience
+- Service pattern for dependency injection
+
+### Basic Usage
+
+```python
+from app.core.dependency_manager import get_service
+
+# Get the cache service
+cache_service = get_service("cache_service")
+
+# Basic cache operations
+async def get_user_profile(user_id: str):
+    # Try to get from cache first
+    cache_key = f"user:profile:{user_id}"
+    cached_profile = await cache_service.get(cache_key)
+
+    if cached_profile is not None:
+        return cached_profile
+
+    # Not in cache, fetch from database
+    profile = await user_repository.get_profile(user_id)
+
+    # Store in cache for future requests (TTL: 10 minutes)
+    await cache_service.set(cache_key, profile, ttl=600)
+
+    return profile
+```
+
+### Using Decorators
+
+The cache system provides decorators for easy function-level caching:
+
+```python
+from app.core.cache import cached, invalidate_cache
+
+# Cache the result of this function for 5 minutes
+@cached(ttl=300)
+async def get_product_details(product_id: str):
+    # This expensive operation will only run on cache misses
+    result = await product_repository.get_details(product_id)
+    return result
+
+# Invalidate cache entries when data changes
+@invalidate_cache(pattern="product:*")
+async def update_product(product_id: str, data: dict):
+    # This will invalidate all cache keys matching the pattern
+    await product_repository.update(product_id, data)
+    return {"status": "updated"}
+```
+
+### Advanced Caching Patterns
+
+```python
+from app.core.cache import cached, cache_aside, memoize
+from app.core.cache.keys import generate_model_key, generate_list_key
+
+# Memoize an expensive function (in-memory caching)
+@memoize(ttl=60)  # 60 seconds
+def calculate_complex_value(input_value: int):
+    # Complex calculation
+    return result
+
+# Cache using custom key generation
+@cache_aside(
+    key_func=lambda category_id, **kwargs: generate_list_key(
+        prefix="products",
+        model_name="product",
+        filters={"category_id": category_id}
+    ),
+    ttl=600,
+    tags=["products", "catalog"]
+)
+async def get_products_by_category(category_id: str):
+    # Fetch from database
+    return await product_repository.list_by_category(category_id)
+```
+
+### Cache Tags for Group Invalidation
+
+```python
+from app.core.dependency_manager import get_service
+
+cache_service = get_service("cache_service")
+
+# Invalidate all product-related cache entries
+async def clear_product_cache():
+    # Get Redis backend
+    redis_backend = cache_service._get_backend("redis")
+
+    # Get all keys with product tag
+    tag_key = "cache:tag:products"
+    keys = await redis_backend.get_set_members(tag_key)
+
+    # Delete all keys
+    if keys:
+        await cache_service.delete_many(keys)
+
+        # Also remove the tag itself
+        await redis_backend.delete(tag_key)
+
+    return {"invalidated": len(keys)}
+```
+
+### Exception Handling
+
+```python
+from app.core.cache.exceptions import CacheException, CacheOperationException
+
+async def get_cached_data(key: str):
+    try:
+        cache_service = get_service("cache_service")
+        return await cache_service.get(key)
+    except CacheOperationException as e:
+        logger.warning(f"Cache operation failed: {e}")
+        # Fallback to database
+        return await fetch_from_database()
+    except CacheException as e:
+        logger.error(f"Cache system error: {e}")
+        # More severe error, may need to be reported
+        raise
+```
+
+### Integration with Metrics
+
+The cache system automatically tracks metrics:
+
+- `cache_hit_total` - Counter of cache hits
+- `cache_miss_total` - Counter of cache misses
+- `cache_operations_total` - Counter of all cache operations
+- `cache_operation_duration_seconds` - Histogram of cache operation durations
+
+These metrics can be used to monitor cache effectiveness:
+
+- Hit rate: `sum(rate(cache_hit_total[5m])) / sum(rate(cache_operations_total[5m]))`
+- Miss rate: `sum(rate(cache_miss_total[5m])) / sum(rate(cache_operations_total[5m]))`
+- Operation latency: `histogram_quantile(0.95, sum(rate(cache_operation_duration_seconds_bucket[5m])) by (le))`
+
+### System Integration
+
+The cache system is designed to seamlessly integrate with other application systems:
+
+#### Error Handling Integration
+
+The cache system uses a dedicated exception hierarchy that integrates with the application's exception system:
+
+```python
+from app.core.cache.exceptions import CacheException, CacheOperationException
+
+try:
+    value = await cache_service.get("my_key")
+except CacheOperationException as e:
+    # Handle specific operation errors
+    logger.warning(f"Cache operation failed: {e}")
+    # Fallback logic
+except CacheException as e:
+    # Handle general cache errors
+    logger.error(f"Cache error: {e}")
+    # More severe error handling
+```
+
+When cache operations fail, the system will automatically log errors with appropriate context and fall back to database operations where possible, rather than causing application failures.
+
+#### Metrics Integration
+
+Cache operations are automatically tracked with the metrics system:
+
+```python
+# These metrics are available automatically
+metrics_service = get_service("metrics_service")
+
+# Get hit rate over the last 5 minutes
+hit_rate = metrics_service.get_counter_rate("cache_hit_total") / \
+           metrics_service.get_counter_rate("cache_operations_total")
+
+# Get p95 latency for cache operations
+latency = metrics_service.get_histogram_quantile(
+    "cache_operation_duration_seconds",
+    0.95,
+    {"component": "product_service"}
+)
+
+# Get miss count by backend
+miss_count = metrics_service.get_counter_sum(
+    "cache_miss_total",
+    {"backend": "redis"}
+)
+```
+
+#### Dependency Injection
+
+The cache service is automatically registered with the dependency manager:
+
+```python
+# In service classes
+class ProductService:
+    def __init__(self, db):
+        self.db = db
+        self.cache_service = get_service("cache_service")
+
+    async def get_product(self, product_id):
+        # Use cache service
+        cache_key = f"product:{product_id}"
+        product = await self.cache_service.get(cache_key)
+        if product:
+            return product
+
+        # Cache miss - get from database
+        product = await self.db.execute(
+            select(Product).where(Product.id == product_id)
+        )
+        product = product.scalar_one_or_none()
+
+        # Cache for next time
+        if product:
+            await self.cache_service.set(cache_key, product, ttl=300)
+
+        return product
+```
+
+### Configuration
+
+The cache system can be configured in the settings:
+
+```python
+# In settings.py or .env
+
+# Cache backend settings
+CACHE_DEFAULT_BACKEND="redis"  # "redis", "memory", or "null"
+
+# Redis connection settings
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD="optional_password"
+REDIS_URI="redis://localhost:6379/0"
+
+# Default TTL settings (in seconds)
+CACHE_DEFAULT_TTL=300  # 5 minutes
+```
+
+### Available Backends
+
+The cache system provides multiple backends:
+
+1. **Redis Backend**: Production-ready backend with all features, including pattern-based invalidation, atomic counters, and tag-based operations. Recommended for production.
+
+2. **Memory Backend**: In-process memory cache. Fast but doesn't persist or share between processes. Good for development, testing, or as a fallback when Redis is unavailable.
+
+3. **Null Backend**: A non-caching implementation that acts like a cache but doesn't store anything. Useful for testing or disabling caching without changing code.
+
+The system automatically falls back to the memory backend if Redis is unavailable, ensuring resilience.
+
+## 10. Event System
+
+The event system provides a robust framework for implementing domain events and event-driven architecture patterns throughout the application. It supports both in-memory and distributed event processing.
+
+### Key Features
+- Support for both in-memory and distributed (Celery) event processing
+- Typed domain events with dataclasses
+- Automatic event handler registration
+- Asynchronous event processing
+- Exception handling and error reporting
+- Integration with metrics system
+- Contextual information in events
+
+### Event Backends
+
+The system supports two event backends:
+
+1. **Memory Backend**: In-process event handling, ideal for development and testing. Simple to set up with no external dependencies.
+
+2. **Celery Backend**: Distributed event processing using Celery tasks, suitable for production environments where reliability and scalability are required.
+
+### Basic Usage
+
+#### Initializing the Event System
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.events import EventBackendType
+
+# In your application startup
+async def startup():
+    # Get event service through dependency injection
+    event_service = get_service("event_service")
+
+    # Initialize with desired backend
+    await event_service.initialize(EventBackendType.MEMORY)  # or EventBackendType.CELERY
+```
+
+#### Publishing Events
+
+```python
+from app.core.dependency_manager import get_service
+
+# Get event service
+event_service = get_service("event_service")
+
+# Publish a simple event
+async def create_user(user_data):
+    # Create user in database
+    user = await user_repository.create(user_data)
+
+    # Publish event
+    await event_service.publish(
+        event_name="user.created",
+        payload={
+            "user_id": str(user.id),
+            "username": user.username,
+            "email": user.email
+        },
+        context={
+            "user_id": user.id,
+            "request_id": get_current_request_id()
+        }
+    )
+
+    return user
+```
+
+#### Subscribing to Events
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.events import get_event_service
+
+# Get event service
+event_service = get_event_service()
+
+# Using decorator to subscribe to events
+@event_service.event_handler("user.created")
+async def handle_new_user(event):
+    # Extract data from event
+    user_data = event["data"]
+    user_id = user_data["user_id"]
+
+    # Process the event
+    logger.info(f"Processing new user creation", user_id=user_id)
+
+    # Send welcome email
+    await email_service.send_welcome_email(user_data["email"])
+```
+
+### Using Typed Domain Events
+
+```python
+from app.core.events.domain_events import DomainEvent, UserCreatedEvent, UserData
+from app.core.dependency_manager import get_service
+
+# Get event service
+event_service = get_service("event_service")
+
+# Creating and publishing a typed event
+async def create_user(user_data):
+    # Create user in database
+    user = await user_repository.create(user_data)
+
+    # Create typed event
+    user_created = UserCreatedEvent.create(
+        data={
+            "user_id": str(user.id),
+            "username": user.username,
+            "email": user.email
+        },
+        user_id=str(user.id),
+        request_id=get_current_request_id()
+    )
+
+    # Convert to dict and publish
+    await event_service.publish(
+        event_name=user_created.event_name,
+        payload=user_created.data,
+        context=user_created.to_dict()
+    )
+
+    return user
+
+# Using strongly typed events
+@event_service.event_handler("user.created.typed")
+async def handle_typed_user_event(event):
+    # Convert dict back to typed event
+    typed_event = UserCreatedEvent.from_dict(event)
+
+    # Access typed data
+    user_data = typed_event.data
+    logger.info(f"Processing new user creation", user_id=user_data.user_id)
+
+    # Send welcome email
+    await email_service.send_welcome_email(user_data.email)
+```
+
+### Filtering Events
+
+```python
+from app.core.dependency_manager import get_service
+
+# Get event service
+event_service = get_service("event_service")
+
+# Subscribe with filtering
+@event_service.event_handler(
+    "order.completed",
+    filter_func=lambda event: event["data"]["total_amount"] > 1000
+)
+async def handle_large_orders(event):
+    """This handler will only be called for large orders."""
+    order_data = event["data"]
+    logger.info(f"Processing large order", order_id=order_data["order_id"], amount=order_data["total_amount"])
+
+    # Special processing for large orders
+    await notification_service.notify_sales_team(order_data["order_id"])
+```
+
+### Creating Custom Domain Events
+
+```python
+from dataclasses import dataclass, field
+from app.core.events.domain_events import DomainEvent
+from typing import Dict, Any, ClassVar, Optional
+
+# Define a custom event
+@dataclass
+class PaymentProcessedEvent(DomainEvent[Dict[str, Any]]):
+    event_name: ClassVar[str] = "payment.processed"
+
+# Define a typed data structure for an event
+@dataclass
+class PaymentData:
+    payment_id: str
+    order_id: str
+    amount: float
+    status: str
+    processor: str
+
+@dataclass
+class PaymentProcessedTypedEvent(DomainEvent[PaymentData]):
+    event_name: ClassVar[str] = "payment.processed.typed"
+```
+
+### Integration with Metrics
+
+The event system automatically integrates with the metrics system to track performance:
+
+```python
+# These metrics are recorded automatically:
+# - events_published_total (counter)
+# - event_handler_errors_total (counter)
+# - event_handler_duration_seconds (histogram)
+
+# Example metrics queries for Prometheus:
+# - rate(events_published_total[5m]) # Event publication rate
+# - sum by (event_type) (event_handler_errors_total) # Error count by event type
+# - histogram_quantile(0.95, sum(event_handler_duration_seconds_bucket) by (le, event_type)) # 95th percentile handler duration
+```
+
+### Error Handling
+
+The event system integrates with the application's exception system:
+
+```python
+from app.core.events.exceptions import (
+    EventPublishException,
+    EventHandlerException,
+    EventConfigurationException
+)
+
+# Publishing with error handling
+async def publish_with_error_handling(event_data):
+    try:
+        await event_service.publish("order.created", event_data)
+    except EventPublishException as e:
+        # Handle publication error
+        logger.error(f"Failed to publish order.created event: {str(e)}")
+        # Report to error service
+        await error_service.report_error(e, {"event_data": event_data})
+
+# Error handling in event handlers is automatic:
+# If an exception occurs in a handler, it will:
+# 1. Log the error
+# 2. Report it to the error service
+# 3. Update metrics
+# 4. Continue processing (won't break the application)
+```
+
+### Advanced Configuration
+
+```python
+from app.core.dependency_manager import get_service
+from app.core.events import EventBackendType
+
+# Get event service
+event_service = get_service("event_service")
+
+# Set default context for all events
+event_service.set_default_context({
+    "application": "my-app",
+    "environment": settings.ENVIRONMENT,
+    "version": "1.0.0"
+})
+
+# Custom initialization for Celery backend
+async def initialize_with_celery():
+    from app.core.celery_app import celery_app
+
+    await event_service.initialize(
+        backend_type=EventBackendType.CELERY
+    )
+
+    # Additional Celery-specific configuration can be done here
+```
+
+## 11. Common Patterns and Best Practices
+
+This section provides examples of common patterns and best practices for using the various systems together effectively.
 
 ### API Endpoint Error Handling with Rate Limiting
 
@@ -1913,269 +2440,164 @@ This pattern demonstrates several important practices:
 6. **Tag-based invalidation** - Using Redis tags for grouped invalidation
 7. **Audit logging** - Recording significant data changes
 
-The above example can be adapted for various types of data and services while maintaining the same core principles of robust caching.
+### Event-Driven Architecture Patterns
 
-## 10. Cache System
+#### Event-Based Workflow
 
-The cache system provides a flexible, configurable caching mechanism that supports multiple backends (memory, Redis, etc.) and offers various caching strategies.
-
-### Key Features
-- Multiple cache backends (Memory, Redis, Null)
-- Key generation utilities for consistent caching
-- Function decorators for easy caching
-- Integration with metrics system
-- Customizable TTL (time-to-live)
-- Cache invalidation patterns
-- Tagged caching for bulk invalidation
-- Exception handling and resilience
-- Service pattern for dependency injection
-
-### Basic Usage
+This pattern demonstrates using events to create a decoupled workflow:
 
 ```python
-from app.core.dependency_manager import get_service
+# In OrderService
+async def place_order(self, order_data, user_id):
+    """Create an order and publish events for subsequent processing."""
+    self.logger.info("Creating order", user_id=user_id, items_count=len(order_data["items"]))
 
-# Get the cache service
-cache_service = get_service("cache_service")
+    # Create order in database
+    order = Order(
+        user_id=user_id,
+        items=order_data["items"],
+        status="pending",
+        total_amount=calculate_total(order_data["items"])
+    )
+    self.db.add(order)
+    await self.db.commit()
+    await self.db.refresh(order)
 
-# Basic cache operations
-async def get_user_profile(user_id: str):
-    # Try to get from cache first
-    cache_key = f"user:profile:{user_id}"
-    cached_profile = await cache_service.get(cache_key)
+    # Publish order created event
+    event_service = get_service("event_service")
+    await event_service.publish(
+        event_name="order.created",
+        payload={
+            "order_id": str(order.id),
+            "user_id": user_id,
+            "items": order_data["items"],
+            "total_amount": order.total_amount
+        }
+    )
 
-    if cached_profile is not None:
-        return cached_profile
+    self.logger.info("Order created successfully", order_id=str(order.id))
+    return order
 
-    # Not in cache, fetch from database
-    profile = await user_repository.get_profile(user_id)
+# In InventoryService as an event handler
+@event_service.event_handler("order.created")
+async def reserve_inventory(event):
+    """Reserve inventory items when an order is created."""
+    order_data = event["data"]
+    logger.info("Reserving inventory for order", order_id=order_data["order_id"])
 
-    # Store in cache for future requests (TTL: 10 minutes)
-    await cache_service.set(cache_key, profile, ttl=600)
-
-    return profile
-```
-
-### Using Decorators
-
-The cache system provides decorators for easy function-level caching:
-
-```python
-from app.core.cache import cached, invalidate_cache
-
-# Cache the result of this function for 5 minutes
-@cached(ttl=300)
-async def get_product_details(product_id: str):
-    # This expensive operation will only run on cache misses
-    result = await product_repository.get_details(product_id)
-    return result
-
-# Invalidate cache entries when data changes
-@invalidate_cache(pattern="product:*")
-async def update_product(product_id: str, data: dict):
-    # This will invalidate all cache keys matching the pattern
-    await product_repository.update(product_id, data)
-    return {"status": "updated"}
-```
-
-### Advanced Caching Patterns
-
-```python
-from app.core.cache import cached, cache_aside, memoize
-from app.core.cache.keys import generate_model_key, generate_list_key
-
-# Memoize an expensive function (in-memory caching)
-@memoize(ttl=60)  # 60 seconds
-def calculate_complex_value(input_value: int):
-    # Complex calculation
-    return result
-
-# Cache using custom key generation
-@cache_aside(
-    key_func=lambda category_id, **kwargs: generate_list_key(
-        prefix="products",
-        model_name="product",
-        filters={"category_id": category_id}
-    ),
-    ttl=600,
-    tags=["products", "catalog"]
-)
-async def get_products_by_category(category_id: str):
-    # Fetch from database
-    return await product_repository.list_by_category(category_id)
-```
-
-### Cache Tags for Group Invalidation
-
-```python
-from app.core.dependency_manager import get_service
-
-cache_service = get_service("cache_service")
-
-# Invalidate all product-related cache entries
-async def clear_product_cache():
-    # Get Redis backend
-    redis_backend = cache_service._get_backend("redis")
-
-    # Get all keys with product tag
-    tag_key = "cache:tag:products"
-    keys = await redis_backend.get_set_members(tag_key)
-
-    # Delete all keys
-    if keys:
-        await cache_service.delete_many(keys)
-
-        # Also remove the tag itself
-        await redis_backend.delete(tag_key)
-
-    return {"invalidated": len(keys)}
-```
-
-### Exception Handling
-
-```python
-from app.core.cache.exceptions import CacheException, CacheOperationException
-
-async def get_cached_data(key: str):
-    try:
-        cache_service = get_service("cache_service")
-        return await cache_service.get(key)
-    except CacheOperationException as e:
-        logger.warning(f"Cache operation failed: {e}")
-        # Fallback to database
-        return await fetch_from_database()
-    except CacheException as e:
-        logger.error(f"Cache system error: {e}")
-        # More severe error, may need to be reported
-        raise
-```
-
-### Integration with Metrics
-
-The cache system automatically tracks metrics:
-
-- `cache_hit_total` - Counter of cache hits
-- `cache_miss_total` - Counter of cache misses
-- `cache_operations_total` - Counter of all cache operations
-- `cache_operation_duration_seconds` - Histogram of cache operation durations
-
-These metrics can be used to monitor cache effectiveness:
-
-- Hit rate: `sum(rate(cache_hit_total[5m])) / sum(rate(cache_operations_total[5m]))`
-- Miss rate: `sum(rate(cache_miss_total[5m])) / sum(rate(cache_operations_total[5m]))`
-- Operation latency: `histogram_quantile(0.95, sum(rate(cache_operation_duration_seconds_bucket[5m])) by (le))`
-
-### System Integration
-
-The cache system is designed to seamlessly integrate with other application systems:
-
-#### Error Handling Integration
-
-The cache system uses a dedicated exception hierarchy that integrates with the application's exception system:
-
-```python
-from app.core.cache.exceptions import CacheException, CacheOperationException
-
-try:
-    value = await cache_service.get("my_key")
-except CacheOperationException as e:
-    # Handle specific operation errors
-    logger.warning(f"Cache operation failed: {e}")
-    # Fallback logic
-except CacheException as e:
-    # Handle general cache errors
-    logger.error(f"Cache error: {e}")
-    # More severe error handling
-```
-
-When cache operations fail, the system will automatically log errors with appropriate context and fall back to database operations where possible, rather than causing application failures.
-
-#### Metrics Integration
-
-Cache operations are automatically tracked with the metrics system:
-
-```python
-# These metrics are available automatically
-metrics_service = get_service("metrics_service")
-
-# Get hit rate over the last 5 minutes
-hit_rate = metrics_service.get_counter_rate("cache_hit_total") / \
-           metrics_service.get_counter_rate("cache_operations_total")
-
-# Get p95 latency for cache operations
-latency = metrics_service.get_histogram_quantile(
-    "cache_operation_duration_seconds",
-    0.95,
-    {"component": "product_service"}
-)
-
-# Get miss count by backend
-miss_count = metrics_service.get_counter_sum(
-    "cache_miss_total",
-    {"backend": "redis"}
-)
-```
-
-#### Dependency Injection
-
-The cache service is automatically registered with the dependency manager:
-
-```python
-# In service classes
-class ProductService:
-    def __init__(self, db):
-        self.db = db
-        self.cache_service = get_service("cache_service")
-
-    async def get_product(self, product_id):
-        # Use cache service
-        cache_key = f"product:{product_id}"
-        product = await self.cache_service.get(cache_key)
-        if product:
-            return product
-
-        # Cache miss - get from database
-        product = await self.db.execute(
-            select(Product).where(Product.id == product_id)
+    # Reserve inventory
+    for item in order_data["items"]:
+        await inventory_repository.reserve(
+            product_id=item["product_id"],
+            quantity=item["quantity"],
+            order_id=order_data["order_id"]
         )
-        product = product.scalar_one_or_none()
 
-        # Cache for next time
-        if product:
-            await self.cache_service.set(cache_key, product, ttl=300)
+    # Publish inventory reserved event
+    await event_service.publish(
+        event_name="inventory.reserved",
+        payload={
+            "order_id": order_data["order_id"],
+            "user_id": order_data["user_id"],
+            "items": order_data["items"]
+        }
+    )
 
-        return product
+    logger.info("Inventory reserved for order", order_id=order_data["order_id"])
+
+# In PaymentService as an event handler
+@event_service.event_handler("inventory.reserved")
+async def process_payment(event):
+    """Process payment after inventory is reserved."""
+    order_data = event["data"]
+    logger.info("Processing payment for order", order_id=order_data["order_id"])
+
+    # Get payment details from user profile
+    user = await user_repository.get_by_id(order_data["user_id"])
+
+    # Process payment
+    payment_result = await payment_gateway.process_payment(
+        amount=order_data["total_amount"],
+        payment_method=user.default_payment_method,
+        order_id=order_data["order_id"]
+    )
+
+    if payment_result.success:
+        # Publish payment succeeded event
+        await event_service.publish(
+            event_name="payment.succeeded",
+            payload={
+                "order_id": order_data["order_id"],
+                "payment_id": payment_result.payment_id,
+                "amount": order_data["total_amount"]
+            }
+        )
+        logger.info("Payment succeeded for order", order_id=order_data["order_id"])
+    else:
+        # Publish payment failed event
+        await event_service.publish(
+            event_name="payment.failed",
+            payload={
+                "order_id": order_data["order_id"],
+                "error": payment_result.error,
+                "reason": payment_result.error_message
+            }
+        )
+        logger.error("Payment failed for order", order_id=order_data["order_id"], error=payment_result.error)
+
+# In OrderService as event handlers for payment outcomes
+@event_service.event_handler("payment.succeeded")
+async def finalize_order(event):
+    """Finalize the order after successful payment."""
+    payment_data = event["data"]
+    logger.info("Finalizing order after payment", order_id=payment_data["order_id"])
+
+    # Update order status
+    order = await order_repository.get_by_id(payment_data["order_id"])
+    order.status = "completed"
+    order.payment_id = payment_data["payment_id"]
+    await db.commit()
+
+    # Publish order completed event
+    await event_service.publish(
+        event_name="order.completed",
+        payload={
+            "order_id": payment_data["order_id"],
+            "user_id": order.user_id,
+            "total_amount": payment_data["amount"],
+            "status": "completed"
+        }
+    )
+
+    logger.info("Order finalized successfully", order_id=payment_data["order_id"])
+
+@event_service.event_handler("payment.failed")
+async def handle_payment_failure(event):
+    """Handle payment failure by updating order and releasing inventory."""
+    payment_data = event["data"]
+    logger.info("Handling payment failure", order_id=payment_data["order_id"])
+
+    # Update order status
+    order = await order_repository.get_by_id(payment_data["order_id"])
+    order.status = "payment_failed"
+    order.failure_reason = payment_data["reason"]
+    await db.commit()
+
+    # Publish event to release inventory
+    await event_service.publish(
+        event_name="inventory.release_requested",
+        payload={
+            "order_id": payment_data["order_id"],
+            "reason": "payment_failed"
+        }
+    )
+
+    logger.info("Order marked as payment failed", order_id=payment_data["order_id"])
 ```
 
-### Configuration
-
-The cache system can be configured in the settings:
-
-```python
-# In settings.py or .env
-
-# Cache backend settings
-CACHE_DEFAULT_BACKEND="redis"  # "redis", "memory", or "null"
-
-# Redis connection settings
-REDIS_HOST="localhost"
-REDIS_PORT=6379
-REDIS_DB=0
-REDIS_PASSWORD="optional_password"
-REDIS_URI="redis://localhost:6379/0"
-
-# Default TTL settings (in seconds)
-CACHE_DEFAULT_TTL=300  # 5 minutes
-```
-
-### Available Backends
-
-The cache system provides multiple backends:
-
-1. **Redis Backend**: Production-ready backend with all features, including pattern-based invalidation, atomic counters, and tag-based operations. Recommended for production.
-
-2. **Memory Backend**: In-process memory cache. Fast but doesn't persist or share between processes. Good for development, testing, or as a fallback when Redis is unavailable.
-
-3. **Null Backend**: A non-caching implementation that acts like a cache but doesn't store anything. Useful for testing or disabling caching without changing code.
-
-The system automatically falls back to the memory backend if Redis is unavailable, ensuring resilience.
+This event-driven workflow demonstrates several benefits:
+1. **Decoupling** - Each service focuses on its own responsibility
+2. **Scalability** - Services can scale independently
+3. **Resilience** - If one part fails, other parts can continue or retry
+4. **Traceability** - The entire workflow is trackable through events
+5. **Extensibility** - New steps can be added by subscribing to existing events

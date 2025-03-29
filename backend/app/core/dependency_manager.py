@@ -481,6 +481,15 @@ def register_services() -> None:
         except ImportError:
             logger.warning("Cache service not available")
 
+        try:
+            from app.core.events.service import get_event_service
+
+            dependency_manager.register_service(
+                lambda db=None: get_event_service, "event_service"
+            )
+        except ImportError:
+            logger.warning("Cache service not available")
+
         # Import and register domain services
         try:
             from app.domains.audit.service import get_audit_service

@@ -43,7 +43,12 @@ from app.core.error import (
     initialize as initialize_error_system,
     shutdown as shutdown_error_system,
 )
-from app.core.events import EventBackendType, init_event_backend, init_domain_events
+from app.core.events import (
+    EventBackendType,
+    init_event_backend,
+    init_domain_events,
+    EventConfigurationException,
+)
 from app.core.exceptions import (
     AppException,
     app_exception_handler,
@@ -91,6 +96,30 @@ def add_typed_middleware(app: FastAPI, middleware_class: Any, **options: Any) ->
 ExceptionHandlerType = Callable[[Request, Exception], Response | JSONResponse]
 
 
+def initialize_event_system() -> None:
+    """Initialize the event system with fallback strategies."""
+    for backend in [EventBackendType.CELERY, EventBackendType.MEMORY]:
+        try:
+            logger.info(
+                f"Attempting to initialize event system with backend: {backend}"
+            )
+            init_event_backend(backend)
+            init_domain_events()
+            logger.info(
+                f"Successfully initialized event system with backend: {backend}"
+            )
+            return
+        except EventConfigurationException as e:
+            logger.warning(f"Event configuration failed for backend {backend}: {e}")
+        except Exception as e:
+            logger.exception(
+                f"Unexpected error initializing event system with backend {backend}"
+            )
+            # Decide whether to break or continue depending on severity
+
+    logger.critical("Failed to initialize any event system backend.")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
@@ -121,6 +150,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await initialize_pagination_system()
     await initialize_ratelimiting_system()
     await initialize_cache()
+    # Initialize event system
+    initialize_event_system()
 
     # Initialize services after all core systems are ready
     await initialize_services()
@@ -135,13 +166,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info("Media service initialized during startup")
     except Exception as e:
         logger.error(f"Error initializing media service: {str(e)}", exc_info=True)
-
-    # Initialize event system
-    try:
-        init_event_backend(EventBackendType.MEMORY)
-        init_domain_events()
-    except Exception as e:
-        logger.error(f"Failed to initialize event system: {str(e)}", exc_info=e)
 
     logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
 

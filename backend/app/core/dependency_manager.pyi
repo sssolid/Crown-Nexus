@@ -9,6 +9,7 @@ from app.core.metrics.service import MetricsService
 from app.core.pagination.service import PaginationService
 from app.core.rate_limiting import RateLimitingService
 from app.core.cache.service import CacheService
+from app.core.events import EventService
 from app.domains.audit.service import AuditService
 from app.services.search import SearchService
 from app.domains.media.service import MediaService
@@ -38,6 +39,10 @@ def get_service(
 def get_service(
     service_name: Literal["cache_service"], db: Optional[AsyncSession] = None
 ) -> CacheService: ...
+@overload
+def get_service(
+    service_name: Literal["event_service"], db: Optional[AsyncSession] = None
+) -> EventService: ...
 @overload
 def get_service(
     service_name: Literal["audit_service"], db: Optional[AsyncSession] = None

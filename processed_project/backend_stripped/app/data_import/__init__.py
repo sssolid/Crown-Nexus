@@ -1,2 +1,0 @@
-from __future__ import annotations
-'\nData import package for the application.\n\nThis package provides functionality for importing data from external sources\ninto the application database, including connectors for different data sources,\nprocessors for transforming data, and importers for loading data.\n'

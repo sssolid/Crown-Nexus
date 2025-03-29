@@ -24,7 +24,7 @@ from app.core.cache.manager import initialize_cache
 from app.core.config import Environment, settings
 from app.core.dependency_manager import register_services, initialize_services, shutdown_services, get_service
 from app.core.error import initialize as initialize_error_system, shutdown as shutdown_error_system
-from app.core.events import EventBackendType, init_event_backend, init_domain_events
+from app.core.events import EventBackendType, init_event_backend, init_domain_events, EventConfigurationException
 from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, generic_exception_handler
 from app.middleware.logging import RequestLoggingMiddleware
 from app.core.metrics import initialize as initialize_metrics_system, shutdown as shutdown_metrics_system
@@ -64,6 +64,7 @@ port = 8000
 | --- | --- |
 | `add_typed_middleware` |  |
 | `health_check` |  |
+| `initialize_event_system` |  |
 | `lifespan` |  |
 | `log_current_user` |  |
 
@@ -76,6 +77,11 @@ def add_typed_middleware(app, middleware_class, **options) -> None:
 ```python
 @app.get('/health')
 async def health_check() -> dict:
+```
+
+### `initialize_event_system`
+```python
+def initialize_event_system() -> None:
 ```
 
 ### `lifespan`

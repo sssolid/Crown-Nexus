@@ -9,10 +9,11 @@
 from __future__ import annotations
 import asyncio
 import inspect
-from app.logging import get_logger
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import Any, Callable, Dict, List, Optional, Protocol
+from app.core.events.exceptions import EventBackendException, EventConfigurationException
+from app.logging import get_logger
 ```
 
 ## Global Variables
@@ -29,7 +30,6 @@ EventHandler = EventHandler = Callable[[Dict[str, Any]], Any]
 | `init_domain_events` |  |
 | `init_event_backend` |  |
 | `publish_event` |  |
-| `register_event_handlers` |  |
 | `subscribe_to_event` |  |
 
 ### `get_event_backend`
@@ -50,11 +50,6 @@ def init_event_backend(backend_type, **kwargs) -> EventBackend:
 ### `publish_event`
 ```python
 def publish_event(event_name, payload) -> None:
-```
-
-### `register_event_handlers`
-```python
-def register_event_handlers(*modules) -> None:
 ```
 
 ### `subscribe_to_event`

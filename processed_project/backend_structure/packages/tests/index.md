@@ -20,3 +20,4 @@
 | Subpackage | Description |
 | --- | --- |
 | [`api`](api/index.md) |  |
+| [`core`](core/index.md) |  |

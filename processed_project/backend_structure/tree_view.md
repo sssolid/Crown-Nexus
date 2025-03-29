@@ -70,7 +70,10 @@ backend/
 │   │   ├── events/
 │   │   │   ├── __init__.py
 │   │   │   ├── backend.py
-│   │   │   └── init.py
+│   │   │   ├── domain_events.py
+│   │   │   ├── exceptions.py
+│   │   │   ├── init.py
+│   │   │   └── service.py
 │   │   ├── exceptions/
 │   │   │   ├── __init__.py
 │   │   │   ├── base.py
@@ -427,6 +430,11 @@ backend/
 │   │   │   ├── test_auth.py
 │   │   │   ├── test_products.py
 │   │   │   └── test_users.py
+│   │   └── __init__.py
+│   ├── core/
+│   │   ├── events/
+│   │   │   ├── __init__.py
+│   │   │   └── test_events.py
 │   │   └── __init__.py
 │   ├── integration/
 │   │   ├── test_api/

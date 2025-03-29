@@ -1,5 +1,5 @@
 # backend Project Structure
-Generated on 2025-03-28 20:12:13
+Generated on 2025-03-29 13:06:33
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -81,7 +81,10 @@ backend/
 │   │   ├── events/
 │   │   │   ├── __init__.py
 │   │   │   ├── backend.py
-│   │   │   └── init.py
+│   │   │   ├── domain_events.py
+│   │   │   ├── exceptions.py
+│   │   │   ├── init.py
+│   │   │   └── service.py
 │   │   ├── exceptions/
 │   │   │   ├── __init__.py
 │   │   │   ├── base.py
@@ -439,6 +442,11 @@ backend/
 │   │   │   ├── test_products.py
 │   │   │   └── test_users.py
 │   │   └── __init__.py
+│   ├── core/
+│   │   ├── events/
+│   │   │   ├── __init__.py
+│   │   │   └── test_events.py
+│   │   └── __init__.py
 │   ├── integration/
 │   │   ├── test_api/
 │   │   │   ├── test_auth.py
@@ -493,7 +501,7 @@ from app.core.cache.manager import initialize_cache
 from app.core.config import Environment, settings
 from app.core.dependency_manager import register_services, initialize_services, shutdown_services, get_service
 from app.core.error import initialize as initialize_error_system, shutdown as shutdown_error_system
-from app.core.events import EventBackendType, init_event_backend, init_domain_events
+from app.core.events import EventBackendType, init_event_backend, init_domain_events, EventConfigurationException
 from app.core.exceptions import AppException, app_exception_handler, validation_exception_handler, generic_exception_handler
 from app.middleware.logging import RequestLoggingMiddleware
 from app.core.metrics import initialize as initialize_metrics_system, shutdown as shutdown_metrics_system
@@ -537,6 +545,11 @@ def add_typed_middleware(app, middleware_class, **options) -> None:
 @app.get('/health')
 async def health_check() -> dict:
     """Health check endpoint.  Returns: A dictionary with health status information"""
+```
+
+```python
+def initialize_event_system() -> None:
+    """Initialize the event system with fallback strategies."""
 ```
 
 ```python
@@ -4273,19 +4286,31 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/events/__init_
 **Imports:**
 ```python
 from __future__ import annotations
-from app.core.events.backend import EventBackendType, get_event_backend, init_domain_events, init_event_backend, publish_event, subscribe_to_event, register_event_handlers
+from app.core.events.backend import EventBackendType, get_event_backend, init_domain_events, init_event_backend, publish_event, subscribe_to_event
+from app.core.events.exceptions import EventBackendException, EventConfigurationException, EventException, EventHandlerException, EventPublishException, EventServiceException
+from app.core.events.service import EventService, get_event_service
 ```
 
 **Global Variables:**
 ```python
 __all__ = __all__ = [
+    # Backend
     "EventBackendType",
     "get_event_backend",
     "init_domain_events",
     "init_event_backend",
     "publish_event",
     "subscribe_to_event",
-    "register_event_handlers",  # Kept for backward compatibility
+    # Service
+    "EventService",
+    "get_event_service",
+    # Exceptions
+    "EventException",
+    "EventPublishException",
+    "EventHandlerException",
+    "EventConfigurationException",
+    "EventBackendException",
+    "EventServiceException",
 ]
 ```
 
@@ -4297,10 +4322,11 @@ Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/events/backend
 from __future__ import annotations
 import asyncio
 import inspect
-from app.logging import get_logger
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import Any, Callable, Dict, List, Optional, Protocol
+from app.core.events.exceptions import EventBackendException, EventConfigurationException
+from app.logging import get_logger
 ```
 
 **Global Variables:**
@@ -4312,104 +4338,99 @@ EventHandler = EventHandler = Callable[[Dict[str, Any]], Any]
 **Functions:**
 ```python
 def get_event_backend() -> EventBackend:
-    """Get the configured event backend.
+    """Get the current event backend.
 
-Returns: The configured event backend instance.
+Returns: EventBackend: The current event backend
 
-Raises: RuntimeError: If the event backend is not initialized"""
+Raises: EventConfigurationException: If the event backend is not initialized"""
 ```
 
 ```python
 def init_domain_events() -> None:
-    """Initialize domain events by registering all pending handlers.
+    """Initialize domain event handlers.
 
-This should be called after the event backend is initialized."""
+This function registers all pending event handlers with the event backend and imports domain event modules.
+
+Raises: EventConfigurationException: If the event backend is not initialized or there's an error initializing domain events"""
 ```
 
 ```python
 def init_event_backend(backend_type, **kwargs) -> EventBackend:
-    """Initialize the event backend to use.
+    """Initialize the event backend.
 
-Args: backend_type: Type of event backend to use **kwargs: Additional arguments to pass to the backend constructor
+Args: backend_type: The type of event backend to use **kwargs: Additional configuration options for the backend
 
-Returns: The initialized event backend instance
+Returns: EventBackend: The initialized event backend
 
-Raises: ValueError: If an unsupported backend type is requested"""
+Raises: EventConfigurationException: If there's an error initializing the backend"""
 ```
 
 ```python
 def publish_event(event_name, payload) -> None:
-    """Publish a domain event.
+    """Publish an event with the given name and payload.
 
-Args: event_name: The name of the event to publish payload: Event data to be sent to subscribers"""
-```
+Args: event_name: The name of the event payload: The event payload data
 
-```python
-def register_event_handlers(*modules) -> None:
-    """Import modules to register their event handlers.
-
-This function has been deprecated. Use init_domain_events() instead.
-
-Args: *modules: Module objects to ensure are imported"""
+Raises: EventConfigurationException: If the event backend is not initialized EventBackendException: If there's an error publishing the event"""
 ```
 
 ```python
 def subscribe_to_event(event_name) -> Callable[([EventHandler], EventHandler)]:
-    """Decorator to subscribe a function to a domain event.
-
-If the event backend is not yet initialized, handlers will be stored for later registration with init_domain_events().
+    """Decorator to subscribe a function to an event.
 
 Args: event_name: The name of the event to subscribe to
 
-Returns: Decorator function that registers the handler"""
+Returns: Decorator function that registers the handler
+
+Raises: EventConfigurationException: If there's an error with the event configuration"""
 ```
 
 **Classes:**
 ```python
 class CeleryEventBackend(EventBackend):
-    """Celery implementation of the event backend."""
+    """Event backend implementation using Celery."""
 ```
 *Methods:*
 ```python
     def __init__(self, celery_app) -> None:
-        """Initialize with a Celery application.  Args: celery_app: The Celery application instance"""
+        """Initialize the Celery event backend.  Args: celery_app: The Celery application instance"""
 ```
 ```python
     def publish_event(self, event_name, payload) -> None:
-        """Publish an event using Celery tasks.
+        """Publish an event with the given name and payload using Celery.
 
-Args: event_name: The name of the event to publish payload: Event data to be sent to subscribers"""
+Args: event_name: The name of the event payload: The event payload data
+
+Raises: EventBackendException: If there's an error publishing the event"""
 ```
 ```python
     def subscribe(self, event_name, handler) -> None:
-        """Subscribe a handler to an event using Celery task decoration.
+        """Subscribe a handler to an event using Celery.
 
-Args: event_name: The name of the event to subscribe to handler: The function to call when the event is published"""
+Args: event_name: The name of the event to subscribe to handler: The function to call when the event occurs
+
+Raises: EventBackendException: If there's an error subscribing to the event"""
 ```
 
 ```python
 class EventBackend(ABC, EventPublisher, EventSubscriber):
-    """Abstract base class for event backend implementations."""
+    """Abstract base class for event backends."""
 ```
 *Methods:*
 ```python
 @abstractmethod
     def publish_event(self, event_name, payload) -> None:
-        """Publish an event to subscribers.
-
-Args: event_name: The name of the event to publish payload: Event data to be sent to subscribers"""
+        """Publish an event with the given name and payload."""
 ```
 ```python
 @abstractmethod
     def subscribe(self, event_name, handler) -> None:
-        """Subscribe a handler to an event.
-
-Args: event_name: The name of the event to subscribe to handler: The function to call when the event is published"""
+        """Subscribe a handler to an event."""
 ```
 
 ```python
 class EventBackendType(Enum):
-    """Types of event backends supported."""
+    """Supported types of event backends."""
 ```
 *Class attributes:*
 ```python
@@ -4419,48 +4440,196 @@ MEMORY =     MEMORY = auto()
 
 ```python
 class EventPublisher(Protocol):
-    """Protocol defining the interface for publishing events."""
+    """Protocol defining the event publishing interface."""
 ```
 *Methods:*
 ```python
     def publish_event(self, event_name, payload) -> None:
-        """Publish an event to subscribers.
+        """Publish an event with the given name and payload.
 
-Args: event_name: The name of the event to publish payload: Event data to be sent to subscribers"""
+Args: event_name: The name of the event payload: The event payload data"""
 ```
 
 ```python
 class EventSubscriber(Protocol):
-    """Protocol defining the interface for subscribing to events."""
+    """Protocol defining the event subscription interface."""
 ```
 *Methods:*
 ```python
     def subscribe(self, event_name, handler) -> None:
         """Subscribe a handler to an event.
 
-Args: event_name: The name of the event to subscribe to handler: The function to call when the event is published"""
+Args: event_name: The name of the event to subscribe to handler: The function to call when the event occurs"""
 ```
 
 ```python
 class MemoryEventBackend(EventBackend):
-    """In-memory implementation of the event backend for testing or simple apps."""
+    """Event backend implementation using in-memory handlers."""
 ```
 *Methods:*
 ```python
     def __init__(self) -> None:
-        """Initialize the in-memory event registry."""
+        """Initialize the in-memory event backend."""
 ```
 ```python
     def publish_event(self, event_name, payload) -> None:
-        """Publish an event to all subscribers immediately in-process.
+        """Publish an event with the given name and payload in-memory.
 
-Args: event_name: The name of the event to publish payload: Event data to be sent to subscribers"""
+Args: event_name: The name of the event payload: The event payload data
+
+Raises: EventBackendException: If there's an error publishing the event"""
 ```
 ```python
     def subscribe(self, event_name, handler) -> None:
-        """Subscribe a handler to an event for in-memory processing.
+        """Subscribe a handler to an event in-memory.
 
-Args: event_name: The name of the event to subscribe to handler: The function to call when the event is published"""
+Args: event_name: The name of the event to subscribe to handler: The function to call when the event occurs
+
+Raises: EventBackendException: If there's an error subscribing to the event"""
+```
+
+###### Module: domain_events
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/events/domain_events.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import time
+from dataclasses import asdict, dataclass, field
+from datetime import datetime
+from typing import Any, ClassVar, Dict, Generic, Optional, Type, TypeVar
+```
+
+**Global Variables:**
+```python
+T = T = TypeVar("T")
+```
+
+**Classes:**
+```python
+@dataclass
+class DomainEvent(Generic[T]):
+    """Base class for all domain events.
+
+This class provides common functionality for domain events and enforces a consistent structure across all event types."""
+```
+*Methods:*
+```python
+@classmethod
+    def create(cls, data, **context) -> DomainEvent[T]:
+        """Create a new event with the given data and context.
+
+Args: data: The main event data **context: Additional context information
+
+Returns: DomainEvent: The created event instance"""
+```
+```python
+@classmethod
+    def from_dict(cls, data) -> DomainEvent:
+        """Create an event instance from a dictionary.
+
+Args: data: Dictionary containing event data
+
+Returns: DomainEvent: Instance of the event"""
+```
+```python
+    def to_dict(self) -> Dict[(str, Any)]:
+        """Convert the event to a dictionary for serialization.  Returns: Dict containing all event data"""
+```
+
+```python
+@dataclass
+class OrderCompletedEvent(DomainEvent[Dict[(str, Any)]]):
+    """Event fired when an order is completed."""
+```
+
+```python
+@dataclass
+class ProductUpdatedEvent(DomainEvent[Dict[(str, Any)]]):
+    """Event fired when a product is updated."""
+```
+
+```python
+@dataclass
+class TypedUserCreatedEvent(DomainEvent[UserData]):
+    """Event fired when a new user is created, with strongly typed data."""
+```
+
+```python
+@dataclass
+class UserCreatedEvent(DomainEvent[Dict[(str, Any)]]):
+    """Event fired when a new user is created."""
+```
+
+```python
+@dataclass
+class UserData(object):
+    """Data structure for user-related events."""
+```
+
+###### Module: exceptions
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/events/exceptions.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+from typing import Any, Dict, List, Optional, Union
+from app.core.exceptions.base import AppException, ErrorCategory, ErrorCode, ErrorSeverity
+```
+
+**Classes:**
+```python
+class EventBackendException(EventException):
+    """Exception raised when there's an error with the event backend."""
+```
+*Methods:*
+```python
+    def __init__(self, message, backend_type, details, original_exception) -> None:
+```
+
+```python
+class EventConfigurationException(EventException):
+    """Exception raised when there's an error with event system configuration."""
+```
+*Methods:*
+```python
+    def __init__(self, message, details, original_exception) -> None:
+```
+
+```python
+class EventException(AppException):
+    """Base exception for all event-related exceptions."""
+```
+*Methods:*
+```python
+    def __init__(self, message, code, details, status_code, original_exception) -> None:
+```
+
+```python
+class EventHandlerException(EventException):
+    """Exception raised when an event handler fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, event_name, handler_name, details, original_exception) -> None:
+```
+
+```python
+class EventPublishException(EventException):
+    """Exception raised when publishing an event fails."""
+```
+*Methods:*
+```python
+    def __init__(self, message, event_name, details, original_exception) -> None:
+```
+
+```python
+class EventServiceException(EventException):
+    """Exception raised when there's an error with the event service."""
+```
+*Methods:*
+```python
+    def __init__(self, message, details, original_exception) -> None:
 ```
 
 ###### Module: init
@@ -4623,6 +4792,94 @@ Args: event_name: The name of the event to publish payload: Event data to be sen
         """Subscribe a handler to an event for in-memory processing.
 
 Args: event_name: The name of the event to subscribe to handler: The function to call when the event is published"""
+```
+
+###### Module: service
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/app/core/events/service.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import asyncio
+import inspect
+import time
+from typing import Any, Callable, Dict, List, Optional, TypeVar, cast
+from app.core.events.backend import EventBackend, EventBackendType, EventHandler, get_event_backend, init_event_backend, init_domain_events, publish_event as backend_publish_event, subscribe_to_event as backend_subscribe_to_event
+from app.core.events.exceptions import EventConfigurationException, EventPublishException, EventServiceException, EventHandlerException
+from app.logging import get_logger
+from app.core.dependency_manager import get_dependency
+from app.core.dependency_manager import register_service
+```
+
+**Global Variables:**
+```python
+logger = logger = get_logger("app.core.events.service")
+T = T = TypeVar("T")
+Event = Event = Dict[str, Any]
+HAS_METRICS = False
+```
+
+**Functions:**
+```python
+def get_event_service() -> EventService:
+    """Get or create the event service instance.  Returns: EventService: The global event service instance"""
+```
+
+**Classes:**
+```python
+class EventService(object):
+    """Service for managing domain events in the application.
+
+This service provides: - Event publishing with metrics tracking - Subscription management - Integration with error handling, logging, and metrics - Advanced event filtering capabilities - Support for both sync and async event handlers"""
+```
+*Methods:*
+```python
+    def __init__(self) -> None:
+        """Initialize the event service."""
+```
+```python
+    def event_handler(self, event_name, filter_func) -> Callable[([EventHandler], EventHandler)]:
+        """Advanced decorator to subscribe a function to an event with filtering.
+
+Args: event_name: The name of the event to subscribe to filter_func: Optional function to filter events before processing
+
+Returns: Decorator function that registers the handler
+
+Example: @event_service.event_handler( "order.status_changed", filter_func=lambda event: event["data"]["new_status"] == "completed" ) async def handle_order_completed(event): order_id = event["data"]["order_id"] # Process completed orders"""
+```
+```python
+    async def initialize(self, backend_type) -> None:
+        """Initialize the event service with the specified backend.
+
+Args: backend_type: The type of event backend to use (MEMORY or CELERY)"""
+```
+```python
+    async def publish(self, event_name, payload, context) -> None:
+        """Publish an event with the given name and payload.
+
+Args: event_name: The name of the event payload: The event payload data context: Additional context data for this event
+
+Raises: EventPublishException: If there's an error publishing the event EventServiceException: If the event service is not initialized"""
+```
+```python
+    def set_default_context(self, context) -> None:
+        """Set default context data to be included with all published events.
+
+Args: context: Dictionary of context data"""
+```
+```python
+    async def shutdown(self) -> None:
+        """Shut down the event service."""
+```
+```python
+    def subscribe(self, event_name) -> Callable[([EventHandler], EventHandler)]:
+        """Decorator to subscribe a function to an event.
+
+Args: event_name: The name of the event to subscribe to
+
+Returns: Decorator function that registers the handler
+
+Example: @event_service.subscribe("user.created") async def handle_user_created(event): user_id = event["data"]["user_id"] # Process the event"""
 ```
 
 ##### Package: exceptions
@@ -26257,8 +26514,83 @@ async def test_update_user_admin(client, admin_token, normal_user) -> None:
 Args: client: Test client admin_token: Admin authentication token normal_user: User to update"""
 ```
 
+#### Package: core
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/core`
+
+**__init__.py:**
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/core/__init__.py`
+
+##### Package: events
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/core/events`
+
+**__init__.py:**
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/core/events/__init__.py`
+
+###### Module: test_events
+Path: `/home/runner/work/Crown-Nexus/Crown-Nexus/backend/tests/core/events/test_events.py`
+
+**Imports:**
+```python
+from __future__ import annotations
+import asyncio
+import pytest
+from typing import Dict, Any, List
+from app.core.events import EventBackendType, publish_event, get_event_service
+from app.core.events.domain_events import DomainEvent, UserData, TypedUserCreatedEvent
+```
+
+**Global Variables:**
+```python
+TEST_EVENT = 'test.event'
+FILTERED_EVENT = 'test.filtered_event'
+event_received = False
+```
+
+**Functions:**
+```python
+@pytest.fixture
+async def event_system():
+    """Initialize and teardown the event system for tests."""
+```
+
+```python
+@get_event_service().event_handler(FILTERED_EVENT, filter_func=Lambda)
+async def handle_filtered_event(event) -> None:
+    """Test handler for filtered events."""
+```
+
+```python
+@get_event_service().event_handler(TEST_EVENT)
+async def handle_test_event(event) -> None:
+    """Test handler for basic events."""
+```
+
+```python
+@pytest.mark.asyncio
+async def test_domain_event_class(event_system):
+    """Test using the domain event classes."""
+```
+
+```python
+@pytest.mark.asyncio
+async def test_event_error_handling(event_system):
+    """Test that errors in event handlers don't crash the system."""
+```
+
+```python
+@pytest.mark.asyncio
+async def test_filtered_events(event_system):
+    """Test that event filtering works correctly."""
+```
+
+```python
+@pytest.mark.asyncio
+async def test_publish_and_handle_event(event_system):
+    """Test that events are properly published and handled."""
+```
+
 # frontend Frontend Structure
-Generated on 2025-03-28 20:12:13
+Generated on 2025-03-29 13:06:33
 
 ## Project Overview
 - Project Name: frontend

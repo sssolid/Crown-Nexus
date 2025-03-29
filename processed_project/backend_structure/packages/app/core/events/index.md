@@ -13,4 +13,7 @@
 | Module | Description |
 | --- | --- |
 | [`backend`](backend.md) |  |
+| [`domain_events`](domain_events.md) |  |
+| [`exceptions`](exceptions.md) |  |
 | [`init`](init.md) |  |
+| [`service`](service.md) |  |

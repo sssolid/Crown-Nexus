@@ -286,36 +286,36 @@ def configure_std_logging() -> None:
 
 def configure_structlog() -> None:
     """Configure structlog for structured logging."""
-    shared_processors: List[Processor] = [
+    base_processors: List[Processor] = [
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.CallsiteParameterAdder(),
         structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
         add_request_id_processor,
         add_user_id_processor,
         add_service_info_processor,
     ]
 
-    # In development mode, use colored console renderer
-    if get_environment() == "development":
+    environment = get_environment()
+
+    if environment == "development":
+        # Exclude `format_exc_info` for dev console output to avoid warning and allow pretty tracebacks
         structlog.configure(
-            processors=shared_processors
+            processors=base_processors
             + [
-                ConsoleRendererWithLineNumbers(
-                    colors=True
-                )  # Use custom renderer with line numbers
+                ConsoleRendererWithLineNumbers(colors=True)
             ],
             logger_factory=structlog.stdlib.LoggerFactory(),
             wrapper_class=structlog.stdlib.BoundLogger,
             cache_logger_on_first_use=True,
         )
     else:
-        # In production mode, route through stdlib logging for proper formatting
+        # Include `format_exc_info` for structured output in production (e.g. JSON, file, or system logs)
         structlog.configure(
-            processors=shared_processors
+            processors=base_processors
             + [
+                structlog.processors.format_exc_info,
                 structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
             ],
             logger_factory=structlog.stdlib.LoggerFactory(),

@@ -9,9 +9,10 @@ This module defines fundamental settings for the application including
 environment, logging configuration, and basic application information.
 """
 
+import os
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -53,6 +54,41 @@ class BaseAppSettings(BaseSettings):
     # Logging settings
     LOG_LEVEL: LogLevel = LogLevel.INFO
     LOG_FORMAT: str = "text"
+
+    # Middleware configuration
+    MIDDLEWARE_EXCLUDE_PATHS: List[str] = [
+        "/api/v1/docs",
+        "/api/v1/redoc",
+        "/api/v1/openapi.json",
+        "/static/",
+        "/media/"
+    ]
+
+    # Request timeout configuration
+    REQUEST_TIMEOUT_SECONDS: float = float(os.getenv("REQUEST_TIMEOUT_SECONDS", "30.0"))
+
+    # Compression settings
+    COMPRESSION_MINIMUM_SIZE: int = int(os.getenv("COMPRESSION_MINIMUM_SIZE", "1000"))
+    COMPRESSION_LEVEL: int = int(os.getenv("COMPRESSION_LEVEL", "6"))
+
+    # Metrics configuration
+    METRICS_IGNORE_PATHS: List[str] = ["/metrics", "/api/v1/metrics", "/health"]
+
+    # Default cache control settings
+    DEFAULT_CACHE_CONTROL: str = os.getenv(
+        "DEFAULT_CACHE_CONTROL",
+        "no-store, no-cache, must-revalidate, max-age=0"
+    )
+
+    # Cache rules by path
+    CACHE_RULES: Dict[str, str] = {
+        "/static/": "public, max-age=86400, stale-while-revalidate=3600",
+        "/media/": "public, max-age=86400, stale-while-revalidate=3600",
+        "/api/v1/docs": "public, max-age=3600",
+        "/api/v1/redoc": "public, max-age=3600",
+        "/api/v1/openapi.json": "public, max-age=3600",
+        "/api/v1/health": "public, max-age=60",
+    }
 
     model_config = SettingsConfigDict(
         env_file=".env",

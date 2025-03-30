@@ -15,7 +15,8 @@ This guide provides a practical overview of the core systems used throughout the
 10. [Event System](#10-event-system)
 11. [Permission System](#11-permission-system)
 12. [Security System](#12-security-system)
-13. [Common Patterns and Best Practices](#13-common-patterns-and-best-practices)
+13. [Middleware System](#13-middleware-system)
+14. [Common Patterns and Best Practices](#14-common-patterns-and-best-practices)
 
 ## 1. Logging System
 
@@ -3237,7 +3238,352 @@ async def log_token_revocation(event):
     )
 ```
 
-## 13. Common Patterns and Best Practices
+## 13. Middleware System
+
+The middleware system provides a framework for processing HTTP requests and responses throughout their lifecycle. Middleware components handle cross-cutting concerns like logging, security, and performance monitoring.
+
+### Key Features
+- Request context and tracking
+- Request/response logging
+- Security protections and headers
+- Performance monitoring and metrics
+- Rate limiting and timeout enforcement
+- Response formatting and compression
+- Error handling and standardization
+- Distributed tracing
+- Cache control
+
+### Available Middleware
+
+#### RequestContextMiddleware
+Sets up the request context with a unique ID and user ID for tracking requests throughout the system.
+
+```python
+from app.middleware import RequestContextMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(RequestContextMiddleware)
+```
+
+#### TracingMiddleware
+Implements distributed tracing for tracking requests across multiple services and components.
+
+```python
+from app.middleware import TracingMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(TracingMiddleware, service_name="api-service")
+```
+
+#### MetricsMiddleware
+Collects request metrics like counts, durations, and status codes for performance monitoring.
+
+```python
+from app.middleware import MetricsMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(MetricsMiddleware, ignore_paths=["/metrics", "/health"])
+```
+
+#### SecurityMiddleware
+Adds security headers and blocks suspicious requests to protect against common attacks.
+
+```python
+from app.middleware import SecurityHeadersMiddleware, SecureRequestMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(SecurityHeadersMiddleware, content_security_policy="default-src 'self'")
+app.add_middleware(SecureRequestMiddleware, block_suspicious_requests=True)
+```
+
+#### RateLimitMiddleware
+Controls request rates to prevent abuse and ensure fair resource usage.
+
+```python
+from app.middleware import RateLimitMiddleware
+from app.core.rate_limiting import RateLimitRule, RateLimitStrategy
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(
+    RateLimitMiddleware,
+    rules=[
+        RateLimitRule(
+            requests_per_window=100,
+            window_seconds=60,
+            strategy=RateLimitStrategy.IP
+        )
+    ],
+    use_redis=True
+)
+```
+
+#### TimeoutMiddleware
+Enforces request timeouts to prevent long-running requests from consuming resources.
+
+```python
+from app.middleware import TimeoutMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(TimeoutMiddleware, timeout_seconds=30.0)
+```
+
+#### CacheControlMiddleware
+Adds appropriate cache control headers to responses based on request path and method.
+
+```python
+from app.middleware import CacheControlMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(CacheControlMiddleware)
+```
+
+#### ResponseFormatterMiddleware
+Standardizes API responses to ensure consistent format with success flag, data, and metadata.
+
+```python
+from app.middleware import ResponseFormatterMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(ResponseFormatterMiddleware)
+```
+
+#### CompressionMiddleware
+Compresses response data to reduce bandwidth and improve performance.
+
+```python
+from app.middleware import CompressionMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(CompressionMiddleware, minimum_size=1000)
+```
+
+#### ErrorHandlerMiddleware
+Catches exceptions and provides standardized error responses.
+
+```python
+from app.middleware import ErrorHandlerMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(ErrorHandlerMiddleware)
+```
+
+### Middleware Ordering
+
+Middleware order is critical as it affects request processing flow. The recommended order is:
+
+1. **RequestContextMiddleware** - First to establish request context
+2. **TracingMiddleware** - Early for accurate tracing
+3. **MetricsMiddleware** - Early to measure full request lifecycle
+4. **SecurityMiddleware** - Block malicious requests early
+5. **RateLimitMiddleware** - Control request rates early
+6. **TimeoutMiddleware** - Enforce timeouts before heavy processing
+7. **CORSMiddleware** - Handle cross-origin requests
+8. **SecurityHeadersMiddleware** - Add security headers
+9. **CacheControlMiddleware** - Add cache control headers
+10. **ResponseFormatterMiddleware** - Format responses
+11. **CompressionMiddleware** - Compress response data
+12. **ErrorHandlerMiddleware** - Last to catch all exceptions
+
+### Creating Custom Middleware
+
+Custom middleware can be created by extending the BaseHTTPMiddleware class:
+
+```python
+from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
+from typing import Callable, Any
+
+from app.logging import get_logger
+
+logger = get_logger("app.middleware.custom")
+
+class CustomMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app: Any, option1: str = "default") -> None:
+        super().__init__(app)
+        self.option1 = option1
+        logger.info("CustomMiddleware initialized", option1=option1)
+
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Response]
+    ) -> Response:
+        # Pre-processing logic
+        logger.info("Processing request in custom middleware")
+
+        try:
+            # Call the next middleware or route handler
+            response = await call_next(request)
+
+            # Post-processing logic
+            logger.info("Request processed successfully")
+
+            return response
+        except Exception as e:
+            # Error handling logic
+            logger.error(f"Error in custom middleware: {str(e)}")
+            raise
+```
+
+### Middleware Best Practices
+
+1. **Order Matters**: Be mindful of middleware execution order
+2. **Performance Impact**: Keep middleware lightweight and efficient
+3. **Error Handling**: Always handle exceptions properly
+4. **Metrics**: Include performance metrics for observability
+5. **Context Preservation**: Don't lose request context between middleware
+6. **Exclusion Paths**: Provide ways to exclude certain paths from processing
+7. **Graceful Degradation**: Middleware should degrade gracefully if dependencies fail
+8. **Configuration**: Support external configuration through settings
+9. **Minimal Work**: Do only what's necessary and delegate complex logic to services
+10. **Documentation**: Document middleware purpose, options, and behavior clearly
+
+### Integration with Other Systems
+
+Middleware components often interact with other application systems:
+
+#### Logging System Integration
+
+```python
+from app.logging import get_logger, request_context
+from fastapi import Request
+
+# In your middleware
+logger = get_logger("app.middleware.example")
+
+async def dispatch(self, request: Request, call_next):
+    request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    with request_context(request_id=request_id):
+        logger.info("Processing request", path=request.url.path)
+        # Process request
+        return await call_next(request)
+```
+
+#### Metrics System Integration
+
+```python
+from app.core.dependency_manager import get_service
+
+# In your middleware
+metrics_service = get_service("metrics_service")
+metrics_service.increment_counter(
+    "requests_total",
+    1,
+    {"path": request.url.path}
+)
+```
+
+#### Error System Integration
+
+```python
+from app.core.error import handle_exception
+
+# In your middleware
+try:
+    # Process request
+    return await call_next(request)
+except Exception as e:
+    request_id = getattr(request.state, "request_id", None)
+    handle_exception(e, request_id=request_id)
+    raise
+```
+
+#### Cache System Integration
+
+```python
+from app.core.dependency_manager import get_service
+
+# In your middleware
+cache_service = get_service("cache_service")
+cached_response = await cache_service.get(f"response:{request.url.path}")
+if cached_response:
+    return cached_response
+```
+
+### Common Middleware Patterns
+
+#### Request/Response Timing
+
+```python
+async def dispatch(self, request: Request, call_next):
+    start_time = time.monotonic()
+
+    response = await call_next(request)
+
+    # Calculate duration
+    duration = time.monotonic() - start_time
+    response.headers["X-Response-Time"] = f"{duration:.4f}s"
+
+    return response
+```
+
+#### Authentication Check
+
+```python
+async def dispatch(self, request: Request, call_next):
+    # Extract token
+    auth_header = request.headers.get("Authorization")
+
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.replace("Bearer ", "")
+        # Validate token
+        # Set user in request state
+        request.state.user_id = user_id
+
+    return await call_next(request)
+```
+
+#### Response Modification
+
+```python
+async def dispatch(self, request: Request, call_next):
+    response = await call_next(request)
+
+    # Modify response headers
+    response.headers["X-Custom-Header"] = "value"
+
+    # Modify response body (for JSON responses)
+    if isinstance(response, JSONResponse):
+        content = response.body
+        modified_content = json.loads(content)
+        modified_content["extra_field"] = "value"
+
+        return JSONResponse(
+            content=modified_content,
+            status_code=response.status_code,
+            headers=dict(response.headers),
+        )
+
+    return response
+```
+
+#### Conditional Processing
+
+```python
+async def dispatch(self, request: Request, call_next):
+    # Skip processing for certain paths
+    if any(request.url.path.startswith(prefix) for prefix in self.exclude_paths):
+        return await call_next(request)
+
+    # Skip processing for certain methods
+    if request.method in ["OPTIONS", "HEAD"]:
+        return await call_next(request)
+
+    # Normal processing
+    # ...
+
+    return await call_next(request)
+```
+
+## 14. Common Patterns and Best Practices
 
 This section provides examples of common patterns and best practices for using the various systems together effectively.
 

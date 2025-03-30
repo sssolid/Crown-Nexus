@@ -10,18 +10,16 @@ middleware, exception handlers, and application components.
 
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, AsyncGenerator, Callable, Optional
+from typing import Any, AsyncGenerator, Optional, List
 
 import uvicorn
 from fastapi import FastAPI, Depends, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.logging import (
-    reinitialize_logging,  # Use reinitialize instead of initialize
+    reinitialize_logging,
     shutdown_logging,
     get_logger,
     set_user_id,
@@ -55,7 +53,6 @@ from app.core.exceptions import (
     validation_exception_handler,
     generic_exception_handler,
 )
-from app.middleware.logging import RequestLoggingMiddleware
 from app.core.metrics import (
     initialize as initialize_metrics_system,
     shutdown as shutdown_metrics_system,
@@ -76,11 +73,22 @@ from app.core.validation import (
     shutdown as shutdown_validation_system,
 )
 from app.domains.users.models import User
-from app.middleware.error_handler import ErrorHandlerMiddleware
+
+# Direct middleware imports
+from app.middleware.request_context import RequestContextMiddleware
+from app.middleware.tracing import TracingMiddleware
 from app.middleware.metrics import MetricsMiddleware
-from app.middleware.rate_limiting import RateLimitMiddleware
-from app.middleware.response_formatter import ResponseFormatterMiddleware
+from app.middleware.timeout import TimeoutMiddleware
+from app.middleware.compression import CompressionMiddleware
 from app.middleware.security import SecurityHeadersMiddleware, SecureRequestMiddleware
+from app.middleware.rate_limiting import RateLimitMiddleware
+from app.middleware.cache_control import CacheControlMiddleware
+from app.middleware.response_formatter import ResponseFormatterMiddleware
+from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.cors import EnhancedCORSMiddleware
+
+# CRITICAL FIX: Import router at the module level, not inside the lifespan
+from app.api.v1.router import api_router
 
 # Initialize logger for this module - logging system is already initialized
 logger = get_logger("app.main")
@@ -88,36 +96,41 @@ logger = get_logger("app.main")
 
 # Type definition for middleware add_middleware method
 def add_typed_middleware(app: FastAPI, middleware_class: Any, **options: Any) -> None:
-    """Add middleware with proper type annotations to avoid IDE warnings."""
+    """Add middleware with proper type annotations to avoid IDE warnings.
+
+    Args:
+        app: The FastAPI application
+        middleware_class: The middleware class to add
+        **options: Additional options for the middleware
+    """
     app.add_middleware(middleware_class, **options)  # type: ignore
 
 
-# Type definition for exception handlers
-ExceptionHandlerType = Callable[[Request, Exception], Response | JSONResponse]
+def initialize_event_system() -> bool:
+    """Initialize the event system with fallback strategies.
 
-
-def initialize_event_system() -> None:
-    """Initialize the event system with fallback strategies."""
+    Returns:
+        bool: True if initialization was successful, False otherwise
+    """
     for backend in [EventBackendType.CELERY, EventBackendType.MEMORY]:
         try:
-            logger.info(
-                f"Attempting to initialize event system with backend: {backend}"
-            )
+            logger.info(f"Attempting to initialize event system with backend: {backend}")
             init_event_backend(backend)
             init_domain_events()
-            logger.info(
-                f"Successfully initialized event system with backend: {backend}"
-            )
-            return
+            logger.info(f"Successfully initialized event system with backend: {backend}")
+            return True
         except EventConfigurationException as e:
             logger.warning(f"Event configuration failed for backend {backend}: {e}")
         except Exception as e:
-            logger.exception(
-                f"Unexpected error initializing event system with backend {backend}"
-            )
-            # Decide whether to break or continue depending on severity
+            logger.exception(f"Unexpected error initializing event system with backend {backend}")
+            # Continue with the next backend
 
     logger.critical("Failed to initialize any event system backend.")
+    return False
+
+
+# List to keep track of initialized components
+initialized_components: List[str] = []
 
 
 @asynccontextmanager
@@ -133,63 +146,125 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Yields:
         None
     """
+    global initialized_components
+    initialized_components = []
+
     # Reinitialize logging if needed (it's already initialized at import time)
     await reinitialize_logging()
+    initialized_components.append("logging")
 
     logger.info("Starting application initialization")
 
     # Initialize error system before other components that might use it
-    await initialize_error_system()
+    try:
+        await initialize_error_system()
+        initialized_components.append("error_system")
+        logger.info("Error system initialized")
+    except Exception as e:
+        logger.critical(f"Failed to initialize error system: {str(e)}", exc_info=True)
+        raise  # Error system is critical - fail fast if it can't initialize
 
     # Register services before initialization
     register_services()
+    initialized_components.append("services_registered")
+    logger.info("Services registered")
 
     # Initialize core systems in order of dependency
     await initialize_validation_system()
+    initialized_components.append("validation_system")
+    logger.info("Validation system initialized")
+
     await initialize_metrics_system()
+    initialized_components.append("metrics_system")
+    logger.info("Metrics system initialized")
+
     await initialize_pagination_system()
+    initialized_components.append("pagination_system")
+    logger.info("Pagination system initialized")
+
     await initialize_ratelimiting_system()
+    initialized_components.append("ratelimiting_system")
+    logger.info("Rate limiting system initialized")
+
     await initialize_cache()
+    initialized_components.append("cache")
+    logger.info("Cache system initialized")
+
     # Initialize event system
-    initialize_event_system()
+    if initialize_event_system():
+        initialized_components.append("event_system")
+        logger.info("Event system initialized")
 
     # Initialize services after all core systems are ready
     await initialize_services()
+    initialized_components.append("services_initialized")
+    logger.info("Services initialized")
 
     # Initialize external integrations
     await initialize_as400_sync()
+    initialized_components.append("as400_sync")
+    logger.info("AS400 sync initialized")
 
     # Initialize media service
-    media_service = get_service("media_service")
     try:
+        media_service = get_service("media_service")
         await media_service.initialize()
-        logger.info("Media service initialized during startup")
+        initialized_components.append("media_service")
+        logger.info("Media service initialized")
     except Exception as e:
         logger.error(f"Error initializing media service: {str(e)}", exc_info=True)
+        # Continue without media service
 
     logger.info(f"Application started in {settings.ENVIRONMENT.value} environment")
 
-    # Include API router
-    from app.api.v1.router import api_router
+    # CRITICAL FIX: DO NOT include router here - moved to after app creation
 
-    app.include_router(api_router, prefix=settings.API_V1_STR)
-
+    # Yield control back to the ASGI server
     yield
 
     # Shutdown sequence - in reverse order of initialization
     logger.info("Beginning application shutdown sequence")
 
-    await shutdown_as400_sync()
-    await shutdown_services()
-    await shutdown_ratelimiting_system()
-    await shutdown_pagination_system()
-    await shutdown_metrics_system()
-    await shutdown_validation_system()
-    await shutdown_error_system()
+    # Shutdown components in reverse order based on what was initialized
+    for component in reversed(initialized_components):
+        try:
+            logger.info(f"Shutting down {component}")
+
+            if component == "as400_sync":
+                await shutdown_as400_sync()
+            elif component == "services_initialized":
+                await shutdown_services()
+            elif component == "ratelimiting_system":
+                await shutdown_ratelimiting_system()
+            elif component == "pagination_system":
+                await shutdown_pagination_system()
+            elif component == "metrics_system":
+                await shutdown_metrics_system()
+            elif component == "validation_system":
+                await shutdown_validation_system()
+            elif component == "error_system":
+                await shutdown_error_system()
+
+            logger.info(f"{component} shutdown complete")
+        except Exception as e:
+            logger.error(f"Error during {component} shutdown: {str(e)}", exc_info=True)
 
     logger.info("Application shutdown complete")
-    await shutdown_logging()
 
+    # Finally, shutdown logging
+    try:
+        if "logging" in initialized_components:
+            await shutdown_logging()
+    except Exception as e:
+        print(f"Error during logging shutdown: {str(e)}")
+
+
+# Default middleware exclusion paths - used across multiple middleware for consistency
+DEFAULT_MIDDLEWARE_EXCLUDE_PATHS = getattr(
+    settings,
+    "MIDDLEWARE_EXCLUDE_PATHS",
+    ["/api/v1/docs", "/api/v1/redoc", "/api/v1/openapi.json", "/static/", "/media/"]
+)
 
 # Create FastAPI application
 app = FastAPI(
@@ -202,31 +277,34 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS
-if settings.BACKEND_CORS_ORIGINS:
-    add_typed_middleware(
-        app,
-        CORSMiddleware,
-        allow_origins=settings.BACKEND_CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+# CRITICAL FIX: Include router AFTER app creation but BEFORE middleware setup
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
-# Add middleware in order of execution
-add_typed_middleware(app, RequestLoggingMiddleware)
-add_typed_middleware(app, MetricsMiddleware)
-add_typed_middleware(app, ErrorHandlerMiddleware)
-add_typed_middleware(app, ResponseFormatterMiddleware)
+# === MIDDLEWARE CONFIGURATION ===
+# Middleware order is critical - they execute in the order added
+
+# 1. Request Context - Must be first to capture all requests and establish context
+add_typed_middleware(app, RequestContextMiddleware)
+
+# 2. Tracing - Early to establish request tracing
+add_typed_middleware(app, TracingMiddleware, service_name=settings.PROJECT_NAME)
+
+# 3. Metrics - Early to accurately measure request performance
 add_typed_middleware(
     app,
-    SecurityHeadersMiddleware,
-    content_security_policy=settings.CONTENT_SECURITY_POLICY,
-    permissions_policy=settings.PERMISSIONS_POLICY,
+    MetricsMiddleware,
+    ignore_paths=getattr(settings, "METRICS_IGNORE_PATHS", ["/metrics", "/api/v1/metrics"])
 )
-add_typed_middleware(app, SecureRequestMiddleware, block_suspicious_requests=True)
 
-# Add rate limiting middleware in non-development environments
+# 4. Security middleware - Block malicious requests early
+add_typed_middleware(
+    app,
+    SecureRequestMiddleware,
+    block_suspicious_requests=True,
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+)
+
+# 5. Rate limiting - Control request rates early in the chain
 if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLED:
     add_typed_middleware(
         app,
@@ -236,7 +314,7 @@ if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLE
                 requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
                 window_seconds=60,
                 strategy=RateLimitStrategy.IP,
-                exclude_paths=["/api/v1/health", "/static/"],
+                exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS + ["/health"],
             ),
             RateLimitRule(
                 requests_per_window=10,
@@ -248,7 +326,64 @@ if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLE
         use_redis=settings.RATE_LIMIT_STORAGE == "redis",
         enable_headers=True,
         block_exceeding_requests=True,
+        fallback_to_memory=True,
     )
+
+# 6. Timeout middleware - Prevent long-running requests
+# Only add in production-like environments
+if settings.ENVIRONMENT != Environment.DEVELOPMENT:
+    add_typed_middleware(
+        app,
+        TimeoutMiddleware,
+        timeout_seconds=getattr(settings, "REQUEST_TIMEOUT_SECONDS", 30.0),
+        exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+    )
+
+# 7. CORS middleware - Handle cross-origin requests
+if settings.BACKEND_CORS_ORIGINS:
+    add_typed_middleware(
+        app,
+        EnhancedCORSMiddleware,
+        allow_origins=settings.BACKEND_CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+# 8. Security headers - Add security headers to responses
+add_typed_middleware(
+    app,
+    SecurityHeadersMiddleware,
+    content_security_policy=settings.CONTENT_SECURITY_POLICY,
+    permissions_policy=settings.PERMISSIONS_POLICY,
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+)
+
+# 9. Cache control - Manage response caching
+add_typed_middleware(
+    app,
+    CacheControlMiddleware,
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
+)
+
+# 10. Response formatting - Standardize API responses
+add_typed_middleware(
+    app,
+    ResponseFormatterMiddleware,
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
+)
+
+# 11. Compression - Compress response data (after formatting)
+add_typed_middleware(
+    app,
+    CompressionMiddleware,
+    minimum_size=getattr(settings, "COMPRESSION_MINIMUM_SIZE", 1000),
+    compression_level=getattr(settings, "COMPRESSION_LEVEL", 6),
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+)
+
+# 12. Error handling - Must be last to catch all exceptions
+add_typed_middleware(app, ErrorHandlerMiddleware)
 
 # Add exception handlers with proper typing
 app.add_exception_handler(AppException, app_exception_handler)  # type: ignore

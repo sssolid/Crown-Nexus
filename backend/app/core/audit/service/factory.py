@@ -13,8 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.logging import get_logger
-from app.domains.audit.service.base import AuditLogger
-from app.domains.audit.service.loggers import (
+from app.core.audit.service.base import AuditLogger
+from app.core.audit.service.loggers import (
     DatabaseAuditLogger,
     FileAuditLogger,
     LoggingAuditLogger,

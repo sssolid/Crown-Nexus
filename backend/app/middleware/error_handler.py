@@ -88,6 +88,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
 
             # Extract request context
             request_id = getattr(request.state, "request_id", None)
+            user_id = getattr(request.state, "user_id", None)
             path = request.url.path
             method = request.method
 
@@ -109,7 +110,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             )
 
             # Report the exception to error handling system
-            handle_exception(exc, request_id=request_id, path=path, method=method)
+            handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
 
             # Track metrics if available
             self._track_error_metrics(
@@ -128,6 +129,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
 
             # Extract request context
             request_id = getattr(request.state, "request_id", None)
+            user_id = getattr(request.state, "user_id", None)
             path = request.url.path
             method = request.method
 
@@ -149,7 +151,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             )
 
             # Report the exception to error handling system
-            handle_exception(exc, request_id=request_id, path=path, method=method)
+            handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
 
             # Track metrics if available
             self._track_error_metrics(
@@ -168,6 +170,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
 
             # Extract request context
             request_id = getattr(request.state, "request_id", None)
+            user_id = getattr(request.state, "user_id", None)
             path = request.url.path
             method = request.method
 
@@ -193,7 +196,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             )
 
             # Report the exception to error handling system
-            handle_exception(exc, request_id=request_id, path=path, method=method)
+            handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
 
             # Track metrics if available
             self._track_error_metrics(

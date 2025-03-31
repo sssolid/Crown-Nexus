@@ -17,12 +17,11 @@ from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 from app.domains.chat.models import ChatRoom
-from app.domains.audit.models import AuditLog
+from app.core.audit import AuditLog
 
 if TYPE_CHECKING:
-    from app.domains.location.models import Address
     from app.domains.users.models import User
-    from app.domains.audit.models import AuditLog
+    from app.core.audit import AuditLog
     from app.domains.products.models import Brand
 
 

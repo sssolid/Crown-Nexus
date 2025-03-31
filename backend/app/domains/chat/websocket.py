@@ -14,7 +14,7 @@ from app.chat.schemas import (
     WebSocketResponse,
 )
 from app.core.service_registry import get_service
-from app.domains.audit.service_service import (
+from app.core.audit import (
     AuditEventType,
     AuditLogLevel,
     AuditService,

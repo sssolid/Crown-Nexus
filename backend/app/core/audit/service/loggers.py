@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.logging import get_logger
-from app.domains.audit.service.base import (
+from app.core.audit.service.base import (
     AuditContext,
     AuditEventType,
     AuditLogLevel,
@@ -431,7 +431,7 @@ class DatabaseAuditLogger(BaseAuditLogger, AuditLogger):
 
         try:
             # Import the AuditLog model here to avoid circular imports
-            from app.domains.audit.models import AuditLog
+            from app.core.audit.models import AuditLog
 
             # Create a new AuditLog instance
             audit_log = AuditLog(

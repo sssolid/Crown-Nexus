@@ -1,6 +1,8 @@
 # app/main.py
 from __future__ import annotations
 
+from app.core.audit.service import get_audit_service
+
 """
 Main application module.
 
@@ -194,6 +196,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     if initialize_event_system():
         initialized_components.append("event_system")
         logger.info("Event system initialized")
+
+    # Initialize audit system
+    audit_service = get_audit_service()
+    await audit_service.initialize()
+    initialized_components.append("audit_service")
+    logger.info("Audit service initialized")
 
     # Initialize services after all core systems are ready
     await initialize_services()

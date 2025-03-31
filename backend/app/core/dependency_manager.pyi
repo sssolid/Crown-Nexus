@@ -10,7 +10,7 @@ from app.core.pagination.service import PaginationService
 from app.core.rate_limiting import RateLimitingService
 from app.core.cache.service import CacheService
 from app.core.events import EventService
-from app.domains.audit.service import AuditService
+from app.core.audit.service import AuditService
 from app.services.search import SearchService
 from app.domains.media.service import MediaService
 

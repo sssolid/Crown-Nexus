@@ -12,7 +12,7 @@ from typing import Optional, Dict, Any
 from sqlalchemy import select, or_, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.audit.models import AuditLog
+from app.core.audit.models import AuditLog
 from app.repositories.base import BaseRepository
 
 

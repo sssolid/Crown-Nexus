@@ -14,15 +14,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.logging import get_logger
-from app.domains.audit.service.base import (
+from app.core.audit.service.base import (
     AuditContext,
     AuditEventType,
     AuditLogLevel,
     AuditLogger,
     AuditOptions,
 )
-from app.domains.audit.service.factory import AuditLoggerFactory
-from app.domains.audit.service.query import AuditQuery
+from app.core.audit.service.factory import AuditLoggerFactory
+from app.core.audit.service.query import AuditQuery
 from app.services.interfaces import ServiceInterface
 
 logger = get_logger("app.domains.audit.service.service")

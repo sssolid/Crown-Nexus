@@ -1,0 +1,25 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="db,redis, prom, graf, elast (REMOTE)" type="docker-deploy" factoryName="docker-compose.yml" folderName="remote" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="envFilePath" value="" />
+        <option name="secondarySourceFiles">
+          <list>
+            <option value="infrastructure/docker/docker-compose-remote.yml" />
+          </list>
+        </option>
+        <option name="services">
+          <list>
+            <option value="db" />
+            <option value="redis" />
+            <option value="elasticsearch" />
+            <option value="prometheus" />
+            <option value="grafana" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="infrastructure/docker/docker-compose.yml" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>

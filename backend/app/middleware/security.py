@@ -203,6 +203,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
         ]
 
         self.exclude_paths = exclude_paths or [
+            "/",
             "/docs",
             "/redoc",
             "/openapi.json",
@@ -283,8 +284,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                     raise SecurityException(
                         message="Forbidden - Suspicious request detected",
                         details={"ip": client_ip, "path": path},
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        code=ErrorCode.SECURITY_ERROR,
+                        status_code=status.HTTP_403_FORBIDDEN
                     )
 
             return await call_next(request)

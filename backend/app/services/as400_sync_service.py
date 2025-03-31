@@ -754,7 +754,7 @@ class AS400SyncService:
             entity_type: Type of entity synced
             result: Sync result
         """
-        from app.domains.audit.models import AuditLog
+        from app.core.audit import AuditLog
 
         # Create audit log entry
         audit_log = AuditLog(

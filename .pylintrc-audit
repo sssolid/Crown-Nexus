@@ -1,0 +1,13 @@
+[MASTER]
+# Load only the audit checker plugin
+load-plugins=crown_nexus_pylint.audit_checker
+
+[MESSAGES CONTROL]
+# Only enable custom checkers
+disable=all
+# Enable your custom checker by its error ID (C9001)
+enable=C9001
+
+[REPORTS]
+# Set the output format
+output-format=text

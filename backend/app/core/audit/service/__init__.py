@@ -2,7 +2,7 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.audit.service.service import AuditService
+from app.core.audit.service.service import AuditService
 
 # Singleton instance
 _audit_service_instance: Optional[AuditService] = None

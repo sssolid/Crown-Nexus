@@ -492,7 +492,7 @@ def register_services() -> None:
 
         # Import and register domain services
         try:
-            from app.domains.audit.service import get_audit_service
+            from app.core.audit.service import get_audit_service
 
             dependency_manager.register_service(
                 lambda db=None: get_audit_service(db), "audit_service"

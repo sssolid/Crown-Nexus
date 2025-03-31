@@ -50,7 +50,6 @@ def encrypt_data(data: Union[str, bytes, dict]) -> str:
         logger.error(f"Encryption error: {str(e)}")
         raise SecurityException(
             message="Failed to encrypt data",
-            code=ErrorCode.SECURITY_ERROR,
             details={"error": str(e)},
         ) from e
 
@@ -83,7 +82,6 @@ def decrypt_data(encrypted_data: str) -> Union[str, dict]:
         logger.error(f"Decryption error: {str(e)}")
         raise SecurityException(
             message="Failed to decrypt data",
-            code=ErrorCode.SECURITY_ERROR,
             details={"error": "Invalid encrypted data format"},
         ) from e
 
@@ -115,7 +113,6 @@ def generate_secure_token(length: int = 32) -> str:
         logger.error(f"Failed to generate secure token: {str(e)}")
         raise SecurityException(
             message="Failed to generate secure token",
-            code=ErrorCode.SECURITY_ERROR,
             details={"error": str(e)},
         ) from e
 

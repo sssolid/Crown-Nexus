@@ -14,7 +14,7 @@ from sqlalchemy import delete, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.logging import get_logger
-from app.domains.audit.service.base import AuditEventType, AuditLogLevel
+from app.core.audit.service.base import AuditEventType, AuditLogLevel
 
 logger = get_logger("app.domains.audit.service.query")
 
@@ -65,7 +65,7 @@ class AuditQuery:
         """
         try:
             # Import the AuditLog model here to avoid circular imports
-            from app.domains.audit.models import AuditLog
+            from app.core.audit.models import AuditLog
 
             # Build base query
             query = select(AuditLog)
@@ -130,7 +130,7 @@ class AuditQuery:
         """
         try:
             # Import the AuditLog model here to avoid circular imports
-            from app.domains.audit.models import AuditLog
+            from app.core.audit.models import AuditLog
 
             query = select(AuditLog).filter(AuditLog.id == event_id)
             result = await self.db.execute(query)
@@ -206,7 +206,7 @@ class AuditQuery:
         """
         try:
             # Import the AuditLog model here to avoid circular imports
-            from app.domains.audit.models import AuditLog
+            from app.core.audit.models import AuditLog
 
             cutoff_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
                 days=days_to_keep

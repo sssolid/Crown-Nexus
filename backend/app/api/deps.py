@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Union, Callable
 
 from app.core.security.dependencies import optional_oauth2_scheme
-from app.domains.audit.service.service import AuditService
+from app.core.audit.service import AuditService
 from fastapi import Depends, Query, WebSocket, status
 from jose import JWTError
 from pydantic import ValidationError

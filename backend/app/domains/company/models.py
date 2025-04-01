@@ -17,7 +17,7 @@ from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 from app.domains.chat.models import ChatRoom
-from app.core.audit import AuditLog
+from app.core.audit.models import AuditLog
 
 if TYPE_CHECKING:
     from app.domains.users.models import User

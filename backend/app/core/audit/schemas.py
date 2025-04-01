@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-"""Audit schema definitions.
+"""
+Audit schema definitions.
 
 This module defines Pydantic schemas for audit log objects,
 including creation, filtering, and response models.
@@ -9,20 +10,13 @@ including creation, filtering, and response models.
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class AuditLogLevel(str, Enum):
-    """Severity levels for audit logs.
-
-    Attributes:
-        INFO: Informational events.
-        WARNING: Warning events that might require attention.
-        ERROR: Error events that indicate problems.
-        CRITICAL: Critical events that require immediate attention.
-    """
+class AuditLogLevelEnum(str, Enum):
+    """Log levels for audit events."""
 
     INFO = "info"
     WARNING = "warning"
@@ -30,13 +24,44 @@ class AuditLogLevel(str, Enum):
     CRITICAL = "critical"
 
 
-class AuditEventType(str, Enum):
-    """Types of auditable events.
+class AuditEventTypeEnum(str, Enum):
+    """Types of events that can be audited."""
 
-    This is a subset of common event types. The system can handle
-    any string value for event_type, not just these enumerated ones.
-    """
+    # Authentication events
+    USER_LOGIN = "user_login"
+    USER_LOGOUT = "user_logout"
+    LOGIN_FAILED = "login_failed"
+    PASSWORD_RESET_REQUESTED = "password_reset_requested"
+    PASSWORD_RESET_COMPLETED = "password_reset_completed"
+    MFA_ENABLED = "mfa_enabled"
+    MFA_DISABLED = "mfa_disabled"
+    SESSION_EXPIRED = "session_expired"
 
+    # API key events
+    API_KEY_CREATED = "api_key_created"
+    API_KEY_REVOKED = "api_key_revoked"
+
+    # User management events
+    USER_CREATED = "user_created"
+    USER_UPDATED = "user_updated"
+    USER_DELETED = "user_deleted"
+    USER_ACTIVATED = "user_activated"
+    USER_DEACTIVATED = "user_deactivated"
+    PASSWORD_CHANGED = "password_changed"
+    EMAIL_CHANGED = "email_changed"
+    USER_PROFILE_UPDATED = "user_profile_updated"
+
+    # Permission events
+    PERMISSION_CHANGED = "permission_changed"
+    ROLE_ASSIGNED = "role_assigned"
+    ROLE_REVOKED = "role_revoked"
+    ACCESS_DENIED = "access_denied"
+
+    # System events
+    SYSTEM_STARTED = "system_started"
+    SYSTEM_STOPPED = "system_stopped"
+
+    # Generic events for backward compatibility
     LOGIN = "login"
     LOGOUT = "logout"
     CREATE = "create"
@@ -45,40 +70,25 @@ class AuditEventType(str, Enum):
     VIEW = "view"
     EXPORT = "export"
     IMPORT = "import"
-    APPROVE = "approve"
-    REJECT = "reject"
-    PASSWORD_CHANGE = "password_change"
-    ROLE_CHANGE = "role_change"
     API_ACCESS = "api_access"
 
 
 class AuditLogBase(BaseModel):
-    """Base schema for audit log data.
-
-    Attributes:
-        timestamp: When the audited event occurred.
-        event_type: Type of event being audited.
-        level: Log level (info, warning, error).
-        user_id: ID of the user who performed the action.
-        ip_address: IP address of the user.
-        resource_id: ID of the affected resource.
-        resource_type: Type of the affected resource.
-        details: Additional details about the event.
-        request_id: ID of the request that triggered the event.
-        user_agent: User agent of the client.
-        session_id: ID of the user's session.
-        company_id: ID of the company context.
-    """
+    """Base schema for audit logs."""
 
     timestamp: datetime = Field(
         default_factory=datetime.now, description="Event timestamp"
     )
     event_type: str = Field(..., description="Event type")
-    level: AuditLogLevel = Field(AuditLogLevel.INFO, description="Log level")
+    level: AuditLogLevelEnum = Field(
+        AuditLogLevelEnum.INFO, description="Log level"
+    )
     user_id: Optional[uuid.UUID] = Field(
         None, description="User who performed the action"
     )
-    ip_address: Optional[str] = Field(None, description="IP address of the user")
+    ip_address: Optional[str] = Field(
+        None, description="IP address of the user"
+    )
     resource_id: Optional[uuid.UUID] = Field(
         None, description="ID of the affected resource"
     )
@@ -88,23 +98,28 @@ class AuditLogBase(BaseModel):
     details: Optional[Dict[str, Any]] = Field(
         None, description="Additional event details"
     )
-    request_id: Optional[str] = Field(None, description="Request ID")
-    user_agent: Optional[str] = Field(None, description="User agent of the client")
-    session_id: Optional[str] = Field(None, description="Session ID")
-    company_id: Optional[uuid.UUID] = Field(None, description="Company context")
+    request_id: Optional[str] = Field(
+        None, description="Request ID"
+    )
+    user_agent: Optional[str] = Field(
+        None, description="User agent of the client"
+    )
+    session_id: Optional[str] = Field(
+        None, description="Session ID"
+    )
+    company_id: Optional[uuid.UUID] = Field(
+        None, description="Company context"
+    )
 
 
 class AuditLogCreate(AuditLogBase):
-    """Schema for creating a new audit log entry."""
+    """Schema for creating an audit log."""
 
     pass
 
 
 class AuditLogInDB(AuditLogBase):
-    """Schema for audit log data as stored in the database.
-
-    Includes database-specific fields like ID.
-    """
+    """Schema for an audit log in the database."""
 
     id: uuid.UUID = Field(..., description="Unique identifier")
 
@@ -112,67 +127,65 @@ class AuditLogInDB(AuditLogBase):
 
 
 class AuditLog(AuditLogInDB):
-    """Schema for complete audit log data in API responses.
+    """Schema for an audit log with related information."""
 
-    Includes related entities like user and company details.
-    """
-
-    user: Optional[Dict[str, Any]] = Field(None, description="User details")
-    company: Optional[Dict[str, Any]] = Field(None, description="Company details")
+    user: Optional[Dict[str, Any]] = Field(
+        None, description="User details"
+    )
+    company: Optional[Dict[str, Any]] = Field(
+        None, description="Company details"
+    )
 
 
 class AuditLogFilter(BaseModel):
-    """Schema for filtering audit logs.
+    """Schema for filtering audit logs."""
 
-    Attributes:
-        start_date: Filter logs after this date.
-        end_date: Filter logs before this date.
-        event_type: Filter by event type.
-        level: Filter by log level.
-        user_id: Filter by user ID.
-        resource_type: Filter by resource type.
-        resource_id: Filter by resource ID.
-        company_id: Filter by company ID.
-    """
-
-    start_date: Optional[datetime] = Field(None, description="Start date for filter")
-    end_date: Optional[datetime] = Field(None, description="End date for filter")
-    event_type: Optional[str] = Field(None, description="Event type to filter by")
-    level: Optional[AuditLogLevel] = Field(None, description="Log level to filter by")
-    user_id: Optional[uuid.UUID] = Field(None, description="User ID to filter by")
-    resource_type: Optional[str] = Field(None, description="Resource type to filter by")
+    start_date: Optional[datetime] = Field(
+        None, description="Start date for filter"
+    )
+    end_date: Optional[datetime] = Field(
+        None, description="End date for filter"
+    )
+    event_type: Optional[str] = Field(
+        None, description="Event type to filter by"
+    )
+    level: Optional[AuditLogLevelEnum] = Field(
+        None, description="Log level to filter by"
+    )
+    user_id: Optional[uuid.UUID] = Field(
+        None, description="User ID to filter by"
+    )
+    resource_type: Optional[str] = Field(
+        None, description="Resource type to filter by"
+    )
     resource_id: Optional[uuid.UUID] = Field(
         None, description="Resource ID to filter by"
     )
-    company_id: Optional[uuid.UUID] = Field(None, description="Company ID to filter by")
+    company_id: Optional[uuid.UUID] = Field(
+        None, description="Company ID to filter by"
+    )
 
 
 class AuditLogStatistics(BaseModel):
-    """Schema for audit log statistics.
-
-    Attributes:
-        total_count: Total number of log entries.
-        by_level: Count of logs grouped by level.
-        by_event_type: Count of logs grouped by event type.
-        by_user: Count of logs grouped by user.
-        by_resource_type: Count of logs grouped by resource type.
-    """
+    """Schema for audit log statistics."""
 
     total_count: int = Field(..., description="Total number of log entries")
-    by_level: Dict[str, int] = Field(..., description="Count by level")
-    by_event_type: Dict[str, int] = Field(..., description="Count by event type")
-    by_user: Dict[str, int] = Field(..., description="Count by user")
-    by_resource_type: Dict[str, int] = Field(..., description="Count by resource type")
+    by_level: Dict[str, int] = Field(
+        ..., description="Count by level"
+    )
+    by_event_type: Dict[str, int] = Field(
+        ..., description="Count by event type"
+    )
+    by_user: Dict[str, int] = Field(
+        ..., description="Count by user"
+    )
+    by_resource_type: Dict[str, int] = Field(
+        ..., description="Count by resource type"
+    )
 
 
 class AuditLogExportFormat(str, Enum):
-    """Export formats for audit logs.
-
-    Attributes:
-        CSV: Comma-separated values format.
-        JSON: JSON format.
-        XML: XML format.
-    """
+    """Export formats for audit logs."""
 
     CSV = "csv"
     JSON = "json"
@@ -180,16 +193,24 @@ class AuditLogExportFormat(str, Enum):
 
 
 class AuditLogExportRequest(BaseModel):
-    """Schema for requesting an audit log export.
+    """Schema for exporting audit logs."""
 
-    Attributes:
-        filter: Filter criteria for logs to export.
-        format: Export format.
-        include_details: Whether to include detailed information.
-    """
-
-    filter: Optional[AuditLogFilter] = Field(None, description="Filter criteria")
+    filter: Optional[AuditLogFilter] = Field(
+        None, description="Filter criteria"
+    )
     format: AuditLogExportFormat = Field(
         AuditLogExportFormat.CSV, description="Export format"
     )
-    include_details: bool = Field(True, description="Include detailed information")
+    include_details: bool = Field(
+        True, description="Include detailed information"
+    )
+
+
+class AuditLogResponse(BaseModel):
+    """Schema for paginated audit log responses."""
+
+    total: int = Field(..., description="Total number of logs matching criteria")
+    items: List[AuditLog] = Field(..., description="Audit logs")
+    page: int = Field(1, description="Current page number")
+    page_size: int = Field(..., description="Number of logs per page")
+    pages: int = Field(..., description="Total number of pages")

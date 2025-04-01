@@ -129,7 +129,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
                     metrics_service.increment_counter(
                         "request_timeouts_total",
                         1,
-                        {"path": path, "method": request.method}
+                        {"endpoint": path, "method": request.method}
                     )
                 except Exception as e:
                     logger.debug(f"Failed to track timeout metrics: {str(e)}")
@@ -137,7 +137,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
             raise TimeoutException(
                 message=f"Request timed out after {self.timeout_seconds} seconds",
                 details={
-                    "path": path,
+                    "endpoint": path,
                     "method": request.method,
                     "timeout_seconds": self.timeout_seconds
                 },
@@ -150,7 +150,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
                     metrics_service.observe_histogram(
                         "request_duration_seconds",
                         duration,
-                        {"path": path, "method": request.method}
+                        {"endpoint": path, "method": request.method}
                     )
                 except Exception as e:
                     logger.debug(f"Failed to track duration metrics: {str(e)}")

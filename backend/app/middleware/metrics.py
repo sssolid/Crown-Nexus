@@ -118,7 +118,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
                     user_agent = request.headers.get("User-Agent", "unknown")
                     user_agent_type = self._classify_user_agent(user_agent)
                     metrics_service.increment_counter(
-                        "http_requests_by_agent_total",
+                        MetricName.HTTP_REQUESTS_BY_AGENT_TOTAL.value,
                         1,
                         {"agent_type": user_agent_type, "endpoint": endpoint or path},
                     )
@@ -137,9 +137,9 @@ class MetricsMiddleware(BaseHTTPMiddleware):
                 try:
                     content_length = int(response.headers["Content-Length"])
                     metrics_service.observe_histogram(
-                        "http_response_size_bytes",
+                        MetricName.HTTP_RESPONSE_SIZE_BYTES.value,
                         content_length,
-                        {"endpoint": endpoint or path, "method": request.method},
+                        {"path": endpoint or path, "method": request.method},
                     )
                 except (ValueError, Exception) as e:
                     logger.debug(f"Failed to track response size metrics: {e}")
@@ -186,14 +186,14 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
                 # Track status code category
                 try:
-                    status_category = f"{status_code // 100}xx"
+                    status_code = f"{status_code // 100}xx"
                     increment_counter(
-                        "http_status_codes_total",
+                        MetricName.HTTP_STATUS_CODES_TOTAL.value,
                         1,
                         {
                             "method": request.method,
                             "endpoint": endpoint or path,
-                            "status_category": status_category,
+                            "status_code": status_code,
                         },
                     )
                 except Exception as e:

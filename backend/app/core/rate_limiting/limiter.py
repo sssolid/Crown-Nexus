@@ -1,6 +1,8 @@
 # app/core/rate_limiting/limiter.py
 from __future__ import annotations
 
+from app.core.metrics import MetricName
+
 """
 Rate limiter implementation.
 
@@ -145,11 +147,11 @@ class RateLimiter:
                 duration = time.monotonic() - start_time
                 try:
                     metrics_service.observe_histogram(
-                        "rate_limiting_check_duration_seconds",
+                        MetricName.RATE_LIMITING_CHECK_DURATION_SECONDS.value,
                         duration,
                         {
-                            "storage": "redis" if self.use_redis else "memory",
-                            "error": str(error or ""),
+                            "cache_backend": "redis" if self.use_redis else "memory",
+                            "error_type": str(error or ""),
                         },
                     )
                     metrics_service.increment_counter(

@@ -1,6 +1,8 @@
 # backend/app/middleware/request_context.py
 from __future__ import annotations
 
+from app.core.metrics import MetricName
+
 """
 Request context middleware for the application.
 
@@ -107,12 +109,12 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 if metrics_service:
                     try:
                         metrics_service.observe_histogram(
-                            "http_request_duration_seconds",
+                            MetricName.HTTP_REQUEST_DURATION_SECONDS.value,
                             execution_time,
                             {
                                 "method": request.method,
-                                "path": request.url.path,
-                                "status": str(response.status_code // 100) + "xx",
+                                "endpoint": request.url.path,
+                                "status_code": str(response.status_code // 100) + "xx",
                             },
                         )
                     except Exception as e:
@@ -141,11 +143,11 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 if metrics_service:
                     try:
                         metrics_service.increment_counter(
-                            "http_request_errors_total",
+                            MetricName.HTTP_REQUEST_ERRORS_TOTAL.value,
                             1,
                             {
                                 "method": request.method,
-                                "path": request.url.path,
+                                "endpoint": request.url.path,
                                 "error_type": type(e).__name__,
                             },
                         )

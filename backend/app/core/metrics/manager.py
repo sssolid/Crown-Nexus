@@ -84,107 +84,168 @@ def _initialize_default_metrics() -> None:
     """Initialize default application metrics."""
     # HTTP metrics
     create_counter(
-        MetricName.HTTP_REQUESTS_TOTAL,
+        MetricName.HTTP_REQUESTS_TOTAL.value,
         "Total number of HTTP requests",
         [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE],
     )
 
     create_histogram(
-        MetricName.HTTP_REQUEST_DURATION_SECONDS,
+        MetricName.HTTP_REQUEST_DURATION_SECONDS.value,
         "HTTP request duration in seconds",
-        [MetricTag.METHOD, MetricTag.ENDPOINT],
+        [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE],
+    )
+
+    create_counter(
+        MetricName.HTTP_REQUESTS_BY_AGENT_TOTAL.value,
+        "Total number of HTTP requests by agent type and endpoint",
+        [MetricTag.AGENT_TYPE, MetricTag.ENDPOINT],
     )
 
     create_gauge(
-        MetricName.HTTP_IN_PROGRESS,
+        MetricName.HTTP_IN_PROGRESS.value,
         "Number of HTTP requests in progress",
         [MetricTag.METHOD, MetricTag.ENDPOINT],
     )
 
     create_counter(
-        MetricName.HTTP_ERRORS_TOTAL,
+        MetricName.HTTP_ERRORS_TOTAL.value,
         "Total number of HTTP errors",
         [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.ERROR_CODE],
     )
 
     # Database metrics
     create_counter(
-        MetricName.DB_QUERIES_TOTAL,
+        MetricName.DB_QUERIES_TOTAL.value,
         "Total number of database queries",
         [MetricTag.OPERATION, MetricTag.ENTITY],
     )
 
     create_histogram(
-        MetricName.DB_QUERY_DURATION_SECONDS,
+        MetricName.DB_QUERY_DURATION_SECONDS.value,
         "Database query duration in seconds",
         [MetricTag.OPERATION, MetricTag.ENTITY],
     )
 
     create_counter(
-        MetricName.DB_ERRORS_TOTAL,
+        MetricName.DB_ERRORS_TOTAL.value,
         "Total number of database errors",
         [MetricTag.OPERATION, MetricTag.ENTITY, MetricTag.ERROR_TYPE],
     )
 
     # Service metrics
     create_counter(
-        MetricName.SERVICE_CALLS_TOTAL,
+        MetricName.SERVICE_CALLS_TOTAL.value,
         "Total number of service calls",
         [MetricTag.COMPONENT, MetricTag.ACTION],
     )
 
     create_histogram(
-        MetricName.SERVICE_CALL_DURATION_SECONDS,
+        MetricName.SERVICE_CALL_DURATION_SECONDS.value,
         "Service call duration in seconds",
         [MetricTag.COMPONENT, MetricTag.ACTION],
     )
 
     create_counter(
-        MetricName.SERVICE_ERRORS_TOTAL,
+        MetricName.SERVICE_ERRORS_TOTAL.value,
         "Total number of service errors",
         [MetricTag.COMPONENT, MetricTag.ACTION, MetricTag.ERROR_TYPE],
     )
 
     # Cache metrics
     create_counter(
-        MetricName.CACHE_HIT_TOTAL,
+        MetricName.CACHE_HIT_TOTAL.value,
         "Total number of cache hits",
         [MetricTag.CACHE_BACKEND, MetricTag.COMPONENT],
     )
 
     create_counter(
-        MetricName.CACHE_MISS_TOTAL,
+        MetricName.CACHE_MISS_TOTAL.value,
         "Total number of cache misses",
         [MetricTag.CACHE_BACKEND, MetricTag.COMPONENT],
     )
 
     create_histogram(
-        MetricName.CACHE_OPERATION_DURATION_SECONDS,
+        MetricName.CACHE_OPERATION_DURATION_SECONDS.value,
         "Cache operation duration in seconds",
         [MetricTag.CACHE_BACKEND, MetricTag.OPERATION],
+    )
+
+    # Custom Metrics
+    create_histogram(
+        MetricName.REQUEST_TRACE_DURATION_SECONDS.value,
+        "Duration of request traces in seconds",
+        [MetricTag.PATH, MetricTag.METHOD, MetricTag.STATUS_CODE, MetricTag.ERROR_CODE]
+    )
+
+    create_histogram(
+        MetricName.RATE_LIMITING_CHECK_DURATION_SECONDS.value,
+        "Duration of rate limiting checks",
+        [MetricTag.CACHE_BACKEND, MetricTag.ERROR_TYPE]
+    )
+
+    create_histogram(
+        MetricName.RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS.value,
+        "Rate limiting middleware execution time",
+        [MetricTag.LIMITED, MetricTag.PATH]
+    )
+
+    create_counter(
+        MetricName.RATE_LIMITING_REQUESTS_TOTAL.value,
+        "Total number of rate-limited requests",
+        [MetricTag.LIMITED, MetricTag.PATH]
+    )
+
+    create_histogram(
+        MetricName.HTTP_RESPONSE_SIZE_BYTES.value,
+        "Size of HTTP responses in bytes",
+        [MetricTag.PATH, MetricTag.METHOD]
+    )
+
+    create_counter(
+        MetricName.HTTP_STATUS_CODES_TOTAL.value,
+        "HTTP status code count",
+        [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE]
+    )
+
+    create_histogram(
+        MetricName.REQUEST_SECURITY_CHECK_DURATION_SECONDS.value,
+        "Duration of security checks on requests",
+        [MetricTag.SUSPICIOUS, MetricTag.PATH]
+    )
+
+    create_histogram(
+        MetricName.SECURITY_HEADERS_DURATION_SECONDS.value,
+        "Duration to set security headers",
+        [MetricTag.PATH]
+    )
+
+    create_histogram(
+        MetricName.RESPONSE_FORMATTING_DURATION_SECONDS.value,
+        "Time taken to format HTTP responses",
+        [MetricTag.RESPONSE_FORMATTED, MetricTag.PATH]
     )
 
     # System metrics if process metrics enabled
     if _config.enable_process_metrics:
         create_gauge(
-            MetricName.PROCESS_RESIDENT_MEMORY_BYTES,
+            MetricName.PROCESS_RESIDENT_MEMORY_BYTES.value,
             "Resident memory size in bytes",
             [],
         )
 
         create_gauge(
-            MetricName.PROCESS_VIRTUAL_MEMORY_BYTES,
+            MetricName.PROCESS_VIRTUAL_MEMORY_BYTES.value,
             "Virtual memory size in bytes",
             [],
         )
 
         create_counter(
-            MetricName.PROCESS_CPU_SECONDS_TOTAL,
+            MetricName.PROCESS_CPU_SECONDS_TOTAL.value,
             "Total user and system CPU time spent in seconds",
             [],
         )
 
-        create_gauge(MetricName.PROCESS_OPEN_FDS, "Number of open file descriptors", [])
+        create_gauge(MetricName.PROCESS_OPEN_FDS.value, "Number of open file descriptors", [])
 
 
 async def initialize(config: Optional[MetricsConfig] = None) -> None:
@@ -253,6 +314,7 @@ def create_counter(
     Returns:
         CounterCollector object
     """
+    name = str(name)
     namespace = namespace or _config.namespace
     subsystem = subsystem or _config.subsystem
 
@@ -288,6 +350,7 @@ def create_gauge(
     Returns:
         GaugeCollector object
     """
+    name = str(name)
     namespace = namespace or _config.namespace
     subsystem = subsystem or _config.subsystem
 
@@ -325,6 +388,7 @@ def create_histogram(
     Returns:
         HistogramCollector object
     """
+    name = str(name)
     namespace = namespace or _config.namespace
     subsystem = subsystem or _config.subsystem
     buckets = buckets or _config.default_buckets
@@ -390,6 +454,7 @@ def increment_counter(
         amount: Amount to increment by
         labels: Optional label values
     """
+    name = str(name)
     if name not in _counters:
         logger.warning(f"Counter {name} not found, skipping increment")
         return
@@ -430,6 +495,7 @@ def observe_histogram(
         value: Value to observe
         labels: Optional label values
     """
+    name = str(name)
     if name not in _histograms:
         logger.warning(f"Histogram {name} not found, skipping observation")
         return
@@ -450,6 +516,7 @@ def observe_summary(
         value: Value to observe
         labels: Optional label values
     """
+    name = str(name)
     if name not in _summaries:
         logger.warning(f"Summary {name} not found, skipping observation")
         return
@@ -470,6 +537,7 @@ def track_in_progress(
         labels: Label values that uniquely identify the operation
         count: Number to adjust the gauge by (1 for start, -1 for end)
     """
+    metric_name = str(metric_name)
     if metric_name not in _gauges:
         logger.warning(f"Gauge {metric_name} not found, skipping in-progress tracking")
         return

@@ -1,6 +1,8 @@
 # backend/app/middleware/tracing.py
 from __future__ import annotations
 
+from app.core.metrics import MetricName
+
 """
 Tracing middleware for the application.
 
@@ -139,13 +141,13 @@ class TracingMiddleware(BaseHTTPMiddleware):
                 if metrics_service:
                     try:
                         metrics_service.observe_histogram(
-                            "request_trace_duration_seconds",
+                            MetricName.REQUEST_TRACE_DURATION_SECONDS.value,
                             duration,
                             {
                                 "path": path,
                                 "method": request.method,
-                                "status": str(status_code // 100) + "xx",
-                                "error": "true" if error else "false",
+                                "status_code": str(status_code // 100) + "xx",
+                                "error_code": "true" if error else "false",
                             },
                         )
                     except Exception as e:

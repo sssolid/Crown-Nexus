@@ -443,7 +443,7 @@ def register_services() -> None:
         try:
             from app.core.validation.service import get_validation_service
 
-            dependency_manager.register_service(get_validation_service, "error_service")
+            dependency_manager.register_service(get_validation_service, "validation_service")
         except ImportError:
             logger.warning("Validation service not available")
 
@@ -492,7 +492,7 @@ def register_services() -> None:
 
         # Import and register domain services
         try:
-            from app.core.audit.service import get_audit_service
+            from app.core.audit import get_audit_service
 
             dependency_manager.register_service(
                 lambda db=None: get_audit_service(db), "audit_service"

@@ -1,6 +1,8 @@
 # backend/app/middleware/rate_limiting.py
 from __future__ import annotations
 
+from app.core.metrics import MetricName
+
 """
 Rate limiting middleware for FastAPI applications.
 
@@ -137,7 +139,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         metrics_service.increment_counter(
                             "rate_limit_skipped_total",
                             1,
-                            {"path": path, "reason": "excluded_path"},
+                            {"endpoint": path, "reason": "excluded_path"},
                         )
                     except Exception as e:
                         logger.debug(f"Failed to record rate limit metrics: {str(e)}")
@@ -153,7 +155,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         metrics_service.increment_counter(
                             "rate_limit_skipped_total",
                             1,
-                            {"path": path, "reason": "no_applicable_rules"},
+                            {"endpoint": path, "reason": "no_applicable_rules"},
                         )
                     except Exception as e:
                         logger.debug(f"Failed to record rate limit metrics: {str(e)}")
@@ -190,7 +192,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                                 "rate_limit_exceeded_total",
                                 1,
                                 {
-                                    "path": path,
+                                    "endpoint": path,
                                     "client_host": client_host[:15],  # Truncate long IPs
                                     "strategy": rule.strategy.value,
                                     "match_reason": rule_match_reason,
@@ -218,7 +220,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     message="Rate limit exceeded",
                     details={
                         "ip": client_host,
-                        "path": path,
+                        "endpoint": path,
                         "strategy": limited_rule.strategy.value,
                     },
                     headers=headers,
@@ -240,12 +242,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 duration = time.time() - start_time
                 try:
                     metrics_service.observe_histogram(
-                        "rate_limiting_middleware_duration_seconds",
+                        MetricName.RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS.value,
                         duration,
                         {"limited": str(is_limited), "path": path},
                     )
                     metrics_service.increment_counter(
-                        "rate_limiting_requests_total",
+                        MetricName.RATE_LIMITING_REQUESTS_TOTAL.value,
                         1,
                         {"limited": str(is_limited), "path": path},
                     )

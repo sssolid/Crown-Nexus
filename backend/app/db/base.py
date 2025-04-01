@@ -23,9 +23,10 @@ from app.domains.users.models import User, UserRole  # noqa: F401
 from app.domains.company.models import Company  # noqa: F401
 from app.domains.currency.models import Currency, ExchangeRate  # noqa: F401
 from app.domains.media.models import Media, MediaType, MediaVisibility  # noqa: F401
+import app.domains.products.models  # noqa: F401
 
 # Now models that depend on others:
-from app.core.audit import AuditLog  # noqa: F401
+from app.core.audit.models import AuditLog  # noqa: F401
 from app.domains.model_mapping.models import ModelMapping  # noqa: F401
 
 # Import associations after all models

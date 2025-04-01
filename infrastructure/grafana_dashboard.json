@@ -1,60 +1,418 @@
 {
-  "id": null,
   "uid": "crown-nexus-cyberhud",
-  "title": "\ud83d\udd76\ufe0f CROWN NEXUS: CYBER OPS HUD",
+  "title": "☢️ CROWN NEXUS: CYBER OPS HUD",
   "tags": [
     "crown_nexus",
     "prometheus",
-    "cyberpunk"
+    "cyberpunk",
+    "enhanced"
   ],
   "timezone": "browser",
-  "schemaVersion": 36,
-  "version": 1,
-  "refresh": "15s",
-  "style": "dark",
+  "editable": true,
+  "refresh": "10s",
   "time": {
     "from": "now-15m",
     "to": "now"
   },
   "panels": [
     {
-      "type": "timeseries",
-      "title": "HTTP Requests Rate",
       "id": 1,
-      "datasource": "prometheus",
+      "title": "",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "transparent": true,
+      "links": [],
+      "options": {
+        "content": "\n# 👾 CROWN NEXUS OPERATIONS MONITORING HUB 👾\n### REAL-TIME SYSTEM TELEMETRY AND PERFORMANCE ANALYTICS\n",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Active Requests",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 2,
+        "w": 4,
+        "h": 4
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(crown_nexus_api_http_requests_in_progress)",
+          "legendFormat": "In Progress",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds",
+            "fixedColor": "#00ffaa"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              },
+              {
+                "value": 5,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 10,
+                "color": "#ff00aa"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "textMode": "auto",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "colorMode": "thresholds"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Requests/sec",
+      "type": "gauge",
+      "description": "",
+      "gridPos": {
+        "x": 4,
+        "y": 2,
+        "w": 4,
+        "h": 4
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(rate(crown_nexus_api_http_requests_total[1m]))",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "max": 50,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              },
+              {
+                "value": 10,
+                "color": "#00ffaa"
+              },
+              {
+                "value": 30,
+                "color": "#ffaa00"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Error Rate",
+      "type": "bargauge",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 2,
+        "w": 4,
+        "h": 4
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(rate(crown_nexus_api_http_errors_total[1m])) / sum(rate(crown_nexus_api_http_requests_total[1m]))",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              },
+              {
+                "value": 0.01,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 0.05,
+                "color": "#ff00aa"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": false,
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Response Time (95th)",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 2,
+        "w": 4,
+        "h": 4
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_http_request_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "thresholds",
+            "fixedColor": "#00ffaa"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              },
+              {
+                "value": 0.1,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 0.5,
+                "color": "#ff00aa"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "textMode": "auto",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "colorMode": "thresholds"
+      }
+    },
+    {
+      "id": 6,
+      "title": "System Info",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 2,
+        "w": 8,
+        "h": 4
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "python_info",
+          "legendFormat": "Python {{version}}",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#00aaff"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00aaff",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "textMode": "name",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "colorMode": "fixed"
+      }
+    },
+    {
+      "id": 7,
+      "title": "",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 24,
+        "h": 1
+      },
+      "transparent": true,
+      "links": [],
+      "options": {
+        "content": "## 💻 HTTP TRAFFIC MONITORING",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 8,
+      "title": "Requests by Endpoint",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 7,
+        "w": 12,
+        "h": 8
+      },
+      "transparent": true,
       "targets": [
         {
           "expr": "rate(crown_nexus_api_http_requests_total[1m])",
           "legendFormat": "{{endpoint}}",
-          "refId": "A"
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 0
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
             "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -63,102 +421,72 @@
         "overrides": []
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "HTTP Error Rate",
-      "id": 2,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_http_errors_total[1m])",
-          "legendFormat": "{{endpoint}} {{error_code}}",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
         },
-        "overrides": []
-      },
-      "options": {
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
       }
     },
     {
+      "id": 9,
+      "title": "Response Time by Endpoint",
       "type": "timeseries",
-      "title": "Request Duration (95th)",
-      "id": 3,
-      "datasource": "prometheus",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 7,
+        "w": 12,
+        "h": 8
+      },
+      "transparent": true,
       "targets": [
         {
           "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_http_request_duration_seconds_bucket[1m])) by (le, endpoint))",
           "legendFormat": "{{endpoint}}",
-          "refId": "A"
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 0
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "s",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -167,50 +495,114 @@
         "overrides": []
       },
       "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
       }
     },
     {
-      "type": "stat",
-      "title": "Requests In Progress",
-      "id": 4,
-      "datasource": "prometheus",
+      "id": 10,
+      "title": "Response Size by Endpoint",
+      "type": "bargauge",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 8,
+        "h": 6
+      },
+      "transparent": true,
       "targets": [
         {
-          "expr": "sum(crown_nexus_api_http_requests_in_progress)",
-          "legendFormat": "{{endpoint}}",
-          "refId": "A"
+          "expr": "sum(crown_nexus_api_http_response_size_bytes_sum) by (path)",
+          "legendFormat": "{{path}}",
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 0
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": false,
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "Status Code Distribution",
+      "type": "piechart",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 15,
+        "w": 8,
+        "h": 6
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(crown_nexus_api_http_status_codes_total) by (status_code)",
+          "legendFormat": "{{status_code}}",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "seriesBy": "index"
           },
           "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -219,415 +611,75 @@
         "overrides": []
       },
       "options": {
+        "pieType": "pie",
+        "displayLabels": [
+          "name",
+          "value",
+          "percent"
+        ],
         "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "DB Query Rate",
-      "id": 5,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_db_queries_total[1m])",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+          "displayMode": "list",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
         },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "DB Query Duration (95th)",
-      "id": 6,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_db_query_duration_seconds_bucket[1m])) by (le))",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
         },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         }
       }
     },
     {
-      "type": "timeseries",
-      "title": "DB Errors",
-      "id": 7,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_db_errors_total[1m])",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Cache Hits",
-      "id": 8,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_cache_hit_total[1m])",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Cache Misses",
-      "id": 9,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_cache_miss_total[1m])",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 16
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Cache Duration (95th)",
-      "id": 10,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_cache_operation_duration_seconds_bucket[1m])) by (le))",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 16
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Service Call Rate",
-      "id": 11,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_service_calls_total[1m])",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 16
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Service Duration (95th)",
       "id": 12,
-      "datasource": "prometheus",
+      "title": "Rate Limited Requests",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 15,
+        "w": 8,
+        "h": 6
+      },
+      "transparent": true,
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_service_call_duration_seconds_bucket[1m])) by (le))",
-          "legendFormat": "",
-          "refId": "A"
+          "expr": "sum(crown_nexus_api_rate_limiting_requests_total{limited='True'}) or vector(0)",
+          "legendFormat": "Limited",
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 16
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "unit": "short",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "mode": "thresholds",
+            "fixedColor": "#00ffaa"
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
+              },
+              {
+                "value": 1,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 10,
+                "color": "#ff00aa"
               }
             ]
           }
@@ -635,102 +687,90 @@
         "overrides": []
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
+        "textMode": "auto",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "colorMode": "thresholds"
       }
     },
     {
-      "type": "timeseries",
-      "title": "Service Errors",
       "id": 13,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "rate(crown_nexus_api_service_errors_total[1m])",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
+      "title": "",
+      "type": "text",
+      "description": "",
       "gridPos": {
-        "h": 8,
-        "w": 6,
         "x": 0,
-        "y": 24
+        "y": 21,
+        "w": 24,
+        "h": 1
       },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
+      "transparent": true,
+      "links": [],
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
+        "content": "## 🚀 SYSTEM PERFORMANCE",
+        "mode": "markdown"
       }
     },
     {
-      "type": "timeseries",
-      "title": "CPU Time",
       "id": 14,
-      "datasource": "prometheus",
+      "title": "CPU Usage",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
       "targets": [
         {
-          "expr": "crown_nexus_api_process_cpu_seconds_total",
-          "legendFormat": "",
-          "refId": "A"
+          "expr": "rate(crown_nexus_api_process_cpu_seconds_total[1m])",
+          "legendFormat": "CPU",
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 24
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "unit": "percentunit",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -739,102 +779,78 @@
         "overrides": []
       },
       "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
       }
     },
     {
-      "type": "timeseries",
-      "title": "Resident Memory",
       "id": 15,
-      "datasource": "prometheus",
+      "title": "Memory Usage",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 22,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
       "targets": [
         {
           "expr": "crown_nexus_api_process_resident_memory_bytes",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 24
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+          "legendFormat": "Resident",
+          "refId": "A",
+          "instant": false
         },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Virtual Memory",
-      "id": 16,
-      "datasource": "prometheus",
-      "targets": [
         {
           "expr": "crown_nexus_api_process_virtual_memory_bytes",
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "Virtual",
+          "refId": "B",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 24
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
             "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -843,50 +859,56 @@
         "overrides": []
       },
       "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
       }
     },
     {
-      "type": "timeseries",
+      "id": 16,
       "title": "Open File Descriptors",
-      "id": 17,
-      "datasource": "prometheus",
+      "type": "gauge",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 22,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
       "targets": [
         {
           "expr": "crown_nexus_api_process_open_fds",
           "legendFormat": "",
-          "refId": "A"
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 32
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "min": 0,
+          "max": 100,
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "mode": "thresholds"
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -895,50 +917,69 @@
         "overrides": []
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
         }
       }
     },
     {
+      "id": 17,
+      "title": "Garbage Collection",
       "type": "timeseries",
-      "title": "GC Collections",
-      "id": 18,
-      "datasource": "prometheus",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
       "targets": [
         {
           "expr": "rate(python_gc_collections_total[1m])",
-          "legendFormat": "{{generation}}",
-          "refId": "A"
+          "legendFormat": "Gen {{generation}}",
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 32
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
             "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -947,50 +988,73 @@
         "overrides": []
       },
       "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
       }
     },
     {
+      "id": 18,
+      "title": "Objects Collected",
       "type": "timeseries",
-      "title": "GC Collected",
-      "id": 19,
-      "datasource": "prometheus",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 29,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
       "targets": [
         {
           "expr": "rate(python_gc_objects_collected_total[1m])",
-          "legendFormat": "{{generation}}",
-          "refId": "A"
+          "legendFormat": "Gen {{generation}}",
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 32
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
             "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -999,102 +1063,72 @@
         "overrides": []
       },
       "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
       }
     },
     {
+      "id": 19,
+      "title": "Uncollectable Objects",
       "type": "timeseries",
-      "title": "GC Uncollectable",
-      "id": 20,
-      "datasource": "prometheus",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 29,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
       "targets": [
         {
-          "expr": "rate(python_gc_objects_uncollectable_total[1m])",
-          "legendFormat": "{{generation}}",
-          "refId": "A"
+          "expr": "python_gc_objects_uncollectable_total",
+          "legendFormat": "Gen {{generation}}",
+          "refId": "A",
+          "instant": false
         }
       ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 32
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom"
-        }
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Python Info",
-      "id": 21,
-      "datasource": "prometheus",
-      "targets": [
-        {
-          "expr": "python_info",
-          "legendFormat": "{{version}}",
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 40
-      },
+      "links": [],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "color": {
-            "mode": "fixed",
-            "fixedColor": "#00ff66"
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
           },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 2,
             "fillOpacity": 20,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "lineInterpolation": "smooth"
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#00ffaa",
                 "value": null
               }
             ]
@@ -1103,19 +1137,996 @@
         "overrides": []
       },
       "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
         "legend": {
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
         }
+      }
+    },
+    {
+      "id": 20,
+      "title": "",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 24,
+        "h": 1
+      },
+      "transparent": true,
+      "links": [],
+      "options": {
+        "content": "## 🗄️ DATABASE PERFORMANCE",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 21,
+      "title": "Query Rate",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 37,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "rate(crown_nexus_api_db_queries_total[1m])",
+          "legendFormat": "Queries",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "qps",
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 22,
+      "title": "Query Duration",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 37,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(crown_nexus_api_db_query_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A",
+          "instant": false
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(crown_nexus_api_db_query_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p90",
+          "refId": "B",
+          "instant": false
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_db_query_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p95",
+          "refId": "C",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 23,
+      "title": "Database Errors",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 37,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(rate(crown_nexus_api_db_errors_total[1m]))",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "thresholds",
+            "fixedColor": "#00ffaa"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              },
+              {
+                "value": 0.1,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 1,
+                "color": "#ff00aa"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "textMode": "auto",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "colorMode": "thresholds"
+      }
+    },
+    {
+      "id": 24,
+      "title": "",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 44,
+        "w": 24,
+        "h": 1
+      },
+      "transparent": true,
+      "links": [],
+      "options": {
+        "content": "## 💾 CACHE PERFORMANCE",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 25,
+      "title": "Cache Operations",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 45,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "rate(crown_nexus_api_cache_hit_total[1m])",
+          "legendFormat": "Hits",
+          "refId": "A",
+          "instant": false
+        },
+        {
+          "expr": "rate(crown_nexus_api_cache_miss_total[1m])",
+          "legendFormat": "Misses",
+          "refId": "B",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 26,
+      "title": "Cache Hit Ratio",
+      "type": "gauge",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 45,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(rate(crown_nexus_api_cache_hit_total[1m])) / (sum(rate(crown_nexus_api_cache_hit_total[1m])) + sum(rate(crown_nexus_api_cache_miss_total[1m])))",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#ff00aa",
+                "value": null
+              },
+              {
+                "value": 0.5,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 0.8,
+                "color": "#00ffaa"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        }
+      }
+    },
+    {
+      "id": 27,
+      "title": "Cache Operation Duration",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 45,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_cache_operation_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p95",
+          "refId": "A",
+          "instant": false
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(crown_nexus_api_cache_operation_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "B",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 28,
+      "title": "",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 52,
+        "w": 24,
+        "h": 1
+      },
+      "transparent": true,
+      "links": [],
+      "options": {
+        "content": "## 🔗 SERVICE INTEGRATION",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 29,
+      "title": "Service Call Rate",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 53,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "rate(crown_nexus_api_service_calls_total[1m])",
+          "legendFormat": "Calls",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 30,
+      "title": "Service Call Duration",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 53,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_service_call_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p95",
+          "refId": "A",
+          "instant": false
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(crown_nexus_api_service_call_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "B",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 31,
+      "title": "Service Errors",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 53,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "rate(crown_nexus_api_service_errors_total[1m])",
+          "legendFormat": "Errors",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#ff00aa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#ff00aa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 32,
+      "title": "",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 60,
+        "w": 24,
+        "h": 1
+      },
+      "transparent": true,
+      "links": [],
+      "options": {
+        "content": "## 🔒 SECURITY MONITORING",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 33,
+      "title": "Security Headers Duration",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 61,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_security_headers_duration_seconds_bucket[1m])) by (le, path))",
+          "legendFormat": "{{path}}",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 34,
+      "title": "Security Check Duration",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 8,
+        "y": 61,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(crown_nexus_api_request_security_check_duration_seconds_bucket[1m])) by (le, path))",
+          "legendFormat": "{{path}}",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic",
+            "fixedColor": "#00ffaa",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": {
+              "mode": "none"
+            },
+            "lineInterpolation": "smooth",
+            "axisPlacement": "auto",
+            "axisSoftMin": null,
+            "axisSoftMax": null,
+            "showValueIndicator": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "id": 35,
+      "title": "Suspicious Requests",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 16,
+        "y": 61,
+        "w": 8,
+        "h": 7
+      },
+      "transparent": true,
+      "targets": [
+        {
+          "expr": "sum(crown_nexus_api_request_security_check_duration_seconds_count{suspicious='True'}) or vector(0)",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false
+        }
+      ],
+      "links": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds",
+            "fixedColor": "#00ffaa"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#00ffaa",
+                "value": null
+              },
+              {
+                "value": 1,
+                "color": "#ffaa00"
+              },
+              {
+                "value": 5,
+                "color": "#ff00aa"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "textMode": "auto",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "colorMode": "thresholds"
       }
     }
   ],
+  "schemaVersion": 36,
+  "version": 1,
+  "links": [],
   "templating": {
     "list": []
   },
   "annotations": {
     "list": []
   },
-  "editable": true,
   "graphTooltip": 1
 }

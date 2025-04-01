@@ -1,6 +1,8 @@
 # backend/app/middleware/security.py
 from __future__ import annotations
 
+from app.core.metrics import MetricName
+
 """
 Security middleware for the application.
 
@@ -139,7 +141,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 try:
                     duration = time.time() - start_time
                     metrics_service.observe_histogram(
-                        "security_headers_duration_seconds",
+                        MetricName.SECURITY_HEADERS_DURATION_SECONDS.value,
                         duration,
                         {"path": path},
                     )
@@ -194,7 +196,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
         regex_patterns = suspicious_regex_patterns or [
             r"(?i)(union[\s\(\+]+select)",
             r"(?i)(select.+from)",
-            r"(?i)(/\*!|\*/)",
+            r'(?i)(/\*!|\*/(?!\*))',
             r"(?i)(script.*>)",
             r"(?i)(alert\s*\(.*\))",
         ]
@@ -273,7 +275,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                                 "blocked_suspicious_requests_total",
                                 1,
                                 {
-                                    "path": path,
+                                    "endpoint": path,
                                     "method": request.method,
                                     "pattern_type": "regex" if isinstance(suspicious_pattern, re.Pattern) else "string",
                                 },
@@ -294,7 +296,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                 try:
                     duration = time.time() - start_time
                     metrics_service.observe_histogram(
-                        "request_security_check_duration_seconds",
+                        MetricName.REQUEST_SECURITY_CHECK_DURATION_SECONDS.value,
                         duration,
                         {"suspicious": str(suspicious), "path": path},
                     )

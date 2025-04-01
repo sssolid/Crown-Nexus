@@ -1,14 +1,17 @@
 # app/main.py
 from __future__ import annotations
 
-from app.core.audit.service import get_audit_service
-
 """
 Main application module.
 
 This module initializes and configures the FastAPI application, including
 middleware, exception handlers, and application components.
 """
+
+import os
+import multiprocessing
+
+multiprocessing.set_start_method("spawn", force=True)
 
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -39,6 +42,7 @@ from app.core.dependency_manager import (
     shutdown_services,
     get_service,
 )
+from app.core.audit import get_audit_service
 from app.core.error import (
     initialize as initialize_error_system,
     shutdown as shutdown_error_system,
@@ -436,7 +440,7 @@ async def health_check() -> dict:
     }
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and os.getenv("RUN_MAIN") != "true":
     host = "0.0.0.0"
     port = 8000
     uvicorn.run(

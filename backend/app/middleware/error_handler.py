@@ -239,7 +239,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     "error_type": error_type,
                     "status_code": str(status_code),
                     "method": method,
-                    "path": path,
+                    "endpoint": path,
                 },
             )
         except Exception as e:

@@ -1,6 +1,8 @@
 # backend/app/middleware/response_formatter.py
 from __future__ import annotations
 
+from app.core.metrics import MetricName
+
 """
 Response formatter middleware for the application.
 
@@ -163,9 +165,9 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
                 try:
                     duration = time.time() - start_time
                     metrics_service.observe_histogram(
-                        "response_formatting_duration_seconds",
+                        MetricName.RESPONSE_FORMATTING_DURATION_SECONDS.value,
                         duration,
-                        {"formatted": str(formatted), "path": path},
+                        {"response_formatted": str(formatted), "path": path},
                     )
                 except Exception as e:
                     logger.debug(f"Failed to track formatting metrics: {str(e)}")

@@ -62,14 +62,28 @@ class MetricTag:
     CACHE_HIT = "cache_hit"
     CACHE_BACKEND = "cache_backend"
 
+    # Suspicious tags
+    SUSPICIOUS = "suspicious"
 
-class MetricName:
+    # Rate Limiter tags
+    LIMITED = "limited"
+
+    # Response Formatting tags
+    RESPONSE_FORMATTED = "response_formatted"
+
+    # HTTP Request tags
+    AGENT_TYPE = "agent_type"
+
+
+class MetricName(str, Enum):
     """Common metric names for consistent measurement."""
 
     # HTTP metrics
     HTTP_REQUESTS_TOTAL = "http_requests_total"
     HTTP_REQUEST_DURATION_SECONDS = "http_request_duration_seconds"
     HTTP_REQUEST_SIZE_BYTES = "http_request_size_bytes"
+    HTTP_REQUEST_ERRORS_TOTAL = "http_request_errors_total"
+    HTTP_REQUESTS_BY_AGENT_TOTAL = "http_requests_by_agent_total"
     HTTP_RESPONSE_SIZE_BYTES = "http_response_size_bytes"
     HTTP_ERRORS_TOTAL = "http_errors_total"
     HTTP_IN_PROGRESS = "http_requests_in_progress"
@@ -108,6 +122,16 @@ class MetricName:
     PROCESS_VIRTUAL_MEMORY_BYTES = "process_virtual_memory_bytes"
     PROCESS_CPU_SECONDS_TOTAL = "process_cpu_seconds_total"
     PROCESS_OPEN_FDS = "process_open_fds"
+
+    # Custom/Advanced Metrics
+    REQUEST_TRACE_DURATION_SECONDS = "request_trace_duration_seconds"
+    RATE_LIMITING_CHECK_DURATION_SECONDS = "rate_limiting_check_duration_seconds"
+    RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS = "rate_limiting_middleware_duration_seconds"
+    RATE_LIMITING_REQUESTS_TOTAL = "rate_limiting_requests_total"
+    HTTP_STATUS_CODES_TOTAL = "http_status_codes_total"
+    REQUEST_SECURITY_CHECK_DURATION_SECONDS = "request_security_check_duration_seconds"
+    SECURITY_HEADERS_DURATION_SECONDS = "security_headers_duration_seconds"
+    RESPONSE_FORMATTING_DURATION_SECONDS = "response_formatting_duration_seconds"
 
 
 @dataclass

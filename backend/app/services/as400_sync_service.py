@@ -503,13 +503,8 @@ class AS400SyncService:
         # Configure processor
         processor_config = AS400ProcessorConfig(
             field_mapping={
-                "part_number": "PRDNUM",
-                "application": "PRDDESC",
-                "vintage": "VINTAGE",
-                "late_model": "LATEMDL",
-                "soft": "SOFT",
-                "universal": "UNIVRSL",
-                "is_active": "ACTIVE",
+                "part_number": "spart",
+                "part_number_stripped": "snschr",
             },
             boolean_true_values=["1", "Y", "YES", "TRUE", "T"],
             boolean_false_values=["0", "N", "NO", "FALSE", "F"],
@@ -531,7 +526,7 @@ class AS400SyncService:
 
         # Run sync with appropriate query
         # Adjust the query to match your AS400 database structure
-        return await pipeline.run("SELECT * FROM PRODUCTLIB.PRODUCTS")
+        return await pipeline.run("SELECT spart, snschr FROM DSTDATA.INSMFH")
 
     async def _sync_measurements(
         self, connector: AS400Connector, db: AsyncSession
@@ -552,13 +547,11 @@ class AS400SyncService:
         # Configure processor
         processor_config = AS400ProcessorConfig(
             field_mapping={
-                "product_id": "PRDNUM",  # Will be transformed to real ID
-                "length": "LENGTH",
-                "width": "WIDTH",
-                "height": "HEIGHT",
-                "weight": "WEIGHT",
-                "volume": "VOLUME",
-                "dimensional_weight": "DIMWT",
+                "product_id": "spart",  # Will be transformed to real ID
+                "length": "slen1",
+                "width": "swit1",
+                "height": "shgt1",
+                "weight": "swght",
             },
             required_fields=["product_id"],
             unique_key_field="product_id",
@@ -599,7 +592,7 @@ class AS400SyncService:
 
         # Run sync with appropriate query
         # Adjust the query to match your AS400 database structure
-        return await pipeline.run("SELECT * FROM PRODUCTLIB.MEASUREMENTS")
+        return await pipeline.run("SELECT spart, slen1, swit1, shgt1, swght FROM DSTDATA.INSMFH")
 
     async def _sync_inventory(
         self, connector: AS400Connector, db: AsyncSession
@@ -621,9 +614,9 @@ class AS400SyncService:
         # Configure processor
         processor_config = AS400ProcessorConfig(
             field_mapping={
-                "product_id": "PRDNUM",  # Will be transformed to real ID
-                "warehouse_id": "WRHSNUM",  # Will be transformed to real ID
-                "quantity": "QUANTITY",
+                "product_id": "snschr",  # Will be transformed to real ID
+                "warehouse_id": "sbran",  # Will be transformed to real ID
+                "quantity": "sclsk",
             },
             required_fields=["product_id", "warehouse_id", "quantity"],
             unique_key_field="product_id",  # Combined with warehouse in custom processing
@@ -680,7 +673,7 @@ class AS400SyncService:
 
         # Run sync with appropriate query
         # Adjust the query to match your AS400 database structure
-        return await pipeline.run("SELECT * FROM INVENTORYLIB.INVENTORY")
+        return await pipeline.run("SELECT spart, sbran, sclsk FROM DSTDATA.INSMFT")
 
     async def _sync_pricing(
         self, connector: AS400Connector, db: AsyncSession
@@ -754,7 +747,7 @@ class AS400SyncService:
             entity_type: Type of entity synced
             result: Sync result
         """
-        from app.core.audit import AuditLog
+        from app.core.audit.models import AuditLog
 
         # Create audit log entry
         audit_log = AuditLog(

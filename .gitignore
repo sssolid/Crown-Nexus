@@ -1,15 +1,8 @@
 # Ignore data directory
 /data/
 
-# Ignore everything inside processed_project/
-processed_project/*
-
-# Allow all subdirectories and files inside to be tracked
-!processed_project/
-!processed_project/**
-
-# Keep the folder even when empty
-!processed_project/.gitkeep
+# Ignore processed_project
+/processed_project/
 
 /backend/data
 /backend/media/

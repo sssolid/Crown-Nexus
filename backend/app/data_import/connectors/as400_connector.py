@@ -4,18 +4,25 @@ from __future__ import annotations
 AS400 connector for data import.
 
 This module provides a secure connector for extracting data from AS400/iSeries
-databases while implementing strict security measures to protect sensitive data.
+databases using the JTOpen (JT400) Java library via JPype while implementing
+strict security measures to protect sensitive data.
 """
 
 import os
-from typing import Any, Dict, List, Optional, Set
-import pyodbc
-from pydantic import BaseModel, Field, SecretStr, validator
+import re
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set, TypedDict, Union, cast
+from pathlib import Path
+from dataclasses import dataclass, field
+from pydantic import BaseModel, Field, SecretStr, validator, root_validator
 from cryptography.fernet import Fernet
+import structlog
+from functools import cache
 
 from app.core.exceptions import (
     DatabaseException,
     SecurityException,
+    ConfigurationException,
 )
 from app.logging import get_logger
 
@@ -23,14 +30,16 @@ logger = get_logger("app.data_import.connectors.as400_connector")
 
 
 class AS400ConnectionConfig(BaseModel):
-    """Configuration for connecting to AS400/iSeries databases securely."""
+    """Configuration for connecting to AS400/iSeries databases securely using JT400."""
 
-    dsn: str = Field(..., description="ODBC Data Source Name")
+    jt400_jar_path: str = Field(
+        ..., description="Path to the jt400.jar file for Java connection"
+    )
+    server: str = Field(..., description="AS400 server address")
     username: str = Field(..., description="AS400 username (read-only account)")
     password: SecretStr = Field(..., description="AS400 password")
     database: str = Field(..., description="AS400 database/library name")
-    server: Optional[str] = Field(None, description="AS400 server address")
-    port: Optional[int] = Field(None, description="AS400 server port")
+    port: Optional[int] = Field(None, description="AS400 server port (default: 446)")
     ssl: bool = Field(True, description="Use SSL for connection")
     allowed_tables: Optional[List[str]] = Field(
         None, description="Whitelist of allowed tables"
@@ -41,6 +50,14 @@ class AS400ConnectionConfig(BaseModel):
     connection_timeout: int = Field(30, description="Connection timeout in seconds")
     query_timeout: int = Field(60, description="Query timeout in seconds")
     encrypt_connection: bool = Field(True, description="Encrypt connection parameters")
+
+    @validator("jt400_jar_path")
+    def validate_jar_path(cls, v: str) -> str:
+        """Validate that the jt400.jar file exists."""
+        jar_path = Path(v)
+        if not jar_path.exists() or not jar_path.is_file():
+            raise ValueError(f"jt400.jar file not found at: {v}")
+        return v
 
     @validator("port")
     def validate_port(cls, v: Optional[int]) -> Optional[int]:
@@ -63,9 +80,30 @@ class AS400ConnectionConfig(BaseModel):
         extra = "forbid"
 
 
+class ColumnMetadata(TypedDict):
+    """Type definition for column metadata."""
+
+    name: str
+    type_name: str
+    type_code: int
+    precision: int
+    scale: int
+    nullable: bool
+
+
+@dataclass
+class AS400Connection:
+    """Wrapper for JT400 Connection object with metadata."""
+
+    connection: Any  # Java Connection object
+    jdbc_url: str
+    properties: Dict[str, str] = field(default_factory=dict)
+    accessed_tables: Set[str] = field(default_factory=set)
+
+
 class AS400Connector:
     """
-    Secure connector for AS400/iSeries databases.
+    Secure connector for AS400/iSeries databases using JT400 via JPype.
 
     Implements multiple security layers:
     1. SecretStr for password handling
@@ -84,76 +122,147 @@ class AS400Connector:
             config: Configuration for the AS400 connection
         """
         self.config = config
-        self.connection = None
+        self._connection: Optional[AS400Connection] = None
         self._encryption_key = self._get_encryption_key()
-        self._accessed_tables: Set[str] = set()
+
+        # Import JPype
+        try:
+            import jpype
+            from jpype.types import JException
+            self._jpype = jpype
+            self._JException = JException
+            # Initialize JVM if needed
+            self._initialize_jpype()
+        except ImportError:
+            raise ImportError(
+                "jpype module is required for JT400 connections. "
+                "Please install it with 'pip install jpype1'."
+            )
+
         logger.debug(
-            f"AS400Connector initialized for DSN: {config.dsn}, "
-            f"Server: {config.server or 'from DSN'}, "
-            f"Database: {config.database}"
+            "AS400Connector initialized",
+            server=config.server,
+            database=config.database,
         )
+
+    @cache
+    def _initialize_jpype(self) -> None:
+        """
+        Initialize JPype and JVM to use JT400.
+
+        This method is cached to ensure JVM is started only once.
+        """
+        jpype = self._jpype  # Local reference for efficiency
+
+        if not jpype.isJVMStarted():
+            # Start JVM with JT400 jar in classpath
+            jpype.startJVM(
+                classpath=[self.config.jt400_jar_path],
+                convertStrings=True,
+            )
+            logger.debug("JVM started for JT400 access")
+
+            # Try to load the AS400 JDBC driver
+            try:
+                driver_class = jpype.JClass("com.ibm.as400.access.AS400JDBCDriver")
+                driver = driver_class()
+                # Register the driver with DriverManager
+                jpype.JClass("java.sql.DriverManager").registerDriver(driver)
+                logger.debug("AS400 JDBC driver registered successfully")
+            except Exception as e:
+                logger.warning(
+                    "Could not register AS400 JDBC driver explicitly",
+                    error=str(e),
+                )
 
     async def connect(self) -> None:
         """
-        Establish a secure connection to the AS400 database.
+        Establish a secure connection to the AS400 database using JT400.
 
         Raises:
             SecurityException: If security requirements aren't met
             DatabaseException: If connection fails
             ConfigurationException: If configuration is invalid
         """
+        jpype = self._jpype  # Local reference for efficiency
+        JException = self._JException  # Local reference for efficiency
+
         try:
-            # Build secure connection string
-            connection_string = self._build_connection_string()
+            # Get Java classes needed for connection
+            java_sql_DriverManager = jpype.JClass("java.sql.DriverManager")
+            java_util_Properties = jpype.JClass("java.util.Properties")
+
+            # Build JDBC URL
+            jdbc_url = self._build_jdbc_url()
+
+            # Create connection properties
+            properties = java_util_Properties()
+            properties.setProperty("user", self.config.username)
+            properties.setProperty("password", self.config.password.get_secret_value())
+            properties.setProperty("secure", "true" if self.config.ssl else "false")
+            properties.setProperty("prompt", "false")  # Don't prompt for credentials
+            properties.setProperty("libraries", self.config.database)
+
+            # Set timeout properties if supported by JT400
+            properties.setProperty("login timeout", str(self.config.connection_timeout))
+            properties.setProperty("query timeout", str(self.config.query_timeout))
+            properties.setProperty("transaction isolation", "read committed")
+            properties.setProperty("date format", "iso")
+            properties.setProperty("errors", "full")
+
+            # Set to read-only mode
+            properties.setProperty("access", "read only")
 
             # Log connection attempt (without credentials)
             logger.info(
-                f"Connecting to AS400 database: {self.config.database} "
-                f"on DSN: {self.config.dsn}"
+                "Connecting to AS400 database",
+                database=self.config.database,
+                server=self.config.server,
+                ssl=self.config.ssl,
             )
 
             # Connect to the database
-            # Some drivers don't support the timeout parameter through connect()
-            # So we'll try both approaches
-            try:
-                self.connection = pyodbc.connect(connection_string)
-            except pyodbc.Error as e:
-                logger.debug(
-                    f"Connection attempt failed: {str(e)}, retrying with different parameters"
-                )
-                # If first approach fails, try without any extra parameters
-                self.connection = pyodbc.connect(connection_string)
+            conn = java_sql_DriverManager.getConnection(jdbc_url, properties)
 
             # Set additional connection properties for security
-            if self.connection:
-                try:
-                    # These might not be supported by all drivers
-                    self.connection.setdecoding(pyodbc.SQL_CHAR, encoding="utf-8")
-                    self.connection.setdecoding(pyodbc.SQL_WCHAR, encoding="utf-8")
-                    self.connection.setencoding(encoding="utf-8")
-                except (pyodbc.Error, AttributeError) as e:
-                    logger.debug(f"Could not set encoding: {str(e)}")
+            conn.setAutoCommit(True)
+            conn.setReadOnly(True)
 
-                try:
-                    # Set query timeout if supported
-                    if hasattr(self.connection, "timeout"):
-                        self.connection.timeout = self.config.query_timeout
-                except (pyodbc.Error, AttributeError) as e:
-                    logger.debug(f"Could not set timeout: {str(e)}")
+            # Store connection properties (excluding password)
+            props_dict = {}
+            prop_keys = properties.keySet().toArray()
+            for key in prop_keys:
+                str_key = str(key)
+                if str_key != "password":  # Skip password for security
+                    props_dict[str_key] = str(properties.getProperty(str_key))
+
+            # Create and store connection wrapper
+            self._connection = AS400Connection(
+                connection=conn,
+                jdbc_url=jdbc_url,
+                properties=props_dict,
+            )
 
             logger.info(
-                f"Successfully connected to AS400 database: {self.config.database}"
+                "Successfully connected to AS400 database",
+                database=self.config.database,
+                server=self.config.server,
             )
-        except pyodbc.Error as e:
+        except JException as e:
             error_msg = str(e)
             # Sanitize error message to remove any potential credentials
             sanitized_error = self._sanitize_error_message(error_msg)
-            logger.error(f"Failed to connect to AS400: {sanitized_error}")
+            logger.error(
+                "Failed to connect to AS400",
+                error=sanitized_error,
+                exc_info=True,
+            )
 
             # Convert error to appropriate exception type
             if (
                 "permission" in error_msg.lower()
                 or "access denied" in error_msg.lower()
+                or "authorization" in error_msg.lower()
             ):
                 raise SecurityException(
                     message=f"Security error connecting to AS400: {sanitized_error}",
@@ -183,53 +292,91 @@ class AS400Connector:
             SecurityException: If the query attempts to access unauthorized tables
             DatabaseException: If the query fails to execute
         """
-        if not self.connection:
+        if not self._connection:
             await self.connect()
+
+        # Make sure we're connected
+        connection = cast(AS400Connection, self._connection)
+
+        # References for efficiency
+        jpype = self._jpype
+        JException = self._JException
 
         # Validate and sanitize query before execution
         table_name = self._validate_and_prepare_query(query, limit)
 
         try:
-            cursor = self.connection.cursor()
+            # Get Java classes needed for query execution
+            java_sql_Types = jpype.JClass("java.sql.Types")
 
             # Log query execution (sanitized)
             sanitized_query = self._sanitize_sql_for_logging(query)
-            logger.debug(f"Executing AS400 query: {sanitized_query}")
+            logger.debug(
+                "Executing AS400 query",
+                query=sanitized_query,
+                limit=limit,
+            )
 
-            # Execute the query
+            # Use prepared statement if parameters are provided
             if params:
-                cursor.execute(query, tuple(params.values()))
+                # Convert query parameters to use ? placeholders
+                query, param_values = self._convert_to_prepared_statement(query, params)
+                statement = connection.connection.prepareStatement(query)
+
+                # Set parameters
+                for i, value in enumerate(param_values):
+                    self._set_prepared_statement_parameter(statement, i + 1, value, java_sql_Types)
+
+                # Set query timeout if supported
+                statement.setQueryTimeout(self.config.query_timeout)
+
+                # Execute and get result set
+                result_set = statement.executeQuery()
             else:
-                cursor.execute(query)
+                # Create regular statement
+                statement = connection.connection.createStatement()
+
+                # Set query timeout if supported
+                statement.setQueryTimeout(self.config.query_timeout)
+
+                # Execute and get result set
+                result_set = statement.executeQuery(query)
 
             # Record table access for auditing
             if table_name:
-                self._accessed_tables.add(table_name.upper())
+                connection.accessed_tables.add(table_name.upper())
 
             # Process results
-            columns = [column[0] for column in cursor.description]
-            results = []
-            for row in cursor.fetchall():
-                result_dict = dict(zip(columns, row))
-                # Convert any AS400-specific data types if needed
-                results.append(self._convert_as400_types(result_dict))
+            results = self._process_result_set(result_set, java_sql_Types)
+
+            # Close the result set and statement
+            result_set.close()
+            statement.close()
 
             # Log success
             logger.info(
-                f"Successfully extracted {len(results)} records from AS400 "
-                f"{'table: ' + table_name if table_name else 'query'}"
+                "Successfully extracted records from AS400",
+                record_count=len(results),
+                table=table_name if table_name else None,
             )
+
             return results
 
-        except pyodbc.Error as e:
+        except JException as e:
             error_msg = str(e)
             sanitized_error = self._sanitize_error_message(error_msg)
-            logger.error(f"Error extracting data from AS400: {sanitized_error}")
+            logger.error(
+                "Error extracting data from AS400",
+                error=sanitized_error,
+                query=self._sanitize_sql_for_logging(query),
+                exc_info=True,
+            )
 
             # Classify error
             if (
                 "permission" in error_msg.lower()
                 or "access denied" in error_msg.lower()
+                or "authorization" in error_msg.lower()
             ):
                 raise SecurityException(
                     message=f"Security error accessing AS400 data: {sanitized_error}",
@@ -248,65 +395,63 @@ class AS400Connector:
         Raises:
             DatabaseException: If closing the connection fails
         """
-        if self.connection:
+        if self._connection:
             try:
-                self.connection.close()
-                self.connection = None
+                # Get reference to connection before nulling it
+                connection = self._connection
+
+                # Close the connection
+                connection.connection.close()
+                self._connection = None
                 logger.debug("AS400 connection closed")
 
                 # Audit logging
-                if self._accessed_tables:
+                if connection.accessed_tables:
                     logger.info(
-                        f"AS400 session accessed the following tables: "
-                        f"{', '.join(sorted(self._accessed_tables))}"
+                        "AS400 session accessed tables",
+                        tables=sorted(connection.accessed_tables),
                     )
-            except pyodbc.Error as e:
-                logger.error(f"Error closing AS400 connection: {str(e)}")
+            except self._JException as e:
+                logger.error(
+                    "Error closing AS400 connection",
+                    error=str(e),
+                    exc_info=True,
+                )
                 raise DatabaseException(
                     message=f"Failed to close AS400 connection: {str(e)}",
                     original_exception=e,
                 )
 
-    def _build_connection_string(self) -> str:
+    def _build_jdbc_url(self) -> str:
         """
-        Build a secure connection string for AS400.
+        Build the JDBC URL for JT400 connection.
 
         Returns:
-            Connection string with proper security parameters
+            JDBC URL string for connection
         """
-        # Start with required parameters
-        connection_string = (
-            f"DSN={self.config.dsn};"
-            f"UID={self.config.username};"
-            f"PWD={self.config.password.get_secret_value()};"
-            f"DATABASE={self.config.database};"
-        )
+        # Base JDBC URL for JT400
+        jdbc_url = f"jdbc:as400://{self.config.server}"
 
-        # Add optional parameters
-        if self.config.server:
-            connection_string += f"SYSTEM={self.config.server};"
-
+        # Add port if specified
         if self.config.port:
-            connection_string += f"PORT={self.config.port};"
+            jdbc_url += f":{self.config.port}"
 
-        # Many AS400 ODBC drivers don't support SSL connection parameter directly
-        # It's often configured at the ODBC DSN level instead
-        # Only add if explicitly configured and you know your driver supports it
-        if (
-            self.config.ssl
-            and os.environ.get("AS400_ENABLE_SSL_PARAM", "").lower() == "true"
-        ):
-            connection_string += "SSLCONNECTION=TRUE;"
+        # Configure additional parameters
+        params = []
 
-        # Many AS400 ODBC drivers don't support the ReadOnly parameter
-        # Only add if explicitly configured and you know your driver supports it
-        if os.environ.get("AS400_ENABLE_READONLY_PARAM", "").lower() == "true":
-            connection_string += "ReadOnly=True;"
+        # Add database/library if provided
+        if self.config.database:
+            params.append(f"libraries={self.config.database}")
 
-        # Add read-only parameter if driver supports it
-        connection_string += "ReadOnly=True;"
+        # Add secure connection parameter if SSL is requested
+        if self.config.ssl:
+            params.append("secure=true")
 
-        return connection_string
+        # Add parameters to URL
+        if params:
+            jdbc_url += ";" + ";".join(params)
+
+        return jdbc_url
 
     def _validate_and_prepare_query(
         self, query: str, limit: Optional[int]
@@ -335,11 +480,12 @@ class AS400Connector:
                         message=f"Access to table '{table_name}' is not allowed"
                     )
 
+            # Build full query with schema/library if needed
+            full_table_name = f"{self.config.database}.{table_name}"
+
             # Add limit clause if requested
-            limit_clause = (
-                f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
-            )
-            query = f'SELECT * FROM "{table_name}"{limit_clause}'
+            limit_clause = f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
+            query = f'SELECT * FROM {full_table_name}{limit_clause}'
             return table_name
         else:
             # For SQL queries, perform security checks
@@ -377,27 +523,196 @@ class AS400Connector:
 
             return None
 
-    def _convert_as400_types(self, row: Dict[str, Any]) -> Dict[str, Any]:
+    def _convert_to_prepared_statement(
+        self, query: str, params: Dict[str, Any]
+    ) -> tuple[str, List[Any]]:
         """
-        Convert AS400-specific data types to Python types.
+        Convert a query with named parameters to a prepared statement with ? placeholders.
 
         Args:
-            row: Dict containing a database row
+            query: SQL query with named parameters
+            params: Parameters dictionary
 
         Returns:
-            Dict with converted values
+            Tuple of (prepared statement query, ordered parameter values)
         """
-        result = {}
-        for key, value in row.items():
-            # Convert decimals to float
-            if hasattr(value, "real") and not isinstance(value, (int, float)):
-                result[key] = float(value)
-            # Convert date/time objects if needed
-            elif hasattr(value, "isoformat"):
-                result[key] = value
+        # Look for named parameters in the format :param_name
+        param_names = re.findall(r":(\w+)", query)
+        param_values = []
+
+        # Replace each named parameter with ? and collect values in order
+        for name in param_names:
+            if name not in params:
+                raise ValueError(f"Parameter '{name}' not provided in params dictionary")
+
+            # Collect value
+            param_values.append(params[name])
+
+            # Replace named parameter with ?
+            query = query.replace(f":{name}", "?", 1)
+
+        return query, param_values
+
+    def _set_prepared_statement_parameter(
+        self, statement: Any, index: int, value: Any, java_sql_Types: Any
+    ) -> None:
+        """
+        Set a parameter value in a prepared statement based on its type.
+
+        Args:
+            statement: JDBC PreparedStatement object
+            index: Parameter index (1-based)
+            value: Parameter value to set
+            java_sql_Types: Java SQL Types class from JPype
+        """
+        jpype = self._jpype  # Local reference for efficiency
+
+        # Handle None/null values
+        if value is None:
+            statement.setNull(index, java_sql_Types.NULL)
+            return
+
+        # Handle different Python types
+        if isinstance(value, str):
+            statement.setString(index, value)
+        elif isinstance(value, int):
+            statement.setInt(index, value)
+        elif isinstance(value, float):
+            statement.setDouble(index, value)
+        elif isinstance(value, bool):
+            statement.setBoolean(index, value)
+        elif hasattr(value, "isoformat"):  # Date or datetime
+            # Convert to java.sql.Date or Timestamp
+            if hasattr(value, "hour"):  # datetime
+                timestamp = jpype.JClass("java.sql.Timestamp")
+                # Convert to milliseconds since epoch
+                mills = int(value.timestamp() * 1000)
+                statement.setTimestamp(index, timestamp(mills))
+            else:  # date
+                date = jpype.JClass("java.sql.Date")
+                # Convert to days since epoch and then milliseconds
+                mills = int(value.toordinal() * 86400 * 1000)
+                statement.setDate(index, date(mills))
+        else:
+            # Fall back to string for other types
+            statement.setString(index, str(value))
+
+    def _process_result_set(self, result_set: Any, java_sql_Types: Any) -> List[Dict[str, Any]]:
+        """
+        Process JDBC ResultSet into a list of dictionaries.
+
+        Args:
+            result_set: JDBC ResultSet object
+            java_sql_Types: Java SQL Types class from JPype
+
+        Returns:
+            List of dictionaries containing the query results
+        """
+        # Get metadata for column names and types
+        meta = result_set.getMetaData()
+        column_count = meta.getColumnCount()
+
+        # Extract column information
+        columns: List[ColumnMetadata] = []
+        for i in range(1, column_count + 1):
+            columns.append({
+                "name": meta.getColumnName(i),
+                "type_name": meta.getColumnTypeName(i),
+                "type_code": meta.getColumnType(i),
+                "precision": meta.getPrecision(i),
+                "scale": meta.getScale(i),
+                "nullable": meta.isNullable(i) != 0,
+            })
+
+        # Process rows
+        results = []
+        while result_set.next():
+            row = {}
+            for i, col in enumerate(columns, 1):
+                # Handle different data types appropriately
+                value = self._get_result_set_value(result_set, i, col, java_sql_Types)
+                row[col["name"]] = value
+
+            results.append(row)
+
+        return results
+
+    def _get_result_set_value(
+        self, result_set: Any, index: int, column: ColumnMetadata, java_sql_Types: Any
+    ) -> Any:
+        """
+        Extract a value from a ResultSet using appropriate conversion.
+
+        Args:
+            result_set: JDBC ResultSet
+            index: Column index (1-based)
+            column: Column metadata
+            java_sql_Types: Java SQL Types class from JPype
+
+        Returns:
+            Converted Python value
+        """
+        # Check for NULL first
+        if result_set.getObject(index) is None:
+            return None
+
+        # Handle different SQL types
+        type_code = column["type_code"]
+
+        # String types
+        if type_code in (java_sql_Types.CHAR, java_sql_Types.VARCHAR, java_sql_Types.LONGVARCHAR):
+            return result_set.getString(index)
+
+        # Numeric types
+        elif type_code in (java_sql_Types.TINYINT, java_sql_Types.SMALLINT, java_sql_Types.INTEGER):
+            return result_set.getInt(index)
+        elif type_code in (java_sql_Types.BIGINT,):
+            return result_set.getLong(index)
+        elif type_code in (java_sql_Types.FLOAT, java_sql_Types.DOUBLE, java_sql_Types.REAL):
+            return result_set.getDouble(index)
+        elif type_code in (java_sql_Types.DECIMAL, java_sql_Types.NUMERIC):
+            # Get as BigDecimal and convert to Python decimal or float
+            big_decimal = result_set.getBigDecimal(index)
+            if column["scale"] == 0:
+                return int(big_decimal.longValue())
             else:
-                result[key] = value
-        return result
+                return float(big_decimal.doubleValue())
+
+        # Date/Time types
+        elif type_code == java_sql_Types.DATE:
+            date = result_set.getDate(index)
+            from datetime import date as py_date
+            return py_date(date.getYear() + 1900, date.getMonth() + 1, date.getDate())
+        elif type_code == java_sql_Types.TIME:
+            time = result_set.getTime(index)
+            from datetime import time as py_time
+            return py_time(time.getHours(), time.getMinutes(), time.getSeconds())
+        elif type_code == java_sql_Types.TIMESTAMP:
+            timestamp = result_set.getTimestamp(index)
+            from datetime import datetime
+            return datetime(
+                timestamp.getYear() + 1900,
+                timestamp.getMonth() + 1,
+                timestamp.getDate(),
+                timestamp.getHours(),
+                timestamp.getMinutes(),
+                timestamp.getSeconds(),
+                timestamp.getNanos() // 1000,
+            )
+
+        # Boolean types
+        elif type_code == java_sql_Types.BOOLEAN:
+            return result_set.getBoolean(index)
+
+        # Binary types
+        elif type_code in (java_sql_Types.BINARY, java_sql_Types.VARBINARY, java_sql_Types.LONGVARBINARY):
+            # Get as byte array and convert to Python bytes
+            java_bytes = result_set.getBytes(index)
+            return bytes(java_bytes)
+
+        # Fall back to string for unknown types
+        else:
+            return str(result_set.getObject(index))
 
     def _sanitize_sql_for_logging(self, query: str) -> str:
         """
@@ -426,6 +741,10 @@ class AS400Connector:
         sanitized = error_message.replace(
             self.config.password.get_secret_value(), "[REDACTED]"
         )
+
+        # Remove username if present
+        sanitized = sanitized.replace(self.config.username, "[USERNAME]")
+
         # Additional sanitization as needed
         return sanitized
 
@@ -443,8 +762,9 @@ class AS400Connector:
             # Generate a key - in production, this should be stored securely
             key = Fernet.generate_key().decode()
             logger.warning(
-                f"No encryption key found in environment variable {key_env_var}. "
-                f"Generated new key. For production, set this environment variable."
+                "No encryption key found in environment variable",
+                env_var=key_env_var,
+                message="Generated new key. For production, set this environment variable.",
             )
 
         return key.encode() if key else b""

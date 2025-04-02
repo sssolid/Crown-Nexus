@@ -29,7 +29,8 @@ class AS400Settings(BaseSettings):
     """
 
     # Connection settings
-    AS400_DSN: str
+    # AS400_DSN: str
+    JT400_JAR_PATH: str
     AS400_USERNAME: str
     AS400_PASSWORD: SecretStr
     AS400_DATABASE: str
@@ -173,7 +174,8 @@ def get_as400_connector_config() -> Dict[str, Any]:
     logger.debug("Retrieving AS400 connector configuration")
 
     return {
-        "dsn": as400_settings.AS400_DSN,
+        # "dsn": as400_settings.AS400_DSN,
+        "jt400_jar_path": as400_settings.JT400_JAR_PATH,
         "username": as400_settings.AS400_USERNAME,
         "password": as400_settings.AS400_PASSWORD,
         "database": as400_settings.AS400_DATABASE,

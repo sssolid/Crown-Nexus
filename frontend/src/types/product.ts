@@ -122,6 +122,7 @@ export interface Product {
 }
 
 export interface ProductFilters {
+  part_number?: string;
   search?: string;
   vintage?: boolean;
   late_model?: boolean;
@@ -130,6 +131,17 @@ export interface ProductFilters {
   is_active?: boolean;
   page?: number;
   page_size?: number;
+  sort_by?: string;
+  sort_desc?: boolean;
+  brand_id?: string;
+  manufacturer_id?: string;
+  warehouse_id?: string;
+  status?: ProductStatus;
+  supersession_id?: string;
+  supersession_old_product_id?: string;
+  supersession_new_product_id?: string;
+  supersession_reason?: string;
+  attributes?: Record<string, any>;
 }
 
 export interface ProductListResponse {

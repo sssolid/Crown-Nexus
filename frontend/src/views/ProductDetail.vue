@@ -4,11 +4,7 @@
     <v-container fluid>
       <!-- Loading State -->
       <div v-if="loading" class="d-flex justify-center my-6">
-        <v-progress-circular
-          indeterminate
-          color="primary"
-          size="64"
-        ></v-progress-circular>
+        <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
       </div>
 
       <template v-else-if="product">
@@ -16,18 +12,12 @@
         <v-row class="mb-6">
           <v-col cols="12" md="8">
             <div class="d-flex align-center">
-              <v-btn
-                icon
-                variant="text"
-                @click="router.back()"
-                class="mr-4"
-              >
+              <v-btn icon variant="text" @click="router.back()" class="mr-4">
                 <v-icon>mdi-arrow-left</v-icon>
               </v-btn>
-
               <div>
-                <h1 class="text-h3 font-weight-bold">{{ product.name }}</h1>
-                <p class="text-subtitle-1">SKU: {{ product.sku }}</p>
+                <h1 class="text-h3 font-weight-bold">{{ product.part_number }}</h1>
+                <p class="text-subtitle-1">Product Details</p>
               </div>
             </div>
           </v-col>
@@ -42,7 +32,6 @@
             >
               Edit
             </v-btn>
-
             <v-btn
               v-if="isAdmin"
               color="error"
@@ -68,15 +57,7 @@
                   <v-col cols="12" md="6">
                     <v-list>
                       <v-list-item>
-                        <template v-slot:prepend>
-                          <v-icon icon="mdi-barcode" class="mr-2"></v-icon>
-                        </template>
-                        <v-list-item-title>SKU</v-list-item-title>
-                        <v-list-item-subtitle>{{ product.sku }}</v-list-item-subtitle>
-                      </v-list-item>
-
-                      <v-list-item v-if="product.part_number">
-                        <template v-slot:prepend>
+                        <template #prepend>
                           <v-icon icon="mdi-pound" class="mr-2"></v-icon>
                         </template>
                         <v-list-item-title>Part Number</v-list-item-title>
@@ -84,7 +65,7 @@
                       </v-list-item>
 
                       <v-list-item>
-                        <template v-slot:prepend>
+                        <template #prepend>
                           <v-icon icon="mdi-circle" class="mr-2"></v-icon>
                         </template>
                         <v-list-item-title>Status</v-list-item-title>
@@ -98,6 +79,14 @@
                           </v-chip>
                         </v-list-item-subtitle>
                       </v-list-item>
+
+                      <v-list-item>
+                        <template #prepend>
+                          <v-icon icon="mdi-tag" class="mr-2"></v-icon>
+                        </template>
+                        <v-list-item-title>Category</v-list-item-title>
+                        <v-list-item-subtitle>{{ category }}</v-list-item-subtitle>
+                      </v-list-item>
                     </v-list>
                   </v-col>
 
@@ -105,7 +94,7 @@
                   <v-col cols="12" md="6">
                     <v-list>
                       <v-list-item>
-                        <template v-slot:prepend>
+                        <template #prepend>
                           <v-icon icon="mdi-calendar-plus" class="mr-2"></v-icon>
                         </template>
                         <v-list-item-title>Created</v-list-item-title>
@@ -113,7 +102,7 @@
                       </v-list-item>
 
                       <v-list-item>
-                        <template v-slot:prepend>
+                        <template #prepend>
                           <v-icon icon="mdi-calendar-edit" class="mr-2"></v-icon>
                         </template>
                         <v-list-item-title>Last Updated</v-list-item-title>
@@ -126,15 +115,17 @@
                 <!-- Description -->
                 <v-divider class="my-4"></v-divider>
                 <h3 class="text-h6 mb-2">Description</h3>
-                <p v-if="product.description" class="text-body-1">{{ product.description }}</p>
+                <p v-if="getDescription(product.descriptions, 'Standard')" class="text-body-1">
+                  {{ getDescription(product.descriptions, 'Standard') }}
+                </p>
                 <p v-else class="text-medium-emphasis">No description available</p>
 
                 <!-- Attributes -->
                 <v-divider class="my-4"></v-divider>
                 <h3 class="text-h6 mb-2">Attributes</h3>
-                <v-row v-if="Object.keys(product.attributes).length > 0">
+                <v-row v-if="Object.keys(attributes).length > 0">
                   <v-col
-                    v-for="(value, key) in product.attributes"
+                    v-for="(value, key) in attributes"
                     :key="key"
                     cols="12"
                     sm="6"
@@ -173,22 +164,22 @@
               <!-- Fitments Table -->
               <v-table v-if="fitments.length > 0">
                 <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Make</th>
-                  <th>Model</th>
-                  <th>Engine</th>
-                  <th>Transmission</th>
-                </tr>
+                  <tr>
+                    <th>Year</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Engine</th>
+                    <th>Transmission</th>
+                  </tr>
                 </thead>
                 <tbody>
-                <tr v-for="fitment in fitments" :key="fitment.id">
-                  <td>{{ fitment.year }}</td>
-                  <td>{{ fitment.make }}</td>
-                  <td>{{ fitment.model }}</td>
-                  <td>{{ fitment.engine || 'N/A' }}</td>
-                  <td>{{ fitment.transmission || 'N/A' }}</td>
-                </tr>
+                  <tr v-for="fitment in fitments" :key="fitment.id">
+                    <td>{{ fitment.year }}</td>
+                    <td>{{ fitment.make }}</td>
+                    <td>{{ fitment.model }}</td>
+                    <td>{{ fitment.engine || 'N/A' }}</td>
+                    <td>{{ fitment.transmission || 'N/A' }}</td>
+                  </tr>
                 </tbody>
               </v-table>
 
@@ -236,7 +227,7 @@
                       class="rounded"
                       @click="openMediaDialog(index)"
                     >
-                      <template v-slot:placeholder>
+                      <template #placeholder>
                         <v-row class="fill-height ma-0" align="center" justify="center">
                           <v-progress-circular indeterminate color="primary"></v-progress-circular>
                         </v-row>
@@ -313,7 +304,7 @@
               Confirm Delete
             </v-card-title>
             <v-card-text class="pa-4 pt-6">
-              <p>Are you sure you want to delete the product <strong>{{ product.name }}</strong>?</p>
+              <p>Are you sure you want to delete the product <strong>{{ product.part_number }}</strong>?</p>
               <p class="text-medium-emphasis mt-2">This action cannot be undone.</p>
             </v-card-text>
             <v-card-actions class="pa-4">
@@ -354,16 +345,54 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import productService from '@/services/product';
-import { Product } from '@/types/product';
+import { Product, ProductDescription } from '@/types/product';
 import { Fitment } from '@/types/fitment';
 import { formatDateTime } from '@/utils/formatters';
+import image1 from '@/assets/mock_product_images/image-1.jpg';
+import image2 from '@/assets/mock_product_images/image-2.jpg';
 
-// Placeholder type for media until we implement the real one
+// Router and route
+const router = useRouter();
+const route = useRoute();
+
+// Auth store
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.isAdmin);
+
+// Data loading state
+const loading = ref(true);
+const product = ref<Product | null>(null);
+const fitments = ref<Fitment[]>([]);
+const media = ref<Media[]>([]);
+
+// Placeholder data
+const category = ref('Uncategorized'); // Placeholder for category
+const attributes = ref<Record<string, string>>({
+  Material: 'Steel',
+  Color: 'Silver',
+  Weight: '2.5 lbs',
+}); // Placeholder for attributes
+
+// Delete functionality
+const deleteDialog = ref(false);
+const deleteLoading = ref(false);
+
+// Media viewer
+const mediaDialog = ref(false);
+const currentMediaIndex = ref(0);
+const currentMedia = computed(() =>
+  media.value.length > 0 && currentMediaIndex.value >= 0 ? media.value[currentMediaIndex.value] : null
+);
+
+// Get product ID from route
+const productId = computed(() => route.params.id as string);
+
+// Placeholder type for media
 interface Media {
   id: string;
   filename: string;
@@ -371,141 +400,82 @@ interface Media {
   thumbnail_url?: string;
 }
 
-export default defineComponent({
-  name: 'ProductDetail',
-
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const authStore = useAuthStore();
-
-    // User permissions
-    const isAdmin = computed(() => authStore.isAdmin);
-
-    // Data loading state
-    const loading = ref(true);
-    const product = ref<Product | null>(null);
-    const fitments = ref<Fitment[]>([]);
-    const media = ref<Media[]>([]);
-
-    // Delete functionality
-    const deleteDialog = ref(false);
-    const deleteLoading = ref(false);
-
-    // Media viewer
-    const mediaDialog = ref(false);
-    const currentMediaIndex = ref(0);
-    const currentMedia = computed(() => {
-      if (media.value.length === 0 || currentMediaIndex.value < 0) return null;
-      return media.value[currentMediaIndex.value];
-    });
-
-    // Get product ID from route
-    const productId = computed(() => route.params.id as string);
-
-    // Fetch product data
-    const fetchProduct = async () => {
-      loading.value = true;
-
-      try {
-        product.value = await productService.getProduct(productId.value);
-
-        // Fetch related data
-        await Promise.all([
-          fetchFitments(),
-          fetchMedia(),
-        ]);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        product.value = null;
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    // Fetch product fitments
-    const fetchFitments = async () => {
-      try {
-        fitments.value = await productService.getProductFitments(productId.value);
-      } catch (error) {
-        console.error('Error fetching fitments:', error);
-        fitments.value = [];
-      }
-    };
-
-    // Fetch product media
-    const fetchMedia = async () => {
-      try {
-        // This would be replaced with the actual media service call
-        // For now, using placeholder data
-        media.value = [
-          {
-            id: '1',
-            filename: 'product-image-1.jpg',
-            url: 'https://via.placeholder.com/800x600?text=Product+Image+1',
-          },
-          {
-            id: '2',
-            filename: 'product-image-2.jpg',
-            url: 'https://via.placeholder.com/800x600?text=Product+Image+2',
-          },
-        ];
-      } catch (error) {
-        console.error('Error fetching media:', error);
-        media.value = [];
-      }
-    };
-
-    // Open media viewer dialog
-    const openMediaDialog = (index: number) => {
-      currentMediaIndex.value = index;
-      mediaDialog.value = true;
-    };
-
-    // Show delete confirmation dialog
-    const confirmDelete = () => {
-      deleteDialog.value = true;
-    };
-
-    // Delete product
-    const deleteProduct = async () => {
-      deleteLoading.value = true;
-
-      try {
-        await productService.deleteProduct(productId.value);
-        deleteDialog.value = false;
-
-        // Redirect to product catalog
-        router.push({ name: 'ProductCatalog' });
-      } catch (error) {
-        console.error('Error deleting product:', error);
-      } finally {
-        deleteLoading.value = false;
-      }
-    };
-
-    // Initialize component
-    onMounted(() => {
-      fetchProduct();
-    });
-
-    return {
-      router,
-      isAdmin,
-      loading,
-      product,
-      fitments,
-      media,
-      deleteDialog,
-      deleteLoading,
-      mediaDialog,
-      currentMediaIndex,
-      currentMedia,
-      formatDateTime,
-      openMediaDialog,
-      confirmDelete,
-      deleteProduct,
-    };
+// Fetch product data
+const fetchProduct = async () => {
+  loading.value = true;
+  try {
+    product.value = await productService.getProduct(productId.value);
+    await Promise.all([fetchFitments(), fetchMedia()]);
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    product.value = null;
+  } finally {
+    loading.value = false;
   }
+};
+
+// Fetch product fitments (placeholder)
+const fetchFitments = async () => {
+  try {
+    // Placeholder data until fitments are implemented in the database
+    fitments.value = [
+      { id: '1', year: '2020', make: 'Toyota', model: 'Camry', engine: '2.5L', transmission: 'Auto' },
+      { id: '2', year: '2021', make: 'Honda', model: 'Civic', engine: '1.5L', transmission: 'Manual' },
+    ];
+  } catch (error) {
+    console.error('Error fetching fitments:', error);
+    fitments.value = [];
+  }
+};
+
+// Fetch product media (placeholder)
+const fetchMedia = async () => {
+  try {
+    // Placeholder data until media service is implemented
+    media.value = [
+      { id: '1', filename: 'product-image-1.jpg', url: image1},
+      { id: '2', filename: 'product-image-2.jpg', url: image2},
+    ];
+  } catch (error) {
+    console.error('Error fetching media:', error);
+    media.value = [];
+  }
+};
+
+// Open media viewer dialog
+const openMediaDialog = (index: number) => {
+  currentMediaIndex.value = index;
+  mediaDialog.value = true;
+};
+
+// Show delete confirmation dialog
+const confirmDelete = () => {
+  deleteDialog.value = true;
+};
+
+// Delete product
+const deleteProduct = async () => {
+  deleteLoading.value = true;
+  try {
+    await productService.deleteProduct(productId.value);
+    deleteDialog.value = false;
+    router.push({ name: 'ProductCatalog' });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+  } finally {
+    deleteLoading.value = false;
+  }
+};
+
+// Extract description by type from product descriptions
+const getDescription = (descriptions: ProductDescription[] | undefined, type: string): string => {
+  if (!descriptions || !Array.isArray(descriptions)) return 'N/A';
+  const description = descriptions.find(d => d.description_type === type);
+  return description?.description || 'N/A';
+};
+
+// Initialize component
+onMounted(() => {
+  fetchProduct();
 });
 </script>

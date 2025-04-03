@@ -266,6 +266,8 @@ async def _run_import(
                 if limit is not None:
                     if source_type == "as400":
                         query = f"{query} FETCH FIRST {limit} ROWS ONLY"
+                    elif source_type == "filemaker":
+                        query = f"{query} FETCH FIRST {limit} ROWS ONLY"
                     else:
                         query = f"{query} LIMIT {limit}"
             except Exception as e:

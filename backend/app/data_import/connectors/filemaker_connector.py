@@ -143,7 +143,7 @@ class FileMakerConnector:
             else:
                 # If it's a custom SQL query with limit
                 if limit is not None and "LIMIT" not in query.upper():
-                    query = f"{query} LIMIT {limit}"
+                    query = f"{query} FETCH FIRST {limit} ROWS ONLY"
 
                 if "limit" in params:
                     del params["limit"]

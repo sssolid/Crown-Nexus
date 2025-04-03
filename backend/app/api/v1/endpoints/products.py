@@ -47,7 +47,6 @@ from app.domains.users.models import User
 
 router = APIRouter()
 
-
 @router.get("/", response_model=ProductListResponse)
 async def read_products(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -62,9 +61,11 @@ async def read_products(
     limit: int = 100,
     page: int = 1,
     page_size: int = 20,
+    sort_by: Optional[str] = None,  # New parameter for sorting field
+    sort_desc: Optional[bool] = False,  # New parameter for sort direction
 ) -> Any:
     """
-    Retrieve products with filtering.
+    Retrieve products with filtering and sorting.
 
     Args:
         db: Database session
@@ -79,6 +80,8 @@ async def read_products(
         limit: Maximum number of products to return
         page: Page number
         page_size: Number of items per page
+        sort_by: Field to sort by (e.g., 'part_number', 'is_active')
+        sort_desc: Sort in descending order if True, ascending if False
 
     Returns:
         ProductListResponse: Paginated list of products
@@ -115,11 +118,35 @@ async def read_products(
     if is_active is not None:
         query = query.where(Product.is_active == is_active)
 
-    # Get total count
+    # Apply sorting
+    if sort_by:
+        # Map query parameter to model field
+        sort_field_map = {
+            "part_number": Product.part_number,
+            "is_active": Product.is_active,
+            "vintage": Product.vintage,
+            "late_model": Product.late_model,
+            "soft": Product.soft,
+            "universal": Product.universal,
+            "application": Product.application,
+            # Add more fields as needed
+        }
+
+        sort_field = sort_field_map.get(sort_by)
+        if sort_field is not None:
+            if sort_desc:
+                query = query.order_by(sort_field.desc())
+            else:
+                query = query.order_by(sort_field.asc())
+        else:
+            # Optionally handle invalid sort_by values (e.g., log warning or default to part_number)
+            query = query.order_by(Product.part_number.asc())
+
+    # Get total count (before pagination)
     count_query = select(func.count()).select_from(query.subquery())
     total = await db.scalar(count_query) or 0
 
-    # Apply pagination and get items
+    # Apply pagination
     query = query.offset(skip).limit(limit)
 
     # Include related data
@@ -127,14 +154,13 @@ async def read_products(
         selectinload(Product.descriptions),
         selectinload(Product.marketing),
         selectinload(Product.activities).selectinload(ProductActivity.changed_by),
-        selectinload(Product.superseded_by).selectinload(
-            ProductSupersession.new_product
-        ),
+        selectinload(Product.superseded_by).selectinload(ProductSupersession.new_product),
         selectinload(Product.supersedes).selectinload(ProductSupersession.old_product),
         selectinload(Product.measurements),
         selectinload(Product.stock),
     )
 
+    # Execute query
     result = await db.execute(query)
     products = result.scalars().all()
 

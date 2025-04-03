@@ -25,11 +25,18 @@ class DescriptionType(str, Enum):
         NOTES: Internal notes about the product.
     """
 
+    STANDARD = "Standard"
     SHORT = "Short"
     LONG = "Long"
     KEYWORDS = "Keywords"
     SLANG = "Slang"
     NOTES = "Notes"
+    LONG_ALLMODELS = "Long_AllModels"
+    LONG_JEEPONLY = "Long_JeepOnly"
+    LONG_NONJEEP = "Long_NonJeep"
+    EXTENDED = "Extended"
+    EXTENDED_NONJEEP = "Extended_NonJeep"
+    EXTENDED_UNLIMITED = "Extended_Unlimited"
 
 
 class MarketingType(str, Enum):
@@ -392,6 +399,67 @@ class ProductStockBase(BaseModel):
 
     warehouse_id: uuid.UUID = Field(..., description="Warehouse ID")
     quantity: int = Field(0, ge=0, description="Stock quantity")
+
+
+class ProductPricingBase(BaseModel):
+    """Base model for product pricing information.
+
+    Defines the common fields for product pricing data with proper validation.
+
+    Attributes:
+        product_id: Unique identifier of the product
+        pricing_type_id: Reference to the pricing type
+        price: The monetary value of the product
+        currency: Three-letter currency code (default: USD)
+        manufacturer_id: Optional reference to the manufacturer
+    """
+    product_id: uuid.UUID = Field(..., description='Product ID')
+    pricing_type_id: uuid.UUID = Field(..., description='Price type ID')
+    price: float = Field(..., description='Price value')
+    currency: str = Field('USD', description='Currency code')
+    manufacturer_id: Optional[uuid.UUID] = Field(None, description='Manufacturer ID')
+
+
+class ProductPricingCreate(ProductPricingBase):
+    """Schema for creating new product pricing records.
+
+    Inherits all fields from ProductPricingBase without modifications.
+    Used specifically in the data import process.
+    """
+    pass
+
+
+class ProductPricingUpdate(BaseModel):
+    """Schema for updating existing product pricing records.
+
+    All fields are optional to allow partial updates.
+
+    Attributes:
+        price: Updated price value if provided
+        currency: Updated currency code if provided
+        manufacturer_id: Updated manufacturer reference if provided
+    """
+    price: Optional[float] = Field(None, description='Price value')
+    currency: Optional[str] = Field(None, description='Currency code')
+    manufacturer_id: Optional[Union[uuid.UUID, None]] = Field(default=..., description='Manufacturer ID')
+
+
+class ProductPricingImport(BaseModel):
+    """Schema for importing product pricing data.
+
+    This schema uses string identifiers (part number, pricing type name) instead of UUIDs
+    to make it easier to import data from external sources.
+
+    Attributes:
+        part_number: Product part number (string identifier)
+        pricing_type: String identifier for the pricing type (e.g., "Jobber", "Export")
+        price: The monetary value of the product
+        currency: Three-letter currency code (default: USD)
+    """
+    part_number: str = Field(..., description='Product part number')
+    pricing_type: str = Field(..., description='Pricing type name (e.g., "Jobber", "Export")')
+    price: float = Field(..., description='Price value')
+    currency: str = Field('USD', description='Currency code')
 
 
 class ProductStockCreate(ProductStockBase):

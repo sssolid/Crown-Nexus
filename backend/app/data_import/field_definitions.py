@@ -699,7 +699,7 @@ PRODUCT_DESCRIPTION_MAPPINGS = {
 # Define product marketing field mappings
 PRODUCT_MARKETING_MAPPINGS = {
     "filemaker": {
-        "AdCopy": ExternalFieldInfo(
+        "Ad Copy": ExternalFieldInfo(
             field_name="RTOffRoadAdCopy",
             table_name="Master",
             description="Marketing advertisement copy",
@@ -858,6 +858,7 @@ PRICING_FIELDS = EntityFieldDefinitions(
                 ),
             },
         ),
+        # We don't need external mappings for pricing_type as it's handled by the processor
         FieldDefinition(
             name="pricing_type",
             field_type=FieldType.STRING,
@@ -865,21 +866,17 @@ PRICING_FIELDS = EntityFieldDefinitions(
             description="Pricing type (Jobber or Export)",
             enum_values=["Jobber", "Export"],
         ),
+        # Include both price fields in the main AS400 source type
         FieldDefinition(
             name="price",
             field_type=FieldType.FLOAT,
             required=True,
             description="Price value",
             external_fields={
-                "as400_jobber": ExternalFieldInfo(
-                    field_name="SRET1",
+                "as400": ExternalFieldInfo(  # Changed to include both price fields in query
+                    field_name="SRET1, SRET2",  # This will ensure both fields are in the query
                     table_name="DSTDATA.INSMFH",
-                    description="Jobber price in AS400",
-                ),
-                "as400_export": ExternalFieldInfo(
-                    field_name="SRET2",
-                    table_name="DSTDATA.INSMFH",
-                    description="Export price in AS400",
+                    description="Price fields in AS400 (Jobber and Export)",
                 ),
                 "csv": ExternalFieldInfo(
                     field_name="price",
@@ -892,7 +889,7 @@ PRICING_FIELDS = EntityFieldDefinitions(
             name="currency",
             field_type=FieldType.STRING,
             description="Currency code",
-            default="USD",  # Default to USD
+            default="USD",
         ),
     ]
 )
@@ -920,7 +917,7 @@ INVENTORY_FIELDS = EntityFieldDefinitions(
                     description="Part number in FileMaker",
                 ),
                 "as400": ExternalFieldInfo(
-                    field_name="SPART",
+                    field_name="spart",
                     table_name="DSTDATA.INSMFH",
                     description="Part number in AS400",
                 ),
@@ -979,39 +976,37 @@ ENTITY_FIELD_DEFINITIONS = {
 COMPLEX_FIELD_MAPPINGS = {
     "product": {
         "descriptions": PRODUCT_DESCRIPTION_MAPPINGS,
-        "marketing": PRODUCT_MARKETING_MAPPINGS,
+        # "marketing": PRODUCT_MARKETING_MAPPINGS,
     },
 }
 
 
-def generate_query_for_entity(
-    entity_name: str,
-    source_type: str,
-    fields: Optional[List[str]] = None
-) -> str:
-    """
-    Generate a SQL query for an entity from a specific source.
+# Update to query generation in field_definitions.py for better complex field handling
+
+def generate_query_for_entity(entity_name: str, source_type: str, fields: Optional[List[str]] = None) -> str:
+    """Generate a SQL query for extracting entity data from a specific source.
 
     Args:
-        entity_name: Name of the entity
-        source_type: Source type
-        fields: Optional list of specific fields to include (default: all)
+        entity_name: Name of the entity to query (e.g., 'product', 'product_pricing')
+        source_type: Type of data source (e.g., 'filemaker', 'as400', 'csv')
+        fields: Optional list of field names to include in the query
 
     Returns:
         SQL query string
+
+    Raises:
+        ValueError: If the entity or source type is not supported
+        ValueError: If no fields are available for the query
     """
     if entity_name not in ENTITY_FIELD_DEFINITIONS:
-        raise ValueError(f"Unknown entity: {entity_name}")
+        raise ValueError(f'Unknown entity: {entity_name}')
 
     entity_def = ENTITY_FIELD_DEFINITIONS[entity_name]
 
     if source_type not in entity_def.source_tables:
-        raise ValueError(f"Source type {source_type} not supported for entity {entity_name}")
+        raise ValueError(f'Source type {source_type} not supported for entity {entity_name}')
 
-    # Get tables for this entity/source combination
     tables_info = entity_def.source_tables[source_type]
-
-    # Find primary table
     primary_table = None
     for table_info in tables_info:
         if table_info.is_primary:
@@ -1019,60 +1014,114 @@ def generate_query_for_entity(
             break
 
     if not primary_table:
-        raise ValueError(f"No primary table defined for {entity_name} in {source_type}")
+        raise ValueError(f'No primary table defined for {entity_name} in {source_type}')
 
-    # Get field list
+    # Special case for AS400 product pricing
+    if entity_name == 'product_pricing' and source_type == 'as400':
+        # DO NOT use column aliases (AS) for AS400 queries
+        return f"""
+            SELECT
+                SPART,
+                SRET1,
+                SRET2
+            FROM {primary_table}
+            WHERE (SRET1 IS NOT NULL OR SRET2 IS NOT NULL)
+        """
+
+    # Special case for product with descriptions and marketing from AS400
+    if entity_name == 'product' and source_type == 'as400':
+        # Include all basic product fields
+        basic_fields = ["SPART"]  # Part number is essential
+
+        # Find other basic fields from field definitions
+        for field in entity_def.fields:
+            if source_type in field.external_fields and field.name not in ['descriptions', 'marketing']:
+                field_info = field.external_fields[source_type]
+                if field_info.field_name != 'SPART':  # Already added
+                    basic_fields.append(field_info.field_name)
+
+        # Add description fields
+        description_fields = []
+        if 'descriptions' in COMPLEX_FIELD_MAPPINGS.get('product', {}):
+            desc_mappings = COMPLEX_FIELD_MAPPINGS['product']['descriptions'].get(source_type, {})
+            for desc_type, field_info in desc_mappings.items():
+                if isinstance(field_info, ExternalFieldInfo):
+                    description_fields.append(field_info.field_name)
+
+        # Add marketing fields
+        marketing_fields = []
+        if 'marketing' in COMPLEX_FIELD_MAPPINGS.get('product', {}):
+            mkt_mappings = COMPLEX_FIELD_MAPPINGS['product']['marketing'].get(source_type, {})
+            for mkt_type, field_info in mkt_mappings.items():
+                if isinstance(field_info, ExternalFieldInfo):
+                    marketing_fields.append(field_info.field_name)
+
+        # Combine all fields for the query
+        all_fields = basic_fields + description_fields + marketing_fields
+        fields_clause = ", ".join(all_fields)
+
+        return f"""
+            SELECT {fields_clause}
+            FROM {primary_table}
+            WHERE SPART IS NOT NULL
+        """
+
+    # Standard field mapping for other cases
     if fields is None:
-        # Use all fields available for this source
         field_mappings = []
         for field in entity_def.fields:
             if source_type in field.external_fields:
                 field_info = field.external_fields[source_type]
-                field_mappings.append(
-                    f"{field_info.table_name}.{field_info.field_name} AS {field.name}"
-                )
+                # Handle comma-separated field names (for multiple price fields)
+                if ',' in field_info.field_name:
+                    for subfield in [f.strip() for f in field_info.field_name.split(',')]:
+                        # For AS400, don't use column aliases to avoid potential field name issues
+                        if source_type == 'as400':
+                            field_mappings.append(f'{field_info.table_name}.{subfield}')
+                        else:
+                            field_mappings.append(f'{field_info.table_name}.{subfield} AS {subfield}')
+                else:
+                    # For AS400, don't use column aliases to avoid potential field name issues
+                    if source_type == 'as400':
+                        field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
+                    else:
+                        # IMPORTANT: Don't use aliases here - use the field name directly
+                        field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
 
-        # Add complex field mappings
+        # For complex fields, don't use aliases in the query
         if entity_name in COMPLEX_FIELD_MAPPINGS:
             for complex_field, mappings in COMPLEX_FIELD_MAPPINGS[entity_name].items():
                 if source_type in mappings:
                     for type_name, field_info in mappings[source_type].items():
-                        field_mappings.append(
-                            f"{field_info.table_name}.{field_info.field_name} AS {type_name}"
-                        )
+                        if isinstance(field_info, ExternalFieldInfo):
+                            # Important: Remove the "AS type_name" alias
+                            field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
     else:
-        # Use specified fields
         field_mappings = []
         for field_name in fields:
             field = entity_def.get_field_by_name(field_name)
             if field and source_type in field.external_fields:
                 field_info = field.external_fields[source_type]
-                field_mappings.append(
-                    f"{field_info.table_name}.{field_info.field_name} AS {field.name}"
-                )
+                # For AS400, don't use column aliases to avoid potential field name issues
+                if source_type == 'as400':
+                    field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
+                else:
+                    field_mappings.append(f'{field_info.table_name}.{field_info.field_name} AS {field.name}')
 
     if not field_mappings:
-        raise ValueError(f"No fields available for entity {entity_name} from source {source_type}")
+        raise ValueError(f'No fields available for entity {entity_name} from source {source_type}')
 
-    # Build query
-    field_list = ", ".join(field_mappings)
+    field_list = ', '.join(field_mappings)
     from_clause = primary_table
-
-    # Add joins
     joins = []
     for table_info in tables_info:
         if not table_info.is_primary and table_info.join_condition:
-            joins.append(f"LEFT JOIN {table_info.table_name} ON {table_info.join_condition}")
+            joins.append(f'LEFT JOIN {table_info.table_name} ON {table_info.join_condition}')
+    join_clause = ' '.join(joins)
 
-    join_clause = " ".join(joins)
-
-    # Special handling for different source types
-    if source_type == "filemaker":
-        # FileMaker might need special treatment for its SQL dialect
-        return f"SELECT {field_list} FROM {from_clause} {join_clause}"
-    elif source_type.startswith("as400"):
-        # AS400 SQL dialect
-        return f"SELECT {field_list} FROM {from_clause} {join_clause}"
+    if source_type == 'filemaker':
+        return f'SELECT {field_list} FROM {from_clause} {join_clause}'
+    elif source_type.startswith('as400'):
+        return f'SELECT {field_list} FROM {from_clause} {join_clause}'
     else:
-        # Generic SQL
-        return f"SELECT {field_list} FROM {from_clause} {join_clause}"
+        return f'SELECT {field_list} FROM {from_clause} {join_clause}'

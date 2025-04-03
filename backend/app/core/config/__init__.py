@@ -16,10 +16,13 @@ from app.core.config.base import Environment, LogLevel
 from app.core.config.settings import Settings, get_settings, settings
 from app.core.config.integrations import (
     AS400Settings,
-    ElasticsearchSettings,
     as400_settings,
-    elasticsearch_settings,
     get_as400_connector_config,
+    FilemakerSettings,
+    filemaker_settings,
+    get_filemaker_connector_config,
+    ElasticsearchSettings,
+    elasticsearch_settings,
 )
 
 # NOTE: The imports from integration modules are delayed to avoid circular imports
@@ -32,10 +35,13 @@ __all__ = [
     "get_settings",
     "settings",
     "AS400Settings",
+    "FilemakerSettings",
     "ElasticsearchSettings",
     "as400_settings",
+    "filemaker_settings",
     "elasticsearch_settings",
     "get_as400_connector_config",
+    "get_filemaker_connector_config"
 ]
 
 
@@ -58,6 +64,22 @@ def __getattr__(name: str) -> object:
         from app.core.config.integrations.as400 import get_as400_connector_config
 
         return get_as400_connector_config
+    elif name == "ElasticsearchSettings":
+        from app.core.config.integrations.elasticsearch import ElasticsearchSettings
+
+    elif name == "FilemakerSettings":
+        from app.core.config.integrations.filemaker import FilemakerSettings
+
+        return FilemakerSettings
+    elif name == "filemaker_settings":
+        from app.core.config.integrations.filemaker import filemaker_settings
+
+        return filemaker_settings
+    elif name == "get_filemaker_connector_config":
+        from app.core.config.integrations.filemaker import get_filemaker_connector_config
+
+        return get_filemaker_connector_config
+
     elif name == "ElasticsearchSettings":
         from app.core.config.integrations.elasticsearch import ElasticsearchSettings
 

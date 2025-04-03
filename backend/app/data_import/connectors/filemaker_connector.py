@@ -145,8 +145,14 @@ class FileMakerConnector:
                 if limit is not None and "LIMIT" not in query.upper():
                     query = f"{query} LIMIT {limit}"
 
+                if "limit" in params:
+                    del params["limit"]
+
                 logger.debug(f"Using custom SQL query with params: {params}")
-                cursor.execute(query, tuple(params.values()) if params else None)
+                if params:
+                    cursor.execute(query, tuple(params.values()))
+                else:
+                    cursor.execute(query)
 
             # Get column names
             columns = [column[0] for column in cursor.description]

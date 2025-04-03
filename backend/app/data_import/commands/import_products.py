@@ -1,21 +1,24 @@
-# app/data_import/commands/import_products.py
+# backend/app/data_import/commands/import_products.py
 from __future__ import annotations
 
 """
-Command for importing products.
+Command for importing products using field definitions.
 
 This module provides a CLI command for importing product data from
-FileMaker or files.
+various sources using centralized field definitions and settings.
 """
 
 import asyncio
 import json
 import sys
-from typing import Dict, Optional
+import time
+from typing import Dict, List, Optional, Any
 
 import typer
 
 from app.logging import get_logger
+from app.core.config.integrations.filemaker import get_filemaker_connector_config
+from app.core.config.integrations.as400 import get_as400_connector_config
 from app.data_import.connectors.file_connector import (
     FileConnector,
     FileConnectionConfig,
@@ -24,12 +27,14 @@ from app.data_import.connectors.filemaker_connector import (
     FileMakerConnector,
     FileMakerConnectionConfig,
 )
+from app.data_import.connectors.as400_connector import (
+    AS400Connector,
+    AS400ConnectionConfig,
+)
 from app.data_import.importers.product_importer import ProductImporter
 from app.data_import.pipeline.product_pipeline import ProductPipeline
-from app.data_import.processors.product_processor import (
-    ProductMappingConfig,
-    ProductProcessor,
-)
+from app.data_import import create_processor, EntityType, SourceType
+from app.data_import.field_definitions import generate_query_for_entity
 from app.db.session import get_db_context
 
 logger = get_logger("app.data_import.commands.import_products")
@@ -40,13 +45,16 @@ app = typer.Typer()
 @app.command()
 def import_products(
     source_type: str = typer.Option(
-        "filemaker", "--source", "-s", help="Source type (filemaker or file)"
+        "filemaker", "--source", "-s", help="Source type (filemaker, as400, or file/csv)"
     ),
-    config_file: str = typer.Option(
-        None, "--config", "-c", help="Path to configuration JSON file"
+    entity_type: str = typer.Option(
+        "product", "--entity", "-e", help="Entity type (product, product_pricing, product_stock)"
     ),
-    query: str = typer.Option(
-        None, "--query", "-q", help="Query or table name to extract data from"
+    config_file: Optional[str] = typer.Option(
+        None, "--config", "-c", help="Optional path to configuration JSON file (overrides settings)"
+    ),
+    custom_query: Optional[str] = typer.Option(
+        None, "--query", "-q", help="Custom query (overrides generated query)"
     ),
     dry_run: bool = typer.Option(
         False,
@@ -57,73 +65,57 @@ def import_products(
     output_file: Optional[str] = typer.Option(
         None, "--output", "-o", help="Output file for processed data (dry run only)"
     ),
-    dsn: Optional[str] = typer.Option(None, "--dsn", help="FileMaker ODBC DSN"),
-    # FileMaker specific options
-    username: Optional[str] = typer.Option(
-        None, "--username", "-u", help="FileMaker username"
-    ),
-    password: Optional[str] = typer.Option(
-        None, "--password", "-p", help="FileMaker password"
-    ),
-    database: Optional[str] = typer.Option(
-        None,
-        "--database",
-        "-db",
-        help="FileMaker database name (optional, may be included in DSN)",
-    ),
+    # File specific options (only needed for CSV/file source)
     file_path: Optional[str] = typer.Option(
         None, "--file", "-f", help="Path to input file (CSV or JSON)"
     ),
-    # Mapping options
-    mapping_file: Optional[str] = typer.Option(
-        None, "--mapping", "-m", help="Path to field mapping JSON file"
-    ),
-    # File specific options
     file_type: Optional[str] = typer.Option(
         None, "--file-type", "-ft", help="File type (csv or json)"
-    ),
-    disable_ssl: bool = typer.Option(
-        False, "--disable-ssl-verification", help="Disable SSL certificate verification"
     ),
     limit: Optional[int] = typer.Option(
         None, "--limit", "-l", help="Limit the number of records to import"
     ),
+    # Field selection options
+    fields: Optional[str] = typer.Option(
+        None, "--fields", help="Comma-separated list of fields to import"
+    ),
 ) -> None:
     """
-    Import products from FileMaker or file.
+    Import entity data from FileMaker, AS400, or file.
 
-    This command extracts product data from FileMaker or a file,
+    This command extracts entity data from a source using field definitions,
     processes and validates it, and imports it into the database.
     """
     try:
+        # Normalize source type
+        normalized_source_type = source_type.lower()
+        if normalized_source_type == "file":
+            normalized_source_type = "csv"
+
+        # Normalize entity type
+        normalized_entity_type = entity_type.lower()
+
         # Load configuration
         connector_config = _load_connector_config(
-            source_type=source_type,
+            source_type=normalized_source_type,
             config_file=config_file,
-            dsn=dsn,
-            username=username,
-            password=password,
-            database=database,
             file_path=file_path,
             file_type=file_type,
-            disable_ssl=disable_ssl,
         )
 
-        mapping_config = _load_mapping_config(mapping_file)
-
-        if not query:
-            if source_type == "filemaker":
-                query = "Products"
-            else:
-                query = ""
+        # Parse field list if provided
+        field_list = None
+        if fields:
+            field_list = [f.strip() for f in fields.split(",")]
 
         # Run the import
         result = asyncio.run(
             _run_import(
-                source_type=source_type,
+                source_type=normalized_source_type,
+                entity_type=normalized_entity_type,
                 connector_config=connector_config,
-                mapping_config=mapping_config,
-                query=query,
+                custom_query=custom_query,
+                fields=field_list,
                 limit=limit,
                 dry_run=dry_run,
                 output_file=output_file,
@@ -142,6 +134,7 @@ def import_products(
             sys.exit(1)
 
     except Exception as e:
+        logger.exception(f"Error in import_products: {str(e)}")
         typer.echo(f"Error: {str(e)}", err=True)
         sys.exit(1)
 
@@ -149,26 +142,17 @@ def import_products(
 def _load_connector_config(
     source_type: str,
     config_file: Optional[str],
-    dsn: Optional[str],
-    username: Optional[str],
-    password: Optional[str],
-    database: Optional[str],
     file_path: Optional[str],
     file_type: Optional[str],
-    disable_ssl: bool = False,
-) -> Dict:
+) -> Dict[str, Any]:
     """
-    Load connector configuration from file or command line options.
+    Load connector configuration from settings or config file.
 
     Args:
-        source_type: Source type (filemaker or file)
-        config_file: Path to configuration file
-        dsn: FileMaker DSN
-        username: FileMaker username
-        password: FileMaker password
-        database: FileMaker database
-        file_path: Path to input file
-        file_type: File type
+        source_type: Source type (filemaker, as400, or csv)
+        config_file: Optional path to configuration file
+        file_path: Path to input file (for file source)
+        file_type: File type (for file source)
 
     Returns:
         Connector configuration dictionary
@@ -176,6 +160,7 @@ def _load_connector_config(
     Raises:
         ValueError: If required configuration is missing
     """
+    # If a config file is provided, it takes precedence
     if config_file:
         try:
             with open(config_file, "r") as f:
@@ -184,26 +169,14 @@ def _load_connector_config(
         except Exception as e:
             raise ValueError(f"Failed to load configuration file: {str(e)}") from e
 
+    # Load configuration from settings
     if source_type == "filemaker":
-        if not all([dsn, username, password]):
-            raise ValueError(
-                "FileMaker source requires dsn, username, and password. "
-                "Provide them as command line options or in a config file."
-            )
-        config = {
-            "dsn": dsn,
-            "username": username,
-            "password": password,
-            "disable_ssl_verification": disable_ssl,
-        }
+        return get_filemaker_connector_config()
 
-        # Only add database if specified
-        if database:
-            config["database"] = database
+    elif source_type == "as400":
+        return get_as400_connector_config()
 
-        return config
-
-    elif source_type == "file":
+    elif source_type == "csv":
         if not file_path:
             raise ValueError(
                 "File source requires file_path. "
@@ -233,64 +206,26 @@ def _load_connector_config(
         raise ValueError(f"Unsupported source type: {source_type}")
 
 
-def _load_mapping_config(mapping_file: Optional[str]) -> Dict:
-    """
-    Load field mapping configuration from file.
-
-    Args:
-        mapping_file: Path to mapping file
-
-    Returns:
-        Mapping configuration dictionary
-
-    Raises:
-        ValueError: If mapping file cannot be loaded
-    """
-    if mapping_file:
-        try:
-            with open(mapping_file, "r") as f:
-                config = json.load(f)
-                return config
-        except Exception as e:
-            raise ValueError(f"Failed to load mapping file: {str(e)}") from e
-
-    # Default mapping configuration
-    return {
-        "part_number_field": "PartNumber",
-        "application_field": "Application",
-        "vintage_field": "Vintage",
-        "late_model_field": "LateModel",
-        "soft_field": "Soft",
-        "universal_field": "Universal",
-        "active_field": "Active",
-        "boolean_true_values": ["yes", "y", "true", "t", "1", "on"],
-        "boolean_false_values": ["no", "n", "false", "f", "0", "off"],
-        "description_fields": {
-            "Short": "ShortDescription",
-            "Long": "Description",
-            "Keywords": "Keywords",
-        },
-        "marketing_fields": {"Bullet Point": "BulletPoints"},
-    }
-
-
 async def _run_import(
     source_type: str,
-    connector_config: Dict,
-    mapping_config: Dict,
-    query: str,
-    limit: Optional[int],
-    dry_run: bool,
-    output_file: Optional[str],
-) -> Dict:
+    entity_type: str,
+    connector_config: Dict[str, Any],
+    custom_query: Optional[str] = None,
+    fields: Optional[List[str]] = None,
+    limit: Optional[int] = None,
+    dry_run: bool = False,
+    output_file: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     Run the import pipeline.
 
     Args:
-        source_type: Source type (filemaker or file)
+        source_type: Source type (filemaker, as400, or csv)
+        entity_type: Entity type (product, product_pricing, etc.)
         connector_config: Connector configuration
-        mapping_config: Mapping configuration
-        query: Query string
+        custom_query: Optional custom query
+        fields: Optional list of specific fields to include
+        limit: Record limit
         dry_run: Dry run flag
         output_file: Output file path
 
@@ -298,19 +233,19 @@ async def _run_import(
         Import result statistics
 
     Raises:
-        AppException: If import fails
+        Exception: If import fails
     """
     async with get_db_context() as db:
-        # Create connector
-        if source_type == "filemaker":
-            connector = FileMakerConnector(
-                FileMakerConnectionConfig(**connector_config)
-            )
-        else:
-            connector = FileConnector(FileConnectionConfig(**connector_config))
+        start_time = time.time()
 
-        # Create processor
-        processor = ProductProcessor(ProductMappingConfig(**mapping_config))
+        # Create connector
+        connector = _create_connector(source_type, connector_config)
+
+        # Create processor using the factory
+        processor = create_processor(
+            entity_type=entity_type,
+            source_type=source_type,
+        )
 
         # Create importer
         importer = ProductImporter(db)
@@ -320,22 +255,80 @@ async def _run_import(
             connector=connector, processor=processor, importer=importer, dry_run=dry_run
         )
 
+        # Generate query if not provided
+        query = custom_query
+        if not query:
+            try:
+                query = generate_query_for_entity(entity_type, source_type, fields)
+                logger.info(f"Generated query: {query}")
+
+                # Add LIMIT clause if specified
+                if limit is not None:
+                    if source_type == "as400":
+                        query = f"{query} FETCH FIRST {limit} ROWS ONLY"
+                    else:
+                        query = f"{query} LIMIT {limit}"
+            except Exception as e:
+                logger.error(f"Failed to generate query: {str(e)}")
+                raise ValueError(f"Failed to generate query: {str(e)}") from e
+
         # Run pipeline
         result = await pipeline.run(query, limit=limit)
+
+        # Add timing information
+        end_time = time.time()
+        result["total_time"] = end_time - start_time
 
         # If dry run and output file, write processed data
         if dry_run and output_file and "processed_data" in result:
             try:
                 with open(output_file, "w") as f:
                     json.dump(result["processed_data"], f, indent=2)
-                typer.echo(f"Processed data written to {output_file}")
+                logger.info(f"Processed data written to {output_file}")
             except Exception as e:
-                typer.echo(f"Failed to write output file: {str(e)}", err=True)
+                logger.error(f"Failed to write output file: {str(e)}")
 
         return result
 
 
-def _print_result(result: Dict) -> None:
+def _create_connector(source_type: str, config: Dict[str, Any]) -> Any:
+    """
+    Create an appropriate connector based on the source type.
+
+    Args:
+        source_type: Source type
+        config: Connector configuration
+
+    Returns:
+        Connector instance
+
+    Raises:
+        ValueError: If source type is unsupported
+    """
+    if source_type == "filemaker":
+        # Convert the SecretStr to a plain string for the connector
+        if "password" in config and hasattr(config["password"], "get_secret_value"):
+            config_copy = config.copy()
+            config_copy["password"] = config["password"].get_secret_value()
+            return FileMakerConnector(FileMakerConnectionConfig(**config_copy))
+        return FileMakerConnector(FileMakerConnectionConfig(**config))
+
+    elif source_type == "as400":
+        # Convert the SecretStr to a plain string for the connector
+        if "password" in config and hasattr(config["password"], "get_secret_value"):
+            config_copy = config.copy()
+            config_copy["password"] = config["password"].get_secret_value()
+            return AS400Connector(AS400ConnectionConfig(**config_copy))
+        return AS400Connector(AS400ConnectionConfig(**config))
+
+    elif source_type == "csv":
+        return FileConnector(FileConnectionConfig(**config))
+
+    else:
+        raise ValueError(f"Unsupported source type: {source_type}")
+
+
+def _print_result(result: Dict[str, Any]) -> None:
     """
     Print import result.
 

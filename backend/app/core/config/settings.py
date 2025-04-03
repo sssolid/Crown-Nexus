@@ -102,6 +102,21 @@ class Settings(
         return as400_settings
 
     @property
+    def filemaker(self) -> "FilemakerSettings":
+        """
+        Access Filemaker settings.
+
+        This allows accessing Filemaker settings through the main settings object
+        while keeping them modularly separated.
+
+        Returns:
+            AS400Settings: The AS400 settings object
+        """
+        from app.core.config.integrations.filemaker import filemaker_settings
+
+        return filemaker_settings
+
+    @property
     def elasticsearch(self) -> "ElasticsearchSettings":
         """
         Access Elasticsearch settings.

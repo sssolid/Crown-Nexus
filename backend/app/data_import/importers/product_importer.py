@@ -10,7 +10,7 @@ product data in the application database.
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException
@@ -87,7 +87,6 @@ class ProductImporter:
             is_new = existing_product is None
 
             if is_new:
-                # Create new product
                 product = Product(
                     part_number=product_data.part_number,
                     part_number_stripped=product_data.part_number_stripped,
@@ -99,10 +98,9 @@ class ProductImporter:
                     is_active=product_data.is_active,
                 )
                 self.db.add(product)
-                await self.db.flush()  # Get ID assigned
+                await self.db.flush()
                 logger.debug(f"Created new product: {product_data.part_number}")
             else:
-                # Update existing product
                 product = existing_product
                 product.application = product_data.application
                 product.vintage = product_data.vintage
@@ -114,17 +112,15 @@ class ProductImporter:
                 await self.db.flush()
                 logger.debug(f"Updated existing product: {product_data.part_number}")
 
-            # Handle descriptions
-            if hasattr(product_data, "descriptions") and product_data.descriptions:
-                # Delete existing descriptions if updating
+            # ✅ Handle descriptions
+            if product_data.descriptions:
                 if not is_new:
                     await self.db.execute(
-                        select(ProductDescription)
-                        .where(ProductDescription.product_id == product.id)
-                        .delete()
+                        delete(ProductDescription).where(
+                            ProductDescription.product_id == product.id
+                        )
                     )
 
-                # Add new descriptions
                 for desc in product_data.descriptions:
                     description = ProductDescription(
                         product_id=product.id,
@@ -133,17 +129,15 @@ class ProductImporter:
                     )
                     self.db.add(description)
 
-            # Handle marketing content
-            if hasattr(product_data, "marketing") and product_data.marketing:
-                # Delete existing marketing if updating
+            # ✅ Handle marketing
+            if product_data.marketing:
                 if not is_new:
                     await self.db.execute(
-                        select(ProductMarketing)
-                        .where(ProductMarketing.product_id == product.id)
-                        .delete()
+                        delete(ProductMarketing).where(
+                            ProductMarketing.product_id == product.id
+                        )
                     )
 
-                # Add new marketing content
                 for mkt in product_data.marketing:
                     marketing = ProductMarketing(
                         product_id=product.id,

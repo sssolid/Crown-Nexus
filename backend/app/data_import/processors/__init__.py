@@ -1,4 +1,4 @@
-# app/data_import/processors/__init__.py
+# backend/app/data_import/processors/__init__.py
 from __future__ import annotations
 
 """
@@ -11,7 +11,6 @@ raw data from external sources into structured formats for import.
 from app.data_import.processors.base import Processor
 from app.data_import.processors.product_processor import (
     ProductProcessor,
-    ProductMappingConfig,
 )
 from app.data_import.processors.as400_processor import (
     AS400BaseProcessor,
@@ -20,14 +19,17 @@ from app.data_import.processors.as400_processor import (
     PricingAS400Processor,
     InventoryAS400Processor,
 )
+from app.data_import.processors.generic_processor import GenericProcessor
+from app.data_import.processors.product_processor import ProductProcessor
 
 __all__ = [
     "Processor",
     "ProductProcessor",
-    "ProductMappingConfig",
     "AS400BaseProcessor",
     "AS400ProcessorConfig",
     "ProductAS400Processor",
     "PricingAS400Processor",
     "InventoryAS400Processor",
+    "GenericProcessor",
+    "ProductProcessor",
 ]

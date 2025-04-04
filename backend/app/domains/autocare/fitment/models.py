@@ -21,6 +21,7 @@ class FitmentMapping(Base):
     """Model for mapping product fitments to autocare data."""
 
     __tablename__ = "autocare_fitment_mapping"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -28,7 +29,7 @@ class FitmentMapping(Base):
 
     # Product relation
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
 
     # VCdb relations - can be nullified if manual fitment
@@ -75,16 +76,16 @@ class FitmentMapping(Base):
         nullable=False,
     )
     created_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
     updated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
 
     # Relationships
-    product = relationship("Product", foreign_keys=[product_id])
-    created_by = relationship("User", foreign_keys=[created_by_id])
-    updated_by = relationship("User", foreign_keys=[updated_by_id])
+    product = relationship("Product", foreign_keys="[product.product_id]")
+    created_by = relationship("User", foreign_keys="[user.created_by_id]")
+    updated_by = relationship("User", foreign_keys="[user.updated_by_id]")
 
     def __repr__(self) -> str:
         return f"<FitmentMapping {self.id}: product={self.product_id}, vehicle={self.vehicle_id}>"
@@ -94,6 +95,7 @@ class FitmentMappingHistory(Base):
     """Model for tracking changes to fitment mappings."""
 
     __tablename__ = "autocare_fitment_mapping_history"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -102,7 +104,7 @@ class FitmentMappingHistory(Base):
     # Reference to the mapping
     mapping_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("autocare_fitment_mapping.id"),
+        ForeignKey("product.autocare_fitment_mapping.id"),
         nullable=False,
         index=True,
     )
@@ -125,7 +127,7 @@ class FitmentMappingHistory(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
 
     # Relationships

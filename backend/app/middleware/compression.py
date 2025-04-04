@@ -1,6 +1,8 @@
 # backend/app/middleware/compression.py
 from __future__ import annotations
 
+from app.utils.circuit_breaker_utils import safe_observe_histogram
+
 """
 Compression middleware for the application.
 
@@ -112,19 +114,19 @@ class CompressionMiddleware(BaseHTTPMiddleware):
                 compressed_size = len(compressed_body)
                 compression_ratio = (1 - compressed_size / original_size) * 100
 
-                metrics_service.observe_histogram(
+                safe_observe_histogram(
                     "response_compression_ratio_percent",
                     compression_ratio,
                     {"path": path.split("/")[1] if len(path.split("/")) > 1 else "root"}
                 )
 
-                metrics_service.observe_histogram(
+                safe_observe_histogram(
                     "response_size_bytes",
                     original_size,
                     {"compressed": "false", "path": path.split("/")[1] if len(path.split("/")) > 1 else "root"}
                 )
 
-                metrics_service.observe_histogram(
+                safe_observe_histogram(
                     "response_size_bytes",
                     compressed_size,
                     {"compressed": "true", "path": path.split("/")[1] if len(path.split("/")) > 1 else "root"}

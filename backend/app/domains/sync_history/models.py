@@ -90,7 +90,7 @@ class SyncHistory(Base):
 
     sync_duration: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     triggered_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
@@ -102,10 +102,10 @@ class SyncHistory(Base):
         "SyncEvent", back_populates="sync", cascade="all, delete-orphan"
     )
 
-    # Indexes
     __table_args__ = (
         Index("ix_sync_history_status_started_at", status, started_at.desc()),
         Index("ix_sync_history_entity_source", entity_type, source),
+        {"schema": "sync_history"},
     )
 
     def __repr__(self) -> str:
@@ -180,12 +180,13 @@ class SyncEvent(Base):
     """Events during synchronization operations."""
 
     __tablename__ = "sync_event"
+    __table_args__ = {"schema": "sync_history"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     sync_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("sync_history.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("sync_history.sync_history.id"), nullable=False, index=True
     )
 
     event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)

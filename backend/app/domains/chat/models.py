@@ -55,6 +55,7 @@ class ChatRoom(Base):
     """
 
     __tablename__ = "chat_room"
+    __table_args__ = {"schema": "chat"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -62,7 +63,7 @@ class ChatRoom(Base):
     name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     type: Mapped[ChatRoomType] = mapped_column(String(20), nullable=False, index=True)
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("company.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("company.company.id"), nullable=True, index=True
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=expression.true(), nullable=False
@@ -139,10 +140,10 @@ class ChatMember(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     room_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("chat_room.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("chat.chat_room.id"), nullable=False, index=True
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=False, index=True
     )
     role: Mapped[ChatMemberRole] = mapped_column(
         String(20), nullable=False, default=ChatMemberRole.MEMBER
@@ -167,7 +168,10 @@ class ChatMember(Base):
     room: Mapped["ChatRoom"] = relationship("ChatRoom", back_populates="members")
     user: Mapped["User"] = relationship("User", back_populates="chat_memberships")
 
-    __table_args__ = (Index("idx_unique_room_user", "room_id", "user_id", unique=True),)
+    __table_args__ = (
+        Index("idx_unique_room_user", "room_id", "user_id", unique=True),
+        {"schema": "chat"},
+    )
 
     def __repr__(self) -> str:
         """Return string representation of ChatMember instance.
@@ -213,15 +217,16 @@ class ChatMessage(Base):
     """
 
     __tablename__ = "chat_message"
+    __table_args__ = {"schema": "chat"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     room_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("chat_room.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("chat.chat_room.id"), nullable=False, index=True
     )
     sender_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True, index=True
     )
     message_type: Mapped[MessageType] = mapped_column(
         String(20), nullable=False, default=MessageType.TEXT
@@ -300,10 +305,10 @@ class MessageReaction(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     message_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("chat_message.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("chat.chat_message.id"), nullable=False, index=True
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=False, index=True
     )
     reaction: Mapped[str] = mapped_column(String(20), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -324,6 +329,7 @@ class MessageReaction(Base):
             "reaction",
             unique=True,
         ),
+        {"schema": "chat"},
     )
 
     def __repr__(self) -> str:
@@ -333,45 +339,3 @@ class MessageReaction(Base):
             String representation including id, reaction, and user ID.
         """
         return f"<MessageReaction {self.id}: {self.reaction} from User {self.user_id}>"
-
-
-class RateLimitLog(Base):
-    """Rate limit log entity for tracking API rate limits.
-
-    Attributes:
-        id: Unique identifier.
-        user_id: ID of the user being rate limited.
-        room_id: ID of the chat room (if applicable).
-        event_type: Type of event being limited.
-        timestamp: When the event occurred.
-        count: Event count.
-    """
-
-    __tablename__ = "rate_limit_log"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
-    )
-    room_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("chat_room.id"), nullable=True, index=True
-    )
-    event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-    timestamp: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
-    )
-    count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-
-    # Relationships
-    user: Mapped["User"] = relationship("User")
-    room: Mapped[Optional["ChatRoom"]] = relationship("ChatRoom")
-
-    def __repr__(self) -> str:
-        """Return string representation of RateLimitLog instance.
-
-        Returns:
-            String representation including id, user ID, event type, and count.
-        """
-        return f"<RateLimitLog {self.id}: User {self.user_id} - {self.event_type} ({self.count})>"

@@ -99,6 +99,7 @@ class Prop65Chemical(Base):
     """
 
     __tablename__ = "prop65_chemical"
+    __table_args__ = {"schema": "compliance"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -146,15 +147,16 @@ class Warning(Base):
     """
 
     __tablename__ = "warning"
+    __table_args__ = {"schema": "compliance"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     chemical_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("prop65_chemical.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("compliance.prop65_chemical.id"), nullable=False, index=True
     )
     warning_text: Mapped[str] = mapped_column(Text, nullable=False)
     last_updated: Mapped[datetime] = mapped_column(
@@ -191,15 +193,16 @@ class ProductChemical(Base):
     """
 
     __tablename__ = "product_chemical"
+    __table_args__ = {"schema": "compliance"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     chemical_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("prop65_chemical.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("compliance.prop65_chemical.id"), nullable=False, index=True
     )
     exposure_scenario: Mapped[ExposureScenario] = mapped_column(
         SQLAEnum(ExposureScenario), nullable=False
@@ -241,12 +244,13 @@ class ProductDOTApproval(Base):
     """
 
     __tablename__ = "product_dot_approval"
+    __table_args__ = {"schema": "compliance"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     approval_status: Mapped[ApprovalStatus] = mapped_column(
         SQLAEnum(ApprovalStatus), nullable=False, index=True
@@ -259,7 +263,7 @@ class ProductDOTApproval(Base):
     expiration_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
     changed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -293,12 +297,13 @@ class HazardousMaterial(Base):
     """
 
     __tablename__ = "hazardous_material"
+    __table_args__ = {"schema": "compliance"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     un_number: Mapped[Optional[str]] = mapped_column(
         String(18), nullable=True, index=True

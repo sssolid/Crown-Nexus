@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from app.core.metrics import MetricName
+from app.utils.circuit_breaker_utils import safe_observe_histogram
 
 """
 Tracing middleware for the application.
@@ -140,7 +141,7 @@ class TracingMiddleware(BaseHTTPMiddleware):
                 # Track span metrics if metrics service is available
                 if metrics_service:
                     try:
-                        metrics_service.observe_histogram(
+                        safe_observe_histogram(
                             MetricName.REQUEST_TRACE_DURATION_SECONDS.value,
                             duration,
                             {

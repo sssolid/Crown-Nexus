@@ -28,6 +28,7 @@ class ModelMapping(Base):
     """
 
     __tablename__ = "model_mapping"
+    __table_args__ = {"schema": "model_mapping"}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     pattern: Mapped[str] = mapped_column(String(255), nullable=False, index=True)

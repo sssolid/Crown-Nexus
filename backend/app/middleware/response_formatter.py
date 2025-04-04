@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from app.core.metrics import MetricName
+from app.utils.circuit_breaker_utils import safe_observe_histogram
 
 """
 Response formatter middleware for the application.
@@ -164,7 +165,7 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
             if metrics_service:
                 try:
                     duration = time.time() - start_time
-                    metrics_service.observe_histogram(
+                    safe_observe_histogram(
                         MetricName.RESPONSE_FORMATTING_DURATION_SECONDS.value,
                         duration,
                         {"response_formatted": str(formatted), "path": path},

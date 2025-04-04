@@ -8,7 +8,7 @@ tracking the status and outcomes of data synchronization operations.
 """
 
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import select, desc, and_, func
@@ -114,7 +114,7 @@ class SyncHistoryRepository(BaseRepository[SyncHistory, uuid.UUID]):
 
         # Calculate duration if completed
         if status in [SyncStatus.COMPLETED, SyncStatus.FAILED, SyncStatus.CANCELLED]:
-            sync.completed_at = datetime.now()
+            sync.completed_at = datetime.now(timezone.utc)
             if sync.started_at:
                 sync.sync_duration = (
                     sync.completed_at - sync.started_at

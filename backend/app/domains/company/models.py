@@ -43,19 +43,20 @@ class Company(Base):
     """
 
     __tablename__ = "company"
+    __table_args__ = {"schema": "company"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     headquarters_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     billing_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     shipping_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     account_number: Mapped[Optional[str]] = mapped_column(
         String(50), unique=True, index=True, nullable=True

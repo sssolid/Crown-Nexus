@@ -8,10 +8,9 @@ an initial admin user. It should be run after the database has been
 created but before starting the application for the first time.
 
 The script:
-1. Creates all tables using SQLAlchemy models
-2. Creates an admin user with provided credentials
-3. Sets up required directories
-4. Verifies database connectivity
+1. Creates an admin user with provided credentials
+2. Sets up required directories
+3. Verifies database connectivity
 
 Usage:
     python scripts/database_bootstrap.py [email] [password] [full_name]
@@ -71,52 +70,6 @@ async def check_connection() -> bool:
             await engine.dispose()
 
 
-async def create_tables() -> bool:
-    """
-    Create all database tables using SQLAlchemy models.
-
-    Returns:
-        bool: True if tables were created successfully, False otherwise
-    """
-    print("Creating tables directly with SQLAlchemy...")
-
-    # Create engine connecting to the app database
-    engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI))
-
-    try:
-        # Create all tables
-        async with engine.begin() as conn:
-            # Drop all tables first to ensure a clean start
-            print("Dropping existing tables...")
-            await conn.run_sync(Base.metadata.drop_all)
-
-            print("Creating tables...")
-            await conn.run_sync(Base.metadata.create_all)
-
-        print("✅ Tables created successfully!")
-
-        # Print the tables created
-        async with engine.connect() as conn:
-            result = await conn.execute(
-                text(
-                    "SELECT table_name FROM information_schema.tables "
-                    "WHERE table_schema = 'public'"
-                )
-            )
-            tables = result.fetchall()
-
-            print("\nCreated the following tables:")
-            for table in tables:
-                print(f"  - {table[0]}")
-
-        return True
-    except SQLAlchemyError as e:
-        print(f"❌ Table creation failed: {e}")
-        return False
-    finally:
-        await engine.dispose()
-
-
 async def create_admin_user(
     email: str, password: str, full_name: str
 ) -> Tuple[bool, Optional[str]]:
@@ -137,7 +90,7 @@ async def create_admin_user(
         async with get_db_context() as db:
             # Check if user already exists
             result = await db.execute(
-                text('SELECT 1 FROM "user" WHERE email = :email'), {"email": email}
+                text('SELECT 1 FROM "user"."user" WHERE email = :email'), {"email": email}
             )
             exists = result.scalar() is not None
 
@@ -153,7 +106,7 @@ async def create_admin_user(
             # Insert user
             await db.execute(
                 text(
-                    'INSERT INTO "user" (id, email, hashed_password, full_name, role, is_active, is_deleted, created_at, updated_at) '
+                    'INSERT INTO "user"."user" (id, email, hashed_password, full_name, role, is_active, is_deleted, created_at, updated_at) '
                     "VALUES (:id, :email, :hashed_password, :full_name, :role, :is_active, :is_deleted, :created_at, :updated_at)"
                 ),
                 {
@@ -203,11 +156,6 @@ async def main() -> bool:
     # Test database connection
     if not await check_connection():
         print("Database connection failed. Cannot continue with bootstrap.")
-        return False
-
-    # Create tables
-    if not await create_tables():
-        print("Table creation failed. Cannot continue with bootstrap.")
         return False
 
     # Add this section - populate country data

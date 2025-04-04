@@ -40,6 +40,7 @@ class Currency(Base):
     """
 
     __tablename__ = "currency"
+    __table_args__ = {"schema": "currency"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -97,15 +98,24 @@ class ExchangeRate(Base):
     """
 
     __tablename__ = "exchange_rate"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_currency_id",
+            "target_currency_id",
+            "effective_date",
+            name="uix_exchange_rate_source_target_date",
+        ),
+        {"schema": "currency"},
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     source_currency_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("currency.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("currency.currency.id"), nullable=False, index=True
     )
     target_currency_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("currency.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("currency.currency.id"), nullable=False, index=True
     )
     rate: Mapped[float] = mapped_column(Float, nullable=False)
     effective_date: Mapped[datetime] = mapped_column(
@@ -125,15 +135,6 @@ class ExchangeRate(Base):
     )
     target_currency: Mapped["Currency"] = relationship(
         "Currency", foreign_keys=[target_currency_id], back_populates="target_rates"
-    )
-
-    __table_args__ = (
-        UniqueConstraint(
-            "source_currency_id",
-            "target_currency_id",
-            "effective_date",
-            name="uix_exchange_rate_source_target_date",
-        ),
     )
 
     def __repr__(self) -> str:

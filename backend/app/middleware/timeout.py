@@ -1,6 +1,8 @@
 # backend/app/middleware/timeout.py
 from __future__ import annotations
 
+from app.utils.circuit_breaker_utils import safe_observe_histogram, safe_increment_counter
+
 """
 Timeout middleware for the application.
 
@@ -126,7 +128,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
             # Track timeout in metrics if available
             if metrics_service:
                 try:
-                    metrics_service.increment_counter(
+                    safe_increment_counter(
                         "request_timeouts_total",
                         1,
                         {"endpoint": path, "method": request.method}
@@ -147,7 +149,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
             if metrics_service and not timed_out:
                 try:
                     duration = time.monotonic() - start_time
-                    metrics_service.observe_histogram(
+                    safe_observe_histogram(
                         "request_duration_seconds",
                         duration,
                         {"endpoint": path, "method": request.method}

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from app.core.metrics import MetricName
+from app.utils.circuit_breaker_utils import safe_increment_counter, safe_observe_histogram
 
 """
 Request context middleware for the application.
@@ -108,7 +109,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 # Record metrics if service is available
                 if metrics_service:
                     try:
-                        metrics_service.observe_histogram(
+                        safe_observe_histogram(
                             MetricName.HTTP_REQUEST_DURATION_SECONDS.value,
                             execution_time,
                             {
@@ -142,7 +143,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 # Record error metrics if service is available
                 if metrics_service:
                     try:
-                        metrics_service.increment_counter(
+                        safe_increment_counter(
                             MetricName.HTTP_REQUEST_ERRORS_TOTAL.value,
                             1,
                             {

@@ -1,7 +1,10 @@
 # backend/app/middleware/rate_limiting.py
 from __future__ import annotations
 
+from starlette.responses import JSONResponse
+
 from app.core.metrics import MetricName
+from app.utils.circuit_breaker_utils import safe_is_rate_limited, safe_increment_counter, safe_observe_histogram
 
 """
 Rate limiting middleware for FastAPI applications.
@@ -136,7 +139,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             ):
                 if metrics_service:
                     try:
-                        metrics_service.increment_counter(
+                        safe_increment_counter(
                             "rate_limit_skipped_total",
                             1,
                             {"endpoint": path, "reason": "excluded_path"},
@@ -152,7 +155,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             if not applicable_rules:
                 if metrics_service:
                     try:
-                        metrics_service.increment_counter(
+                        safe_increment_counter(
                             "rate_limit_skipped_total",
                             1,
                             {"endpoint": path, "reason": "no_applicable_rules"},
@@ -168,9 +171,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             limited_rule = None
             for rule in applicable_rules:
                 key: str = self.rate_limiter.get_key_for_request(request, rule)
-                limited, count, limit = await self.rate_limiter.is_rate_limited(
-                    key, rule
-                )
+                try:
+                    limited, count, limit = await safe_is_rate_limited(self.rate_limiter, key, rule)
+                except Exception as e:
+                    limited, count, limit = False, 0, rule.requests_per_window
 
                 if limited:
                     is_limited = True
@@ -188,7 +192,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     # Track detailed metrics
                     if metrics_service:
                         try:
-                            metrics_service.increment_counter(
+                            safe_increment_counter(
                                 "rate_limit_exceeded_total",
                                 1,
                                 {
@@ -216,15 +220,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 assert limited_rule is not None, "Limited rule should not be None when is_limited is True"
                 headers["Retry-After"] = str(limited_rule.window_seconds)
 
-                raise RateLimitExceededException(
-                    message="Rate limit exceeded",
-                    details={
-                        "ip": client_host,
-                        "endpoint": path,
-                        "strategy": limited_rule.strategy.value,
-                    },
-                    headers=headers,
-                    reset_seconds=limited_rule.window_seconds,
+                return JSONResponse(
+                    content={"error": "Rate limit exceeded"},
+                    status_code=429,
+                    headers=headers
                 )
 
             # Process the request
@@ -241,12 +240,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             if metrics_service:
                 duration = time.time() - start_time
                 try:
-                    metrics_service.observe_histogram(
+                    safe_observe_histogram(
                         MetricName.RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS.value,
                         duration,
                         {"limited": str(is_limited), "path": path},
                     )
-                    metrics_service.increment_counter(
+                    safe_increment_counter(
                         MetricName.RATE_LIMITING_REQUESTS_TOTAL.value,
                         1,
                         {"limited": str(is_limited), "path": path},

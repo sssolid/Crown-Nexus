@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from app.core.metrics import MetricName
+from app.utils.circuit_breaker_utils import safe_observe_histogram, safe_increment_counter
 
 """
 Security middleware for the application.
@@ -140,7 +141,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             if metrics_service:
                 try:
                     duration = time.time() - start_time
-                    metrics_service.observe_histogram(
+                    safe_observe_histogram(
                         MetricName.SECURITY_HEADERS_DURATION_SECONDS.value,
                         duration,
                         {"path": path},
@@ -271,7 +272,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                     # Track blocked request if metrics available
                     if metrics_service:
                         try:
-                            metrics_service.increment_counter(
+                            safe_increment_counter(
                                 "blocked_suspicious_requests_total",
                                 1,
                                 {
@@ -295,7 +296,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
             if metrics_service:
                 try:
                     duration = time.time() - start_time
-                    metrics_service.observe_histogram(
+                    safe_observe_histogram(
                         MetricName.REQUEST_SECURITY_CHECK_DURATION_SECONDS.value,
                         duration,
                         {"suspicious": str(suspicious), "path": path},

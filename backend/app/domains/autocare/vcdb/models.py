@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.domains.autocare.vcdb.schemas import BaseVehicle, Make, Vehicle
+
 """VCdb (Vehicle Component Database) models.
 
 This module defines the SQLAlchemy models that correspond to the VCdb database schema.
@@ -13,7 +15,7 @@ from typing import Optional
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, foreign, remote
 from sqlalchemy.sql import func
 
 from app.db.base_class import Base
@@ -30,7 +32,8 @@ class Make(Base):
         base_vehicles: Relationship to base vehicles.
     """
 
-    __tablename__ = "autocare_make"
+    __tablename__ = "make"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -41,7 +44,15 @@ class Make(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    vehicles = relationship("Vehicle", back_populates="make")
+    # vehicles = relationship("Vehicle", back_populates="make")
+    vehicles = relationship(
+        "Vehicle",
+        secondary="base_vehicle",  # <- use table name as string
+        primaryjoin="Make.make_id == foreign(vcdb.BaseVehicle.make_id)",
+        secondaryjoin="foreign(vcdb.Vehicle.base_vehicle_id) == vcdb.BaseVehicle.base_vehicle_id",
+        viewonly=True,
+        overlaps="make,base_vehicle"
+    )
     base_vehicles = relationship("BaseVehicle", back_populates="make")
 
     def __repr__(self) -> str:
@@ -63,7 +74,8 @@ class Year(Base):
         base_vehicles: Relationship to base vehicles.
     """
 
-    __tablename__ = "autocare_year"
+    __tablename__ = "year"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -97,7 +109,8 @@ class Model(Base):
         vehicle_type: Relationship to vehicle type.
     """
 
-    __tablename__ = "autocare_model"
+    __tablename__ = "model"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -107,7 +120,7 @@ class Model(Base):
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     vehicle_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_vehicle_type.vehicle_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.vehicle_type.vehicle_type_id"), nullable=False
     )
 
     # Relationships
@@ -135,7 +148,8 @@ class VehicleType(Base):
         vehicle_type_group: Relationship to vehicle type group.
     """
 
-    __tablename__ = "autocare_vehicle_type"
+    __tablename__ = "vehicle_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -146,7 +160,7 @@ class VehicleType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     vehicle_type_group_id: Mapped[Optional[int]] = mapped_column(
         Integer,
-        ForeignKey("autocare_vehicle_type_group.vehicle_type_group_id"),
+        ForeignKey("vcdb.vehicle_type_group.vehicle_type_group_id"),
         nullable=True,
     )
 
@@ -175,7 +189,8 @@ class VehicleTypeGroup(Base):
         vehicle_types: Relationship to vehicle types.
     """
 
-    __tablename__ = "autocare_vehicle_type_group"
+    __tablename__ = "vehicle_type_group"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -207,7 +222,8 @@ class SubModel(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_submodel"
+    __tablename__ = "submodel"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -243,7 +259,8 @@ class Region(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_region"
+    __tablename__ = "region"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -252,14 +269,24 @@ class Region(Base):
         Integer, nullable=False, unique=True, index=True
     )
     parent_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("autocare_region.region_id"), nullable=True
+        Integer, ForeignKey("vcdb.region.region_id"), nullable=True
     )
     abbr: Mapped[Optional[str]] = mapped_column(String(3), nullable=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    children = relationship("Region", back_populates="parent", remote_side=[region_id])
-    parent = relationship("Region", back_populates="children", remote_side=[id])
+    # children = relationship("Region", back_populates="parent", remote_side=[region_id])
+    # parent = relationship("Region", back_populates="children", remote_side=[id])
+    parent = relationship(
+        "Region",
+        remote_side="Region.region_id",
+        back_populates="children"
+    )
+    children = relationship(
+        "Region",
+        back_populates="parent",
+        cascade="all, delete-orphan"
+    )
     vehicles = relationship("Vehicle", back_populates="region")
 
     def __repr__(self) -> str:
@@ -281,7 +308,8 @@ class PublicationStage(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_publication_stage"
+    __tablename__ = "publication_stage"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -318,7 +346,8 @@ class BaseVehicle(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_base_vehicle"
+    __tablename__ = "base_vehicle"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -327,13 +356,13 @@ class BaseVehicle(Base):
         Integer, nullable=False, unique=True, index=True
     )
     year_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_year.year_id"), nullable=False
+        Integer, ForeignKey("vcdb.year.year_id"), nullable=False
     )
     make_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_make.make_id"), nullable=False
+        Integer, ForeignKey("vcdb.make.make_id"), nullable=False
     )
     model_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_model.model_id"), nullable=False
+        Integer, ForeignKey("vcdb.model.model_id"), nullable=False
     )
 
     # Relationships
@@ -373,7 +402,8 @@ class Vehicle(Base):
         model: Model name (through base_vehicle.model).
     """
 
-    __tablename__ = "autocare_vehicle"
+    __tablename__ = "vehicle"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -382,18 +412,18 @@ class Vehicle(Base):
         Integer, nullable=False, unique=True, index=True
     )
     base_vehicle_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_base_vehicle.base_vehicle_id"), nullable=False
+        Integer, ForeignKey("vcdb.base_vehicle.base_vehicle_id"), nullable=False
     )
     submodel_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_submodel.submodel_id"), nullable=False
+        Integer, ForeignKey("vcdb.submodel.submodel_id"), nullable=False
     )
     region_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_region.region_id"), nullable=False
+        Integer, ForeignKey("vcdb.region.region_id"), nullable=False
     )
     source: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
     publication_stage_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_publication_stage.publication_stage_id"),
+        ForeignKey("vcdb.publication_stage.publication_stage_id"),
         nullable=False,
         default=4,
     )
@@ -409,30 +439,30 @@ class Vehicle(Base):
     publication_stage = relationship("PublicationStage", back_populates="vehicles")
 
     # Vehicle attributes relationships
-    drive_types = relationship("DriveType", secondary="autocare_vehicle_to_drive_type")
+    drive_types = relationship("DriveType", secondary="vehicle_to_drive_type")
     brake_configs = relationship(
-        "BrakeConfig", secondary="autocare_vehicle_to_brake_config"
+        "BrakeConfig", secondary="vehicle_to_brake_config"
     )
-    bed_configs = relationship("BedConfig", secondary="autocare_vehicle_to_bed_config")
+    bed_configs = relationship("BedConfig", secondary="vehicle_to_bed_config")
     body_style_configs = relationship(
-        "BodyStyleConfig", secondary="autocare_vehicle_to_body_style_config"
+        "BodyStyleConfig", secondary="vehicle_to_body_style_config"
     )
     mfr_body_codes = relationship(
-        "MfrBodyCode", secondary="autocare_vehicle_to_mfr_body_code"
+        "MfrBodyCode", secondary="vehicle_to_mfr_body_code"
     )
     engine_configs = relationship(
-        "EngineConfig", secondary="autocare_vehicle_to_engine_config"
+        "EngineConfig", secondary="vehicle_to_engine_config"
     )
     spring_type_configs = relationship(
-        "SpringTypeConfig", secondary="autocare_vehicle_to_spring_type_config"
+        "SpringTypeConfig", secondary="vehicle_to_spring_type_config"
     )
     steering_configs = relationship(
-        "SteeringConfig", secondary="autocare_vehicle_to_steering_config"
+        "SteeringConfig", secondary="vehicle_to_steering_config"
     )
     transmissions = relationship(
-        "Transmission", secondary="autocare_vehicle_to_transmission"
+        "Transmission", secondary="vehicle_to_transmission"
     )
-    wheel_bases = relationship("WheelBase", secondary="autocare_vehicle_to_wheel_base")
+    wheel_bases = relationship("WheelBase", secondary="vehicle_to_wheel_base")
 
     # Properties for convenience
     @property
@@ -484,7 +514,8 @@ class DriveType(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_drive_type"
+    __tablename__ = "drive_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -505,19 +536,20 @@ class DriveType(Base):
 
 # Vehicle to DriveType association table
 vehicle_to_drive_type = Table(
-    "autocare_vehicle_to_drive_type",
+    "vehicle_to_drive_type",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "drive_type_id",
         Integer,
-        ForeignKey("autocare_drive_type.drive_type_id"),
+        ForeignKey("vcdb.drive_type.drive_type_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -532,7 +564,8 @@ class BrakeType(Base):
         rear_brake_configs: Relationship to brake configs (as rear).
     """
 
-    __tablename__ = "autocare_brake_type"
+    __tablename__ = "brake_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -545,12 +578,12 @@ class BrakeType(Base):
     # Relationships
     front_brake_configs = relationship(
         "BrakeConfig",
-        foreign_keys="[BrakeConfig.front_brake_type_id]",
+        foreign_keys="[vcdb.BrakeConfig.front_brake_type_id]",
         back_populates="front_brake_type",
     )
     rear_brake_configs = relationship(
         "BrakeConfig",
-        foreign_keys="[BrakeConfig.rear_brake_type_id]",
+        foreign_keys="[vcdb.BrakeConfig.rear_brake_type_id]",
         back_populates="rear_brake_type",
     )
 
@@ -573,7 +606,8 @@ class BrakeSystem(Base):
         brake_configs: Relationship to brake configs.
     """
 
-    __tablename__ = "autocare_brake_system"
+    __tablename__ = "brake_system"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -605,7 +639,8 @@ class BrakeABS(Base):
         brake_configs: Relationship to brake configs.
     """
 
-    __tablename__ = "autocare_brake_abs"
+    __tablename__ = "brake_abs"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -644,7 +679,8 @@ class BrakeConfig(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_brake_config"
+    __tablename__ = "brake_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -653,27 +689,27 @@ class BrakeConfig(Base):
         Integer, nullable=False, unique=True, index=True
     )
     front_brake_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_brake_type.brake_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.brake_type.brake_type_id"), nullable=False
     )
     rear_brake_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_brake_type.brake_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.brake_type.brake_type_id"), nullable=False
     )
     brake_system_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_brake_system.brake_system_id"), nullable=False
+        Integer, ForeignKey("vcdb.brake_system.brake_system_id"), nullable=False
     )
     brake_abs_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_brake_abs.brake_abs_id"), nullable=False
+        Integer, ForeignKey("vcdb.brake_abs.brake_abs_id"), nullable=False
     )
 
     # Relationships
     front_brake_type = relationship(
         "BrakeType",
-        foreign_keys=[front_brake_type_id],
+        foreign_keys="[vcdb.front_brake_type_id]",
         back_populates="front_brake_configs",
     )
     rear_brake_type = relationship(
         "BrakeType",
-        foreign_keys=[rear_brake_type_id],
+        foreign_keys="[vcdb.rear_brake_type_id]",
         back_populates="rear_brake_configs",
     )
     brake_system = relationship("BrakeSystem", back_populates="brake_configs")
@@ -690,19 +726,20 @@ class BrakeConfig(Base):
 
 # Vehicle to BrakeConfig association table
 vehicle_to_brake_config = Table(
-    "autocare_vehicle_to_brake_config",
+    "vehicle_to_brake_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "brake_config_id",
         Integer,
-        ForeignKey("autocare_brake_config.brake_config_id"),
+        ForeignKey("vcdb.brake_config.brake_config_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -716,7 +753,8 @@ class BedType(Base):
         bed_configs: Relationship to bed configs.
     """
 
-    __tablename__ = "autocare_bed_type"
+    __tablename__ = "bed_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -749,7 +787,8 @@ class BedLength(Base):
         bed_configs: Relationship to bed configs.
     """
 
-    __tablename__ = "autocare_bed_length"
+    __tablename__ = "bed_length"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -785,7 +824,8 @@ class BedConfig(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_bed_config"
+    __tablename__ = "bed_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -794,10 +834,10 @@ class BedConfig(Base):
         Integer, nullable=False, unique=True, index=True
     )
     bed_length_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_bed_length.bed_length_id"), nullable=False
+        Integer, ForeignKey("vcdb.bed_length.bed_length_id"), nullable=False
     )
     bed_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_bed_type.bed_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.bed_type.bed_type_id"), nullable=False
     )
 
     # Relationships
@@ -815,19 +855,20 @@ class BedConfig(Base):
 
 # Vehicle to BedConfig association table
 vehicle_to_bed_config = Table(
-    "autocare_vehicle_to_bed_config",
+    "vehicle_to_bed_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "bed_config_id",
         Integer,
-        ForeignKey("autocare_bed_config.bed_config_id"),
+        ForeignKey("vcdb.bed_config.bed_config_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -841,7 +882,8 @@ class BodyType(Base):
         body_style_configs: Relationship to body style configs.
     """
 
-    __tablename__ = "autocare_body_type"
+    __tablename__ = "body_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -873,7 +915,8 @@ class BodyNumDoors(Base):
         body_style_configs: Relationship to body style configs.
     """
 
-    __tablename__ = "autocare_body_num_doors"
+    __tablename__ = "body_num_doors"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -910,7 +953,8 @@ class BodyStyleConfig(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_body_style_config"
+    __tablename__ = "body_style_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -919,10 +963,10 @@ class BodyStyleConfig(Base):
         Integer, nullable=False, unique=True, index=True
     )
     body_num_doors_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_body_num_doors.body_num_doors_id"), nullable=False
+        Integer, ForeignKey("vcdb.body_num_doors.body_num_doors_id"), nullable=False
     )
     body_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_body_type.body_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.body_type.body_type_id"), nullable=False
     )
 
     # Relationships
@@ -940,19 +984,20 @@ class BodyStyleConfig(Base):
 
 # Vehicle to BodyStyleConfig association table
 vehicle_to_body_style_config = Table(
-    "autocare_vehicle_to_body_style_config",
+    "vehicle_to_body_style_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "body_style_config_id",
         Integer,
-        ForeignKey("autocare_body_style_config.body_style_config_id"),
+        ForeignKey("vcdb.body_style_config.body_style_config_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -966,7 +1011,8 @@ class MfrBodyCode(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_mfr_body_code"
+    __tablename__ = "mfr_body_code"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -987,19 +1033,20 @@ class MfrBodyCode(Base):
 
 # Vehicle to MfrBodyCode association table
 vehicle_to_mfr_body_code = Table(
-    "autocare_vehicle_to_mfr_body_code",
+    "vehicle_to_mfr_body_code",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "mfr_body_code_id",
         Integer,
-        ForeignKey("autocare_mfr_body_code.mfr_body_code_id"),
+        ForeignKey("vcdb.mfr_body_code.mfr_body_code_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -1017,7 +1064,8 @@ class EngineBlock(Base):
         engine_bases: Relationship to engine bases.
     """
 
-    __tablename__ = "autocare_engine_block"
+    __tablename__ = "engine_block"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1058,7 +1106,8 @@ class EngineBoreStroke(Base):
         engine_bases: Relationship to engine bases.
     """
 
-    __tablename__ = "autocare_engine_bore_stroke"
+    __tablename__ = "engine_bore_stroke"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1096,7 +1145,8 @@ class EngineBase(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_engine_base"
+    __tablename__ = "engine_base"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1105,11 +1155,11 @@ class EngineBase(Base):
         Integer, nullable=False, unique=True, index=True
     )
     engine_block_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_engine_block.engine_block_id"), nullable=False
+        Integer, ForeignKey("vcdb.engine_block.engine_block_id"), nullable=False
     )
     engine_bore_stroke_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_engine_bore_stroke.engine_bore_stroke_id"),
+        ForeignKey("vcdb.engine_bore_stroke.engine_bore_stroke_id"),
         nullable=False,
     )
 
@@ -1137,7 +1187,8 @@ class Aspiration(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_aspiration"
+    __tablename__ = "aspiration"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1169,7 +1220,8 @@ class FuelType(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_fuel_type"
+    __tablename__ = "fuel_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1201,7 +1253,8 @@ class CylinderHeadType(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_cylinder_head_type"
+    __tablename__ = "cylinder_head_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1233,7 +1286,8 @@ class EngineDesignation(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_engine_designation"
+    __tablename__ = "engine_designation"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1265,7 +1319,8 @@ class EngineVIN(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_engine_vin"
+    __tablename__ = "engine_vin"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1297,7 +1352,8 @@ class EngineVersion(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_engine_version"
+    __tablename__ = "engine_version"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1330,7 +1386,8 @@ class Mfr(Base):
         transmission_configs: Relationship to transmission configs (as transmission manufacturer).
     """
 
-    __tablename__ = "autocare_mfr"
+    __tablename__ = "mfr"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1365,7 +1422,8 @@ class IgnitionSystemType(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_ignition_system_type"
+    __tablename__ = "ignition_system_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1397,7 +1455,8 @@ class Valves(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_valves"
+    __tablename__ = "valves"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1429,7 +1488,8 @@ class FuelDeliveryType(Base):
         fuel_delivery_configs: Relationship to fuel delivery configs.
     """
 
-    __tablename__ = "autocare_fuel_delivery_type"
+    __tablename__ = "fuel_delivery_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1463,7 +1523,8 @@ class FuelDeliverySubType(Base):
         fuel_delivery_configs: Relationship to fuel delivery configs.
     """
 
-    __tablename__ = "autocare_fuel_delivery_subtype"
+    __tablename__ = "fuel_delivery_subtype"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1497,7 +1558,8 @@ class FuelSystemControlType(Base):
         fuel_delivery_configs: Relationship to fuel delivery configs.
     """
 
-    __tablename__ = "autocare_fuel_system_control_type"
+    __tablename__ = "fuel_system_control_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1533,7 +1595,8 @@ class FuelSystemDesign(Base):
         fuel_delivery_configs: Relationship to fuel delivery configs.
     """
 
-    __tablename__ = "autocare_fuel_system_design"
+    __tablename__ = "fuel_system_design"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1574,7 +1637,8 @@ class FuelDeliveryConfig(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_fuel_delivery_config"
+    __tablename__ = "fuel_delivery_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1584,22 +1648,22 @@ class FuelDeliveryConfig(Base):
     )
     fuel_delivery_type_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_fuel_delivery_type.fuel_delivery_type_id"),
+        ForeignKey("vcdb.fuel_delivery_type.fuel_delivery_type_id"),
         nullable=False,
     )
     fuel_delivery_subtype_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_fuel_delivery_subtype.fuel_delivery_subtype_id"),
+        ForeignKey("vcdb.fuel_delivery_subtype.fuel_delivery_subtype_id"),
         nullable=False,
     )
     fuel_system_control_type_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_fuel_system_control_type.fuel_system_control_type_id"),
+        ForeignKey("vcdb.fuel_system_control_type.fuel_system_control_type_id"),
         nullable=False,
     )
     fuel_system_design_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_fuel_system_design.fuel_system_design_id"),
+        ForeignKey("vcdb.fuel_system_design.fuel_system_design_id"),
         nullable=False,
     )
 
@@ -1638,7 +1702,8 @@ class PowerOutput(Base):
         engine_configs: Relationship to engine configs.
     """
 
-    __tablename__ = "autocare_power_output"
+    __tablename__ = "power_output"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1694,7 +1759,8 @@ class EngineConfig(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_engine_config"
+    __tablename__ = "engine_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1703,48 +1769,48 @@ class EngineConfig(Base):
         Integer, nullable=False, unique=True, index=True
     )
     engine_base_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_engine_base.engine_base_id"), nullable=False
+        Integer, ForeignKey("vcdb.engine_base.engine_base_id"), nullable=False
     )
     engine_designation_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_engine_designation.engine_designation_id"),
+        ForeignKey("vcdb.engine_designation.engine_designation_id"),
         nullable=False,
     )
     engine_vin_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_engine_vin.engine_vin_id"), nullable=False
+        Integer, ForeignKey("vcdb.engine_vin.engine_vin_id"), nullable=False
     )
     valves_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_valves.valves_id"), nullable=False
+        Integer, ForeignKey("vcdb.valves.valves_id"), nullable=False
     )
     fuel_delivery_config_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_fuel_delivery_config.fuel_delivery_config_id"),
+        ForeignKey("vcdb.fuel_delivery_config.fuel_delivery_config_id"),
         nullable=False,
     )
     aspiration_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_aspiration.aspiration_id"), nullable=False
+        Integer, ForeignKey("vcdb.aspiration.aspiration_id"), nullable=False
     )
     cylinder_head_type_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_cylinder_head_type.cylinder_head_type_id"),
+        ForeignKey("vcdb.cylinder_head_type.cylinder_head_type_id"),
         nullable=False,
     )
     fuel_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_fuel_type.fuel_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.fuel_type.fuel_type_id"), nullable=False
     )
     ignition_system_type_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_ignition_system_type.ignition_system_type_id"),
+        ForeignKey("vcdb.ignition_system_type.ignition_system_type_id"),
         nullable=False,
     )
     engine_mfr_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_mfr.mfr_id"), nullable=False
+        Integer, ForeignKey("vcdb.mfr.mfr_id"), nullable=False
     )
     engine_version_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_engine_version.engine_version_id"), nullable=False
+        Integer, ForeignKey("vcdb.engine_version.engine_version_id"), nullable=False
     )
     power_output_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_power_output.power_output_id"), nullable=False
+        Integer, ForeignKey("vcdb.power_output.power_output_id"), nullable=False
     )
 
     # Relationships
@@ -1780,19 +1846,20 @@ class EngineConfig(Base):
 
 # Vehicle to EngineConfig association table
 vehicle_to_engine_config = Table(
-    "autocare_vehicle_to_engine_config",
+    "vehicle_to_engine_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "engine_config_id",
         Integer,
-        ForeignKey("autocare_engine_config.engine_config_id"),
+        ForeignKey("vcdb.engine_config.engine_config_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -1807,7 +1874,8 @@ class SpringType(Base):
         rear_spring_configs: Relationship to spring configs (as rear).
     """
 
-    __tablename__ = "autocare_spring_type"
+    __tablename__ = "spring_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1820,12 +1888,12 @@ class SpringType(Base):
     # Relationships
     front_spring_configs = relationship(
         "SpringTypeConfig",
-        foreign_keys="[SpringTypeConfig.front_spring_type_id]",
+        foreign_keys="[vcdb.SpringTypeConfig.front_spring_type_id]",
         back_populates="front_spring_type",
     )
     rear_spring_configs = relationship(
         "SpringTypeConfig",
-        foreign_keys="[SpringTypeConfig.rear_spring_type_id]",
+        foreign_keys="[vcdb.SpringTypeConfig.rear_spring_type_id]",
         back_populates="rear_spring_type",
     )
 
@@ -1851,7 +1919,8 @@ class SpringTypeConfig(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_spring_type_config"
+    __tablename__ = "spring_type_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1860,21 +1929,21 @@ class SpringTypeConfig(Base):
         Integer, nullable=False, unique=True, index=True
     )
     front_spring_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_spring_type.spring_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.spring_type.spring_type_id"), nullable=False
     )
     rear_spring_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_spring_type.spring_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.spring_type.spring_type_id"), nullable=False
     )
 
     # Relationships
     front_spring_type = relationship(
         "SpringType",
-        foreign_keys=[front_spring_type_id],
+        foreign_keys="[vcdb.front_spring_type_id]",
         back_populates="front_spring_configs",
     )
     rear_spring_type = relationship(
         "SpringType",
-        foreign_keys=[rear_spring_type_id],
+        foreign_keys="[vcdb.rear_spring_type_id]",
         back_populates="rear_spring_configs",
     )
 
@@ -1889,19 +1958,20 @@ class SpringTypeConfig(Base):
 
 # Vehicle to SpringTypeConfig association table
 vehicle_to_spring_type_config = Table(
-    "autocare_vehicle_to_spring_type_config",
+    "vehicle_to_spring_type_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "spring_type_config_id",
         Integer,
-        ForeignKey("autocare_spring_type_config.spring_type_config_id"),
+        ForeignKey("vcdb.spring_type_config.spring_type_config_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -1915,7 +1985,8 @@ class SteeringType(Base):
         steering_configs: Relationship to steering configs.
     """
 
-    __tablename__ = "autocare_steering_type"
+    __tablename__ = "steering_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1947,7 +2018,8 @@ class SteeringSystem(Base):
         steering_configs: Relationship to steering configs.
     """
 
-    __tablename__ = "autocare_steering_system"
+    __tablename__ = "steering_system"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1982,7 +2054,8 @@ class SteeringConfig(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_steering_config"
+    __tablename__ = "steering_config"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -1991,11 +2064,11 @@ class SteeringConfig(Base):
         Integer, nullable=False, unique=True, index=True
     )
     steering_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_steering_type.steering_type_id"), nullable=False
+        Integer, ForeignKey("vcdb.steering_type.steering_type_id"), nullable=False
     )
     steering_system_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_steering_system.steering_system_id"),
+        ForeignKey("vcdb.steering_system.steering_system_id"),
         nullable=False,
     )
 
@@ -2014,19 +2087,20 @@ class SteeringConfig(Base):
 
 # Vehicle to SteeringConfig association table
 vehicle_to_steering_config = Table(
-    "autocare_vehicle_to_steering_config",
+    "vehicle_to_steering_config",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "steering_config_id",
         Integer,
-        ForeignKey("autocare_steering_config.steering_config_id"),
+        ForeignKey("vcdb.steering_config.steering_config_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -2040,7 +2114,8 @@ class TransmissionType(Base):
         transmission_bases: Relationship to transmission bases.
     """
 
-    __tablename__ = "autocare_transmission_type"
+    __tablename__ = "transmission_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2074,7 +2149,8 @@ class TransmissionNumSpeeds(Base):
         transmission_bases: Relationship to transmission bases.
     """
 
-    __tablename__ = "autocare_transmission_num_speeds"
+    __tablename__ = "transmission_num_speeds"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2108,7 +2184,8 @@ class TransmissionControlType(Base):
         transmission_bases: Relationship to transmission bases.
     """
 
-    __tablename__ = "autocare_transmission_control_type"
+    __tablename__ = "transmission_control_type"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2147,7 +2224,8 @@ class TransmissionBase(Base):
         transmissions: Relationship to transmissions.
     """
 
-    __tablename__ = "autocare_transmission_base"
+    __tablename__ = "transmission_base"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2157,17 +2235,17 @@ class TransmissionBase(Base):
     )
     transmission_type_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_transmission_type.transmission_type_id"),
+        ForeignKey("vcdb.transmission_type.transmission_type_id"),
         nullable=False,
     )
     transmission_num_speeds_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_transmission_num_speeds.transmission_num_speeds_id"),
+        ForeignKey("vcdb.transmission_num_speeds.transmission_num_speeds_id"),
         nullable=False,
     )
     transmission_control_type_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_transmission_control_type.transmission_control_type_id"),
+        ForeignKey("vcdb.transmission_control_type.transmission_control_type_id"),
         nullable=False,
     )
 
@@ -2202,7 +2280,8 @@ class TransmissionMfrCode(Base):
         transmissions: Relationship to transmissions.
     """
 
-    __tablename__ = "autocare_transmission_mfr_code"
+    __tablename__ = "transmission_mfr_code"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2234,7 +2313,8 @@ class ElecControlled(Base):
         transmissions: Relationship to transmissions.
     """
 
-    __tablename__ = "autocare_elec_controlled"
+    __tablename__ = "elec_controlled"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2273,7 +2353,8 @@ class Transmission(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_transmission"
+    __tablename__ = "transmission"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2283,21 +2364,21 @@ class Transmission(Base):
     )
     transmission_base_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_transmission_base.transmission_base_id"),
+        ForeignKey("vcdb.transmission_base.transmission_base_id"),
         nullable=False,
     )
     transmission_mfr_code_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_transmission_mfr_code.transmission_mfr_code_id"),
+        ForeignKey("vcdb.transmission_mfr_code.transmission_mfr_code_id"),
         nullable=False,
     )
     elec_controlled_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_elec_controlled.elec_controlled_id"),
+        ForeignKey("vcdb.elec_controlled.elec_controlled_id"),
         nullable=False,
     )
     transmission_mfr_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_mfr.mfr_id"), nullable=False
+        Integer, ForeignKey("vcdb.mfr.mfr_id"), nullable=False
     )
 
     # Relationships
@@ -2319,19 +2400,20 @@ class Transmission(Base):
 
 # Vehicle to Transmission association table
 vehicle_to_transmission = Table(
-    "autocare_vehicle_to_transmission",
+    "vehicle_to_transmission",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "transmission_id",
         Integer,
-        ForeignKey("autocare_transmission.transmission_id"),
+        ForeignKey("vcdb.transmission.transmission_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -2346,7 +2428,8 @@ class WheelBase(Base):
         vehicles: Relationship to vehicles.
     """
 
-    __tablename__ = "autocare_wheel_base"
+    __tablename__ = "wheel_base"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -2368,19 +2451,20 @@ class WheelBase(Base):
 
 # Vehicle to WheelBase association table
 vehicle_to_wheel_base = Table(
-    "autocare_vehicle_to_wheel_base",
+    "vehicle_to_wheel_base",
     Base.metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     Column(
-        "vehicle_id", Integer, ForeignKey("autocare_vehicle.vehicle_id"), nullable=False
+        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
     ),
     Column(
         "wheel_base_id",
         Integer,
-        ForeignKey("autocare_wheel_base.wheel_base_id"),
+        ForeignKey("vcdb.wheel_base.wheel_base_id"),
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
+    schema="vcdb"
 )
 
 
@@ -2393,12 +2477,13 @@ class VCdbVersion(Base):
         is_current: Whether this is the current version.
     """
 
-    __tablename__ = "autocare_vcdb_version"
+    __tablename__ = "vcdb_version"
+    __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

@@ -20,7 +20,8 @@ from app.db.base_class import Base
 class PartAttribute(Base):
     """Model for part attribute definitions."""
 
-    __tablename__ = "autocare_part_attribute"
+    __tablename__ = "part_attribute"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -39,7 +40,8 @@ class PartAttribute(Base):
 class MetaData(Base):
     """Model for attribute metadata definitions."""
 
-    __tablename__ = "autocare_metadata"
+    __tablename__ = "metadata"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -55,7 +57,7 @@ class MetaData(Base):
     max_length: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     # Relationships
-    assignments = relationship("PartAttributeAssignment", back_populates="metadata")
+    assignments = relationship("PartAttributeAssignment", back_populates="metadata_info")
 
     def __repr__(self) -> str:
         return f"<MetaData {self.meta_name} ({self.meta_id})>"
@@ -64,7 +66,8 @@ class MetaData(Base):
 class MeasurementGroup(Base):
     """Model for measurement groupings."""
 
-    __tablename__ = "autocare_measurement_group"
+    __tablename__ = "measurement_group"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -86,7 +89,8 @@ class MeasurementGroup(Base):
 class MetaUOMCode(Base):
     """Model for units of measure codes."""
 
-    __tablename__ = "autocare_meta_uom_code"
+    __tablename__ = "meta_uom_code"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -99,7 +103,7 @@ class MetaUOMCode(Base):
     uom_label: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
     measurement_group_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_measurement_group.measurement_group_id"),
+        ForeignKey("padb.measurement_group.measurement_group_id"),
         nullable=False,
     )
 
@@ -114,7 +118,8 @@ class MetaUOMCode(Base):
 class PartAttributeAssignment(Base):
     """Model for assignments between parts, attributes, and metadata."""
 
-    __tablename__ = "autocare_part_attribute_assignment"
+    __tablename__ = "part_attribute_assignment"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -123,19 +128,19 @@ class PartAttributeAssignment(Base):
         Integer, nullable=False, unique=True, index=True
     )
     part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=False
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
     )
     pa_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_part_attribute.pa_id"), nullable=False
+        Integer, ForeignKey("padb.part_attribute.pa_id"), nullable=False
     )
     meta_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_metadata.meta_id"), nullable=False
+        Integer, ForeignKey("padb.metadata.meta_id"), nullable=False
     )
 
     # Relationships
     part = relationship("Parts", foreign_keys=[part_terminology_id])
     attribute = relationship("PartAttribute", back_populates="assignments")
-    metadata = relationship("MetaData", back_populates="assignments")
+    metadata_info = relationship("MetaData", back_populates="assignments")
     uom_assignments = relationship(
         "MetaUomCodeAssignment", back_populates="attribute_assignment"
     )
@@ -151,7 +156,8 @@ class PartAttributeAssignment(Base):
 class MetaUomCodeAssignment(Base):
     """Model for assignments between attributes and UOM codes."""
 
-    __tablename__ = "autocare_meta_uom_code_assignment"
+    __tablename__ = "meta_uom_code_assignment"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -161,11 +167,11 @@ class MetaUomCodeAssignment(Base):
     )
     papt_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_part_attribute_assignment.papt_id"),
+        ForeignKey("padb.part_attribute_assignment.papt_id"),
         nullable=False,
     )
     meta_uom_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_meta_uom_code.meta_uom_id"), nullable=False
+        Integer, ForeignKey("padb.meta_uom_code.meta_uom_id"), nullable=False
     )
 
     # Relationships
@@ -181,7 +187,8 @@ class MetaUomCodeAssignment(Base):
 class ValidValue(Base):
     """Model for valid values for attributes."""
 
-    __tablename__ = "autocare_valid_value"
+    __tablename__ = "valid_value"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -201,7 +208,8 @@ class ValidValue(Base):
 class ValidValueAssignment(Base):
     """Model for assignments between attributes and valid values."""
 
-    __tablename__ = "autocare_valid_value_assignment"
+    __tablename__ = "valid_value_assignment"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -211,11 +219,11 @@ class ValidValueAssignment(Base):
     )
     papt_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("autocare_part_attribute_assignment.papt_id"),
+        ForeignKey("padb.part_attribute_assignment.papt_id"),
         nullable=False,
     )
     valid_value_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_valid_value.valid_value_id"), nullable=False
+        Integer, ForeignKey("padb.valid_value.valid_value_id"), nullable=False
     )
 
     # Relationships
@@ -231,7 +239,8 @@ class ValidValueAssignment(Base):
 class Style(Base):
     """Model for style definitions."""
 
-    __tablename__ = "autocare_style"
+    __tablename__ = "style"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -252,16 +261,17 @@ class Style(Base):
 class PartAttributeStyle(Base):
     """Model for part attribute styling."""
 
-    __tablename__ = "autocare_part_attribute_style"
+    __tablename__ = "part_attribute_style"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     style_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("autocare_style.style_id"), nullable=True
+        Integer, ForeignKey("padb.style.style_id"), nullable=True
     )
     papt_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("autocare_part_attribute_assignment.papt_id"), nullable=True
+        Integer, ForeignKey("padb.part_attribute_assignment.papt_id"), nullable=True
     )
 
     # Relationships
@@ -277,16 +287,17 @@ class PartAttributeStyle(Base):
 class PartTypeStyle(Base):
     """Model for part type styling."""
 
-    __tablename__ = "autocare_part_type_style"
+    __tablename__ = "part_type_style"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     style_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("autocare_style.style_id"), nullable=True
+        Integer, ForeignKey("padb.style.style_id"), nullable=True
     )
     part_terminology_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=True
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=True
     )
 
     # Relationships
@@ -300,12 +311,13 @@ class PartTypeStyle(Base):
 class PAdbVersion(Base):
     """Model for PAdb version tracking."""
 
-    __tablename__ = "autocare_padb_version"
+    __tablename__ = "padb_version"
+    __table_args__ = {"schema": "padb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

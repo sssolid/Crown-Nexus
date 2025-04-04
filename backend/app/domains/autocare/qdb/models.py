@@ -20,7 +20,8 @@ from app.db.base_class import Base
 class QualifierType(Base):
     """Model for qualifier types."""
 
-    __tablename__ = "autocare_qualifier_type"
+    __tablename__ = "qualifier_type"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -40,7 +41,8 @@ class QualifierType(Base):
 class Qualifier(Base):
     """Model for qualifiers."""
 
-    __tablename__ = "autocare_qualifier"
+    __tablename__ = "qualifier"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -51,10 +53,10 @@ class Qualifier(Base):
     qualifier_text: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     example_text: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     qualifier_type_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_qualifier_type.qualifier_type_id"), nullable=False
+        Integer, ForeignKey("qdb.qualifier_type.qualifier_type_id"), nullable=False
     )
     new_qualifier_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("autocare_qualifier.qualifier_id"), nullable=True
+        Integer, ForeignKey("qdb.qualifier.qualifier_id"), nullable=True
     )
     when_modified: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.now
@@ -64,11 +66,17 @@ class Qualifier(Base):
     qualifier_type = relationship("QualifierType", back_populates="qualifiers")
     translations = relationship("QualifierTranslation", back_populates="qualifier")
     groups = relationship("QualifierGroup", back_populates="qualifier")
+    # superseded_by = relationship(
+    #     "Qualifier",
+    #     remote_side=[id],
+    #     foreign_keys=[new_qualifier_id],
+    #     backref="supersedes",
+    # )
     superseded_by = relationship(
         "Qualifier",
-        remote_side=[id],
-        foreign_keys=[new_qualifier_id],
+        primaryjoin="foreign(qdb.Qualifier.new_qualifier_id) == remote(qdb.Qualifier.qualifier_id)",
         backref="supersedes",
+        remote_side="qdb.Qualifier.qualifier_id"
     )
 
     def __repr__(self) -> str:
@@ -79,7 +87,8 @@ class Qualifier(Base):
 class Language(Base):
     """Model for languages."""
 
-    __tablename__ = "autocare_language"
+    __tablename__ = "language"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -100,7 +109,8 @@ class Language(Base):
 class QualifierTranslation(Base):
     """Model for qualifier translations."""
 
-    __tablename__ = "autocare_qualifier_translation"
+    __tablename__ = "qualifier_translation"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -109,10 +119,10 @@ class QualifierTranslation(Base):
         Integer, nullable=False, unique=True, index=True
     )
     qualifier_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_qualifier.qualifier_id"), nullable=False
+        Integer, ForeignKey("qdb.qualifier.qualifier_id"), nullable=False
     )
     language_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_language.language_id"), nullable=False
+        Integer, ForeignKey("qdb.language.language_id"), nullable=False
     )
     translation_text: Mapped[str] = mapped_column(String(500), nullable=False)
 
@@ -127,7 +137,8 @@ class QualifierTranslation(Base):
 class GroupNumber(Base):
     """Model for qualifier group numbers."""
 
-    __tablename__ = "autocare_group_number"
+    __tablename__ = "group_number"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -147,7 +158,8 @@ class GroupNumber(Base):
 class QualifierGroup(Base):
     """Model for qualifier groups."""
 
-    __tablename__ = "autocare_qualifier_group"
+    __tablename__ = "qualifier_group"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -156,10 +168,10 @@ class QualifierGroup(Base):
         Integer, nullable=False, unique=True, index=True
     )
     group_number_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_group_number.group_number_id"), nullable=False
+        Integer, ForeignKey("qdb.group_number.group_number_id"), nullable=False
     )
     qualifier_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_qualifier.qualifier_id"), nullable=False
+        Integer, ForeignKey("qdb.qualifier.qualifier_id"), nullable=False
     )
 
     # Relationships
@@ -173,12 +185,13 @@ class QualifierGroup(Base):
 class QdbVersion(Base):
     """Model for Qdb version tracking."""
 
-    __tablename__ = "autocare_qdb_version"
+    __tablename__ = "qdb_version"
+    __table_args__ = {"schema": "qdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

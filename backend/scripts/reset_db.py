@@ -1,150 +1,149 @@
-#!/usr/bin/env python
+# backend/true_reset.py
 """
-Reset database script.
-This will drop and recreate the crown_nexus database, then create the initial tables.
+Hard database reset script that allows completely starting over with migrations.
+
+This script:
+1. Drops all tables in the database (including alembic_version)
+2. Deletes all migration files (optional)
+3. Creates a new initial migration
 """
 
-import asyncio
+import argparse
 import os
-import subprocess
+import shutil
 import sys
 from pathlib import Path
+from sqlalchemy import create_engine, text, MetaData, inspect
 
-# Add the backend directory to sys.path
-script_path = Path(__file__).resolve()
-backend_dir = script_path.parent.parent  # Go up two levels: from scripts/ to backend/
-sys.path.insert(0, str(backend_dir))
+# Ensure we can import app modules
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import asyncpg
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine
-
-from app.db.base import Base
-
-DATABASE_NAME = "crown_nexus"
-USER = "postgres"
-PASSWORD = "postgres"
-HOST = "localhost"
+# Import settings from app config
+from app.core.config import settings
 
 
-async def reset_database():
-    """Drop and recreate the database, then create tables."""
-    print(f"Resetting database '{DATABASE_NAME}'...")
+def drop_all_tables():
+    """Drop ALL tables from the database, including alembic_version."""
+    # Create a synchronous connection to the database
+    sync_url = str(settings.SQLALCHEMY_DATABASE_URI).replace("postgresql+asyncpg://", "postgresql://")
+    engine = create_engine(sync_url)
 
-    # Connect to postgres database to manage crown_nexus database
-    conn = await asyncpg.connect(
-        user=USER,
-        password=PASSWORD,
-        host=HOST,
-        database="postgres",  # Connect to default postgres database
+    with engine.connect() as conn:
+        conn.execute(text("COMMIT"))  # Close any existing transaction
+
+        # Get list of all tables
+        result = conn.execute(text(
+            "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
+        ))
+        tables = [row[0] for row in result]
+        print(f"Found {len(tables)} tables to drop")
+
+        # Disable foreign key constraints temporarily
+        conn.execute(text("SET session_replication_role = 'replica'"))
+
+        # Drop all tables
+        for table in tables:
+            print(f"Dropping table: {table}")
+            conn.execute(text(f'DROP TABLE IF EXISTS "{table}" CASCADE'))
+
+        # Re-enable foreign key constraints
+        conn.execute(text("SET session_replication_role = 'origin'"))
+
+        # Commit changes
+        conn.execute(text("COMMIT"))
+
+    print("✅ All tables dropped successfully")
+
+
+def clear_migrations(versions_dir):
+    """Delete all migration files in the versions directory."""
+    if not versions_dir.exists():
+        print(f"Versions directory not found: {versions_dir}")
+        return
+
+    # Make backup of versions directory
+    backup_dir = versions_dir.parent / "versions_backup"
+    if backup_dir.exists():
+        shutil.rmtree(backup_dir)
+
+    os.makedirs(backup_dir, exist_ok=True)
+
+    # Copy all migration files to backup
+    for migration_file in versions_dir.glob("*.py"):
+        if migration_file.name != "__init__.py":
+            shutil.copy2(migration_file, backup_dir)
+            print(f"Backed up: {migration_file.name}")
+
+    # Delete all migration files except __init__.py
+    for migration_file in versions_dir.glob("*.py"):
+        if migration_file.name != "__init__.py":
+            migration_file.unlink()
+            print(f"Deleted: {migration_file.name}")
+
+    print("✅ All migration files cleared (backup created in 'versions_backup')")
+
+
+def create_initial_migration(message="initial"):
+    """Create a new initial migration."""
+    cmd = f'alembic revision --autogenerate -m "{message}"'
+    print(f"Creating new initial migration: {cmd}")
+    result = os.system(cmd)
+
+    if result != 0:
+        print(f"⚠️ Failed to create initial migration (exit code: {result})")
+    else:
+        print("✅ New initial migration created successfully")
+
+    return result
+
+
+def main():
+    """Parse arguments and execute commands."""
+    parser = argparse.ArgumentParser(
+        description="Complete database reset (drops all tables and optionally resets migrations)"
+    )
+    parser.add_argument(
+        "--keep-migrations",
+        action="store_true",
+        help="Don't delete existing migration files"
+    )
+    parser.add_argument(
+        "--message",
+        default="initial",
+        help="Message for the new initial migration"
+    )
+    parser.add_argument(
+        "--skip-create",
+        action="store_true",
+        help="Skip creating new migration"
     )
 
-    try:
-        # Drop database if it exists
-        await conn.execute(
-            f"""
-            DROP DATABASE IF EXISTS {DATABASE_NAME};
-        """
-        )
-        print(f"Dropped database '{DATABASE_NAME}' if it existed.")
+    args = parser.parse_args()
 
-        # Create fresh database
-        await conn.execute(
-            f"""
-            CREATE DATABASE {DATABASE_NAME};
-        """
-        )
-        print(f"Created fresh database '{DATABASE_NAME}'.")
-    finally:
-        await conn.close()
+    # Ask for confirmation
+    print("⚠️ WARNING: This will drop ALL tables in your database and reset migrations!")
+    confirm = input("Are you sure you want to continue? (y/N): ")
 
-    print("Database reset complete.")
+    if confirm.lower() != "y":
+        print("Operation cancelled.")
+        return
 
+    # Drop all tables
+    drop_all_tables()
 
-async def test_connection():
-    """Test database connection."""
-    print("\nTesting database connection...")
-    try:
-        # Try direct asyncpg connection
-        conn = await asyncpg.connect(
-            user=USER, password=PASSWORD, host=HOST, database=DATABASE_NAME
-        )
-        await conn.execute("SELECT 1")
-        await conn.close()
-        print("✅ Direct asyncpg connection successful!")
+    # Clear migrations if requested
+    if not args.keep_migrations:
+        versions_dir = Path("alembic/versions")
+        clear_migrations(versions_dir)
 
-        # Try SQLAlchemy connection
-        engine = create_async_engine(
-            f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}/{DATABASE_NAME}"
-        )
-        async with engine.begin() as conn:
-            # Use text() for raw SQL
-            await conn.execute(text("SELECT 1"))
-        await engine.dispose()
-        print("✅ SQLAlchemy connection successful!")
+    # Create new initial migration if requested
+    if not args.skip_create:
+        create_initial_migration(args.message)
 
-        return True
-    except Exception as e:
-        print(f"❌ Connection failed: {e}")
-        return False
-
-
-def run_alembic_migrations():
-    """Run Alembic migrations to create tables."""
-    print("\nRunning Alembic migrations...")
-    try:
-        # Change to the backend directory where alembic.ini is located
-        original_dir = os.getcwd()
-        os.chdir(str(backend_dir))
-
-        # Check if alembic.ini exists
-        if not Path("alembic.ini").exists():
-            print(f"❌ alembic.ini not found in {os.getcwd()}")
-            return False
-
-        # Generate migration
-        subprocess.run(
-            ["alembic", "revision", "--autogenerate", "-m", "Initial migration"],
-            check=True,
-        )
-        print("✅ Migration generated successfully!")
-
-        # Apply migration
-        subprocess.run(["alembic", "upgrade", "head"], check=True)
-        print("✅ Migration applied successfully!")
-
-        # Change back to original directory
-        os.chdir(original_dir)
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Migration failed: {e}")
-        # Change back to original directory if error occurs
-        if "original_dir" in locals():
-            os.chdir(original_dir)
-        return False
-
-
-async def main():
-    """Main function to reset and initialize the database."""
-    # Reset database
-    await reset_database()
-
-    # Test connection
-    connection_success = await test_connection()
-    if not connection_success:
-        print("Database connection failed. Exiting.")
-        return False
-
-    # Run migrations
-    migration_success = run_alembic_migrations()
-    if not migration_success:
-        print("Database migration failed. Exiting.")
-        return False
-
-    print("\n✅ Database successfully reset and initialized!")
-    return True
+    print("\nTrue reset completed.")
+    if not args.skip_create:
+        print("You can now run: alembic upgrade head")
 
 
 if __name__ == "__main__":
-    success = asyncio.run(main())
-    sys.exit(0 if success else 1)
+    main()

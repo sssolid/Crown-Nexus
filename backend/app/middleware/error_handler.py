@@ -1,6 +1,8 @@
 # backend/app/middleware/error_handler.py
 from __future__ import annotations
 
+from app.utils.circuit_breaker_utils import safe_increment_counter
+
 """
 Error handler middleware for the application.
 
@@ -232,7 +234,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             return
 
         try:
-            metrics_service.increment_counter(
+            safe_increment_counter(
                 "http_errors_total",
                 1,
                 {

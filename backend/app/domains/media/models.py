@@ -88,6 +88,7 @@ class Media(Base):
     """
 
     __tablename__ = "media"
+    __table_args__ = {"schema": "media"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -106,13 +107,13 @@ class Media(Base):
         JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb")
     )
     uploaded_by_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=False
     )
     is_approved: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=expression.false(), nullable=False
     )
     approved_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
     approved_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True

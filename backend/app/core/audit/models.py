@@ -39,7 +39,7 @@ class AuditLog(Base):
         String, nullable=False, index=True
     )
     user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"),
+        UUID(as_uuid=True), ForeignKey("user.user.id", ondelete="SET NULL"),
         nullable=True, index=True
     )
     ip_address: Mapped[Optional[str]] = mapped_column(
@@ -64,7 +64,7 @@ class AuditLog(Base):
         String, nullable=True
     )
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("company.id", ondelete="SET NULL"),
+        UUID(as_uuid=True), ForeignKey("company.company.id", ondelete="SET NULL"),
         nullable=True, index=True
     )
 
@@ -78,6 +78,7 @@ class AuditLog(Base):
         Index("ix_audit_log_user_id_timestamp", user_id, timestamp.desc()),
         Index("ix_audit_log_resource_timestamp", resource_type, resource_id, timestamp.desc()),
         Index("ix_audit_log_event_type_timestamp", event_type, timestamp.desc()),
+        {"schema": "audit"},
     )
 
     def __repr__(self) -> str:

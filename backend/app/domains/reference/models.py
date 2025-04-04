@@ -33,6 +33,7 @@ class Color(Base):
     """
 
     __tablename__ = "color"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -65,6 +66,7 @@ class ConstructionType(Base):
     """
 
     __tablename__ = "construction_type"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -97,6 +99,7 @@ class Texture(Base):
     """
 
     __tablename__ = "texture"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -131,6 +134,7 @@ class PackagingType(Base):
     """
 
     __tablename__ = "packaging_type"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -173,6 +177,7 @@ class Hardware(Base):
     """
 
     __tablename__ = "hardware_item"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -209,6 +214,7 @@ class TariffCode(Base):
     """
 
     __tablename__ = "tariff_code"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -216,7 +222,7 @@ class TariffCode(Base):
     code: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     country_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("country.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("location.country.id"), nullable=True, index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -249,6 +255,7 @@ class UnspscCode(Base):
     """
 
     __tablename__ = "unspsc_code"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -286,13 +293,14 @@ class Warehouse(Base):
     """
 
     __tablename__ = "warehouse"
+    __table_args__ = {"schema": "reference"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean,

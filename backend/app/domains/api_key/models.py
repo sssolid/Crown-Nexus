@@ -44,7 +44,7 @@ class ApiKey(Base):
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("user.id", ondelete="CASCADE"),
+        ForeignKey("user.user.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -77,7 +77,10 @@ class ApiKey(Base):
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="api_keys")
 
-    __table_args__ = (Index("ix_api_keys_user_id_name", user_id, name, unique=True),)
+    __table_args__ = (
+        Index("ix_api_keys_user_id_name", user_id, name, unique=True),
+        {"schema": "api_key"},
+    )
 
     def __repr__(self) -> str:
         """Return string representation of ApiKey instance.

@@ -10,7 +10,7 @@ attributes according to Auto Care Association standards.
 import uuid
 from datetime import date, datetime
 from typing import Optional
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Table, Column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -20,7 +20,8 @@ from app.db.base_class import Base
 class Parts(Base):
     """Model for parts terminology."""
 
-    __tablename__ = "autocare_parts"
+    __tablename__ = "parts"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -33,7 +34,7 @@ class Parts(Base):
     )
     parts_description_id: Mapped[Optional[int]] = mapped_column(
         Integer,
-        ForeignKey("autocare_parts_description.parts_description_id"),
+        ForeignKey("pcdb.parts_description.parts_description_id"),
         nullable=True,
     )
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
@@ -63,7 +64,8 @@ class Parts(Base):
 class PartsDescription(Base):
     """Model for parts descriptions."""
 
-    __tablename__ = "autocare_parts_description"
+    __tablename__ = "parts_description"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -83,7 +85,8 @@ class PartsDescription(Base):
 class Category(Base):
     """Model for parts categories."""
 
-    __tablename__ = "autocare_category"
+    __tablename__ = "category"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -104,7 +107,8 @@ class Category(Base):
 class SubCategory(Base):
     """Model for parts subcategories."""
 
-    __tablename__ = "autocare_subcategory"
+    __tablename__ = "subcategory"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -127,7 +131,8 @@ class SubCategory(Base):
 class Position(Base):
     """Model for parts positions."""
 
-    __tablename__ = "autocare_position"
+    __tablename__ = "position"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -148,7 +153,8 @@ class Position(Base):
 class PartCategory(Base):
     """Model for parts to category mapping."""
 
-    __tablename__ = "autocare_part_category"
+    __tablename__ = "part_category"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -157,13 +163,13 @@ class PartCategory(Base):
         Integer, nullable=False, unique=True, index=True
     )
     part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=False
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
     )
     subcategory_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_subcategory.subcategory_id"), nullable=False
+        Integer, ForeignKey("pcdb.subcategory.subcategory_id"), nullable=False
     )
     category_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_category.category_id"), nullable=False
+        Integer, ForeignKey("pcdb.category.category_id"), nullable=False
     )
 
     # Relationships
@@ -178,7 +184,8 @@ class PartCategory(Base):
 class PartPosition(Base):
     """Model for parts to position mapping."""
 
-    __tablename__ = "autocare_part_position"
+    __tablename__ = "part_position"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -187,10 +194,10 @@ class PartPosition(Base):
         Integer, nullable=False, unique=True, index=True
     )
     part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=False
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
     )
     position_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_position.position_id"), nullable=False
+        Integer, ForeignKey("pcdb.position.position_id"), nullable=False
     )
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
 
@@ -205,7 +212,8 @@ class PartPosition(Base):
 class PartsSupersession(Base):
     """Model for parts supersession."""
 
-    __tablename__ = "autocare_parts_supersession"
+    __tablename__ = "parts_supersession"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -214,11 +222,11 @@ class PartsSupersession(Base):
         Integer, nullable=False, unique=True, index=True
     )
     old_part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=False
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
     )
     old_part_terminology_name: Mapped[str] = mapped_column(String(256), nullable=False)
     new_part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=False
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
     )
     new_part_terminology_name: Mapped[str] = mapped_column(String(256), nullable=False)
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
@@ -231,7 +239,8 @@ class PartsSupersession(Base):
 class CodeMaster(Base):
     """Model for code master which links parts, categories, subcategories, and positions."""
 
-    __tablename__ = "autocare_code_master"
+    __tablename__ = "code_master"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -240,16 +249,16 @@ class CodeMaster(Base):
         Integer, nullable=False, unique=True, index=True
     )
     part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_parts.part_terminology_id"), nullable=False
+        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
     )
     category_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_category.category_id"), nullable=False
+        Integer, ForeignKey("pcdb.category.category_id"), nullable=False
     )
     subcategory_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_subcategory.subcategory_id"), nullable=False
+        Integer, ForeignKey("pcdb.subcategory.subcategory_id"), nullable=False
     )
     position_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("autocare_position.position_id"), nullable=False
+        Integer, ForeignKey("pcdb.position.position_id"), nullable=False
     )
     rev_date: Mapped[date] = mapped_column(Date, nullable=False)
 
@@ -266,7 +275,8 @@ class CodeMaster(Base):
 class Alias(Base):
     """Model for part aliases."""
 
-    __tablename__ = "autocare_alias"
+    __tablename__ = "alias"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -282,24 +292,29 @@ class Alias(Base):
 
 # Association table for parts to aliases
 parts_to_alias = Table(
-    "autocare_parts_to_alias",
+    "parts_to_alias",
     Base.metadata,
-    mapped_column(
+    Column(
         "part_terminology_id",
         Integer,
-        ForeignKey("autocare_parts.part_terminology_id"),
+        ForeignKey("pcdb.parts.part_terminology_id"),
         primary_key=True,
     ),
-    mapped_column(
-        "alias_id", Integer, ForeignKey("autocare_alias.alias_id"), primary_key=True
+    Column(
+        "alias_id",
+        Integer,
+        ForeignKey("pcdb.alias.alias_id"),
+        primary_key=True,
     ),
+    schema="pcdb",
 )
 
 
 class Use(Base):
     """Model for part uses."""
 
-    __tablename__ = "autocare_use"
+    __tablename__ = "use"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -315,29 +330,34 @@ class Use(Base):
 
 # Association table for parts to uses
 parts_to_use = Table(
-    "autocare_parts_to_use",
+    "parts_to_use",
     Base.metadata,
-    mapped_column(
+    Column(
         "part_terminology_id",
         Integer,
-        ForeignKey("autocare_parts.part_terminology_id"),
+        ForeignKey("pcdb.parts.part_terminology_id"),
         primary_key=True,
     ),
-    mapped_column(
-        "use_id", Integer, ForeignKey("autocare_use.use_id"), primary_key=True
+    Column(
+        "use_id",
+        Integer,
+        ForeignKey("pcdb.use.use_id"),
+        primary_key=True,
     ),
+    schema="pcdb",
 )
 
 
 class PCdbVersion(Base):
     """Model for PCdb version tracking."""
 
-    __tablename__ = "autocare_pcdb_version"
+    __tablename__ = "pcdb_version"
+    __table_args__ = {"schema": "pcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

@@ -1,6 +1,8 @@
 # backend/app/middleware/metrics.py
 from __future__ import annotations
 
+from app.utils.circuit_breaker_utils import safe_observe_histogram, safe_increment_counter
+
 """
 Metrics middleware for the application.
 
@@ -117,7 +119,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
                 try:
                     user_agent = request.headers.get("User-Agent", "unknown")
                     user_agent_type = self._classify_user_agent(user_agent)
-                    metrics_service.increment_counter(
+                    safe_increment_counter(
                         MetricName.HTTP_REQUESTS_BY_AGENT_TOTAL.value,
                         1,
                         {"agent_type": user_agent_type, "endpoint": endpoint or path},
@@ -136,7 +138,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             if metrics_service and "Content-Length" in response.headers:
                 try:
                     content_length = int(response.headers["Content-Length"])
-                    metrics_service.observe_histogram(
+                    safe_observe_histogram(
                         MetricName.HTTP_RESPONSE_SIZE_BYTES.value,
                         content_length,
                         {"path": endpoint or path, "method": request.method},

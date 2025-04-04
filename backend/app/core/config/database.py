@@ -9,9 +9,9 @@ This module handles all database-related settings including connection
 parameters for PostgreSQL and Redis.
 """
 
-from typing import Optional
+from typing import Optional, List, Any
 
-from pydantic import PostgresDsn, SecretStr, model_validator
+from pydantic import PostgresDsn, SecretStr, model_validator, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,6 +25,7 @@ class DatabaseSettings(BaseSettings):
     POSTGRES_DB: str = "crown_nexus"
     POSTGRES_PORT: str = "5432"
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
+    DB_SCHEMAS: List[str] = []
 
     # Redis settings
     REDIS_HOST: str = "localhost"
@@ -39,7 +40,23 @@ class DatabaseSettings(BaseSettings):
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",  # Allow extra fields in env file
+        json_schema_extra={
+            # Disable JSON parsing for these fields
+            "POSTGRES_SCHEMAS": {"env_mode": "str"},
+        },
     )
+
+    @field_validator("DB_SCHEMAS", mode="before")
+    @classmethod
+    def parse_str_to_list(cls, v: Any) -> List[str]:
+        """Parse string to list of strings if needed."""
+        if isinstance(v, str):
+            if not v:
+                return []
+            if "," in v:
+                return [item.strip() for item in v.split(",")]
+            return [v.strip()]
+        return v
 
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "DatabaseSettings":

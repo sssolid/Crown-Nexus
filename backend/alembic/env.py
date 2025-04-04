@@ -10,6 +10,7 @@ the application's models and configuration.
 from __future__ import annotations
 
 import asyncio
+import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
@@ -26,38 +27,28 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.core.config import settings
 
 # Import the Base class directly - don't import all models here
-from app.db.base_class import Base
+from app.db import base
 
 # This is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Use settings from app config instead of hardcoding
-db_url = str(settings.SQLALCHEMY_DATABASE_URI)
+# Convert asyncpg URL to psycopg for migrations
+db_url = str(settings.SQLALCHEMY_DATABASE_URI).replace("postgresql+asyncpg://", "postgresql://")
 config.set_section_option(config.config_ini_section, "sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
-# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Target metadata is the Base.metadata that all models are registered with
-target_metadata = Base.metadata
+# Target metadata is the Base.metadata
+target_metadata = base.Base.metadata
 
 
 def run_migrations_offline() -> None:
-    """
-    Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well. By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-    """
-    url: str = config.get_main_option("sqlalchemy.url")
+    """Run migrations in 'offline' mode."""
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -70,72 +61,66 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    """
-    Run migrations with the given connection.
-
-    Args:
-        connection: SQLAlchemy connection
-    """
-    context.configure(
-        connection=connection,
-        target_metadata=target_metadata,
-        compare_type=True,
-    )
+    """Run migrations with the given connection."""
+    print(f"Number of tables in metadata: {len(target_metadata.tables)}")
+    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
 
     with context.begin_transaction():
         context.run_migrations()
+        print("Migrations executed successfully within transaction")
 
 
-async def run_migrations_online() -> None:
-    """
-    Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-    """
-    # Print diagnostic information
+def run_migrations_online() -> None:
+    """Run migrations in 'online' mode using synchronous engine."""
     print("Attempting to connect to database...")
     print(f"Database URL: {db_url}")
 
-    # List all tables in the metadata for verification
+    # List tables in metadata
     table_names = [table.name for table in target_metadata.tables.values()]
-    print(f"Models to migrate: {table_names}")
+    print(f"Models to migrate: {table_names[:10]}...")  # Show first 10
 
-    # Create the engine with explicit configuration
+    # Create a standard synchronous engine
     engine_config = config.get_section(config.config_ini_section)
     if not engine_config:
         raise ValueError("Could not find SQLAlchemy configuration section")
 
-    connectable = AsyncEngine(
-        engine_from_config(
-            engine_config,
-            prefix="sqlalchemy.",
-            poolclass=pool.NullPool,
-            future=True,
-        )
+    connectable = engine_from_config(
+        engine_config,
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
     )
 
-    # Test connection before proceeding
-    try:
-        async with connectable.connect() as connection:
-            # Test the connection
-            await connection.execute(text("SELECT 1"))
-            print("✅ Database connection successful!")
+    # Run migrations with the synchronous engine
+    with connectable.connect() as connection:
+        # Test connection
+        result = connection.execute(text("SELECT 1"))
+        print("Database connection successful!")
 
-            # Run migrations
-            await connection.run_sync(do_run_migrations)
-    except Exception as e:
-        print(f"❌ Migration failed: {e}")
-        # Show more detailed error information
-        import traceback
+        # Check existing tables
+        result = connection.execute(text(
+            "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
+        ))
+        existing_tables = [row[0] for row in result]
+        print(f"Existing tables before migration: {len(existing_tables)}")
 
-        traceback.print_exc()
-        raise
-    finally:
-        await connectable.dispose()
+        # Run migrations
+        do_run_migrations(connection)
+
+        # Check tables after migration
+        result = connection.execute(text(
+            "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
+        ))
+        tables_after = [row[0] for row in result]
+        print(f"Tables after migration: {len(tables_after)}")
+        new_tables = set(tables_after) - set(existing_tables)
+        print(f"Newly created tables: {len(new_tables)}")
+
+        # Commit explicitly
+        connection.commit()
 
 
+# This is the entrypoint that gets invoked when executing the env.py file
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    asyncio.run(run_migrations_online())
+    run_migrations_online()

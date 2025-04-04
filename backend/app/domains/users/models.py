@@ -63,6 +63,7 @@ class User(Base):
     """
 
     __tablename__ = "user"
+    __table_args__ = {"schema": "user"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -85,7 +86,7 @@ class User(Base):
         Boolean, default=True, server_default=expression.true(), nullable=False
     )
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("company.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("company.company.id"), nullable=True
     )
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -109,10 +110,10 @@ class User(Base):
         "AuditLog", back_populates="user"
     )
     uploaded_media = relationship(
-        "Media", foreign_keys="[Media.uploaded_by_id]", back_populates="uploaded_by"
+        "Media", foreign_keys="[media.Media.uploaded_by_id]", back_populates="uploaded_by"
     )
     approved_media = relationship(
-        "Media", foreign_keys="[Media.approved_by_id]", back_populates="approved_by"
+        "Media", foreign_keys="[media.Media.approved_by_id]", back_populates="approved_by"
     )
 
     def __repr__(self) -> str:

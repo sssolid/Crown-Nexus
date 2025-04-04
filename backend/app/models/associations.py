@@ -28,13 +28,13 @@ product_fitment_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "fitment_id",
         UUID(as_uuid=True),
-        ForeignKey("fitment.id", ondelete="CASCADE"),
+        ForeignKey("product.fitment.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -43,6 +43,7 @@ product_fitment_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to Media relationship
@@ -52,13 +53,13 @@ product_media_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "media_id",
         UUID(as_uuid=True),
-        ForeignKey("media.id", ondelete="CASCADE"),
+        ForeignKey("media.media.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column("display_order", Integer, nullable=False, default=0),
@@ -69,6 +70,7 @@ product_media_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to TariffCode relationship
@@ -78,13 +80,13 @@ product_tariff_code_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "tariff_code_id",
         UUID(as_uuid=True),
-        ForeignKey("tariff_code.id", ondelete="CASCADE"),
+        ForeignKey("reference.tariff_code.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -93,6 +95,7 @@ product_tariff_code_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to UnspscCode relationship
@@ -102,13 +105,13 @@ product_unspsc_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "unspsc_code_id",
         UUID(as_uuid=True),
-        ForeignKey("unspsc_code.id", ondelete="CASCADE"),
+        ForeignKey("reference.unspsc_code.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -117,6 +120,7 @@ product_unspsc_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to Country relationship (for origin information)
@@ -126,19 +130,19 @@ product_country_origin_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "country_id",
         UUID(as_uuid=True),
-        ForeignKey("country.id", ondelete="CASCADE"),
+        ForeignKey("location.country.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "manufacturer_id",
         UUID(as_uuid=True),
-        ForeignKey("manufacturer.id", ondelete="SET NULL"),
+        ForeignKey("product.manufacturer.id", ondelete="SET NULL"),
         nullable=True,
     ),
     Column("origin_type", Integer, nullable=False, default=0),
@@ -150,6 +154,7 @@ product_country_origin_association = Table(
         server_default=func.now(),
     ),
     UniqueConstraint("product_id", "country_id", name="uix_product_country"),
+    schema="product",
 )
 
 # Product to Hardware relationship
@@ -159,13 +164,13 @@ product_hardware_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "hardware_id",
         UUID(as_uuid=True),
-        ForeignKey("hardware_item.id", ondelete="CASCADE"),
+        ForeignKey("reference.hardware_item.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column("quantity", Integer, nullable=False, default=1),
@@ -177,6 +182,7 @@ product_hardware_association = Table(
         server_default=func.now(),
     ),
     UniqueConstraint("product_id", "hardware_id", name="uix_product_hardware"),
+    schema="product",
 )
 
 # Product interchange information
@@ -186,14 +192,14 @@ product_interchange_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column("interchange_number", Integer, nullable=False),
     Column(
         "brand_id",
         UUID(as_uuid=True),
-        ForeignKey("brand.id", ondelete="SET NULL"),
+        ForeignKey("product.brand.id", ondelete="SET NULL"),
         nullable=True,
     ),
     # CORRECTION: Changed from Integer to Text for notes
@@ -207,6 +213,7 @@ product_interchange_association = Table(
     UniqueConstraint(
         "product_id", "interchange_number", "brand_id", name="uix_product_interchange"
     ),
+    schema="product",
 )
 
 # Product to PackagingType relationship
@@ -216,13 +223,13 @@ product_packaging_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "packaging_type_id",
         UUID(as_uuid=True),
-        ForeignKey("packaging_type.id", ondelete="CASCADE"),
+        ForeignKey("reference.packaging_type.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -231,6 +238,7 @@ product_packaging_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to Color relationship
@@ -240,13 +248,13 @@ product_color_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "color_id",
         UUID(as_uuid=True),
-        ForeignKey("color.id", ondelete="CASCADE"),
+        ForeignKey("reference.color.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -255,6 +263,7 @@ product_color_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to ConstructionType relationship
@@ -264,13 +273,13 @@ product_construction_type_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "construction_type_id",
         UUID(as_uuid=True),
-        ForeignKey("construction_type.id", ondelete="CASCADE"),
+        ForeignKey("reference.construction_type.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -279,6 +288,7 @@ product_construction_type_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )
 
 # Product to Texture relationship
@@ -288,13 +298,13 @@ product_texture_association = Table(
     Column(
         "product_id",
         UUID(as_uuid=True),
-        ForeignKey("product.id", ondelete="CASCADE"),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
         "texture_id",
         UUID(as_uuid=True),
-        ForeignKey("texture.id", ondelete="CASCADE"),
+        ForeignKey("reference.texture.id", ondelete="CASCADE"),
         primary_key=True,
     ),
     Column(
@@ -303,4 +313,5 @@ product_texture_association = Table(
         nullable=False,
         server_default=func.now(),
     ),
+    schema="product",
 )

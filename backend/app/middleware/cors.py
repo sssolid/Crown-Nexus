@@ -1,6 +1,8 @@
 # backend/app/middleware/cors.py
 from __future__ import annotations
 
+from app.utils.circuit_breaker_utils import safe_increment_counter
+
 """
 Enhanced CORS middleware for the application.
 
@@ -127,7 +129,7 @@ class EnhancedCORSMiddleware(CORSMiddleware):
             # Track CORS request metrics if available
             if metrics_service:
                 try:
-                    metrics_service.increment_counter(
+                    safe_increment_counter(
                         "cors_requests_total",
                         1,
                         {
@@ -168,7 +170,7 @@ class EnhancedCORSMiddleware(CORSMiddleware):
                 # Track CORS response metrics if available
                 if metrics_service:
                     try:
-                        metrics_service.increment_counter(
+                        safe_increment_counter(
                             "cors_responses_total",
                             1,
                             {

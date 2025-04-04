@@ -38,6 +38,7 @@ class Country(Base):
     """
 
     __tablename__ = "country"
+    __table_args__ = {"schema": "location"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -95,6 +96,7 @@ class Address(Base):
     """
 
     __tablename__ = "address"
+    __table_args__ = {"schema": "location"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -104,7 +106,7 @@ class Address(Base):
     state: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     postal_code: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     country_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("country.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("location.country.id"), nullable=False, index=True
     )
     latitude: Mapped[Optional[float]] = mapped_column(
         Float(precision=10, decimal_return_scale=7), nullable=True

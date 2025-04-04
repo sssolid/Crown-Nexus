@@ -66,6 +66,7 @@ class Product(Base):
     """
 
     __tablename__ = "product"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -224,12 +225,13 @@ class ProductDescription(Base):
     """
 
     __tablename__ = "product_description"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False
     )
     description_type: Mapped[str] = mapped_column(
         String(20), nullable=False, index=True
@@ -264,12 +266,13 @@ class ProductMarketing(Base):
     """
 
     __tablename__ = "product_marketing"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False
     )
     marketing_type: Mapped[str] = mapped_column(String(20), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
@@ -303,17 +306,18 @@ class ProductActivity(Base):
     """
 
     __tablename__ = "product_activity"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False
     )
     status: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
     changed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
@@ -346,15 +350,16 @@ class ProductSupersession(Base):
     """
 
     __tablename__ = "product_supersession"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     old_product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     new_product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     changed_at: Mapped[datetime] = mapped_column(
@@ -389,13 +394,14 @@ class Brand(Base):
     """
 
     __tablename__ = "brand"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     parent_company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("company.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("company.company.id"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -432,21 +438,22 @@ class ProductBrandHistory(Base):
     """
 
     __tablename__ = "product_brand_history"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     old_brand_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("brand.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("product.brand.id"), nullable=True
     )
     new_brand_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("brand.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("product.brand.id"), nullable=False
     )
     changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("user.user.id"), nullable=True
     )
     changed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
@@ -494,6 +501,7 @@ class AttributeDefinition(Base):
     """
 
     __tablename__ = "attribute_definition"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -561,11 +569,11 @@ class ProductAttribute(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     attribute_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("attribute_definition.id"),
+        ForeignKey("product.attribute_definition.id"),
         nullable=False,
         index=True,
     )
@@ -598,6 +606,7 @@ class ProductAttribute(Base):
 
     __table_args__ = (
         UniqueConstraint("product_id", "attribute_id", name="uix_product_attribute"),
+        {"schema": "product"},
     )
 
     def __repr__(self) -> str:
@@ -620,6 +629,7 @@ class PriceType(Base):
     """
 
     __tablename__ = "price_type"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -660,18 +670,19 @@ class ProductPricing(Base):
     """
 
     __tablename__ = "product_pricing"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     pricing_type_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("price_type.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.price_type.id"), nullable=False, index=True
     )
     manufacturer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("manufacturer.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("product.manufacturer.id"), nullable=True, index=True
     )
     price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     currency: Mapped[str] = mapped_column(
@@ -714,25 +725,26 @@ class Manufacturer(Base):
     """
 
     __tablename__ = "manufacturer"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("company.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("company.company.id"), nullable=True, index=True
     )
     address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     billing_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     shipping_address_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("address.id"), nullable=True
+        UUID(as_uuid=True), ForeignKey("location.address.id"), nullable=True
     )
     country_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("country.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("location.country.id"), nullable=True, index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -777,15 +789,16 @@ class ProductMeasurement(Base):
     """
 
     __tablename__ = "product_measurement"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     manufacturer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("manufacturer.id"), nullable=True, index=True
+        UUID(as_uuid=True), ForeignKey("product.manufacturer.id"), nullable=True, index=True
     )
     length: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
     width: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
@@ -826,15 +839,16 @@ class ProductStock(Base):
     """
 
     __tablename__ = "product_stock"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     warehouse_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("warehouse.id"), nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("reference.warehouse.id"), nullable=False, index=True
     )
     quantity: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False, index=True
@@ -874,6 +888,7 @@ class Fitment(Base):
     """
 
     __tablename__ = "fitment"
+    __table_args__ = {"schema": "product"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4

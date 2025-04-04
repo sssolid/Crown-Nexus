@@ -7,16 +7,19 @@ and can be run manually or during application setup.
 """
 
 import asyncio
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import typer
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from app.db.session import get_db_context
 from app.domains.currency.models import Currency
 from app.domains.currency.tasks import init_currencies as init_currencies_task
 
 app = typer.Typer()
-
 
 @app.command()
 def init_currencies(
@@ -76,9 +79,9 @@ async def _init_currencies_sync(force: bool, base_currency: str) -> None:
         # Delete existing currencies if forcing
         if force:
             # Delete all exchange rates first (foreign key constraint)
-            await db.execute("DELETE FROM exchange_rate")
+            await db.execute(text("DELETE FROM exchange_rate"))
             # Delete currencies
-            await db.execute("DELETE FROM currency")
+            await db.execute(text("DELETE FROM currency"))
             await db.commit()
 
         # Add currencies

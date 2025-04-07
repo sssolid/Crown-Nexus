@@ -1,14 +1,4 @@
-# backend/app/middleware/rate_limiting.py
 from __future__ import annotations
-
-from starlette.responses import JSONResponse
-
-from app.core.metrics import MetricName
-from app.utils.circuit_breaker_utils import (
-    safe_is_rate_limited,
-    safe_increment_counter,
-    safe_observe_histogram,
-)
 
 """
 Rate limiting middleware for FastAPI applications.
@@ -19,10 +9,9 @@ rules and strategies. It supports both Redis-backed and in-memory rate limiting.
 
 import time
 from typing import Any, Callable, Dict, List, Optional, Tuple
-
 from fastapi import Request, Response
+from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-
 from app.core.config import settings
 from app.core.exceptions import RateLimitException
 from app.logging import get_logger
@@ -30,16 +19,14 @@ from app.core.rate_limiting.limiter import RateLimiter
 from app.core.rate_limiting.models import RateLimitRule, RateLimitStrategy
 from app.core.rate_limiting.exceptions import RateLimitExceededException
 from app.core.dependency_manager import get_service
+from app.core.metrics import MetricName
+from app.utils.circuit_breaker_utils import safe_is_rate_limited, safe_increment_counter, safe_observe_histogram
 
-logger = get_logger("app.middleware.rate_limiting")
+logger = get_logger('app.middleware.rate_limiting')
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Middleware that applies rate limiting to incoming requests.
-
-    This middleware checks requests against configured rate limit rules
-    and rejects requests that exceed the limits.
-    """
+    """Middleware for rate limiting API requests."""
 
     def __init__(
         self,
@@ -49,26 +36,25 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         enable_headers: bool = True,
         block_exceeding_requests: bool = True,
         fallback_to_memory: bool = True,
-        limit_by_path: bool = False,
+        limit_by_path: bool = False
     ) -> None:
-        """Initialize the rate limit middleware.
+        """
+        Initialize the rate limit middleware.
 
         Args:
-            app: The FastAPI application.
-            rules: List of rate limit rules to apply. If None, a default
-                rule will be used.
-            use_redis: Whether to use Redis for rate limiting.
-            enable_headers: Whether to include rate limit headers in responses.
-            block_exceeding_requests: Whether to block requests that exceed
-                the rate limit.
-            fallback_to_memory: Whether to fallback to memory if Redis fails
-            limit_by_path: Whether to apply rate limits by path in addition to rules
+            app: The ASGI application
+            rules: Rate limit rules to apply
+            use_redis: Whether to use Redis for rate limiting
+            enable_headers: Whether to include rate limit headers in responses
+            block_exceeding_requests: Whether to block requests that exceed rate limits
+            fallback_to_memory: Whether to fallback to memory-based rate limiting if Redis fails
+            limit_by_path: Whether to apply rate limits per path
         """
         super().__init__(app)
         self.rules: List[RateLimitRule] = rules or [
             RateLimitRule(
                 requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
-                window_seconds=60,
+                window_seconds=60
             )
         ]
         self.use_redis: bool = use_redis
@@ -82,174 +68,183 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             self.using_fallback: bool = False
         except Exception as e:
             if fallback_to_memory:
-                logger.warning(
-                    "Failed to initialize Redis rate limiter, falling back to memory",
-                    error=str(e),
-                )
+                logger.warning('Failed to initialize Redis rate limiter, falling back to memory', error=str(e))
                 self.rate_limiter = RateLimiter(use_redis=False)
                 self.using_fallback = True
             else:
-                logger.error(
-                    "Failed to initialize rate limiter and fallback disabled",
-                    error=str(e),
-                )
+                logger.error('Failed to initialize rate limiter and fallback disabled', error=str(e))
                 raise
 
         logger.info(
-            "RateLimitMiddleware initialized",
+            'RateLimitMiddleware initialized',
             rules_count=len(self.rules),
             use_redis=use_redis,
-            using_fallback=getattr(self, "using_fallback", False),
+            using_fallback=getattr(self, 'using_fallback', False),
             enable_headers=enable_headers,
             block_exceeding_requests=block_exceeding_requests,
-            limit_by_path=limit_by_path,
+            limit_by_path=limit_by_path
         )
 
-    async def dispatch(
-        self, request: Request, call_next: Callable[[Request], Response]
-    ) -> Response:
-        """Process the request and apply rate limiting.
+    async def dispatch(self, request: Request, call_next: Callable[[Request], Response]) -> Response:
+        """
+        Process the request with rate limiting.
 
         Args:
-            request: The incoming request.
-            call_next: The next middleware or route handler.
+            request: The incoming request
+            call_next: Function to call the next middleware
 
         Returns:
-            The response from the next middleware or route handler,
-            or a 429 response if the rate limit is exceeded.
-
-        Raises:
-            RateLimitException: If the rate limit is exceeded and
-                block_exceeding_requests is True.
+            Response: The response, or a rate limit exceeded response
         """
-        # Get metrics service
         metrics_service = None
         try:
-            metrics_service = get_service("metrics_service")
+            metrics_service = get_service('metrics_service')
         except Exception as e:
-            logger.debug(f"Could not get metrics service: {str(e)}")
+            logger.debug(f'Could not get metrics service: {str(e)}')
 
         start_time = time.time()
         is_limited = False
         path: str = request.url.path
-        client_host = (
-            getattr(request.client, "host", "unknown") if request.client else "unknown"
-        )
+        client_host = getattr(request.client, 'host', 'unknown') if request.client else 'unknown'
+        rate_limit_error = False
 
         try:
-            # Skip excluded paths
-            if any(
-                path.startswith(excluded)
-                for rule in self.rules
-                for excluded in rule.exclude_paths
-            ):
+            # Check if path is excluded from rate limiting
+            excluded_path = False
+            for rule in self.rules:
+                if hasattr(rule, 'exclude_paths') and any(path.startswith(excluded) for excluded in rule.exclude_paths):
+                    excluded_path = True
+                    break
+
+            if excluded_path:
                 if metrics_service:
                     try:
-                        safe_increment_counter(
-                            "rate_limit_skipped_total",
-                            1,
-                            {"endpoint": path, "reason": "excluded_path"},
-                        )
+                        safe_increment_counter('rate_limit_skipped_total', 1,
+                                               {'endpoint': path, 'reason': 'excluded_path'})
                     except Exception as e:
-                        logger.debug(f"Failed to record rate limit metrics: {str(e)}")
-
+                        logger.debug(f'Failed to record rate limit metrics: {str(e)}')
                 return await call_next(request)
 
-            # Find applicable rules
+            # Get applicable rules
             applicable_rules, rule_match_reason = self._get_applicable_rules(request)
-
             if not applicable_rules:
                 if metrics_service:
                     try:
-                        safe_increment_counter(
-                            "rate_limit_skipped_total",
-                            1,
-                            {"endpoint": path, "reason": "no_applicable_rules"},
-                        )
+                        safe_increment_counter('rate_limit_skipped_total', 1,
+                                               {'endpoint': path, 'reason': 'no_applicable_rules'})
                     except Exception as e:
-                        logger.debug(f"Failed to record rate limit metrics: {str(e)}")
-
+                        logger.debug(f'Failed to record rate limit metrics: {str(e)}')
                 return await call_next(request)
 
+            # Apply rate limiting
             headers: Dict[str, str] = {}
-
-            # Check against each rule
             limited_rule = None
+
             for rule in applicable_rules:
-                key: str = self.rate_limiter.get_key_for_request(request, rule)
                 try:
-                    limited, count, limit = await safe_is_rate_limited(
-                        self.rate_limiter, key, rule
-                    )
+                    key: str = self.rate_limiter.get_key_for_request(request, rule)
+
+                    try:
+                        limited, count, limit = await safe_is_rate_limited(self.rate_limiter, key, rule)
+                    except Exception as e:
+                        logger.warning(f'Rate limit check failed: {str(e)}')
+                        # In case of error, assume not limited to avoid false positives
+                        limited, count, limit = False, 0, rule.requests_per_window
+                        rate_limit_error = True
+                        continue
+
+                    if limited:
+                        is_limited = True
+                        limited_rule = rule
+                        logger.warning(
+                            'Rate limit exceeded',
+                            client_host=client_host,
+                            path=path,
+                            key=key,
+                            count=count,
+                            limit=limit,
+                            rule_type=rule.strategy.value
+                        )
+
+                        if metrics_service:
+                            try:
+                                safe_increment_counter(
+                                    'rate_limit_exceeded_total',
+                                    1,
+                                    {
+                                        'endpoint': path,
+                                        'client_host': client_host[:15],
+                                        'strategy': rule.strategy.value,
+                                        'match_reason': rule_match_reason
+                                    }
+                                )
+                            except Exception as e:
+                                logger.debug(f'Failed to record rate limit metrics: {str(e)}')
+                        break
+
+                    if self.enable_headers:
+                        remaining = max(0, limit - count)
+                        if 'X-RateLimit-Remaining' not in headers or int(headers['X-RateLimit-Remaining']) > remaining:
+                            headers['X-RateLimit-Limit'] = str(limit)
+                            headers['X-RateLimit-Remaining'] = str(remaining)
+                            headers['X-RateLimit-Reset'] = str(rule.window_seconds)
                 except Exception as e:
-                    limited, count, limit = False, 0, rule.requests_per_window
+                    logger.error(f'Error processing rate limit rule: {str(e)}', exc_info=True)
+                    # Continue to the next rule rather than failing the entire request
+                    continue
 
-                if limited:
-                    is_limited = True
-                    limited_rule = rule
-                    logger.warning(
-                        "Rate limit exceeded",
-                        client_host=client_host,
-                        path=path,
-                        key=key,
-                        count=count,
-                        limit=limit,
-                        rule_type=rule.strategy.value,
-                    )
-
-                    # Track detailed metrics
-                    if metrics_service:
-                        try:
-                            safe_increment_counter(
-                                "rate_limit_exceeded_total",
-                                1,
-                                {
-                                    "endpoint": path,
-                                    "client_host": client_host[
-                                        :15
-                                    ],  # Truncate long IPs
-                                    "strategy": rule.strategy.value,
-                                    "match_reason": rule_match_reason,
-                                },
-                            )
-                        except Exception as e:
-                            logger.debug(
-                                f"Failed to record rate limit metrics: {str(e)}"
-                            )
-
-                    break
-
-                if self.enable_headers:
-                    # Update headers with the most restrictive remaining value
-                    if "X-RateLimit-Remaining" not in headers or int(
-                        headers["X-RateLimit-Remaining"]
-                    ) > (limit - count):
-                        headers["X-RateLimit-Limit"] = str(limit)
-                        headers["X-RateLimit-Remaining"] = str(max(0, limit - count))
-                        headers["X-RateLimit-Reset"] = str(rule.window_seconds)
-
-            # Handle rate limit exceeded
+            # Handle rate-limited requests
             if is_limited and self.block_exceeding_requests:
-                assert (
-                    limited_rule is not None
-                ), "Limited rule should not be None when is_limited is True"
-                headers["Retry-After"] = str(limited_rule.window_seconds)
+                # Set default retry-after value in case limited_rule is None
+                retry_after = '60'
 
+                if limited_rule is not None:
+                    retry_after = str(limited_rule.window_seconds)
+                    headers['Retry-After'] = retry_after
+                else:
+                    # This should not happen, but just in case
+                    logger.error('Rate limit triggered but no limited_rule found')
+                    headers['Retry-After'] = retry_after
+
+                # Return a proper JSON response for rate-limited requests
                 return JSONResponse(
-                    content={"error": "Rate limit exceeded"},
+                    content={
+                        'success': False,
+                        'message': 'Rate limit exceeded',
+                        'error': {
+                            'code': 'RATE_LIMIT_EXCEEDED',
+                            'details': {
+                                'retry_after': retry_after,
+                                'path': path
+                            }
+                        },
+                        'timestamp': time.time()
+                    },
                     status_code=429,
-                    headers=headers,
+                    headers=headers
                 )
 
-            # Process the request
-            response: Response = await call_next(request)
+            # Process the request if not rate-limited
+            try:
+                response = await call_next(request)
 
-            # Add rate limit headers to the response
-            if self.enable_headers and headers:
-                for header, value in headers.items():
-                    response.headers[header] = value
+                # Add rate limit headers to response
+                if self.enable_headers and headers:
+                    for header, value in headers.items():
+                        response.headers[header] = value
 
-            return response
+                return response
+            except Exception as e:
+                logger.error(f'Error in rate limit middleware call_next: {str(e)}', exc_info=True)
+                # Let ErrorHandlerMiddleware handle this exception
+                raise
+
+        except Exception as e:
+            # Catch any uncaught exceptions in the middleware itself
+            logger.error(f'Unexpected error in rate limit middleware: {str(e)}', exc_info=True)
+            # Let ErrorHandlerMiddleware handle this exception
+            raise
+
         finally:
             # Record metrics
             if metrics_service:
@@ -258,48 +253,42 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     safe_observe_histogram(
                         MetricName.RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS.value,
                         duration,
-                        {"limited": str(is_limited), "path": path},
+                        {'limited': str(is_limited), 'path': path}
                     )
                     safe_increment_counter(
                         MetricName.RATE_LIMITING_REQUESTS_TOTAL.value,
                         1,
-                        {"limited": str(is_limited), "path": path},
+                        {'limited': str(is_limited), 'path': path}
                     )
                 except Exception as e:
-                    logger.debug(f"Failed to record rate limiting metrics: {str(e)}")
+                    logger.debug(f'Failed to record rate limiting metrics: {str(e)}')
 
-    def _get_applicable_rules(
-        self, request: Request
-    ) -> Tuple[List[RateLimitRule], str]:
-        """Get applicable rate limit rules for a request.
+    def _get_applicable_rules(self, request: Request) -> Tuple[List[RateLimitRule], str]:
+        """
+        Get applicable rate limit rules for the request.
 
         Args:
             request: The incoming request
 
         Returns:
-            Tuple of (list of applicable rules, match reason)
+            Tuple[List[RateLimitRule], str]: The applicable rules and the reason they matched
         """
         path: str = request.url.path
 
-        # Check for path-specific rules first
-        path_rules = [
-            rule
-            for rule in self.rules
-            if rule.path_pattern is not None and path.startswith(rule.path_pattern)
-        ]
-
+        # Check path-specific rules first
+        path_rules = [rule for rule in self.rules if
+                      rule.path_pattern is not None and path.startswith(rule.path_pattern)]
         if path_rules:
-            return path_rules, "path_pattern"
+            return path_rules, 'path_pattern'
 
-        # If path-specific rules not found, check for default rules
+        # Check default rules (no path pattern)
         default_rules = [rule for rule in self.rules if rule.path_pattern is None]
-
         if default_rules:
-            return default_rules, "default"
+            return default_rules, 'default'
 
-        # If no matching rules, return the first rule as fallback
+        # Fallback to the first rule if available
         if self.rules:
-            return [self.rules[0]], "fallback"
+            return [self.rules[0]], 'fallback'
 
-        # If no rules at all, return empty list
-        return [], "no_rules"
+        # No rules applicable
+        return [], 'no_rules'

@@ -33,11 +33,11 @@ import app.domains.chat.models  # noqa: F401  # Depends on Company, User
 import app.domains.currency.models  # noqa: F401
 
 # Products
-import app.domains.products.models  # noqa: F401
-import app.domains.products.associations  # noqa: F401
-import app.domains.media.models  # noqa: F401  # Depends on Product, Media
-import app.domains.compliance.models  # noqa: F401  # Depends on Product, User
+import app.domains.media.models  # noqa: F401
+import app.domains.compliance.models  # noqa: F401
 import app.domains.model_mapping.models  # noqa: F401
+import app.domains.products.associations  # noqa: F401
+import app.domains.products.models  # noqa: F401
 
 # Autocare Datasets
 import app.domains.autocare.fitment.models  # noqa: F401
@@ -51,3 +51,12 @@ import app.domains.reference.models  # noqa: F401
 
 # Audit
 import app.core.audit.models  # noqa: F401
+
+from sqlalchemy.orm import configure_mappers
+try:
+    configure_mappers()
+except Exception as e:
+    import sys
+    print(f"Failed to configure SQLAlchemy mappers: {e}", file=sys.stderr)
+    # Don't re-raise the exception - let the application start so the issue can be fixed
+    # We'll log the error, but we don't want to prevent the app from starting

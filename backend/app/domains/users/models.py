@@ -109,14 +109,14 @@ class User(Base):
     audit_logs: Mapped[List["AuditLog"]] = relationship(
         "AuditLog", back_populates="user"
     )
-    uploaded_media = relationship(
+    uploaded_media: Mapped[List["Media"]] = relationship(
         "Media",
-        foreign_keys="[media.Media.uploaded_by_id]",
+        foreign_keys="Media.uploaded_by_id",  # Simplified string reference
         back_populates="uploaded_by",
     )
-    approved_media = relationship(
+    approved_media: Mapped[List["Media"]] = relationship(
         "Media",
-        foreign_keys="[media.Media.approved_by_id]",
+        foreign_keys="Media.approved_by_id",  # Simplified string reference
         back_populates="approved_by",
     )
 

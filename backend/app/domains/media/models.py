@@ -29,8 +29,10 @@ from app.db.base_class import Base
 
 if TYPE_CHECKING:
     from app.domains.products.models import Product
+    from app.domains.users.models import User
 else:
-    from app.domains.products.associations import product_media_association
+    # Avoid direct imports to prevent circular references
+    pass
 
 
 class MediaType(str, Enum):
@@ -131,14 +133,18 @@ class Media(Base):
     # Relationships
     products: Mapped[List["Product"]] = relationship(
         "Product",
-        secondary=product_media_association,
+        secondary="product.product_media",
         back_populates="media",
     )
     uploaded_by: Mapped["User"] = relationship(
-        "User", foreign_keys=[uploaded_by_id], back_populates="uploaded_media"
+        "User",
+        foreign_keys="Media.uploaded_by_id",  # Use string reference
+        back_populates="uploaded_media",
     )
     approved_by: Mapped[Optional["User"]] = relationship(
-        "User", foreign_keys=[approved_by_id], back_populates="approved_media"
+        "User",
+        foreign_keys="Media.approved_by_id",  # Use string reference
+        back_populates="approved_media",
     )
 
     def __repr__(self) -> str:

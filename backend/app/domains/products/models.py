@@ -19,6 +19,7 @@ from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 
+# Replace the TYPE_CHECKING section with this:
 if typing.TYPE_CHECKING:
     from app.domains.media.models import Media
     from app.domains.reference.models import (
@@ -32,20 +33,21 @@ if typing.TYPE_CHECKING:
         Warehouse,
     )
     from app.domains.location.models import Country
-
-from app.domains.products.associations import (
-    product_media_association,
-    product_fitment_association,
-    product_tariff_code_association,
-    product_unspsc_association,
-    product_country_origin_association,
-    product_hardware_association,
-    product_color_association,
-    product_construction_type_association,
-    product_texture_association,
-    product_packaging_association,
-    product_interchange_association,
-)
+else:
+    # Import only the associations, not the Media model directly
+    from app.domains.products.associations import (
+        product_media_association,
+        product_fitment_association,
+        product_tariff_code_association,
+        product_unspsc_association,
+        product_country_origin_association,
+        product_hardware_association,
+        product_color_association,
+        product_construction_type_association,
+        product_texture_association,
+        product_packaging_association,
+        product_interchange_association,
+    )
 
 
 class Product(Base):
@@ -149,7 +151,7 @@ class Product(Base):
     # Many-to-many relationships using association tables
     media: Mapped[List["Media"]] = relationship(
         "Media",
-        secondary=product_media_association,
+        secondary="product.product_media",
         back_populates="products",
     )
 

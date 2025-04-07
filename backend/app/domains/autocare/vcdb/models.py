@@ -47,9 +47,9 @@ class Make(Base):
     # vehicles = relationship("Vehicle", back_populates="make")
     vehicles: Mapped[List["Vehicle"]] = relationship(
         "Vehicle",
-        secondary="base_vehicle",  # <- use table name as string
-        primaryjoin="Make.make_id == foreign(vcdb.BaseVehicle.make_id)",
-        secondaryjoin="foreign(vcdb.Vehicle.base_vehicle_id) == vcdb.BaseVehicle.base_vehicle_id",
+        secondary="vcdb.base_vehicle",  # <- use table name as string
+        primaryjoin="Make.make_id == foreign(BaseVehicle.make_id)",
+        secondaryjoin="foreign(Vehicle.base_vehicle_id) == BaseVehicle.base_vehicle_id",
         viewonly=True,
         overlaps="make,base_vehicle",
     )
@@ -456,34 +456,34 @@ class Vehicle(Base):
 
     # Vehicle attributes relationships
     drive_types: Mapped[List["DriveType"]] = relationship(
-        "DriveType", secondary="vehicle_to_drive_type"
+        "DriveType", secondary="vcdb.vehicle_to_drive_type"
     )
     brake_configs: Mapped[List["BrakeConfig"]] = relationship(
-        "BrakeConfig", secondary="vehicle_to_brake_config"
+        "BrakeConfig", secondary="vcdb.vehicle_to_brake_config"
     )
     bed_configs: Mapped[List["BedConfig"]] = relationship(
-        "BedConfig", secondary="vehicle_to_bed_config"
+        "BedConfig", secondary="vcdb.vehicle_to_bed_config"
     )
     body_style_configs: Mapped[List["BodyStyleConfig"]] = relationship(
-        "BodyStyleConfig", secondary="vehicle_to_body_style_config"
+        "BodyStyleConfig", secondary="vcdb.vehicle_to_body_style_config"
     )
     mfr_body_codes: Mapped[List["MfrBodyCode"]] = relationship(
-        "MfrBodyCode", secondary="vehicle_to_mfr_body_code"
+        "MfrBodyCode", secondary="vcdb.vehicle_to_mfr_body_code"
     )
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
-        "EngineConfig", secondary="vehicle_to_engine_config"
+        "EngineConfig", secondary="vcdb.vehicle_to_engine_config"
     )
     spring_type_configs: Mapped[List["SpringTypeConfig"]] = relationship(
-        "SpringTypeConfig", secondary="vehicle_to_spring_type_config"
+        "SpringTypeConfig", secondary="vcdb.vehicle_to_spring_type_config"
     )
     steering_configs: Mapped[List["SteeringConfig"]] = relationship(
-        "SteeringConfig", secondary="vehicle_to_steering_config"
+        "SteeringConfig", secondary="vcdb.vehicle_to_steering_config"
     )
     transmissions: Mapped[List["Transmission"]] = relationship(
-        "Transmission", secondary="vehicle_to_transmission"
+        "Transmission", secondary="vcdb.vehicle_to_transmission"
     )
     wheel_bases: Mapped[List["WheelBase"]] = relationship(
-        "WheelBase", secondary="vehicle_to_wheel_base"
+        "WheelBase", secondary="vcdb.vehicle_to_wheel_base"
     )
 
     # Properties for convenience
@@ -600,12 +600,12 @@ class BrakeType(Base):
     # Relationships
     front_brake_configs: Mapped[List["BrakeConfig"]] = relationship(
         "BrakeConfig",
-        foreign_keys="[vcdb.BrakeConfig.front_brake_type_id]",
+        primaryjoin="BrakeType.brake_type_id == BrakeConfig.front_brake_type_id",
         back_populates="front_brake_type",
     )
     rear_brake_configs: Mapped[List["BrakeConfig"]] = relationship(
         "BrakeConfig",
-        foreign_keys="[vcdb.BrakeConfig.rear_brake_type_id]",
+        primaryjoin="BrakeType.brake_type_id == BrakeConfig.rear_brake_type_id",
         back_populates="rear_brake_type",
     )
 
@@ -728,20 +728,20 @@ class BrakeConfig(Base):
     )
 
     # Relationships
-    front_brake_type: Mapped[List["BrakeType"]] = relationship(
+    front_brake_type: Mapped["BrakeType"] = relationship(
         "BrakeType",
-        foreign_keys="[vcdb.front_brake_type_id]",
+        primaryjoin="BrakeConfig.front_brake_type_id == BrakeType.brake_type_id",
         back_populates="front_brake_configs",
     )
-    rear_brake_type: Mapped[List["BrakeType"]] = relationship(
+    rear_brake_type: Mapped["BrakeType"] = relationship(
         "BrakeType",
-        foreign_keys="[vcdb.rear_brake_type_id]",
+        primaryjoin="BrakeConfig.rear_brake_type_id == BrakeType.brake_type_id",
         back_populates="rear_brake_configs",
     )
-    brake_system: Mapped[List["BrakeSystem"]] = relationship(
+    brake_system: Mapped["BrakeSystem"] = relationship(
         "BrakeSystem", back_populates="brake_configs"
     )
-    brake_abs: Mapped[List["BrakeABS"]] = relationship(
+    brake_abs: Mapped["BrakeABS"] = relationship(
         "BrakeABS", back_populates="brake_configs"
     )
 
@@ -1974,12 +1974,12 @@ class SpringType(Base):
     # Relationships
     front_spring_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig",
-        foreign_keys="[vcdb.SpringTypeConfig.front_spring_type_id]",
+        primaryjoin="SpringType.spring_type_id == SpringTypeConfig.front_spring_type_id",
         back_populates="front_spring_type",
     )
     rear_spring_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig",
-        foreign_keys="[vcdb.SpringTypeConfig.rear_spring_type_id]",
+        primaryjoin="SpringType.spring_type_id == SpringTypeConfig.rear_spring_type_id",
         back_populates="rear_spring_type",
     )
 
@@ -2024,12 +2024,12 @@ class SpringTypeConfig(Base):
     # Relationships
     front_spring_type: Mapped["SpringType"] = relationship(
         "SpringType",
-        foreign_keys="[vcdb.front_spring_type_id]",
+        primaryjoin="SpringTypeConfig.front_spring_type_id == SpringType.spring_type_id",
         back_populates="front_spring_configs",
     )
     rear_spring_type: Mapped["SpringType"] = relationship(
         "SpringType",
-        foreign_keys="[vcdb.rear_spring_type_id]",
+        primaryjoin="SpringTypeConfig.rear_spring_type_id == SpringType.spring_type_id",
         back_populates="rear_spring_configs",
     )
 

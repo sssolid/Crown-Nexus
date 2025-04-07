@@ -156,7 +156,7 @@ class Product(Base):
     )
 
     fitments: Mapped[List["Fitment"]] = relationship(
-        "Fitment", secondary=product_fitment_association, back_populates="products"
+        "Fitment", secondary="product.product_fitment", back_populates="products"
     )
 
     tariff_codes: Mapped[List["TariffCode"]] = relationship(

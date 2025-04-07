@@ -83,9 +83,17 @@ class FitmentMapping(Base):
     )
 
     # Relationships
-    product = relationship("Product", foreign_keys="[product.product_id]")
-    created_by = relationship("User", foreign_keys="[user.created_by_id]")
-    updated_by = relationship("User", foreign_keys="[user.updated_by_id]")
+    product: Mapped["Product"] = relationship(
+        "Product", primaryjoin="FitmentMapping.product_id == foreign(Product.id)"
+    )
+
+    created_by: Mapped["User"] = relationship(
+        "User", primaryjoin="FitmentMapping.created_by_id == foreign(User.id)"
+    )
+
+    updated_by: Mapped["User"] = relationship(
+        "User", primaryjoin="FitmentMapping.updated_by_id == foreign(User.id)"
+    )
 
     def __repr__(self) -> str:
         return f"<FitmentMapping {self.id}: product={self.product_id}, vehicle={self.vehicle_id}>"

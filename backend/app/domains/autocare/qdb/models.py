@@ -31,9 +31,11 @@ class QualifierType(Base):
     )
     qualifier_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
-    # Relationships
+    # Relationships with explicit join conditions
     qualifiers: Mapped[List["Qualifier"]] = relationship(
-        "Qualifier", back_populates="qualifier_type"
+        "Qualifier",
+        primaryjoin="QualifierType.qualifier_type_id == Qualifier.qualifier_type_id",
+        back_populates="qualifier_type",
     )
 
     def __repr__(self) -> str:
@@ -64,27 +66,32 @@ class Qualifier(Base):
         DateTime, nullable=False, default=datetime.now
     )
 
-    # Relationships
+    # Relationships with explicit join conditions
     qualifier_type: Mapped["QualifierType"] = relationship(
-        "QualifierType", back_populates="qualifiers"
+        "QualifierType",
+        primaryjoin="Qualifier.qualifier_type_id == QualifierType.qualifier_type_id",
+        back_populates="qualifiers",
     )
+
     translations: Mapped[List["QualifierTranslation"]] = relationship(
-        "QualifierTranslation", back_populates="qualifier"
+        "QualifierTranslation",
+        primaryjoin="Qualifier.qualifier_id == QualifierTranslation.qualifier_id",
+        back_populates="qualifier",
     )
-    groups: Mapped["QualifierGroup"] = relationship(
-        "QualifierGroup", back_populates="qualifier"
+
+    groups: Mapped[List["QualifierGroup"]] = relationship(  # Fixed to List
+        "QualifierGroup",
+        primaryjoin="Qualifier.qualifier_id == QualifierGroup.qualifier_id",
+        back_populates="qualifier",
     )
-    # superseded_by = relationship(
-    #     "Qualifier",
-    #     remote_side=[id],
-    #     foreign_keys=[new_qualifier_id],
-    #     backref="supersedes",
-    # )
-    superseded_by = relationship(
+
+    # Self-referential relationship with explicit join
+    superseded_by: Mapped[Optional["Qualifier"]] = relationship(
         "Qualifier",
-        primaryjoin="foreign(qdb.Qualifier.new_qualifier_id) == remote(qdb.Qualifier.qualifier_id)",
+        primaryjoin="Qualifier.new_qualifier_id == Qualifier.qualifier_id",
+        foreign_keys=[new_qualifier_id],
+        remote_side=[qualifier_id],
         backref="supersedes",
-        remote_side="qdb.Qualifier.qualifier_id",
     )
 
     def __repr__(self) -> str:
@@ -107,9 +114,11 @@ class Language(Base):
     language_name: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     dialect_name: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
-    # Relationships
+    # Relationships with explicit join conditions
     translations: Mapped[List["QualifierTranslation"]] = relationship(
-        "QualifierTranslation", back_populates="language"
+        "QualifierTranslation",
+        primaryjoin="Language.language_id == QualifierTranslation.language_id",
+        back_populates="language",
     )
 
     def __repr__(self) -> str:
@@ -136,12 +145,17 @@ class QualifierTranslation(Base):
     )
     translation_text: Mapped[str] = mapped_column(String(500), nullable=False)
 
-    # Relationships
+    # Relationships with explicit join conditions
     qualifier: Mapped["Qualifier"] = relationship(
-        "Qualifier", back_populates="translations"
+        "Qualifier",
+        primaryjoin="QualifierTranslation.qualifier_id == Qualifier.qualifier_id",
+        back_populates="translations",
     )
+
     language: Mapped["Language"] = relationship(
-        "Language", back_populates="translations"
+        "Language",
+        primaryjoin="QualifierTranslation.language_id == Language.language_id",
+        back_populates="translations",
     )
 
     def __repr__(self) -> str:
@@ -162,9 +176,11 @@ class GroupNumber(Base):
     )
     group_description: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    # Relationships
+    # Relationships with explicit join conditions
     qualifier_groups: Mapped[List["QualifierGroup"]] = relationship(
-        "QualifierGroup", back_populates="group_number"
+        "QualifierGroup",
+        primaryjoin="GroupNumber.group_number_id == QualifierGroup.group_number_id",
+        back_populates="group_number",
     )
 
     def __repr__(self) -> str:
@@ -190,11 +206,18 @@ class QualifierGroup(Base):
         Integer, ForeignKey("qdb.qualifier.qualifier_id"), nullable=False
     )
 
-    # Relationships
+    # Relationships with explicit join conditions
     group_number: Mapped["GroupNumber"] = relationship(
-        "GroupNumber", back_populates="qualifier_groups"
+        "GroupNumber",
+        primaryjoin="QualifierGroup.group_number_id == GroupNumber.group_number_id",
+        back_populates="qualifier_groups",
     )
-    qualifier: Mapped["Qualifier"] = relationship("Qualifier", back_populates="groups")
+
+    qualifier: Mapped["Qualifier"] = relationship(
+        "Qualifier",
+        primaryjoin="QualifierGroup.qualifier_id == Qualifier.qualifier_id",
+        back_populates="groups",
+    )
 
     def __repr__(self) -> str:
         return f"<QualifierGroup {self.qualifier_group_id}: {self.group_number_id}/{self.qualifier_id}>"

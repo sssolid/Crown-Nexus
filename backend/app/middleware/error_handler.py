@@ -17,18 +17,23 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.core.error import handle_exception
-from app.core.exceptions import AppException, ErrorCode, app_exception_handler, validation_exception_handler, \
-    generic_exception_handler
+from app.core.exceptions import (
+    AppException,
+    ErrorCode,
+    app_exception_handler,
+    validation_exception_handler,
+    generic_exception_handler,
+)
 from app.logging.context import get_logger
 from app.core.dependency_manager import get_service
 from app.utils.circuit_breaker_utils import safe_increment_counter
 
-logger = get_logger('app.middleware.error_handler')
+logger = get_logger("app.middleware.error_handler")
 
 ERROR_TYPE_MAPPING: Dict[Type[Exception], ErrorCode] = {
     RequestValidationError: ErrorCode.VALIDATION_ERROR,
     ValueError: ErrorCode.VALIDATION_ERROR,
-    TypeError: ErrorCode.VALIDATION_ERROR
+    TypeError: ErrorCode.VALIDATION_ERROR,
 }
 
 
@@ -43,9 +48,11 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             app: The ASGI application
         """
         super().__init__(app)
-        logger.info('ErrorHandlerMiddleware initialized')
+        logger.info("ErrorHandlerMiddleware initialized")
 
-    async def dispatch(self, request: Request, call_next: Callable[[Request], Response]) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Response]
+    ) -> Response:
         """
         Process the request and handle any exceptions.
 
@@ -58,7 +65,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         """
         metrics_service: Optional[Any] = None
         try:
-            metrics_service = get_service('metrics_service')
+            metrics_service = get_service("metrics_service")
         except Exception:
             pass
 
@@ -79,16 +86,16 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                         "message": "Internal Server Error",
                         "error": {
                             "code": "RECURSIVE_ERROR",
-                            "details": "Error occurred during error handling"
-                        }
-                    }
+                            "details": "Error occurred during error handling",
+                        },
+                    },
                 )
             except Exception:
                 # If even creating the JSONResponse fails, return a plain 500
                 return Response(
                     content="Internal Server Error",
                     status_code=500,
-                    media_type="text/plain"
+                    media_type="text/plain",
                 )
 
         # Mark that we're inside the error handler
@@ -101,62 +108,78 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             except AppException as exc:
                 # Handle application-specific exceptions
                 execution_time = time.time() - start_time
-                request_id = getattr(request.state, 'request_id', None)
-                user_id = getattr(request.state, 'user_id', None)
+                request_id = getattr(request.state, "request_id", None)
+                user_id = getattr(request.state, "user_id", None)
                 path = request.url.path
                 method = request.method
                 error_type = type(exc).__name__
                 status_code = exc.status_code
 
                 logger.warning(
-                    f'Application exception: {str(exc)}',
+                    f"Application exception: {str(exc)}",
                     exc_info=exc,
                     request_id=request_id,
                     path=path,
                     method=method,
-                    error_code=exc.code.value if hasattr(exc, 'code') else None,
+                    error_code=exc.code.value if hasattr(exc, "code") else None,
                     status_code=exc.status_code,
                     details=exc.details,
-                    execution_time=f'{execution_time:.4f}s'
+                    execution_time=f"{execution_time:.4f}s",
                 )
 
-                handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
-                self._track_error_metrics(metrics_service, error_type, status_code, request.method, request.url.path)
+                handle_exception(
+                    exc, request_id=request_id, user_id=user_id, function_name=method
+                )
+                self._track_error_metrics(
+                    metrics_service,
+                    error_type,
+                    status_code,
+                    request.method,
+                    request.url.path,
+                )
 
                 return await app_exception_handler(request, exc)
 
             except RequestValidationError as exc:
                 # Handle validation errors
                 execution_time = time.time() - start_time
-                request_id = getattr(request.state, 'request_id', None)
-                user_id = getattr(request.state, 'user_id', None)
+                request_id = getattr(request.state, "request_id", None)
+                user_id = getattr(request.state, "user_id", None)
                 path = request.url.path
                 method = request.method
                 error_type = type(exc).__name__
                 status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
                 logger.warning(
-                    f'Validation error: {str(exc)}',
+                    f"Validation error: {str(exc)}",
                     exc_info=exc,
                     request_id=request_id,
                     path=path,
                     method=method,
                     error_code=ErrorCode.VALIDATION_ERROR.value,
                     status_code=status_code,
-                    errors=str(exc.errors()) if hasattr(exc, 'errors') else None,
-                    execution_time=f'{execution_time:.4f}s'
+                    errors=str(exc.errors()) if hasattr(exc, "errors") else None,
+                    execution_time=f"{execution_time:.4f}s",
                 )
 
-                handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
-                self._track_error_metrics(metrics_service, error_type, status_code, request.method, request.url.path)
+                handle_exception(
+                    exc, request_id=request_id, user_id=user_id, function_name=method
+                )
+                self._track_error_metrics(
+                    metrics_service,
+                    error_type,
+                    status_code,
+                    request.method,
+                    request.url.path,
+                )
 
                 return await validation_exception_handler(request, exc)
 
             except Exception as exc:
                 # Handle all other exceptions
                 execution_time = time.time() - start_time
-                request_id = getattr(request.state, 'request_id', None)
-                user_id = getattr(request.state, 'user_id', None)
+                request_id = getattr(request.state, "request_id", None)
+                user_id = getattr(request.state, "user_id", None)
                 path = request.url.path
                 method = request.method
                 error_type = type(exc).__name__
@@ -165,10 +188,10 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
 
                 # Get full traceback for better debugging
                 exc_info = sys.exc_info()
-                tb_str = ''.join(traceback.format_exception(*exc_info))
+                tb_str = "".join(traceback.format_exception(*exc_info))
 
                 logger.exception(
-                    f'Unhandled exception: {str(exc)}',
+                    f"Unhandled exception: {str(exc)}",
                     exc_info=exc,
                     traceback=tb_str,
                     request_id=request_id,
@@ -176,11 +199,19 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     method=method,
                     error_code=error_code.value,
                     status_code=status_code,
-                    execution_time=f'{execution_time:.4f}s'
+                    execution_time=f"{execution_time:.4f}s",
                 )
 
-                handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
-                self._track_error_metrics(metrics_service, error_type, status_code, request.method, request.url.path)
+                handle_exception(
+                    exc, request_id=request_id, user_id=user_id, function_name=method
+                )
+                self._track_error_metrics(
+                    metrics_service,
+                    error_type,
+                    status_code,
+                    request.method,
+                    request.url.path,
+                )
 
                 return await generic_exception_handler(request, exc)
 
@@ -188,7 +219,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             # Handle exceptions that occur during error handling
             logger.critical(
                 f"Exception occurred during error handling: {str(nested_exc)}",
-                exc_info=nested_exc
+                exc_info=nested_exc,
             )
 
             # Return a simple error response as a last resort
@@ -199,9 +230,9 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     "message": "Internal Server Error",
                     "error": {
                         "code": "ERROR_HANDLER_FAILURE",
-                        "details": "An error occurred during error handling"
-                    }
-                }
+                        "details": "An error occurred during error handling",
+                    },
+                },
             )
         finally:
             # Clean up the error handler flag to prevent state leakage
@@ -214,7 +245,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         error_type: str,
         status_code: int,
         method: str,
-        path: str
+        path: str,
     ) -> None:
         """
         Track error metrics.
@@ -231,14 +262,14 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
 
         try:
             safe_increment_counter(
-                'http_errors_total',
+                "http_errors_total",
                 1,
                 {
-                    'error_type': error_type,
-                    'status_code': str(status_code),
-                    'method': method,
-                    'endpoint': path
-                }
+                    "error_type": error_type,
+                    "status_code": str(status_code),
+                    "method": method,
+                    "endpoint": path,
+                },
             )
         except Exception as e:
-            logger.debug(f'Failed to track error metrics: {e}')
+            logger.debug(f"Failed to track error metrics: {e}")

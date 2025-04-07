@@ -19,7 +19,7 @@ from app.core.dependency_manager import get_service
 from app.core.metrics import MetricName
 from app.utils.circuit_breaker_utils import safe_observe_histogram
 
-logger = get_logger('app.middleware.response_formatter')
+logger = get_logger("app.middleware.response_formatter")
 
 
 class ResponseFormatterMiddleware(BaseHTTPMiddleware):
@@ -27,7 +27,7 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
         self,
         app: Any,
         exclude_paths: Optional[list[str]] = None,
-        skip_binary_responses: bool = True
+        skip_binary_responses: bool = True,
     ) -> None:
         """
         Initialize the response formatter middleware.
@@ -38,11 +38,19 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
             skip_binary_responses: Whether to skip formatting binary responses
         """
         super().__init__(app)
-        self.exclude_paths = exclude_paths or ['/docs', '/redoc', '/openapi.json', '/static/', '/media/']
+        self.exclude_paths = exclude_paths or [
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+            "/static/",
+            "/media/",
+        ]
         self.skip_binary_responses = skip_binary_responses
-        logger.info('ResponseFormatterMiddleware initialized')
+        logger.info("ResponseFormatterMiddleware initialized")
 
-    async def dispatch(self, request: Request, call_next: Callable[[Request], Response]) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Response]
+    ) -> Response:
         """
         Process the request and format the response.
 
@@ -59,7 +67,7 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
 
         metrics_service: Optional[Any] = None
         try:
-            metrics_service = get_service('metrics_service')
+            metrics_service = get_service("metrics_service")
         except Exception:
             pass
 
@@ -72,9 +80,9 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
             # Skip non-JSON responses
             if not isinstance(response, JSONResponse):
                 if self.skip_binary_responses and (
-                    isinstance(response, (StreamingResponse, FileResponse)) or
-                    response.headers.get('Content-Type', '').startswith(
-                        ('image/', 'audio/', 'video/', 'application/octet-stream')
+                    isinstance(response, (StreamingResponse, FileResponse))
+                    or response.headers.get("Content-Type", "").startswith(
+                        ("image/", "audio/", "video/", "application/octet-stream")
                     )
                 ):
                     return response
@@ -90,46 +98,48 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
                     content = json.loads(body)
                 except json.JSONDecodeError as e:
                     logger.warning(
-                        f'Failed to parse response JSON: {str(e)}',
+                        f"Failed to parse response JSON: {str(e)}",
                         path=path,
-                        status_code=response.status_code
+                        status_code=response.status_code,
                     )
                     return response
 
                 # If response already has success field, just ensure it has timestamp
-                if isinstance(content, dict) and 'success' in content:
-                    if 'timestamp' not in content:
-                        content['timestamp'] = datetime.datetime.now(datetime.UTC).isoformat()
+                if isinstance(content, dict) and "success" in content:
+                    if "timestamp" not in content:
+                        content["timestamp"] = datetime.datetime.now(
+                            datetime.UTC
+                        ).isoformat()
                     formatted_response = JSONResponse(
                         content=content,
                         status_code=response.status_code,
-                        headers=dict(response.headers)
+                        headers=dict(response.headers),
                     )
                     formatted = True
                     return formatted_response
 
                 # Format response with standard structure
                 formatted_content = {
-                    'success': 200 <= response.status_code < 300,
-                    'message': self._get_status_message(response.status_code),
-                    'data': content,
-                    'meta': self._build_metadata(request, response),
-                    'timestamp': datetime.datetime.now(datetime.UTC).isoformat()
+                    "success": 200 <= response.status_code < 300,
+                    "message": self._get_status_message(response.status_code),
+                    "data": content,
+                    "meta": self._build_metadata(request, response),
+                    "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
                 }
                 formatted_response = JSONResponse(
                     content=formatted_content,
                     status_code=response.status_code,
-                    headers=dict(response.headers)
+                    headers=dict(response.headers),
                 )
                 formatted = True
                 return formatted_response
             except Exception as e:
                 logger.error(
-                    f'Error formatting response: {str(e)}',
+                    f"Error formatting response: {str(e)}",
                     exc_info=e,
-                    request_id=getattr(request.state, 'request_id', None),
+                    request_id=getattr(request.state, "request_id", None),
                     path=path,
-                    status_code=getattr(response, 'status_code', None)
+                    status_code=getattr(response, "status_code", None),
                 )
                 return response
         finally:
@@ -139,10 +149,10 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
                     safe_observe_histogram(
                         MetricName.RESPONSE_FORMATTING_DURATION_SECONDS.value,
                         duration,
-                        {'response_formatted': str(formatted), 'path': path}
+                        {"response_formatted": str(formatted), "path": path},
                     )
                 except Exception as e:
-                    logger.debug(f'Failed to track formatting metrics: {str(e)}')
+                    logger.debug(f"Failed to track formatting metrics: {str(e)}")
 
     def _get_status_message(self, status_code: int) -> str:
         """
@@ -155,25 +165,25 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
             str: A human-readable message
         """
         if 200 <= status_code < 300:
-            return 'OK'
+            return "OK"
         elif status_code == 400:
-            return 'Bad Request'
+            return "Bad Request"
         elif status_code == 401:
-            return 'Unauthorized'
+            return "Unauthorized"
         elif status_code == 403:
-            return 'Forbidden'
+            return "Forbidden"
         elif status_code == 404:
-            return 'Not Found'
+            return "Not Found"
         elif status_code == 422:
-            return 'Validation Error'
+            return "Validation Error"
         elif status_code == 429:
-            return 'Too Many Requests'
+            return "Too Many Requests"
         elif 400 <= status_code < 500:
-            return 'Client Error'
+            return "Client Error"
         elif 500 <= status_code < 600:
-            return 'Server Error'
+            return "Server Error"
         else:
-            return 'Unknown'
+            return "Unknown"
 
     def _build_metadata(self, request: Request, response: Response) -> Dict[str, Any]:
         """
@@ -187,33 +197,35 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
             Dict[str, Any]: Metadata for the response
         """
         metadata: Dict[str, Any] = {
-            'request_id': getattr(request.state, 'request_id', None)
+            "request_id": getattr(request.state, "request_id", None)
         }
 
         pagination_headers = [
-            'X-Total-Count',
-            'X-Page-Count',
-            'X-Page-Number',
-            'X-Page-Size',
-            'X-Has-Next',
-            'X-Has-Prev'
+            "X-Total-Count",
+            "X-Page-Count",
+            "X-Page-Number",
+            "X-Page-Size",
+            "X-Has-Next",
+            "X-Has-Prev",
         ]
 
         pagination = {}
         for header in pagination_headers:
             if header in response.headers:
-                key = header.replace('X-', '').replace('-', '_').lower()
+                key = header.replace("X-", "").replace("-", "_").lower()
                 value = response.headers[header]
-                if value.lower() in ('true', 'false'):
-                    value = value.lower() == 'true'
+                if value.lower() in ("true", "false"):
+                    value = value.lower() == "true"
                 elif value.isdigit():
                     value = int(value)
                 pagination[key] = value
 
         if pagination:
-            metadata['pagination'] = pagination
+            metadata["pagination"] = pagination
 
-        if hasattr(request.state, 'metadata') and isinstance(request.state.metadata, dict):
+        if hasattr(request.state, "metadata") and isinstance(
+            request.state.metadata, dict
+        ):
             metadata.update(request.state.metadata)
 
         return metadata

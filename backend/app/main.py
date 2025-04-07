@@ -303,65 +303,92 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 add_typed_middleware(app, ErrorHandlerMiddleware)
 
 # Apply CompressionMiddleware before ResponseFormatterMiddleware
-add_typed_middleware(app, CompressionMiddleware,
-                    minimum_size=getattr(settings, 'COMPRESSION_MINIMUM_SIZE', 1000),
-                    compression_level=getattr(settings, 'COMPRESSION_LEVEL', 6),
-                    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS)
+add_typed_middleware(
+    app,
+    CompressionMiddleware,
+    minimum_size=getattr(settings, "COMPRESSION_MINIMUM_SIZE", 1000),
+    compression_level=getattr(settings, "COMPRESSION_LEVEL", 6),
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+)
 
 # Then apply ResponseFormatterMiddleware
-add_typed_middleware(app, ResponseFormatterMiddleware, exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS)
+add_typed_middleware(
+    app, ResponseFormatterMiddleware, exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
+)
 
 # Apply CacheControlMiddleware
-add_typed_middleware(app, CacheControlMiddleware, exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS)
+add_typed_middleware(
+    app, CacheControlMiddleware, exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
+)
 
 # Apply SecurityHeadersMiddleware
-add_typed_middleware(app, SecurityHeadersMiddleware,
-                    content_security_policy=settings.CONTENT_SECURITY_POLICY,
-                    permissions_policy=settings.PERMISSIONS_POLICY,
-                    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS)
+add_typed_middleware(
+    app,
+    SecurityHeadersMiddleware,
+    content_security_policy=settings.CONTENT_SECURITY_POLICY,
+    permissions_policy=settings.PERMISSIONS_POLICY,
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+)
 
 # Conditionally apply EnhancedCORSMiddleware
 if settings.BACKEND_CORS_ORIGINS:
-    add_typed_middleware(app, EnhancedCORSMiddleware,
-                        allow_origins=settings.BACKEND_CORS_ORIGINS,
-                        allow_credentials=True,
-                        allow_methods=['*'],
-                        allow_headers=['*'])
+    add_typed_middleware(
+        app,
+        EnhancedCORSMiddleware,
+        allow_origins=settings.BACKEND_CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 # Conditionally apply TimeoutMiddleware
 if settings.ENVIRONMENT != Environment.DEVELOPMENT:
-    add_typed_middleware(app, TimeoutMiddleware,
-                        timeout_seconds=getattr(settings, 'REQUEST_TIMEOUT_SECONDS', 30.0),
-                        exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS)
+    add_typed_middleware(
+        app,
+        TimeoutMiddleware,
+        timeout_seconds=getattr(settings, "REQUEST_TIMEOUT_SECONDS", 30.0),
+        exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+    )
 
 # Conditionally apply RateLimitMiddleware
 if settings.ENVIRONMENT != Environment.DEVELOPMENT or settings.RATE_LIMIT_ENABLED:
-    add_typed_middleware(app, RateLimitMiddleware,
-                        rules=[
-                            RateLimitRule(
-                                requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
-                                window_seconds=60,
-                                strategy=RateLimitStrategy.IP,
-                                exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS + ['/health']
-                            ),
-                            RateLimitRule(
-                                requests_per_window=10,
-                                window_seconds=60,
-                                strategy=RateLimitStrategy.IP,
-                                path_pattern='/api/v1/auth/'
-                            )
-                        ],
-                        use_redis=settings.RATE_LIMIT_STORAGE == 'redis',
-                        enable_headers=True,
-                        block_exceeding_requests=True,
-                        fallback_to_memory=True)
+    add_typed_middleware(
+        app,
+        RateLimitMiddleware,
+        rules=[
+            RateLimitRule(
+                requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
+                window_seconds=60,
+                strategy=RateLimitStrategy.IP,
+                exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS + ["/health"],
+            ),
+            RateLimitRule(
+                requests_per_window=10,
+                window_seconds=60,
+                strategy=RateLimitStrategy.IP,
+                path_pattern="/api/v1/auth/",
+            ),
+        ],
+        use_redis=settings.RATE_LIMIT_STORAGE == "redis",
+        enable_headers=True,
+        block_exceeding_requests=True,
+        fallback_to_memory=True,
+    )
 
 # Apply other early middleware
-add_typed_middleware(app, SecureRequestMiddleware,
-                    block_suspicious_requests=True,
-                    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS)
-add_typed_middleware(app, MetricsMiddleware,
-                    ignore_paths=getattr(settings, 'METRICS_IGNORE_PATHS', ['/metrics', '/api/v1/metrics']))
+add_typed_middleware(
+    app,
+    SecureRequestMiddleware,
+    block_suspicious_requests=True,
+    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS,
+)
+add_typed_middleware(
+    app,
+    MetricsMiddleware,
+    ignore_paths=getattr(
+        settings, "METRICS_IGNORE_PATHS", ["/metrics", "/api/v1/metrics"]
+    ),
+)
 add_typed_middleware(app, TracingMiddleware, service_name=settings.PROJECT_NAME)
 add_typed_middleware(app, RequestContextMiddleware)
 

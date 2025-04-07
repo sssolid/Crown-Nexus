@@ -113,7 +113,6 @@
           class="elevation-1"
           loading-text="Loading products..."
           no-data-text="No products found"
-          @update:options="onTableOptionsChange"
         >
           <template #item.part_number="{ item }">
             <div>
@@ -241,11 +240,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import {ref, computed, onMounted, reactive, watch} from 'vue';
+import {useRouter} from 'vue-router';
+import {useAuthStore} from '@/stores/auth';
 import productService from '@/services/product';
-import { Product, ProductFilters, ProductDescription } from '@/types/product';
+import {Product, ProductFilters, ProductDescription} from '@/types/product';
+import {debounce} from 'lodash';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -253,16 +253,16 @@ const isAdmin = computed(() => authStore.isAdmin);
 
 // Table configuration
 const itemsPerPageOptions = [
-  { title: '10', value: 10 },
-  { title: '25', value: 25 },
-  { title: '50', value: 50 },
-  { title: '100', value: 100 }
+  {title: '10', value: 10},
+  {title: '25', value: 25},
+  {title: '50', value: 50},
+  {title: '100', value: 100}
 ];
 
 const tableOptions = ref({
   page: 1,
   itemsPerPage: 10,
-  sortBy: [{ key: 'part_number', order: 'asc' }],
+  sortBy: [{key: 'part_number', order: 'asc'}],
   groupBy: [],
   multiSort: false
 });
@@ -276,6 +276,7 @@ const partNumberFilter = ref('');
 const attributeFilter = ref('');
 const statusFilter = ref<boolean | null>(null);
 const showAdvancedFilters = ref(false);
+const isInitialLoad = ref(true);
 
 // Filters that will be sent to the API
 const currentFilters = ref<ProductFilters>({
@@ -294,15 +295,15 @@ const snackbar = reactive({
 
 // Table headers
 const headers = [
-  { key: 'part_number', title: 'Name', sortable: true, align: 'start' },
-  { key: 'description', title: 'Description', sortable: false },
-  { key: 'is_active', title: 'Status', sortable: true, align: 'center', width: '120px' },
-  { key: 'actions', title: 'Actions', sortable: false, align: 'end', width: '120px' }
+  {key: 'part_number', title: 'Name', sortable: true, align: 'start'},
+  {key: 'description', title: 'Description', sortable: false},
+  {key: 'is_active', title: 'Status', sortable: true, align: 'center', width: '120px'},
+  {key: 'actions', title: 'Actions', sortable: false, align: 'end', width: '120px'}
 ];
 
 const statusOptions = [
-  { title: 'Active', value: true },
-  { title: 'Inactive', value: false }
+  {title: 'Active', value: true},
+  {title: 'Inactive', value: false}
 ];
 
 // Delete dialog state
@@ -324,39 +325,56 @@ const buildFilters = () => {
   if (partNumberFilter.value) filters.part_number = partNumberFilter.value;
   if (attributeFilter.value?.includes(':')) {
     const [key, value] = attributeFilter.value.split(':');
-    if (key && value) filters.attributes = { [key.trim()]: value.trim() };
+    if (key && value) filters.attributes = {[key.trim()]: value.trim()};
   }
 
   return filters;
 };
 
-// Fetch products from the API
-const fetchProducts = async () => {
+// Fetch products from the API with debouncing and retry handling
+const fetchProductsActual = async () => {
+  if (loading.value) {
+    return; // Prevent concurrent requests
+  }
+
   loading.value = true;
   try {
     const filters = buildFilters();
-    currentFilters.value = { ...filters }; // Ensure deep copy to avoid reactivity issues
+    currentFilters.value = {...filters}; // Deep copy
 
+    console.log("Fetching products with filters:", filters);
     const response = await productService.getProducts(filters);
     products.value = response.items;
     totalItems.value = response.total;
-  } catch (err) {
-    showErrorMessage('Failed to load products. Please try again.');
+  } catch (err: any) {
+    // Handle different types of errors
+    if (err.response?.status === 429) {
+      showErrorMessage('Rate limit exceeded. Please wait a moment before trying again.');
+    } else {
+      showErrorMessage('Failed to load products. Please try again.');
+    }
     console.error('Fetch failed:', err);
   } finally {
     loading.value = false;
   }
 };
 
-// Handle table options changes (sorting, pagination)
-const onTableOptionsChange = () => {
-  fetchProducts(); // Simply fetch products with updated options
+// Create debounced version of fetchProducts
+const fetchProducts = debounce(fetchProductsActual, 300);
+
+// Handle table options changes - use the event data directly
+const onTableOptionsChange = (newOptions: any) => {
+  // IMPORTANT: Don't update tableOptions here if v-model:options is set
+  // This would cause double-reactivity
+
+  // Only fetch if not initial load or options actually changed
+  if (!isInitialLoad.value) {
+    fetchProducts();
+  }
+  isInitialLoad.value = false;
 };
 
-// Watch tableOptions for changes
-watch(tableOptions, () => {
-  onTableOptionsChange();
-}, { deep: true });
+// REMOVE the watch on tableOptions - it's causing double API calls
 
 // Extract description by type from product descriptions
 const getDescription = (descriptions: ProductDescription[] | undefined, type: string): string => {
@@ -376,7 +394,7 @@ const resetFilters = () => {
   tableOptions.value = {
     page: 1,
     itemsPerPage: 10,
-    sortBy: [{ key: 'part_number', order: 'asc' }],
+    sortBy: [{key: 'part_number', order: 'asc'}],
     groupBy: [],
     multiSort: false
   };
@@ -440,6 +458,7 @@ onMounted(() => {
   if (searchParam) {
     searchInput.value = searchParam;
   }
+  isInitialLoad.value = true;
   fetchProducts();
 });
 </script>

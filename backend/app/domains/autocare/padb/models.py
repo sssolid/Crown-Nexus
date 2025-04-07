@@ -148,8 +148,9 @@ class PartAttributeAssignment(Base):
     )
 
     # Relationships
-    part: Mapped[List["Parts"]] = relationship(
-        "Parts", foreign_keys=[part_terminology_id]
+    part: Mapped["Parts"] = relationship(
+        "Parts",
+        primaryjoin="PartAttributeAssignment.part_terminology_id == Parts.part_terminology_id",
     )
     attribute: Mapped["PartAttribute"] = relationship(
         "PartAttribute", back_populates="assignments"

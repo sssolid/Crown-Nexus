@@ -61,7 +61,7 @@ class BaseAppSettings(BaseSettings):
         "/api/v1/redoc",
         "/api/v1/openapi.json",
         "/static/",
-        "/media/"
+        "/media/",
     ]
 
     # Request timeout configuration
@@ -76,8 +76,7 @@ class BaseAppSettings(BaseSettings):
 
     # Default cache control settings
     DEFAULT_CACHE_CONTROL: str = os.getenv(
-        "DEFAULT_CACHE_CONTROL",
-        "no-store, no-cache, must-revalidate, max-age=0"
+        "DEFAULT_CACHE_CONTROL", "no-store, no-cache, must-revalidate, max-age=0"
     )
 
     # Cache rules by path

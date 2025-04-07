@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 from app.core.metrics import MetricName
-from app.utils.circuit_breaker_utils import safe_increment_counter, safe_observe_histogram
+from app.utils.circuit_breaker_utils import (
+    safe_increment_counter,
+    safe_observe_histogram,
+)
 
 """
 Request context middleware for the application.

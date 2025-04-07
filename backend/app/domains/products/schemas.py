@@ -413,11 +413,12 @@ class ProductPricingBase(BaseModel):
         currency: Three-letter currency code (default: USD)
         manufacturer_id: Optional reference to the manufacturer
     """
-    product_id: uuid.UUID = Field(..., description='Product ID')
-    pricing_type_id: uuid.UUID = Field(..., description='Price type ID')
-    price: float = Field(..., description='Price value')
-    currency: str = Field('USD', description='Currency code')
-    manufacturer_id: Optional[uuid.UUID] = Field(None, description='Manufacturer ID')
+
+    product_id: uuid.UUID = Field(..., description="Product ID")
+    pricing_type_id: uuid.UUID = Field(..., description="Price type ID")
+    price: float = Field(..., description="Price value")
+    currency: str = Field("USD", description="Currency code")
+    manufacturer_id: Optional[uuid.UUID] = Field(None, description="Manufacturer ID")
 
 
 class ProductPricingCreate(ProductPricingBase):
@@ -426,6 +427,7 @@ class ProductPricingCreate(ProductPricingBase):
     Inherits all fields from ProductPricingBase without modifications.
     Used specifically in the data import process.
     """
+
     pass
 
 
@@ -439,9 +441,12 @@ class ProductPricingUpdate(BaseModel):
         currency: Updated currency code if provided
         manufacturer_id: Updated manufacturer reference if provided
     """
-    price: Optional[float] = Field(None, description='Price value')
-    currency: Optional[str] = Field(None, description='Currency code')
-    manufacturer_id: Optional[Union[uuid.UUID, None]] = Field(default=..., description='Manufacturer ID')
+
+    price: Optional[float] = Field(None, description="Price value")
+    currency: Optional[str] = Field(None, description="Currency code")
+    manufacturer_id: Optional[Union[uuid.UUID, None]] = Field(
+        default=..., description="Manufacturer ID"
+    )
 
 
 class ProductPricingImport(BaseModel):
@@ -456,10 +461,13 @@ class ProductPricingImport(BaseModel):
         price: The monetary value of the product
         currency: Three-letter currency code (default: USD)
     """
-    part_number: str = Field(..., description='Product part number')
-    pricing_type: str = Field(..., description='Pricing type name (e.g., "Jobber", "Export")')
-    price: float = Field(..., description='Price value')
-    currency: str = Field('USD', description='Currency code')
+
+    part_number: str = Field(..., description="Product part number")
+    pricing_type: str = Field(
+        ..., description='Pricing type name (e.g., "Jobber", "Export")'
+    )
+    price: float = Field(..., description="Price value")
+    currency: str = Field("USD", description="Currency code")
 
 
 class ProductStockCreate(ProductStockBase):

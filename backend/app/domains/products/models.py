@@ -7,6 +7,7 @@ product management within the application.
 """
 
 import uuid
+import typing
 from datetime import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
@@ -18,8 +19,7 @@ from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
 
-# Avoid circular imports
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from app.domains.media.models import Media
     from app.domains.reference.models import (
         Color,
@@ -29,22 +29,23 @@ if TYPE_CHECKING:
         TariffCode,
         Texture,
         UnspscCode,
+        Warehouse,
     )
     from app.domains.location.models import Country
-else:
-    # Import association tables
-    from app.models.associations import (
-        product_color_association,
-        product_construction_type_association,
-        product_country_origin_association,
-        product_fitment_association,
-        product_hardware_association,
-        product_media_association,
-        product_packaging_association,
-        product_tariff_code_association,
-        product_texture_association,
-        product_unspsc_association,
-    )
+
+from app.domains.products.associations import (
+    product_media_association,
+    product_fitment_association,
+    product_tariff_code_association,
+    product_unspsc_association,
+    product_country_origin_association,
+    product_hardware_association,
+    product_color_association,
+    product_construction_type_association,
+    product_texture_association,
+    product_packaging_association,
+    product_interchange_association,
+)
 
 
 class Product(Base):
@@ -679,10 +680,16 @@ class ProductPricing(Base):
         UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     pricing_type_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.price_type.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("product.price_type.id"),
+        nullable=False,
+        index=True,
     )
     manufacturer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.manufacturer.id"), nullable=True, index=True
+        UUID(as_uuid=True),
+        ForeignKey("product.manufacturer.id"),
+        nullable=True,
+        index=True,
     )
     price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     currency: Mapped[str] = mapped_column(
@@ -798,7 +805,10 @@ class ProductMeasurement(Base):
         UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     manufacturer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product.manufacturer.id"), nullable=True, index=True
+        UUID(as_uuid=True),
+        ForeignKey("product.manufacturer.id"),
+        nullable=True,
+        index=True,
     )
     length: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
     width: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)
@@ -848,7 +858,10 @@ class ProductStock(Base):
         UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     warehouse_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("reference.warehouse.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("reference.warehouse.id"),
+        nullable=False,
+        index=True,
     )
     quantity: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False, index=True

@@ -156,7 +156,10 @@ class Warning(Base):
         UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     chemical_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("compliance.prop65_chemical.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("compliance.prop65_chemical.id"),
+        nullable=False,
+        index=True,
     )
     warning_text: Mapped[str] = mapped_column(Text, nullable=False)
     last_updated: Mapped[datetime] = mapped_column(
@@ -202,7 +205,10 @@ class ProductChemical(Base):
         UUID(as_uuid=True), ForeignKey("product.product.id"), nullable=False, index=True
     )
     chemical_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("compliance.prop65_chemical.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("compliance.prop65_chemical.id"),
+        nullable=False,
+        index=True,
     )
     exposure_scenario: Mapped[ExposureScenario] = mapped_column(
         SQLAEnum(ExposureScenario), nullable=False

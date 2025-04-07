@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 from app.core.metrics import MetricName
-from app.utils.circuit_breaker_utils import safe_observe_histogram, safe_increment_counter
+from app.utils.circuit_breaker_utils import (
+    safe_observe_histogram,
+    safe_increment_counter,
+)
 
 """
 Security middleware for the application.
@@ -197,7 +200,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
         regex_patterns = suspicious_regex_patterns or [
             r"(?i)(union[\s\(\+]+select)",
             r"(?i)(select.+from)",
-            r'(?i)(/\*!|\*/(?!\*))',
+            r"(?i)(/\*!|\*/(?!\*))",
             r"(?i)(script.*>)",
             r"(?i)(alert\s*\(.*\))",
         ]
@@ -211,7 +214,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
             "/redoc",
             "/openapi.json",
             "/static/",
-            "/media/"
+            "/media/",
         ]
 
         logger.info(
@@ -257,10 +260,16 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
 
         try:
             if self.block_suspicious_requests:
-                suspicious, suspicious_pattern = await self._is_suspicious_request(request)
+                suspicious, suspicious_pattern = await self._is_suspicious_request(
+                    request
+                )
 
                 if suspicious:
-                    client_ip = getattr(request.client, "host", "unknown") if request.client else "unknown"
+                    client_ip = (
+                        getattr(request.client, "host", "unknown")
+                        if request.client
+                        else "unknown"
+                    )
                     logger.warning(
                         f"Blocked suspicious request",
                         ip=client_ip,
@@ -278,7 +287,11 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                                 {
                                     "endpoint": path,
                                     "method": request.method,
-                                    "pattern_type": "regex" if isinstance(suspicious_pattern, re.Pattern) else "string",
+                                    "pattern_type": (
+                                        "regex"
+                                        if isinstance(suspicious_pattern, re.Pattern)
+                                        else "string"
+                                    ),
                                 },
                             )
                         except Exception as e:
@@ -287,7 +300,7 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                     raise SecurityException(
                         message="Forbidden - Suspicious request detected",
                         details={"ip": client_ip, "path": path},
-                        status_code=status.HTTP_403_FORBIDDEN
+                        status_code=status.HTTP_403_FORBIDDEN,
                     )
 
             return await call_next(request)
@@ -304,7 +317,9 @@ class SecureRequestMiddleware(BaseHTTPMiddleware):
                 except Exception as e:
                     logger.debug(f"Failed to track security check metrics: {e}")
 
-    async def _is_suspicious_request(self, request: Request) -> tuple[bool, Optional[Any]]:
+    async def _is_suspicious_request(
+        self, request: Request
+    ) -> tuple[bool, Optional[Any]]:
         """
         Check if a request contains suspicious patterns.
 

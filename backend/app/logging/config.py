@@ -302,10 +302,7 @@ def configure_structlog() -> None:
     if environment == "development":
         # Exclude `format_exc_info` for dev console output to avoid warning and allow pretty tracebacks
         structlog.configure(
-            processors=base_processors
-            + [
-                ConsoleRendererWithLineNumbers(colors=True)
-            ],
+            processors=base_processors + [ConsoleRendererWithLineNumbers(colors=True)],
             logger_factory=structlog.stdlib.LoggerFactory(),
             wrapper_class=structlog.stdlib.BoundLogger,
             cache_logger_on_first_use=True,

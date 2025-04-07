@@ -68,7 +68,11 @@ class HttpTracker:
         self.observe_histogram(
             MetricName.HTTP_REQUEST_DURATION_SECONDS.value,
             duration,
-            {MetricTag.METHOD: method, MetricTag.ENDPOINT: endpoint, MetricTag.STATUS_CODE: str(status_code)},
+            {
+                MetricTag.METHOD: method,
+                MetricTag.ENDPOINT: endpoint,
+                MetricTag.STATUS_CODE: str(status_code),
+            },
         )
 
         # Track errors if status code indicates an error

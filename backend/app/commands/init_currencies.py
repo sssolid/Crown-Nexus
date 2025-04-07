@@ -21,6 +21,7 @@ from app.domains.currency.tasks import init_currencies as init_currencies_task
 
 app = typer.Typer()
 
+
 @app.command()
 def init_currencies(
     force: bool = typer.Option(

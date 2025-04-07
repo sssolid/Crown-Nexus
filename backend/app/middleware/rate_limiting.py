@@ -4,7 +4,11 @@ from __future__ import annotations
 from starlette.responses import JSONResponse
 
 from app.core.metrics import MetricName
-from app.utils.circuit_breaker_utils import safe_is_rate_limited, safe_increment_counter, safe_observe_histogram
+from app.utils.circuit_breaker_utils import (
+    safe_is_rate_limited,
+    safe_increment_counter,
+    safe_observe_histogram,
+)
 
 """
 Rate limiting middleware for FastAPI applications.
@@ -128,7 +132,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
         is_limited = False
         path: str = request.url.path
-        client_host = getattr(request.client, "host", "unknown") if request.client else "unknown"
+        client_host = (
+            getattr(request.client, "host", "unknown") if request.client else "unknown"
+        )
 
         try:
             # Skip excluded paths
@@ -172,7 +178,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             for rule in applicable_rules:
                 key: str = self.rate_limiter.get_key_for_request(request, rule)
                 try:
-                    limited, count, limit = await safe_is_rate_limited(self.rate_limiter, key, rule)
+                    limited, count, limit = await safe_is_rate_limited(
+                        self.rate_limiter, key, rule
+                    )
                 except Exception as e:
                     limited, count, limit = False, 0, rule.requests_per_window
 
@@ -197,33 +205,40 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                                 1,
                                 {
                                     "endpoint": path,
-                                    "client_host": client_host[:15],  # Truncate long IPs
+                                    "client_host": client_host[
+                                        :15
+                                    ],  # Truncate long IPs
                                     "strategy": rule.strategy.value,
                                     "match_reason": rule_match_reason,
                                 },
                             )
                         except Exception as e:
-                            logger.debug(f"Failed to record rate limit metrics: {str(e)}")
+                            logger.debug(
+                                f"Failed to record rate limit metrics: {str(e)}"
+                            )
 
                     break
 
                 if self.enable_headers:
                     # Update headers with the most restrictive remaining value
-                    if "X-RateLimit-Remaining" not in headers or int(headers["X-RateLimit-Remaining"]) > (
-                        limit - count):
+                    if "X-RateLimit-Remaining" not in headers or int(
+                        headers["X-RateLimit-Remaining"]
+                    ) > (limit - count):
                         headers["X-RateLimit-Limit"] = str(limit)
                         headers["X-RateLimit-Remaining"] = str(max(0, limit - count))
                         headers["X-RateLimit-Reset"] = str(rule.window_seconds)
 
             # Handle rate limit exceeded
             if is_limited and self.block_exceeding_requests:
-                assert limited_rule is not None, "Limited rule should not be None when is_limited is True"
+                assert (
+                    limited_rule is not None
+                ), "Limited rule should not be None when is_limited is True"
                 headers["Retry-After"] = str(limited_rule.window_seconds)
 
                 return JSONResponse(
                     content={"error": "Rate limit exceeded"},
                     status_code=429,
-                    headers=headers
+                    headers=headers,
                 )
 
             # Process the request
@@ -253,7 +268,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 except Exception as e:
                     logger.debug(f"Failed to record rate limiting metrics: {str(e)}")
 
-    def _get_applicable_rules(self, request: Request) -> Tuple[List[RateLimitRule], str]:
+    def _get_applicable_rules(
+        self, request: Request
+    ) -> Tuple[List[RateLimitRule], str]:
         """Get applicable rate limit rules for a request.
 
         Args:
@@ -266,7 +283,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         # Check for path-specific rules first
         path_rules = [
-            rule for rule in self.rules
+            rule
+            for rule in self.rules
             if rule.path_pattern is not None and path.startswith(rule.path_pattern)
         ]
 
@@ -274,10 +292,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return path_rules, "path_pattern"
 
         # If path-specific rules not found, check for default rules
-        default_rules = [
-            rule for rule in self.rules
-            if rule.path_pattern is None
-        ]
+        default_rules = [rule for rule in self.rules if rule.path_pattern is None]
 
         if default_rules:
             return default_rules, "default"

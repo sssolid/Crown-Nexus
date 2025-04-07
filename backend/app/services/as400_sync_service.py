@@ -592,7 +592,9 @@ class AS400SyncService:
 
         # Run sync with appropriate query
         # Adjust the query to match your AS400 database structure
-        return await pipeline.run("SELECT spart, slen1, swit1, shgt1, swght FROM DSTDATA.INSMFH")
+        return await pipeline.run(
+            "SELECT spart, slen1, swit1, shgt1, swght FROM DSTDATA.INSMFH"
+        )
 
     async def _sync_inventory(
         self, connector: AS400Connector, db: AsyncSession

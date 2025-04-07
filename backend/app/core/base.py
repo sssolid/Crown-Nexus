@@ -10,7 +10,19 @@ should implement to ensure consistent behavior and lifecycle management.
 import abc
 import contextlib
 from datetime import datetime, timezone
-from typing import Any, AsyncContextManager, Callable, ClassVar, Dict, List, Optional, Protocol, Type, TypeVar, Union
+from typing import (
+    Any,
+    AsyncContextManager,
+    Callable,
+    ClassVar,
+    Dict,
+    List,
+    Optional,
+    Protocol,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from pydantic import BaseModel
 
@@ -42,7 +54,9 @@ class ServiceConfig(BaseModel):
     log_level: str = "INFO"
 
     @classmethod
-    def from_settings(cls, settings_prefix: str, settings_obj: Any = None) -> "ServiceConfig":
+    def from_settings(
+        cls, settings_prefix: str, settings_obj: Any = None
+    ) -> "ServiceConfig":
         """Create configuration from settings.
 
         Args:
@@ -92,15 +106,21 @@ class HealthCheckable(Protocol):
 class MetricsEnabled(Protocol):
     """Protocol for components that track metrics."""
 
-    def increment_counter(self, name: str, value: int = 1, tags: Optional[Dict[str, str]] = None) -> None:
+    def increment_counter(
+        self, name: str, value: int = 1, tags: Optional[Dict[str, str]] = None
+    ) -> None:
         """Increment a counter metric."""
         ...
 
-    def record_gauge(self, name: str, value: float, tags: Optional[Dict[str, str]] = None) -> None:
+    def record_gauge(
+        self, name: str, value: float, tags: Optional[Dict[str, str]] = None
+    ) -> None:
         """Record a gauge metric."""
         ...
 
-    def record_timing(self, name: str, value: float, tags: Optional[Dict[str, str]] = None) -> None:
+    def record_timing(
+        self, name: str, value: float, tags: Optional[Dict[str, str]] = None
+    ) -> None:
         """Record a timing metric."""
         ...
 
@@ -159,7 +179,7 @@ class CoreManager(InitializableComponent, HealthCheckable):
             except Exception as e:
                 self.logger.error(
                     f"Failed to initialize component {component.__class__.__name__}: {e}",
-                    exc_info=True
+                    exc_info=True,
                 )
                 raise
 
@@ -180,7 +200,9 @@ class CoreManager(InitializableComponent, HealthCheckable):
     async def shutdown(self) -> None:
         """Shut down the manager and all its components."""
         if not self._initialized:
-            self.logger.debug(f"{self.component_name} manager not initialized, nothing to shut down")
+            self.logger.debug(
+                f"{self.component_name} manager not initialized, nothing to shut down"
+            )
             return
 
         self.logger.info(f"Shutting down {self.component_name} manager")
@@ -195,7 +217,7 @@ class CoreManager(InitializableComponent, HealthCheckable):
             except Exception as e:
                 self.logger.error(
                     f"Failed to shut down component {component.__class__.__name__}: {e}",
-                    exc_info=True
+                    exc_info=True,
                 )
 
         self._initialized = False
@@ -227,11 +249,13 @@ class CoreManager(InitializableComponent, HealthCheckable):
                     if component_status.get("status") != "healthy":
                         status = "degraded"
                 except Exception as e:
-                    component_statuses.append({
-                        "status": "unhealthy",
-                        "component": component.__class__.__name__,
-                        "error": str(e),
-                    })
+                    component_statuses.append(
+                        {
+                            "status": "unhealthy",
+                            "component": component.__class__.__name__,
+                            "error": str(e),
+                        }
+                    )
                     status = "degraded"
 
         return {
@@ -330,7 +354,7 @@ class CoreService(abc.ABC):
             except Exception as e:
                 self.logger.error(
                     f"Failed to initialize component {component.__class__.__name__}: {e}",
-                    exc_info=True
+                    exc_info=True,
                 )
                 raise
 
@@ -354,7 +378,9 @@ class CoreService(abc.ABC):
         This method should be called when the service is no longer needed.
         """
         if not self._initialized:
-            self.logger.debug(f"{self.service_name} service not initialized, nothing to shut down")
+            self.logger.debug(
+                f"{self.service_name} service not initialized, nothing to shut down"
+            )
             return
 
         self.logger.info(f"Shutting down {self.service_name} service")
@@ -369,7 +395,7 @@ class CoreService(abc.ABC):
             except Exception as e:
                 self.logger.error(
                     f"Failed to shut down component {component.__class__.__name__}: {e}",
-                    exc_info=True
+                    exc_info=True,
                 )
 
         self._initialized = False
@@ -437,11 +463,13 @@ class CoreService(abc.ABC):
                     if component_status.get("status") != "healthy":
                         status = "degraded"
                 except Exception as e:
-                    component_statuses.append({
-                        "status": "unhealthy",
-                        "component": component.__class__.__name__,
-                        "error": str(e),
-                    })
+                    component_statuses.append(
+                        {
+                            "status": "unhealthy",
+                            "component": component.__class__.__name__,
+                            "error": str(e),
+                        }
+                    )
                     status = "degraded"
 
         return {
@@ -519,7 +547,9 @@ def discover_backends(package_path: str) -> Dict[str, Type[Any]]:
     package = importlib.import_module(package_path)
 
     # Get all modules in the package
-    for _, name, is_pkg in pkgutil.iter_modules(package.__path__, package.__name__ + "."):
+    for _, name, is_pkg in pkgutil.iter_modules(
+        package.__path__, package.__name__ + "."
+    ):
         if not is_pkg:
             module = importlib.import_module(name)
             # Find all classes in the module

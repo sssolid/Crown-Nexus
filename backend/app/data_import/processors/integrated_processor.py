@@ -13,12 +13,12 @@ from app.domains.products.schemas import (
     ProductCreate,
     ProductDescriptionCreate,
     ProductMarketingCreate,
-    ProductPricingImport
+    ProductPricingImport,
 )
 from app.data_import.field_definitions import (
     ENTITY_FIELD_DEFINITIONS,
     COMPLEX_FIELD_MAPPINGS,
-    ExternalFieldInfo
+    ExternalFieldInfo,
 )
 from app.data_import.processors.generic_processor import GenericProcessor
 from app.logging import get_logger
@@ -42,7 +42,7 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
         super().__init__(
             field_definitions=ENTITY_FIELD_DEFINITIONS["product"],
             model_type=ProductCreate,
-            source_type=source_type
+            source_type=source_type,
         )
         self.description_field_map = self._create_field_alias_map("descriptions")
         self.marketing_field_map = self._create_field_alias_map("marketing")
@@ -59,9 +59,14 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
             Dictionary mapping external field names to internal field types
         """
         field_map = {}
-        if "product" in COMPLEX_FIELD_MAPPINGS and complex_field in COMPLEX_FIELD_MAPPINGS["product"]:
+        if (
+            "product" in COMPLEX_FIELD_MAPPINGS
+            and complex_field in COMPLEX_FIELD_MAPPINGS["product"]
+        ):
             if self.source_type in COMPLEX_FIELD_MAPPINGS["product"][complex_field]:
-                mappings = COMPLEX_FIELD_MAPPINGS["product"][complex_field][self.source_type]
+                mappings = COMPLEX_FIELD_MAPPINGS["product"][complex_field][
+                    self.source_type
+                ]
                 for field_type, field_info in mappings.items():
                     if isinstance(field_info, ExternalFieldInfo):
                         original_field = field_info.field_name
@@ -76,7 +81,7 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
         processed_record: Dict[str, Any],
         original_record: Dict[str, Any],
         complex_field: str,
-        mappings: Dict[str, Any]
+        mappings: Dict[str, Any],
     ) -> None:
         """
         Process complex fields (descriptions or marketing content).
@@ -87,14 +92,22 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
             complex_field: Complex field name ("descriptions" or "marketing")
             mappings: Field mappings
         """
-        logger.debug(f"Processing complex field '{complex_field}' with {len(mappings)} mappings")
+        logger.debug(
+            f"Processing complex field '{complex_field}' with {len(mappings)} mappings"
+        )
         field_names = list(original_record.keys())
 
         if logger.isEnabledFor(10):  # DEBUG level
-            logger.debug(f"Original record has {len(field_names)} fields: {field_names[:10]}")
+            logger.debug(
+                f"Original record has {len(field_names)} fields: {field_names[:10]}"
+            )
 
         items = []
-        field_map = self.description_field_map if complex_field == "descriptions" else self.marketing_field_map
+        field_map = (
+            self.description_field_map
+            if complex_field == "descriptions"
+            else self.marketing_field_map
+        )
 
         # For marketing bullets, find and process them in order
         if complex_field == "marketing":
@@ -117,10 +130,12 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                     ProductMarketingCreate(
                         marketing_type=field_map[field_name],
                         content=str(value).strip(),
-                        position=position
+                        position=position,
                     )
                 )
-                logger.debug(f"Added marketing bullet {position} from field '{field_name}'")
+                logger.debug(
+                    f"Added marketing bullet {position} from field '{field_name}'"
+                )
 
             # Process other marketing fields (non-bullets)
             for field_name in field_names:
@@ -132,10 +147,12 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                             ProductMarketingCreate(
                                 marketing_type=field_type,
                                 content=str(value).strip(),
-                                position=len(items) + 1
+                                position=len(items) + 1,
                             )
                         )
-                        logger.debug(f"Added marketing '{field_type}' from field '{field_name}'")
+                        logger.debug(
+                            f"Added marketing '{field_type}' from field '{field_name}'"
+                        )
         else:
             # Process description fields
             for field_name in field_names:
@@ -146,10 +163,12 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                         items.append(
                             ProductDescriptionCreate(
                                 description_type=field_type,
-                                description=str(value).strip()
+                                description=str(value).strip(),
                             )
                         )
-                        logger.debug(f"Added description '{field_type}' from field '{field_name}'")
+                        logger.debug(
+                            f"Added description '{field_type}' from field '{field_name}'"
+                        )
 
         if items:
             processed_record[complex_field] = items
@@ -180,11 +199,14 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                     part_number = str(record["part_number"]).strip()
                 else:
                     if i == 0:
-                        logger.warning(f"Available fields in record: {list(record.keys())}")
+                        logger.warning(
+                            f"Available fields in record: {list(record.keys())}"
+                        )
                     skipped_records += 1
                     if i % 1000 == 0:
                         logger.warning(
-                            f"Record at index {i} is missing part number. Available fields: {list(record.keys())}")
+                            f"Record at index {i} is missing part number. Available fields: {list(record.keys())}"
+                        )
                     continue
 
                 if not part_number:
@@ -205,7 +227,9 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                     except (ValueError, TypeError):
                         invalid_price_records += 1
                         if i % 1000 == 0:
-                            logger.warning(f"Invalid Jobber price for {part_number}: {record['SRET1']}")
+                            logger.warning(
+                                f"Invalid Jobber price for {part_number}: {record['SRET1']}"
+                            )
 
                 # Process Export price
                 export_price = None
@@ -221,7 +245,9 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                     except (ValueError, TypeError):
                         invalid_price_records += 1
                         if i % 1000 == 0:
-                            logger.warning(f"Invalid Export price for {part_number}: {record['SRET2']}")
+                            logger.warning(
+                                f"Invalid Export price for {part_number}: {record['SRET2']}"
+                            )
 
                 # Add records for valid prices
                 if jobber_price is not None:
@@ -229,7 +255,7 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                         "part_number": part_number,
                         "pricing_type": "Jobber",
                         "price": jobber_price,
-                        "currency": "USD"
+                        "currency": "USD",
                     }
                     processed_data.append(jobber_record)
 
@@ -238,12 +264,14 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                         "part_number": part_number,
                         "pricing_type": "Export",
                         "price": export_price,
-                        "currency": "USD"
+                        "currency": "USD",
                     }
                     processed_data.append(export_record)
 
             except Exception as e:
-                logger.warning(f"Error processing pricing record at index {i}: {str(e)}")
+                logger.warning(
+                    f"Error processing pricing record at index {i}: {str(e)}"
+                )
 
         logger.info(
             f"Processed {len(processed_data)} pricing records from {len(data)} input records. "
@@ -253,7 +281,9 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
 
         return processed_data
 
-    async def validate_pricing(self, data: List[Dict[str, Any]]) -> List[ProductPricingImport]:
+    async def validate_pricing(
+        self, data: List[Dict[str, Any]]
+    ) -> List[ProductPricingImport]:
         """
         Validate pricing data.
 
@@ -272,15 +302,18 @@ class IntegratedProductProcessor(GenericProcessor[ProductCreate]):
                 validated_data.append(validated_item)
             except Exception as e:
                 logger.warning(f"Validation error for pricing at index {i}: {str(e)}")
-                validation_errors.append({
-                    "index": i,
-                    "part_number": item.get("part_number", f"index_{i}"),
-                    "error": str(e)
-                })
+                validation_errors.append(
+                    {
+                        "index": i,
+                        "part_number": item.get("part_number", f"index_{i}"),
+                        "error": str(e),
+                    }
+                )
 
         if validation_errors:
             logger.warning(
-                f"Validated {len(validated_data)} pricing records with {len(validation_errors)} validation errors")
+                f"Validated {len(validated_data)} pricing records with {len(validation_errors)} validation errors"
+            )
         else:
             logger.info(f"Validated {len(validated_data)} pricing records successfully")
 

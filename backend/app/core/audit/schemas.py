@@ -80,15 +80,11 @@ class AuditLogBase(BaseModel):
         default_factory=datetime.now, description="Event timestamp"
     )
     event_type: str = Field(..., description="Event type")
-    level: AuditLogLevelEnum = Field(
-        AuditLogLevelEnum.INFO, description="Log level"
-    )
+    level: AuditLogLevelEnum = Field(AuditLogLevelEnum.INFO, description="Log level")
     user_id: Optional[uuid.UUID] = Field(
         None, description="User who performed the action"
     )
-    ip_address: Optional[str] = Field(
-        None, description="IP address of the user"
-    )
+    ip_address: Optional[str] = Field(None, description="IP address of the user")
     resource_id: Optional[uuid.UUID] = Field(
         None, description="ID of the affected resource"
     )
@@ -98,18 +94,10 @@ class AuditLogBase(BaseModel):
     details: Optional[Dict[str, Any]] = Field(
         None, description="Additional event details"
     )
-    request_id: Optional[str] = Field(
-        None, description="Request ID"
-    )
-    user_agent: Optional[str] = Field(
-        None, description="User agent of the client"
-    )
-    session_id: Optional[str] = Field(
-        None, description="Session ID"
-    )
-    company_id: Optional[uuid.UUID] = Field(
-        None, description="Company context"
-    )
+    request_id: Optional[str] = Field(None, description="Request ID")
+    user_agent: Optional[str] = Field(None, description="User agent of the client")
+    session_id: Optional[str] = Field(None, description="Session ID")
+    company_id: Optional[uuid.UUID] = Field(None, description="Company context")
 
 
 class AuditLogCreate(AuditLogBase):
@@ -129,59 +117,35 @@ class AuditLogInDB(AuditLogBase):
 class AuditLog(AuditLogInDB):
     """Schema for an audit log with related information."""
 
-    user: Optional[Dict[str, Any]] = Field(
-        None, description="User details"
-    )
-    company: Optional[Dict[str, Any]] = Field(
-        None, description="Company details"
-    )
+    user: Optional[Dict[str, Any]] = Field(None, description="User details")
+    company: Optional[Dict[str, Any]] = Field(None, description="Company details")
 
 
 class AuditLogFilter(BaseModel):
     """Schema for filtering audit logs."""
 
-    start_date: Optional[datetime] = Field(
-        None, description="Start date for filter"
-    )
-    end_date: Optional[datetime] = Field(
-        None, description="End date for filter"
-    )
-    event_type: Optional[str] = Field(
-        None, description="Event type to filter by"
-    )
+    start_date: Optional[datetime] = Field(None, description="Start date for filter")
+    end_date: Optional[datetime] = Field(None, description="End date for filter")
+    event_type: Optional[str] = Field(None, description="Event type to filter by")
     level: Optional[AuditLogLevelEnum] = Field(
         None, description="Log level to filter by"
     )
-    user_id: Optional[uuid.UUID] = Field(
-        None, description="User ID to filter by"
-    )
-    resource_type: Optional[str] = Field(
-        None, description="Resource type to filter by"
-    )
+    user_id: Optional[uuid.UUID] = Field(None, description="User ID to filter by")
+    resource_type: Optional[str] = Field(None, description="Resource type to filter by")
     resource_id: Optional[uuid.UUID] = Field(
         None, description="Resource ID to filter by"
     )
-    company_id: Optional[uuid.UUID] = Field(
-        None, description="Company ID to filter by"
-    )
+    company_id: Optional[uuid.UUID] = Field(None, description="Company ID to filter by")
 
 
 class AuditLogStatistics(BaseModel):
     """Schema for audit log statistics."""
 
     total_count: int = Field(..., description="Total number of log entries")
-    by_level: Dict[str, int] = Field(
-        ..., description="Count by level"
-    )
-    by_event_type: Dict[str, int] = Field(
-        ..., description="Count by event type"
-    )
-    by_user: Dict[str, int] = Field(
-        ..., description="Count by user"
-    )
-    by_resource_type: Dict[str, int] = Field(
-        ..., description="Count by resource type"
-    )
+    by_level: Dict[str, int] = Field(..., description="Count by level")
+    by_event_type: Dict[str, int] = Field(..., description="Count by event type")
+    by_user: Dict[str, int] = Field(..., description="Count by user")
+    by_resource_type: Dict[str, int] = Field(..., description="Count by resource type")
 
 
 class AuditLogExportFormat(str, Enum):
@@ -195,15 +159,11 @@ class AuditLogExportFormat(str, Enum):
 class AuditLogExportRequest(BaseModel):
     """Schema for exporting audit logs."""
 
-    filter: Optional[AuditLogFilter] = Field(
-        None, description="Filter criteria"
-    )
+    filter: Optional[AuditLogFilter] = Field(None, description="Filter criteria")
     format: AuditLogExportFormat = Field(
         AuditLogExportFormat.CSV, description="Export format"
     )
-    include_details: bool = Field(
-        True, description="Include detailed information"
-    )
+    include_details: bool = Field(True, description="Include detailed information")
 
 
 class AuditLogResponse(BaseModel):

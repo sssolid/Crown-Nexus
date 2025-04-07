@@ -25,16 +25,18 @@ from app.core.config import settings
 def drop_all_tables():
     """Drop ALL tables from the database, including alembic_version."""
     # Create a synchronous connection to the database
-    sync_url = str(settings.SQLALCHEMY_DATABASE_URI).replace("postgresql+asyncpg://", "postgresql://")
+    sync_url = str(settings.SQLALCHEMY_DATABASE_URI).replace(
+        "postgresql+asyncpg://", "postgresql://"
+    )
     engine = create_engine(sync_url)
 
     with engine.connect() as conn:
         conn.execute(text("COMMIT"))  # Close any existing transaction
 
         # Get list of all tables
-        result = conn.execute(text(
-            "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
-        ))
+        result = conn.execute(
+            text("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")
+        )
         tables = [row[0] for row in result]
         print(f"Found {len(tables)} tables to drop")
 
@@ -105,17 +107,13 @@ def main():
     parser.add_argument(
         "--keep-migrations",
         action="store_true",
-        help="Don't delete existing migration files"
+        help="Don't delete existing migration files",
     )
     parser.add_argument(
-        "--message",
-        default="initial",
-        help="Message for the new initial migration"
+        "--message", default="initial", help="Message for the new initial migration"
     )
     parser.add_argument(
-        "--skip-create",
-        action="store_true",
-        help="Skip creating new migration"
+        "--skip-create", action="store_true", help="Skip creating new migration"
     )
 
     args = parser.parse_args()

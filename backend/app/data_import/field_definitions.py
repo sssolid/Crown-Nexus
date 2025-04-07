@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field, ValidationError, create_model
 
 class FieldType(str, Enum):
     """Enum for field data types."""
+
     STRING = "string"
     INTEGER = "integer"
     FLOAT = "float"
@@ -32,12 +33,14 @@ class FieldType(str, Enum):
 
 class TransformationDirection(str, Enum):
     """Enum for transformation directions."""
+
     IMPORT = "import"  # External data to application format
     EXPORT = "export"  # Application format to external data
 
 
 class TableInfo(BaseModel):
     """Information about a database table."""
+
     table_name: str
     is_primary: bool = False
     join_condition: Optional[str] = None
@@ -45,6 +48,7 @@ class TableInfo(BaseModel):
 
 class ExternalFieldInfo(BaseModel):
     """Information about an external field."""
+
     field_name: str
     table_name: str
     description: Optional[str] = None
@@ -52,6 +56,7 @@ class ExternalFieldInfo(BaseModel):
 
 class FieldTransformation(BaseModel):
     """Configuration for field transformations."""
+
     direction: TransformationDirection
     source_field: str
     target_field: str
@@ -59,11 +64,13 @@ class FieldTransformation(BaseModel):
 
     class Config:
         """Pydantic config."""
+
         arbitrary_types_allowed = True
 
 
 class FieldDefinition(BaseModel):
     """Definition for a data field."""
+
     name: str
     field_type: FieldType
     required: bool = False
@@ -77,11 +84,12 @@ class FieldDefinition(BaseModel):
     # Source-specific field information with table names
     external_fields: Dict[str, ExternalFieldInfo] = Field(
         default_factory=dict,
-        description="Mapping of source type to external field information"
+        description="Mapping of source type to external field information",
     )
 
     class Config:
         """Pydantic config."""
+
         arbitrary_types_allowed = True
 
     def validate_value(self, value: Any) -> bool:
@@ -105,18 +113,20 @@ class FieldDefinition(BaseModel):
         Returns:
             Dictionary mapping source types to external field names
         """
-        return {source: info.field_name for source, info in self.external_fields.items()}
+        return {
+            source: info.field_name for source, info in self.external_fields.items()
+        }
 
 
 class EntityFieldDefinitions(BaseModel):
     """Field definitions for an entity type."""
+
     entity_name: str
     fields: List[FieldDefinition]
     primary_key_field: str
     unique_fields: List[str] = Field(default_factory=list)
     source_tables: Dict[str, List[TableInfo]] = Field(
-        default_factory=dict,
-        description="Mapping of source type to table information"
+        default_factory=dict, description="Mapping of source type to table information"
     )
 
     def get_field_by_name(self, name: str) -> Optional[FieldDefinition]:
@@ -206,7 +216,10 @@ class EntityFieldDefinitions(BaseModel):
                 if field.nested_fields:
                     nested_model = create_model(
                         f"{model_name}_{field.name.capitalize()}",
-                        **{nested_field.name: (Any, ...) for nested_field in field.nested_fields}
+                        **{
+                            nested_field.name: (Any, ...)
+                            for nested_field in field.nested_fields
+                        },
                     )
                     python_type = nested_model
                 else:
@@ -217,10 +230,13 @@ class EntityFieldDefinitions(BaseModel):
                 python_type = Optional[python_type]
 
             # Create field definition
-            field_definitions[field.name] = (python_type, Field(
-                default=field.default,
-                description=field.description,
-            ))
+            field_definitions[field.name] = (
+                python_type,
+                Field(
+                    default=field.default,
+                    description=field.description,
+                ),
+            )
 
         # Create and return model
         return create_model(model_name, **field_definitions)
@@ -228,12 +244,14 @@ class EntityFieldDefinitions(BaseModel):
 
 class ComplexFieldMappingEntry(BaseModel):
     """An entry for a complex field mapping."""
+
     source_type: str
     mapping: Dict[str, ExternalFieldInfo]
 
 
 class ComplexFieldMapping(BaseModel):
     """Mapping for a complex field across different sources."""
+
     entity_name: str
     field_name: str
     mappings: List[ComplexFieldMappingEntry]
@@ -323,22 +341,20 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
     unique_fields=["part_number", "part_number_stripped"],
     # Define source tables and their relationships
     source_tables={
-        "filemaker": [
-            TableInfo(table_name="Master", is_primary=True)
-        ],
+        "filemaker": [TableInfo(table_name="Master", is_primary=True)],
         "as400": [
             TableInfo(table_name="DSTDATA.INSMFH", is_primary=True),
             TableInfo(
                 table_name="DSTDATA.INSMFT",
-                join_condition="INSMFT.SPART = INSMFH.SPART"
+                join_condition="INSMFT.SPART = INSMFH.SPART",
             ),
             TableInfo(
                 table_name="DSTDATA.ININTER",
-                join_condition="ININTER.SPART = INSMFH.SPART"
+                join_condition="ININTER.SPART = INSMFH.SPART",
             ),
             TableInfo(
                 table_name="DSTDATA.INPTNOTE",
-                join_condition="INPTNOTE.SPART = INSMFH.SPART"
+                join_condition="INPTNOTE.SPART = INSMFH.SPART",
             ),
         ],
     },
@@ -372,7 +388,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="part_number",
                     transformation=clean_part_number,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="part_number_stripped",
@@ -392,7 +408,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="part_number_stripped",
                     transformation=normalize_part_number,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="application",
@@ -435,7 +451,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="vintage",
                     transformation=boolean_transformation,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="late_model",
@@ -461,7 +477,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="late_model",
                     transformation=boolean_transformation,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="soft",
@@ -487,7 +503,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="soft",
                     transformation=boolean_transformation,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="universal",
@@ -513,7 +529,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="universal",
                     transformation=boolean_transformation,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="is_active",
@@ -539,7 +555,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                     target_field="is_active",
                     transformation=boolean_transformation,
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="last_updated",
@@ -603,7 +619,7 @@ PRODUCT_FIELDS = EntityFieldDefinitions(
                 ),
             ],
         ),
-    ]
+    ],
 )
 
 # Define product description field mappings
@@ -891,7 +907,7 @@ PRICING_FIELDS = EntityFieldDefinitions(
             description="Currency code",
             default="USD",
         ),
-    ]
+    ],
 )
 
 # Define inventory fields
@@ -952,9 +968,11 @@ INVENTORY_FIELDS = EntityFieldDefinitions(
                     source_field="quantity",
                     target_field="quantity",
                     # Ensure quantity is not negative
-                    transformation=lambda v: max(0, int(float(v))) if v is not None else 0,
+                    transformation=lambda v: (
+                        max(0, int(float(v))) if v is not None else 0
+                    ),
                 )
-            ]
+            ],
         ),
         FieldDefinition(
             name="last_updated",
@@ -962,7 +980,7 @@ INVENTORY_FIELDS = EntityFieldDefinitions(
             description="Last update timestamp",
             # This will be set programmatically at import time
         ),
-    ]
+    ],
 )
 
 # Create a registry of all entity field definitions
@@ -983,7 +1001,10 @@ COMPLEX_FIELD_MAPPINGS = {
 
 # Update to query generation in field_definitions.py for better complex field handling
 
-def generate_query_for_entity(entity_name: str, source_type: str, fields: Optional[List[str]] = None) -> str:
+
+def generate_query_for_entity(
+    entity_name: str, source_type: str, fields: Optional[List[str]] = None
+) -> str:
     """Generate a SQL query for extracting entity data from a specific source.
 
     Args:
@@ -999,12 +1020,14 @@ def generate_query_for_entity(entity_name: str, source_type: str, fields: Option
         ValueError: If no fields are available for the query
     """
     if entity_name not in ENTITY_FIELD_DEFINITIONS:
-        raise ValueError(f'Unknown entity: {entity_name}')
+        raise ValueError(f"Unknown entity: {entity_name}")
 
     entity_def = ENTITY_FIELD_DEFINITIONS[entity_name]
 
     if source_type not in entity_def.source_tables:
-        raise ValueError(f'Source type {source_type} not supported for entity {entity_name}')
+        raise ValueError(
+            f"Source type {source_type} not supported for entity {entity_name}"
+        )
 
     tables_info = entity_def.source_tables[source_type]
     primary_table = None
@@ -1014,10 +1037,10 @@ def generate_query_for_entity(entity_name: str, source_type: str, fields: Option
             break
 
     if not primary_table:
-        raise ValueError(f'No primary table defined for {entity_name} in {source_type}')
+        raise ValueError(f"No primary table defined for {entity_name} in {source_type}")
 
     # Special case for AS400 product pricing
-    if entity_name == 'product_pricing' and source_type == 'as400':
+    if entity_name == "product_pricing" and source_type == "as400":
         # DO NOT use column aliases (AS) for AS400 queries
         return f"""
             SELECT
@@ -1029,29 +1052,36 @@ def generate_query_for_entity(entity_name: str, source_type: str, fields: Option
         """
 
     # Special case for product with descriptions and marketing from AS400
-    if entity_name == 'product' and source_type == 'as400':
+    if entity_name == "product" and source_type == "as400":
         # Include all basic product fields
         basic_fields = ["SPART"]  # Part number is essential
 
         # Find other basic fields from field definitions
         for field in entity_def.fields:
-            if source_type in field.external_fields and field.name not in ['descriptions', 'marketing']:
+            if source_type in field.external_fields and field.name not in [
+                "descriptions",
+                "marketing",
+            ]:
                 field_info = field.external_fields[source_type]
-                if field_info.field_name != 'SPART':  # Already added
+                if field_info.field_name != "SPART":  # Already added
                     basic_fields.append(field_info.field_name)
 
         # Add description fields
         description_fields = []
-        if 'descriptions' in COMPLEX_FIELD_MAPPINGS.get('product', {}):
-            desc_mappings = COMPLEX_FIELD_MAPPINGS['product']['descriptions'].get(source_type, {})
+        if "descriptions" in COMPLEX_FIELD_MAPPINGS.get("product", {}):
+            desc_mappings = COMPLEX_FIELD_MAPPINGS["product"]["descriptions"].get(
+                source_type, {}
+            )
             for desc_type, field_info in desc_mappings.items():
                 if isinstance(field_info, ExternalFieldInfo):
                     description_fields.append(field_info.field_name)
 
         # Add marketing fields
         marketing_fields = []
-        if 'marketing' in COMPLEX_FIELD_MAPPINGS.get('product', {}):
-            mkt_mappings = COMPLEX_FIELD_MAPPINGS['product']['marketing'].get(source_type, {})
+        if "marketing" in COMPLEX_FIELD_MAPPINGS.get("product", {}):
+            mkt_mappings = COMPLEX_FIELD_MAPPINGS["product"]["marketing"].get(
+                source_type, {}
+            )
             for mkt_type, field_info in mkt_mappings.items():
                 if isinstance(field_info, ExternalFieldInfo):
                     marketing_fields.append(field_info.field_name)
@@ -1073,20 +1103,28 @@ def generate_query_for_entity(entity_name: str, source_type: str, fields: Option
             if source_type in field.external_fields:
                 field_info = field.external_fields[source_type]
                 # Handle comma-separated field names (for multiple price fields)
-                if ',' in field_info.field_name:
-                    for subfield in [f.strip() for f in field_info.field_name.split(',')]:
+                if "," in field_info.field_name:
+                    for subfield in [
+                        f.strip() for f in field_info.field_name.split(",")
+                    ]:
                         # For AS400, don't use column aliases to avoid potential field name issues
-                        if source_type == 'as400':
-                            field_mappings.append(f'{field_info.table_name}.{subfield}')
+                        if source_type == "as400":
+                            field_mappings.append(f"{field_info.table_name}.{subfield}")
                         else:
-                            field_mappings.append(f'{field_info.table_name}.{subfield} AS {subfield}')
+                            field_mappings.append(
+                                f"{field_info.table_name}.{subfield} AS {subfield}"
+                            )
                 else:
                     # For AS400, don't use column aliases to avoid potential field name issues
-                    if source_type == 'as400':
-                        field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
+                    if source_type == "as400":
+                        field_mappings.append(
+                            f"{field_info.table_name}.{field_info.field_name}"
+                        )
                     else:
                         # IMPORTANT: Don't use aliases here - use the field name directly
-                        field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
+                        field_mappings.append(
+                            f"{field_info.table_name}.{field_info.field_name}"
+                        )
 
         # For complex fields, don't use aliases in the query
         if entity_name in COMPLEX_FIELD_MAPPINGS:
@@ -1095,7 +1133,9 @@ def generate_query_for_entity(entity_name: str, source_type: str, fields: Option
                     for type_name, field_info in mappings[source_type].items():
                         if isinstance(field_info, ExternalFieldInfo):
                             # Important: Remove the "AS type_name" alias
-                            field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
+                            field_mappings.append(
+                                f"{field_info.table_name}.{field_info.field_name}"
+                            )
     else:
         field_mappings = []
         for field_name in fields:
@@ -1103,25 +1143,33 @@ def generate_query_for_entity(entity_name: str, source_type: str, fields: Option
             if field and source_type in field.external_fields:
                 field_info = field.external_fields[source_type]
                 # For AS400, don't use column aliases to avoid potential field name issues
-                if source_type == 'as400':
-                    field_mappings.append(f'{field_info.table_name}.{field_info.field_name}')
+                if source_type == "as400":
+                    field_mappings.append(
+                        f"{field_info.table_name}.{field_info.field_name}"
+                    )
                 else:
-                    field_mappings.append(f'{field_info.table_name}.{field_info.field_name} AS {field.name}')
+                    field_mappings.append(
+                        f"{field_info.table_name}.{field_info.field_name} AS {field.name}"
+                    )
 
     if not field_mappings:
-        raise ValueError(f'No fields available for entity {entity_name} from source {source_type}')
+        raise ValueError(
+            f"No fields available for entity {entity_name} from source {source_type}"
+        )
 
-    field_list = ', '.join(field_mappings)
+    field_list = ", ".join(field_mappings)
     from_clause = primary_table
     joins = []
     for table_info in tables_info:
         if not table_info.is_primary and table_info.join_condition:
-            joins.append(f'LEFT JOIN {table_info.table_name} ON {table_info.join_condition}')
-    join_clause = ' '.join(joins)
+            joins.append(
+                f"LEFT JOIN {table_info.table_name} ON {table_info.join_condition}"
+            )
+    join_clause = " ".join(joins)
 
-    if source_type == 'filemaker':
-        return f'SELECT {field_list} FROM {from_clause} {join_clause}'
-    elif source_type.startswith('as400'):
-        return f'SELECT {field_list} FROM {from_clause} {join_clause}'
+    if source_type == "filemaker":
+        return f"SELECT {field_list} FROM {from_clause} {join_clause}"
+    elif source_type.startswith("as400"):
+        return f"SELECT {field_list} FROM {from_clause} {join_clause}"
     else:
-        return f'SELECT {field_list} FROM {from_clause} {join_clause}'
+        return f"SELECT {field_list} FROM {from_clause} {join_clause}"

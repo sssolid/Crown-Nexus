@@ -409,6 +409,7 @@ class VehicleDataService:
 # Singleton instance
 _vehicle_service_instance: Optional[VehicleDataService] = None
 
+
 async def get_vehicle_service(db: AsyncSession = Depends(get_db)) -> VehicleDataService:
     """Dependency for getting the vehicle service.
 

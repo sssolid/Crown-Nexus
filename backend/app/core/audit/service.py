@@ -11,7 +11,12 @@ from typing import Any, Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.audit.base import AuditContext, AuditEventType, AuditLogLevel, AuditOptions
+from app.core.audit.base import (
+    AuditContext,
+    AuditEventType,
+    AuditLogLevel,
+    AuditOptions,
+)
 from app.core.audit.manager import AuditManager
 from app.core.base import CoreService, HealthCheckable
 from app.logging import get_logger

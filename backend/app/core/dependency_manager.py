@@ -443,7 +443,9 @@ def register_services() -> None:
         try:
             from app.core.validation.service import get_validation_service
 
-            dependency_manager.register_service(get_validation_service, "validation_service")
+            dependency_manager.register_service(
+                get_validation_service, "validation_service"
+            )
         except ImportError:
             logger.warning("Validation service not available")
 

@@ -112,7 +112,9 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             )
 
             # Report the exception to error handling system
-            handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
+            handle_exception(
+                exc, request_id=request_id, user_id=user_id, function_name=method
+            )
 
             # Track metrics if available
             self._track_error_metrics(
@@ -120,7 +122,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                 error_type,
                 status_code,
                 request.method,
-                request.url.path
+                request.url.path,
             )
 
             # Handle the exception
@@ -153,7 +155,9 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             )
 
             # Report the exception to error handling system
-            handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
+            handle_exception(
+                exc, request_id=request_id, user_id=user_id, function_name=method
+            )
 
             # Track metrics if available
             self._track_error_metrics(
@@ -161,7 +165,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                 error_type,
                 status_code,
                 request.method,
-                request.url.path
+                request.url.path,
             )
 
             # Handle the exception
@@ -181,9 +185,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
 
             # Determine error code from mapping or use default
-            error_code = ERROR_TYPE_MAPPING.get(
-                type(exc), ErrorCode.SERVER_ERROR
-            )
+            error_code = ERROR_TYPE_MAPPING.get(type(exc), ErrorCode.SERVER_ERROR)
 
             # Log the exception with context
             logger.exception(
@@ -198,7 +200,9 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             )
 
             # Report the exception to error handling system
-            handle_exception(exc, request_id=request_id, user_id=user_id, function_name=method)
+            handle_exception(
+                exc, request_id=request_id, user_id=user_id, function_name=method
+            )
 
             # Track metrics if available
             self._track_error_metrics(
@@ -206,7 +210,7 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                 error_type,
                 status_code,
                 request.method,
-                request.url.path
+                request.url.path,
             )
 
             # Handle the exception

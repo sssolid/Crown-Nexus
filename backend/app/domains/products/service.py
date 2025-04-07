@@ -23,7 +23,7 @@ from app.domains.products.exceptions import (
     ProductNotFoundException,
     DuplicatePartNumberException,
     ProductInactiveException,
-    BrandNotFoundException
+    BrandNotFoundException,
 )
 from app.domains.products.models import (
     Product,
@@ -33,7 +33,7 @@ from app.domains.products.models import (
     ProductPricing,
     ProductStock,
     ProductSupersession,
-    Brand
+    Brand,
 )
 from app.domains.products.repository import ProductRepository, BrandRepository
 from app.domains.products.schemas import (
@@ -41,7 +41,7 @@ from app.domains.products.schemas import (
     ProductUpdate,
     ProductDescriptionCreate,
     ProductMarketingCreate,
-    ProductPricingCreate
+    ProductPricingCreate,
 )
 from app.domains.sync_history.models import SyncEntityType, SyncSource, SyncStatus
 from app.domains.sync_history.repository import SyncHistoryRepository
@@ -89,7 +89,9 @@ class ProductService:
             return cached_product
 
         # Query database if not in cache
-        query = select(Product).where(Product.id == product_id, Product.is_deleted == False)
+        query = select(Product).where(
+            Product.id == product_id, Product.is_deleted == False
+        )
         result = await self.db.execute(query)
         product = result.scalars().first()
 
@@ -99,7 +101,7 @@ class ProductService:
                 event_type=AuditEventType.ACCESS_DENIED,
                 resource_id=str(product_id),
                 resource_type="Product",
-                details={"error": "Product not found"}
+                details={"error": "Product not found"},
             )
             raise ProductNotFoundException(product_id=str(product_id))
 
@@ -110,7 +112,7 @@ class ProductService:
         await self._log_audit_event(
             event_type=AuditEventType.VIEW,
             resource_id=str(product_id),
-            resource_type="Product"
+            resource_type="Product",
         )
 
         return product
@@ -119,7 +121,7 @@ class ProductService:
         self,
         data: ProductCreate,
         user_id: Optional[uuid.UUID] = None,
-        import_id: Optional[uuid.UUID] = None
+        import_id: Optional[uuid.UUID] = None,
     ) -> Product:
         """
         Create a new product.
@@ -147,13 +149,14 @@ class ProductService:
         # Create product
         product = Product(
             part_number=data.part_number,
-            part_number_stripped=data.part_number_stripped or self._normalize_part_number(data.part_number),
+            part_number_stripped=data.part_number_stripped
+            or self._normalize_part_number(data.part_number),
             application=data.application,
             vintage=data.vintage,
             late_model=data.late_model,
             soft=data.soft,
             universal=data.universal,
-            is_active=data.is_active
+            is_active=data.is_active,
         )
 
         # Add to database
@@ -173,7 +176,7 @@ class ProductService:
             product_id=product.id,
             status="active" if data.is_active else "inactive",
             changed_by_id=user_id,
-            changed_at=datetime.now()
+            changed_at=datetime.now(),
         )
         self.db.add(activity)
 
@@ -189,8 +192,8 @@ class ProductService:
             resource_type="Product",
             details={
                 "part_number": data.part_number,
-                "import_id": str(import_id) if import_id else None
-            }
+                "import_id": str(import_id) if import_id else None,
+            },
         )
 
         # Emit event for notifications
@@ -200,8 +203,8 @@ class ProductService:
                 "product_id": str(product.id),
                 "part_number": data.part_number,
                 "user_id": str(user_id) if user_id else None,
-                "import_id": str(import_id) if import_id else None
-            }
+                "import_id": str(import_id) if import_id else None,
+            },
         )
 
         # Update cache
@@ -218,7 +221,7 @@ class ProductService:
         product_id: uuid.UUID,
         data: ProductUpdate,
         user_id: Optional[uuid.UUID] = None,
-        import_id: Optional[uuid.UUID] = None
+        import_id: Optional[uuid.UUID] = None,
     ) -> Product:
         """
         Update an existing product.
@@ -253,12 +256,14 @@ class ProductService:
             "late_model": product.late_model,
             "soft": product.soft,
             "universal": product.universal,
-            "is_active": product.is_active
+            "is_active": product.is_active,
         }
 
         # Check for duplicate part number if changing
         if data.part_number and data.part_number != product.part_number:
-            existing_product = await self.repository.find_by_part_number(data.part_number)
+            existing_product = await self.repository.find_by_part_number(
+                data.part_number
+            )
             if existing_product and existing_product.id != product_id:
                 raise DuplicatePartNumberException(part_number=data.part_number)
             product.part_number = data.part_number
@@ -283,7 +288,7 @@ class ProductService:
                 status="active" if data.is_active else "inactive",
                 reason="Updated via API/Import",
                 changed_by_id=user_id,
-                changed_at=datetime.now()
+                changed_at=datetime.now(),
             )
             self.db.add(activity)
 
@@ -300,11 +305,15 @@ class ProductService:
             "late_model": product.late_model,
             "soft": product.soft,
             "universal": product.universal,
-            "is_active": product.is_active
+            "is_active": product.is_active,
         }
 
         # Calculate changes
-        changes = {k: after_state[k] for k in after_state if before_state.get(k) != after_state[k]}
+        changes = {
+            k: after_state[k]
+            for k in after_state
+            if before_state.get(k) != after_state[k]
+        }
 
         # Log audit event if changes were made
         if changes:
@@ -317,8 +326,8 @@ class ProductService:
                     "changes": changes,
                     "before": before_state,
                     "after": after_state,
-                    "import_id": str(import_id) if import_id else None
-                }
+                    "import_id": str(import_id) if import_id else None,
+                },
             )
 
             # Emit event for notifications
@@ -329,8 +338,8 @@ class ProductService:
                     "part_number": product.part_number,
                     "changes": changes,
                     "user_id": str(user_id) if user_id else None,
-                    "import_id": str(import_id) if import_id else None
-                }
+                    "import_id": str(import_id) if import_id else None,
+                },
             )
 
             # Update cache
@@ -343,9 +352,7 @@ class ProductService:
         return product
 
     async def delete_product(
-        self,
-        product_id: uuid.UUID,
-        user_id: Optional[uuid.UUID] = None
+        self, product_id: uuid.UUID, user_id: Optional[uuid.UUID] = None
     ) -> None:
         """
         Delete a product (soft delete).
@@ -372,7 +379,7 @@ class ProductService:
             product_id=product.id,
             status="deleted",
             changed_by_id=user_id,
-            changed_at=datetime.now()
+            changed_at=datetime.now(),
         )
         self.db.add(activity)
 
@@ -384,7 +391,7 @@ class ProductService:
             user_id=str(user_id) if user_id else None,
             resource_id=str(product.id),
             resource_type="Product",
-            details={"part_number": product.part_number}
+            details={"part_number": product.part_number},
         )
 
         # Emit event for notifications
@@ -393,8 +400,8 @@ class ProductService:
             {
                 "product_id": str(product.id),
                 "part_number": product.part_number,
-                "user_id": str(user_id) if user_id else None
-            }
+                "user_id": str(user_id) if user_id else None,
+            },
         )
 
         # Clear caches
@@ -406,7 +413,7 @@ class ProductService:
         product_id: uuid.UUID,
         status: str,
         reason: Optional[str] = None,
-        user_id: Optional[uuid.UUID] = None
+        user_id: Optional[uuid.UUID] = None,
     ) -> Tuple[Product, ProductActivity]:
         """
         Update a product's status.
@@ -426,14 +433,15 @@ class ProductService:
         # Update via repository with built-in auditing
         try:
             product, activity = await self.repository.update_status(
-                product_id=product_id,
-                status=status,
-                reason=reason,
-                user_id=user_id
+                product_id=product_id, status=status, reason=reason, user_id=user_id
             )
 
             # Get proper event type based on status
-            event_type = AuditEventType.PRODUCT_ACTIVATED if status == "active" else AuditEventType.PRODUCT_DEACTIVATED
+            event_type = (
+                AuditEventType.PRODUCT_ACTIVATED
+                if status == "active"
+                else AuditEventType.PRODUCT_DEACTIVATED
+            )
 
             # Log audit event
             await self._log_audit_event(
@@ -444,8 +452,8 @@ class ProductService:
                 details={
                     "status": status,
                     "reason": reason,
-                    "part_number": product.part_number
-                }
+                    "part_number": product.part_number,
+                },
             )
 
             # Emit event for notifications
@@ -455,8 +463,8 @@ class ProductService:
                     "product_id": str(product.id),
                     "part_number": product.part_number,
                     "reason": reason,
-                    "user_id": str(user_id) if user_id else None
-                }
+                    "user_id": str(user_id) if user_id else None,
+                },
             )
 
             # Update cache
@@ -473,7 +481,7 @@ class ProductService:
         old_product_id: uuid.UUID,
         new_product_id: uuid.UUID,
         reason: Optional[str] = None,
-        user_id: Optional[uuid.UUID] = None
+        user_id: Optional[uuid.UUID] = None,
     ) -> ProductSupersession:
         """
         Create a product supersession.
@@ -496,7 +504,7 @@ class ProductService:
             supersession = await self.repository.create_supersession(
                 old_product_id=old_product_id,
                 new_product_id=new_product_id,
-                reason=reason
+                reason=reason,
             )
 
             # Log audit event
@@ -508,8 +516,8 @@ class ProductService:
                 details={
                     "action": "supersession",
                     "new_product_id": str(new_product_id),
-                    "reason": reason
-                }
+                    "reason": reason,
+                },
             )
 
             # Emit event for notifications
@@ -519,8 +527,8 @@ class ProductService:
                     "old_product_id": str(old_product_id),
                     "new_product_id": str(new_product_id),
                     "reason": reason,
-                    "user_id": str(user_id) if user_id else None
-                }
+                    "user_id": str(user_id) if user_id else None,
+                },
             )
 
             # Clear caches
@@ -541,7 +549,7 @@ class ProductService:
         product_id: uuid.UUID,
         pricing_data: ProductPricingCreate,
         user_id: Optional[uuid.UUID] = None,
-        import_id: Optional[uuid.UUID] = None
+        import_id: Optional[uuid.UUID] = None,
     ) -> ProductPricing:
         """
         Update or create product pricing.
@@ -567,10 +575,12 @@ class ProductService:
         query = select(ProductPricing).where(
             ProductPricing.product_id == product_id,
             ProductPricing.pricing_type_id == pricing_data.pricing_type_id,
-            ProductPricing.is_deleted == False
+            ProductPricing.is_deleted == False,
         )
         if pricing_data.manufacturer_id:
-            query = query.where(ProductPricing.manufacturer_id == pricing_data.manufacturer_id)
+            query = query.where(
+                ProductPricing.manufacturer_id == pricing_data.manufacturer_id
+            )
 
         result = await self.db.execute(query)
         existing_pricing = result.scalars().first()
@@ -580,7 +590,7 @@ class ProductService:
         if existing_pricing:
             before_state = {
                 "price": float(existing_pricing.price),
-                "currency": existing_pricing.currency
+                "currency": existing_pricing.currency,
             }
 
             # Update existing pricing
@@ -597,7 +607,7 @@ class ProductService:
                 manufacturer_id=pricing_data.manufacturer_id,
                 price=pricing_data.price,
                 currency=pricing_data.currency,
-                last_updated=datetime.now()
+                last_updated=datetime.now(),
             )
             self.db.add(pricing)
 
@@ -605,31 +615,36 @@ class ProductService:
         await self.db.refresh(pricing)
 
         # Log audit event
-        after_state = {
-            "price": float(pricing.price),
-            "currency": pricing.currency
-        }
+        after_state = {"price": float(pricing.price), "currency": pricing.currency}
 
         event_details = {
             "part_number": product.part_number,
             "pricing_type_id": str(pricing_data.pricing_type_id),
             "price": float(pricing.price),
             "currency": pricing.currency,
-            "manufacturer_id": str(pricing_data.manufacturer_id) if pricing_data.manufacturer_id else None,
-            "import_id": str(import_id) if import_id else None
+            "manufacturer_id": (
+                str(pricing_data.manufacturer_id)
+                if pricing_data.manufacturer_id
+                else None
+            ),
+            "import_id": str(import_id) if import_id else None,
         }
 
         if before_state:
             event_details["before"] = before_state
             event_details["after"] = after_state
-            event_details["changes"] = {k: after_state[k] for k in after_state if before_state.get(k) != after_state[k]}
+            event_details["changes"] = {
+                k: after_state[k]
+                for k in after_state
+                if before_state.get(k) != after_state[k]
+            }
 
         await self._log_audit_event(
             event_type=AuditEventType.PRICE_CHANGED,
             user_id=str(user_id) if user_id else None,
             resource_id=str(product_id),
             resource_type="Product",
-            details=event_details
+            details=event_details,
         )
 
         # Emit event for notifications
@@ -641,8 +656,8 @@ class ProductService:
                 "price": float(pricing.price),
                 "currency": pricing.currency,
                 "user_id": str(user_id) if user_id else None,
-                "import_id": str(import_id) if import_id else None
-            }
+                "import_id": str(import_id) if import_id else None,
+            },
         )
 
         # Clear caches
@@ -656,7 +671,7 @@ class ProductService:
         self,
         products_data: List[ProductCreate],
         user_id: Optional[uuid.UUID] = None,
-        sync_source: Optional[str] = None
+        sync_source: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Create multiple products in a batch operation.
@@ -675,46 +690,41 @@ class ProductService:
                 "created": 0,
                 "updated": 0,
                 "errors": 0,
-                "total": 0
+                "total": 0,
             }
 
         # Create sync history entry
         sync_history = await self.sync_repository.create_sync(
             entity_type=SyncEntityType.PRODUCT,
-            source=SyncSource(sync_source.upper()) if sync_source else SyncSource.EXTERNAL,
+            source=(
+                SyncSource(sync_source.upper()) if sync_source else SyncSource.EXTERNAL
+            ),
             triggered_by_id=user_id,
             details={
                 "record_count": len(products_data),
-                "source": sync_source or "api"
-            }
+                "source": sync_source or "api",
+            },
         )
 
         # Update sync status to running
         await self.sync_repository.update_sync_status(
-            sync_id=sync_history.id,
-            status=SyncStatus.RUNNING
+            sync_id=sync_history.id, status=SyncStatus.RUNNING
         )
 
         # Log sync start event
         await self.sync_repository.add_sync_event(
             sync_id=sync_history.id,
             event_type="start",
-            message=f"Starting import of {len(products_data)} products"
+            message=f"Starting import of {len(products_data)} products",
         )
 
         # Process each product
-        result = {
-            "created": 0,
-            "updated": 0,
-            "errors": 0,
-            "error_details": []
-        }
+        result = {"created": 0, "updated": 0, "errors": 0, "error_details": []}
 
         # Get existing products by part number
         part_numbers = [p.part_number for p in products_data]
         query = select(Product).where(
-            Product.part_number.in_(part_numbers),
-            Product.is_deleted == False
+            Product.part_number.in_(part_numbers), Product.is_deleted == False
         )
         existing_result = await self.db.execute(query)
         existing_products = {p.part_number: p for p in existing_result.scalars().all()}
@@ -727,8 +737,8 @@ class ProductService:
             details={
                 "sync_id": str(sync_history.id),
                 "record_count": len(products_data),
-                "source": sync_source or "api"
-            }
+                "source": sync_source or "api",
+            },
         )
 
         # Process each product
@@ -745,44 +755,52 @@ class ProductService:
                         late_model=product_data.late_model,
                         soft=product_data.soft,
                         universal=product_data.universal,
-                        is_active=product_data.is_active
+                        is_active=product_data.is_active,
                     )
 
                     await self.update_product(
                         product_id=existing_product.id,
                         data=update_data,
                         user_id=user_id,
-                        import_id=sync_history.id
+                        import_id=sync_history.id,
                     )
 
                     # Handle descriptions if provided
-                    if hasattr(product_data, "descriptions") and product_data.descriptions:
-                        await self._update_descriptions(existing_product.id, product_data.descriptions)
+                    if (
+                        hasattr(product_data, "descriptions")
+                        and product_data.descriptions
+                    ):
+                        await self._update_descriptions(
+                            existing_product.id, product_data.descriptions
+                        )
 
                     # Handle marketing if provided
                     if hasattr(product_data, "marketing") and product_data.marketing:
-                        await self._update_marketing(existing_product.id, product_data.marketing)
+                        await self._update_marketing(
+                            existing_product.id, product_data.marketing
+                        )
 
                     result["updated"] += 1
                 else:
                     # Create new product
                     await self.create_product(
-                        data=product_data,
-                        user_id=user_id,
-                        import_id=sync_history.id
+                        data=product_data, user_id=user_id, import_id=sync_history.id
                     )
                     result["created"] += 1
 
             except Exception as e:
-                logger.error(f"Error importing product {product_data.part_number}: {str(e)}")
+                logger.error(
+                    f"Error importing product {product_data.part_number}: {str(e)}"
+                )
                 result["errors"] += 1
-                result["error_details"].append({
-                    "part_number": product_data.part_number,
-                    "error": str(e)
-                })
+                result["error_details"].append(
+                    {"part_number": product_data.part_number, "error": str(e)}
+                )
 
         # Update sync history with results
-        sync_status = SyncStatus.COMPLETED if result["errors"] == 0 else SyncStatus.FAILED
+        sync_status = (
+            SyncStatus.COMPLETED if result["errors"] == 0 else SyncStatus.FAILED
+        )
         error_message = None
         if result["errors"] > 0:
             error_message = f"Failed to import {result['errors']} products"
@@ -796,8 +814,10 @@ class ProductService:
             records_failed=result["errors"],
             error_message=error_message,
             details={
-                "error_details": result["error_details"] if result["errors"] > 0 else None
-            }
+                "error_details": (
+                    result["error_details"] if result["errors"] > 0 else None
+                )
+            },
         )
 
         # Log sync completion event
@@ -808,7 +828,7 @@ class ProductService:
                 f"Import completed with {result['created']} created, "
                 f"{result['updated']} updated, and {result['errors']} errors"
             ),
-            details=result
+            details=result,
         )
 
         # Emit event for notifications
@@ -820,8 +840,8 @@ class ProductService:
                 "updated": result["updated"],
                 "errors": result["errors"],
                 "user_id": str(user_id) if user_id else None,
-                "source": sync_source or "api"
-            }
+                "source": sync_source or "api",
+            },
         )
 
         # Add total to result
@@ -834,7 +854,7 @@ class ProductService:
         self,
         pricing_data_list: List[Dict[str, Any]],
         user_id: Optional[uuid.UUID] = None,
-        sync_source: Optional[str] = None
+        sync_source: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Update multiple product prices in a batch operation.
@@ -853,31 +873,32 @@ class ProductService:
                 "created": 0,
                 "updated": 0,
                 "errors": 0,
-                "total": 0
+                "total": 0,
             }
 
         # Create sync history entry
         sync_history = await self.sync_repository.create_sync(
             entity_type=SyncEntityType.PRICING,
-            source=SyncSource(sync_source.upper()) if sync_source else SyncSource.EXTERNAL,
+            source=(
+                SyncSource(sync_source.upper()) if sync_source else SyncSource.EXTERNAL
+            ),
             triggered_by_id=user_id,
             details={
                 "record_count": len(pricing_data_list),
-                "source": sync_source or "api"
-            }
+                "source": sync_source or "api",
+            },
         )
 
         # Update sync status to running
         await self.sync_repository.update_sync_status(
-            sync_id=sync_history.id,
-            status=SyncStatus.RUNNING
+            sync_id=sync_history.id, status=SyncStatus.RUNNING
         )
 
         # Log sync start event
         await self.sync_repository.add_sync_event(
             sync_id=sync_history.id,
             event_type="start",
-            message=f"Starting import of {len(pricing_data_list)} pricing records"
+            message=f"Starting import of {len(pricing_data_list)} pricing records",
         )
 
         # Batch log audit event for overall operation
@@ -888,26 +909,24 @@ class ProductService:
             details={
                 "sync_id": str(sync_history.id),
                 "record_count": len(pricing_data_list),
-                "source": sync_source or "api"
-            }
+                "source": sync_source or "api",
+            },
         )
 
         # Process each pricing record
-        result = {
-            "created": 0,
-            "updated": 0,
-            "errors": 0,
-            "error_details": []
-        }
+        result = {"created": 0, "updated": 0, "errors": 0, "error_details": []}
 
         # Get products by part number
-        part_numbers = [p.get("part_number") for p in pricing_data_list if "part_number" in p]
+        part_numbers = [
+            p.get("part_number") for p in pricing_data_list if "part_number" in p
+        ]
         query = select(Product).where(
-            Product.part_number.in_(part_numbers),
-            Product.is_deleted == False
+            Product.part_number.in_(part_numbers), Product.is_deleted == False
         )
         existing_result = await self.db.execute(query)
-        products_by_part_number = {p.part_number: p for p in existing_result.scalars().all()}
+        products_by_part_number = {
+            p.part_number: p for p in existing_result.scalars().all()
+        }
 
         # Get pricing types
         price_type_query = select("price_type").where("price_type.is_deleted == False")
@@ -921,38 +940,42 @@ class ProductService:
                 part_number = pricing_data.get("part_number")
                 if not part_number:
                     result["errors"] += 1
-                    result["error_details"].append({
-                        "error": "Missing part number in pricing data",
-                        "data": pricing_data
-                    })
+                    result["error_details"].append(
+                        {
+                            "error": "Missing part number in pricing data",
+                            "data": pricing_data,
+                        }
+                    )
                     continue
 
                 product = products_by_part_number.get(part_number)
                 if not product:
                     result["errors"] += 1
-                    result["error_details"].append({
-                        "part_number": part_number,
-                        "error": f"Product not found with part number: {part_number}"
-                    })
+                    result["error_details"].append(
+                        {
+                            "part_number": part_number,
+                            "error": f"Product not found with part number: {part_number}",
+                        }
+                    )
                     continue
 
                 # Get or create price type
                 price_type_name = pricing_data.get("pricing_type")
                 if not price_type_name:
                     result["errors"] += 1
-                    result["error_details"].append({
-                        "part_number": part_number,
-                        "error": "Missing pricing type"
-                    })
+                    result["error_details"].append(
+                        {"part_number": part_number, "error": "Missing pricing type"}
+                    )
                     continue
 
                 price_type = price_types.get(price_type_name)
                 if not price_type:
                     # Create price type
                     from app.domains.products.models import PriceType
+
                     price_type = PriceType(
                         name=price_type_name,
-                        description=f"{price_type_name} price type"
+                        description=f"{price_type_name} price type",
                     )
                     self.db.add(price_type)
                     await self.db.flush()
@@ -964,10 +987,12 @@ class ProductService:
                 pricing_query = select(ProductPricing).where(
                     ProductPricing.product_id == product.id,
                     ProductPricing.pricing_type_id == price_type.id,
-                    ProductPricing.is_deleted == False
+                    ProductPricing.is_deleted == False,
                 )
                 if manufacturer_id:
-                    pricing_query = pricing_query.where(ProductPricing.manufacturer_id == manufacturer_id)
+                    pricing_query = pricing_query.where(
+                        ProductPricing.manufacturer_id == manufacturer_id
+                    )
 
                 pricing_result = await self.db.execute(pricing_query)
                 existing_pricing = pricing_result.scalars().first()
@@ -988,7 +1013,7 @@ class ProductService:
                         manufacturer_id=manufacturer_id,
                         price=pricing_data.get("price"),
                         currency=pricing_data.get("currency", "USD"),
-                        last_updated=datetime.now()
+                        last_updated=datetime.now(),
                     )
                     self.db.add(new_pricing)
                     result["created"] += 1
@@ -1004,23 +1029,24 @@ class ProductService:
                         "pricing_type": price_type_name,
                         "price": pricing_data.get("price"),
                         "currency": pricing_data.get("currency", "USD"),
-                        "sync_id": str(sync_history.id)
-                    }
+                        "sync_id": str(sync_history.id),
+                    },
                 )
 
             except Exception as e:
                 logger.error(f"Error importing pricing for {part_number}: {str(e)}")
                 result["errors"] += 1
-                result["error_details"].append({
-                    "part_number": part_number,
-                    "error": str(e)
-                })
+                result["error_details"].append(
+                    {"part_number": part_number, "error": str(e)}
+                )
 
         # Commit changes
         await self.db.flush()
 
         # Update sync history with results
-        sync_status = SyncStatus.COMPLETED if result["errors"] == 0 else SyncStatus.FAILED
+        sync_status = (
+            SyncStatus.COMPLETED if result["errors"] == 0 else SyncStatus.FAILED
+        )
         error_message = None
         if result["errors"] > 0:
             error_message = f"Failed to import {result['errors']} pricing records"
@@ -1034,8 +1060,10 @@ class ProductService:
             records_failed=result["errors"],
             error_message=error_message,
             details={
-                "error_details": result["error_details"] if result["errors"] > 0 else None
-            }
+                "error_details": (
+                    result["error_details"] if result["errors"] > 0 else None
+                )
+            },
         )
 
         # Log sync completion event
@@ -1046,7 +1074,7 @@ class ProductService:
                 f"Pricing import completed with {result['created']} created, "
                 f"{result['updated']} updated, and {result['errors']} errors"
             ),
-            details=result
+            details=result,
         )
 
         # Emit event for notifications
@@ -1058,8 +1086,8 @@ class ProductService:
                 "updated": result["updated"],
                 "errors": result["errors"],
                 "user_id": str(user_id) if user_id else None,
-                "source": sync_source or "api"
-            }
+                "source": sync_source or "api",
+            },
         )
 
         # Add total to result
@@ -1075,38 +1103,35 @@ class ProductService:
     # Helper Methods
 
     async def _create_descriptions(
-        self,
-        product_id: uuid.UUID,
-        descriptions: List[ProductDescriptionCreate]
+        self, product_id: uuid.UUID, descriptions: List[ProductDescriptionCreate]
     ) -> None:
         """Create product descriptions."""
         for desc in descriptions:
             description = ProductDescription(
                 product_id=product_id,
                 description_type=desc.description_type,
-                description=desc.description
+                description=desc.description,
             )
             self.db.add(description)
 
     async def _update_descriptions(
-        self,
-        product_id: uuid.UUID,
-        descriptions: List[ProductDescriptionCreate]
+        self, product_id: uuid.UUID, descriptions: List[ProductDescriptionCreate]
     ) -> None:
         """Update product descriptions (delete and recreate)."""
         # Delete existing descriptions
         from sqlalchemy import delete
+
         await self.db.execute(
-            delete(ProductDescription).where(ProductDescription.product_id == product_id)
+            delete(ProductDescription).where(
+                ProductDescription.product_id == product_id
+            )
         )
 
         # Create new descriptions
         await self._create_descriptions(product_id, descriptions)
 
     async def _create_marketing(
-        self,
-        product_id: uuid.UUID,
-        marketing_items: List[ProductMarketingCreate]
+        self, product_id: uuid.UUID, marketing_items: List[ProductMarketingCreate]
     ) -> None:
         """Create product marketing items."""
         for i, mkt in enumerate(marketing_items):
@@ -1115,18 +1140,17 @@ class ProductService:
                 product_id=product_id,
                 marketing_type=mkt.marketing_type,
                 content=mkt.content,
-                position=position
+                position=position,
             )
             self.db.add(marketing)
 
     async def _update_marketing(
-        self,
-        product_id: uuid.UUID,
-        marketing_items: List[ProductMarketingCreate]
+        self, product_id: uuid.UUID, marketing_items: List[ProductMarketingCreate]
     ) -> None:
         """Update product marketing items (delete and recreate)."""
         # Delete existing marketing items
         from sqlalchemy import delete
+
         await self.db.execute(
             delete(ProductMarketing).where(ProductMarketing.product_id == product_id)
         )
@@ -1136,7 +1160,7 @@ class ProductService:
 
     def _normalize_part_number(self, part_number: str) -> str:
         """Normalize part number (remove non-alphanumeric characters and uppercase)."""
-        return ''.join(c for c in part_number if c.isalnum()).upper()
+        return "".join(c for c in part_number if c.isalnum()).upper()
 
     async def _log_audit_event(
         self,
@@ -1144,7 +1168,7 @@ class ProductService:
         resource_type: str,
         resource_id: Optional[str] = None,
         user_id: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None
+        details: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Log an audit event using the audit service."""
         audit_service = get_audit_service(self.db)
@@ -1153,5 +1177,5 @@ class ProductService:
             user_id=user_id,
             resource_id=resource_id,
             resource_type=resource_type,
-            details=details
+            details=details,
         )

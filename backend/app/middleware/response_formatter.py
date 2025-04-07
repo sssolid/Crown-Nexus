@@ -49,7 +49,13 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
             skip_binary_responses: Whether to skip formatting for binary responses
         """
         super().__init__(app)
-        self.exclude_paths = exclude_paths or ["/docs", "/redoc", "/openapi.json", "/static/", "/media/"]
+        self.exclude_paths = exclude_paths or [
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+            "/static/",
+            "/media/",
+        ]
         self.skip_binary_responses = skip_binary_responses
         logger.info("ResponseFormatterMiddleware initialized")
 
@@ -91,8 +97,8 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
                 if self.skip_binary_responses and (
                     isinstance(response, (StreamingResponse, FileResponse))
                     or response.headers.get("Content-Type", "").startswith(
-                    ("image/", "audio/", "video/", "application/octet-stream")
-                )
+                        ("image/", "audio/", "video/", "application/octet-stream")
+                    )
                 ):
                     return response
                 else:
@@ -204,9 +210,7 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
         else:
             return "Unknown"
 
-    def _build_metadata(
-        self, request: Request, response: Response
-    ) -> Dict[str, Any]:
+    def _build_metadata(self, request: Request, response: Response) -> Dict[str, Any]:
         """
         Build metadata for the response.
 

@@ -100,7 +100,7 @@ def fix_self_referential_tables(content: str) -> str:
         for fk_match in re.finditer(fk_pattern, full_match):
             src_col = fk_match.group(1)
             target = fk_match.group(2)
-            target_parts = target.split('.')
+            target_parts = target.split(".")
             if len(target_parts) >= 2 and target_parts[0] == table_name:
                 target_col = target_parts[1]
                 self_refs.append((src_col, target_col, fk_match.group(0)))
@@ -115,27 +115,37 @@ def fix_self_referential_tables(content: str) -> str:
             modified_create = modified_create.replace(fk_clause, "")
 
         # Fix any syntax issues (extra commas)
-        modified_create = re.sub(r',\s*\)', ')', modified_create)
-        modified_create = re.sub(r',\s*,', ',', modified_create)
+        modified_create = re.sub(r",\s*\)", ")", modified_create)
+        modified_create = re.sub(r",\s*,", ",", modified_create)
 
         # Add ALTER TABLE statements after the CREATE TABLE
         alter_statements = []
         for src_col, target_col, _ in self_refs:
             # Add unique constraint on target column if it's not the primary key
-            if "sa.PrimaryKeyConstraint('" + target_col + "'" not in full_match and "sa.UniqueConstraint('" + target_col + "'" not in full_match:
+            if (
+                "sa.PrimaryKeyConstraint('" + target_col + "'" not in full_match
+                and "sa.UniqueConstraint('" + target_col + "'" not in full_match
+            ):
                 alter_statements.append(
-                    f"    op.create_unique_constraint('uq_{table_name}_{target_col}', '{table_name}', ['{target_col}'])")
+                    f"    op.create_unique_constraint('uq_{table_name}_{target_col}', '{table_name}', ['{target_col}'])"
+                )
 
             # Add foreign key constraint
             alter_statements.append(
-                f"    op.create_foreign_key('fk_{table_name}_{src_col}_{target_col}', '{table_name}', '{table_name}', ['{src_col}'], ['{target_col}'])")
+                f"    op.create_foreign_key('fk_{table_name}_{src_col}_{target_col}', '{table_name}', '{table_name}', ['{src_col}'], ['{target_col}'])"
+            )
 
         # Return modified CREATE TABLE followed by ALTER TABLE statements
-        return modified_create + "\n\n    # Add self-referential foreign keys after table creation\n" + "\n".join(
-            alter_statements)
+        return (
+            modified_create
+            + "\n\n    # Add self-referential foreign keys after table creation\n"
+            + "\n".join(alter_statements)
+        )
 
     # Process all matches
-    fixed_content = re.sub(create_table_pattern, process_match, content, flags=re.DOTALL)
+    fixed_content = re.sub(
+        create_table_pattern, process_match, content, flags=re.DOTALL
+    )
     return fixed_content
 
 

@@ -90,7 +90,8 @@ async def create_admin_user(
         async with get_db_context() as db:
             # Check if user already exists
             result = await db.execute(
-                text('SELECT 1 FROM "user"."user" WHERE email = :email'), {"email": email}
+                text('SELECT 1 FROM "user"."user" WHERE email = :email'),
+                {"email": email},
             )
             exists = result.scalar() is not None
 

@@ -12,7 +12,13 @@ from typing import Any, Dict, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.audit.base import AuditBackend, AuditContext, AuditEventType, AuditLogLevel, AuditOptions
+from app.core.audit.base import (
+    AuditBackend,
+    AuditContext,
+    AuditEventType,
+    AuditLogLevel,
+    AuditOptions,
+)
 from app.core.audit.exceptions import AuditBackendException
 from app.core.audit.models import AuditLog
 from app.core.audit.utils import anonymize_data
@@ -75,7 +81,9 @@ class DatabaseAuditBackend(AuditBackend, InitializableComponent):
         # Process details
         processed_details = details or {}
         if options.anonymize_data:
-            processed_details = anonymize_data(processed_details, options.sensitive_fields)
+            processed_details = anonymize_data(
+                processed_details, options.sensitive_fields
+            )
 
         # Create audit log entry
         try:

@@ -11,7 +11,7 @@ Auto Care Association standards.
 
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table
 from sqlalchemy.dialects.postgresql import UUID
@@ -45,15 +45,17 @@ class Make(Base):
 
     # Relationships
     # vehicles = relationship("Vehicle", back_populates="make")
-    vehicles = relationship(
+    vehicles: Mapped[List["Vehicle"]] = relationship(
         "Vehicle",
         secondary="base_vehicle",  # <- use table name as string
         primaryjoin="Make.make_id == foreign(vcdb.BaseVehicle.make_id)",
         secondaryjoin="foreign(vcdb.Vehicle.base_vehicle_id) == vcdb.BaseVehicle.base_vehicle_id",
         viewonly=True,
-        overlaps="make,base_vehicle"
+        overlaps="make,base_vehicle",
     )
-    base_vehicles = relationship("BaseVehicle", back_populates="make")
+    base_vehicles: Mapped[List["BaseVehicle"]] = relationship(
+        "BaseVehicle", back_populates="make"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Make instance.
@@ -86,7 +88,9 @@ class Year(Base):
     year: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
 
     # Relationships
-    base_vehicles = relationship("BaseVehicle", back_populates="year")
+    base_vehicles: Mapped[List["BaseVehicle"]] = relationship(
+        "BaseVehicle", back_populates="year"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Year instance.
@@ -124,8 +128,12 @@ class Model(Base):
     )
 
     # Relationships
-    base_vehicles = relationship("BaseVehicle", back_populates="model")
-    vehicle_type = relationship("VehicleType", back_populates="models")
+    base_vehicles: Mapped[List["BaseVehicle"]] = relationship(
+        "BaseVehicle", back_populates="model"
+    )
+    vehicle_type: Mapped["VehicleType"] = relationship(
+        "VehicleType", back_populates="models"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Model instance.
@@ -165,8 +173,8 @@ class VehicleType(Base):
     )
 
     # Relationships
-    models = relationship("Model", back_populates="vehicle_type")
-    vehicle_type_group = relationship(
+    models: Mapped[List["Model"]] = relationship("Model", back_populates="vehicle_type")
+    vehicle_type_group: Mapped["VehicleTypeGroup"] = relationship(
         "VehicleTypeGroup", back_populates="vehicle_types"
     )
 
@@ -201,7 +209,9 @@ class VehicleTypeGroup(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    vehicle_types = relationship("VehicleType", back_populates="vehicle_type_group")
+    vehicle_types: Mapped[List["VehicleType"]] = relationship(
+        "VehicleType", back_populates="vehicle_type_group"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of VehicleTypeGroup instance.
@@ -234,7 +244,9 @@ class SubModel(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    vehicles = relationship("Vehicle", back_populates="submodel")
+    vehicles: Mapped[List["Vehicle"]] = relationship(
+        "Vehicle", back_populates="submodel"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of SubModel instance.
@@ -277,17 +289,13 @@ class Region(Base):
     # Relationships
     # children = relationship("Region", back_populates="parent", remote_side=[region_id])
     # parent = relationship("Region", back_populates="children", remote_side=[id])
-    parent = relationship(
-        "Region",
-        remote_side="Region.region_id",
-        back_populates="children"
+    parent: Mapped["Region"] = relationship(
+        "Region", remote_side="Region.region_id", back_populates="children"
     )
-    children = relationship(
-        "Region",
-        back_populates="parent",
-        cascade="all, delete-orphan"
+    children: Mapped[List["Region"]] = relationship(
+        "Region", back_populates="parent", cascade="all, delete-orphan"
     )
-    vehicles = relationship("Vehicle", back_populates="region")
+    vehicles: Mapped[List["Vehicle"]] = relationship("Vehicle", back_populates="region")
 
     def __repr__(self) -> str:
         """Return string representation of Region instance.
@@ -320,7 +328,9 @@ class PublicationStage(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
 
     # Relationships
-    vehicles = relationship("Vehicle", back_populates="publication_stage")
+    vehicles: Mapped[List["Vehicle"]] = relationship(
+        "Vehicle", back_populates="publication_stage"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of PublicationStage instance.
@@ -366,10 +376,12 @@ class BaseVehicle(Base):
     )
 
     # Relationships
-    year = relationship("Year", back_populates="base_vehicles")
-    make = relationship("Make", back_populates="base_vehicles")
-    model = relationship("Model", back_populates="base_vehicles")
-    vehicles = relationship("Vehicle", back_populates="base_vehicle")
+    year: Mapped["Year"] = relationship("Year", back_populates="base_vehicles")
+    make: Mapped["Make"] = relationship("Make", back_populates="base_vehicles")
+    model: Mapped["Model"] = relationship("Model", back_populates="base_vehicles")
+    vehicles: Mapped[List["Vehicle"]] = relationship(
+        "Vehicle", back_populates="base_vehicle"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BaseVehicle instance.
@@ -433,36 +445,46 @@ class Vehicle(Base):
     )
 
     # Relationships
-    base_vehicle = relationship("BaseVehicle", back_populates="vehicles")
-    submodel = relationship("SubModel", back_populates="vehicles")
-    region = relationship("Region", back_populates="vehicles")
-    publication_stage = relationship("PublicationStage", back_populates="vehicles")
+    base_vehicle: Mapped["BaseVehicle"] = relationship(
+        "BaseVehicle", back_populates="vehicles"
+    )
+    submodel: Mapped["SubModel"] = relationship("SubModel", back_populates="vehicles")
+    region: Mapped["Region"] = relationship("Region", back_populates="vehicles")
+    publication_stage: Mapped["PublicationStage"] = relationship(
+        "PublicationStage", back_populates="vehicles"
+    )
 
     # Vehicle attributes relationships
-    drive_types = relationship("DriveType", secondary="vehicle_to_drive_type")
-    brake_configs = relationship(
+    drive_types: Mapped[List["DriveType"]] = relationship(
+        "DriveType", secondary="vehicle_to_drive_type"
+    )
+    brake_configs: Mapped[List["BrakeConfig"]] = relationship(
         "BrakeConfig", secondary="vehicle_to_brake_config"
     )
-    bed_configs = relationship("BedConfig", secondary="vehicle_to_bed_config")
-    body_style_configs = relationship(
+    bed_configs: Mapped[List["BedConfig"]] = relationship(
+        "BedConfig", secondary="vehicle_to_bed_config"
+    )
+    body_style_configs: Mapped[List["BodyStyleConfig"]] = relationship(
         "BodyStyleConfig", secondary="vehicle_to_body_style_config"
     )
-    mfr_body_codes = relationship(
+    mfr_body_codes: Mapped[List["MfrBodyCode"]] = relationship(
         "MfrBodyCode", secondary="vehicle_to_mfr_body_code"
     )
-    engine_configs = relationship(
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", secondary="vehicle_to_engine_config"
     )
-    spring_type_configs = relationship(
+    spring_type_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig", secondary="vehicle_to_spring_type_config"
     )
-    steering_configs = relationship(
+    steering_configs: Mapped[List["SteeringConfig"]] = relationship(
         "SteeringConfig", secondary="vehicle_to_steering_config"
     )
-    transmissions = relationship(
+    transmissions: Mapped[List["Transmission"]] = relationship(
         "Transmission", secondary="vehicle_to_transmission"
     )
-    wheel_bases = relationship("WheelBase", secondary="vehicle_to_wheel_base")
+    wheel_bases: Mapped[List["WheelBase"]] = relationship(
+        "WheelBase", secondary="vehicle_to_wheel_base"
+    )
 
     # Properties for convenience
     @property
@@ -549,7 +571,7 @@ vehicle_to_drive_type = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -576,12 +598,12 @@ class BrakeType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    front_brake_configs = relationship(
+    front_brake_configs: Mapped[List["BrakeConfig"]] = relationship(
         "BrakeConfig",
         foreign_keys="[vcdb.BrakeConfig.front_brake_type_id]",
         back_populates="front_brake_type",
     )
-    rear_brake_configs = relationship(
+    rear_brake_configs: Mapped[List["BrakeConfig"]] = relationship(
         "BrakeConfig",
         foreign_keys="[vcdb.BrakeConfig.rear_brake_type_id]",
         back_populates="rear_brake_type",
@@ -618,7 +640,9 @@ class BrakeSystem(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    brake_configs = relationship("BrakeConfig", back_populates="brake_system")
+    brake_configs: Mapped[List["BrakeConfig"]] = relationship(
+        "BrakeConfig", back_populates="brake_system"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BrakeSystem instance.
@@ -651,7 +675,9 @@ class BrakeABS(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    brake_configs = relationship("BrakeConfig", back_populates="brake_abs")
+    brake_configs: Mapped[List["BrakeConfig"]] = relationship(
+        "BrakeConfig", back_populates="brake_abs"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BrakeABS instance.
@@ -702,18 +728,22 @@ class BrakeConfig(Base):
     )
 
     # Relationships
-    front_brake_type = relationship(
+    front_brake_type: Mapped[List["BrakeType"]] = relationship(
         "BrakeType",
         foreign_keys="[vcdb.front_brake_type_id]",
         back_populates="front_brake_configs",
     )
-    rear_brake_type = relationship(
+    rear_brake_type: Mapped[List["BrakeType"]] = relationship(
         "BrakeType",
         foreign_keys="[vcdb.rear_brake_type_id]",
         back_populates="rear_brake_configs",
     )
-    brake_system = relationship("BrakeSystem", back_populates="brake_configs")
-    brake_abs = relationship("BrakeABS", back_populates="brake_configs")
+    brake_system: Mapped[List["BrakeSystem"]] = relationship(
+        "BrakeSystem", back_populates="brake_configs"
+    )
+    brake_abs: Mapped[List["BrakeABS"]] = relationship(
+        "BrakeABS", back_populates="brake_configs"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BrakeConfig instance.
@@ -739,7 +769,7 @@ vehicle_to_brake_config = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -765,7 +795,9 @@ class BedType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    bed_configs = relationship("BedConfig", back_populates="bed_type")
+    bed_configs: Mapped[List["BedConfig"]] = relationship(
+        "BedConfig", back_populates="bed_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BedType instance.
@@ -800,7 +832,9 @@ class BedLength(Base):
     length_metric: Mapped[str] = mapped_column(String(10), nullable=False)
 
     # Relationships
-    bed_configs = relationship("BedConfig", back_populates="bed_length")
+    bed_configs: Mapped[List["BedConfig"]] = relationship(
+        "BedConfig", back_populates="bed_length"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BedLength instance.
@@ -841,8 +875,10 @@ class BedConfig(Base):
     )
 
     # Relationships
-    bed_length = relationship("BedLength", back_populates="bed_configs")
-    bed_type = relationship("BedType", back_populates="bed_configs")
+    bed_length: Mapped["BedLength"] = relationship(
+        "BedLength", back_populates="bed_configs"
+    )
+    bed_type: Mapped["BedType"] = relationship("BedType", back_populates="bed_configs")
 
     def __repr__(self) -> str:
         """Return string representation of BedConfig instance.
@@ -868,7 +904,7 @@ vehicle_to_bed_config = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -894,7 +930,9 @@ class BodyType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    body_style_configs = relationship("BodyStyleConfig", back_populates="body_type")
+    body_style_configs: Mapped[List["BodyStyleConfig"]] = relationship(
+        "BodyStyleConfig", back_populates="body_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BodyType instance.
@@ -927,7 +965,7 @@ class BodyNumDoors(Base):
     num_doors: Mapped[str] = mapped_column(String(3), nullable=False)
 
     # Relationships
-    body_style_configs = relationship(
+    body_style_configs: Mapped[List["BodyStyleConfig"]] = relationship(
         "BodyStyleConfig", back_populates="body_num_doors"
     )
 
@@ -970,8 +1008,12 @@ class BodyStyleConfig(Base):
     )
 
     # Relationships
-    body_num_doors = relationship("BodyNumDoors", back_populates="body_style_configs")
-    body_type = relationship("BodyType", back_populates="body_style_configs")
+    body_num_doors: Mapped["BodyNumDoors"] = relationship(
+        "BodyNumDoors", back_populates="body_style_configs"
+    )
+    body_type: Mapped["BodyType"] = relationship(
+        "BodyType", back_populates="body_style_configs"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of BodyStyleConfig instance.
@@ -997,7 +1039,7 @@ vehicle_to_body_style_config = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -1046,7 +1088,7 @@ vehicle_to_mfr_body_code = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -1080,7 +1122,9 @@ class EngineBlock(Base):
     block_type: Mapped[str] = mapped_column(String(2), nullable=False)
 
     # Relationships
-    engine_bases = relationship("EngineBase", back_populates="engine_block")
+    engine_bases: Mapped[List["EngineBase"]] = relationship(
+        "EngineBase", back_populates="engine_block"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineBlock instance.
@@ -1121,7 +1165,9 @@ class EngineBoreStroke(Base):
     stroke_metric: Mapped[str] = mapped_column(String(10), nullable=False)
 
     # Relationships
-    engine_bases = relationship("EngineBase", back_populates="engine_bore_stroke")
+    engine_bases: Mapped[List["EngineBase"]] = relationship(
+        "EngineBase", back_populates="engine_bore_stroke"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineBoreStroke instance.
@@ -1164,9 +1210,15 @@ class EngineBase(Base):
     )
 
     # Relationships
-    engine_block = relationship("EngineBlock", back_populates="engine_bases")
-    engine_bore_stroke = relationship("EngineBoreStroke", back_populates="engine_bases")
-    engine_configs = relationship("EngineConfig", back_populates="engine_base")
+    engine_block: Mapped["EngineBlock"] = relationship(
+        "EngineBlock", back_populates="engine_bases"
+    )
+    engine_bore_stroke: Mapped["EngineBoreStroke"] = relationship(
+        "EngineBoreStroke", back_populates="engine_bases"
+    )
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="engine_base"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineBase instance.
@@ -1199,7 +1251,9 @@ class Aspiration(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="aspiration")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="aspiration"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Aspiration instance.
@@ -1232,7 +1286,9 @@ class FuelType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="fuel_type")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="fuel_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelType instance.
@@ -1265,7 +1321,9 @@ class CylinderHeadType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="cylinder_head_type")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="cylinder_head_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of CylinderHeadType instance.
@@ -1298,7 +1356,9 @@ class EngineDesignation(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="engine_designation")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="engine_designation"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineDesignation instance.
@@ -1331,7 +1391,9 @@ class EngineVIN(Base):
     code: Mapped[str] = mapped_column(String(5), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="engine_vin")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="engine_vin"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineVIN instance.
@@ -1364,7 +1426,9 @@ class EngineVersion(Base):
     version: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="engine_version")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="engine_version"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineVersion instance.
@@ -1398,8 +1462,10 @@ class Mfr(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="engine_mfr")
-    transmission_configs = relationship(
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="engine_mfr"
+    )
+    transmission_configs: Mapped[List["Transmission"]] = relationship(
         "Transmission", back_populates="transmission_mfr"
     )
 
@@ -1434,7 +1500,9 @@ class IgnitionSystemType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="ignition_system_type")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="ignition_system_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of IgnitionSystemType instance.
@@ -1467,7 +1535,9 @@ class Valves(Base):
     valves_per_engine: Mapped[str] = mapped_column(String(3), nullable=False)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="valves")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="valves"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Valves instance.
@@ -1500,7 +1570,7 @@ class FuelDeliveryType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship(
+    fuel_delivery_configs: Mapped[List["FuelDeliveryConfig"]] = relationship(
         "FuelDeliveryConfig", back_populates="fuel_delivery_type"
     )
 
@@ -1535,7 +1605,7 @@ class FuelDeliverySubType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship(
+    fuel_delivery_configs: Mapped[List["FuelDeliveryConfig"]] = relationship(
         "FuelDeliveryConfig", back_populates="fuel_delivery_subtype"
     )
 
@@ -1570,7 +1640,7 @@ class FuelSystemControlType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship(
+    fuel_delivery_configs: Mapped[List["FuelDeliveryConfig"]] = relationship(
         "FuelDeliveryConfig", back_populates="fuel_system_control_type"
     )
 
@@ -1607,7 +1677,7 @@ class FuelSystemDesign(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    fuel_delivery_configs = relationship(
+    fuel_delivery_configs: Mapped[List["FuelDeliveryConfig"]] = relationship(
         "FuelDeliveryConfig", back_populates="fuel_system_design"
     )
 
@@ -1668,19 +1738,21 @@ class FuelDeliveryConfig(Base):
     )
 
     # Relationships
-    fuel_delivery_type = relationship(
+    fuel_delivery_type: Mapped["FuelDeliveryType"] = relationship(
         "FuelDeliveryType", back_populates="fuel_delivery_configs"
     )
-    fuel_delivery_subtype = relationship(
+    fuel_delivery_subtype: Mapped["FuelDeliverySubType"] = relationship(
         "FuelDeliverySubType", back_populates="fuel_delivery_configs"
     )
-    fuel_system_control_type = relationship(
+    fuel_system_control_type: Mapped["FuelSystemControlType"] = relationship(
         "FuelSystemControlType", back_populates="fuel_delivery_configs"
     )
-    fuel_system_design = relationship(
+    fuel_system_design: Mapped["FuelSystemDesign"] = relationship(
         "FuelSystemDesign", back_populates="fuel_delivery_configs"
     )
-    engine_configs = relationship("EngineConfig", back_populates="fuel_delivery_config")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="fuel_delivery_config"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelDeliveryConfig instance.
@@ -1715,7 +1787,9 @@ class PowerOutput(Base):
     kilowatt: Mapped[str] = mapped_column(String(10), nullable=False)
 
     # Relationships
-    engine_configs = relationship("EngineConfig", back_populates="power_output")
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="power_output"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of PowerOutput instance.
@@ -1814,26 +1888,38 @@ class EngineConfig(Base):
     )
 
     # Relationships
-    engine_base = relationship("EngineBase", back_populates="engine_configs")
-    engine_designation = relationship(
+    engine_base: Mapped["EngineBase"] = relationship(
+        "EngineBase", back_populates="engine_configs"
+    )
+    engine_designation: Mapped["EngineDesignation"] = relationship(
         "EngineDesignation", back_populates="engine_configs"
     )
-    engine_vin = relationship("EngineVIN", back_populates="engine_configs")
-    valves = relationship("Valves", back_populates="engine_configs")
-    fuel_delivery_config = relationship(
+    engine_vin: Mapped["EngineVIN"] = relationship(
+        "EngineVIN", back_populates="engine_configs"
+    )
+    valves: Mapped["Valves"] = relationship("Valves", back_populates="engine_configs")
+    fuel_delivery_config: Mapped["FuelDeliveryConfig"] = relationship(
         "FuelDeliveryConfig", back_populates="engine_configs"
     )
-    aspiration = relationship("Aspiration", back_populates="engine_configs")
-    cylinder_head_type = relationship(
+    aspiration: Mapped["Aspiration"] = relationship(
+        "Aspiration", back_populates="engine_configs"
+    )
+    cylinder_head_type: Mapped["CylinderHeadType"] = relationship(
         "CylinderHeadType", back_populates="engine_configs"
     )
-    fuel_type = relationship("FuelType", back_populates="engine_configs")
-    ignition_system_type = relationship(
+    fuel_type: Mapped["FuelType"] = relationship(
+        "FuelType", back_populates="engine_configs"
+    )
+    ignition_system_type: Mapped["IgnitionSystemType"] = relationship(
         "IgnitionSystemType", back_populates="engine_configs"
     )
-    engine_mfr = relationship("Mfr", back_populates="engine_configs")
-    engine_version = relationship("EngineVersion", back_populates="engine_configs")
-    power_output = relationship("PowerOutput", back_populates="engine_configs")
+    engine_mfr: Mapped["Mfr"] = relationship("Mfr", back_populates="engine_configs")
+    engine_version: Mapped["EngineVersion"] = relationship(
+        "EngineVersion", back_populates="engine_configs"
+    )
+    power_output: Mapped["PowerOutput"] = relationship(
+        "PowerOutput", back_populates="engine_configs"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineConfig instance.
@@ -1859,7 +1945,7 @@ vehicle_to_engine_config = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -1886,12 +1972,12 @@ class SpringType(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     # Relationships
-    front_spring_configs = relationship(
+    front_spring_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig",
         foreign_keys="[vcdb.SpringTypeConfig.front_spring_type_id]",
         back_populates="front_spring_type",
     )
-    rear_spring_configs = relationship(
+    rear_spring_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig",
         foreign_keys="[vcdb.SpringTypeConfig.rear_spring_type_id]",
         back_populates="rear_spring_type",
@@ -1936,12 +2022,12 @@ class SpringTypeConfig(Base):
     )
 
     # Relationships
-    front_spring_type = relationship(
+    front_spring_type: Mapped["SpringType"] = relationship(
         "SpringType",
         foreign_keys="[vcdb.front_spring_type_id]",
         back_populates="front_spring_configs",
     )
-    rear_spring_type = relationship(
+    rear_spring_type: Mapped["SpringType"] = relationship(
         "SpringType",
         foreign_keys="[vcdb.rear_spring_type_id]",
         back_populates="rear_spring_configs",
@@ -1971,7 +2057,7 @@ vehicle_to_spring_type_config = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -1997,7 +2083,9 @@ class SteeringType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    steering_configs = relationship("SteeringConfig", back_populates="steering_type")
+    steering_configs: Mapped[List["SteeringConfig"]] = relationship(
+        "SteeringConfig", back_populates="steering_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of SteeringType instance.
@@ -2030,7 +2118,9 @@ class SteeringSystem(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    steering_configs = relationship("SteeringConfig", back_populates="steering_system")
+    steering_configs: Mapped[List["SteeringConfig"]] = relationship(
+        "SteeringConfig", back_populates="steering_system"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of SteeringSystem instance.
@@ -2073,8 +2163,12 @@ class SteeringConfig(Base):
     )
 
     # Relationships
-    steering_type = relationship("SteeringType", back_populates="steering_configs")
-    steering_system = relationship("SteeringSystem", back_populates="steering_configs")
+    steering_type: Mapped[List["SteeringType"]] = relationship(
+        "SteeringType", back_populates="steering_configs"
+    )
+    steering_system: Mapped[List["SteeringSystem"]] = relationship(
+        "SteeringSystem", back_populates="steering_configs"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of SteeringConfig instance.
@@ -2100,7 +2194,7 @@ vehicle_to_steering_config = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -2126,7 +2220,7 @@ class TransmissionType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    transmission_bases = relationship(
+    transmission_bases: Mapped[List["TransmissionBase"]] = relationship(
         "TransmissionBase", back_populates="transmission_type"
     )
 
@@ -2161,7 +2255,7 @@ class TransmissionNumSpeeds(Base):
     num_speeds: Mapped[str] = mapped_column(String(3), nullable=False, index=True)
 
     # Relationships
-    transmission_bases = relationship(
+    transmission_bases: Mapped[List["TransmissionBase"]] = relationship(
         "TransmissionBase", back_populates="transmission_num_speeds"
     )
 
@@ -2196,7 +2290,7 @@ class TransmissionControlType(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    transmission_bases = relationship(
+    transmission_bases: Mapped[List["TransmissionBase"]] = relationship(
         "TransmissionBase", back_populates="transmission_control_type"
     )
 
@@ -2250,16 +2344,18 @@ class TransmissionBase(Base):
     )
 
     # Relationships
-    transmission_type = relationship(
+    transmission_type: Mapped["TransmissionType"] = relationship(
         "TransmissionType", back_populates="transmission_bases"
     )
-    transmission_num_speeds = relationship(
+    transmission_num_speeds: Mapped["TransmissionNumSpeeds"] = relationship(
         "TransmissionNumSpeeds", back_populates="transmission_bases"
     )
-    transmission_control_type = relationship(
+    transmission_control_type: Mapped["TransmissionControlType"] = relationship(
         "TransmissionControlType", back_populates="transmission_bases"
     )
-    transmissions = relationship("Transmission", back_populates="transmission_base")
+    transmissions: Mapped[List["Transmission"]] = relationship(
+        "Transmission", back_populates="transmission_base"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of TransmissionBase instance.
@@ -2292,7 +2388,9 @@ class TransmissionMfrCode(Base):
     code: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
 
     # Relationships
-    transmissions = relationship("Transmission", back_populates="transmission_mfr_code")
+    transmissions: Mapped[List["Transmission"]] = relationship(
+        "Transmission", back_populates="transmission_mfr_code"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of TransmissionMfrCode instance.
@@ -2325,7 +2423,9 @@ class ElecControlled(Base):
     value: Mapped[str] = mapped_column(String(3), nullable=False, index=True)
 
     # Relationships
-    transmissions = relationship("Transmission", back_populates="elec_controlled")
+    transmissions: Mapped[List["Transmission"]] = relationship(
+        "Transmission", back_populates="elec_controlled"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of ElecControlled instance.
@@ -2382,12 +2482,18 @@ class Transmission(Base):
     )
 
     # Relationships
-    transmission_base = relationship("TransmissionBase", back_populates="transmissions")
-    transmission_mfr_code = relationship(
+    transmission_base: Mapped["TransmissionBase"] = relationship(
+        "TransmissionBase", back_populates="transmissions"
+    )
+    transmission_mfr_code: Mapped["TransmissionMfrCode"] = relationship(
         "TransmissionMfrCode", back_populates="transmissions"
     )
-    elec_controlled = relationship("ElecControlled", back_populates="transmissions")
-    transmission_mfr = relationship("Mfr", back_populates="transmission_configs")
+    elec_controlled: Mapped["ElecControlled"] = relationship(
+        "ElecControlled", back_populates="transmissions"
+    )
+    transmission_mfr: Mapped["Mfr"] = relationship(
+        "Mfr", back_populates="transmission_configs"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of Transmission instance.
@@ -2413,7 +2519,7 @@ vehicle_to_transmission = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -2464,7 +2570,7 @@ vehicle_to_wheel_base = Table(
         nullable=False,
     ),
     Column("source", String(10), nullable=True),
-    schema="vcdb"
+    schema="vcdb",
 )
 
 
@@ -2483,7 +2589,9 @@ class VCdbVersion(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

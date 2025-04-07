@@ -41,7 +41,7 @@ __all__ = [
     "filemaker_settings",
     "elasticsearch_settings",
     "get_as400_connector_config",
-    "get_filemaker_connector_config"
+    "get_filemaker_connector_config",
 ]
 
 
@@ -76,7 +76,9 @@ def __getattr__(name: str) -> object:
 
         return filemaker_settings
     elif name == "get_filemaker_connector_config":
-        from app.core.config.integrations.filemaker import get_filemaker_connector_config
+        from app.core.config.integrations.filemaker import (
+            get_filemaker_connector_config,
+        )
 
         return get_filemaker_connector_config
 

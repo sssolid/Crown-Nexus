@@ -23,7 +23,10 @@ class ProductPricingImport(BaseModel):
         price: The monetary value of the product
         currency: Three-letter currency code (default: USD)
     """
-    part_number: str = Field(..., description='Product part number')
-    pricing_type: str = Field(..., description='Pricing type name (e.g., "Jobber", "Export")')
-    price: float = Field(..., description='Price value')
-    currency: str = Field('USD', description='Currency code')
+
+    part_number: str = Field(..., description="Product part number")
+    pricing_type: str = Field(
+        ..., description='Pricing type name (e.g., "Jobber", "Export")'
+    )
+    price: float = Field(..., description="Price value")
+    currency: str = Field("USD", description="Currency code")

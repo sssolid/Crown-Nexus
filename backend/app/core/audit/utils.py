@@ -48,8 +48,11 @@ def anonymize_data(data: Dict[str, Any], sensitive_fields: List[str]) -> Dict[st
             anonymized[key] = anonymize_data(value, sensitive_fields)
         elif isinstance(value, list) and value and isinstance(value[0], dict):
             anonymized[key] = [
-                anonymize_data(item, sensitive_fields)
-                if isinstance(item, dict) else item
+                (
+                    anonymize_data(item, sensitive_fields)
+                    if isinstance(item, dict)
+                    else item
+                )
                 for item in value
             ]
         else:

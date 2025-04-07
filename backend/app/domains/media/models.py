@@ -30,7 +30,7 @@ from app.db.base_class import Base
 if TYPE_CHECKING:
     from app.domains.products.models import Product
 else:
-    from app.models.associations import product_media_association
+    from app.domains.products.associations import product_media_association
 
 
 class MediaType(str, Enum):

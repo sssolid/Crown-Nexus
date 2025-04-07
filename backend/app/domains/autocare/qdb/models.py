@@ -9,7 +9,7 @@ Association standards.
 
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -32,7 +32,9 @@ class QualifierType(Base):
     qualifier_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
     # Relationships
-    qualifiers = relationship("Qualifier", back_populates="qualifier_type")
+    qualifiers: Mapped[List["Qualifier"]] = relationship(
+        "Qualifier", back_populates="qualifier_type"
+    )
 
     def __repr__(self) -> str:
         return f"<QualifierType {self.qualifier_type} ({self.qualifier_type_id})>"
@@ -63,9 +65,15 @@ class Qualifier(Base):
     )
 
     # Relationships
-    qualifier_type = relationship("QualifierType", back_populates="qualifiers")
-    translations = relationship("QualifierTranslation", back_populates="qualifier")
-    groups = relationship("QualifierGroup", back_populates="qualifier")
+    qualifier_type: Mapped["QualifierType"] = relationship(
+        "QualifierType", back_populates="qualifiers"
+    )
+    translations: Mapped[List["QualifierTranslation"]] = relationship(
+        "QualifierTranslation", back_populates="qualifier"
+    )
+    groups: Mapped["QualifierGroup"] = relationship(
+        "QualifierGroup", back_populates="qualifier"
+    )
     # superseded_by = relationship(
     #     "Qualifier",
     #     remote_side=[id],
@@ -76,7 +84,7 @@ class Qualifier(Base):
         "Qualifier",
         primaryjoin="foreign(qdb.Qualifier.new_qualifier_id) == remote(qdb.Qualifier.qualifier_id)",
         backref="supersedes",
-        remote_side="qdb.Qualifier.qualifier_id"
+        remote_side="qdb.Qualifier.qualifier_id",
     )
 
     def __repr__(self) -> str:
@@ -100,7 +108,9 @@ class Language(Base):
     dialect_name: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
     # Relationships
-    translations = relationship("QualifierTranslation", back_populates="language")
+    translations: Mapped[List["QualifierTranslation"]] = relationship(
+        "QualifierTranslation", back_populates="language"
+    )
 
     def __repr__(self) -> str:
         return f"<Language {self.language_name} ({self.language_id})>"
@@ -127,8 +137,12 @@ class QualifierTranslation(Base):
     translation_text: Mapped[str] = mapped_column(String(500), nullable=False)
 
     # Relationships
-    qualifier = relationship("Qualifier", back_populates="translations")
-    language = relationship("Language", back_populates="translations")
+    qualifier: Mapped["Qualifier"] = relationship(
+        "Qualifier", back_populates="translations"
+    )
+    language: Mapped["Language"] = relationship(
+        "Language", back_populates="translations"
+    )
 
     def __repr__(self) -> str:
         return f"<QualifierTranslation {self.qualifier_translation_id}: {self.translation_text[:30]}...>"
@@ -149,7 +163,9 @@ class GroupNumber(Base):
     group_description: Mapped[str] = mapped_column(String(100), nullable=False)
 
     # Relationships
-    qualifier_groups = relationship("QualifierGroup", back_populates="group_number")
+    qualifier_groups: Mapped[List["QualifierGroup"]] = relationship(
+        "QualifierGroup", back_populates="group_number"
+    )
 
     def __repr__(self) -> str:
         return f"<GroupNumber {self.group_number_id}: {self.group_description}>"
@@ -175,8 +191,10 @@ class QualifierGroup(Base):
     )
 
     # Relationships
-    group_number = relationship("GroupNumber", back_populates="qualifier_groups")
-    qualifier = relationship("Qualifier", back_populates="groups")
+    group_number: Mapped["GroupNumber"] = relationship(
+        "GroupNumber", back_populates="qualifier_groups"
+    )
+    qualifier: Mapped["Qualifier"] = relationship("Qualifier", back_populates="groups")
 
     def __repr__(self) -> str:
         return f"<QualifierGroup {self.qualifier_group_id}: {self.group_number_id}/{self.qualifier_id}>"
@@ -191,7 +209,9 @@ class QdbVersion(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

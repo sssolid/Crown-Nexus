@@ -9,8 +9,17 @@ attributes according to Auto Care Association standards.
 
 import uuid
 from datetime import date, datetime
-from typing import Optional
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Table, Column
+from typing import Optional, List
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+    Column,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -40,17 +49,25 @@ class Parts(Base):
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
 
     # Relationships
-    description = relationship("PartsDescription", back_populates="parts")
-    categories = relationship("PartCategory", back_populates="part")
-    positions = relationship("PartPosition", back_populates="part")
-    attributes = relationship("PartAttributeAssignment", back_populates="part")
-    supersessions = relationship(
+    description: Mapped["PartsDescription"] = relationship(
+        "PartsDescription", back_populates="parts"
+    )
+    categories: Mapped[List["PartCategory"]] = relationship(
+        "PartCategory", back_populates="part"
+    )
+    positions: Mapped[List["PartPosition"]] = relationship(
+        "PartPosition", back_populates="part"
+    )
+    attributes: Mapped[List["PartAttributeAssignment"]] = relationship(
+        "PartAttributeAssignment", back_populates="part"
+    )
+    supersessions: Mapped[List["PartsSupersession"]] = relationship(
         "PartsSupersession",
         foreign_keys="[PartsSupersession.new_part_terminology_id]",
         primaryjoin="Parts.part_terminology_id==PartsSupersession.new_part_terminology_id",
         backref="new_part",
     )
-    superseded_by = relationship(
+    superseded_by: Mapped["PartsSupersession"] = relationship(
         "PartsSupersession",
         foreign_keys="[PartsSupersession.old_part_terminology_id]",
         primaryjoin="Parts.part_terminology_id==PartsSupersession.old_part_terminology_id",
@@ -76,7 +93,7 @@ class PartsDescription(Base):
     parts_description: Mapped[str] = mapped_column(String(500), nullable=False)
 
     # Relationships
-    parts = relationship("Parts", back_populates="description")
+    parts: Mapped[List["Parts"]] = relationship("Parts", back_populates="description")
 
     def __repr__(self) -> str:
         return f"<PartsDescription {self.parts_description_id}: {self.parts_description[:30]}...>"
@@ -97,8 +114,12 @@ class Category(Base):
     category_name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
 
     # Relationships
-    part_categories = relationship("PartCategory", back_populates="category")
-    code_masters = relationship("CodeMaster", back_populates="category")
+    part_categories: Mapped[List["PartCategory"]] = relationship(
+        "PartCategory", back_populates="category"
+    )
+    code_masters: Mapped[List["CodeMaster"]] = relationship(
+        "CodeMaster", back_populates="category"
+    )
 
     def __repr__(self) -> str:
         return f"<Category {self.category_name} ({self.category_id})>"
@@ -121,8 +142,12 @@ class SubCategory(Base):
     )
 
     # Relationships
-    part_categories = relationship("PartCategory", back_populates="subcategory")
-    code_masters = relationship("CodeMaster", back_populates="subcategory")
+    part_categories: Mapped[List["PartCategory"]] = relationship(
+        "PartCategory", back_populates="subcategory"
+    )
+    code_masters: Mapped[List["CodeMaster"]] = relationship(
+        "CodeMaster", back_populates="subcategory"
+    )
 
     def __repr__(self) -> str:
         return f"<SubCategory {self.subcategory_name} ({self.subcategory_id})>"
@@ -143,8 +168,12 @@ class Position(Base):
     position: Mapped[str] = mapped_column(String(500), nullable=False, index=True)
 
     # Relationships
-    part_positions = relationship("PartPosition", back_populates="position")
-    code_masters = relationship("CodeMaster", back_populates="position")
+    part_positions: Mapped[List["PartPosition"]] = relationship(
+        "PartPosition", back_populates="position"
+    )
+    code_masters: Mapped[List["CodeMaster"]] = relationship(
+        "CodeMaster", back_populates="position"
+    )
 
     def __repr__(self) -> str:
         return f"<Position {self.position} ({self.position_id})>"
@@ -173,9 +202,13 @@ class PartCategory(Base):
     )
 
     # Relationships
-    part = relationship("Parts", back_populates="categories")
-    subcategory = relationship("SubCategory", back_populates="part_categories")
-    category = relationship("Category", back_populates="part_categories")
+    part: Mapped["Parts"] = relationship("Parts", back_populates="categories")
+    subcategory: Mapped["SubCategory"] = relationship(
+        "SubCategory", back_populates="part_categories"
+    )
+    category: Mapped["Category"] = relationship(
+        "Category", back_populates="part_categories"
+    )
 
     def __repr__(self) -> str:
         return f"<PartCategory {self.part_category_id}: {self.part_terminology_id}>"
@@ -202,8 +235,10 @@ class PartPosition(Base):
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
 
     # Relationships
-    part = relationship("Parts", back_populates="positions")
-    position = relationship("Position", back_populates="part_positions")
+    part: Mapped["Part"] = relationship("Parts", back_populates="positions")
+    position: Mapped["Position"] = relationship(
+        "Position", back_populates="part_positions"
+    )
 
     def __repr__(self) -> str:
         return f"<PartPosition {self.part_position_id}: {self.part_terminology_id}>"
@@ -263,10 +298,16 @@ class CodeMaster(Base):
     rev_date: Mapped[date] = mapped_column(Date, nullable=False)
 
     # Relationships
-    part = relationship("Parts", foreign_keys=[part_terminology_id])
-    category = relationship("Category", back_populates="code_masters")
-    subcategory = relationship("SubCategory", back_populates="code_masters")
-    position = relationship("Position", back_populates="code_masters")
+    part: Mapped["Part"] = relationship("Parts", foreign_keys=[part_terminology_id])
+    category: Mapped["Category"] = relationship(
+        "Category", back_populates="code_masters"
+    )
+    subcategory: Mapped["SubCategory"] = relationship(
+        "SubCategory", back_populates="code_masters"
+    )
+    position: Mapped["Position"] = relationship(
+        "Position", back_populates="code_masters"
+    )
 
     def __repr__(self) -> str:
         return f"<CodeMaster {self.code_master_id}: {self.part_terminology_id}>"
@@ -357,7 +398,9 @@ class PCdbVersion(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

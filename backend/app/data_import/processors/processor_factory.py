@@ -23,7 +23,7 @@ from app.data_import.schemas.pricing import ProductPricingImport
 from app.domains.products.schemas import (
     ProductCreate,
     ProductMeasurementCreate,
-    ProductStockCreate
+    ProductStockCreate,
 )
 from app.logging import get_logger
 
@@ -55,21 +55,23 @@ class ProcessorFactory:
         EntityType.PRODUCT: ProductCreate,
         EntityType.PRODUCT_STOCK: ProductStockCreate,
         EntityType.PRODUCT_MEASUREMENT: ProductMeasurementCreate,
-        EntityType.PRODUCT_PRICING: ProductPricingImport
+        EntityType.PRODUCT_PRICING: ProductPricingImport,
     }
 
     # Map entity types and source types to specialized processor classes
-    _specialized_processors: Dict[EntityType, Dict[SourceType, Type[GenericProcessor]]] = {
+    _specialized_processors: Dict[
+        EntityType, Dict[SourceType, Type[GenericProcessor]]
+    ] = {
         EntityType.PRODUCT: {
             SourceType.FILEMAKER: IntegratedProductProcessor,
             SourceType.AS400: IntegratedProductProcessor,
-            SourceType.CSV: IntegratedProductProcessor
+            SourceType.CSV: IntegratedProductProcessor,
         },
         EntityType.PRODUCT_PRICING: {
             SourceType.AS400: PricingProcessor,
             SourceType.FILEMAKER: PricingProcessor,
-            SourceType.CSV: PricingProcessor
-        }
+            SourceType.CSV: PricingProcessor,
+        },
     }
 
     @classmethod
@@ -77,7 +79,7 @@ class ProcessorFactory:
         cls,
         entity_type: Union[EntityType, str],
         source_type: Union[SourceType, str],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> GenericProcessor:
         """
         Create a processor for the specified entity type and source type.
@@ -123,19 +125,21 @@ class ProcessorFactory:
 
         # If we have a specialized processor for this entity and source type, use it
         if (
-            entity_type in cls._specialized_processors and
-            source_type in cls._specialized_processors[entity_type]
+            entity_type in cls._specialized_processors
+            and source_type in cls._specialized_processors[entity_type]
         ):
             processor_class = cls._specialized_processors[entity_type][source_type]
             return processor_class(source_type.value, **kwargs)
 
         # Otherwise, use generic processor
-        logger.debug(f"Using generic processor for {entity_type.value} from {source_type.value}")
+        logger.debug(
+            f"Using generic processor for {entity_type.value} from {source_type.value}"
+        )
         return GenericProcessor(
             field_definitions=field_definitions,
             model_type=model_type,
             source_type=source_type.value,
-            **kwargs
+            **kwargs,
         )
 
 

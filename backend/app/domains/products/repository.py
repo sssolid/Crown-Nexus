@@ -39,13 +39,14 @@ class ProductRepository(BaseRepository[Product, uuid.UUID]):
         super().__init__(model=Product, db=db)
 
     async def find_by_part_number(self, part_number: str) -> Optional[Product]:
-        """Find a product by exact part number.
+        """
+        Find a product by its exact part number.
 
         Args:
-            part_number: The part number to search for.
+            part_number: The part number to search for
 
         Returns:
-            The product if found, None otherwise.
+            The product if found, None otherwise
         """
         query = select(Product).where(
             Product.part_number == part_number, Product.is_deleted == False

@@ -1,7 +1,10 @@
 # backend/app/middleware/timeout.py
 from __future__ import annotations
 
-from app.utils.circuit_breaker_utils import safe_observe_histogram, safe_increment_counter
+from app.utils.circuit_breaker_utils import (
+    safe_observe_histogram,
+    safe_increment_counter,
+)
 
 """
 Timeout middleware for the application.
@@ -115,7 +118,11 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
         except asyncio.TimeoutError:
             timed_out = True
             # Get client IP safely
-            client_ip = getattr(request.client, "host", "unknown") if request.client else "unknown"
+            client_ip = (
+                getattr(request.client, "host", "unknown")
+                if request.client
+                else "unknown"
+            )
 
             logger.warning(
                 "Request timed out",
@@ -131,7 +138,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
                     safe_increment_counter(
                         "request_timeouts_total",
                         1,
-                        {"endpoint": path, "method": request.method}
+                        {"endpoint": path, "method": request.method},
                     )
                 except Exception as e:
                     logger.debug(f"Failed to track timeout metrics: {str(e)}")
@@ -141,7 +148,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
                 details={
                     "endpoint": path,
                     "method": request.method,
-                    "timeout_seconds": self.timeout_seconds
+                    "timeout_seconds": self.timeout_seconds,
                 },
             )
         finally:
@@ -152,7 +159,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
                     safe_observe_histogram(
                         "request_duration_seconds",
                         duration,
-                        {"endpoint": path, "method": request.method}
+                        {"endpoint": path, "method": request.method},
                     )
                 except Exception as e:
                     logger.debug(f"Failed to track duration metrics: {str(e)}")

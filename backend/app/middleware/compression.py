@@ -117,19 +117,33 @@ class CompressionMiddleware(BaseHTTPMiddleware):
                 safe_observe_histogram(
                     "response_compression_ratio_percent",
                     compression_ratio,
-                    {"path": path.split("/")[1] if len(path.split("/")) > 1 else "root"}
+                    {
+                        "path": (
+                            path.split("/")[1] if len(path.split("/")) > 1 else "root"
+                        )
+                    },
                 )
 
                 safe_observe_histogram(
                     "response_size_bytes",
                     original_size,
-                    {"compressed": "false", "path": path.split("/")[1] if len(path.split("/")) > 1 else "root"}
+                    {
+                        "compressed": "false",
+                        "path": (
+                            path.split("/")[1] if len(path.split("/")) > 1 else "root"
+                        ),
+                    },
                 )
 
                 safe_observe_histogram(
                     "response_size_bytes",
                     compressed_size,
-                    {"compressed": "true", "path": path.split("/")[1] if len(path.split("/")) > 1 else "root"}
+                    {
+                        "compressed": "true",
+                        "path": (
+                            path.split("/")[1] if len(path.split("/")) > 1 else "root"
+                        ),
+                    },
                 )
 
                 logger.debug(

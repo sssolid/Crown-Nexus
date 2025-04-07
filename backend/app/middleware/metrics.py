@@ -1,7 +1,10 @@
 # backend/app/middleware/metrics.py
 from __future__ import annotations
 
-from app.utils.circuit_breaker_utils import safe_observe_histogram, safe_increment_counter
+from app.utils.circuit_breaker_utils import (
+    safe_observe_histogram,
+    safe_increment_counter,
+)
 
 """
 Metrics middleware for the application.

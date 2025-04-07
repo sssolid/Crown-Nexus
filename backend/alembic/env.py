@@ -35,7 +35,9 @@ config = context.config
 
 # Use settings from app config instead of hardcoding
 # Convert asyncpg URL to psycopg for migrations
-db_url = str(settings.SQLALCHEMY_DATABASE_URI).replace("postgresql+asyncpg://", "postgresql://")
+db_url = str(settings.SQLALCHEMY_DATABASE_URI).replace(
+    "postgresql+asyncpg://", "postgresql://"
+)
 config.set_section_option(config.config_ini_section, "sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
@@ -63,7 +65,9 @@ def run_migrations_offline() -> None:
 def do_run_migrations(connection: Connection) -> None:
     """Run migrations with the given connection."""
     print(f"Number of tables in metadata: {len(target_metadata.tables)}")
-    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+    context.configure(
+        connection=connection, target_metadata=target_metadata, compare_type=True
+    )
 
     with context.begin_transaction():
         context.run_migrations()
@@ -97,9 +101,9 @@ def run_migrations_online() -> None:
         print("Database connection successful!")
 
         # Check existing tables
-        result = connection.execute(text(
-            "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
-        ))
+        result = connection.execute(
+            text("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")
+        )
         existing_tables = [row[0] for row in result]
         print(f"Existing tables before migration: {len(existing_tables)}")
 
@@ -107,9 +111,9 @@ def run_migrations_online() -> None:
         do_run_migrations(connection)
 
         # Check tables after migration
-        result = connection.execute(text(
-            "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
-        ))
+        result = connection.execute(
+            text("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")
+        )
         tables_after = [row[0] for row in result]
         print(f"Tables after migration: {len(tables_after)}")
         new_tables = set(tables_after) - set(existing_tables)

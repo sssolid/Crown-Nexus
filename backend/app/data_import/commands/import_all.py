@@ -21,9 +21,18 @@ from sqlalchemy import select
 from app.core.config.integrations.as400 import get_as400_connector_config
 from app.core.config.integrations.filemaker import get_filemaker_connector_config
 from app.data_import import create_processor, EntityType, SourceType
-from app.data_import.connectors.as400_connector import AS400ConnectionConfig, AS400Connector
-from app.data_import.connectors.file_connector import FileConnectionConfig, FileConnector
-from app.data_import.connectors.filemaker_connector import FileMakerConnectionConfig, FileMakerConnector
+from app.data_import.connectors.as400_connector import (
+    AS400ConnectionConfig,
+    AS400Connector,
+)
+from app.data_import.connectors.file_connector import (
+    FileConnectionConfig,
+    FileConnector,
+)
+from app.data_import.connectors.filemaker_connector import (
+    FileMakerConnectionConfig,
+    FileMakerConnector,
+)
 from app.data_import.field_definitions import generate_query_for_entity
 from app.data_import.importers.product_importer import ProductImporter
 from app.data_import.pipeline.product_pipeline import ProductPipeline
@@ -125,23 +134,25 @@ def import_all(
             source_type=normalized_source_type,
             config_file=config_file,
             file_path=file_path,
-            file_type=file_type
+            file_type=file_type,
         )
 
         # Get or create system user for audit logging
         system_user_id = resolve_system_user_id(system_user)
 
         # Run import for all entity types
-        results = asyncio.run(_run_import_all(
-            source_type=normalized_source_type,
-            entity_types=entity_types,
-            connector_config=connector_config,
-            limit=limit,
-            dry_run=dry_run,
-            output_dir=output_dir,
-            system_user_id=system_user_id,
-            notify_users=notify_users
-        ))
+        results = asyncio.run(
+            _run_import_all(
+                source_type=normalized_source_type,
+                entity_types=entity_types,
+                connector_config=connector_config,
+                limit=limit,
+                dry_run=dry_run,
+                output_dir=output_dir,
+                system_user_id=system_user_id,
+                notify_users=notify_users,
+            )
+        )
 
         # Print results
         _print_results(results)
@@ -237,7 +248,7 @@ def resolve_system_user_id(user_id: Optional[str] = None) -> Optional[uuid.UUID]
                     is_active=True,
                     is_system=True,
                     first_name="System",
-                    last_name="Import"
+                    last_name="Import",
                 )
                 db.add(system_user)
                 await db.commit()
@@ -256,7 +267,7 @@ def _load_connector_config(
     source_type: str,
     config_file: Optional[str],
     file_path: Optional[str],
-    file_type: Optional[str]
+    file_type: Optional[str],
 ) -> Dict[str, Any]:
     """
     Load connector configuration from file or environment.
@@ -284,7 +295,9 @@ def _load_connector_config(
         return get_as400_connector_config()
     elif source_type == "csv":
         if not file_path:
-            raise ValueError("File source requires file_path. Provide it as a command line option or in a config file.")
+            raise ValueError(
+                "File source requires file_path. Provide it as a command line option or in a config file."
+            )
 
         if not file_type:
             if file_path.endswith(".csv"):
@@ -293,14 +306,15 @@ def _load_connector_config(
                 file_type = "json"
             else:
                 raise ValueError(
-                    "Could not determine file type from file extension. Provide file_type as a command line option or in a config file.")
+                    "Could not determine file type from file extension. Provide file_type as a command line option or in a config file."
+                )
 
         return {
             "file_path": file_path,
             "file_type": file_type,
             "encoding": "utf-8",
             "csv_delimiter": ",",
-            "csv_quotechar": '"'
+            "csv_quotechar": '"',
         }
     else:
         raise ValueError(f"Unsupported source type: {source_type}")
@@ -314,7 +328,7 @@ async def _run_import_all(
     dry_run: bool,
     output_dir: Optional[str],
     system_user_id: Optional[uuid.UUID],
-    notify_users: bool
+    notify_users: bool,
 ) -> Dict[str, Dict[str, Any]]:
     """
     Run import for all specified entity types.
@@ -344,7 +358,7 @@ async def _run_import_all(
                 "dry_run": dry_run,
                 "notify_users": notify_users,
                 "start_time": datetime.now().isoformat(),
-            }
+            },
         )
 
         # Create connector
@@ -370,20 +384,19 @@ async def _run_import_all(
                         "parent_sync_id": str(main_sync.id),
                         "dry_run": dry_run,
                         "start_time": datetime.now().isoformat(),
-                    }
+                    },
                 )
 
                 # Update sync status to running
                 await sync_repo.update_sync_status(
-                    sync_id=entity_sync.id,
-                    status=SyncStatus.RUNNING
+                    sync_id=entity_sync.id, status=SyncStatus.RUNNING
                 )
 
                 # Log start of entity import
                 await sync_repo.add_sync_event(
                     sync_id=entity_sync.id,
                     event_type="start",
-                    message=f"Starting import for {entity_type}"
+                    message=f"Starting import for {entity_type}",
                 )
 
                 # Generate query
@@ -396,11 +409,13 @@ async def _run_import_all(
                         else:
                             query = f"{query} LIMIT {limit}"
                 except Exception as e:
-                    logger.error(f"Failed to generate query for {entity_type}: {str(e)}")
+                    logger.error(
+                        f"Failed to generate query for {entity_type}: {str(e)}"
+                    )
                     await sync_repo.update_sync_status(
                         sync_id=entity_sync.id,
                         status=SyncStatus.FAILED,
-                        error_message=f"Failed to generate query: {str(e)}"
+                        error_message=f"Failed to generate query: {str(e)}",
                     )
                     results[entity_type] = {
                         "success": False,
@@ -409,13 +424,15 @@ async def _run_import_all(
                         "records_processed": 0,
                         "records_validated": 0,
                         "records_imported": 0,
-                        "total_time": time.time() - entity_start_time
+                        "total_time": time.time() - entity_start_time,
                     }
                     overall_success = False
                     continue
 
                 # Create processor
-                processor = create_processor(entity_type=entity_type, source_type=source_type)
+                processor = create_processor(
+                    entity_type=entity_type, source_type=source_type
+                )
 
                 # Create importer
                 importer = ProductImporter(db)
@@ -425,7 +442,7 @@ async def _run_import_all(
                     connector=connector,
                     processor=processor,
                     importer=importer,
-                    dry_run=dry_run
+                    dry_run=dry_run,
                 )
 
                 # Run pipeline
@@ -447,17 +464,21 @@ async def _run_import_all(
                             "validate_time": result.get("validate_time", 0),
                             "import_time": result.get("import_time", 0),
                             "total_time": result.get("total_time", 0),
-                        }
+                        },
                     )
 
                     # Send notifications if requested
-                    if not dry_run and notify_users and result.get("records_updated", 0) > 0:
+                    if (
+                        not dry_run
+                        and notify_users
+                        and result.get("records_updated", 0) > 0
+                    ):
                         await _send_notifications(
                             db=db,
                             entity_type=entity_type,
                             updated_count=result.get("records_updated", 0),
                             created_count=result.get("records_created", 0),
-                            system_user_id=system_user_id
+                            system_user_id=system_user_id,
                         )
                 else:
                     await sync_repo.update_sync_status(
@@ -475,13 +496,14 @@ async def _run_import_all(
                             "validate_time": result.get("validate_time", 0),
                             "import_time": result.get("import_time", 0),
                             "total_time": result.get("total_time", 0),
-                        }
+                        },
                     )
                     overall_success = False
 
                 # Write processed data to output file if dry run
                 if dry_run and output_dir and ("processed_data" in result):
                     import os
+
                     output_file = os.path.join(output_dir, f"{entity_type}_data.json")
                     try:
                         os.makedirs(output_dir, exist_ok=True)
@@ -502,8 +524,8 @@ async def _run_import_all(
                     error_message=str(e),
                     details={
                         "end_time": datetime.now().isoformat(),
-                        "total_time": time.time() - entity_start_time
-                    }
+                        "total_time": time.time() - entity_start_time,
+                    },
                 )
                 results[entity_type] = {
                     "success": False,
@@ -512,7 +534,7 @@ async def _run_import_all(
                     "records_processed": 0,
                     "records_validated": 0,
                     "records_imported": 0,
-                    "total_time": time.time() - entity_start_time
+                    "total_time": time.time() - entity_start_time,
                 }
                 overall_success = False
 
@@ -536,18 +558,21 @@ async def _run_import_all(
                 records_updated=total_updated,
                 records_failed=total_failed,
                 details={
-                    "results": {k: {
-                        "success": v.get("success", False),
-                        "records_extracted": v.get("records_extracted", 0),
-                        "records_processed": v.get("records_processed", 0),
-                        "records_validated": v.get("records_validated", 0),
-                        "records_created": v.get("records_created", 0),
-                        "records_updated": v.get("records_updated", 0),
-                        "records_failed": v.get("records_with_errors", 0)
-                    } for k, v in results.items()},
+                    "results": {
+                        k: {
+                            "success": v.get("success", False),
+                            "records_extracted": v.get("records_extracted", 0),
+                            "records_processed": v.get("records_processed", 0),
+                            "records_validated": v.get("records_validated", 0),
+                            "records_created": v.get("records_created", 0),
+                            "records_updated": v.get("records_updated", 0),
+                            "records_failed": v.get("records_with_errors", 0),
+                        }
+                        for k, v in results.items()
+                    },
                     "end_time": datetime.now().isoformat(),
-                    "total_time": total_time
-                }
+                    "total_time": total_time,
+                },
             )
         else:
             await sync_repo.update_sync_status(
@@ -558,18 +583,21 @@ async def _run_import_all(
                 records_updated=total_updated,
                 records_failed=total_failed,
                 details={
-                    "results": {k: {
-                        "success": v.get("success", False),
-                        "records_extracted": v.get("records_extracted", 0),
-                        "records_processed": v.get("records_processed", 0),
-                        "records_validated": v.get("records_validated", 0),
-                        "records_created": v.get("records_created", 0),
-                        "records_updated": v.get("records_updated", 0),
-                        "records_failed": v.get("records_with_errors", 0)
-                    } for k, v in results.items()},
+                    "results": {
+                        k: {
+                            "success": v.get("success", False),
+                            "records_extracted": v.get("records_extracted", 0),
+                            "records_processed": v.get("records_processed", 0),
+                            "records_validated": v.get("records_validated", 0),
+                            "records_created": v.get("records_created", 0),
+                            "records_updated": v.get("records_updated", 0),
+                            "records_failed": v.get("records_with_errors", 0),
+                        }
+                        for k, v in results.items()
+                    },
                     "end_time": datetime.now().isoformat(),
-                    "total_time": total_time
-                }
+                    "total_time": total_time,
+                },
             )
 
         # Add a final event
@@ -584,15 +612,16 @@ async def _run_import_all(
                 "total_validated": total_validated,
                 "total_created": total_created,
                 "total_updated": total_updated,
-                "total_failed": total_failed
-            }
+                "total_failed": total_failed,
+            },
         )
 
         return results
 
 
-def _create_connector(source_type: str, config: Dict[str, Any]) -> Union[
-    FileConnector, FileMakerConnector, AS400Connector]:
+def _create_connector(
+    source_type: str, config: Dict[str, Any]
+) -> Union[FileConnector, FileMakerConnector, AS400Connector]:
     """
     Create a connector instance based on source type.
 
@@ -656,7 +685,7 @@ async def _send_notifications(
     entity_type: str,
     updated_count: int,
     created_count: int,
-    system_user_id: Optional[uuid.UUID]
+    system_user_id: Optional[uuid.UUID],
 ) -> None:
     """
     Send notifications for updated products.
@@ -681,7 +710,9 @@ async def _send_notifications(
         if updated_count > 0:
             message += f"{updated_count} records updated"
         if created_count > 0:
-            message += f"{', ' if updated_count > 0 else ''}{created_count} records created"
+            message += (
+                f"{', ' if updated_count > 0 else ''}{created_count} records created"
+            )
 
         # TODO: Send notification to users with proper permissions
         # await notification_service.send_admin_notification(
@@ -713,7 +744,9 @@ def _print_results(results: Dict[str, Dict[str, Any]]) -> None:
 
     for entity_type, result in results.items():
         typer.echo(f"\n  Entity Type: {entity_type}")
-        typer.echo(f"    Status: {('Success' if result.get('success', False) else 'Failed')}")
+        typer.echo(
+            f"    Status: {('Success' if result.get('success', False) else 'Failed')}"
+        )
         typer.echo(f"    Message: {result.get('message', 'No message')}")
         typer.echo(f"    Extracted: {result.get('records_extracted', 0)} records")
         typer.echo(f"    Processed: {result.get('records_processed', 0)} records")

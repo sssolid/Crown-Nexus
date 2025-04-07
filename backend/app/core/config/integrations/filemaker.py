@@ -67,7 +67,9 @@ class FilemakerSettings(BaseSettings):
         },
     )
 
-    @field_validator("FILEMAKER_ALLOWED_TABLES", "FILEMAKER_ALLOWED_LAYOUTS", mode="before")
+    @field_validator(
+        "FILEMAKER_ALLOWED_TABLES", "FILEMAKER_ALLOWED_LAYOUTS", mode="before"
+    )
     @classmethod
     def parse_str_to_list(cls, v: Any) -> List[str]:
         """Parse string to list of strings if needed."""
@@ -145,7 +147,7 @@ class FilemakerSettings(BaseSettings):
         "FILEMAKER_ENCRYPT_CONNECTION",
         "FILEMAKER_SYNC_ENABLED",
         "FILEMAKER_USE_EXTENDED_STATEMENTS",
-        mode="before"
+        mode="before",
     )
     @classmethod
     def parse_boolean(cls, v: Any) -> bool:

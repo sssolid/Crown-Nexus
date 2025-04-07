@@ -32,51 +32,48 @@ class AuditLog(Base):
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, index=True
     )
-    event_type: Mapped[str] = mapped_column(
-        String, nullable=False, index=True
-    )
-    level: Mapped[str] = mapped_column(
-        String, nullable=False, index=True
-    )
+    event_type: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    level: Mapped[str] = mapped_column(String, nullable=False, index=True)
     user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user.user.id", ondelete="SET NULL"),
-        nullable=True, index=True
+        UUID(as_uuid=True),
+        ForeignKey("user.user.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )
-    ip_address: Mapped[Optional[str]] = mapped_column(
-        String, nullable=True
-    )
+    ip_address: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     resource_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), nullable=True, index=True
     )
     resource_type: Mapped[Optional[str]] = mapped_column(
         String, nullable=True, index=True
     )
-    details: Mapped[Optional[Dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
-    request_id: Mapped[Optional[str]] = mapped_column(
-        String, nullable=True
-    )
-    user_agent: Mapped[Optional[str]] = mapped_column(
-        String, nullable=True
-    )
-    session_id: Mapped[Optional[str]] = mapped_column(
-        String, nullable=True
-    )
+    details: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    request_id: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    session_id: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     company_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("company.company.id", ondelete="SET NULL"),
-        nullable=True, index=True
+        UUID(as_uuid=True),
+        ForeignKey("company.company.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )
 
     # Relationships
     user: Mapped[Optional["User"]] = relationship("User", back_populates="audit_logs")
-    company: Mapped[Optional["Company"]] = relationship("Company", back_populates="audit_logs")
+    company: Mapped[Optional["Company"]] = relationship(
+        "Company", back_populates="audit_logs"
+    )
 
     # Indexes for better query performance
     __table_args__ = (
         Index("ix_audit_log_timestamp_desc", timestamp.desc()),
         Index("ix_audit_log_user_id_timestamp", user_id, timestamp.desc()),
-        Index("ix_audit_log_resource_timestamp", resource_type, resource_id, timestamp.desc()),
+        Index(
+            "ix_audit_log_resource_timestamp",
+            resource_type,
+            resource_id,
+            timestamp.desc(),
+        ),
         Index("ix_audit_log_event_type_timestamp", event_type, timestamp.desc()),
         {"schema": "audit"},
     )

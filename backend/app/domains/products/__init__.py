@@ -7,9 +7,23 @@ It exports key functionality while hiding implementation details.
 """
 
 # Re-export public interfaces
-from app.domains.products.models import Product, Brand, ProductBrandHistory, ProductDescription, ProductMarketing, \
-    ProductActivity, ProductSupersession, AttributeDefinition, ProductAttribute, PriceType, ProductPricing, \
-    Manufacturer, ProductMeasurement, ProductStock, Fitment
+from app.domains.products.models import (
+    Product,
+    Brand,
+    ProductBrandHistory,
+    ProductDescription,
+    ProductMarketing,
+    ProductActivity,
+    ProductSupersession,
+    AttributeDefinition,
+    ProductAttribute,
+    PriceType,
+    ProductPricing,
+    Manufacturer,
+    ProductMeasurement,
+    ProductStock,
+    Fitment,
+)
 from app.domains.products.schemas import (
     ProductCreate,
     ProductUpdate,

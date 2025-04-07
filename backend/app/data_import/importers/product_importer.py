@@ -67,8 +67,9 @@ class ProductImporter:
                 original_exception=e,
             ) from e
 
-    async def _create_or_update_product(self, product_data: ProductCreate,
-                                        existing_product: Optional[Product] = None) -> Tuple[Product, bool]:
+    async def _create_or_update_product(
+        self, product_data: ProductCreate, existing_product: Optional[Product] = None
+    ) -> Tuple[Product, bool]:
         """Create or update a product and its related data.
 
         This method handles both the base product fields and complex fields like
@@ -97,11 +98,11 @@ class ProductImporter:
                     late_model=product_data.late_model,
                     soft=product_data.soft,
                     universal=product_data.universal,
-                    is_active=product_data.is_active
+                    is_active=product_data.is_active,
                 )
                 self.db.add(product)
                 await self.db.flush()
-                logger.debug(f'Created new product: {product_data.part_number}')
+                logger.debug(f"Created new product: {product_data.part_number}")
             else:
                 # Update existing product
                 product = existing_product
@@ -113,62 +114,89 @@ class ProductImporter:
                 product.is_active = product_data.is_active
                 self.db.add(product)
                 await self.db.flush()
-                logger.debug(f'Updated existing product: {product_data.part_number}')
+                logger.debug(f"Updated existing product: {product_data.part_number}")
 
             # Add debugging for descriptions
-            if hasattr(product_data, 'descriptions') and product_data.descriptions:
-                logger.debug(f"Processing {len(product_data.descriptions)} descriptions for {product_data.part_number}")
+            if hasattr(product_data, "descriptions") and product_data.descriptions:
+                logger.debug(
+                    f"Processing {len(product_data.descriptions)} descriptions for {product_data.part_number}"
+                )
 
                 # Delete existing descriptions if updating
                 if not is_new:
                     from app.domains.products.models import ProductDescription
-                    await self.db.execute(delete(ProductDescription).where(ProductDescription.product_id == product.id))
-                    logger.debug(f"Deleted existing descriptions for {product_data.part_number}")
+
+                    await self.db.execute(
+                        delete(ProductDescription).where(
+                            ProductDescription.product_id == product.id
+                        )
+                    )
+                    logger.debug(
+                        f"Deleted existing descriptions for {product_data.part_number}"
+                    )
 
                 # Add new descriptions
                 for desc in product_data.descriptions:
                     from app.domains.products.models import ProductDescription
+
                     description = ProductDescription(
                         product_id=product.id,
                         description_type=desc.description_type,
-                        description=desc.description
+                        description=desc.description,
                     )
                     self.db.add(description)
                     logger.debug(
-                        f"Added {desc.description_type} description for {product_data.part_number}: {desc.description[:30]}...")
+                        f"Added {desc.description_type} description for {product_data.part_number}: {desc.description[:30]}..."
+                    )
             else:
                 logger.debug(f"No descriptions for {product_data.part_number}")
 
             # Add debugging for marketing
-            if hasattr(product_data, 'marketing') and product_data.marketing:
-                logger.debug(f"Processing {len(product_data.marketing)} marketing items for {product_data.part_number}")
+            if hasattr(product_data, "marketing") and product_data.marketing:
+                logger.debug(
+                    f"Processing {len(product_data.marketing)} marketing items for {product_data.part_number}"
+                )
 
                 # Delete existing marketing if updating
                 if not is_new:
                     from app.domains.products.models import ProductMarketing
-                    await self.db.execute(delete(ProductMarketing).where(ProductMarketing.product_id == product.id))
-                    logger.debug(f"Deleted existing marketing for {product_data.part_number}")
+
+                    await self.db.execute(
+                        delete(ProductMarketing).where(
+                            ProductMarketing.product_id == product.id
+                        )
+                    )
+                    logger.debug(
+                        f"Deleted existing marketing for {product_data.part_number}"
+                    )
 
                 # Add new marketing
                 for mkt in product_data.marketing:
                     from app.domains.products.models import ProductMarketing
+
                     marketing = ProductMarketing(
                         product_id=product.id,
                         marketing_type=mkt.marketing_type,
                         content=mkt.content,
-                        position=mkt.position
+                        position=mkt.position,
                     )
                     self.db.add(marketing)
                     logger.debug(
-                        f"Added {mkt.marketing_type} marketing for {product_data.part_number}: {mkt.content[:30]}...")
+                        f"Added {mkt.marketing_type} marketing for {product_data.part_number}: {mkt.content[:30]}..."
+                    )
             else:
                 logger.debug(f"No marketing for {product_data.part_number}")
 
             await self.db.flush()
             return (product, is_new)
         except Exception as e:
-            logger.error(f'Error creating/updating product {product_data.part_number}: {str(e)}')
-            raise DatabaseException(message=f'Failed to create/update product: {str(e)}', original_exception=e) from e
+            logger.error(
+                f"Error creating/updating product {product_data.part_number}: {str(e)}"
+            )
+            raise DatabaseException(
+                message=f"Failed to create/update product: {str(e)}",
+                original_exception=e,
+            ) from e
 
     async def import_data(self, data: List[ProductCreate]) -> Dict[str, Any]:
         """

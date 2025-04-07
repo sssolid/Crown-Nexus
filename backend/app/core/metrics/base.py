@@ -126,7 +126,9 @@ class MetricName(str, Enum):
     # Custom/Advanced Metrics
     REQUEST_TRACE_DURATION_SECONDS = "request_trace_duration_seconds"
     RATE_LIMITING_CHECK_DURATION_SECONDS = "rate_limiting_check_duration_seconds"
-    RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS = "rate_limiting_middleware_duration_seconds"
+    RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS = (
+        "rate_limiting_middleware_duration_seconds"
+    )
     RATE_LIMITING_REQUESTS_TOTAL = "rate_limiting_requests_total"
     HTTP_STATUS_CODES_TOTAL = "http_status_codes_total"
     REQUEST_SECURITY_CHECK_DURATION_SECONDS = "request_security_check_duration_seconds"

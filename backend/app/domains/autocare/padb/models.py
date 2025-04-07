@@ -9,7 +9,7 @@ to Auto Care Association standards.
 
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -31,7 +31,9 @@ class PartAttribute(Base):
     pa_descr: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
 
     # Relationships
-    assignments = relationship("PartAttributeAssignment", back_populates="attribute")
+    assignments: Mapped[List["PartAttributeAssignment"]] = relationship(
+        "PartAttributeAssignment", back_populates="attribute"
+    )
 
     def __repr__(self) -> str:
         return f"<PartAttribute {self.pa_name} ({self.pa_id})>"
@@ -57,7 +59,9 @@ class MetaData(Base):
     max_length: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     # Relationships
-    assignments = relationship("PartAttributeAssignment", back_populates="metadata_info")
+    assignments: Mapped[List["PartAttributeAssignment"]] = relationship(
+        "PartAttributeAssignment", back_populates="metadata_info"
+    )
 
     def __repr__(self) -> str:
         return f"<MetaData {self.meta_name} ({self.meta_id})>"
@@ -80,7 +84,9 @@ class MeasurementGroup(Base):
     )
 
     # Relationships
-    uom_codes = relationship("MetaUOMCode", back_populates="measurement_group")
+    uom_codes: Mapped[List["MetaUOMCode"]] = relationship(
+        "MetaUOMCode", back_populates="measurement_group"
+    )
 
     def __repr__(self) -> str:
         return f"<MeasurementGroup {self.measurement_group_name} ({self.measurement_group_id})>"
@@ -108,8 +114,12 @@ class MetaUOMCode(Base):
     )
 
     # Relationships
-    measurement_group = relationship("MeasurementGroup", back_populates="uom_codes")
-    assignments = relationship("MetaUomCodeAssignment", back_populates="meta_uom")
+    measurement_group: Mapped["MeasurementGroup"] = relationship(
+        "MeasurementGroup", back_populates="uom_codes"
+    )
+    assignments: Mapped[List["MetaUomCodeAssignment"]] = relationship(
+        "MetaUomCodeAssignment", back_populates="meta_uom"
+    )
 
     def __repr__(self) -> str:
         return f"<MetaUOMCode {self.uom_code} ({self.meta_uom_id})>"
@@ -138,16 +148,24 @@ class PartAttributeAssignment(Base):
     )
 
     # Relationships
-    part = relationship("Parts", foreign_keys=[part_terminology_id])
-    attribute = relationship("PartAttribute", back_populates="assignments")
-    metadata_info = relationship("MetaData", back_populates="assignments")
-    uom_assignments = relationship(
+    part: Mapped[List["Parts"]] = relationship(
+        "Parts", foreign_keys=[part_terminology_id]
+    )
+    attribute: Mapped["PartAttribute"] = relationship(
+        "PartAttribute", back_populates="assignments"
+    )
+    metadata_info: Mapped["MetaData"] = relationship(
+        "MetaData", back_populates="assignments"
+    )
+    uom_assignments: Mapped[List["MetaUomCodeAssignment"]] = relationship(
         "MetaUomCodeAssignment", back_populates="attribute_assignment"
     )
-    valid_value_assignments = relationship(
+    valid_value_assignments: Mapped[List["ValidValueAssignment"]] = relationship(
         "ValidValueAssignment", back_populates="attribute_assignment"
     )
-    style = relationship("PartAttributeStyle", back_populates="attribute_assignment")
+    style: Mapped["PartAttributeStyle"] = relationship(
+        "PartAttributeStyle", back_populates="attribute_assignment"
+    )
 
     def __repr__(self) -> str:
         return f"<PartAttributeAssignment {self.papt_id}: {self.part_terminology_id}>"
@@ -175,10 +193,12 @@ class MetaUomCodeAssignment(Base):
     )
 
     # Relationships
-    attribute_assignment = relationship(
+    attribute_assignment: Mapped["PartAttributeAssignment"] = relationship(
         "PartAttributeAssignment", back_populates="uom_assignments"
     )
-    meta_uom = relationship("MetaUOMCode", back_populates="assignments")
+    meta_uom: Mapped["MetaUOMCode"] = relationship(
+        "MetaUOMCode", back_populates="assignments"
+    )
 
     def __repr__(self) -> str:
         return f"<MetaUomCodeAssignment {self.meta_uom_code_assignment_id}>"
@@ -199,7 +219,9 @@ class ValidValue(Base):
     valid_value: Mapped[str] = mapped_column(String(500), nullable=False)
 
     # Relationships
-    assignments = relationship("ValidValueAssignment", back_populates="valid_value")
+    assignments: Mapped[List["ValidValueAssignment"]] = relationship(
+        "ValidValueAssignment", back_populates="valid_value"
+    )
 
     def __repr__(self) -> str:
         return f"<ValidValue {self.valid_value_id}: {self.valid_value[:30]}...>"
@@ -227,10 +249,12 @@ class ValidValueAssignment(Base):
     )
 
     # Relationships
-    attribute_assignment = relationship(
+    attribute_assignment: Mapped["PartAttributeAssignment"] = relationship(
         "PartAttributeAssignment", back_populates="valid_value_assignments"
     )
-    valid_value = relationship("ValidValue", back_populates="assignments")
+    valid_value: Mapped["ValidValue"] = relationship(
+        "ValidValue", back_populates="assignments"
+    )
 
     def __repr__(self) -> str:
         return f"<ValidValueAssignment {self.valid_value_assignment_id}>"
@@ -251,8 +275,12 @@ class Style(Base):
     style_name: Mapped[Optional[str]] = mapped_column(String(225), nullable=True)
 
     # Relationships
-    part_attribute_styles = relationship("PartAttributeStyle", back_populates="style")
-    part_type_styles = relationship("PartTypeStyle", back_populates="style")
+    part_attribute_styles: Mapped[List["PartAttributeStyle"]] = relationship(
+        "PartAttributeStyle", back_populates="style"
+    )
+    part_type_styles: Mapped[List["PartTypeStyle"]] = relationship(
+        "PartTypeStyle", back_populates="style"
+    )
 
     def __repr__(self) -> str:
         return f"<Style {self.style_name} ({self.style_id})>"
@@ -275,8 +303,10 @@ class PartAttributeStyle(Base):
     )
 
     # Relationships
-    style = relationship("Style", back_populates="part_attribute_styles")
-    attribute_assignment = relationship(
+    style: Mapped["Style"] = relationship(
+        "Style", back_populates="part_attribute_styles"
+    )
+    attribute_assignment: Mapped["PartAttributeAssignment"] = relationship(
         "PartAttributeAssignment", back_populates="style"
     )
 
@@ -301,8 +331,8 @@ class PartTypeStyle(Base):
     )
 
     # Relationships
-    style = relationship("Style", back_populates="part_type_styles")
-    part = relationship("Parts", foreign_keys=[part_terminology_id])
+    style: Mapped["Style"] = relationship("Style", back_populates="part_type_styles")
+    part: Mapped["Parts"] = relationship("Parts", foreign_keys=[part_terminology_id])
 
     def __repr__(self) -> str:
         return f"<PartTypeStyle {self.id}: {self.part_terminology_id}>"
@@ -317,7 +347,9 @@ class PAdbVersion(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    version_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    version_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __repr__(self) -> str:

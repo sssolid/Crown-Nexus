@@ -45,13 +45,22 @@ app = typer.Typer()
 @app.command()
 def import_products(
     source_type: str = typer.Option(
-        "filemaker", "--source", "-s", help="Source type (filemaker, as400, or file/csv)"
+        "filemaker",
+        "--source",
+        "-s",
+        help="Source type (filemaker, as400, or file/csv)",
     ),
     entity_type: str = typer.Option(
-        "product", "--entity", "-e", help="Entity type (product, product_pricing, product_stock)"
+        "product",
+        "--entity",
+        "-e",
+        help="Entity type (product, product_pricing, product_stock)",
     ),
     config_file: Optional[str] = typer.Option(
-        None, "--config", "-c", help="Optional path to configuration JSON file (overrides settings)"
+        None,
+        "--config",
+        "-c",
+        help="Optional path to configuration JSON file (overrides settings)",
     ),
     custom_query: Optional[str] = typer.Option(
         None, "--query", "-q", help="Custom query (overrides generated query)"

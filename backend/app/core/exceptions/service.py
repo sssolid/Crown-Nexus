@@ -9,7 +9,12 @@ by each core package for specific error cases.
 
 from typing import Any, Dict, List, Optional, Union
 
-from app.core.exceptions.base import AppException, ErrorCategory, ErrorCode, ErrorSeverity
+from app.core.exceptions.base import (
+    AppException,
+    ErrorCategory,
+    ErrorCode,
+    ErrorSeverity,
+)
 
 
 class CoreServiceException(AppException):

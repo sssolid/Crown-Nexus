@@ -47,6 +47,7 @@ from app.domains.users.models import User
 
 router = APIRouter()
 
+
 @router.get("/", response_model=ProductListResponse)
 async def read_products(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -154,7 +155,9 @@ async def read_products(
         selectinload(Product.descriptions),
         selectinload(Product.marketing),
         selectinload(Product.activities).selectinload(ProductActivity.changed_by),
-        selectinload(Product.superseded_by).selectinload(ProductSupersession.new_product),
+        selectinload(Product.superseded_by).selectinload(
+            ProductSupersession.new_product
+        ),
         selectinload(Product.supersedes).selectinload(ProductSupersession.old_product),
         selectinload(Product.measurements),
         selectinload(Product.stock),

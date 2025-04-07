@@ -98,25 +98,41 @@ class AuditLogLevel(str, Enum):
 class AuditContext(BaseModel):
     """Context information for audit events."""
 
-    user_id: Optional[str] = Field(None, description="ID of the user who performed the action")
-    ip_address: Optional[str] = Field(None, description="IP address the action was performed from")
+    user_id: Optional[str] = Field(
+        None, description="ID of the user who performed the action"
+    )
+    ip_address: Optional[str] = Field(
+        None, description="IP address the action was performed from"
+    )
     user_agent: Optional[str] = Field(None, description="User agent of the client")
     session_id: Optional[str] = Field(None, description="Session ID")
     request_id: Optional[str] = Field(None, description="Request ID for tracking")
     company_id: Optional[str] = Field(None, description="Company context ID")
     resource_id: Optional[str] = Field(None, description="ID of the affected resource")
-    resource_type: Optional[str] = Field(None, description="Type of the affected resource")
-    before_state: Optional[Dict[str, Any]] = Field(None, description="Resource state before change")
-    after_state: Optional[Dict[str, Any]] = Field(None, description="Resource state after change")
-    changes: Optional[Dict[str, Any]] = Field(None, description="Changes made to the resource")
+    resource_type: Optional[str] = Field(
+        None, description="Type of the affected resource"
+    )
+    before_state: Optional[Dict[str, Any]] = Field(
+        None, description="Resource state before change"
+    )
+    after_state: Optional[Dict[str, Any]] = Field(
+        None, description="Resource state after change"
+    )
+    changes: Optional[Dict[str, Any]] = Field(
+        None, description="Changes made to the resource"
+    )
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
 
 
 class AuditOptions(BaseModel):
     """Options for audit logging."""
 
-    include_request_body: bool = Field(False, description="Include request body in the audit log")
-    sensitive_fields: List[str] = Field(default_factory=list, description="Sensitive fields to redact")
+    include_request_body: bool = Field(
+        False, description="Include request body in the audit log"
+    )
+    sensitive_fields: List[str] = Field(
+        default_factory=list, description="Sensitive fields to redact"
+    )
     anonymize_data: bool = Field(False, description="Anonymize sensitive data")
     capture_before_after: bool = Field(False, description="Capture before/after state")
     retention_period: int = Field(90, description="Retention period in days")

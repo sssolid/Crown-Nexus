@@ -11,7 +11,13 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from app.core.audit.base import AuditBackend, AuditContext, AuditEventType, AuditLogLevel, AuditOptions
+from app.core.audit.base import (
+    AuditBackend,
+    AuditContext,
+    AuditEventType,
+    AuditLogLevel,
+    AuditOptions,
+)
 from app.core.audit.utils import anonymize_data
 from app.logging import get_logger
 

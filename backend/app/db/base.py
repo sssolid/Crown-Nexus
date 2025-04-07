@@ -34,6 +34,7 @@ import app.domains.currency.models  # noqa: F401
 
 # Products
 import app.domains.products.models  # noqa: F401
+import app.domains.products.associations  # noqa: F401
 import app.domains.media.models  # noqa: F401  # Depends on Product, Media
 import app.domains.compliance.models  # noqa: F401  # Depends on Product, User
 import app.domains.model_mapping.models  # noqa: F401

@@ -60,14 +60,12 @@ __all__ = [
     # Service
     "AuditService",
     "get_audit_service",
-
     # Base types
     "AuditBackend",
     "AuditContext",
     "AuditEventType",
     "AuditLogLevel",
     "AuditOptions",
-
     # Exceptions
     "AuditException",
     "AuditBackendException",

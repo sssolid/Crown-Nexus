@@ -17,7 +17,7 @@ from app.domains.products.models import Product, PriceType, ProductPricing
 from app.logging import get_logger
 from app.data_import.importers.base import Importer
 
-logger = get_logger('app.data_import.importers.product_pricing_importer')
+logger = get_logger("app.data_import.importers.product_pricing_importer")
 
 
 class ProductPricingImporter(Importer[ProductPricingImport]):
@@ -34,7 +34,7 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
             db: SQLAlchemy async session for database operations
         """
         self.db = db
-        logger.debug('ProductPricingImporter initialized')
+        logger.debug("ProductPricingImporter initialized")
 
     async def _get_product_id_by_part_number(self, part_number: str) -> Optional[UUID]:
         """Look up a product ID by part number.
@@ -46,8 +46,7 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
             The product ID if found, None otherwise
         """
         query = select(Product.id).where(
-            Product.part_number == part_number,
-            Product.is_deleted == False
+            Product.part_number == part_number, Product.is_deleted == False
         )
         result = await self.db.execute(query)
         product_id = result.scalar_one_or_none()
@@ -63,8 +62,7 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
             The price type ID if found, None otherwise
         """
         query = select(PriceType.id).where(
-            PriceType.name == name,
-            PriceType.is_deleted == False
+            PriceType.name == name, PriceType.is_deleted == False
         )
         result = await self.db.execute(query)
         price_type_id = result.scalar_one_or_none()
@@ -89,7 +87,9 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
         await self.db.flush()
         return price_type.id
 
-    async def _get_existing_pricing(self, product_id: UUID, price_type_id: UUID) -> Optional[ProductPricing]:
+    async def _get_existing_pricing(
+        self, product_id: UUID, price_type_id: UUID
+    ) -> Optional[ProductPricing]:
         """Get existing pricing for a product and price type.
 
         Args:
@@ -102,7 +102,7 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
         query = select(ProductPricing).where(
             ProductPricing.product_id == product_id,
             ProductPricing.pricing_type_id == price_type_id,
-            ProductPricing.is_deleted == False
+            ProductPricing.is_deleted == False,
         )
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
@@ -120,54 +120,69 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
             Dictionary with import statistics
         """
         if not data:
-            return {'success': True, 'created': 0, 'updated': 0, 'errors': 0, 'total': 0}
+            return {
+                "success": True,
+                "created": 0,
+                "updated": 0,
+                "errors": 0,
+                "total": 0,
+            }
 
         try:
-            stats = {'created': 0, 'updated': 0, 'errors': 0, 'error_details': []}
+            stats = {"created": 0, "updated": 0, "errors": 0, "error_details": []}
 
             # Process each pricing record
             for pricing_data in data:
                 try:
                     # Look up product ID
-                    product_id = await self._get_product_id_by_part_number(pricing_data.part_number)
+                    product_id = await self._get_product_id_by_part_number(
+                        pricing_data.part_number
+                    )
                     if not product_id:
-                        stats['errors'] += 1
-                        stats['error_details'].append({
-                            'part_number': pricing_data.part_number,
-                            'error': f'Product not found with part number: {pricing_data.part_number}'
-                        })
+                        stats["errors"] += 1
+                        stats["error_details"].append(
+                            {
+                                "part_number": pricing_data.part_number,
+                                "error": f"Product not found with part number: {pricing_data.part_number}",
+                            }
+                        )
                         continue
 
                     # Get or create price type
-                    price_type_id = await self._get_or_create_price_type(pricing_data.pricing_type)
+                    price_type_id = await self._get_or_create_price_type(
+                        pricing_data.pricing_type
+                    )
 
                     # Check for existing pricing
-                    existing_pricing = await self._get_existing_pricing(product_id, price_type_id)
+                    existing_pricing = await self._get_existing_pricing(
+                        product_id, price_type_id
+                    )
 
                     if existing_pricing:
                         # Update existing pricing
                         existing_pricing.price = pricing_data.price
                         existing_pricing.currency = pricing_data.currency
                         self.db.add(existing_pricing)
-                        stats['updated'] += 1
+                        stats["updated"] += 1
                     else:
                         # Create new pricing
                         new_pricing = ProductPricing(
                             product_id=product_id,
                             pricing_type_id=price_type_id,
                             price=pricing_data.price,
-                            currency=pricing_data.currency
+                            currency=pricing_data.currency,
                         )
                         self.db.add(new_pricing)
-                        stats['created'] += 1
+                        stats["created"] += 1
 
                 except Exception as e:
-                    logger.error(f'Error importing pricing for {pricing_data.part_number}: {str(e)}')
-                    stats['errors'] += 1
-                    stats['error_details'].append({
-                        'part_number': pricing_data.part_number,
-                        'error': str(e)
-                    })
+                    logger.error(
+                        f"Error importing pricing for {pricing_data.part_number}: {str(e)}"
+                    )
+                    stats["errors"] += 1
+                    stats["error_details"].append(
+                        {"part_number": pricing_data.part_number, "error": str(e)}
+                    )
 
             await self.db.commit()
 
@@ -178,18 +193,18 @@ class ProductPricingImporter(Importer[ProductPricingImport]):
             )
 
             return {
-                'success': stats['errors'] == 0,
-                'created': stats['created'],
-                'updated': stats['updated'],
-                'errors': stats['errors'],
-                'error_details': stats['error_details'] if stats['errors'] > 0 else [],
-                'total': len(data)
+                "success": stats["errors"] == 0,
+                "created": stats["created"],
+                "updated": stats["updated"],
+                "errors": stats["errors"],
+                "error_details": stats["error_details"] if stats["errors"] > 0 else [],
+                "total": len(data),
             }
 
         except Exception as e:
             await self.db.rollback()
-            logger.error(f'Transaction failed in pricing import: {str(e)}')
+            logger.error(f"Transaction failed in pricing import: {str(e)}")
             raise DatabaseException(
-                message=f'Pricing import transaction failed: {str(e)}',
-                original_exception=e
+                message=f"Pricing import transaction failed: {str(e)}",
+                original_exception=e,
             ) from e

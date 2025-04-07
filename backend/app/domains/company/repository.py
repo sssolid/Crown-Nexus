@@ -11,7 +11,7 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.company.schemas import Company
+from app.domains.company.models import Company
 from app.repositories.base import BaseRepository
 from app.core.exceptions import ResourceNotFoundException
 
@@ -32,17 +32,16 @@ class CompanyRepository(BaseRepository[Company, uuid.UUID]):
         super().__init__(model=Company, db=db)
 
     async def find_by_name(self, name: str) -> Optional[Company]:
-        """Find a company by its name.
+        """
+        Find a company by its exact name.
 
         Args:
-            name: The company name to search for.
+            name: The company name to search for
 
         Returns:
-            The company if found, None otherwise.
+            The company if found, None otherwise
         """
-        query = select(Company).where(Company.name == name, Company.is_deleted == False)
-        result = await self.db.execute(query)
-        return result.scalars().first()
+        return await self.find_one_by({"name": name})
 
     async def find_by_account_number(self, account_number: str) -> Optional[Company]:
         """Find a company by its account number.

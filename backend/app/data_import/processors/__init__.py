@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """
 Data processors for data import.
 
@@ -12,7 +13,7 @@ from app.data_import.processors.as400_processor import (
     AS400ProcessorConfig,
     ProductAS400Processor,
     PricingAS400Processor,
-    InventoryAS400Processor
+    InventoryAS400Processor,
 )
 from app.data_import.processors.generic_processor import GenericProcessor
 from app.data_import.processors.integrated_processor import IntegratedProductProcessor

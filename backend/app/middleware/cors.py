@@ -90,7 +90,9 @@ class EnhancedCORSMiddleware(CORSMiddleware):
             max_age=max_age,
         )
 
-    async def __call__(self, scope: Dict[str, Any], receive: Callable, send: Callable) -> None:
+    async def __call__(
+        self, scope: Dict[str, Any], receive: Callable, send: Callable
+    ) -> None:
         """
         Process the ASGI request.
 

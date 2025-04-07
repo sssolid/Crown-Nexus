@@ -18,7 +18,8 @@ from app.data_import.field_definitions import (
     EntityFieldDefinitions,
     FieldDefinition,
     TransformationDirection,
-    COMPLEX_FIELD_MAPPINGS, ExternalFieldInfo,
+    COMPLEX_FIELD_MAPPINGS,
+    ExternalFieldInfo,
 )
 
 logger = get_logger("app.data_import.processors.generic_processor")
@@ -123,7 +124,10 @@ class GenericProcessor(Generic[T]):
         # Process each field according to its definition
         for field_def in self.field_definitions.fields:
             # Skip complex fields like arrays and objects that need special handling
-            if field_def.field_type in ["ARRAY", "OBJECT"] and not field_def.get_external_names():
+            if (
+                field_def.field_type in ["ARRAY", "OBJECT"]
+                and not field_def.get_external_names()
+            ):
                 continue
 
             # Get the external field name from mapping
@@ -187,10 +191,7 @@ class GenericProcessor(Generic[T]):
                 continue
 
             self._process_complex_field(
-                processed_record,
-                original_record,
-                complex_field,
-                source_mappings
+                processed_record, original_record, complex_field, source_mappings
             )
 
         return processed_record
@@ -225,13 +226,17 @@ class GenericProcessor(Generic[T]):
                 field_name = field_info.field_name
 
                 if field_name in original_record and original_record[field_name]:
-                    items.append({
-                        f"{complex_field[:-1]}_type": item_type,
-                        "content": str(original_record[field_name]),
-                    })
+                    items.append(
+                        {
+                            f"{complex_field[:-1]}_type": item_type,
+                            "content": str(original_record[field_name]),
+                        }
+                    )
             except Exception as e:
-                logger.error(f"Error processing complex field '{complex_field}' "
-                             f"item '{item_type}': {e}")
+                logger.error(
+                    f"Error processing complex field '{complex_field}' "
+                    f"item '{item_type}': {e}"
+                )
 
         if items:
             processed_record[complex_field] = items
@@ -257,19 +262,26 @@ class GenericProcessor(Generic[T]):
         for i, record in enumerate(data):
             try:
                 processed_record = self._process_record(record)
-                processed_record = self._process_complex_fields(processed_record, record)
+                processed_record = self._process_complex_fields(
+                    processed_record, record
+                )
 
                 # Check for duplicates using primary key
                 primary_key_field = self.field_definitions.primary_key_field
-                if primary_key_field in processed_record and processed_record[primary_key_field]:
+                if (
+                    primary_key_field in processed_record
+                    and processed_record[primary_key_field]
+                ):
                     key_value = processed_record[primary_key_field]
                     if key_value in self.processed_keys:
                         logger.warning(f"Duplicate key: {key_value}")
-                        errors.append({
-                            "index": i,
-                            "key": key_value,
-                            "error": f"Duplicate {primary_key_field}"
-                        })
+                        errors.append(
+                            {
+                                "index": i,
+                                "key": key_value,
+                                "error": f"Duplicate {primary_key_field}",
+                            }
+                        )
                         continue
                     self.processed_keys.add(key_value)
 
@@ -278,8 +290,16 @@ class GenericProcessor(Generic[T]):
                 logger.warning(f"Error processing record at index {i}: {str(e)}")
                 errors.append({"index": i, "error": str(e), "record": record})
             except Exception as e:
-                logger.error(f"Unexpected error processing record at index {i}: {str(e)}")
-                errors.append({"index": i, "error": f"Unexpected error: {str(e)}", "record": record})
+                logger.error(
+                    f"Unexpected error processing record at index {i}: {str(e)}"
+                )
+                errors.append(
+                    {
+                        "index": i,
+                        "error": f"Unexpected error: {str(e)}",
+                        "record": record,
+                    }
+                )
 
         # Log processing results
         if errors:
@@ -317,21 +337,23 @@ class GenericProcessor(Generic[T]):
                 key_value = item.get(
                     self.field_definitions.primary_key_field, f"index_{i}"
                 )
-                validation_errors.append({
-                    "index": i,
-                    "key": key_value,
-                    "error": str(e)
-                })
+                validation_errors.append(
+                    {"index": i, "key": key_value, "error": str(e)}
+                )
             except Exception as e:
-                logger.error(f"Unexpected error validating record at index {i}: {str(e)}")
+                logger.error(
+                    f"Unexpected error validating record at index {i}: {str(e)}"
+                )
                 key_value = item.get(
                     self.field_definitions.primary_key_field, f"index_{i}"
                 )
-                validation_errors.append({
-                    "index": i,
-                    "key": key_value,
-                    "error": f"Unexpected error: {str(e)}"
-                })
+                validation_errors.append(
+                    {
+                        "index": i,
+                        "key": key_value,
+                        "error": f"Unexpected error: {str(e)}",
+                    }
+                )
 
         # Log validation results
         if validation_errors:
@@ -343,8 +365,7 @@ class GenericProcessor(Generic[T]):
             # Raise exception if all records failed validation
             if len(validation_errors) >= len(data):
                 raise ValidationException(
-                    message="All records failed validation",
-                    errors=validation_errors
+                    message="All records failed validation", errors=validation_errors
                 )
         else:
             logger.info(f"Validated {len(validated_data)} records successfully")

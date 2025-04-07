@@ -110,10 +110,14 @@ class User(Base):
         "AuditLog", back_populates="user"
     )
     uploaded_media = relationship(
-        "Media", foreign_keys="[media.Media.uploaded_by_id]", back_populates="uploaded_by"
+        "Media",
+        foreign_keys="[media.Media.uploaded_by_id]",
+        back_populates="uploaded_by",
     )
     approved_media = relationship(
-        "Media", foreign_keys="[media.Media.approved_by_id]", back_populates="approved_by"
+        "Media",
+        foreign_keys="[media.Media.approved_by_id]",
+        back_populates="approved_by",
     )
 
     def __repr__(self) -> str:

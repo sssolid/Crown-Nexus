@@ -13,7 +13,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from app.core.audit.base import AuditBackend, AuditContext, AuditEventType, AuditLogLevel, AuditOptions
+from app.core.audit.base import (
+    AuditBackend,
+    AuditContext,
+    AuditEventType,
+    AuditLogLevel,
+    AuditOptions,
+)
 from app.core.audit.exceptions import AuditBackendException
 from app.core.audit.utils import anonymize_data
 from app.core.base import InitializableComponent
@@ -123,7 +129,11 @@ class FileAuditBackend(AuditBackend, InitializableComponent):
                 pass
 
             # Get file size
-            file_size = Path(self.file_path).stat().st_size if Path(self.file_path).exists() else 0
+            file_size = (
+                Path(self.file_path).stat().st_size
+                if Path(self.file_path).exists()
+                else 0
+            )
 
             return {
                 "status": "healthy",

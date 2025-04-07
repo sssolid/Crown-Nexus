@@ -174,55 +174,55 @@ def _initialize_default_metrics() -> None:
     create_histogram(
         MetricName.REQUEST_TRACE_DURATION_SECONDS.value,
         "Duration of request traces in seconds",
-        [MetricTag.PATH, MetricTag.METHOD, MetricTag.STATUS_CODE, MetricTag.ERROR_CODE]
+        [MetricTag.PATH, MetricTag.METHOD, MetricTag.STATUS_CODE, MetricTag.ERROR_CODE],
     )
 
     create_histogram(
         MetricName.RATE_LIMITING_CHECK_DURATION_SECONDS.value,
         "Duration of rate limiting checks",
-        [MetricTag.CACHE_BACKEND, MetricTag.ERROR_TYPE]
+        [MetricTag.CACHE_BACKEND, MetricTag.ERROR_TYPE],
     )
 
     create_histogram(
         MetricName.RATE_LIMITING_MIDDLEWARE_DURATION_SECONDS.value,
         "Rate limiting middleware execution time",
-        [MetricTag.LIMITED, MetricTag.PATH]
+        [MetricTag.LIMITED, MetricTag.PATH],
     )
 
     create_counter(
         MetricName.RATE_LIMITING_REQUESTS_TOTAL.value,
         "Total number of rate-limited requests",
-        [MetricTag.LIMITED, MetricTag.PATH]
+        [MetricTag.LIMITED, MetricTag.PATH],
     )
 
     create_histogram(
         MetricName.HTTP_RESPONSE_SIZE_BYTES.value,
         "Size of HTTP responses in bytes",
-        [MetricTag.PATH, MetricTag.METHOD]
+        [MetricTag.PATH, MetricTag.METHOD],
     )
 
     create_counter(
         MetricName.HTTP_STATUS_CODES_TOTAL.value,
         "HTTP status code count",
-        [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE]
+        [MetricTag.METHOD, MetricTag.ENDPOINT, MetricTag.STATUS_CODE],
     )
 
     create_histogram(
         MetricName.REQUEST_SECURITY_CHECK_DURATION_SECONDS.value,
         "Duration of security checks on requests",
-        [MetricTag.SUSPICIOUS, MetricTag.PATH]
+        [MetricTag.SUSPICIOUS, MetricTag.PATH],
     )
 
     create_histogram(
         MetricName.SECURITY_HEADERS_DURATION_SECONDS.value,
         "Duration to set security headers",
-        [MetricTag.PATH]
+        [MetricTag.PATH],
     )
 
     create_histogram(
         MetricName.RESPONSE_FORMATTING_DURATION_SECONDS.value,
         "Time taken to format HTTP responses",
-        [MetricTag.RESPONSE_FORMATTED, MetricTag.PATH]
+        [MetricTag.RESPONSE_FORMATTED, MetricTag.PATH],
     )
 
     # System metrics if process metrics enabled
@@ -245,7 +245,9 @@ def _initialize_default_metrics() -> None:
             [],
         )
 
-        create_gauge(MetricName.PROCESS_OPEN_FDS.value, "Number of open file descriptors", [])
+        create_gauge(
+            MetricName.PROCESS_OPEN_FDS.value, "Number of open file descriptors", []
+        )
 
 
 async def initialize(config: Optional[MetricsConfig] = None) -> None:

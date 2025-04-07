@@ -76,7 +76,7 @@ def fix_postgresql_data_types(sql: str) -> str:
         str: SQL statement with PostgreSQL compatible data types
     """
     # Replace DATETIME with TIMESTAMP
-    return sql.replace(' DATETIME ', ' TIMESTAMP ')
+    return sql.replace(" DATETIME ", " TIMESTAMP ")
 
 
 def drop_all_tables() -> bool:
@@ -92,7 +92,9 @@ def drop_all_tables() -> bool:
         conn.execute(text("SET session_replication_role = 'replica'"))
 
         # Get all tables
-        result = conn.execute(text("SELECT tablename FROM pg_tables WHERE schemaname = 'public'"))
+        result = conn.execute(
+            text("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")
+        )
         tables = [row[0] for row in result]
 
         if not tables:
@@ -212,7 +214,9 @@ def create_all_tables() -> bool:
         # Find problematic tables (self-references)
         problem_tables = find_problematic_tables()
         if problem_tables:
-            logger.info(f"Found {len(problem_tables)} tables with self-referential foreign keys")
+            logger.info(
+                f"Found {len(problem_tables)} tables with self-referential foreign keys"
+            )
 
         # Get list of tables in correct creation order
         table_order = sort_tables_by_dependency()
@@ -233,8 +237,8 @@ def create_all_tables() -> bool:
                 # Get column type with PostgreSQL compatibility fix
                 column_type = str(column.type)
                 # Convert DATETIME to TIMESTAMP for PostgreSQL
-                if column_type.upper() == 'DATETIME':
-                    column_type = 'TIMESTAMP'
+                if column_type.upper() == "DATETIME":
+                    column_type = "TIMESTAMP"
 
                 # Basic column definition
                 col_def = f'"{column.name}" {column_type}'
@@ -250,17 +254,19 @@ def create_all_tables() -> bool:
                     default_value = str(column.server_default.arg)
 
                     # Fix 'NONE' as a string literal
-                    if default_value == 'NONE':
+                    if default_value == "NONE":
                         default_value = "'NONE'"
 
                     # Quote other non-numeric, non-function literals that aren't already quoted
-                    if (not default_value.startswith("'") and
-                        not default_value.startswith('"') and
-                        not default_value.lower() == 'null' and
-                        not default_value.lower() == 'true' and
-                        not default_value.lower() == 'false' and
-                        not '(' in default_value and  # Skip functions like now()
-                        not default_value.replace('.', '', 1).isdigit()):  # Skip numbers
+                    if (
+                        not default_value.startswith("'")
+                        and not default_value.startswith('"')
+                        and not default_value.lower() == "null"
+                        and not default_value.lower() == "true"
+                        and not default_value.lower() == "false"
+                        and not "(" in default_value  # Skip functions like now()
+                        and not default_value.replace(".", "", 1).isdigit()
+                    ):  # Skip numbers
                         default_value = f"'{default_value}'"
 
                     col_def += f" DEFAULT {default_value}"
@@ -284,14 +290,18 @@ def create_all_tables() -> bool:
                     column_defs.append(pk_constraint)
 
             # Create the table
-            create_sql = f"CREATE TABLE {table_name} (\n  " + ",\n  ".join(column_defs) + "\n)"
+            create_sql = (
+                f"CREATE TABLE {table_name} (\n  " + ",\n  ".join(column_defs) + "\n)"
+            )
 
             with engine.connect() as conn:
                 try:
                     # Skip if table already exists
                     inspector = inspect(engine)
                     if table_name in inspector.get_table_names():
-                        logger.info(f"Table {table_name} already exists, skipping creation")
+                        logger.info(
+                            f"Table {table_name} already exists, skipping creation"
+                        )
                         continue
 
                     conn.execute(text(create_sql))
@@ -314,11 +324,15 @@ def create_all_tables() -> bool:
                     for source_col, ref_col in problem_tables[table_name]:
                         constraint_name = f"uq_{table_name}_{ref_col}"
                         try:
-                            conn.execute(text(
-                                f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
-                                f"UNIQUE ({ref_col})"
-                            ))
-                            logger.info(f"  Added unique constraint on {ref_col} in {table_name}")
+                            conn.execute(
+                                text(
+                                    f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
+                                    f"UNIQUE ({ref_col})"
+                                )
+                            )
+                            logger.info(
+                                f"  Added unique constraint on {ref_col} in {table_name}"
+                            )
                         except Exception as e:
                             if "already exists" not in str(e):
                                 logger.error(f"Failed to add unique constraint: {e}")
@@ -341,15 +355,20 @@ def create_all_tables() -> bool:
 
                     with engine.connect() as conn:
                         try:
-                            conn.execute(text(
-                                f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
-                                f"FOREIGN KEY ({source_column}) REFERENCES {target_table}({target_column})"
-                            ))
+                            conn.execute(
+                                text(
+                                    f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
+                                    f"FOREIGN KEY ({source_column}) REFERENCES {target_table}({target_column})"
+                                )
+                            )
                             logger.info(
-                                f"  Added foreign key: {table_name}.{source_column} -> {target_table}.{target_column}")
+                                f"  Added foreign key: {table_name}.{source_column} -> {target_table}.{target_column}"
+                            )
                         except Exception as e:
                             if "already exists" not in str(e):
-                                logger.error(f"Failed to add foreign key constraint: {e}")
+                                logger.error(
+                                    f"Failed to add foreign key constraint: {e}"
+                                )
 
             # Add self-referential foreign keys last (for problematic tables)
             if is_problematic:
@@ -357,14 +376,20 @@ def create_all_tables() -> bool:
                     for src_col, ref_col in problem_tables[table_name]:
                         constraint_name = f"fk_{table_name}_{src_col}_{ref_col}"
                         try:
-                            conn.execute(text(
-                                f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
-                                f"FOREIGN KEY ({src_col}) REFERENCES {table_name}({ref_col})"
-                            ))
-                            logger.info(f"  Added self-referential foreign key: {src_col} -> {ref_col} in {table_name}")
+                            conn.execute(
+                                text(
+                                    f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
+                                    f"FOREIGN KEY ({src_col}) REFERENCES {table_name}({ref_col})"
+                                )
+                            )
+                            logger.info(
+                                f"  Added self-referential foreign key: {src_col} -> {ref_col} in {table_name}"
+                            )
                         except Exception as e:
                             if "already exists" not in str(e):
-                                logger.error(f"Failed to add self-referential foreign key: {e}")
+                                logger.error(
+                                    f"Failed to add self-referential foreign key: {e}"
+                                )
 
         return True
 
@@ -384,9 +409,9 @@ def initialize_alembic() -> bool:
 
     if not alembic_dir.exists():
         logger.info("Alembic not initialized. Running 'alembic init alembic'...")
-        result = subprocess.run(["alembic", "init", "alembic"],
-                                capture_output=True,
-                                text=True)
+        result = subprocess.run(
+            ["alembic", "init", "alembic"], capture_output=True, text=True
+        )
         if result.returncode != 0:
             logger.error(f"Failed to initialize Alembic: {result.stderr}")
             return False
@@ -394,9 +419,9 @@ def initialize_alembic() -> bool:
 
     # Stamp the current state
     logger.info("Stamping current database state...")
-    result = subprocess.run(["alembic", "stamp", "head"],
-                            capture_output=True,
-                            text=True)
+    result = subprocess.run(
+        ["alembic", "stamp", "head"], capture_output=True, text=True
+    )
     if result.returncode != 0:
         logger.error(f"Failed to stamp database: {result.stderr}")
         return False
@@ -457,9 +482,7 @@ def handle_create(message: str) -> bool:
     """
     # Make sure database is stamped first
     logger.info("Ensuring database is stamped...")
-    subprocess.run(["alembic", "stamp", "head"],
-                   capture_output=True,
-                   text=True)
+    subprocess.run(["alembic", "stamp", "head"], capture_output=True, text=True)
 
     return run_alembic_command("revision", "--autogenerate", "-m", message)
 
@@ -502,7 +525,9 @@ def handle_stamp(revision: str = "head") -> bool:
 
 def main() -> None:
     """Main function to parse arguments and execute commands."""
-    parser = argparse.ArgumentParser(description="Database management tool that actually works")
+    parser = argparse.ArgumentParser(
+        description="Database management tool that actually works"
+    )
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
     # Reset command (THE ONE COMMAND TO RULE THEM ALL)
@@ -513,14 +538,22 @@ def main() -> None:
     create_parser.add_argument("message", help="Migration message")
 
     upgrade_parser = subparsers.add_parser("upgrade", help="Upgrade database")
-    upgrade_parser.add_argument("revision", nargs="?", default="head", help="Revision to upgrade to")
+    upgrade_parser.add_argument(
+        "revision", nargs="?", default="head", help="Revision to upgrade to"
+    )
 
     downgrade_parser = subparsers.add_parser("downgrade", help="Downgrade database")
-    downgrade_parser.add_argument("revision", nargs="?", default="-1", help="Revision to downgrade to")
+    downgrade_parser.add_argument(
+        "revision", nargs="?", default="-1", help="Revision to downgrade to"
+    )
 
     # Add stamp command
-    stamp_parser = subparsers.add_parser("stamp", help="Stamp database without running migrations")
-    stamp_parser.add_argument("revision", nargs="?", default="head", help="Revision to stamp with")
+    stamp_parser = subparsers.add_parser(
+        "stamp", help="Stamp database without running migrations"
+    )
+    stamp_parser.add_argument(
+        "revision", nargs="?", default="head", help="Revision to stamp with"
+    )
 
     args = parser.parse_args()
 

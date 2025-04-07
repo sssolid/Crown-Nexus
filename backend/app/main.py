@@ -120,15 +120,21 @@ def initialize_event_system() -> bool:
     """
     for backend in [EventBackendType.CELERY, EventBackendType.MEMORY]:
         try:
-            logger.info(f"Attempting to initialize event system with backend: {backend}")
+            logger.info(
+                f"Attempting to initialize event system with backend: {backend}"
+            )
             init_event_backend(backend)
             init_domain_events()
-            logger.info(f"Successfully initialized event system with backend: {backend}")
+            logger.info(
+                f"Successfully initialized event system with backend: {backend}"
+            )
             return True
         except EventConfigurationException as e:
             logger.warning(f"Event configuration failed for backend {backend}: {e}")
         except Exception as e:
-            logger.exception(f"Unexpected error initializing event system with backend {backend}")
+            logger.exception(
+                f"Unexpected error initializing event system with backend {backend}"
+            )
             # Continue with the next backend
 
     logger.critical("Failed to initialize any event system backend.")
@@ -275,7 +281,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 DEFAULT_MIDDLEWARE_EXCLUDE_PATHS = getattr(
     settings,
     "MIDDLEWARE_EXCLUDE_PATHS",
-    ["/api/v1/docs", "/api/v1/redoc", "/api/v1/openapi.json", "/static/", "/media/"]
+    ["/api/v1/docs", "/api/v1/redoc", "/api/v1/openapi.json", "/static/", "/media/"],
 )
 
 # Create FastAPI application
@@ -305,7 +311,9 @@ add_typed_middleware(app, TracingMiddleware, service_name=settings.PROJECT_NAME)
 add_typed_middleware(
     app,
     MetricsMiddleware,
-    ignore_paths=getattr(settings, "METRICS_IGNORE_PATHS", ["/metrics", "/api/v1/metrics"])
+    ignore_paths=getattr(
+        settings, "METRICS_IGNORE_PATHS", ["/metrics", "/api/v1/metrics"]
+    ),
 )
 
 # 4. Security middleware - Block malicious requests early
@@ -373,16 +381,12 @@ add_typed_middleware(
 
 # 9. Cache control - Manage response caching
 add_typed_middleware(
-    app,
-    CacheControlMiddleware,
-    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
+    app, CacheControlMiddleware, exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
 )
 
 # 10. Response formatting - Standardize API responses
 add_typed_middleware(
-    app,
-    ResponseFormatterMiddleware,
-    exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
+    app, ResponseFormatterMiddleware, exclude_paths=DEFAULT_MIDDLEWARE_EXCLUDE_PATHS
 )
 
 # 11. Compression - Compress response data (after formatting)

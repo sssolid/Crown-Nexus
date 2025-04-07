@@ -20,7 +20,7 @@ from app.core.audit.base import (
     AuditContext,
     AuditEventType,
     AuditLogLevel,
-    AuditOptions
+    AuditOptions,
 )
 from app.core.audit.exceptions import AuditBackendException, AuditManagerException
 from app.core.audit.utils import get_event_level_mapping, get_sensitive_fields
@@ -81,7 +81,9 @@ class AuditManager(CoreManager):
                 f"{', '.join([b.__class__.__name__ for b in self.backends])}"
             )
         except Exception as e:
-            self.logger.error(f"Failed to initialize audit backends: {str(e)}", exc_info=True)
+            self.logger.error(
+                f"Failed to initialize audit backends: {str(e)}", exc_info=True
+            )
             raise AuditBackendException(
                 backend_name="manager",
                 operation="initialize",
@@ -222,11 +224,15 @@ class AuditManager(CoreManager):
 
             # Apply filters
             if start_time:
-                start_datetime = datetime.datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+                start_datetime = datetime.datetime.fromisoformat(
+                    start_time.replace("Z", "+00:00")
+                )
                 query = query.filter(AuditLog.timestamp >= start_datetime)
 
             if end_time:
-                end_datetime = datetime.datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+                end_datetime = datetime.datetime.fromisoformat(
+                    end_time.replace("Z", "+00:00")
+                )
                 query = query.filter(AuditLog.timestamp <= end_datetime)
 
             if event_type:
@@ -299,7 +305,9 @@ class AuditManager(CoreManager):
 
             return None
         except Exception as e:
-            self.logger.error(f"Error retrieving audit event by ID: {str(e)}", exc_info=True)
+            self.logger.error(
+                f"Error retrieving audit event by ID: {str(e)}", exc_info=True
+            )
             raise AuditManagerException(
                 operation="get_event_by_id",
                 message="Error retrieving audit event by ID",
@@ -389,7 +397,9 @@ class AuditManager(CoreManager):
             from app.core.audit.models import AuditLog
 
             # Calculate cutoff date
-            cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=days_to_keep)
+            cutoff_date = datetime.datetime.now(
+                datetime.timezone.utc
+            ) - datetime.timedelta(days=days_to_keep)
 
             # Build delete statement
             delete_stmt = delete(AuditLog).where(AuditLog.timestamp < cutoff_date)
@@ -399,7 +409,9 @@ class AuditManager(CoreManager):
             await self.db.commit()
 
             deleted_count = result.rowcount
-            self.logger.info(f"Purged {deleted_count} audit logs older than {cutoff_date.isoformat()}")
+            self.logger.info(
+                f"Purged {deleted_count} audit logs older than {cutoff_date.isoformat()}"
+            )
 
             # Log purge event
             await self.log_event(

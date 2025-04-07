@@ -112,10 +112,16 @@ class ExchangeRate(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     source_currency_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("currency.currency.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("currency.currency.id"),
+        nullable=False,
+        index=True,
     )
     target_currency_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("currency.currency.id"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("currency.currency.id"),
+        nullable=False,
+        index=True,
     )
     rate: Mapped[float] = mapped_column(Float, nullable=False)
     effective_date: Mapped[datetime] = mapped_column(

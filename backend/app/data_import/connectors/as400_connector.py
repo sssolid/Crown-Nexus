@@ -129,6 +129,7 @@ class AS400Connector:
         try:
             import jpype
             from jpype.types import JException
+
             self._jpype = jpype
             self._JException = JException
             # Initialize JVM if needed
@@ -325,7 +326,9 @@ class AS400Connector:
 
                 # Set parameters
                 for i, value in enumerate(param_values):
-                    self._set_prepared_statement_parameter(statement, i + 1, value, java_sql_Types)
+                    self._set_prepared_statement_parameter(
+                        statement, i + 1, value, java_sql_Types
+                    )
 
                 # Set query timeout if supported
                 statement.setQueryTimeout(self.config.query_timeout)
@@ -484,8 +487,10 @@ class AS400Connector:
             full_table_name = f"{self.config.database}.{table_name}"
 
             # Add limit clause if requested
-            limit_clause = f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
-            query = f'SELECT * FROM {full_table_name}{limit_clause}'
+            limit_clause = (
+                f" FETCH FIRST {limit} ROWS ONLY" if limit is not None else ""
+            )
+            query = f"SELECT * FROM {full_table_name}{limit_clause}"
             return table_name
         else:
             # For SQL queries, perform security checks
@@ -543,7 +548,9 @@ class AS400Connector:
         # Replace each named parameter with ? and collect values in order
         for name in param_names:
             if name not in params:
-                raise ValueError(f"Parameter '{name}' not provided in params dictionary")
+                raise ValueError(
+                    f"Parameter '{name}' not provided in params dictionary"
+                )
 
             # Collect value
             param_values.append(params[name])
@@ -597,7 +604,9 @@ class AS400Connector:
             # Fall back to string for other types
             statement.setString(index, str(value))
 
-    def _process_result_set(self, result_set: Any, java_sql_Types: Any) -> List[Dict[str, Any]]:
+    def _process_result_set(
+        self, result_set: Any, java_sql_Types: Any
+    ) -> List[Dict[str, Any]]:
         """
         Process JDBC ResultSet into a list of dictionaries.
 
@@ -615,14 +624,16 @@ class AS400Connector:
         # Extract column information
         columns: List[ColumnMetadata] = []
         for i in range(1, column_count + 1):
-            columns.append({
-                "name": meta.getColumnName(i),
-                "type_name": meta.getColumnTypeName(i),
-                "type_code": meta.getColumnType(i),
-                "precision": meta.getPrecision(i),
-                "scale": meta.getScale(i),
-                "nullable": meta.isNullable(i) != 0,
-            })
+            columns.append(
+                {
+                    "name": meta.getColumnName(i),
+                    "type_name": meta.getColumnTypeName(i),
+                    "type_code": meta.getColumnType(i),
+                    "precision": meta.getPrecision(i),
+                    "scale": meta.getScale(i),
+                    "nullable": meta.isNullable(i) != 0,
+                }
+            )
 
         # Process rows
         results = []
@@ -660,15 +671,27 @@ class AS400Connector:
         type_code = column["type_code"]
 
         # String types
-        if type_code in (java_sql_Types.CHAR, java_sql_Types.VARCHAR, java_sql_Types.LONGVARCHAR):
+        if type_code in (
+            java_sql_Types.CHAR,
+            java_sql_Types.VARCHAR,
+            java_sql_Types.LONGVARCHAR,
+        ):
             return result_set.getString(index)
 
         # Numeric types
-        elif type_code in (java_sql_Types.TINYINT, java_sql_Types.SMALLINT, java_sql_Types.INTEGER):
+        elif type_code in (
+            java_sql_Types.TINYINT,
+            java_sql_Types.SMALLINT,
+            java_sql_Types.INTEGER,
+        ):
             return result_set.getInt(index)
         elif type_code in (java_sql_Types.BIGINT,):
             return result_set.getLong(index)
-        elif type_code in (java_sql_Types.FLOAT, java_sql_Types.DOUBLE, java_sql_Types.REAL):
+        elif type_code in (
+            java_sql_Types.FLOAT,
+            java_sql_Types.DOUBLE,
+            java_sql_Types.REAL,
+        ):
             return result_set.getDouble(index)
         elif type_code in (java_sql_Types.DECIMAL, java_sql_Types.NUMERIC):
             # Get as BigDecimal and convert to Python decimal or float
@@ -682,14 +705,17 @@ class AS400Connector:
         elif type_code == java_sql_Types.DATE:
             date = result_set.getDate(index)
             from datetime import date as py_date
+
             return py_date(date.getYear() + 1900, date.getMonth() + 1, date.getDate())
         elif type_code == java_sql_Types.TIME:
             time = result_set.getTime(index)
             from datetime import time as py_time
+
             return py_time(time.getHours(), time.getMinutes(), time.getSeconds())
         elif type_code == java_sql_Types.TIMESTAMP:
             timestamp = result_set.getTimestamp(index)
             from datetime import datetime
+
             return datetime(
                 timestamp.getYear() + 1900,
                 timestamp.getMonth() + 1,
@@ -705,7 +731,11 @@ class AS400Connector:
             return result_set.getBoolean(index)
 
         # Binary types
-        elif type_code in (java_sql_Types.BINARY, java_sql_Types.VARBINARY, java_sql_Types.LONGVARBINARY):
+        elif type_code in (
+            java_sql_Types.BINARY,
+            java_sql_Types.VARBINARY,
+            java_sql_Types.LONGVARBINARY,
+        ):
             # Get as byte array and convert to Python bytes
             java_bytes = result_set.getBytes(index)
             return bytes(java_bytes)

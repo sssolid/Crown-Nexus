@@ -1,27 +1,15 @@
-# app/models/associations.py
 from __future__ import annotations
 
 """
-Many-to-many relationship tables for the application.
+Product association tables.
 
-This module defines association tables that connect entities through
-many-to-many relationships without creating separate model classes.
+This module defines all association tables for product relationships.
 """
-
-from sqlalchemy import (
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    Table,
-    Text,
-    UniqueConstraint,
-    func,
-)
+from datetime import datetime
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, func, Text
 from sqlalchemy.dialects.postgresql import UUID
 from app.db.base_class import Base
 
-# Product to Fitment relationship
 product_fitment_association = Table(
     "product_fitment",
     Base.metadata,
@@ -38,15 +26,11 @@ product_fitment_association = Table(
         primary_key=True,
     ),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
     schema="product",
 )
 
-# Product to Media relationship
 product_media_association = Table(
     "product_media",
     Base.metadata,
@@ -65,15 +49,11 @@ product_media_association = Table(
     Column("display_order", Integer, nullable=False, default=0),
     Column("is_primary", Integer, nullable=False, default=0),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
     schema="product",
 )
 
-# Product to TariffCode relationship
 product_tariff_code_association = Table(
     "product_tariff_code",
     Base.metadata,
@@ -98,7 +78,6 @@ product_tariff_code_association = Table(
     schema="product",
 )
 
-# Product to UnspscCode relationship
 product_unspsc_association = Table(
     "product_unspsc",
     Base.metadata,
@@ -123,7 +102,6 @@ product_unspsc_association = Table(
     schema="product",
 )
 
-# Product to Country relationship (for origin information)
 product_country_origin_association = Table(
     "product_country_origin",
     Base.metadata,
@@ -148,16 +126,11 @@ product_country_origin_association = Table(
     Column("origin_type", Integer, nullable=False, default=0),
     Column("origin_order", Integer, nullable=False, default=0),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
-    UniqueConstraint("product_id", "country_id", name="uix_product_country"),
     schema="product",
 )
 
-# Product to Hardware relationship
 product_hardware_association = Table(
     "product_hardware",
     Base.metadata,
@@ -176,72 +149,11 @@ product_hardware_association = Table(
     Column("quantity", Integer, nullable=False, default=1),
     Column("is_optional", Integer, nullable=False, default=0),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-    ),
-    UniqueConstraint("product_id", "hardware_id", name="uix_product_hardware"),
-    schema="product",
-)
-
-# Product interchange information
-product_interchange_association = Table(
-    "product_interchange",
-    Base.metadata,
-    Column(
-        "product_id",
-        UUID(as_uuid=True),
-        ForeignKey("product.product.id", ondelete="CASCADE"),
-        primary_key=True,
-    ),
-    Column("interchange_number", Integer, nullable=False),
-    Column(
-        "brand_id",
-        UUID(as_uuid=True),
-        ForeignKey("product.brand.id", ondelete="SET NULL"),
-        nullable=True,
-    ),
-    # CORRECTION: Changed from Integer to Text for notes
-    Column("notes", Text, nullable=True),
-    Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-    ),
-    UniqueConstraint(
-        "product_id", "interchange_number", "brand_id", name="uix_product_interchange"
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
     schema="product",
 )
 
-# Product to PackagingType relationship
-product_packaging_association = Table(
-    "product_packaging",
-    Base.metadata,
-    Column(
-        "product_id",
-        UUID(as_uuid=True),
-        ForeignKey("product.product.id", ondelete="CASCADE"),
-        primary_key=True,
-    ),
-    Column(
-        "packaging_type_id",
-        UUID(as_uuid=True),
-        ForeignKey("reference.packaging_type.id", ondelete="CASCADE"),
-        primary_key=True,
-    ),
-    Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-    ),
-    schema="product",
-)
-
-# Product to Color relationship
 product_color_association = Table(
     "product_color",
     Base.metadata,
@@ -258,15 +170,11 @@ product_color_association = Table(
         primary_key=True,
     ),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
     schema="product",
 )
 
-# Product to ConstructionType relationship
 product_construction_type_association = Table(
     "product_construction_type",
     Base.metadata,
@@ -283,15 +191,11 @@ product_construction_type_association = Table(
         primary_key=True,
     ),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
     schema="product",
 )
 
-# Product to Texture relationship
 product_texture_association = Table(
     "product_texture",
     Base.metadata,
@@ -308,10 +212,51 @@ product_texture_association = Table(
         primary_key=True,
     ),
     Column(
-        "created_at",
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+    ),
+    schema="product",
+)
+
+product_packaging_association = Table(
+    "product_packaging",
+    Base.metadata,
+    Column(
+        "product_id",
+        UUID(as_uuid=True),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "packaging_type_id",
+        UUID(as_uuid=True),
+        ForeignKey("reference.packaging_type.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
+    ),
+    schema="product",
+)
+
+product_interchange_association = Table(
+    "product_interchange",
+    Base.metadata,
+    Column(
+        "product_id",
+        UUID(as_uuid=True),
+        ForeignKey("product.product.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("interchange_number", Integer, nullable=False),
+    Column(
+        "brand_id",
+        UUID(as_uuid=True),
+        ForeignKey("product.brand.id", ondelete="SET NULL"),
+        nullable=True,
+    ),
+    Column("notes", Text, nullable=True),
+    Column(
+        "created_at", DateTime(timezone=True), nullable=False, server_default=func.now()
     ),
     schema="product",
 )

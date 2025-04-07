@@ -257,11 +257,11 @@ class PartsSupersession(Base):
         Integer, nullable=False, unique=True, index=True
     )
     old_part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
+        Integer, nullable=False
     )
     old_part_terminology_name: Mapped[str] = mapped_column(String(256), nullable=False)
     new_part_terminology_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("pcdb.parts.part_terminology_id"), nullable=False
+        Integer, nullable=False
     )
     new_part_terminology_name: Mapped[str] = mapped_column(String(256), nullable=False)
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)

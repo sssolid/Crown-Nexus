@@ -164,22 +164,22 @@
               <!-- Fitments Table -->
               <v-table v-if="fitments.length > 0">
                 <thead>
-                  <tr>
-                    <th>Year</th>
-                    <th>Make</th>
-                    <th>Model</th>
-                    <th>Engine</th>
-                    <th>Transmission</th>
-                  </tr>
+                <tr>
+                  <th>Year</th>
+                  <th>Make</th>
+                  <th>Model</th>
+                  <th>Engine</th>
+                  <th>Transmission</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="fitment in fitments" :key="fitment.id">
-                    <td>{{ fitment.year }}</td>
-                    <td>{{ fitment.make }}</td>
-                    <td>{{ fitment.model }}</td>
-                    <td>{{ fitment.engine || 'N/A' }}</td>
-                    <td>{{ fitment.transmission || 'N/A' }}</td>
-                  </tr>
+                <tr v-for="fitment in fitments" :key="fitment.id">
+                  <td>{{ fitment.year }}</td>
+                  <td>{{ fitment.make }}</td>
+                  <td>{{ fitment.model }}</td>
+                  <td>{{ fitment.engine || 'N/A' }}</td>
+                  <td>{{ fitment.transmission || 'N/A' }}</td>
+                </tr>
                 </tbody>
               </v-table>
 
@@ -223,7 +223,7 @@
                     <v-img
                       :src="item.url"
                       height="150"
-                      cover
+                      contain
                       class="rounded"
                       @click="openMediaDialog(index)"
                     >
@@ -346,15 +346,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import {ref, computed, onMounted} from 'vue';
+import {useRouter, useRoute} from 'vue-router';
+import {useAuthStore} from '@/stores/auth';
 import productService from '@/services/product';
-import { Product, ProductDescription } from '@/types/product';
-import { Fitment } from '@/types/fitment';
-import { formatDateTime } from '@/utils/formatters';
+import {Product, ProductDescription} from '@/types/product';
+import {Fitment} from '@/types/fitment';
+import {formatDateTime} from '@/utils/formatters';
 import image1 from '@/assets/mock_product_images/image-1.jpg';
 import image2 from '@/assets/mock_product_images/image-2.jpg';
+import mediaService from "@/services/media.ts";
 
 // Router and route
 const router = useRouter();
@@ -419,8 +420,8 @@ const fetchFitments = async () => {
   try {
     // Placeholder data until fitments are implemented in the database
     fitments.value = [
-      { id: '1', year: '2020', make: 'Toyota', model: 'Camry', engine: '2.5L', transmission: 'Auto' },
-      { id: '2', year: '2021', make: 'Honda', model: 'Civic', engine: '1.5L', transmission: 'Manual' },
+      {id: '1', year: '2020', make: 'Toyota', model: 'Camry', engine: '2.5L', transmission: 'Auto'},
+      {id: '2', year: '2021', make: 'Honda', model: 'Civic', engine: '1.5L', transmission: 'Manual'},
     ];
   } catch (error) {
     console.error('Error fetching fitments:', error);
@@ -431,11 +432,7 @@ const fetchFitments = async () => {
 // Fetch product media (placeholder)
 const fetchMedia = async () => {
   try {
-    // Placeholder data until media service is implemented
-    media.value = [
-      { id: '1', filename: 'product-image-1.jpg', url: image1},
-      { id: '2', filename: 'product-image-2.jpg', url: image2},
-    ];
+    media.value = await mediaService.getProductMedia(productId.value);
   } catch (error) {
     console.error('Error fetching media:', error);
     media.value = [];
@@ -459,7 +456,7 @@ const deleteProduct = async () => {
   try {
     await productService.deleteProduct(productId.value);
     deleteDialog.value = false;
-    router.push({ name: 'ProductCatalog' });
+    router.push({name: 'ProductCatalog'});
   } catch (error) {
     console.error('Error deleting product:', error);
   } finally {

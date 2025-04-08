@@ -55,7 +55,9 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
+        include_schemas=True,
         dialect_opts={"paramstyle": "named"},
+        version_table_schema="public",
     )
 
     with context.begin_transaction():
@@ -66,7 +68,11 @@ def do_run_migrations(connection: Connection) -> None:
     """Run migrations with the given connection."""
     print(f"Number of tables in metadata: {len(target_metadata.tables)}")
     context.configure(
-        connection=connection, target_metadata=target_metadata, compare_type=True
+        connection=connection,
+        target_metadata=target_metadata,
+        include_schemas=True,  # <-- required
+        compare_type=True,
+        version_table_schema="public",  # <-- required
     )
 
     with context.begin_transaction():
@@ -96,6 +102,17 @@ def run_migrations_online() -> None:
 
     # Run migrations with the synchronous engine
     with connectable.connect() as connection:
+        from app.core.config import settings
+
+        for schema in settings.DB_SCHEMAS:
+            connection.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{schema}"'))
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            include_schemas=True,
+            compare_type=True,
+            version_table_schema="public",
+        )
         # Test connection
         result = connection.execute(text("SELECT 1"))
         print("Database connection successful!")

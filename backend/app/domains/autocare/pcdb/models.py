@@ -256,16 +256,24 @@ class PartsSupersession(Base):
     parts_supersession_id: Mapped[int] = mapped_column(
         Integer, nullable=False, unique=True, index=True
     )
-    old_part_terminology_id: Mapped[int] = mapped_column(
-        Integer, nullable=False
-    )
+    old_part_terminology_id: Mapped[int] = mapped_column(Integer, nullable=False)
     old_part_terminology_name: Mapped[str] = mapped_column(String(256), nullable=False)
-    new_part_terminology_id: Mapped[int] = mapped_column(
-        Integer, nullable=False
-    )
+    new_part_terminology_id: Mapped[int] = mapped_column(Integer, nullable=False)
     new_part_terminology_name: Mapped[str] = mapped_column(String(256), nullable=False)
     rev_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     note: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+
+    # Optional relationships for convenience
+    old_part_terminology: Mapped[Optional["Parts"]] = relationship(
+        "Parts",
+        primaryjoin="foreign(PartsSupersession.old_part_terminology_id) == Parts.part_terminology_id",
+        viewonly=True,
+    )
+    new_part_terminology: Mapped[Optional["Parts"]] = relationship(
+        "Parts",
+        primaryjoin="foreign(PartsSupersession.new_part_terminology_id) == Parts.part_terminology_id",
+        viewonly=True,
+    )
 
     def __repr__(self) -> str:
         return f"<PartsSupersession {self.parts_supersession_id}: {self.old_part_terminology_id} -> {self.new_part_terminology_id}>"

@@ -15,11 +15,26 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.autocare.importers.flexible_importer import FlexibleImporter, SourceFormat, detect_source_format
+from app.domains.autocare.importers.flexible_importer import (
+    FlexibleImporter,
+    SourceFormat,
+    detect_source_format,
+)
 from app.domains.autocare.pcdb.models import (
-    Alias, Category, CodeMaster, Parts, PartsDescription,
-    PartCategory, PartPosition, PartsSupersession, PCdbVersion,
-    Position, SubCategory, parts_to_alias, parts_to_use, Use
+    Alias,
+    Category,
+    CodeMaster,
+    Parts,
+    PartsDescription,
+    PartCategory,
+    PartPosition,
+    PartsSupersession,
+    PCdbVersion,
+    Position,
+    SubCategory,
+    parts_to_alias,
+    parts_to_use,
+    Use,
 )
 from app.logging import get_logger
 
@@ -34,7 +49,7 @@ class PCdbImporter(FlexibleImporter):
         db: AsyncSession,
         source_path: Path,
         source_format: Optional[SourceFormat] = None,
-        batch_size: int = 1000
+        batch_size: int = 1000,
     ):
         """
         Initialize PCdbImporter.
@@ -80,21 +95,23 @@ class PCdbImporter(FlexibleImporter):
         self._register_mappings()
 
         # Define import order for referential integrity
-        self.set_import_order([
-            f"Categories{file_ext}",
-            f"Subcategories{file_ext}",
-            f"Positions{file_ext}",
-            f"PartsDescription{file_ext}",
-            f"Parts{file_ext}",
-            f"PartCategory{file_ext}",
-            f"PartPosition{file_ext}",
-            f"PartsSupersession{file_ext}",
-            f"Alias{file_ext}",
-            f"Use{file_ext}",
-            f"PartsToAlias{file_ext}",
-            f"PartsToUse{file_ext}",
-            f"CodeMaster{file_ext}",
-        ])
+        self.set_import_order(
+            [
+                f"Categories{file_ext}",
+                f"Subcategories{file_ext}",
+                f"Positions{file_ext}",
+                f"PartsDescription{file_ext}",
+                f"Parts{file_ext}",
+                f"PartCategory{file_ext}",
+                f"PartPosition{file_ext}",
+                f"PartsSupersession{file_ext}",
+                f"Alias{file_ext}",
+                f"Use{file_ext}",
+                f"PartsToAlias{file_ext}",
+                f"PartsToUse{file_ext}",
+                f"CodeMaster{file_ext}",
+            ]
+        )
 
     def _register_mappings(self) -> None:
         """Register all table mappings for PCdb imports."""
@@ -171,11 +188,19 @@ class PCdbImporter(FlexibleImporter):
             transformers={
                 "part_terminology_id": lambda x: int(x) if x else None,
                 "parts_description_id": lambda x: int(x) if x else None,
-                "rev_date": lambda x: datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None,
+                "rev_date": lambda x: (
+                    datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None
+                ),
             },
             validators={
-                "part_terminology_id": lambda x: (x is not None, "Part terminology ID is required"),
-                "part_terminology_name": lambda x: (bool(x and x.strip()), "Part terminology name is required"),
+                "part_terminology_id": lambda x: (
+                    x is not None,
+                    "Part terminology ID is required",
+                ),
+                "part_terminology_name": lambda x: (
+                    bool(x and x.strip()),
+                    "Part terminology name is required",
+                ),
             },
         )
 
@@ -213,7 +238,9 @@ class PCdbImporter(FlexibleImporter):
                 "part_position_id": lambda x: int(x) if x else None,
                 "part_terminology_id": lambda x: int(x) if x else None,
                 "position_id": lambda x: int(x) if x else None,
-                "rev_date": lambda x: datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None,
+                "rev_date": lambda x: (
+                    datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None
+                ),
             },
         )
 
@@ -235,7 +262,9 @@ class PCdbImporter(FlexibleImporter):
                 "parts_supersession_id": lambda x: int(x) if x else None,
                 "old_part_terminology_id": lambda x: int(x) if x else None,
                 "new_part_terminology_id": lambda x: int(x) if x else None,
-                "rev_date": lambda x: datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None,
+                "rev_date": lambda x: (
+                    datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None
+                ),
             },
         )
 
@@ -314,6 +343,8 @@ class PCdbImporter(FlexibleImporter):
                 "category_id": lambda x: int(x) if x else None,
                 "subcategory_id": lambda x: int(x) if x else None,
                 "position_id": lambda x: int(x) if x else None,
-                "rev_date": lambda x: datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None,
+                "rev_date": lambda x: (
+                    datetime.strptime(x, "%Y-%m-%d").date() if x and x.strip() else None
+                ),
             },
         )

@@ -39,6 +39,7 @@ class SyncEntityType(str, Enum):
     MANUFACTURER = "manufacturer"
     CUSTOMER = "customer"
     ORDER = "order"
+    AUTOCARE = "autocare"
 
 
 class SyncStatus(str, Enum):
@@ -57,6 +58,7 @@ class SyncSource(str, Enum):
     AS400 = "as400"
     FILEMAKER = "filemaker"
     API = "api"
+    FILE = "file"
     EXTERNAL = "external"
 
 

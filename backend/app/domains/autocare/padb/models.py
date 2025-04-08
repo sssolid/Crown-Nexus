@@ -277,7 +277,10 @@ class Style(Base):
 
     # Relationships
     part_attribute_styles: Mapped[List["PartAttributeStyle"]] = relationship(
-        "PartAttributeStyle", back_populates="style"
+        "PartAttributeStyle",
+        primaryjoin="foreign(PartAttributeStyle.style_id) == Style.style_id",
+        back_populates="style",
+        viewonly=True,
     )
     part_type_styles: Mapped[List["PartTypeStyle"]] = relationship(
         "PartTypeStyle", back_populates="style"
@@ -296,16 +299,17 @@ class PartAttributeStyle(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    style_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("padb.style.style_id"), nullable=True
-    )
+    style_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     papt_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("padb.part_attribute_assignment.papt_id"), nullable=True
     )
 
     # Relationships
-    style: Mapped["Style"] = relationship(
-        "Style", back_populates="part_attribute_styles"
+    style: Mapped[Optional["Style"]] = relationship(
+        "Style",
+        primaryjoin="foreign(PartAttributeStyle.style_id) == Style.style_id",
+        back_populates="part_attribute_styles",
+        viewonly=True,
     )
     attribute_assignment: Mapped["PartAttributeAssignment"] = relationship(
         "PartAttributeAssignment", back_populates="style"

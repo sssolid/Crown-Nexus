@@ -1052,7 +1052,7 @@ import { useAuthStore } from '@/stores/auth';
 import mediaService from '@/services/media';
 import productService from '@/services/product';
 import { Media } from '@/types/media';
-import { Product } from '@/types/product';
+import {DescriptionType, Product} from '@/types/product';
 import { formatDate, formatDateTime, formatFileSize } from '@/utils/formatters';
 import { notificationService } from '@/utils/notification';
 
@@ -1433,12 +1433,13 @@ export default defineComponent({
     const fetchProductOptions = async () => {
       try {
         const response = await productService.getProducts({
-          page_size: 100 // Get up to 100 products for dropdown
+          page_size: 100, // Get up to 100 products for dropdown
+          sort_by: 'part_number'
         });
 
         productOptions.value = response.items.map(product => ({
           id: product.id,
-          name: `${product.sku} - ${product.name}`
+          name: `${product.part_number} - ${product.descriptions.find(description => description.description_type === DescriptionType.STANDARD)?.description}`
         }));
       } catch (error) {
         console.error('Error fetching product options:', error);

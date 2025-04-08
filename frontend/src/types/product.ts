@@ -4,7 +4,13 @@ export enum DescriptionType {
   LONG = "Long",
   KEYWORDS = "Keywords",
   SLANG = "Slang",
-  NOTES = "Notes"
+  NOTES = "Notes",
+  STANDARD = "Standard",
+  LONG_ALL_MODELS = "Long_AllModels",
+  LONG_JEEP_ONLY = "Long_JeepOnly",
+  EXTENDED = "Extended",
+  EXTENDED_NON_JEEP = "Extended_NonJeep",
+  EXTENDED_UNLIMITED = "Extended_Unlimited",
 }
 
 export enum MarketingType {

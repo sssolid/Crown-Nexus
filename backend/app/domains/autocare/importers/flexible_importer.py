@@ -16,7 +16,21 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, Generic, Iterator, List, Optional, Protocol, Set, Type, TypeVar, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterator,
+    List,
+    Optional,
+    Protocol,
+    Set,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,6 +46,7 @@ T = TypeVar("T", bound=Base)
 
 class SourceFormat(str, Enum):
     """Source data formats."""
+
     PIPE = "pipe"
     JSON = "json"
     # Can be extended with other formats like:
@@ -136,7 +151,9 @@ class FileReader(DataSourceReader):
 class PipeFileReader(FileReader):
     """Reader for pipe-delimited files."""
 
-    def __init__(self, source_path: Path, encoding: str = "utf-8", delimiter: str = "|"):
+    def __init__(
+        self, source_path: Path, encoding: str = "utf-8", delimiter: str = "|"
+    ):
         """
         Initialize PipeFileReader.
 
@@ -230,7 +247,9 @@ class JsonFileReader(FileReader):
                 elif isinstance(version_data, str):
                     version_str = version_data
                 else:
-                    raise ValueError(f"Unexpected version data format: {type(version_data)}")
+                    raise ValueError(
+                        f"Unexpected version data format: {type(version_data)}"
+                    )
 
                 return version_str
             except json.JSONDecodeError as e:
@@ -269,7 +288,9 @@ class JsonFileReader(FileReader):
                         # Single object or other structure
                         yield data
                 else:
-                    logger.warning(f"Unexpected JSON data format in {source_name}: {type(data)}")
+                    logger.warning(
+                        f"Unexpected JSON data format in {source_name}: {type(data)}"
+                    )
             except json.JSONDecodeError as e:
                 logger.error(f"Invalid JSON in {source_name}: {str(e)}")
                 raise ValueError(f"Invalid JSON in {source_name}: {str(e)}")
@@ -443,11 +464,16 @@ class FlexibleImporter(Generic[T]):
         # Validate that all sources in order exist in mappings
         unknown_sources = []
         for source_name in order:
-            if source_name not in self.table_mappings and source_name not in self.many_to_many_tables:
+            if (
+                source_name not in self.table_mappings
+                and source_name not in self.many_to_many_tables
+            ):
                 unknown_sources.append(source_name)
 
         if unknown_sources:
-            raise ValueError(f"Unknown sources in import order: {', '.join(unknown_sources)}")
+            raise ValueError(
+                f"Unknown sources in import order: {', '.join(unknown_sources)}"
+            )
 
         # Make sure all mapped sources are included in order
         missing_sources = []
@@ -460,7 +486,9 @@ class FlexibleImporter(Generic[T]):
                 missing_sources.append(source_name)
 
         if missing_sources:
-            raise ValueError(f"Sources missing from import order: {', '.join(missing_sources)}")
+            raise ValueError(
+                f"Sources missing from import order: {', '.join(missing_sources)}"
+            )
 
         self.import_order = order
 
@@ -484,9 +512,15 @@ class FlexibleImporter(Generic[T]):
             "start_time": datetime.now().isoformat(),
         }
 
+        transaction = None
+
         try:
             # Start transaction
-            transaction = await self.db.begin()
+            if not self.db.in_transaction():
+                logger.debug("Starting a new transaction for import.")
+                transaction = await self.db.begin()
+            else:
+                logger.debug("Using existing transaction from session.")
 
             # Create version record
             version_info = await self._import_version()
@@ -495,13 +529,17 @@ class FlexibleImporter(Generic[T]):
             else:
                 stats["success"] = False
                 stats["errors"].append(version_info["message"])
-                await transaction.rollback()
+                if transaction:
+                    await transaction.rollback()
+                stats["end_time"] = datetime.now().isoformat()
                 return stats
 
             # Import tables in order
             if not self.import_order:
                 # If no explicit order is set, use all mappings
-                self.import_order = list(self.table_mappings.keys()) + list(self.many_to_many_tables.keys())
+                self.import_order = list(self.table_mappings.keys()) + list(
+                    self.many_to_many_tables.keys()
+                )
 
             for source_name in self.import_order:
                 try:
@@ -515,7 +553,9 @@ class FlexibleImporter(Generic[T]):
                     elif source_name in self.many_to_many_tables:
                         # Many-to-many table
                         mapping = self.many_to_many_tables[source_name]
-                        count = await self._import_many_to_many_table(source_name, mapping)
+                        count = await self._import_many_to_many_table(
+                            source_name, mapping
+                        )
                         stats["processed_files"] += 1
                         stats["items_imported"][source_name] = count
 
@@ -523,11 +563,13 @@ class FlexibleImporter(Generic[T]):
                     logger.error(f"Error importing {source_name}: {str(e)}")
                     stats["errors"].append(f"Error importing {source_name}: {str(e)}")
                     stats["success"] = False
-                    await transaction.rollback()
+                    if transaction:
+                        await transaction.rollback()
                     return stats
 
             # Commit transaction
-            await transaction.commit()
+            if transaction:
+                await transaction.commit()
 
             stats["end_time"] = datetime.now().isoformat()
             return stats
@@ -538,7 +580,8 @@ class FlexibleImporter(Generic[T]):
             stats["success"] = False
             stats["errors"].append(f"Error in import process: {str(e)}")
             try:
-                await transaction.rollback()
+                if transaction:
+                    await transaction.rollback()
             except Exception as rollback_error:
                 logger.error(f"Error rolling back transaction: {str(rollback_error)}")
 
@@ -560,15 +603,29 @@ class FlexibleImporter(Generic[T]):
                 version_date = datetime.strptime(version_str, "%Y-%m-%d")
             except ValueError:
                 # Try different date formats if the standard one fails
-                try:
-                    version_date = datetime.strptime(version_str, "%m/%d/%Y")
-                except ValueError:
-                    logger.warning(f"Unrecognized date format: {version_str}. Using current date.")
+                date_formats = [
+                    "%Y-%m-%d",  # 2025-02-27
+                    "%m/%d/%Y",  # 02/27/2025
+                    "%Y-%m-%dT%H:%M:%S",  # 2025-02-27T00:00:00
+                ]
+
+                for fmt in date_formats:
+                    try:
+                        version_date = datetime.strptime(version_str, fmt)
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    logger.warning(
+                        f"Unrecognized date format: {version_str}. Using current date."
+                    )
                     version_date = datetime.now()
 
             # Update existing version records
             await self.db.execute(
-                text(f"UPDATE {self.schema_name}.{self.version_class.__tablename__} SET is_current = false")
+                text(
+                    f"UPDATE {self.schema_name}.{self.version_class.__tablename__} SET is_current = false"
+                )
             )
 
             # Create new version record
@@ -609,7 +666,11 @@ class FlexibleImporter(Generic[T]):
 
         if count > 0:
             logger.info(f"Clearing existing data from {table_name}")
-            await self.db.execute(text(f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"))
+            await self.db.execute(
+                text(
+                    f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"
+                )
+            )
 
         # Initialize tracking
         total_count = 0
@@ -643,23 +704,35 @@ class FlexibleImporter(Generic[T]):
                         try:
                             value = transformers[model_field](value)
                         except Exception as e:
-                            logger.error(f"Error transforming field {model_field} in {source_name}: {str(e)}")
-                            validation_errors.append(f"Error transforming field {model_field}: {str(e)}")
+                            logger.error(
+                                f"Error transforming field {model_field} in {source_name}: {str(e)}"
+                            )
+                            validation_errors.append(
+                                f"Error transforming field {model_field}: {str(e)}"
+                            )
 
                     # Apply validator if one exists
                     if model_field in validators:
                         try:
                             valid, error = validators[model_field](value)
                             if not valid:
-                                validation_errors.append(f"Validation error for {model_field}: {error}")
+                                validation_errors.append(
+                                    f"Validation error for {model_field}: {error}"
+                                )
                         except Exception as e:
-                            logger.error(f"Error validating field {model_field} in {source_name}: {str(e)}")
-                            validation_errors.append(f"Error validating field {model_field}: {str(e)}")
+                            logger.error(
+                                f"Error validating field {model_field} in {source_name}: {str(e)}"
+                            )
+                            validation_errors.append(
+                                f"Error validating field {model_field}: {str(e)}"
+                            )
 
                     obj_data[model_field] = value
 
                 if validation_errors:
-                    logger.warning(f"Validation errors in {source_name}, skipping row: {', '.join(validation_errors)}")
+                    logger.warning(
+                        f"Validation errors in {source_name}, skipping row: {', '.join(validation_errors)}"
+                    )
                     continue
 
                 # Create model instance
@@ -695,7 +768,9 @@ class FlexibleImporter(Generic[T]):
         logger.info(f"Imported {total_count} records to {table_name}")
         return total_count
 
-    async def _import_many_to_many_table(self, source_name: str, mapping: Dict[str, Any]) -> int:
+    async def _import_many_to_many_table(
+        self, source_name: str, mapping: Dict[str, Any]
+    ) -> int:
         """
         Import data from a source to a many-to-many table.
 
@@ -717,7 +792,11 @@ class FlexibleImporter(Generic[T]):
 
         if count > 0:
             logger.info(f"Clearing existing data from {table_name}")
-            await self.db.execute(text(f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"))
+            await self.db.execute(
+                text(
+                    f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"
+                )
+            )
 
         # Initialize tracking
         total_count = 0
@@ -748,7 +827,9 @@ class FlexibleImporter(Generic[T]):
                         try:
                             value = transformers[db_field](value)
                         except Exception as e:
-                            logger.error(f"Error transforming field {db_field} in {source_name}: {str(e)}")
+                            logger.error(
+                                f"Error transforming field {db_field} in {source_name}: {str(e)}"
+                            )
                             continue
 
                     row_data[db_field] = value
@@ -765,7 +846,8 @@ class FlexibleImporter(Generic[T]):
                         field_list = ", ".join(fields)
 
                         query = text(
-                            f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})")
+                            f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})"
+                        )
 
                         for data in batch:
                             await self.db.execute(query, data)
@@ -778,7 +860,9 @@ class FlexibleImporter(Generic[T]):
 
                         logger.debug(f"Imported {total_count} records to {table_name}")
                     except Exception as e:
-                        logger.error(f"Error inserting batch into {table_name}: {str(e)}")
+                        logger.error(
+                            f"Error inserting batch into {table_name}: {str(e)}"
+                        )
                         raise
 
         except Exception as e:
@@ -793,7 +877,9 @@ class FlexibleImporter(Generic[T]):
                 placeholders = ", ".join([f":{field}" for field in fields])
                 field_list = ", ".join(fields)
 
-                query = text(f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})")
+                query = text(
+                    f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})"
+                )
 
                 for data in batch:
                     await self.db.execute(query, data)

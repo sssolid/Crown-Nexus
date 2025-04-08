@@ -80,9 +80,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Alembic
-alembic/versions/*.py
 !alembic/versions/.gitkeep
-!alembic/versions/__init__.py
 
 # Docker
 .dockerignore

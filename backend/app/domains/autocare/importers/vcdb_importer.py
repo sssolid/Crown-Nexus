@@ -14,19 +14,79 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.autocare.importers.flexible_importer import FlexibleImporter, SourceFormat, detect_source_format
+from app.domains.autocare.importers.flexible_importer import (
+    FlexibleImporter,
+    SourceFormat,
+    detect_source_format,
+)
 from app.domains.autocare.vcdb.models import (
-    Make, Year, Model, VehicleType, VehicleTypeGroup, SubModel,
-    Region, BaseVehicle, Vehicle, DriveType, BrakeType, BrakeSystem,
-    BrakeABS, BrakeConfig, BodyType, BodyNumDoors, BodyStyleConfig,
-    EngineBlock, EngineBoreStroke, EngineBase, Aspiration, FuelType,
-    CylinderHeadType, FuelDeliveryType, FuelDeliverySubType, FuelSystemControlType,
-    FuelSystemDesign, FuelDeliveryConfig, EngineDesignation, EngineVIN, EngineVersion,
-    Valves, Mfr, IgnitionSystemType, PowerOutput, EngineConfig,
-    TransmissionType, TransmissionNumSpeeds, TransmissionControlType, TransmissionBase,
-    TransmissionMfrCode, ElecControlled, Transmission, WheelBase, VCdbVersion,
-    BedType, BedLength, BedConfig, MfrBodyCode, SpringType, SpringTypeConfig,
-    SteeringType, SteeringSystem, SteeringConfig, PublicationStage
+    Make,
+    Year,
+    Model,
+    VehicleType,
+    VehicleTypeGroup,
+    SubModel,
+    Region,
+    BaseVehicle,
+    Vehicle,
+    DriveType,
+    BrakeType,
+    BrakeSystem,
+    BrakeABS,
+    BrakeConfig,
+    BodyType,
+    BodyNumDoors,
+    BodyStyleConfig,
+    EngineBlock,
+    EngineBoreStroke,
+    EngineBase,
+    EngineBase2,
+    Aspiration,
+    FuelType,
+    CylinderHeadType,
+    FuelDeliveryType,
+    FuelDeliverySubType,
+    FuelSystemControlType,
+    FuelSystemDesign,
+    FuelDeliveryConfig,
+    EngineDesignation,
+    EngineVIN,
+    EngineVersion,
+    Valves,
+    Mfr,
+    IgnitionSystemType,
+    PowerOutput,
+    EngineConfig,
+    EngineConfig2,
+    TransmissionType,
+    TransmissionNumSpeeds,
+    TransmissionControlType,
+    TransmissionBase,
+    TransmissionMfrCode,
+    ElecControlled,
+    Transmission,
+    WheelBase,
+    VCdbVersion,
+    BedType,
+    BedLength,
+    BedConfig,
+    MfrBodyCode,
+    SpringType,
+    SpringTypeConfig,
+    SteeringType,
+    SteeringSystem,
+    SteeringConfig,
+    PublicationStage,
+    VehicleToDriveType,
+    VehicleToBrakeConfig,
+    VehicleToBedConfig,
+    VehicleToBodyStyleConfig,
+    VehicleToMfrBodyCode,
+    VehicleToEngineConfig,
+    VehicleToSpringTypeConfig,
+    VehicleToSteeringConfig,
+    VehicleToTransmission,
+    VehicleToWheelBase,
 )
 from app.logging import get_logger
 
@@ -41,7 +101,7 @@ class VCdbImporter(FlexibleImporter):
         db: AsyncSession,
         source_path: Path,
         source_format: Optional[SourceFormat] = None,
-        batch_size: int = 1000
+        batch_size: int = 1000,
     ):
         """
         Initialize VCdbImporter.
@@ -87,72 +147,76 @@ class VCdbImporter(FlexibleImporter):
         self._register_mappings()
 
         # Define import order for referential integrity
-        self.set_import_order([
-            f"Year{file_ext}",
-            f"VehicleTypeGroup{file_ext}",
-            f"VehicleType{file_ext}",
-            f"Make{file_ext}",
-            f"Model{file_ext}",
-            f"SubModel{file_ext}",
-            f"Region{file_ext}",
-            f"PublicationStage{file_ext}",
-            f"BaseVehicle{file_ext}",
-            f"Vehicle{file_ext}",
-            f"DriveType{file_ext}",
-            f"BrakeType{file_ext}",
-            f"BrakeSystem{file_ext}",
-            f"BrakeABS{file_ext}",
-            f"BrakeConfig{file_ext}",
-            f"BedType{file_ext}",
-            f"BedLength{file_ext}",
-            f"BedConfig{file_ext}",
-            f"BodyType{file_ext}",
-            f"BodyNumDoors{file_ext}",
-            f"BodyStyleConfig{file_ext}",
-            f"MfrBodyCode{file_ext}",
-            f"EngineBlock{file_ext}",
-            f"EngineBoreStroke{file_ext}",
-            f"Mfr{file_ext}",
-            f"EngineBase{file_ext}",
-            f"Aspiration{file_ext}",
-            f"FuelType{file_ext}",
-            f"CylinderHeadType{file_ext}",
-            f"FuelDeliveryType{file_ext}",
-            f"FuelDeliverySubType{file_ext}",
-            f"FuelSystemControlType{file_ext}",
-            f"FuelSystemDesign{file_ext}",
-            f"FuelDeliveryConfig{file_ext}",
-            f"EngineDesignation{file_ext}",
-            f"EngineVIN{file_ext}",
-            f"EngineVersion{file_ext}",
-            f"Valves{file_ext}",
-            f"IgnitionSystemType{file_ext}",
-            f"PowerOutput{file_ext}",
-            f"EngineConfig{file_ext}",
-            f"TransmissionType{file_ext}",
-            f"TransmissionNumSpeeds{file_ext}",
-            f"TransmissionControlType{file_ext}",
-            f"TransmissionBase{file_ext}",
-            f"TransmissionMfrCode{file_ext}",
-            f"ElecControlled{file_ext}",
-            f"Transmission{file_ext}",
-            f"WheelBase{file_ext}",
-            f"SpringType{file_ext}",
-            f"SpringTypeConfig{file_ext}",
-            f"SteeringType{file_ext}",
-            f"SteeringSystem{file_ext}",
-            f"SteeringConfig{file_ext}",
-            f"VehicleToDriveType{file_ext}",
-            f"VehicleToBrakeConfig{file_ext}",
-            f"VehicleToBedConfig{file_ext}",
-            f"VehicleToBodyStyleConfig{file_ext}",
-            f"VehicleToMfrBodyCode{file_ext}",
-            f"VehicleToEngineConfig{file_ext}",
-            f"VehicleToSpringTypeConfig{file_ext}",
-            f"VehicleToSteeringConfig{file_ext}",
-            f"VehicleToTransmission{file_ext}",
-            f"VehicleToWheelBase{file_ext}",
-        ])
+        self.set_import_order(
+            [
+                f"Year{file_ext}",
+                f"VehicleTypeGroup{file_ext}",
+                f"VehicleType{file_ext}",
+                f"Make{file_ext}",
+                f"Model{file_ext}",
+                f"SubModel{file_ext}",
+                f"Region{file_ext}",
+                f"PublicationStage{file_ext}",
+                f"BaseVehicle{file_ext}",
+                f"Vehicle{file_ext}",
+                f"DriveType{file_ext}",
+                f"BrakeType{file_ext}",
+                f"BrakeSystem{file_ext}",
+                f"BrakeABS{file_ext}",
+                f"BrakeConfig{file_ext}",
+                f"BedType{file_ext}",
+                f"BedLength{file_ext}",
+                f"BedConfig{file_ext}",
+                f"BodyType{file_ext}",
+                f"BodyNumDoors{file_ext}",
+                f"BodyStyleConfig{file_ext}",
+                f"MfrBodyCode{file_ext}",
+                f"EngineBlock{file_ext}",
+                f"EngineBoreStroke{file_ext}",
+                f"Mfr{file_ext}",
+                f"EngineBase{file_ext}",
+                f"EngineBase2{file_ext}",
+                f"Aspiration{file_ext}",
+                f"FuelType{file_ext}",
+                f"CylinderHeadType{file_ext}",
+                f"FuelDeliveryType{file_ext}",
+                f"FuelDeliverySubType{file_ext}",
+                f"FuelSystemControlType{file_ext}",
+                f"FuelSystemDesign{file_ext}",
+                f"FuelDeliveryConfig{file_ext}",
+                f"EngineDesignation{file_ext}",
+                f"EngineVIN{file_ext}",
+                f"EngineVersion{file_ext}",
+                f"Valves{file_ext}",
+                f"IgnitionSystemType{file_ext}",
+                f"PowerOutput{file_ext}",
+                f"EngineConfig{file_ext}",
+                f"EngineConfig2{file_ext}",
+                f"TransmissionType{file_ext}",
+                f"TransmissionNumSpeeds{file_ext}",
+                f"TransmissionControlType{file_ext}",
+                f"TransmissionBase{file_ext}",
+                f"TransmissionMfrCode{file_ext}",
+                f"ElecControlled{file_ext}",
+                f"Transmission{file_ext}",
+                f"WheelBase{file_ext}",
+                f"SpringType{file_ext}",
+                f"SpringTypeConfig{file_ext}",
+                f"SteeringType{file_ext}",
+                f"SteeringSystem{file_ext}",
+                f"SteeringConfig{file_ext}",
+                f"VehicleToDriveType{file_ext}",
+                f"VehicleToBrakeConfig{file_ext}",
+                f"VehicleToBedConfig{file_ext}",
+                f"VehicleToBodyStyleConfig{file_ext}",
+                f"VehicleToMfrBodyCode{file_ext}",
+                f"VehicleToEngineConfig{file_ext}",
+                f"VehicleToSpringTypeConfig{file_ext}",
+                f"VehicleToSteeringConfig{file_ext}",
+                f"VehicleToTransmission{file_ext}",
+                f"VehicleToWheelBase{file_ext}",
+            ]
+        )
 
     def _register_mappings(self) -> None:
         """Register all table mappings for VCdb imports."""
@@ -189,13 +253,11 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Year{file_ext}",
             model_class=Year,
             field_mapping={
-                "year_id": "YearId",
-                "year": "YearName",
+                "year_id": "YearID",
             },
             primary_key="year_id",
             transformers={
                 "year_id": lambda x: int(x) if x else None,
-                "year": lambda x: int(x) if x else None,
             },
         )
 
@@ -204,7 +266,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"VehicleTypeGroup{file_ext}",
             model_class=VehicleTypeGroup,
             field_mapping={
-                "vehicle_type_group_id": "VehicleTypeGroupId",
+                "vehicle_type_group_id": "VehicleTypeGroupID",
                 "name": "VehicleTypeGroupName",
             },
             primary_key="vehicle_type_group_id",
@@ -218,9 +280,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"VehicleType{file_ext}",
             model_class=VehicleType,
             field_mapping={
-                "vehicle_type_id": "VehicleTypeId",
+                "vehicle_type_id": "VehicleTypeID",
                 "name": "VehicleTypeName",
-                "vehicle_type_group_id": "VehicleTypeGroupId",
+                "vehicle_type_group_id": "VehicleTypeGroupID",
             },
             primary_key="vehicle_type_id",
             transformers={
@@ -234,7 +296,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Make{file_ext}",
             model_class=Make,
             field_mapping={
-                "make_id": "MakeId",
+                "make_id": "MakeID",
                 "name": "MakeName",
             },
             primary_key="make_id",
@@ -248,9 +310,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Model{file_ext}",
             model_class=Model,
             field_mapping={
-                "model_id": "ModelId",
+                "model_id": "ModelID",
                 "name": "ModelName",
-                "vehicle_type_id": "VehicleTypeId",
+                "vehicle_type_id": "VehicleTypeID",
             },
             primary_key="model_id",
             transformers={
@@ -264,7 +326,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"SubModel{file_ext}",
             model_class=SubModel,
             field_mapping={
-                "submodel_id": "SubModelId",
+                "submodel_id": "SubModelID",
                 "name": "SubModelName",
             },
             primary_key="submodel_id",
@@ -278,8 +340,8 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Region{file_ext}",
             model_class=Region,
             field_mapping={
-                "region_id": "RegionId",
-                "parent_id": "ParentId",
+                "region_id": "RegionID",
+                "parent_id": "ParentID",
                 "abbr": "RegionAbbr",
                 "name": "RegionName",
             },
@@ -295,7 +357,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"PublicationStage{file_ext}",
             model_class=PublicationStage,
             field_mapping={
-                "publication_stage_id": "PublicationStageId",
+                "publication_stage_id": "PublicationStageID",
                 "name": "PublicationStageName",
             },
             primary_key="publication_stage_id",
@@ -309,10 +371,10 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BaseVehicle{file_ext}",
             model_class=BaseVehicle,
             field_mapping={
-                "base_vehicle_id": "BaseVehicleId",
-                "year_id": "YearId",
-                "make_id": "MakeId",
-                "model_id": "ModelId",
+                "base_vehicle_id": "BaseVehicleID",
+                "year_id": "YearID",
+                "make_id": "MakeID",
+                "model_id": "ModelID",
             },
             primary_key="base_vehicle_id",
             transformers={
@@ -328,12 +390,12 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Vehicle{file_ext}",
             model_class=Vehicle,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "base_vehicle_id": "BaseVehicleId",
-                "submodel_id": "SubModelId",
-                "region_id": "RegionId",
+                "vehicle_id": "VehicleID",
+                "base_vehicle_id": "BaseVehicleID",
+                "submodel_id": "SubmodelID",
+                "region_id": "RegionID",
                 "source": "Source",
-                "publication_stage_id": "PublicationStageId",
+                "publication_stage_id": "PublicationStageID",
                 "publication_stage_source": "PublicationStageSource",
                 "publication_stage_date": "PublicationStageDate",
             },
@@ -343,10 +405,17 @@ class VCdbImporter(FlexibleImporter):
                 "base_vehicle_id": lambda x: int(x) if x else None,
                 "submodel_id": lambda x: int(x) if x else None,
                 "region_id": lambda x: int(x) if x else None,
-                "publication_stage_id": lambda x: int(x) if x else 4,  # Default to "Production"
-                "publication_stage_date": lambda x: datetime.strptime(x, "%Y%m%d").date()
-                if x and x.strip() else datetime.now().date(),
-                "publication_stage_source": lambda x: x if x and x.strip() else "DataLoad",
+                "publication_stage_id": lambda x: (
+                    int(x) if x else 4
+                ),  # Default to "Production"
+                "publication_stage_date": lambda x: (
+                    datetime.strptime(x, "%Y-%m-%dT%H:%M:%S").date()
+                    if x and x.strip()
+                    else datetime.now().date()
+                ),
+                "publication_stage_source": lambda x: (
+                    x if x and x.strip() else "DataLoad"
+                ),
             },
         )
 
@@ -362,7 +431,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"DriveType{file_ext}",
             model_class=DriveType,
             field_mapping={
-                "drive_type_id": "DriveTypeId",
+                "drive_type_id": "DriveTypeID",
                 "name": "DriveTypeName",
             },
             primary_key="drive_type_id",
@@ -376,7 +445,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BrakeType{file_ext}",
             model_class=BrakeType,
             field_mapping={
-                "brake_type_id": "BrakeTypeId",
+                "brake_type_id": "BrakeTypeID",
                 "name": "BrakeTypeName",
             },
             primary_key="brake_type_id",
@@ -390,7 +459,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BrakeSystem{file_ext}",
             model_class=BrakeSystem,
             field_mapping={
-                "brake_system_id": "BrakeSystemId",
+                "brake_system_id": "BrakeSystemID",
                 "name": "BrakeSystemName",
             },
             primary_key="brake_system_id",
@@ -404,7 +473,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BrakeABS{file_ext}",
             model_class=BrakeABS,
             field_mapping={
-                "brake_abs_id": "BrakeABSId",
+                "brake_abs_id": "BrakeABSID",
                 "name": "BrakeABSName",
             },
             primary_key="brake_abs_id",
@@ -418,11 +487,11 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BrakeConfig{file_ext}",
             model_class=BrakeConfig,
             field_mapping={
-                "brake_config_id": "BrakeConfigId",
-                "front_brake_type_id": "FrontBrakeTypeId",
-                "rear_brake_type_id": "RearBrakeTypeId",
-                "brake_system_id": "BrakeSystemId",
-                "brake_abs_id": "BrakeABSId",
+                "brake_config_id": "BrakeConfigID",
+                "front_brake_type_id": "FrontBrakeTypeID",
+                "rear_brake_type_id": "RearBrakeTypeID",
+                "brake_system_id": "BrakeSystemID",
+                "brake_abs_id": "BrakeABSID",
             },
             primary_key="brake_config_id",
             transformers={
@@ -439,7 +508,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BedType{file_ext}",
             model_class=BedType,
             field_mapping={
-                "bed_type_id": "BedTypeId",
+                "bed_type_id": "BedTypeID",
                 "name": "BedTypeName",
             },
             primary_key="bed_type_id",
@@ -453,7 +522,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BedLength{file_ext}",
             model_class=BedLength,
             field_mapping={
-                "bed_length_id": "BedLengthId",
+                "bed_length_id": "BedLengthID",
                 "length": "BedLength",
                 "length_metric": "BedLengthMetric",
             },
@@ -468,9 +537,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BedConfig{file_ext}",
             model_class=BedConfig,
             field_mapping={
-                "bed_config_id": "BedConfigId",
-                "bed_length_id": "BedLengthId",
-                "bed_type_id": "BedTypeId",
+                "bed_config_id": "BedConfigID",
+                "bed_length_id": "BedLengthID",
+                "bed_type_id": "BedTypeID",
             },
             primary_key="bed_config_id",
             transformers={
@@ -485,7 +554,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BodyType{file_ext}",
             model_class=BodyType,
             field_mapping={
-                "body_type_id": "BodyTypeId",
+                "body_type_id": "BodyTypeID",
                 "name": "BodyTypeName",
             },
             primary_key="body_type_id",
@@ -499,8 +568,8 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BodyNumDoors{file_ext}",
             model_class=BodyNumDoors,
             field_mapping={
-                "body_num_doors_id": "BodyNumDoorsId",
-                "num_doors": "NumDoors",
+                "body_num_doors_id": "BodyNumDoorsID",
+                "num_doors": "BodyNumDoors",
             },
             primary_key="body_num_doors_id",
             transformers={
@@ -513,9 +582,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"BodyStyleConfig{file_ext}",
             model_class=BodyStyleConfig,
             field_mapping={
-                "body_style_config_id": "BodyStyleConfigId",
-                "body_num_doors_id": "BodyNumDoorsId",
-                "body_type_id": "BodyTypeId",
+                "body_style_config_id": "BodyStyleConfigID",
+                "body_num_doors_id": "BodyNumDoorsID",
+                "body_type_id": "BodyTypeID",
             },
             primary_key="body_style_config_id",
             transformers={
@@ -530,8 +599,8 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"MfrBodyCode{file_ext}",
             model_class=MfrBodyCode,
             field_mapping={
-                "mfr_body_code_id": "MfrBodyCodeId",
-                "code": "MfrBodyCode",
+                "mfr_body_code_id": "MfrBodyCodeID",
+                "code": "MfrBodyCodeName",
             },
             primary_key="mfr_body_code_id",
             transformers={
@@ -551,7 +620,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineBlock{file_ext}",
             model_class=EngineBlock,
             field_mapping={
-                "engine_block_id": "EngineBlockId",
+                "engine_block_id": "EngineBlockID",
                 "liter": "Liter",
                 "cc": "CC",
                 "cid": "CID",
@@ -569,11 +638,11 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineBoreStroke{file_ext}",
             model_class=EngineBoreStroke,
             field_mapping={
-                "engine_bore_stroke_id": "EngineBoreStrokeId",
-                "bore_in": "BoreIn",
-                "bore_metric": "BoreMetric",
-                "stroke_in": "StrokeIn",
-                "stroke_metric": "StrokeMetric",
+                "engine_bore_stroke_id": "EngineBoreStrokeID",
+                "bore_in": "EngBoreIn",
+                "bore_metric": "EngBoreMetric",
+                "stroke_in": "EngStrokeIn",
+                "stroke_metric": "EngStrokeMetric",
             },
             primary_key="engine_bore_stroke_id",
             transformers={
@@ -586,7 +655,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Mfr{file_ext}",
             model_class=Mfr,
             field_mapping={
-                "mfr_id": "MfrId",
+                "mfr_id": "MfrID",
                 "name": "MfrName",
             },
             primary_key="mfr_id",
@@ -600,9 +669,31 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineBase{file_ext}",
             model_class=EngineBase,
             field_mapping={
-                "engine_base_id": "EngineBaseId",
-                "engine_block_id": "EngineBlockId",
-                "engine_bore_stroke_id": "EngineBoreStrokeId",
+                "engine_base_id": "EngineBaseID",
+                "liter": "Liter",
+                "cc": "CC",
+                "cid": "CID",
+                "cylinders": "Cylinders",
+                "block_type": "BlockType",
+                "eng_bore_in": "EngBoreIn",
+                "eng_bore_metric": "EngBoreMetric",
+                "eng_stroke_in": "EngStrokeIn",
+                "eng_stroke_metric": "EngStrokeMetric",
+            },
+            primary_key="engine_base_id",
+            transformers={
+                "engine_base_id": lambda x: int(x) if x else None,
+            },
+        )
+
+        # EngineBase2
+        self.register_table_mapping(
+            source_name=f"EngineBase2{file_ext}",
+            model_class=EngineBase2,
+            field_mapping={
+                "engine_base_id": "EngineBaseID",
+                "engine_block_id": "EngineBlockID",
+                "engine_bore_stroke_id": "EngineBoreStrokeID",
             },
             primary_key="engine_base_id",
             transformers={
@@ -617,7 +708,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Aspiration{file_ext}",
             model_class=Aspiration,
             field_mapping={
-                "aspiration_id": "AspirationId",
+                "aspiration_id": "AspirationID",
                 "name": "AspirationName",
             },
             primary_key="aspiration_id",
@@ -631,7 +722,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"FuelType{file_ext}",
             model_class=FuelType,
             field_mapping={
-                "fuel_type_id": "FuelTypeId",
+                "fuel_type_id": "FuelTypeID",
                 "name": "FuelTypeName",
             },
             primary_key="fuel_type_id",
@@ -645,7 +736,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"CylinderHeadType{file_ext}",
             model_class=CylinderHeadType,
             field_mapping={
-                "cylinder_head_type_id": "CylinderHeadTypeId",
+                "cylinder_head_type_id": "CylinderHeadTypeID",
                 "name": "CylinderHeadTypeName",
             },
             primary_key="cylinder_head_type_id",
@@ -659,7 +750,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"FuelDeliveryType{file_ext}",
             model_class=FuelDeliveryType,
             field_mapping={
-                "fuel_delivery_type_id": "FuelDeliveryTypeId",
+                "fuel_delivery_type_id": "FuelDeliveryTypeID",
                 "name": "FuelDeliveryTypeName",
             },
             primary_key="fuel_delivery_type_id",
@@ -673,7 +764,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"FuelDeliverySubType{file_ext}",
             model_class=FuelDeliverySubType,
             field_mapping={
-                "fuel_delivery_subtype_id": "FuelDeliverySubTypeId",
+                "fuel_delivery_subtype_id": "FuelDeliverySubTypeID",
                 "name": "FuelDeliverySubTypeName",
             },
             primary_key="fuel_delivery_subtype_id",
@@ -687,7 +778,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"FuelSystemControlType{file_ext}",
             model_class=FuelSystemControlType,
             field_mapping={
-                "fuel_system_control_type_id": "FuelSystemControlTypeId",
+                "fuel_system_control_type_id": "FuelSystemControlTypeID",
                 "name": "FuelSystemControlTypeName",
             },
             primary_key="fuel_system_control_type_id",
@@ -701,7 +792,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"FuelSystemDesign{file_ext}",
             model_class=FuelSystemDesign,
             field_mapping={
-                "fuel_system_design_id": "FuelSystemDesignId",
+                "fuel_system_design_id": "FuelSystemDesignID",
                 "name": "FuelSystemDesignName",
             },
             primary_key="fuel_system_design_id",
@@ -715,11 +806,11 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"FuelDeliveryConfig{file_ext}",
             model_class=FuelDeliveryConfig,
             field_mapping={
-                "fuel_delivery_config_id": "FuelDeliveryConfigId",
-                "fuel_delivery_type_id": "FuelDeliveryTypeId",
-                "fuel_delivery_subtype_id": "FuelDeliverySubTypeId",
-                "fuel_system_control_type_id": "FuelSystemControlTypeId",
-                "fuel_system_design_id": "FuelSystemDesignId",
+                "fuel_delivery_config_id": "FuelDeliveryConfigID",
+                "fuel_delivery_type_id": "FuelDeliveryTypeID",
+                "fuel_delivery_subtype_id": "FuelDeliverySubTypeID",
+                "fuel_system_control_type_id": "FuelSystemControlTypeID",
+                "fuel_system_design_id": "FuelSystemDesignID",
             },
             primary_key="fuel_delivery_config_id",
             transformers={
@@ -736,7 +827,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineDesignation{file_ext}",
             model_class=EngineDesignation,
             field_mapping={
-                "engine_designation_id": "EngineDesignationId",
+                "engine_designation_id": "EngineDesignationID",
                 "name": "EngineDesignationName",
             },
             primary_key="engine_designation_id",
@@ -750,8 +841,8 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineVIN{file_ext}",
             model_class=EngineVIN,
             field_mapping={
-                "engine_vin_id": "EngineVINId",
-                "code": "EngineVINCode",
+                "engine_vin_id": "EngineVINID",
+                "code": "EngineVINName",
             },
             primary_key="engine_vin_id",
             transformers={
@@ -764,7 +855,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineVersion{file_ext}",
             model_class=EngineVersion,
             field_mapping={
-                "engine_version_id": "EngineVersionId",
+                "engine_version_id": "EngineVersionID",
                 "version": "EngineVersion",
             },
             primary_key="engine_version_id",
@@ -778,7 +869,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Valves{file_ext}",
             model_class=Valves,
             field_mapping={
-                "valves_id": "ValvesId",
+                "valves_id": "ValvesID",
                 "valves_per_engine": "ValvesPerEngine",
             },
             primary_key="valves_id",
@@ -792,7 +883,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"IgnitionSystemType{file_ext}",
             model_class=IgnitionSystemType,
             field_mapping={
-                "ignition_system_type_id": "IgnitionSystemTypeId",
+                "ignition_system_type_id": "IgnitionSystemTypeID",
                 "name": "IgnitionSystemTypeName",
             },
             primary_key="ignition_system_type_id",
@@ -806,9 +897,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"PowerOutput{file_ext}",
             model_class=PowerOutput,
             field_mapping={
-                "power_output_id": "PowerOutputId",
-                "horsepower": "Horsepower",
-                "kilowatt": "Kilowatt",
+                "power_output_id": "PowerOutputID",
+                "horsepower": "HorsePower",
+                "kilowatt": "KilowattPower",
             },
             primary_key="power_output_id",
             transformers={
@@ -821,27 +912,68 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"EngineConfig{file_ext}",
             model_class=EngineConfig,
             field_mapping={
-                "engine_config_id": "EngineConfigId",
-                "engine_base_id": "EngineBaseId",
-                "engine_designation_id": "EngineDesignationId",
-                "engine_vin_id": "EngineVINId",
-                "valves_id": "ValvesId",
-                "fuel_delivery_config_id": "FuelDeliveryConfigId",
-                "aspiration_id": "AspirationId",
-                "cylinder_head_type_id": "CylinderHeadTypeId",
-                "fuel_type_id": "FuelTypeId",
-                "ignition_system_type_id": "IgnitionSystemTypeId",
-                "engine_mfr_id": "EngineMfrId",
-                "engine_version_id": "EngineVersionId",
-                "power_output_id": "PowerOutputId",
+                "engine_config_id": "EngineConfigID",
+                "engine_designation_id": "EngineDesignationID",
+                "engine_vin_id": "EngineVINID",
+                "valves_id": "ValvesID",
+                "engine_base_id": "EngineBaseID",
+                "fuel_delivery_config_id": "FuelDeliveryConfigID",
+                "aspiration_id": "AspirationID",
+                "cylinder_head_type_id": "CylinderHeadTypeID",
+                "fuel_type_id": "FuelTypeID",
+                "ignition_system_type_id": "IgnitionSystemTypeID",
+                "engine_mfr_id": "EngineMfrID",
+                "engine_version_id": "EngineVersionID",
+                "power_output_id": "PowerOutputID",
             },
             primary_key="engine_config_id",
             transformers={
                 "engine_config_id": lambda x: int(x) if x else None,
-                "engine_base_id": lambda x: int(x) if x else None,
                 "engine_designation_id": lambda x: int(x) if x else None,
                 "engine_vin_id": lambda x: int(x) if x else None,
                 "valves_id": lambda x: int(x) if x else None,
+                "engine_base_id": lambda x: int(x) if x else None,
+                "fuel_delivery_config_id": lambda x: int(x) if x else None,
+                "aspiration_id": lambda x: int(x) if x else None,
+                "cylinder_head_type_id": lambda x: int(x) if x else None,
+                "fuel_type_id": lambda x: int(x) if x else None,
+                "ignition_system_type_id": lambda x: int(x) if x else None,
+                "engine_mfr_id": lambda x: int(x) if x else None,
+                "engine_version_id": lambda x: int(x) if x else None,
+                "power_output_id": lambda x: int(x) if x else None,
+            },
+        )
+
+        # EngineConfig2
+        self.register_table_mapping(
+            source_name=f"EngineConfig2{file_ext}",
+            model_class=EngineConfig2,
+            field_mapping={
+                "engine_config_id": "EngineConfigID",
+                "engine_designation_id": "EngineDesignationID",
+                "engine_vin_id": "EngineVINID",
+                "valves_id": "ValvesID",
+                "engine_base_id": "EngineBaseID",
+                "engine_block_id": "EngineBlockID",
+                "engine_bore_stroke_id": "EngineBoreStrokeID",
+                "fuel_delivery_config_id": "FuelDeliveryConfigID",
+                "aspiration_id": "AspirationID",
+                "cylinder_head_type_id": "CylinderHeadTypeID",
+                "fuel_type_id": "FuelTypeID",
+                "ignition_system_type_id": "IgnitionSystemTypeID",
+                "engine_mfr_id": "EngineMfrID",
+                "engine_version_id": "EngineVersionID",
+                "power_output_id": "PowerOutputID",
+            },
+            primary_key="engine_config_id",
+            transformers={
+                "engine_config_id": lambda x: int(x) if x else None,
+                "engine_designation_id": lambda x: int(x) if x else None,
+                "engine_vin_id": lambda x: int(x) if x else None,
+                "valves_id": lambda x: int(x) if x else None,
+                "engine_base_id": lambda x: int(x) if x else None,
+                "engine_block_id": lambda x: int(x) if x else None,
+                "engine_bore_stroke_id": lambda x: int(x) if x else None,
                 "fuel_delivery_config_id": lambda x: int(x) if x else None,
                 "aspiration_id": lambda x: int(x) if x else None,
                 "cylinder_head_type_id": lambda x: int(x) if x else None,
@@ -865,7 +997,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"TransmissionType{file_ext}",
             model_class=TransmissionType,
             field_mapping={
-                "transmission_type_id": "TransmissionTypeId",
+                "transmission_type_id": "TransmissionTypeID",
                 "name": "TransmissionTypeName",
             },
             primary_key="transmission_type_id",
@@ -879,8 +1011,8 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"TransmissionNumSpeeds{file_ext}",
             model_class=TransmissionNumSpeeds,
             field_mapping={
-                "transmission_num_speeds_id": "TransmissionNumSpeedsId",
-                "num_speeds": "NumSpeeds",
+                "transmission_num_speeds_id": "TransmissionNumSpeedsID",
+                "num_speeds": "TransmissionNumSpeeds",
             },
             primary_key="transmission_num_speeds_id",
             transformers={
@@ -893,7 +1025,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"TransmissionControlType{file_ext}",
             model_class=TransmissionControlType,
             field_mapping={
-                "transmission_control_type_id": "TransmissionControlTypeId",
+                "transmission_control_type_id": "TransmissionControlTypeID",
                 "name": "TransmissionControlTypeName",
             },
             primary_key="transmission_control_type_id",
@@ -907,10 +1039,10 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"TransmissionBase{file_ext}",
             model_class=TransmissionBase,
             field_mapping={
-                "transmission_base_id": "TransmissionBaseId",
-                "transmission_type_id": "TransmissionTypeId",
-                "transmission_num_speeds_id": "TransmissionNumSpeedsId",
-                "transmission_control_type_id": "TransmissionControlTypeId",
+                "transmission_base_id": "TransmissionBaseID",
+                "transmission_type_id": "TransmissionTypeID",
+                "transmission_num_speeds_id": "TransmissionNumSpeedsID",
+                "transmission_control_type_id": "TransmissionControlTypeID",
             },
             primary_key="transmission_base_id",
             transformers={
@@ -926,7 +1058,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"TransmissionMfrCode{file_ext}",
             model_class=TransmissionMfrCode,
             field_mapping={
-                "transmission_mfr_code_id": "TransmissionMfrCodeId",
+                "transmission_mfr_code_id": "TransmissionMfrCodeID",
                 "code": "TransmissionMfrCode",
             },
             primary_key="transmission_mfr_code_id",
@@ -940,8 +1072,8 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"ElecControlled{file_ext}",
             model_class=ElecControlled,
             field_mapping={
-                "elec_controlled_id": "ElecControlledId",
-                "value": "ElecControlledValue",
+                "elec_controlled_id": "ElecControlledID",
+                "value": "ElecControlled",
             },
             primary_key="elec_controlled_id",
             transformers={
@@ -954,11 +1086,11 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"Transmission{file_ext}",
             model_class=Transmission,
             field_mapping={
-                "transmission_id": "TransmissionId",
-                "transmission_base_id": "TransmissionBaseId",
-                "transmission_mfr_code_id": "TransmissionMfrCodeId",
-                "elec_controlled_id": "ElecControlledId",
-                "transmission_mfr_id": "TransmissionMfrId",
+                "transmission_id": "TransmissionID",
+                "transmission_base_id": "TransmissionBaseID",
+                "transmission_mfr_code_id": "TransmissionMfrCodeID",
+                "elec_controlled_id": "TransmissionElecControlledID",
+                "transmission_mfr_id": "TransmissionMfrID",
             },
             primary_key="transmission_id",
             transformers={
@@ -982,7 +1114,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"WheelBase{file_ext}",
             model_class=WheelBase,
             field_mapping={
-                "wheel_base_id": "WheelBaseId",
+                "wheel_base_id": "WheelBaseID",
                 "wheel_base": "WheelBase",
                 "wheel_base_metric": "WheelBaseMetric",
             },
@@ -997,7 +1129,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"SpringType{file_ext}",
             model_class=SpringType,
             field_mapping={
-                "spring_type_id": "SpringTypeId",
+                "spring_type_id": "SpringTypeID",
                 "name": "SpringTypeName",
             },
             primary_key="spring_type_id",
@@ -1011,9 +1143,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"SpringTypeConfig{file_ext}",
             model_class=SpringTypeConfig,
             field_mapping={
-                "spring_type_config_id": "SpringTypeConfigId",
-                "front_spring_type_id": "FrontSpringTypeId",
-                "rear_spring_type_id": "RearSpringTypeId",
+                "spring_type_config_id": "SpringTypeConfigID",
+                "front_spring_type_id": "FrontSpringTypeID",
+                "rear_spring_type_id": "RearSpringTypeID",
             },
             primary_key="spring_type_config_id",
             transformers={
@@ -1028,7 +1160,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"SteeringType{file_ext}",
             model_class=SteeringType,
             field_mapping={
-                "steering_type_id": "SteeringTypeId",
+                "steering_type_id": "SteeringTypeID",
                 "name": "SteeringTypeName",
             },
             primary_key="steering_type_id",
@@ -1042,7 +1174,7 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"SteeringSystem{file_ext}",
             model_class=SteeringSystem,
             field_mapping={
-                "steering_system_id": "SteeringSystemId",
+                "steering_system_id": "SteeringSystemID",
                 "name": "SteeringSystemName",
             },
             primary_key="steering_system_id",
@@ -1056,9 +1188,9 @@ class VCdbImporter(FlexibleImporter):
             source_name=f"SteeringConfig{file_ext}",
             model_class=SteeringConfig,
             field_mapping={
-                "steering_config_id": "SteeringConfigId",
-                "steering_type_id": "SteeringTypeId",
-                "steering_system_id": "SteeringSystemId",
+                "steering_config_id": "SteeringConfigID",
+                "steering_type_id": "SteeringTypeID",
+                "steering_system_id": "SteeringSystemID",
             },
             primary_key="steering_config_id",
             transformers={
@@ -1076,150 +1208,180 @@ class VCdbImporter(FlexibleImporter):
             file_ext: File extension to use
         """
         # VehicleToDriveType
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToDriveType{file_ext}",
-            table_name="vehicle_to_drive_type",
+            model_class=VehicleToDriveType,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "drive_type_id": "DriveTypeId",
+                "vehicle_to_drive_type_id": "VehicleToDriveTypeID",
+                "vehicle_id": "VehicleID",
+                "drive_type_id": "DriveTypeID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_drive_type_id",
             transformers={
+                "vehicle_to_drive_type_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "drive_type_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToBrakeConfig
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToBrakeConfig{file_ext}",
-            table_name="vehicle_to_brake_config",
+            model_class=VehicleToBrakeConfig,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "brake_config_id": "BrakeConfigId",
+                "vehicle_to_brake_config_id": "VehicleToBrakeConfigID",
+                "vehicle_id": "VehicleID",
+                "brake_config_id": "BrakeConfigID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_brake_config_id",
             transformers={
+                "vehicle_to_brake_config_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "brake_config_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToBedConfig
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToBedConfig{file_ext}",
-            table_name="vehicle_to_bed_config",
+            model_class=VehicleToBedConfig,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "bed_config_id": "BedConfigId",
+                "vehicle_to_bed_config_id": "VehicleToBedConfigID",
+                "vehicle_id": "VehicleID",
+                "bed_config_id": "BedConfigID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_bed_config_id",
             transformers={
+                "vehicle_to_bed_config_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "bed_config_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToBodyStyleConfig
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToBodyStyleConfig{file_ext}",
-            table_name="vehicle_to_body_style_config",
+            model_class=VehicleToBodyStyleConfig,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "body_style_config_id": "BodyStyleConfigId",
+                "vehicle_to_body_style_config_id": "VehicleToBodyStyleConfigID",
+                "vehicle_id": "VehicleID",
+                "body_style_config_id": "BodyStyleConfigID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_body_style_config_id",
             transformers={
+                "vehicle_to_body_style_config_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "body_style_config_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToMfrBodyCode
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToMfrBodyCode{file_ext}",
-            table_name="vehicle_to_mfr_body_code",
+            model_class=VehicleToMfrBodyCode,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "mfr_body_code_id": "MfrBodyCodeId",
+                "vehicle_to_mfr_body_code_id": "VehicleToMfrBodyCodeID",
+                "vehicle_id": "VehicleID",
+                "mfr_body_code_id": "MfrBodyCodeID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_mfr_body_code_id",
             transformers={
+                "vehicle_to_mfr_body_code_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "mfr_body_code_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToEngineConfig
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToEngineConfig{file_ext}",
-            table_name="vehicle_to_engine_config",
+            model_class=VehicleToEngineConfig,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "engine_config_id": "EngineConfigId",
+                "vehicle_to_engine_config_id": "VehicleToEngineConfigID",
+                "vehicle_id": "VehicleID",
+                "engine_config_id": "EngineConfigID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_engine_config_id",
             transformers={
+                "vehicle_to_engine_config_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "engine_config_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToSpringTypeConfig
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToSpringTypeConfig{file_ext}",
-            table_name="vehicle_to_spring_type_config",
+            model_class=VehicleToSpringTypeConfig,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "spring_type_config_id": "SpringTypeConfigId",
+                "vehicle_to_spring_type_config_id": "VehicleToSpringTypeConfigID",
+                "vehicle_id": "VehicleID",
+                "spring_type_config_id": "SpringTypeConfigID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_spring_type_config_id",
             transformers={
+                "vehicle_to_spring_type_config_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "spring_type_config_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToSteeringConfig
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToSteeringConfig{file_ext}",
-            table_name="vehicle_to_steering_config",
+            model_class=VehicleToSteeringConfig,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "steering_config_id": "SteeringConfigId",
+                "vehicle_to_steering_config_id": "VehicleToSteeringConfigID",
+                "vehicle_id": "VehicleID",
+                "steering_config_id": "SteeringConfigID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_steering_config_id",
             transformers={
+                "vehicle_to_steering_config_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "steering_config_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToTransmission
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToTransmission{file_ext}",
-            table_name="vehicle_to_transmission",
+            model_class=VehicleToTransmission,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "transmission_id": "TransmissionId",
+                "vehicle_to_transmission_id": "VehicleToTransmissionID",
+                "vehicle_id": "VehicleID",
+                "transmission_id": "TransmissionID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_transmission_id",
             transformers={
+                "vehicle_to_transmission_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "transmission_id": lambda x: int(x) if x else None,
             },
         )
 
         # VehicleToWheelBase
-        self.register_many_to_many_table(
+        self.register_table_mapping(
             source_name=f"VehicleToWheelBase{file_ext}",
-            table_name="vehicle_to_wheel_base",
+            model_class=VehicleToWheelBase,
             field_mapping={
-                "vehicle_id": "VehicleId",
-                "wheel_base_id": "WheelBaseId",
+                "vehicle_to_wheel_base_id": "VehicleToWheelbaseID",
+                "vehicle_id": "VehicleID",
+                "wheel_base_id": "WheelbaseID",
                 "source": "Source",
             },
+            primary_key="vehicle_to_wheel_base_id",
             transformers={
+                "vehicle_to_wheel_base_id": lambda x: int(x) if x else None,
                 "vehicle_id": lambda x: int(x) if x else None,
                 "wheel_base_id": lambda x: int(x) if x else None,
             },

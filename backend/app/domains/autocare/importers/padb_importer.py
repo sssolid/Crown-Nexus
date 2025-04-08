@@ -14,12 +14,24 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.autocare.importers.flexible_importer import FlexibleImporter, SourceFormat, detect_source_format
+from app.domains.autocare.importers.flexible_importer import (
+    FlexibleImporter,
+    SourceFormat,
+    detect_source_format,
+)
 from app.domains.autocare.padb.models import (
-    PartAttribute, MetaData, MeasurementGroup, MetaUOMCode,
-    PartAttributeAssignment, MetaUomCodeAssignment, ValidValue,
-    ValidValueAssignment, Style, PartAttributeStyle, PartTypeStyle,
-    PAdbVersion
+    PartAttribute,
+    MetaData,
+    MeasurementGroup,
+    MetaUOMCode,
+    PartAttributeAssignment,
+    MetaUomCodeAssignment,
+    ValidValue,
+    ValidValueAssignment,
+    Style,
+    PartAttributeStyle,
+    PartTypeStyle,
+    PAdbVersion,
 )
 from app.logging import get_logger
 
@@ -34,7 +46,7 @@ class PAdbImporter(FlexibleImporter):
         db: AsyncSession,
         source_path: Path,
         source_format: Optional[SourceFormat] = None,
-        batch_size: int = 1000
+        batch_size: int = 1000,
     ):
         """
         Initialize PAdbImporter.
@@ -78,19 +90,21 @@ class PAdbImporter(FlexibleImporter):
         self._register_mappings()
 
         # Define import order for referential integrity
-        self.set_import_order([
-            f"PartAttributes{file_ext}",
-            f"MetaData{file_ext}",
-            f"MeasurementGroup{file_ext}",
-            f"MetaUOMCodes{file_ext}",
-            f"PartAttributeAssignment{file_ext}",
-            f"MetaUOMCodeAssignment{file_ext}",
-            f"ValidValues{file_ext}",
-            f"ValidValueAssignment{file_ext}",
-            f"Style{file_ext}",
-            f"PartAttributeStyle{file_ext}",
-            f"PartTypeStyle{file_ext}",
-        ])
+        self.set_import_order(
+            [
+                f"PartAttributes{file_ext}",
+                f"MetaData{file_ext}",
+                f"MeasurementGroup{file_ext}",
+                f"MetaUOMCodes{file_ext}",
+                f"PartAttributeAssignment{file_ext}",
+                f"MetaUOMCodeAssignment{file_ext}",
+                f"ValidValues{file_ext}",
+                f"ValidValueAssignment{file_ext}",
+                f"Style{file_ext}",
+                f"PartAttributeStyle{file_ext}",
+                f"PartTypeStyle{file_ext}",
+            ]
+        )
 
     def _register_mappings(self) -> None:
         """Register all table mappings for PAdb imports."""

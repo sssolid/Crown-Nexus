@@ -1,6 +1,8 @@
 # app/domains/autocare/commands/import_autocare.py
 from __future__ import annotations
 
+import logging
+
 """
 Command for importing AutoCare data into the application database.
 
@@ -19,7 +21,10 @@ import typer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db_context
-from app.domains.autocare.importers.flexible_importer import SourceFormat, detect_source_format
+from app.domains.autocare.importers.flexible_importer import (
+    SourceFormat,
+    detect_source_format,
+)
 from app.domains.autocare.importers.vcdb_importer import VCdbImporter
 from app.domains.autocare.importers.pcdb_importer import PCdbImporter
 from app.domains.autocare.importers.padb_importer import PAdbImporter
@@ -130,7 +135,9 @@ def import_autocare(
         print(f"Using database directory: {db_dir}")
 
         # Get the version file name based on format
-        version_file = db_dir / ("Version.json" if source_format == SourceFormat.JSON else "Version.txt")
+        version_file = db_dir / (
+            "Version.json" if source_format == SourceFormat.JSON else "Version.txt"
+        )
         if not version_file.exists():
             print(f"ERROR: Version file not found in {db_dir}")
             raise typer.Exit(code=1)
@@ -153,6 +160,7 @@ def import_autocare(
     except Exception as e:
         print(f"ERROR: {str(e)}")
         import traceback
+
         traceback.print_exc()
         raise typer.Exit(code=1)
 
@@ -183,7 +191,9 @@ def display_import_result(db_name: str, result: Dict) -> None:
         typer.echo(f"  Version: {result['version']}")
 
     if "processed_files" in result:
-        typer.echo(f"  Files processed: {result['processed_files']} of {result.get('total_files', '?')}")
+        typer.echo(
+            f"  Files processed: {result['processed_files']} of {result.get('total_files', '?')}"
+        )
 
     # Show item counts per file if available
     if "items_imported" in result:
@@ -249,7 +259,9 @@ async def run_import(
             AutoCareDatabase.PADB,
             AutoCareDatabase.QDB,
         ]
-        print(f"Will import all databases: {', '.join(db.value for db in databases_to_import)}")
+        print(
+            f"Will import all databases: {', '.join(db.value for db in databases_to_import)}"
+        )
     else:
         databases_to_import = [database]
         print(f"Will import single database: {database.value}")
@@ -292,7 +304,8 @@ async def run_import(
                     )
                     results[db_type.value] = result
                     print(
-                        f"Import of {db_type.value} completed with status: {'SUCCESS' if result.get('success', False) else 'FAILED'}")
+                        f"Import of {db_type.value} completed with status: {'SUCCESS' if result.get('success', False) else 'FAILED'}"
+                    )
             except Exception as e:
                 print(f"ERROR during import of {db_type.value}: {str(e)}")
                 logger.error(f"Error importing {db_type.value}: {str(e)}")
@@ -333,7 +346,14 @@ async def import_database(
     """
     print(f"\nImporting {database.value} from {source_dir}")
     print(f"Format: {source_format.value}")
-    print(f"Options: batch_size={batch_size}, dry_run={dry_run}, track_in_history={track_in_history}")
+    print(
+        f"Options: batch_size={batch_size}, dry_run={dry_run}, track_in_history={track_in_history}"
+    )
+
+    if not verbose:
+        logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    else:
+        logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
     # Initialize sync history if tracking is enabled
     sync_record = None
@@ -352,7 +372,7 @@ async def import_database(
                     "batch_size": batch_size,
                     "dry_run": dry_run,
                     "start_time": datetime.now().isoformat(),
-                }
+                },
             )
             await sync_repo.update_sync_status(
                 sync_id=sync_record.id,
@@ -370,19 +390,36 @@ async def import_database(
 
         if database == AutoCareDatabase.VCDB:
             print("Creating VCdb importer...")
-            importer = VCdbImporter(db=db, source_path=db_source_dir, source_format=source_format,
-                                    batch_size=batch_size)
+            importer = VCdbImporter(
+                db=db,
+                source_path=db_source_dir,
+                source_format=source_format,
+                batch_size=batch_size,
+            )
         elif database == AutoCareDatabase.PCDB:
             print("Creating PCdb importer...")
-            importer = PCdbImporter(db=db, source_path=db_source_dir, source_format=source_format,
-                                    batch_size=batch_size)
+            importer = PCdbImporter(
+                db=db,
+                source_path=db_source_dir,
+                source_format=source_format,
+                batch_size=batch_size,
+            )
         elif database == AutoCareDatabase.PADB:
             print("Creating PAdb importer...")
-            importer = PAdbImporter(db=db, source_path=db_source_dir, source_format=source_format,
-                                    batch_size=batch_size)
+            importer = PAdbImporter(
+                db=db,
+                source_path=db_source_dir,
+                source_format=source_format,
+                batch_size=batch_size,
+            )
         elif database == AutoCareDatabase.QDB:
             print("Creating Qdb importer...")
-            importer = QdbImporter(db=db, source_path=db_source_dir, source_format=source_format, batch_size=batch_size)
+            importer = QdbImporter(
+                db=db,
+                source_path=db_source_dir,
+                source_format=source_format,
+                batch_size=batch_size,
+            )
         else:
             raise ValueError(f"Unsupported database type: {database}")
 
@@ -413,7 +450,9 @@ async def import_database(
         print(f"\nSource validation successful for {database.value}")
 
         if dry_run:
-            print(f"DRY RUN: {database.value} validation passed, skipping actual import")
+            print(
+                f"DRY RUN: {database.value} validation passed, skipping actual import"
+            )
 
             # Update sync history
             if track_in_history and sync_repo and sync_record:
@@ -424,7 +463,7 @@ async def import_database(
                     details={
                         "dry_run": True,
                         "end_time": datetime.now().isoformat(),
-                    }
+                    },
                 )
 
             return {
@@ -459,7 +498,7 @@ async def import_database(
                         "end_time": datetime.now().isoformat(),
                         "duration": duration,
                         "version": result.get("version"),
-                    }
+                    },
                 )
             else:
                 await sync_repo.update_sync_status(
@@ -471,7 +510,7 @@ async def import_database(
                         "end_time": datetime.now().isoformat(),
                         "duration": duration,
                         "errors": result.get("errors", []),
-                    }
+                    },
                 )
 
         return result
@@ -479,6 +518,7 @@ async def import_database(
     except Exception as e:
         print(f"\nERROR importing {database.value}: {str(e)}")
         import traceback
+
         traceback.print_exc()
         logger.exception(f"Error importing {database.value}: {str(e)}")
 
@@ -491,7 +531,7 @@ async def import_database(
                 error_message=str(e),
                 details={
                     "end_time": datetime.now().isoformat(),
-                }
+                },
             )
 
         return {
@@ -531,7 +571,10 @@ def get_database_source_dir(source_dir: Path, database: AutoCareDatabase) -> Pat
         matches = list(source_dir.glob(pattern))
         if matches:
             for match in matches:
-                if match.is_dir() and ((match / "Version.txt").exists() or (match / "Version.json").exists()):
+                if match.is_dir() and (
+                    (match / "Version.txt").exists()
+                    or (match / "Version.json").exists()
+                ):
                     return match
 
     # No matching subdirectory found, return the original

@@ -12,7 +12,18 @@ import json
 import gc
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Generic, List, Optional, Set, Type, TypeVar, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Set,
+    Type,
+    TypeVar,
+    cast,
+)
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -158,12 +169,16 @@ class JsonFileImporter(Generic[T]):
         # Print validation summary
         print(f"\nValidation Summary:")
         print(f"  - Source directory exists: ✓")
-        print(f"  - Required files: {len(self.required_files) - len(missing_files)}/{len(self.required_files)} present")
         print(
-            f"  - Mapped tables: {len(self.table_mappings) - len(missing_mappings)}/{len(self.table_mappings)} present")
+            f"  - Required files: {len(self.required_files) - len(missing_files)}/{len(self.required_files)} present"
+        )
+        print(
+            f"  - Mapped tables: {len(self.table_mappings) - len(missing_mappings)}/{len(self.table_mappings)} present"
+        )
         if self.many_to_many_tables:
             print(
-                f"  - Many-to-many tables: {len(self.many_to_many_tables) - len(missing_many_to_many)}/{len(self.many_to_many_tables)} present")
+                f"  - Many-to-many tables: {len(self.many_to_many_tables) - len(missing_many_to_many)}/{len(self.many_to_many_tables)} present"
+            )
         print(f"  - Version.json present: {'✓' if version_file.exists() else '✗'}")
 
         # Additional JSON validation
@@ -270,11 +285,16 @@ class JsonFileImporter(Generic[T]):
         # Validate that all files in order exist in mappings
         unknown_files = []
         for file_name in order:
-            if file_name not in self.table_mappings and file_name not in self.many_to_many_tables:
+            if (
+                file_name not in self.table_mappings
+                and file_name not in self.many_to_many_tables
+            ):
                 unknown_files.append(file_name)
 
         if unknown_files:
-            raise ValueError(f"Unknown files in import order: {', '.join(unknown_files)}")
+            raise ValueError(
+                f"Unknown files in import order: {', '.join(unknown_files)}"
+            )
 
         # Make sure all mapped files are included in order
         missing_files = []
@@ -287,7 +307,9 @@ class JsonFileImporter(Generic[T]):
                 missing_files.append(file_name)
 
         if missing_files:
-            raise ValueError(f"Files missing from import order: {', '.join(missing_files)}")
+            raise ValueError(
+                f"Files missing from import order: {', '.join(missing_files)}"
+            )
 
         self.import_order = order
 
@@ -328,7 +350,9 @@ class JsonFileImporter(Generic[T]):
             # Import tables in order
             if not self.import_order:
                 # If no explicit order is set, use all mappings
-                self.import_order = list(self.table_mappings.keys()) + list(self.many_to_many_tables.keys())
+                self.import_order = list(self.table_mappings.keys()) + list(
+                    self.many_to_many_tables.keys()
+                )
 
             for file_name in self.import_order:
                 try:
@@ -342,7 +366,9 @@ class JsonFileImporter(Generic[T]):
                     elif file_name in self.many_to_many_tables:
                         # Many-to-many table
                         mapping = self.many_to_many_tables[file_name]
-                        count = await self._import_many_to_many_table(file_name, mapping)
+                        count = await self._import_many_to_many_table(
+                            file_name, mapping
+                        )
                         stats["processed_files"] += 1
                         stats["items_imported"][file_name] = count
 
@@ -389,13 +415,18 @@ class JsonFileImporter(Generic[T]):
                 version_str = version_data.get("version", None)
 
                 if not version_str:
-                    return {"success": False, "message": "Version file contains no version field"}
+                    return {
+                        "success": False,
+                        "message": "Version file contains no version field",
+                    }
 
                 version_date = datetime.strptime(version_str, "%Y-%m-%d")
 
                 # Update existing version records
                 await self.db.execute(
-                    text(f"UPDATE {self.schema_name}.{self.version_class.__tablename__} SET is_current = false")
+                    text(
+                        f"UPDATE {self.schema_name}.{self.version_class.__tablename__} SET is_current = false"
+                    )
                 )
 
                 # Create new version record
@@ -409,7 +440,10 @@ class JsonFileImporter(Generic[T]):
 
         except json.JSONDecodeError as e:
             logger.error(f"Error parsing Version.json: {str(e)}")
-            return {"success": False, "message": f"Error parsing Version.json: {str(e)}"}
+            return {
+                "success": False,
+                "message": f"Error parsing Version.json: {str(e)}",
+            }
         except Exception as e:
             logger.error(f"Error importing version: {str(e)}")
             return {"success": False, "message": f"Error importing version: {str(e)}"}
@@ -444,7 +478,11 @@ class JsonFileImporter(Generic[T]):
 
         if count > 0:
             logger.info(f"Clearing existing data from {table_name}")
-            await self.db.execute(text(f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"))
+            await self.db.execute(
+                text(
+                    f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"
+                )
+            )
 
         # Initialize tracking
         total_count = 0
@@ -465,7 +503,11 @@ class JsonFileImporter(Generic[T]):
                 # Ensure data is a list
                 if not isinstance(data, list):
                     # If it's a dictionary with a data field, try to use that
-                    if isinstance(data, dict) and "data" in data and isinstance(data["data"], list):
+                    if (
+                        isinstance(data, dict)
+                        and "data" in data
+                        and isinstance(data["data"], list)
+                    ):
                         data = data["data"]
                     else:
                         # Otherwise, wrap in a list
@@ -504,24 +546,35 @@ class JsonFileImporter(Generic[T]):
                             try:
                                 value = transformers[model_field](value)
                             except Exception as e:
-                                logger.error(f"Error transforming field {model_field} in {file_name}: {str(e)}")
-                                validation_errors.append(f"Error transforming field {model_field}: {str(e)}")
+                                logger.error(
+                                    f"Error transforming field {model_field} in {file_name}: {str(e)}"
+                                )
+                                validation_errors.append(
+                                    f"Error transforming field {model_field}: {str(e)}"
+                                )
 
                         # Apply validator if one exists
                         if model_field in validators:
                             try:
                                 valid, error = validators[model_field](value)
                                 if not valid:
-                                    validation_errors.append(f"Validation error for {model_field}: {error}")
+                                    validation_errors.append(
+                                        f"Validation error for {model_field}: {error}"
+                                    )
                             except Exception as e:
-                                logger.error(f"Error validating field {model_field} in {file_name}: {str(e)}")
-                                validation_errors.append(f"Error validating field {model_field}: {str(e)}")
+                                logger.error(
+                                    f"Error validating field {model_field} in {file_name}: {str(e)}"
+                                )
+                                validation_errors.append(
+                                    f"Error validating field {model_field}: {str(e)}"
+                                )
 
                         obj_data[model_field] = value
 
                     if validation_errors:
                         logger.warning(
-                            f"Validation errors in {file_name}, skipping item: {', '.join(validation_errors)}")
+                            f"Validation errors in {file_name}, skipping item: {', '.join(validation_errors)}"
+                        )
                         continue
 
                     # Create model instance
@@ -561,7 +614,9 @@ class JsonFileImporter(Generic[T]):
         logger.info(f"Imported {total_count} records to {table_name}")
         return total_count
 
-    async def _import_many_to_many_table(self, file_name: str, mapping: Dict[str, Any]) -> int:
+    async def _import_many_to_many_table(
+        self, file_name: str, mapping: Dict[str, Any]
+    ) -> int:
         """
         Import data from a JSON file to a many-to-many table.
 
@@ -588,7 +643,11 @@ class JsonFileImporter(Generic[T]):
 
         if count > 0:
             logger.info(f"Clearing existing data from {table_name}")
-            await self.db.execute(text(f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"))
+            await self.db.execute(
+                text(
+                    f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"
+                )
+            )
 
         # Initialize tracking
         total_count = 0
@@ -607,7 +666,11 @@ class JsonFileImporter(Generic[T]):
                 # Ensure data is a list
                 if not isinstance(data, list):
                     # If it's a dictionary with a data field, try to use that
-                    if isinstance(data, dict) and "data" in data and isinstance(data["data"], list):
+                    if (
+                        isinstance(data, dict)
+                        and "data" in data
+                        and isinstance(data["data"], list)
+                    ):
                         data = data["data"]
                     else:
                         # Otherwise, wrap in a list
@@ -645,7 +708,9 @@ class JsonFileImporter(Generic[T]):
                             try:
                                 value = transformers[db_field](value)
                             except Exception as e:
-                                logger.error(f"Error transforming field {db_field} in {file_name}: {str(e)}")
+                                logger.error(
+                                    f"Error transforming field {db_field} in {file_name}: {str(e)}"
+                                )
                                 continue
 
                         row_data[db_field] = value
@@ -662,7 +727,8 @@ class JsonFileImporter(Generic[T]):
                             field_list = ", ".join(fields)
 
                             query = text(
-                                f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})")
+                                f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})"
+                            )
 
                             for data in batch:
                                 await self.db.execute(query, data)
@@ -673,9 +739,13 @@ class JsonFileImporter(Generic[T]):
                             # Force garbage collection to manage memory
                             gc.collect()
 
-                            logger.debug(f"Imported {total_count} records to {table_name}")
+                            logger.debug(
+                                f"Imported {total_count} records to {table_name}"
+                            )
                         except Exception as e:
-                            logger.error(f"Error inserting batch into {table_name}: {str(e)}")
+                            logger.error(
+                                f"Error inserting batch into {table_name}: {str(e)}"
+                            )
                             raise
 
         except json.JSONDecodeError as e:
@@ -694,7 +764,9 @@ class JsonFileImporter(Generic[T]):
                 placeholders = ", ".join([f":{field}" for field in fields])
                 field_list = ", ".join(fields)
 
-                query = text(f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})")
+                query = text(
+                    f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})"
+                )
 
                 for data in batch:
                     await self.db.execute(query, data)

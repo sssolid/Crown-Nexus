@@ -24,12 +24,8 @@ app.command(name="import")(import_autocare)
 # Add a callback to print version information
 @app.callback()
 def callback(
-    verbose: bool = typer.Option(
-        False, "--verbose", "-v", help="Print verbose output"
-    ),
-    version: bool = typer.Option(
-        False, "--version", help="Print version and exit"
-    ),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print verbose output"),
+    version: bool = typer.Option(False, "--version", help="Print version and exit"),
 ) -> None:
     """
     AutoCare data management tool.

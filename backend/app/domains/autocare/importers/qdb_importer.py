@@ -14,11 +14,19 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.autocare.importers.flexible_importer import FlexibleImporter, SourceFormat, detect_source_format
+from app.domains.autocare.importers.flexible_importer import (
+    FlexibleImporter,
+    SourceFormat,
+    detect_source_format,
+)
 from app.domains.autocare.qdb.models import (
-    QualifierType, Qualifier, Language,
-    QualifierTranslation, GroupNumber,
-    QualifierGroup, QdbVersion
+    QualifierType,
+    Qualifier,
+    Language,
+    QualifierTranslation,
+    GroupNumber,
+    QualifierGroup,
+    QdbVersion,
 )
 from app.logging import get_logger
 
@@ -33,7 +41,7 @@ class QdbImporter(FlexibleImporter):
         db: AsyncSession,
         source_path: Path,
         source_format: Optional[SourceFormat] = None,
-        batch_size: int = 1000
+        batch_size: int = 1000,
     ):
         """
         Initialize QdbImporter.
@@ -74,14 +82,16 @@ class QdbImporter(FlexibleImporter):
         self._register_mappings()
 
         # Define import order for referential integrity
-        self.set_import_order([
-            f"QualifierType{file_ext}",
-            f"Qualifier{file_ext}",
-            f"Language{file_ext}",
-            f"QualifierTranslation{file_ext}",
-            f"GroupNumber{file_ext}",
-            f"QualifierGroup{file_ext}",
-        ])
+        self.set_import_order(
+            [
+                f"QualifierType{file_ext}",
+                f"Qualifier{file_ext}",
+                # f"Language{file_ext}",
+                # f"QualifierTranslation{file_ext}",
+                f"GroupNumber{file_ext}",
+                f"QualifierGroup{file_ext}",
+            ]
+        )
 
     def _register_mappings(self) -> None:
         """Register all table mappings for Qdb imports."""
@@ -93,7 +103,7 @@ class QdbImporter(FlexibleImporter):
             source_name=f"QualifierType{file_ext}",
             model_class=QualifierType,
             field_mapping={
-                "qualifier_type_id": "QualifierTypeId",
+                "qualifier_type_id": "QualifierTypeID",
                 "qualifier_type": "QualifierType",
             },
             primary_key="qualifier_type_id",
@@ -107,54 +117,59 @@ class QdbImporter(FlexibleImporter):
             source_name=f"Qualifier{file_ext}",
             model_class=Qualifier,
             field_mapping={
-                "qualifier_id": "QualifierId",
+                "qualifier_id": "QualifierID",
                 "qualifier_text": "QualifierText",
                 "example_text": "ExampleText",
-                "qualifier_type_id": "QualifierTypeId",
-                "new_qualifier_id": "NewQualifierId",
+                "qualifier_type_id": "QualifierTypeID",
+                "new_qualifier_id": "NewQualifierID",
                 "when_modified": "WhenModified",
             },
             primary_key="qualifier_id",
             transformers={
                 "qualifier_id": lambda x: int(x) if x else None,
                 "qualifier_type_id": lambda x: int(x) if x else None,
-                "new_qualifier_id": lambda x: int(x) if x and x.strip() else None,
-                "when_modified": lambda x: datetime.strptime(x, "%Y%m%d%H%M%S") if x and x.strip() else datetime.now(),
+                "new_qualifier_id": lambda x: int(x) if x else None,
+                "when_modified": lambda x: (
+                    datetime.strptime(x, "%Y-%m-%dT%H:%M:%S")
+                    if x and x.strip()
+                    else datetime.now()
+                ),
             },
         )
 
-        # Language
-        self.register_table_mapping(
-            source_name=f"Language{file_ext}",
-            model_class=Language,
-            field_mapping={
-                "language_id": "LanguageId",
-                "language_name": "LanguageName",
-                "dialect_name": "DialectName",
-            },
-            primary_key="language_id",
-            transformers={
-                "language_id": lambda x: int(x) if x else None,
-            },
-        )
-
-        # QualifierTranslation
-        self.register_table_mapping(
-            source_name=f"QualifierTranslation{file_ext}",
-            model_class=QualifierTranslation,
-            field_mapping={
-                "qualifier_translation_id": "QualifierTranslationId",
-                "qualifier_id": "QualifierId",
-                "language_id": "LanguageId",
-                "translation_text": "TranslationText",
-            },
-            primary_key="qualifier_translation_id",
-            transformers={
-                "qualifier_translation_id": lambda x: int(x) if x else None,
-                "qualifier_id": lambda x: int(x) if x else None,
-                "language_id": lambda x: int(x) if x else None,
-            },
-        )
+        # INFO: The date for these tables is empty, skipping for now
+        # # Language
+        # self.register_table_mapping(
+        #     source_name=f"Language{file_ext}",
+        #     model_class=Language,
+        #     field_mapping={
+        #         "language_id": "LanguageID",
+        #         "language_name": "LanguageName",
+        #         "dialect_name": "DialectName",
+        #     },
+        #     primary_key="language_id",
+        #     transformers={
+        #         "language_id": lambda x: int(x) if x else None,
+        #     },
+        # )
+        #
+        # # QualifierTranslation
+        # self.register_table_mapping(
+        #     source_name=f"QualifierTranslation{file_ext}",
+        #     model_class=QualifierTranslation,
+        #     field_mapping={
+        #         "qualifier_translation_id": "QualifierTranslationID",
+        #         "qualifier_id": "QualifierID",
+        #         "language_id": "LanguageID",
+        #         "translation_text": "TranslationText",
+        #     },
+        #     primary_key="qualifier_translation_id",
+        #     transformers={
+        #         "qualifier_translation_id": lambda x: int(x) if x else None,
+        #         "qualifier_id": lambda x: int(x) if x else None,
+        #         "language_id": lambda x: int(x) if x else None,
+        #     },
+        # )
 
         # GroupNumber
         self.register_table_mapping(
@@ -162,7 +177,7 @@ class QdbImporter(FlexibleImporter):
             model_class=GroupNumber,
             field_mapping={
                 "group_number_id": "GroupNumberId",
-                "group_description": "GroupDescription",
+                "group_description": "GroupNumberDescription",
             },
             primary_key="group_number_id",
             transformers={

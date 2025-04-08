@@ -154,12 +154,16 @@ class PipeFileImporter(Generic[T]):
         # Print validation summary
         print(f"\nValidation Summary:")
         print(f"  - Source directory exists: ✓")
-        print(f"  - Required files: {len(self.required_files) - len(missing_files)}/{len(self.required_files)} present")
         print(
-            f"  - Mapped tables: {len(self.table_mappings) - len(missing_mappings)}/{len(self.table_mappings)} present")
+            f"  - Required files: {len(self.required_files) - len(missing_files)}/{len(self.required_files)} present"
+        )
+        print(
+            f"  - Mapped tables: {len(self.table_mappings) - len(missing_mappings)}/{len(self.table_mappings)} present"
+        )
         if self.many_to_many_tables:
             print(
-                f"  - Many-to-many tables: {len(self.many_to_many_tables) - len(missing_many_to_many)}/{len(self.many_to_many_tables)} present")
+                f"  - Many-to-many tables: {len(self.many_to_many_tables) - len(missing_many_to_many)}/{len(self.many_to_many_tables)} present"
+            )
         print(f"  - Version.txt present: {'✓' if version_file.exists() else '✗'}")
 
         validation_result = (not missing_files) and version_file.exists()
@@ -241,11 +245,16 @@ class PipeFileImporter(Generic[T]):
         # Validate that all files in order exist in mappings
         unknown_files = []
         for file_name in order:
-            if file_name not in self.table_mappings and file_name not in self.many_to_many_tables:
+            if (
+                file_name not in self.table_mappings
+                and file_name not in self.many_to_many_tables
+            ):
                 unknown_files.append(file_name)
 
         if unknown_files:
-            raise ValueError(f"Unknown files in import order: {', '.join(unknown_files)}")
+            raise ValueError(
+                f"Unknown files in import order: {', '.join(unknown_files)}"
+            )
 
         # Make sure all mapped files are included in order
         missing_files = []
@@ -258,7 +267,9 @@ class PipeFileImporter(Generic[T]):
                 missing_files.append(file_name)
 
         if missing_files:
-            raise ValueError(f"Files missing from import order: {', '.join(missing_files)}")
+            raise ValueError(
+                f"Files missing from import order: {', '.join(missing_files)}"
+            )
 
         self.import_order = order
 
@@ -299,7 +310,9 @@ class PipeFileImporter(Generic[T]):
             # Import tables in order
             if not self.import_order:
                 # If no explicit order is set, use all mappings
-                self.import_order = list(self.table_mappings.keys()) + list(self.many_to_many_tables.keys())
+                self.import_order = list(self.table_mappings.keys()) + list(
+                    self.many_to_many_tables.keys()
+                )
 
             for file_name in self.import_order:
                 try:
@@ -313,7 +326,9 @@ class PipeFileImporter(Generic[T]):
                     elif file_name in self.many_to_many_tables:
                         # Many-to-many table
                         mapping = self.many_to_many_tables[file_name]
-                        count = await self._import_many_to_many_table(file_name, mapping)
+                        count = await self._import_many_to_many_table(
+                            file_name, mapping
+                        )
                         stats["processed_files"] += 1
                         stats["items_imported"][file_name] = count
 
@@ -360,13 +375,18 @@ class PipeFileImporter(Generic[T]):
                     # Just take the first row
                     version_str = next((v for k, v in row.items() if v), None)
                     if not version_str:
-                        return {"success": False, "message": "Version file contains no data"}
+                        return {
+                            "success": False,
+                            "message": "Version file contains no data",
+                        }
 
                     version_date = datetime.strptime(version_str, "%Y-%m-%d")
 
                     # Update existing version records
                     await self.db.execute(
-                        text(f"UPDATE {self.schema_name}.{self.version_class.__tablename__} SET is_current = false")
+                        text(
+                            f"UPDATE {self.schema_name}.{self.version_class.__tablename__} SET is_current = false"
+                        )
                     )
 
                     # Create new version record
@@ -376,7 +396,10 @@ class PipeFileImporter(Generic[T]):
                     self.db.add(version)
                     await self.db.flush()
 
-                    return {"success": True, "version": version_date.strftime("%Y-%m-%d")}
+                    return {
+                        "success": True,
+                        "version": version_date.strftime("%Y-%m-%d"),
+                    }
 
             return {"success": False, "message": "Version file is empty"}
 
@@ -414,7 +437,11 @@ class PipeFileImporter(Generic[T]):
 
         if count > 0:
             logger.info(f"Clearing existing data from {table_name}")
-            await self.db.execute(text(f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"))
+            await self.db.execute(
+                text(
+                    f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"
+                )
+            )
 
         # Initialize tracking
         total_count = 0
@@ -451,23 +478,35 @@ class PipeFileImporter(Generic[T]):
                         try:
                             value = transformers[model_field](value)
                         except Exception as e:
-                            logger.error(f"Error transforming field {model_field} in {file_name}: {str(e)}")
-                            validation_errors.append(f"Error transforming field {model_field}: {str(e)}")
+                            logger.error(
+                                f"Error transforming field {model_field} in {file_name}: {str(e)}"
+                            )
+                            validation_errors.append(
+                                f"Error transforming field {model_field}: {str(e)}"
+                            )
 
                     # Apply validator if one exists
                     if model_field in validators:
                         try:
                             valid, error = validators[model_field](value)
                             if not valid:
-                                validation_errors.append(f"Validation error for {model_field}: {error}")
+                                validation_errors.append(
+                                    f"Validation error for {model_field}: {error}"
+                                )
                         except Exception as e:
-                            logger.error(f"Error validating field {model_field} in {file_name}: {str(e)}")
-                            validation_errors.append(f"Error validating field {model_field}: {str(e)}")
+                            logger.error(
+                                f"Error validating field {model_field} in {file_name}: {str(e)}"
+                            )
+                            validation_errors.append(
+                                f"Error validating field {model_field}: {str(e)}"
+                            )
 
                     obj_data[model_field] = value
 
                 if validation_errors:
-                    logger.warning(f"Validation errors in {file_name}, skipping row: {', '.join(validation_errors)}")
+                    logger.warning(
+                        f"Validation errors in {file_name}, skipping row: {', '.join(validation_errors)}"
+                    )
                     continue
 
                 # Create model instance
@@ -499,7 +538,9 @@ class PipeFileImporter(Generic[T]):
         logger.info(f"Imported {total_count} records to {table_name}")
         return total_count
 
-    async def _import_many_to_many_table(self, file_name: str, mapping: Dict[str, Any]) -> int:
+    async def _import_many_to_many_table(
+        self, file_name: str, mapping: Dict[str, Any]
+    ) -> int:
         """
         Import data from a file to a many-to-many table.
 
@@ -526,7 +567,11 @@ class PipeFileImporter(Generic[T]):
 
         if count > 0:
             logger.info(f"Clearing existing data from {table_name}")
-            await self.db.execute(text(f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"))
+            await self.db.execute(
+                text(
+                    f"TRUNCATE TABLE {self.schema_name}.{table_name} RESTART IDENTITY CASCADE"
+                )
+            )
 
         # Initialize tracking
         total_count = 0
@@ -560,7 +605,9 @@ class PipeFileImporter(Generic[T]):
                         try:
                             value = transformers[db_field](value)
                         except Exception as e:
-                            logger.error(f"Error transforming field {db_field} in {file_name}: {str(e)}")
+                            logger.error(
+                                f"Error transforming field {db_field} in {file_name}: {str(e)}"
+                            )
                             continue
 
                     row_data[db_field] = value
@@ -577,7 +624,8 @@ class PipeFileImporter(Generic[T]):
                         field_list = ", ".join(fields)
 
                         query = text(
-                            f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})")
+                            f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})"
+                        )
 
                         for data in batch:
                             await self.db.execute(query, data)
@@ -590,7 +638,9 @@ class PipeFileImporter(Generic[T]):
 
                         logger.debug(f"Imported {total_count} records to {table_name}")
                     except Exception as e:
-                        logger.error(f"Error inserting batch into {table_name}: {str(e)}")
+                        logger.error(
+                            f"Error inserting batch into {table_name}: {str(e)}"
+                        )
                         raise
 
         # Commit final batch
@@ -601,7 +651,9 @@ class PipeFileImporter(Generic[T]):
                 placeholders = ", ".join([f":{field}" for field in fields])
                 field_list = ", ".join(fields)
 
-                query = text(f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})")
+                query = text(
+                    f"INSERT INTO {self.schema_name}.{table_name} ({field_list}) VALUES ({placeholders})"
+                )
 
                 for data in batch:
                     await self.db.execute(query, data)

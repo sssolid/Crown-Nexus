@@ -83,7 +83,7 @@
                       <v-img
                         :src="item.url"
                         height="180"
-                        cover
+                        contain
                         class="media-thumbnail"
                         @click="openMediaPreview(item)"
                       ></v-img>

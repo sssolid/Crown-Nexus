@@ -66,58 +66,6 @@ def execute_sql(sql: str, description: Optional[str] = None) -> bool:
         return False
 
 
-def fix_postgresql_data_types(sql: str) -> str:
-    """Fix PostgreSQL data type incompatibilities in SQL strings.
-
-    Args:
-        sql: SQL statement that might contain incompatible data types
-
-    Returns:
-        str: SQL statement with PostgreSQL compatible data types
-    """
-    # Replace DATETIME with TIMESTAMP
-    return sql.replace(" DATETIME ", " TIMESTAMP ")
-
-
-def drop_all_tables() -> bool:
-    """Drop all tables with CASCADE.
-
-    Returns:
-        bool: True if successful or if no tables to drop, False otherwise
-    """
-    engine = get_engine()
-
-    with engine.connect() as conn:
-        # Disable foreign key constraints
-        conn.execute(text("SET session_replication_role = 'replica'"))
-
-        # Get all tables
-        result = conn.execute(
-            text("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")
-        )
-        tables = [row[0] for row in result]
-
-        if not tables:
-            logger.info("No tables to drop.")
-            return True  # Return True if there are no tables - this is successful!
-
-        # Drop all tables
-        for table in tables:
-            conn.execute(text(f'DROP TABLE IF EXISTS "{table}" CASCADE'))
-            logger.info(f"Dropped table: {table}")
-
-        # Drop all schemas
-        for schema in settings.DB_SCHEMAS:
-            conn.execute(text(f'DROP SCHEMA IF EXISTS "{schema}" CASCADE'))
-            logger.info(f"Dropped schema: {schema}")
-
-        # Re-enable constraints
-        conn.execute(text("SET session_replication_role = 'origin'"))
-
-    logger.info("✅ All tables dropped successfully")
-    return True
-
-
 def sort_tables_by_dependency() -> List[str]:
     """Sort tables based on their foreign key dependencies.
 
@@ -202,202 +150,6 @@ def find_problematic_tables() -> Dict[str, List[Tuple[str, str]]]:
     return problematic_tables
 
 
-def create_all_tables() -> bool:
-    """Create all tables in the correct order with dependency handling.
-
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    try:
-        engine = get_engine()
-
-        # Find problematic tables (self-references)
-        problem_tables = find_problematic_tables()
-        if problem_tables:
-            logger.info(
-                f"Found {len(problem_tables)} tables with self-referential foreign keys"
-            )
-
-        # Get list of tables in correct creation order
-        table_order = sort_tables_by_dependency()
-        logger.info(f"Creating tables in dependency order: {', '.join(table_order)}")
-
-        # First phase: Create all tables without foreign key constraints
-        for table_name in table_order:
-            if table_name not in Base.metadata.tables:
-                continue
-
-            table = Base.metadata.tables[table_name]
-
-            # Generate CREATE TABLE SQL without foreign keys
-            column_defs = []
-            primary_key_columns = []
-
-            for column in table.columns:
-                # Get column type with PostgreSQL compatibility fix
-                column_type = str(column.type)
-                # Convert DATETIME to TIMESTAMP for PostgreSQL
-                if column_type.upper() == "DATETIME":
-                    column_type = "TIMESTAMP"
-
-                # Basic column definition
-                col_def = f'"{column.name}" {column_type}'
-
-                # Add constraints (except foreign keys and primary keys)
-                if column.primary_key:
-                    primary_key_columns.append(column.name)
-                    # Don't add PRIMARY KEY here - we'll handle it separately
-                if not column.nullable:
-                    col_def += " NOT NULL"
-                if column.server_default:
-                    # Special handling for default values
-                    default_value = str(column.server_default.arg)
-
-                    # Fix 'NONE' as a string literal
-                    if default_value == "NONE":
-                        default_value = "'NONE'"
-
-                    # Quote other non-numeric, non-function literals that aren't already quoted
-                    if (
-                        not default_value.startswith("'")
-                        and not default_value.startswith('"')
-                        and not default_value.lower() == "null"
-                        and not default_value.lower() == "true"
-                        and not default_value.lower() == "false"
-                        and not "(" in default_value  # Skip functions like now()
-                        and not default_value.replace(".", "", 1).isdigit()
-                    ):  # Skip numbers
-                        default_value = f"'{default_value}'"
-
-                    col_def += f" DEFAULT {default_value}"
-
-                column_defs.append(col_def)
-
-                # Add composite primary key if needed
-            if primary_key_columns:
-                if len(primary_key_columns) == 1:
-                    # Single primary key - add directly to column
-                    for i, col_def in enumerate(column_defs):
-                        if col_def.startswith(f'"{primary_key_columns[0]}"'):
-                            column_defs[i] = col_def + " PRIMARY KEY"
-                            break
-                else:
-                    # Composite primary key - add as separate constraint
-                    quoted_cols = []
-                    for col in primary_key_columns:
-                        quoted_cols.append(f'"{col}"')
-                    pk_constraint = f'PRIMARY KEY ({", ".join(quoted_cols)})'
-                    column_defs.append(pk_constraint)
-
-            # Create the table
-            create_sql = (
-                f"CREATE TABLE {table_name} (\n  " + ",\n  ".join(column_defs) + "\n)"
-            )
-
-            with engine.connect() as conn:
-                try:
-                    # Skip if table already exists
-                    inspector = inspect(engine)
-                    if table_name in inspector.get_table_names():
-                        logger.info(
-                            f"Table {table_name} already exists, skipping creation"
-                        )
-                        continue
-
-                    conn.execute(text(create_sql))
-                    logger.info(f"Created table: {table_name}")
-                except Exception as e:
-                    logger.error(f"Failed to create table {table_name}: {e}")
-                    return False
-
-        # Second phase: Add foreign key constraints
-        for table_name in table_order:
-            if table_name not in Base.metadata.tables:
-                continue
-
-            table = Base.metadata.tables[table_name]
-            is_problematic = table_name in problem_tables
-
-            # If table is problematic, add unique constraints first
-            if is_problematic:
-                with engine.connect() as conn:
-                    for source_col, ref_col in problem_tables[table_name]:
-                        constraint_name = f"uq_{table_name}_{ref_col}"
-                        try:
-                            conn.execute(
-                                text(
-                                    f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
-                                    f"UNIQUE ({ref_col})"
-                                )
-                            )
-                            logger.info(
-                                f"  Added unique constraint on {ref_col} in {table_name}"
-                            )
-                        except Exception as e:
-                            if "already exists" not in str(e):
-                                logger.error(f"Failed to add unique constraint: {e}")
-
-            # Add foreign key constraints
-            for column in table.columns:
-                if not hasattr(column, "foreign_keys") or not column.foreign_keys:
-                    continue
-
-                for fk in column.foreign_keys:
-                    target_table = fk.column.table.name
-                    target_column = fk.column.name
-                    source_column = column.name
-
-                    # Skip if this is a self-reference and table is problematic
-                    if is_problematic and target_table == table_name:
-                        continue  # Will be handled separately
-
-                    constraint_name = f"fk_{table_name}_{source_column}_{target_table}_{target_column}"
-
-                    with engine.connect() as conn:
-                        try:
-                            conn.execute(
-                                text(
-                                    f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
-                                    f"FOREIGN KEY ({source_column}) REFERENCES {target_table}({target_column})"
-                                )
-                            )
-                            logger.info(
-                                f"  Added foreign key: {table_name}.{source_column} -> {target_table}.{target_column}"
-                            )
-                        except Exception as e:
-                            if "already exists" not in str(e):
-                                logger.error(
-                                    f"Failed to add foreign key constraint: {e}"
-                                )
-
-            # Add self-referential foreign keys last (for problematic tables)
-            if is_problematic:
-                with engine.connect() as conn:
-                    for src_col, ref_col in problem_tables[table_name]:
-                        constraint_name = f"fk_{table_name}_{src_col}_{ref_col}"
-                        try:
-                            conn.execute(
-                                text(
-                                    f"ALTER TABLE {table_name} ADD CONSTRAINT {constraint_name} "
-                                    f"FOREIGN KEY ({src_col}) REFERENCES {table_name}({ref_col})"
-                                )
-                            )
-                            logger.info(
-                                f"  Added self-referential foreign key: {src_col} -> {ref_col} in {table_name}"
-                            )
-                        except Exception as e:
-                            if "already exists" not in str(e):
-                                logger.error(
-                                    f"Failed to add self-referential foreign key: {e}"
-                                )
-
-        return True
-
-    except Exception as e:
-        logger.error(f"Error creating tables: {e}")
-        return False
-
-
 def initialize_alembic() -> bool:
     """Ensure Alembic is properly initialized and stamped.
 
@@ -431,19 +183,25 @@ def initialize_alembic() -> bool:
 
 
 def reset_database() -> bool:
-    """Complete database reset that actually works.
-
-    Returns:
-        bool: True if successful, False otherwise
-    """
+    """Reset the database using Alembic only."""
     logger.info("Resetting database...")
 
-    # Drop all tables
-    if not drop_all_tables():
-        logger.error("Failed to drop tables.")
+    # Drop all data — cleanest approach
+    result = subprocess.run(
+        ["alembic", "downgrade", "base"], capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        logger.error(f"Failed to downgrade: {result.stderr}")
         return False
 
-    logger.info("✅ Database reset completed successfully!")
+    result = subprocess.run(
+        ["alembic", "upgrade", "head"], capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        logger.error(f"Failed to upgrade: {result.stderr}")
+        return False
+
+    logger.info("✅ Database reset and upgraded via Alembic")
     return True
 
 

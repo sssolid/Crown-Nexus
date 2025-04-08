@@ -85,7 +85,6 @@ class Year(Base):
     year_id: Mapped[int] = mapped_column(
         Integer, nullable=False, unique=True, index=True
     )
-    year: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
 
     # Relationships
     base_vehicles: Mapped[List["BaseVehicle"]] = relationship(
@@ -470,8 +469,8 @@ class Vehicle(Base):
     mfr_body_codes: Mapped[List["MfrBodyCode"]] = relationship(
         "MfrBodyCode", secondary="vcdb.vehicle_to_mfr_body_code"
     )
-    engine_configs: Mapped[List["EngineConfig"]] = relationship(
-        "EngineConfig", secondary="vcdb.vehicle_to_engine_config"
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", secondary="vcdb.vehicle_to_engine_config"
     )
     spring_type_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig", secondary="vcdb.vehicle_to_spring_type_config"
@@ -503,7 +502,7 @@ class Vehicle(Base):
         Returns:
             Year value.
         """
-        return self.base_vehicle.year.year
+        return self.base_vehicle.year.year_id
 
     @property
     def model(self) -> str:
@@ -557,22 +556,53 @@ class DriveType(Base):
 
 
 # Vehicle to DriveType association table
-vehicle_to_drive_type = Table(
-    "vehicle_to_drive_type",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "drive_type_id",
-        Integer,
-        ForeignKey("vcdb.drive_type.drive_type_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToDriveType(Base):
+    """
+    Represents the VehicleToDriveType entity linking vehicles with drive types.
+
+    This class defines the relationship between a vehicle and a drive type,
+    providing a mapping structure used within the vcdb schema. It supports optional
+    source metadata for tracking the origin of the data.
+
+    Attributes:
+        id (uuid.UUID): Primary key uniquely identifying each entry.
+        vehicle_to_drive_type_id (int): Unique identifier for this specific vehicle-to-drive-type mapping.
+        vehicle_id (int): Foreign key referencing the associated vehicle.
+        drive_type_id (int): Foreign key referencing the associated drive type.
+        source (Optional[str]): Optional metadata field indicating the data origin, limited to 10 characters.
+    """
+
+    __tablename__ = "vehicle_to_drive_type"
+    __table_args__ = {"schema": "vcdb"}
+
+    # Primary key
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+
+    # Unique mapping identifier
+    vehicle_to_drive_type_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+
+    # Foreign key linking to the vehicle
+    vehicle_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
+    )
+
+    # Foreign key linking to the drive type
+    drive_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.drive_type.drive_type_id"), nullable=False
+    )
+
+    # Optional source metadata
+    source: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+
+    def __repr__(self) -> str:
+        return (
+            f"<VehicleToDriveType(id={self.id}, vehicle_to_drive_type_id={self.vehicle_to_drive_type_id}, "
+            f"vehicle_id={self.vehicle_id}, drive_type_id={self.drive_type_id}, source={self.source})>"
+        )
 
 
 class BrakeType(Base):
@@ -755,22 +785,55 @@ class BrakeConfig(Base):
 
 
 # Vehicle to BrakeConfig association table
-vehicle_to_brake_config = Table(
-    "vehicle_to_brake_config",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "brake_config_id",
-        Integer,
-        ForeignKey("vcdb.brake_config.brake_config_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToBrakeConfig(Base):
+    """
+    Represents the VehicleToBrakeConfig entity linking vehicles with brake configurations.
+
+    This class maps the relationship between a vehicle and a brake configuration in the
+    database, recording and storing the association along with optional metadata regarding
+    the source system. It primarily serves as part of a schema in the vcdb module.
+
+    Attributes:
+        id (uuid.UUID): The primary key uniquely identifying each entry.
+        config_id (int): The unique identifier for this specific vehicle to brake configuration.
+        vehicle_id (int): Foreign key referencing the associated vehicle ID.
+        brake_config_id (int): Foreign key referencing the associated brake configuration ID.
+        source_system (Optional[str]): An optional metadata field indicating the data source
+        of the configuration, limited to 10 characters for storage.
+    """
+
+    __tablename__ = "vehicle_to_brake_config"
+    __table_args__ = {"schema": "vcdb"}
+
+    # Primary key
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+
+    # Unique identifier for this configuration
+    vehicle_to_brake_config_id: Mapped[int] = mapped_column(
+        "vehicle_to_brake_config_id", Integer, nullable=False, unique=True, index=True
+    )
+
+    # Foreign key linking to the vehicle
+    vehicle_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
+    )
+
+    # Foreign key linking to the brake configuration
+    brake_config_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.brake_config.brake_config_id"), nullable=False
+    )
+
+    # Optional metadata about the source system (e.g., data origin)
+    source: Mapped[Optional[str]] = mapped_column("source", String(10), nullable=True)
+
+    def __repr__(self) -> str:
+        return (
+            f"<VehicleToBrakeConfig(id={self.id}, config_id={self.vehicle_to_brake_config_id}, "
+            f"vehicle_id={self.vehicle_id}, brake_config_id={self.brake_config_id}, "
+            f"source={self.source})>"
+        )
 
 
 class BedType(Base):
@@ -889,23 +952,42 @@ class BedConfig(Base):
         return f"<BedConfig {self.bed_config_id}>"
 
 
-# Vehicle to BedConfig association table
-vehicle_to_bed_config = Table(
-    "vehicle_to_bed_config",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "bed_config_id",
-        Integer,
-        ForeignKey("vcdb.bed_config.bed_config_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToBedConfig(Base):
+    """
+    Represents the association between a vehicle and a bed configuration in the VCDB schema.
+
+    Attributes:
+        id (UUID): Primary key, a universally unique identifier for the record.
+        vehicle_to_bed_config_id (int): Unique identifier for the vehicle-to-bed configuration.
+        vehicle_id (int): Foreign key referencing the vehicle table.
+        bed_config_id (int): Foreign key referencing the bed configuration table.
+        source (str): Represents the source information, optional.
+    """
+
+    __tablename__ = "vehicle_to_bed_config"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_bed_config_id = Column(Integer, nullable=False, unique=True, index=True)
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    bed_config_id = Column(
+        Integer, ForeignKey("vcdb.bed_config.bed_config_id"), nullable=False
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        """
+        Returns a string representation of the VehicleToBedConfig object.
+        """
+        return (
+            f"<VehicleToBedConfig("
+            f"id={self.id}, "
+            f"vehicle_to_bed_config_id={self.vehicle_to_bed_config_id}, "
+            f"vehicle_id={self.vehicle_id}, "
+            f"bed_config_id={self.bed_config_id}, "
+            f"source={self.source}"
+            f")>"
+        )
 
 
 class BodyType(Base):
@@ -1025,22 +1107,42 @@ class BodyStyleConfig(Base):
 
 
 # Vehicle to BodyStyleConfig association table
-vehicle_to_body_style_config = Table(
-    "vehicle_to_body_style_config",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "body_style_config_id",
+class VehicleToBodyStyleConfig(Base):
+    """
+    Represents the mapping between vehicles and their associated body style configurations.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_body_style_config_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        body_style_config_id (int): Foreign key linking to the 'body_style_config' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_body_style_config"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_body_style_config_id = Column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    body_style_config_id = Column(
         Integer,
         ForeignKey("vcdb.body_style_config.body_style_config_id"),
         nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToBodyStyleConfig("
+            f"id={self.id}, vehicle_to_body_style_config_id={self.vehicle_to_body_style_config_id}, "
+            f"vehicle_id={self.vehicle_id}, body_style_config_id={self.body_style_config_id}, "
+            f"source={self.source})>"
+        )
 
 
 class MfrBodyCode(Base):
@@ -1074,22 +1176,40 @@ class MfrBodyCode(Base):
 
 
 # Vehicle to MfrBodyCode association table
-vehicle_to_mfr_body_code = Table(
-    "vehicle_to_mfr_body_code",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "mfr_body_code_id",
-        Integer,
-        ForeignKey("vcdb.mfr_body_code.mfr_body_code_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToMfrBodyCode(Base):
+    """
+    Represents the mapping between vehicles and their manufacturer-specific body codes.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_mfr_body_code_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        mfr_body_code_id (int): Foreign key linking to the 'mfr_body_code' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_mfr_body_code"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_mfr_body_code_id = Column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    mfr_body_code_id = Column(
+        Integer, ForeignKey("vcdb.mfr_body_code.mfr_body_code_id"), nullable=False
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToMfrBodyCode("
+            f"id={self.id}, vehicle_to_mfr_body_code_id={self.vehicle_to_mfr_body_code_id}, "
+            f"vehicle_id={self.vehicle_id}, mfr_body_code_id={self.mfr_body_code_id}, "
+            f"source={self.source})>"
+        )
 
 
 class EngineBlock(Base):
@@ -1122,8 +1242,11 @@ class EngineBlock(Base):
     block_type: Mapped[str] = mapped_column(String(2), nullable=False)
 
     # Relationships
-    engine_bases: Mapped[List["EngineBase"]] = relationship(
-        "EngineBase", back_populates="engine_block"
+    engine_bases2: Mapped[List["EngineBase"]] = relationship(
+        "EngineBase2", back_populates="engine_block"
+    )
+    engine_configs2: Mapped[List] = relationship(
+        "EngineConfig2", back_populates="engine_block"
     )
 
     def __repr__(self) -> str:
@@ -1165,8 +1288,11 @@ class EngineBoreStroke(Base):
     stroke_metric: Mapped[str] = mapped_column(String(10), nullable=False)
 
     # Relationships
-    engine_bases: Mapped[List["EngineBase"]] = relationship(
-        "EngineBase", back_populates="engine_bore_stroke"
+    engine_bases2: Mapped[List["EngineBase"]] = relationship(
+        "EngineBase2", back_populates="engine_bore_stroke"
+    )
+    engine_configs2: Mapped[List] = relationship(
+        "EngineConfig2", back_populates="engine_bore_stroke"
     )
 
     def __repr__(self) -> str:
@@ -1184,6 +1310,15 @@ class EngineBase(Base):
     Attributes:
         id: Primary key.
         engine_base_id: VCdb specific ID.
+        liter: Engine displacement in liters.
+        cc: Engine displacement in cubic centimeters.
+        cid: Engine displacement in cubic inches.
+        cylinders: Number of cylinders.
+        block_type: Configuration of the engine block.
+        eng_bore_in: Engine bore in inches.
+        eng_bore_metric: Engine bore in millimeters.
+        eng_stroke_in: Engine stroke in inches.
+        eng_stroke_metric: Engine stroke in millimeters.
         engine_block_id: Reference to engine block.
         engine_bore_stroke_id: Reference to engine bore stroke.
         engine_block: Relationship to engine block.
@@ -1192,6 +1327,50 @@ class EngineBase(Base):
     """
 
     __tablename__ = "engine_base"
+    __table_args__ = {"schema": "vcdb"}
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    engine_base_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+
+    # New fields based on provided data
+    liter: Mapped[str] = mapped_column(String(10), nullable=False)
+    cc: Mapped[str] = mapped_column(String(10), nullable=False)
+    cid: Mapped[str] = mapped_column(String(10), nullable=False)
+    cylinders: Mapped[str] = mapped_column(String(10), nullable=False)
+    block_type: Mapped[str] = mapped_column(String(10), nullable=False)
+    eng_bore_in: Mapped[str] = mapped_column(String(10), nullable=False)
+    eng_bore_metric: Mapped[str] = mapped_column(String(10), nullable=False)
+    eng_stroke_in: Mapped[str] = mapped_column(String(10), nullable=False)
+    eng_stroke_metric: Mapped[str] = mapped_column(String(10), nullable=False)
+
+    # Relationships
+    engine_configs: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig", back_populates="engine_base"
+    )
+
+    def __repr__(self) -> str:
+        """Return string representation of EngineBase instance."""
+        return f"<EngineBase {self.engine_base_id}>"
+
+
+class EngineBase2(Base):
+    """EngineBase entity representing base engine specifications.
+
+    Attributes:
+        id: Primary key.
+        engine_base_id: VCdb specific ID.
+        engine_block_id: Reference to engine block.
+        engine_bore_stroke_id: Reference to engine bore stroke.
+        engine_block: Relationship to engine block.
+        engine_bore_stroke: Relationship to engine bore stroke.
+        engine_configs: Relationship to engine configs 2.
+    """
+
+    __tablename__ = "engine_base2"
     __table_args__ = {"schema": "vcdb"}
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -1211,13 +1390,13 @@ class EngineBase(Base):
 
     # Relationships
     engine_block: Mapped["EngineBlock"] = relationship(
-        "EngineBlock", back_populates="engine_bases"
+        "EngineBlock", back_populates="engine_bases2"
     )
     engine_bore_stroke: Mapped["EngineBoreStroke"] = relationship(
-        "EngineBoreStroke", back_populates="engine_bases"
+        "EngineBoreStroke", back_populates="engine_bases2"
     )
-    engine_configs: Mapped[List["EngineConfig"]] = relationship(
-        "EngineConfig", back_populates="engine_base"
+    engine_configs: Mapped[List["EngineConfig2"]] = relationship(
+        "EngineConfig2", back_populates="engine_base"
     )
 
     def __repr__(self) -> str:
@@ -1226,7 +1405,7 @@ class EngineBase(Base):
         Returns:
             String representation.
         """
-        return f"<EngineBase {self.engine_base_id}>"
+        return f"<EngineBase2 {self.engine_base_id}>"
 
 
 class Aspiration(Base):
@@ -1253,6 +1432,9 @@ class Aspiration(Base):
     # Relationships
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="aspiration"
+    )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="aspiration"
     )
 
     def __repr__(self) -> str:
@@ -1289,6 +1471,9 @@ class FuelType(Base):
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="fuel_type"
     )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="fuel_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelType instance.
@@ -1323,6 +1508,9 @@ class CylinderHeadType(Base):
     # Relationships
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="cylinder_head_type"
+    )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="cylinder_head_type"
     )
 
     def __repr__(self) -> str:
@@ -1359,6 +1547,9 @@ class EngineDesignation(Base):
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="engine_designation"
     )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="engine_designation"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineDesignation instance.
@@ -1393,6 +1584,9 @@ class EngineVIN(Base):
     # Relationships
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="engine_vin"
+    )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="engine_vin"
     )
 
     def __repr__(self) -> str:
@@ -1429,6 +1623,9 @@ class EngineVersion(Base):
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="engine_version"
     )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="engine_version"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of EngineVersion instance.
@@ -1464,6 +1661,9 @@ class Mfr(Base):
     # Relationships
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="engine_mfr"
+    )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="engine_mfr"
     )
     transmission_configs: Mapped[List["Transmission"]] = relationship(
         "Transmission", back_populates="transmission_mfr"
@@ -1503,6 +1703,9 @@ class IgnitionSystemType(Base):
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="ignition_system_type"
     )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="ignition_system_type"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of IgnitionSystemType instance.
@@ -1537,6 +1740,9 @@ class Valves(Base):
     # Relationships
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="valves"
+    )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="valves"
     )
 
     def __repr__(self) -> str:
@@ -1753,6 +1959,9 @@ class FuelDeliveryConfig(Base):
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="fuel_delivery_config"
     )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="fuel_delivery_config"
+    )
 
     def __repr__(self) -> str:
         """Return string representation of FuelDeliveryConfig instance.
@@ -1789,6 +1998,9 @@ class PowerOutput(Base):
     # Relationships
     engine_configs: Mapped[List["EngineConfig"]] = relationship(
         "EngineConfig", back_populates="power_output"
+    )
+    engine_configs2: Mapped[List["EngineConfig"]] = relationship(
+        "EngineConfig2", back_populates="power_output"
     )
 
     def __repr__(self) -> str:
@@ -1930,23 +2142,185 @@ class EngineConfig(Base):
         return f"<EngineConfig {self.engine_config_id}>"
 
 
-# Vehicle to EngineConfig association table
-vehicle_to_engine_config = Table(
-    "vehicle_to_engine_config",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "engine_config_id",
+class EngineConfig2(Base):
+    """EngineConfig entity representing complete engine configurations.
+
+    Attributes:
+        id: Primary key.
+        engine_config_id: VCdb specific ID.
+        engine_base_id: Reference to engine base.
+        engine_block_id: Reference to engine block.
+        engine_bore_stroke_id: Reference to engine bore stroke.
+        engine_designation_id: Reference to engine designation.
+        engine_vin_id: Reference to engine VIN.
+        valves_id: Reference to valves.
+        fuel_delivery_config_id: Reference to fuel delivery config.
+        aspiration_id: Reference to aspiration.
+        cylinder_head_type_id: Reference to cylinder head type.
+        fuel_type_id: Reference to fuel type.
+        ignition_system_type_id: Reference to ignition system type.
+        engine_mfr_id: Reference to engine manufacturer.
+        engine_version_id: Reference to engine version.
+        power_output_id: Reference to power output.
+        engine_base: Relationship to engine base.
+        engine_designation: Relationship to engine designation.
+        engine_vin: Relationship to engine VIN.
+        valves: Relationship to valves.
+        fuel_delivery_config: Relationship to fuel delivery config.
+        aspiration: Relationship to aspiration.
+        cylinder_head_type: Relationship to cylinder head type.
+        fuel_type: Relationship to fuel type.
+        ignition_system_type: Relationship to ignition system type.
+        engine_mfr: Relationship to engine manufacturer.
+        engine_version: Relationship to engine version.
+        power_output: Relationship to power output.
+        vehicles: Relationship to vehicles.
+    """
+
+    __tablename__ = "engine_config2"
+    __table_args__ = {"schema": "vcdb"}
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    engine_config_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    engine_base_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.engine_base2.engine_base_id"), nullable=False
+    )
+    engine_block_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.engine_block.engine_block_id"), nullable=False
+    )
+    engine_bore_stroke_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.engine_bore_stroke.engine_bore_stroke_id")
+    )
+    engine_designation_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("vcdb.engine_config.engine_config_id"),
+        ForeignKey("vcdb.engine_designation.engine_designation_id"),
         nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+    )
+    engine_vin_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.engine_vin.engine_vin_id"), nullable=False
+    )
+    valves_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.valves.valves_id"), nullable=False
+    )
+    fuel_delivery_config_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("vcdb.fuel_delivery_config.fuel_delivery_config_id"),
+        nullable=False,
+    )
+    aspiration_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.aspiration.aspiration_id"), nullable=False
+    )
+    cylinder_head_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("vcdb.cylinder_head_type.cylinder_head_type_id"),
+        nullable=False,
+    )
+    fuel_type_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.fuel_type.fuel_type_id"), nullable=False
+    )
+    ignition_system_type_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("vcdb.ignition_system_type.ignition_system_type_id"),
+        nullable=False,
+    )
+    engine_mfr_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.mfr.mfr_id"), nullable=False
+    )
+    engine_version_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.engine_version.engine_version_id"), nullable=False
+    )
+    power_output_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("vcdb.power_output.power_output_id"), nullable=False
+    )
+
+    # Relationships
+    engine_block: Mapped["EngineBlock"] = relationship(
+        "EngineBlock", back_populates="engine_configs2"
+    )
+    engine_bore_stroke: Mapped["EngineBoreStroke"] = relationship(
+        "EngineBoreStroke", back_populates="engine_configs2"
+    )
+    engine_base: Mapped["EngineBase2"] = relationship(
+        "EngineBase2", back_populates="engine_configs"
+    )
+    engine_designation: Mapped["EngineDesignation"] = relationship(
+        "EngineDesignation", back_populates="engine_configs2"
+    )
+    engine_vin: Mapped["EngineVIN"] = relationship(
+        "EngineVIN", back_populates="engine_configs2"
+    )
+    valves: Mapped["Valves"] = relationship("Valves", back_populates="engine_configs2")
+    fuel_delivery_config: Mapped["FuelDeliveryConfig"] = relationship(
+        "FuelDeliveryConfig", back_populates="engine_configs2"
+    )
+    aspiration: Mapped["Aspiration"] = relationship(
+        "Aspiration", back_populates="engine_configs2"
+    )
+    cylinder_head_type: Mapped["CylinderHeadType"] = relationship(
+        "CylinderHeadType", back_populates="engine_configs2"
+    )
+    fuel_type: Mapped["FuelType"] = relationship(
+        "FuelType", back_populates="engine_configs2"
+    )
+    ignition_system_type: Mapped["IgnitionSystemType"] = relationship(
+        "IgnitionSystemType", back_populates="engine_configs2"
+    )
+    engine_mfr: Mapped["Mfr"] = relationship("Mfr", back_populates="engine_configs2")
+    engine_version: Mapped["EngineVersion"] = relationship(
+        "EngineVersion", back_populates="engine_configs2"
+    )
+    power_output: Mapped["PowerOutput"] = relationship(
+        "PowerOutput", back_populates="engine_configs2"
+    )
+
+    def __repr__(self) -> str:
+        """Return string representation of EngineConfig instance.
+
+        Returns:
+            String representation.
+        """
+        return f"<EngineConfig2 {self.engine_config_id}>"
+
+
+# Vehicle to EngineConfig association table
+class VehicleToEngineConfig(Base):
+    """
+    Represents the mapping between vehicles and their associated engine configurations.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_engine_config_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        engine_config_id (int): Foreign key linking to the 'engine_config2' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_engine_config"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_engine_config_id = Column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    engine_config_id = Column(
+        Integer, ForeignKey("vcdb.engine_config2.engine_config_id"), nullable=False
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToEngineConfig("
+            f"id={self.id}, vehicle_to_engine_config_id={self.vehicle_to_engine_config_id}, "
+            f"vehicle_id={self.vehicle_id}, engine_config_id={self.engine_config_id}, "
+            f"source={self.source})>"
+        )
 
 
 class SpringType(Base):
@@ -2043,22 +2417,42 @@ class SpringTypeConfig(Base):
 
 
 # Vehicle to SpringTypeConfig association table
-vehicle_to_spring_type_config = Table(
-    "vehicle_to_spring_type_config",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "spring_type_config_id",
+class VehicleToSpringTypeConfig(Base):
+    """
+    Represents the mapping between vehicles and their associated spring type configurations.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_spring_type_config_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        spring_type_config_id (int): Foreign key linking to the 'spring_type_config' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_spring_type_config"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_spring_type_config_id = Column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    spring_type_config_id = Column(
         Integer,
         ForeignKey("vcdb.spring_type_config.spring_type_config_id"),
         nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToSpringTypeConfig("
+            f"id={self.id}, vehicle_to_spring_type_config_id={self.vehicle_to_spring_type_config_id}, "
+            f"vehicle_id={self.vehicle_id}, spring_type_config_id={self.spring_type_config_id}, "
+            f"source={self.source})>"
+        )
 
 
 class SteeringType(Base):
@@ -2180,22 +2574,40 @@ class SteeringConfig(Base):
 
 
 # Vehicle to SteeringConfig association table
-vehicle_to_steering_config = Table(
-    "vehicle_to_steering_config",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "steering_config_id",
-        Integer,
-        ForeignKey("vcdb.steering_config.steering_config_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToSteeringConfig(Base):
+    """
+    Represents the mapping between vehicles and their associated steering configurations.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_steering_config_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        steering_config_id (int): Foreign key linking to the 'steering_config' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_steering_config"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_steering_config_id = Column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    steering_config_id = Column(
+        Integer, ForeignKey("vcdb.steering_config.steering_config_id"), nullable=False
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToSteeringConfig("
+            f"id={self.id}, vehicle_to_steering_config_id={self.vehicle_to_steering_config_id}, "
+            f"vehicle_id={self.vehicle_id}, steering_config_id={self.steering_config_id}, "
+            f"source={self.source})>"
+        )
 
 
 class TransmissionType(Base):
@@ -2505,22 +2917,40 @@ class Transmission(Base):
 
 
 # Vehicle to Transmission association table
-vehicle_to_transmission = Table(
-    "vehicle_to_transmission",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "transmission_id",
-        Integer,
-        ForeignKey("vcdb.transmission.transmission_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToTransmission(Base):
+    """
+    Represents the mapping between vehicles and their associated transmissions.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_transmission_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        transmission_id (int): Foreign key linking to the 'transmission' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_transmission"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_transmission_id = Column(
+        Integer, nullable=False, unique=True, index=True
+    )
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    transmission_id = Column(
+        Integer, ForeignKey("vcdb.transmission.transmission_id"), nullable=False
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToTransmission("
+            f"id={self.id}, vehicle_to_transmission_id={self.vehicle_to_transmission_id}, "
+            f"vehicle_id={self.vehicle_id}, transmission_id={self.transmission_id}, "
+            f"source={self.source}>"
+        )
 
 
 class WheelBase(Base):
@@ -2556,22 +2986,38 @@ class WheelBase(Base):
 
 
 # Vehicle to WheelBase association table
-vehicle_to_wheel_base = Table(
-    "vehicle_to_wheel_base",
-    Base.metadata,
-    Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-    Column(
-        "vehicle_id", Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False
-    ),
-    Column(
-        "wheel_base_id",
-        Integer,
-        ForeignKey("vcdb.wheel_base.wheel_base_id"),
-        nullable=False,
-    ),
-    Column("source", String(10), nullable=True),
-    schema="vcdb",
-)
+class VehicleToWheelBase(Base):
+    """
+    Represents the mapping between vehicles and their associated wheel base configurations.
+
+    Attributes:
+        id (UUID): Primary key, a unique identifier for each mapping record, generated automatically.
+        vehicle_to_wheel_base_id (int): A unique identifier for the relationship,
+            indexed and must not be null.
+        vehicle_id (int): Foreign key linking to the 'vehicle' table in the 'vcdb' schema, must not be null.
+        wheel_base_id (int): Foreign key linking to the 'wheel_base' table
+            in the 'vcdb' schema, must not be null.
+        source (str): An optional string (up to 10 characters) to denote the source of the mapping.
+    """
+
+    __tablename__ = "vehicle_to_wheel_base"
+    __table_args__ = {"schema": "vcdb"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_to_wheel_base_id = Column(Integer, nullable=False, unique=True, index=True)
+    vehicle_id = Column(Integer, ForeignKey("vcdb.vehicle.vehicle_id"), nullable=False)
+    wheel_base_id = Column(
+        Integer, ForeignKey("vcdb.wheel_base.wheel_base_id"), nullable=False
+    )
+    source = Column(String(10), nullable=True)
+
+    def __repr__(self):
+        return (
+            f"<VehicleToWheelBase("
+            f"id={self.id}, vehicle_to_wheel_base_id={self.vehicle_to_wheel_base_id}, "
+            f"vehicle_id={self.vehicle_id}, wheel_base_id={self.wheel_base_id}, "
+            f"source={self.source}>"
+        )
 
 
 class VCdbVersion(Base):

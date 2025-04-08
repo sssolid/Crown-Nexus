@@ -10,7 +10,14 @@ Association standards.
 import uuid
 from datetime import datetime
 from typing import Optional, List
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    ForeignKeyConstraint,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -46,7 +53,15 @@ class Qualifier(Base):
     """Model for qualifiers."""
 
     __tablename__ = "qualifier"
-    __table_args__ = {"schema": "qdb"}
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["new_qualifier_id"],
+            ["qdb.qualifier.qualifier_id"],
+            deferrable=True,
+            initially="DEFERRED",
+        ),
+        {"schema": "qdb"},
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -59,9 +74,7 @@ class Qualifier(Base):
     qualifier_type_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("qdb.qualifier_type.qualifier_type_id"), nullable=False
     )
-    new_qualifier_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("qdb.qualifier.qualifier_id"), nullable=True
-    )
+    new_qualifier_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     when_modified: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.now
     )

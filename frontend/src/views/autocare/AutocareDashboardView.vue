@@ -26,7 +26,7 @@
           <v-card-text>
             <p>Vehicle Component Database</p>
             <v-list density="compact" class="bg-transparent">
-              <v-list-item v-for="(stat, index) in vcdbStats" :key="index" :title="stat.label" :subtitle="`${stat.value}`">
+              <v-list-item v-for="(stat, index) in vcdbStats" :key="index" :title="stat.label" :subtitle="stat.value">
                 <template v-slot:prepend>
                   <v-icon :icon="stat.icon" color="primary"></v-icon>
                 </template>
@@ -54,7 +54,7 @@
           <v-card-text>
             <p>Product Component Database</p>
             <v-list density="compact" class="bg-transparent">
-              <v-list-item v-for="(stat, index) in pcdbStats" :key="index" :title="stat.label" :subtitle="`${stat.value}`">
+              <v-list-item v-for="(stat, index) in pcdbStats" :key="index" :title="stat.label" :subtitle="stat.value">
                 <template v-slot:prepend>
                   <v-icon :icon="stat.icon" color="primary"></v-icon>
                 </template>
@@ -82,7 +82,7 @@
           <v-card-text>
             <p>Part Attribute Database</p>
             <v-list density="compact" class="bg-transparent">
-              <v-list-item v-for="(stat, index) in padbStats" :key="index" :title="stat.label" :subtitle="`${stat.value}`">
+              <v-list-item v-for="(stat, index) in padbStats" :key="index" :title="stat.label" :subtitle="stat.value">
                 <template v-slot:prepend>
                   <v-icon :icon="stat.icon" color="primary"></v-icon>
                 </template>
@@ -110,7 +110,7 @@
           <v-card-text>
             <p>Qualifier Database</p>
             <v-list density="compact" class="bg-transparent">
-              <v-list-item v-for="(stat, index) in qdbStats" :key="index" :title="stat.label" :subtitle="`${stat.value}`">
+              <v-list-item v-for="(stat, index) in qdbStats" :key="index" :title="stat.label" :subtitle="stat.value">
                 <template v-slot:prepend>
                   <v-icon :icon="stat.icon" color="primary"></v-icon>
                 </template>
@@ -317,37 +317,36 @@ const pcdbVersion = computed(() => pcdbStore.version);
 const padbVersion = computed(() => padbStore.version);
 const qdbVersion = computed(() => qdbStore.version);
 
-// Static data for the dashboard
-// In a real app, this would be fetched from the API
-const vcdbStats = ref([
-  { label: 'Total Vehicles', value: '125,432', icon: 'mdi-car' },
-  { label: 'Makes', value: '87', icon: 'mdi-car-info' },
-  { label: 'Models', value: '1,245', icon: 'mdi-car-side' },
-  { label: 'Year Range', value: '1950-2023', icon: 'mdi-calendar-range' },
+// Dynamic stats computed properties
+const vcdbStats = computed(() => [
+  { label: 'Total Vehicles', value: vcdbStore.stats?.totalVehicles.toLocaleString(), icon: 'mdi-car' },
+  { label: 'Makes', value: vcdbStore.stats?.makeCount.toLocaleString(), icon: 'mdi-car-info' },
+  { label: 'Models', value: vcdbStore.stats?.modelCount.toLocaleString(), icon: 'mdi-car-side' },
+  { label: 'Year Range', value: vcdbStore.stats?.yearRange, icon: 'mdi-calendar-range' },
 ]);
 
-const pcdbStats = ref([
-  { label: 'Total Parts', value: '18,723', icon: 'mdi-wrench' },
-  { label: 'Categories', value: '142', icon: 'mdi-folder' },
-  { label: 'Positions', value: '87', icon: 'mdi-format-align-left' },
-  { label: 'Supersessions', value: '3,245', icon: 'mdi-arrow-up-down' },
+const pcdbStats = computed(() => [
+  // { label: 'Total Parts', value: pcdbStore.stats?.totalParts.toLocaleString(), icon: 'mdi-wrench' },
+  // { label: 'Categories', value: pcdbStore.stats?.categoryCount.toLocaleString(), icon: 'mdi-folder' },
+  // { label: 'Positions', value: pcdbStore.stats?.positionCount.toLocaleString(), icon: 'mdi-format-align-left' },
+  // { label: 'Supersessions', value: pcdbStore.stats?.supersessionCount.toLocaleString(), icon: 'mdi-arrow-up-down' },
 ]);
 
-const padbStats = ref([
-  { label: 'Total Attributes', value: '753', icon: 'mdi-format-list-bulleted' },
-  { label: 'Measurement Groups', value: '24', icon: 'mdi-ruler' },
-  { label: 'Valid Values', value: '1,876', icon: 'mdi-check-circle' },
-  { label: 'UOM Codes', value: '56', icon: 'mdi-code-tags' },
+const padbStats = computed(() => [
+  // { label: 'Total Attributes', value: padbStore.stats?.totalAttributes.toLocaleString(), icon: 'mdi-format-list-bulleted' },
+  // { label: 'Measurement Groups', value: padbStore.stats?.measurementGroupCount.toLocaleString(), icon: 'mdi-ruler' },
+  // { label: 'Valid Values', value: padbStore.stats?.validValueCount.toLocaleString(), icon: 'mdi-check-circle' },
+  // { label: 'UOM Codes', value: padbStore.stats?.uomCodeCount.toLocaleString(), icon: 'mdi-code-tags' },
 ]);
 
-const qdbStats = ref([
-  { label: 'Total Qualifiers', value: '3,421', icon: 'mdi-text-box' },
-  { label: 'Qualifier Types', value: '15', icon: 'mdi-format-list-text' },
-  { label: 'Languages', value: '12', icon: 'mdi-translate' },
-  { label: 'Groups', value: '47', icon: 'mdi-folder-multiple' },
+const qdbStats = computed(() => [
+  // { label: 'Total Qualifiers', value: qdbStore.stats?.totalQualifiers.toLocaleString(), icon: 'mdi-text-box' },
+  // { label: 'Qualifier Types', value: qdbStore.stats?.qualifierTypeCount.toLocaleString(), icon: 'mdi-format-list-text' },
+  // { label: 'Languages', value: qdbStore.stats?.languageCount.toLocaleString(), icon: 'mdi-translate' },
+  // { label: 'Groups', value: qdbStore.stats?.groupCount.toLocaleString(), icon: 'mdi-folder-multiple' },
 ]);
 
-// Quick search state
+// Quick search state - keep unchanged
 const quickSearch = ref({
   vehicles: {
     year: null,
@@ -365,7 +364,7 @@ const quickSearch = ref({
   },
 });
 
-// Computed
+// Computed properties - keep unchanged
 const isVehicleSearchValid = computed(() => {
   return (
     quickSearch.value.vehicles.year !== null ||
@@ -374,7 +373,7 @@ const isVehicleSearchValid = computed(() => {
   );
 });
 
-// Vehicle search reference data
+// Vehicle search reference data - keep unchanged
 const years = computed(() => vcdbStore.years);
 const makes = computed(() => vcdbStore.makes);
 const models = computed(() => vcdbStore.models);
@@ -390,6 +389,14 @@ const loadData = async () => {
       pcdbStore.fetchVersion(),
       padbStore.fetchVersion(),
       qdbStore.fetchVersion(),
+    ]);
+
+    // Load stats data
+    await Promise.all([
+      vcdbStore.fetchStats(),
+      // pcdbStore.fetchStats(),
+      // padbStore.fetchStats(),
+      // qdbStore.fetchStats(),
     ]);
 
     // Load reference data for quick search

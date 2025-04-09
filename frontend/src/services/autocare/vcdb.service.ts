@@ -21,7 +21,7 @@ import {
   BrakeConfig,
   BodyStyleConfig,
   VehicleConfigurationResponse,
-  VehicleType
+  VehicleType, VCdbStats
 } from '@/types';
 
 export class VCdbService extends ApiService {
@@ -32,6 +32,16 @@ export class VCdbService extends ApiService {
    */
   async getVersion(): Promise<string> {
     return this.get<string>(`${this.baseUrl}/version`);
+  }
+
+
+  /**
+   * Fetches statistical data from the specified endpoint.
+   *
+   * @return {Promise<any>} A promise that resolves to the statistical data fetched from the server.
+   */
+  async getStats(): Promise<VCdbStats> {
+    return this.get<VCdbStats>(`${this.baseUrl}/stats`);
   }
 
   /**

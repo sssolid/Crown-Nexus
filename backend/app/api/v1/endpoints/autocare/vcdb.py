@@ -35,6 +35,21 @@ async def get_version(
     version = await service.get_version()
     return version
 
+@router.get("/stats")
+async def get_vcdb_stats(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> Dict[str, Any]:
+    """Get VCdb statistics.
+
+    Args:
+        db: Database session
+
+    Returns:
+        VCdb statistics
+    """
+    service = VCdbService(db)
+    stats = await service.get_stats()
+    return stats
 
 @router.get("/years")
 async def get_years(
@@ -492,18 +507,25 @@ async def get_vehicle_details(
 async def get_vehicle_configurations(
     vehicle_id: int,
     db: Annotated[AsyncSession, Depends(get_db)],
+    use_config2: bool = Query(True, description="Use EngineConfig2 model instead of original EngineConfig"),
 ) -> Dict[str, Any]:
     """Get configurations for a vehicle.
 
     Args:
         vehicle_id: Vehicle ID
+        use_config2: Whether to use the newer EngineConfig2 model (default: True)
         db: Database session
 
     Returns:
         Vehicle configurations
     """
     service = VCdbService(db)
-    configurations = await service.get_vehicle_configurations(vehicle_id)
+
+    if use_config2:
+        configurations = await service.get_vehicle_configurations2(vehicle_id)
+    else:
+        configurations = await service.get_vehicle_configurations(vehicle_id)
+
     return configurations
 
 

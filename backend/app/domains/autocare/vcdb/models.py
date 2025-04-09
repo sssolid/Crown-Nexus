@@ -462,8 +462,11 @@ class Vehicle(Base):
     mfr_body_codes: Mapped[List["MfrBodyCode"]] = relationship(
         "MfrBodyCode", secondary="vcdb.vehicle_to_mfr_body_code"
     )
-    engine_configs: Mapped[List["EngineConfig2"]] = relationship(
-        "EngineConfig2", secondary="vcdb.vehicle_to_engine_config"
+    engine_configs: Mapped[List['EngineConfig2']] = relationship(
+        'EngineConfig2',
+        secondary='vcdb.vehicle_to_engine_config',
+        primaryjoin='Vehicle.vehicle_id == VehicleToEngineConfig.vehicle_id',
+        secondaryjoin='VehicleToEngineConfig.engine_config_id == EngineConfig2.engine_config_id'
     )
     spring_type_configs: Mapped[List["SpringTypeConfig"]] = relationship(
         "SpringTypeConfig", secondary="vcdb.vehicle_to_spring_type_config"

@@ -7,6 +7,13 @@ export interface BaseEntity {
   id: string;
 }
 
+export interface VCdbStats {
+  totalVehicles: number;
+  makeCount: number;
+  modelCount: number;
+  yearRange: string;
+}
+
 export interface Make extends BaseEntity {
   make_id: number;
   name: string;

@@ -18,7 +18,7 @@ import {
   BaseVehicle,
   VehicleConfigurationResponse,
   VehicleType,
-  Region
+  Region, VCdbStats
 } from '@/types';
 
 export const useVCdbStore = defineStore('vcdb', () => {
@@ -26,6 +26,7 @@ export const useVCdbStore = defineStore('vcdb', () => {
   const loading = ref(false);
   const error = ref<ApiError | null>(null);
   const version = ref<string | null>(null);
+  const stats = ref<VCdbStats | null>(null);
   const years = ref<Year[]>([]);
   const makes = ref<Make[]>([]);
   const models = ref<Model[]>([]);
@@ -72,6 +73,18 @@ export const useVCdbStore = defineStore('vcdb', () => {
       setLoading(true);
       clearError();
       version.value = await vcdbService.getVersion();
+    } catch (err) {
+      setError(err as ApiError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      stats.value = await vcdbService.getStats();
     } catch (err) {
       setError(err as ApiError);
     } finally {
@@ -298,6 +311,7 @@ export const useVCdbStore = defineStore('vcdb', () => {
     loading,
     error,
     version,
+    stats,
     years,
     makes,
     models,
@@ -322,6 +336,7 @@ export const useVCdbStore = defineStore('vcdb', () => {
     setLoading,
     setError,
     fetchVersion,
+    fetchStats,
     fetchYears,
     fetchYearRange,
     fetchMakes,

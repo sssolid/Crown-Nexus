@@ -14,7 +14,7 @@ import {
 } from '@/types';
 
 export class QdbService extends ApiService {
-  private readonly baseUrl = '/qdb';
+  private readonly baseUrl = '/autocare/qdb';
 
   /**
    * Get the current Qdb version

@@ -50,6 +50,12 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         logger.info("ErrorHandlerMiddleware initialized")
 
+    def _get_metrics_service(self) -> Optional[Any]:
+        try:
+            return get_service("metrics_service")
+        except Exception:
+            return None
+
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Response]
     ) -> Response:
@@ -63,11 +69,6 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         Returns:
             Response: The response, or an error response if an exception occurred
         """
-        metrics_service: Optional[Any] = None
-        try:
-            metrics_service = get_service("metrics_service")
-        except Exception:
-            pass
 
         start_time = time.time()
         error_type = None
@@ -131,7 +132,6 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     exc, request_id=request_id, user_id=user_id, function_name=method
                 )
                 self._track_error_metrics(
-                    metrics_service,
                     error_type,
                     status_code,
                     request.method,
@@ -166,7 +166,6 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     exc, request_id=request_id, user_id=user_id, function_name=method
                 )
                 self._track_error_metrics(
-                    metrics_service,
                     error_type,
                     status_code,
                     request.method,
@@ -206,7 +205,6 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     exc, request_id=request_id, user_id=user_id, function_name=method
                 )
                 self._track_error_metrics(
-                    metrics_service,
                     error_type,
                     status_code,
                     request.method,
@@ -241,7 +239,6 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
 
     def _track_error_metrics(
         self,
-        metrics_service: Optional[Any],
         error_type: str,
         status_code: int,
         method: str,
@@ -251,12 +248,12 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         Track error metrics.
 
         Args:
-            metrics_service: The metrics service
             error_type: The type of error
             status_code: The HTTP status code
             method: The HTTP method
             path: The request path
         """
+        metrics_service = self._get_metrics_service()
         if not metrics_service:
             return
 

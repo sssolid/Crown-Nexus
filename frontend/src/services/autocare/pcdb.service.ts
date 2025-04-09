@@ -14,7 +14,7 @@ import {
 } from '@/types';
 
 export class PCdbService extends ApiService {
-  private readonly baseUrl = '/pcdb';
+  private readonly baseUrl = '/autocare/pcdb';
 
   /**
    * Get the current PCdb version

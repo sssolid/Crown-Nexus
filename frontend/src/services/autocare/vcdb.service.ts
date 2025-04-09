@@ -25,7 +25,7 @@ import {
 } from '@/types';
 
 export class VCdbService extends ApiService {
-  private readonly baseUrl = '/vcdb';
+  private readonly baseUrl = '/autocare/vcdb';
 
   /**
    * Get the current VCdb version

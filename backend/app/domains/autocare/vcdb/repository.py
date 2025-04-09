@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import select, and_, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.repositories.base import BaseRepository
 from app.domains.autocare.vcdb.models import (
@@ -34,6 +35,7 @@ from app.domains.autocare.vcdb.models import (
     EngineBlock,
     EngineBoreStroke,
     EngineBase,
+    EngineBase2,
     Aspiration,
     FuelType,
     CylinderHeadType,
@@ -50,6 +52,7 @@ from app.domains.autocare.vcdb.models import (
     IgnitionSystemType,
     PowerOutput,
     EngineConfig,
+    EngineConfig2,
     TransmissionType,
     TransmissionNumSpeeds,
     TransmissionControlType,
@@ -188,13 +191,24 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
             .join(Make, BaseVehicle.make_id == Make.make_id)
             .join(Model, BaseVehicle.model_id == Model.model_id)
             .join(SubModel, Vehicle.submodel_id == SubModel.submodel_id)
+            .options(
+                selectinload(Vehicle.base_vehicle)
+                .selectinload(BaseVehicle.make),
+                selectinload(Vehicle.base_vehicle)
+                .selectinload(BaseVehicle.year),
+                selectinload(Vehicle.base_vehicle)
+                .selectinload(BaseVehicle.model),
+                selectinload(Vehicle.submodel),
+                selectinload(Vehicle.region),
+            )
+
         )
 
         # Add filters
         conditions = []
 
         if year:
-            conditions.append(Year.year == year)
+            conditions.append(Year.year_id == year)
 
         if make:
             conditions.append(Make.name.ilike(f"%{make}%"))
@@ -208,35 +222,25 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
         if body_type:
             # Add join for body type
             query = query.join(
-                BodyStyleConfig, Vehicle.id == BodyStyleConfig.body_style_config_id
+                Vehicle.body_style_configs
             ).join(BodyType, BodyStyleConfig.body_type_id == BodyType.body_type_id)
             conditions.append(BodyType.name.ilike(f"%{body_type}%"))
 
         if engine_config:
             # Add join for engine config
-            query = query.join(
-                EngineConfig, Vehicle.id == EngineConfig.engine_config_id
-            )
-            conditions.append(EngineConfig.engine_config_id == engine_config)
+            query = query.join(Vehicle.engine_configs)
+            conditions.append(EngineConfig2.engine_config_id == engine_config)
 
         if transmission_type:
             # Add join for transmission
-            query = query.join(
-                Transmission, Vehicle.id == Transmission.transmission_id
-            ).join(
-                TransmissionBase,
-                Transmission.transmission_base_id
-                == TransmissionBase.transmission_base_id,
-            )
-            conditions.append(
-                TransmissionBase.transmission_type_id == transmission_type
-            )
+            query = query.join(Vehicle.transmissions).join(TransmissionBase)
+            conditions.append(TransmissionBase.transmission_type_id == transmission_type)
 
         if conditions:
             query = query.where(and_(*conditions))
 
         # Order by latest year, then make, then model
-        query = query.order_by(desc(Year.year), Make.name, Model.name)
+        query = query.order_by(desc(Year.year_id), Make.name, Model.name)
 
         return await self.paginate(query, page, page_size)
 
@@ -271,7 +275,14 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
         Returns:
             Dict containing lists of configurations by type.
         """
-        vehicle = await self.get_by_vehicle_id(vehicle_id)
+        vehicle_query = (
+            select(Vehicle)
+            .where(Vehicle.vehicle_id == vehicle_id)
+            .options(selectinload(Vehicle.engine_configs))
+        )
+        result = await self.db.execute(vehicle_query)
+        vehicle = result.scalars().first()
+
         if not vehicle:
             return {
                 "engines": [],
@@ -283,18 +294,20 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
             }
 
         # Engines
+        engine_config_ids = [ec.engine_config_id for ec in vehicle.engine_configs]
+
         engine_query = (
-            select(EngineConfig)
-            .join(EngineBase, EngineConfig.engine_base_id == EngineBase.engine_base_id)
-            .join(
-                EngineBlock, EngineBase.engine_block_id == EngineBlock.engine_block_id
-            )
-            .join(FuelType, EngineConfig.fuel_type_id == FuelType.fuel_type_id)
-            .join(Aspiration, EngineConfig.aspiration_id == Aspiration.aspiration_id)
-            .where(
-                EngineConfig.engine_config_id.in_(
-                    [ec.engine_config_id for ec in vehicle.engine_configs]
-                )
+            select(EngineConfig2)
+            .join(EngineBase2, EngineConfig2.engine_base_id == EngineBase2.engine_base_id)
+            .join(EngineBlock, EngineBase2.engine_block_id == EngineBlock.engine_block_id)
+            .join(FuelType, EngineConfig2.fuel_type_id == FuelType.fuel_type_id)
+            .join(Aspiration, EngineConfig2.aspiration_id == Aspiration.aspiration_id)
+            .where(EngineConfig2.engine_config_id.in_(engine_config_ids))
+            .options(
+                selectinload(EngineConfig2.engine_base),
+                selectinload(EngineConfig2.engine_block),
+                selectinload(EngineConfig2.fuel_type),
+                selectinload(EngineConfig2.aspiration),
             )
         )
 
@@ -422,7 +435,7 @@ class BaseVehicleRepository(BaseRepository[BaseVehicle, uuid.UUID]):
         conditions = []
 
         if year:
-            conditions.append(Year.year == year)
+            conditions.append(Year.year_id == year)
 
         if make:
             conditions.append(Make.name.ilike(f"%{make}%"))
@@ -434,7 +447,7 @@ class BaseVehicleRepository(BaseRepository[BaseVehicle, uuid.UUID]):
             query = query.where(and_(*conditions))
 
         # Order by latest year, then make, then model
-        query = query.order_by(desc(Year.year), Make.name, Model.name)
+        query = query.order_by(desc(Year.year_id), Make.name, Model.name)
 
         return await self.paginate(query, page, page_size)
 
@@ -490,7 +503,7 @@ class MakeRepository(BaseRepository[Make, uuid.UUID]):
             select(Make)
             .join(BaseVehicle, Make.make_id == BaseVehicle.make_id)
             .join(Year, BaseVehicle.year_id == Year.year_id)
-            .where(Year.year == year)
+            .where(Year.year_id == year)
             .distinct()
             .order_by(Make.name)
         )
@@ -561,7 +574,8 @@ class ModelRepository(BaseRepository[Model, uuid.UUID]):
             select(Model)
             .join(BaseVehicle, Model.model_id == BaseVehicle.model_id)
             .join(Year, BaseVehicle.year_id == Year.year_id)
-            .where(Year.year == year, BaseVehicle.make_id == make_id)
+            .where(Year.year_id == year, BaseVehicle.make_id == make_id)
+            .options(selectinload(Model.vehicle_type))
             .distinct()
             .order_by(Model.name)
         )
@@ -621,7 +635,7 @@ class YearRepository(BaseRepository[Year, uuid.UUID]):
         Returns:
             The year entity if found, None otherwise.
         """
-        query = select(Year).where(Year.year == year)
+        query = select(Year).where(Year.year_id == year)
         result = await self.db.execute(query)
         return result.scalars().first()
 
@@ -631,7 +645,7 @@ class YearRepository(BaseRepository[Year, uuid.UUID]):
         Returns:
             List of all year entities.
         """
-        query = select(Year).order_by(desc(Year.year))
+        query = select(Year).order_by(desc(Year.year_id))
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
@@ -641,8 +655,8 @@ class YearRepository(BaseRepository[Year, uuid.UUID]):
         Returns:
             Tuple containing (min_year, max_year).
         """
-        min_query = select(func.min(Year.year))
-        max_query = select(func.max(Year.year))
+        min_query = select(func.min(Year.year_id))
+        max_query = select(func.max(Year.year_id))
 
         min_result = await self.db.execute(min_query)
         max_result = await self.db.execute(max_query)
@@ -815,7 +829,7 @@ class RegionRepository(BaseRepository[Region, uuid.UUID]):
         return list(result.scalars().all())
 
 
-class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
+class EngineConfigRepository(BaseRepository[EngineConfig2, uuid.UUID]):
     """Repository for EngineConfig entity operations."""
 
     def __init__(self, db: AsyncSession) -> None:
@@ -824,11 +838,11 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
         Args:
             db: The database session.
         """
-        super().__init__(model=EngineConfig, db=db)
+        super().__init__(model=EngineConfig2, db=db)
 
     async def get_by_engine_config_id(
         self, engine_config_id: int
-    ) -> Optional[EngineConfig]:
+    ) -> Optional[EngineConfig2]:
         """Get an engine configuration by its VCdb ID.
 
         Args:
@@ -837,8 +851,8 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
         Returns:
             The engine config if found, None otherwise.
         """
-        query = select(EngineConfig).where(
-            EngineConfig.engine_config_id == engine_config_id
+        query = select(EngineConfig2).where(
+            EngineConfig2.engine_config_id == engine_config_id
         )
         result = await self.db.execute(query)
         return result.scalars().first()
@@ -863,19 +877,19 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
         Returns:
             Dict containing items, total count, and pagination info.
         """
-        query = select(EngineConfig)
+        query = select(EngineConfig2)
 
         # Add filters
         conditions = []
 
         if engine_base_id:
-            conditions.append(EngineConfig.engine_base_id == engine_base_id)
+            conditions.append(EngineConfig2.engine_base_id == engine_base_id)
 
         if fuel_type_id:
-            conditions.append(EngineConfig.fuel_type_id == fuel_type_id)
+            conditions.append(EngineConfig2.fuel_type_id == fuel_type_id)
 
         if aspiration_id:
-            conditions.append(EngineConfig.aspiration_id == aspiration_id)
+            conditions.append(EngineConfig2.aspiration_id == aspiration_id)
 
         if conditions:
             query = query.where(and_(*conditions))
@@ -893,135 +907,43 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
         """
         # Get the engine config with all related entities
         query = (
-            select(
-                EngineConfig,
-                EngineBase,
-                EngineBlock,
-                EngineBoreStroke,
-                Aspiration,
-                FuelType,
-                CylinderHeadType,
-                FuelDeliveryConfig,
-                EngineDesignation,
-                EngineVIN,
-                Valves,
-                Mfr,
-                IgnitionSystemType,
-                EngineVersion,
-                PowerOutput,
+            select(EngineConfig2)
+            .options(
+                selectinload(EngineConfig2.engine_base),
+                selectinload(EngineConfig2.engine_block),
+                selectinload(EngineConfig2.engine_bore_stroke),
+                selectinload(EngineConfig2.aspiration),
+                selectinload(EngineConfig2.fuel_type),
+                selectinload(EngineConfig2.cylinder_head_type),
+                selectinload(EngineConfig2.fuel_delivery_config),
+                selectinload(EngineConfig2.engine_designation),
+                selectinload(EngineConfig2.engine_vin),
+                selectinload(EngineConfig2.valves),
+                selectinload(EngineConfig2.engine_mfr),
+                selectinload(EngineConfig2.ignition_system_type),
+                selectinload(EngineConfig2.engine_version),
+                selectinload(EngineConfig2.power_output),
+                selectinload(EngineConfig2.fuel_delivery_config).selectinload(
+                    FuelDeliveryConfig.fuel_delivery_type
+                ),
+                selectinload(EngineConfig2.fuel_delivery_config).selectinload(
+                    FuelDeliveryConfig.fuel_delivery_subtype
+                ),
+                selectinload(EngineConfig2.fuel_delivery_config).selectinload(
+                    FuelDeliveryConfig.fuel_system_control_type
+                ),
+                selectinload(EngineConfig2.fuel_delivery_config).selectinload(
+                    FuelDeliveryConfig.fuel_system_design
+                ),
             )
-            .join(EngineBase, EngineConfig.engine_base_id == EngineBase.engine_base_id)
-            .join(
-                EngineBlock, EngineBase.engine_block_id == EngineBlock.engine_block_id
-            )
-            .join(
-                EngineBoreStroke,
-                EngineBase.engine_bore_stroke_id
-                == EngineBoreStroke.engine_bore_stroke_id,
-            )
-            .join(Aspiration, EngineConfig.aspiration_id == Aspiration.aspiration_id)
-            .join(FuelType, EngineConfig.fuel_type_id == FuelType.fuel_type_id)
-            .join(
-                CylinderHeadType,
-                EngineConfig.cylinder_head_type_id
-                == CylinderHeadType.cylinder_head_type_id,
-            )
-            .join(
-                FuelDeliveryConfig,
-                EngineConfig.fuel_delivery_config_id
-                == FuelDeliveryConfig.fuel_delivery_config_id,
-            )
-            .join(
-                EngineDesignation,
-                EngineConfig.engine_designation_id
-                == EngineDesignation.engine_designation_id,
-            )
-            .join(EngineVIN, EngineConfig.engine_vin_id == EngineVIN.engine_vin_id)
-            .join(Valves, EngineConfig.valves_id == Valves.valves_id)
-            .join(Mfr, EngineConfig.engine_mfr_id == Mfr.mfr_id)
-            .join(
-                IgnitionSystemType,
-                EngineConfig.ignition_system_type_id
-                == IgnitionSystemType.ignition_system_type_id,
-            )
-            .join(
-                EngineVersion,
-                EngineConfig.engine_version_id == EngineVersion.engine_version_id,
-            )
-            .join(
-                PowerOutput, EngineConfig.power_output_id == PowerOutput.power_output_id
-            )
-            .where(EngineConfig.engine_config_id == engine_config_id)
+            .where(EngineConfig2.engine_config_id == engine_config_id)
         )
 
         result = await self.db.execute(query)
-        row = result.first()
+        engine_config = result.scalars().first()
 
-        if not row:
+        if not engine_config:
             return {}
-
-        # Extract all entities from the row
-        (
-            engine_config,
-            engine_base,
-            engine_block,
-            engine_bore_stroke,
-            aspiration,
-            fuel_type,
-            cylinder_head_type,
-            fuel_delivery_config,
-            engine_designation,
-            engine_vin,
-            valves,
-            mfr,
-            ignition_system_type,
-            engine_version,
-            power_output,
-        ) = row
-
-        # Get fuel delivery details
-        fuel_delivery_query = (
-            select(
-                FuelDeliveryType,
-                FuelDeliverySubType,
-                FuelSystemControlType,
-                FuelSystemDesign,
-            )
-            .join(
-                FuelDeliverySubType,
-                FuelDeliveryConfig.fuel_delivery_subtype_id
-                == FuelDeliverySubType.fuel_delivery_subtype_id,
-            )
-            .join(
-                FuelSystemControlType,
-                FuelDeliveryConfig.fuel_system_control_type_id
-                == FuelSystemControlType.fuel_system_control_type_id,
-            )
-            .join(
-                FuelSystemDesign,
-                FuelDeliveryConfig.fuel_system_design_id
-                == FuelSystemDesign.fuel_system_design_id,
-            )
-            .where(
-                FuelDeliveryConfig.fuel_delivery_config_id
-                == fuel_delivery_config.fuel_delivery_config_id
-            )
-        )
-
-        fuel_delivery_result = await self.db.execute(fuel_delivery_query)
-        fuel_delivery_row = fuel_delivery_result.first()
-
-        if fuel_delivery_row:
-            (
-                fuel_delivery_type,
-                fuel_delivery_subtype,
-                fuel_system_control_type,
-                fuel_system_design,
-            ) = fuel_delivery_row
-        else:
-            fuel_delivery_type = fuel_delivery_subtype = fuel_system_control_type = (
-                fuel_system_design
-            ) = None
 
         # Construct the detailed response
         return {
@@ -1041,59 +963,63 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
                 "power_output_id": engine_config.power_output_id,
             },
             "engine_block": {
-                "id": engine_block.engine_block_id,
-                "liter": engine_block.liter,
-                "cc": engine_block.cc,
-                "cid": engine_block.cid,
-                "cylinders": engine_block.cylinders,
-                "block_type": engine_block.block_type,
+                "id": engine_config.engine_block.engine_block_id if engine_config.engine_block else None,
+                "liter": engine_config.engine_block.liter if engine_config.engine_block else None,
+                "cc": engine_config.engine_block.cc if engine_config.engine_block else None,
+                "cid": engine_config.engine_block.cid if engine_config.engine_block else None,
+                "cylinders": engine_config.engine_block.cylinders if engine_config.engine_block else None,
+                "block_type": engine_config.engine_block.block_type if engine_config.engine_block else None,
             },
             "engine_bore_stroke": {
-                "id": engine_bore_stroke.engine_bore_stroke_id,
-                "bore_in": engine_bore_stroke.bore_in,
-                "bore_metric": engine_bore_stroke.bore_metric,
-                "stroke_in": engine_bore_stroke.stroke_in,
-                "stroke_metric": engine_bore_stroke.stroke_metric,
+                "id": engine_config.engine_bore_stroke.engine_bore_stroke_id if engine_config.engine_bore_stroke else None,
+                "bore_in": engine_config.engine_bore_stroke.bore_in if engine_config.engine_bore_stroke else None,
+                "bore_metric": engine_config.engine_bore_stroke.bore_metric if engine_config.engine_bore_stroke else None,
+                "stroke_in": engine_config.engine_bore_stroke.stroke_in if engine_config.engine_bore_stroke else None,
+                "stroke_metric": engine_config.engine_bore_stroke.stroke_metric if engine_config.engine_bore_stroke else None,
             },
-            "aspiration": {"id": aspiration.aspiration_id, "name": aspiration.name},
-            "fuel_type": {"id": fuel_type.fuel_type_id, "name": fuel_type.name},
+            "aspiration": {"id": engine_config.aspiration.aspiration_id,
+                           "name": engine_config.aspiration.name} if engine_config.aspiration else None,
+            "fuel_type": {"id": engine_config.fuel_type.fuel_type_id,
+                          "name": engine_config.fuel_type.name} if engine_config.fuel_type else None,
             "cylinder_head_type": {
-                "id": cylinder_head_type.cylinder_head_type_id,
-                "name": cylinder_head_type.name,
-            },
+                "id": engine_config.cylinder_head_type.cylinder_head_type_id,
+                "name": engine_config.cylinder_head_type.name,
+            } if engine_config.cylinder_head_type else None,
             "fuel_delivery": {
-                "type": fuel_delivery_type.name if fuel_delivery_type else None,
-                "subtype": (
-                    fuel_delivery_subtype.name if fuel_delivery_subtype else None
-                ),
-                "control_type": (
-                    fuel_system_control_type.name if fuel_system_control_type else None
-                ),
-                "design": fuel_system_design.name if fuel_system_design else None,
+                "type": engine_config.fuel_delivery_config.fuel_delivery_type.name
+                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_delivery_type else None,
+                "subtype": engine_config.fuel_delivery_config.fuel_delivery_subtype.name
+                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_delivery_subtype else None,
+                "control_type": engine_config.fuel_delivery_config.fuel_system_control_type.name
+                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_system_control_type else None,
+                "design": engine_config.fuel_delivery_config.fuel_system_design.name
+                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_system_design else None,
             },
             "engine_designation": {
-                "id": engine_designation.engine_designation_id,
-                "name": engine_designation.name,
-            },
-            "engine_vin": {"id": engine_vin.engine_vin_id, "code": engine_vin.code},
+                "id": engine_config.engine_designation.engine_designation_id,
+                "name": engine_config.engine_designation.name,
+            } if engine_config.engine_designation else None,
+            "engine_vin": {"id": engine_config.engine_vin.engine_vin_id,
+                           "code": engine_config.engine_vin.code} if engine_config.engine_vin else None,
             "valves": {
-                "id": valves.valves_id,
-                "valves_per_engine": valves.valves_per_engine,
-            },
-            "manufacturer": {"id": mfr.mfr_id, "name": mfr.name},
+                "id": engine_config.valves.valves_id,
+                "valves_per_engine": engine_config.valves.valves_per_engine,
+            } if engine_config.valves else None,
+            "manufacturer": {"id": engine_config.engine_mfr.mfr_id,
+                            "name": engine_config.engine_mfr.name} if engine_config.engine_mfr else None,
             "ignition_system_type": {
-                "id": ignition_system_type.ignition_system_type_id,
-                "name": ignition_system_type.name,
-            },
+                "id": engine_config.ignition_system_type.ignition_system_type_id,
+                "name": engine_config.ignition_system_type.name,
+            } if engine_config.ignition_system_type else None,
             "engine_version": {
-                "id": engine_version.engine_version_id,
-                "version": engine_version.version,
-            },
+                "id": engine_config.engine_version.engine_version_id,
+                "version": engine_config.engine_version.version,
+            } if engine_config.engine_version else None,
             "power_output": {
-                "id": power_output.power_output_id,
-                "horsepower": power_output.horsepower,
-                "kilowatt": power_output.kilowatt,
-            },
+                "id": engine_config.power_output.power_output_id,
+                "horsepower": engine_config.power_output.horsepower,
+                "kilowatt": engine_config.power_output.kilowatt,
+            } if engine_config.power_output else None,
         }
 
 
@@ -1189,66 +1115,26 @@ class TransmissionRepository(BaseRepository[Transmission, uuid.UUID]):
         """
         # Get the transmission with all related entities
         query = (
-            select(
-                Transmission,
-                TransmissionBase,
-                TransmissionType,
-                TransmissionNumSpeeds,
-                TransmissionControlType,
-                TransmissionMfrCode,
-                ElecControlled,
-                Mfr,
+            select(Transmission)
+            .options(
+                selectinload(Transmission.transmission_base)
+                .selectinload(TransmissionBase.transmission_type),
+                selectinload(Transmission.transmission_base)
+                .selectinload(TransmissionBase.transmission_num_speeds),
+                selectinload(Transmission.transmission_base)
+                .selectinload(TransmissionBase.transmission_control_type),
+                selectinload(Transmission.transmission_mfr_code),
+                selectinload(Transmission.elec_controlled),
+                selectinload(Transmission.transmission_mfr),
             )
-            .join(
-                TransmissionBase,
-                Transmission.transmission_base_id
-                == TransmissionBase.transmission_base_id,
-            )
-            .join(
-                TransmissionType,
-                TransmissionBase.transmission_type_id
-                == TransmissionType.transmission_type_id,
-            )
-            .join(
-                TransmissionNumSpeeds,
-                TransmissionBase.transmission_num_speeds_id
-                == TransmissionNumSpeeds.transmission_num_speeds_id,
-            )
-            .join(
-                TransmissionControlType,
-                TransmissionBase.transmission_control_type_id
-                == TransmissionControlType.transmission_control_type_id,
-            )
-            .join(
-                TransmissionMfrCode,
-                Transmission.transmission_mfr_code_id
-                == TransmissionMfrCode.transmission_mfr_code_id,
-            )
-            .join(
-                ElecControlled,
-                Transmission.elec_controlled_id == ElecControlled.elec_controlled_id,
-            )
-            .join(Mfr, Transmission.transmission_mfr_id == Mfr.mfr_id)
             .where(Transmission.transmission_id == transmission_id)
         )
 
         result = await self.db.execute(query)
-        row = result.first()
+        transmission = result.scalars().first()
 
-        if not row:
+        if not transmission:
             return {}
-
-        # Extract all entities from the row
-        (
-            transmission,
-            transmission_base,
-            transmission_type,
-            transmission_num_speeds,
-            transmission_control_type,
-            transmission_mfr_code,
-            elec_controlled,
-            mfr,
-        ) = row
 
         # Construct the detailed response
         return {
@@ -1260,26 +1146,27 @@ class TransmissionRepository(BaseRepository[Transmission, uuid.UUID]):
                 "transmission_mfr_id": transmission.transmission_mfr_id,
             },
             "type": {
-                "id": transmission_type.transmission_type_id,
-                "name": transmission_type.name,
-            },
+                "id": transmission.transmission_base.transmission_type.transmission_type_id,
+                "name": transmission.transmission_base.transmission_type.name,
+            } if transmission.transmission_base and transmission.transmission_base.transmission_type else None,
             "num_speeds": {
-                "id": transmission_num_speeds.transmission_num_speeds_id,
-                "num_speeds": transmission_num_speeds.num_speeds,
-            },
+                "id": transmission.transmission_base.transmission_num_speeds.transmission_num_speeds_id,
+                "num_speeds": transmission.transmission_base.transmission_num_speeds.num_speeds,
+            } if transmission.transmission_base and transmission.transmission_base.transmission_num_speeds else None,
             "control_type": {
-                "id": transmission_control_type.transmission_control_type_id,
-                "name": transmission_control_type.name,
-            },
+                "id": transmission.transmission_base.transmission_control_type.transmission_control_type_id,
+                "name": transmission.transmission_base.transmission_control_type.name,
+            } if transmission.transmission_base and transmission.transmission_base.transmission_control_type else None,
             "mfr_code": {
-                "id": transmission_mfr_code.transmission_mfr_code_id,
-                "code": transmission_mfr_code.code,
-            },
+                "id": transmission.transmission_mfr_code.transmission_mfr_code_id,
+                "code": transmission.transmission_mfr_code.code,
+            } if transmission.transmission_mfr_code else None,
             "elec_controlled": {
-                "id": elec_controlled.elec_controlled_id,
-                "value": elec_controlled.value,
-            },
-            "manufacturer": {"id": mfr.mfr_id, "name": mfr.name},
+                "id": transmission.elec_controlled.elec_controlled_id,
+                "value": transmission.elec_controlled.value,
+            } if transmission.elec_controlled else None,
+            "manufacturer": {"id": transmission.transmission_mfr.mfr_id,
+                            "name": transmission.transmission_mfr.name} if transmission.transmission_mfr else None,
         }
 
 
@@ -1375,23 +1262,19 @@ class BodyStyleConfigRepository(BaseRepository[BodyStyleConfig, uuid.UUID]):
         """
         # Get the body style config with all related entities
         query = (
-            select(BodyStyleConfig, BodyType, BodyNumDoors)
-            .join(BodyType, BodyStyleConfig.body_type_id == BodyType.body_type_id)
-            .join(
-                BodyNumDoors,
-                BodyStyleConfig.body_num_doors_id == BodyNumDoors.body_num_doors_id,
+            select(BodyStyleConfig)
+            .options(
+                selectinload(BodyStyleConfig.body_type),
+                selectinload(BodyStyleConfig.body_num_doors),
             )
             .where(BodyStyleConfig.body_style_config_id == body_style_config_id)
         )
 
         result = await self.db.execute(query)
-        row = result.first()
+        body_style_config = result.scalars().first()
 
-        if not row:
+        if not body_style_config:
             return {}
-
-        # Extract all entities from the row
-        body_style_config, body_type, body_num_doors = row
 
         # Construct the detailed response
         return {
@@ -1400,11 +1283,12 @@ class BodyStyleConfigRepository(BaseRepository[BodyStyleConfig, uuid.UUID]):
                 "body_type_id": body_style_config.body_type_id,
                 "body_num_doors_id": body_style_config.body_num_doors_id,
             },
-            "body_type": {"id": body_type.body_type_id, "name": body_type.name},
+            "body_type": {"id": body_style_config.body_type.body_type_id,
+                         "name": body_style_config.body_type.name} if body_style_config.body_type else None,
             "body_num_doors": {
-                "id": body_num_doors.body_num_doors_id,
-                "num_doors": body_num_doors.num_doors,
-            },
+                "id": body_style_config.body_num_doors.body_num_doors_id,
+                "num_doors": body_style_config.body_num_doors.num_doors,
+            } if body_style_config.body_num_doors else None,
         }
 
 
@@ -1449,50 +1333,21 @@ class BrakeConfigRepository(BaseRepository[BrakeConfig, uuid.UUID]):
         """
         # Get the brake config with all related entities
         query = (
-            select(
-                BrakeConfig,
-                BrakeType.name.label("front_brake_type_name"),
-                BrakeType.name.label("rear_brake_type_name"),
-                BrakeSystem,
-                BrakeABS,
-            )
-            .join(
-                BrakeType,
-                BrakeConfig.front_brake_type_id == BrakeType.brake_type_id,
-                isouter=True,
-            )
-            .join(
-                BrakeType,
-                BrakeConfig.rear_brake_type_id == BrakeType.brake_type_id,
-                isouter=True,
-            )
-            .join(
-                BrakeSystem,
-                BrakeConfig.brake_system_id == BrakeSystem.brake_system_id,
-                isouter=True,
-            )
-            .join(
-                BrakeABS,
-                BrakeConfig.brake_abs_id == BrakeABS.brake_abs_id,
-                isouter=True,
+            select(BrakeConfig)
+            .options(
+                selectinload(BrakeConfig.front_brake_type),
+                selectinload(BrakeConfig.rear_brake_type),
+                selectinload(BrakeConfig.brake_system),
+                selectinload(BrakeConfig.brake_abs),
             )
             .where(BrakeConfig.brake_config_id == brake_config_id)
         )
 
         result = await self.db.execute(query)
-        row = result.first()
+        brake_config = result.scalars().first()
 
-        if not row:
+        if not brake_config:
             return {}
-
-        # Extract all entities from the row
-        (
-            brake_config,
-            front_brake_type_name,
-            rear_brake_type_name,
-            brake_system,
-            brake_abs,
-        ) = row
 
         # Construct the detailed response
         return {
@@ -1504,21 +1359,21 @@ class BrakeConfigRepository(BaseRepository[BrakeConfig, uuid.UUID]):
                 "brake_abs_id": brake_config.brake_abs_id,
             },
             "front_brake_type": {
-                "id": brake_config.front_brake_type_id,
-                "name": front_brake_type_name,
-            },
+                "id": brake_config.front_brake_type.brake_type_id,
+                "name": brake_config.front_brake_type.name,
+            } if brake_config.front_brake_type else None,
             "rear_brake_type": {
-                "id": brake_config.rear_brake_type_id,
-                "name": rear_brake_type_name,
-            },
+                "id": brake_config.rear_brake_type.brake_type_id,
+                "name": brake_config.rear_brake_type.name,
+            } if brake_config.rear_brake_type else None,
             "brake_system": {
-                "id": brake_system.brake_system_id if brake_system else None,
-                "name": brake_system.name if brake_system else None,
-            },
+                "id": brake_config.brake_system.brake_system_id,
+                "name": brake_config.brake_system.name,
+            } if brake_config.brake_system else None,
             "brake_abs": {
-                "id": brake_abs.brake_abs_id if brake_abs else None,
-                "name": brake_abs.name if brake_abs else None,
-            },
+                "id": brake_config.brake_abs.brake_abs_id,
+                "name": brake_config.brake_abs.name,
+            } if brake_config.brake_abs else None,
         }
 
 

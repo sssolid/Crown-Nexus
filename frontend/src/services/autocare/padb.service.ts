@@ -12,7 +12,7 @@ import {
 } from '@/types';
 
 export class PAdbService extends ApiService {
-  private readonly baseUrl = '/padb';
+  private readonly baseUrl = '/autocare/padb';
 
   /**
    * Get the current PAdb version

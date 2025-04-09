@@ -66,7 +66,6 @@ class Year(BaseModel):
 
     id: uuid.UUID = Field(..., description="Unique identifier")
     year_id: int = Field(..., description="Year ID from VCdb")
-    year: int = Field(..., description="Year value")
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -297,7 +296,7 @@ class EngineBoreStroke(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class EngineBase(BaseModel):
+class EngineBase2(BaseModel):
     """Schema for engine base data."""
 
     id: uuid.UUID = Field(..., description="Unique identifier")
@@ -502,12 +501,14 @@ class PowerOutput(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class EngineConfig(BaseModel):
+class EngineConfig2(BaseModel):
     """Schema for engine configuration data."""
 
     id: uuid.UUID = Field(..., description="Unique identifier")
     engine_config_id: int = Field(..., description="Engine config ID from VCdb")
     engine_base_id: int = Field(..., description="Engine base ID")
+    engine_block_id: int = Field(..., description="Engine block ID")
+    engine_bore_stroke_id: int = Field(..., description="Engine bore stroke ID")
     engine_designation_id: int = Field(..., description="Engine designation ID")
     engine_vin_id: int = Field(..., description="Engine VIN ID")
     valves_id: int = Field(..., description="Valves ID")
@@ -520,8 +521,9 @@ class EngineConfig(BaseModel):
     engine_version_id: int = Field(..., description="Engine version ID")
     power_output_id: int = Field(..., description="Power output ID")
 
-    # Selected related entities (for brevity)
-    engine_base: Optional[EngineBase] = Field(None, description="Engine base details")
+    # Selected related entities
+    engine_base: Optional[EngineBase2] = Field(None, description="Engine base details")
+    engine_block: Optional[EngineBlock] = Field(None, description="Engine block details")
     fuel_type: Optional[FuelType] = Field(None, description="Fuel type details")
     aspiration: Optional[Aspiration] = Field(None, description="Aspiration details")
 

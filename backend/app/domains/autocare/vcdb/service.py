@@ -6,7 +6,6 @@ This module provides service methods for working with VCdb data, including
 import, export, and query operations for vehicles and their components.
 """
 
-from app.logging import get_logger
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -17,6 +16,7 @@ from app.core.exceptions import ResourceNotFoundException
 from app.domains.autocare.exceptions import VCdbException
 from app.domains.autocare.schemas import AutocareImportParams
 from app.domains.autocare.vcdb.repository import VCdbRepository
+from app.logging import get_logger
 
 logger = get_logger("app.domains.autocare.vcdb.service")
 
@@ -112,7 +112,7 @@ class VCdbService:
             List of dictionaries containing year information
         """
         years = await self.repository.year_repo.get_all_years()
-        return [{"id": year.year_id, "year": year.year} for year in years]
+        return [{"id": year.id, "year": year.year_id} for year in years]
 
     async def get_year_range(self) -> Tuple[int, int]:
         """Get the range of available vehicle years.
@@ -389,7 +389,7 @@ class VCdbService:
 
         return {
             "id": base_vehicle.base_vehicle_id,
-            "year": base_vehicle.year.year if base_vehicle.year else None,
+            "year": base_vehicle.year.year_id if base_vehicle.year else None,
             "make": base_vehicle.make.name if base_vehicle.make else None,
             "model": base_vehicle.model.name if base_vehicle.model else None,
             "year_id": base_vehicle.year_id,
@@ -419,7 +419,7 @@ class VCdbService:
 
         return {
             "id": base_vehicle.base_vehicle_id,
-            "year": base_vehicle.year.year if base_vehicle.year else None,
+            "year": base_vehicle.year.year_id if base_vehicle.year else None,
             "make": base_vehicle.make.name if base_vehicle.make else None,
             "model": base_vehicle.model.name if base_vehicle.model else None,
             "year_id": base_vehicle.year_id,
@@ -456,7 +456,7 @@ class VCdbService:
             base_vehicles.append(
                 {
                     "id": bv.base_vehicle_id,
-                    "year": bv.year.year if bv.year else None,
+                    "year": bv.year.year_id if bv.year else None,
                     "make": bv.make.name if bv.make else None,
                     "model": bv.model.name if bv.model else None,
                     "year_id": bv.year_id,
@@ -516,13 +516,17 @@ class VCdbService:
 
         vehicles = []
         for vehicle in result["items"]:
+            make_name = None
+            if vehicle.base_vehicle and vehicle.base_vehicle.make:
+                make_name = vehicle.base_vehicle.make.name
+
             vehicles.append(
                 {
                     "id": str(vehicle.id),
                     "vehicle_id": vehicle.vehicle_id,
                     "year": vehicle.year,
-                    "make": vehicle.make.name if vehicle.make else None,
-                    "model": vehicle.model,
+                    "make": make_name,
+                    "model": vehicle.model if hasattr(vehicle, "model") else None,
                     "submodel": vehicle.submodel.name if vehicle.submodel else None,
                     "region": vehicle.region.name if vehicle.region else None,
                 }
@@ -554,12 +558,16 @@ class VCdbService:
                 resource_type="Vehicle", resource_id=str(vehicle_id)
             )
 
+        make_name = None
+        if vehicle.base_vehicle and vehicle.base_vehicle.make:
+            make_name = vehicle.base_vehicle.make.name
+
         return {
             "id": str(vehicle.id),
             "vehicle_id": vehicle.vehicle_id,
             "year": vehicle.year,
-            "make": vehicle.make.name if vehicle.make else None,
-            "model": vehicle.model,
+            "make": make_name,
+            "model": vehicle.model if hasattr(vehicle, "model") else None,
             "submodel": vehicle.submodel.name if vehicle.submodel else None,
             "region": vehicle.region.name if vehicle.region else None,
         }
@@ -585,22 +593,14 @@ class VCdbService:
 
         engines = []
         for engine_config in vehicle.engine_configs:
-            if (
-                not hasattr(engine_config, "engine_base")
-                or not engine_config.engine_base
-            ):
-                continue
-            if (
-                not hasattr(engine_config.engine_base, "engine_block")
-                or not engine_config.engine_base.engine_block
-            ):
+            if not engine_config.engine_base or not engine_config.engine_block:
                 continue
 
             engines.append(
                 {
                     "id": engine_config.engine_config_id,
-                    "liter": engine_config.engine_base.engine_block.liter,
-                    "cylinders": engine_config.engine_base.engine_block.cylinders,
+                    "liter": engine_config.engine_block.liter,
+                    "cylinders": engine_config.engine_block.cylinders,
                     "aspiration": (
                         engine_config.aspiration.name
                         if engine_config.aspiration
@@ -616,39 +616,42 @@ class VCdbService:
 
         transmissions = []
         for transmission in vehicle.transmissions:
-            if (
-                not hasattr(transmission, "transmission_base")
-                or not transmission.transmission_base
-            ):
+            if not transmission.transmission_base:
                 continue
+
+            trans_type = None
+            if (transmission.transmission_base.transmission_type and
+                hasattr(transmission.transmission_base.transmission_type, "name")):
+                trans_type = transmission.transmission_base.transmission_type.name
+
+            speeds = None
+            if (transmission.transmission_base.transmission_num_speeds and
+                hasattr(transmission.transmission_base.transmission_num_speeds, "num_speeds")):
+                speeds = transmission.transmission_base.transmission_num_speeds.num_speeds
 
             transmissions.append(
                 {
                     "id": transmission.transmission_id,
-                    "type": (
-                        transmission.transmission_base.transmission_type.name
-                        if transmission.transmission_base.transmission_type
-                        else None
-                    ),
-                    "speeds": (
-                        transmission.transmission_base.transmission_num_speeds.num_speeds
-                        if transmission.transmission_base.transmission_num_speeds
-                        else None
-                    ),
+                    "type": trans_type,
+                    "speeds": speeds,
                 }
             )
+
+        make_name = None
+        if vehicle.base_vehicle and vehicle.base_vehicle.make:
+            make_name = vehicle.base_vehicle.make.name
 
         return {
             "id": str(vehicle.id),
             "vehicle_id": vehicle.vehicle_id,
             "year": vehicle.year,
-            "make": vehicle.make.name if vehicle.make else None,
-            "model": vehicle.model,
+            "make": make_name,
+            "model": vehicle.model if hasattr(vehicle, "model") else None,
             "submodel": vehicle.submodel.name if vehicle.submodel else None,
             "region": vehicle.region.name if vehicle.region else None,
             "engines": engines,
             "transmissions": transmissions,
-            "drive_types": [dt.name for dt in vehicle.drive_types],
+            "drive_types": [dt.name for dt in vehicle.drive_types if hasattr(dt, "name")],
             "body_styles": [
                 bs.body_type.name
                 for bs in vehicle.body_style_configs
@@ -689,67 +692,75 @@ class VCdbService:
 
         # Process engine configurations
         for engine in configs["engines"]:
+            # Extract engine block details safely
+            liter = None
+            cylinders = None
+            if hasattr(engine, "engine_block") and engine.engine_block:
+                liter = engine.engine_block.liter
+                cylinders = engine.engine_block.cylinders
+            elif hasattr(engine, "engine_base") and engine.engine_base and hasattr(engine.engine_base,
+                                                                                   "engine_block") and engine.engine_base.engine_block:
+                liter = engine.engine_base.engine_block.liter
+                cylinders = engine.engine_base.engine_block.cylinders
+
+            # Extract other engine details safely
+            fuel_type = engine.fuel_type.name if hasattr(engine, "fuel_type") and engine.fuel_type else None
+            aspiration = engine.aspiration.name if hasattr(engine, "aspiration") and engine.aspiration else None
+
+            # Extract power output details safely
+            horsepower = None
+            kilowatt = None
+            if hasattr(engine, "power_output") and engine.power_output:
+                horsepower = engine.power_output.horsepower
+                kilowatt = engine.power_output.kilowatt
+
             result["engines"].append(
                 {
                     "id": engine.engine_config_id,
-                    "liter": (
-                        engine.engine_base.engine_block.liter
-                        if engine.engine_base and engine.engine_base.engine_block
-                        else None
-                    ),
-                    "cylinders": (
-                        engine.engine_base.engine_block.cylinders
-                        if engine.engine_base and engine.engine_base.engine_block
-                        else None
-                    ),
-                    "fuel_type": engine.fuel_type.name if engine.fuel_type else None,
-                    "aspiration": engine.aspiration.name if engine.aspiration else None,
+                    "liter": liter,
+                    "cylinders": cylinders,
+                    "fuel_type": fuel_type,
+                    "aspiration": aspiration,
                     "power": {
-                        "horsepower": (
-                            engine.power_output.horsepower
-                            if engine.power_output
-                            else None
-                        ),
-                        "kilowatt": (
-                            engine.power_output.kilowatt
-                            if engine.power_output
-                            else None
-                        ),
+                        "horsepower": horsepower,
+                        "kilowatt": kilowatt,
                     },
                 }
             )
 
         # Process transmission configurations
         for trans in configs["transmissions"]:
+            # Extract transmission base details safely
+            trans_type = None
+            speeds = None
+            control_type = None
+            if hasattr(trans, "transmission_base") and trans.transmission_base:
+                if (hasattr(trans.transmission_base, "transmission_type") and
+                    trans.transmission_base.transmission_type):
+                    trans_type = trans.transmission_base.transmission_type.name
+
+                if (hasattr(trans.transmission_base, "transmission_num_speeds") and
+                    trans.transmission_base.transmission_num_speeds):
+                    speeds = trans.transmission_base.transmission_num_speeds.num_speeds
+
+                if (hasattr(trans.transmission_base, "transmission_control_type") and
+                    trans.transmission_base.transmission_control_type):
+                    control_type = trans.transmission_base.transmission_control_type.name
+
+            # Extract other transmission details safely
+            manufacturer = trans.transmission_mfr.name if hasattr(trans,
+                                                                  "transmission_mfr") and trans.transmission_mfr else None
+            code = trans.transmission_mfr_code.code if hasattr(trans,
+                                                               "transmission_mfr_code") and trans.transmission_mfr_code else None
+
             result["transmissions"].append(
                 {
                     "id": trans.transmission_id,
-                    "type": (
-                        trans.transmission_base.transmission_type.name
-                        if trans.transmission_base
-                        and trans.transmission_base.transmission_type
-                        else None
-                    ),
-                    "speeds": (
-                        trans.transmission_base.transmission_num_speeds.num_speeds
-                        if trans.transmission_base
-                        and trans.transmission_base.transmission_num_speeds
-                        else None
-                    ),
-                    "control_type": (
-                        trans.transmission_base.transmission_control_type.name
-                        if trans.transmission_base
-                        and trans.transmission_base.transmission_control_type
-                        else None
-                    ),
-                    "manufacturer": (
-                        trans.transmission_mfr.name if trans.transmission_mfr else None
-                    ),
-                    "code": (
-                        trans.transmission_mfr_code.code
-                        if trans.transmission_mfr_code
-                        else None
-                    ),
+                    "type": trans_type,
+                    "speeds": speeds,
+                    "control_type": control_type,
+                    "manufacturer": manufacturer,
+                    "code": code,
                 }
             )
 
@@ -759,27 +770,31 @@ class VCdbService:
 
         # Process body styles
         for bs in configs["body_styles"]:
+            body_type = bs.body_type.name if hasattr(bs, "body_type") and bs.body_type else None
+            doors = bs.body_num_doors.num_doors if hasattr(bs, "body_num_doors") and bs.body_num_doors else None
+
             result["body_styles"].append(
                 {
                     "id": bs.body_style_config_id,
-                    "type": bs.body_type.name if bs.body_type else None,
-                    "doors": bs.body_num_doors.num_doors if bs.body_num_doors else None,
+                    "type": body_type,
+                    "doors": doors,
                 }
             )
 
         # Process brake configs
         for bc in configs["brake_configs"]:
+            front_type = bc.front_brake_type.name if hasattr(bc, "front_brake_type") and bc.front_brake_type else None
+            rear_type = bc.rear_brake_type.name if hasattr(bc, "rear_brake_type") and bc.rear_brake_type else None
+            system = bc.brake_system.name if hasattr(bc, "brake_system") and bc.brake_system else None
+            abs_type = bc.brake_abs.name if hasattr(bc, "brake_abs") and bc.brake_abs else None
+
             result["brake_configs"].append(
                 {
                     "id": bc.brake_config_id,
-                    "front_type": (
-                        bc.front_brake_type.name if bc.front_brake_type else None
-                    ),
-                    "rear_type": (
-                        bc.rear_brake_type.name if bc.rear_brake_type else None
-                    ),
-                    "system": bc.brake_system.name if bc.brake_system else None,
-                    "abs": bc.brake_abs.name if bc.brake_abs else None,
+                    "front_type": front_type,
+                    "rear_type": rear_type,
+                    "system": system,
+                    "abs": abs_type,
                 }
             )
 

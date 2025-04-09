@@ -1,6 +1,5 @@
 # app/main.py
 from __future__ import annotations
-
 """
 Main application module.
 
@@ -98,7 +97,6 @@ from app.api.v1.router import api_router
 
 # Initialize logger for this module - logging system is already initialized
 logger = get_logger("app.main")
-
 
 # Type definition for middleware add_middleware method
 def add_typed_middleware(app: FastAPI, middleware_class: Any, **options: Any) -> None:

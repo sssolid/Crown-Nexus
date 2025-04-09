@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
+from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import DatabaseException
@@ -136,6 +137,21 @@ class BaseRepository(Generic[T, ID]):
                     query = query.where(getattr(self.model, field) == value)
 
         return await count_query(self.db, query)
+
+    async def paginate(
+        self, query: Select, page: int = 1, page_size: int = 100
+    ) -> Dict[str, Any]:
+        """Paginate a custom query.
+
+        Args:
+            query: SQLAlchemy Select query.
+            page: Page number.
+            page_size: Page size.
+
+        Returns:
+            Dict[str, Any]: Paginated results.
+        """
+        return await paginate(self.db, query, page, page_size)
 
     async def create(self, data: Dict[str, Any]) -> T:
         """Create a new entity.

@@ -231,7 +231,7 @@ const handleSearch = async () => {
     };
 
     if (searchParams.value.year) {
-      params.year = searchParams.value.year.year;
+      params.year = searchParams.value.year.year_id;
     }
     if (searchParams.value.make) {
       params.make = searchParams.value.make.name;
@@ -240,10 +240,10 @@ const handleSearch = async () => {
       params.model = searchParams.value.model.name;
     }
     if (searchParams.value.submodel) {
-      params.submodel = searchParams.value.submodel.name;
+      params.submodel = searchParams.value.submodel;
     }
     if (searchParams.value.body_type) {
-      params.body_type = searchParams.value.body_type.name;
+      params.body_type = searchParams.value.body_type;
     }
     if (searchParams.value.engine_config) {
       params.engine_config = searchParams.value.engine_config;
@@ -266,7 +266,7 @@ const onMakeChange = async () => {
     try {
       await vcdbStore.fetchModelsByYearMake(
         searchParams.value.year.year,
-        searchParams.value.make.make_id
+        searchParams.value.make.id
       );
     } catch (err) {
       error.value = 'Failed to load models';

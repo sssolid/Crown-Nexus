@@ -1,0 +1,56 @@
+<template>
+  <div class="qualifier-search-page">
+    <PageHeader
+      title="Qualifier Search"
+      subtitle="Search for qualifiers by text, type, or language"
+      icon="mdi-text-box"
+    >
+      <template v-slot:actions>
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-refresh"
+          @click="refreshData"
+          :loading="loading"
+        >
+          Refresh
+        </v-btn>
+      </template>
+    </PageHeader>
+
+    <QualifierSearch />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useQdbStore } from '@/stores/autocare/qdb.store.ts';
+import PageHeader from '@/components/common/PageHeader.vue';
+import QualifierSearch from '@/components/autocare/qdb/QualifierSearch.vue';
+
+// Store
+const qdbStore = useQdbStore();
+
+// State
+const loading = ref(false);
+
+// Methods
+const refreshData = async () => {
+  loading.value = true;
+  await Promise.all([
+    qdbStore.fetchQualifierTypes(),
+    qdbStore.fetchLanguages(),
+  ]);
+  loading.value = false;
+};
+
+// Load initial data
+onMounted(() => {
+  // Data is loaded in the QualifierSearch component
+});
+</script>
+
+<style scoped>
+.qualifier-search-page {
+  width: 100%;
+}
+</style>

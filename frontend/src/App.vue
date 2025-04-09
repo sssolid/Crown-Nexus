@@ -11,9 +11,9 @@ import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 // Import layouts
-import PublicLayout from '@/components/layout/PublicLayout.vue';
-import DashboardLayout from '@/components/layout/DashboardLayout.vue';
-import BlankLayout from '@/components/layout/BlankLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
+import BlankLayout from '@/layouts/BlankLayout.vue';
 
 export default defineComponent({
   name: 'App',

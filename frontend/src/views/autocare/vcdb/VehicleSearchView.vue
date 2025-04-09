@@ -1,0 +1,57 @@
+<template>
+  <div class="vehicle-search-page">
+    <PageHeader
+      title="Vehicle Search"
+      subtitle="Search for vehicles by year, make, model, and more"
+      icon="mdi-car-search"
+    >
+      <template v-slot:actions>
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-refresh"
+          @click="refreshData"
+          :loading="loading"
+        >
+          Refresh
+        </v-btn>
+      </template>
+    </PageHeader>
+
+    <VehicleSearch />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useVCdbStore } from '@/stores/autocare/vcdb.store.ts';
+import PageHeader from '@/components/common/PageHeader.vue';
+import VehicleSearch from '@/components/autocare/vcdb/VehicleSearch.vue';
+
+// Store
+const vcdbStore = useVCdbStore();
+
+// State
+const loading = ref(false);
+
+// Methods
+const refreshData = async () => {
+  loading.value = true;
+  await Promise.all([
+    vcdbStore.fetchYears(),
+    vcdbStore.fetchMakes(),
+    // Add other data that needs to be refreshed
+  ]);
+  loading.value = false;
+};
+
+// Load initial data
+onMounted(() => {
+  // Data is loaded in the VehicleSearch component
+});
+</script>
+
+<style scoped>
+.vehicle-search-page {
+  width: 100%;
+}
+</style>

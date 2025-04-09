@@ -11,7 +11,7 @@
  * It builds on the base API service and adds user-specific functionality.
  */
 
-import api from '@/services/api';
+import api, {ApiService} from '@/services/api';
 import { User, UserRole } from '@/types/user';
 
 // User list response interface
@@ -66,7 +66,7 @@ export interface UserPreferences {
 /**
  * User service for API interactions.
  */
-const userService = {
+export class UserService extends ApiService  {
   /**
    * Get a paginated list of users with optional filtering.
    *
@@ -75,7 +75,7 @@ const userService = {
    */
   async getUsers(filters?: UserFilters): Promise<UserListResponse> {
     return api.get<UserListResponse>('/users', { params: filters });
-  },
+  }
 
   /**
    * Get a single user by ID.
@@ -85,7 +85,7 @@ const userService = {
    */
   async getUser(id: string): Promise<User> {
     return api.get<User>(`/users/${id}`);
-  },
+  }
 
   /**
    * Create a new user.
@@ -95,7 +95,7 @@ const userService = {
    */
   async createUser(userData: UserPayload): Promise<User> {
     return api.post<User>('/users', userData);
-  },
+  }
 
   /**
    * Update an existing user.
@@ -106,7 +106,7 @@ const userService = {
    */
   async updateUser(id: string, userData: Partial<UserPayload>): Promise<User> {
     return api.put<User>(`/users/${id}`, userData);
-  },
+  }
 
   /**
    * Delete a user.
@@ -116,7 +116,7 @@ const userService = {
    */
   async deleteUser(id: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/users/${id}`);
-  },
+  }
 
   /**
    * Get a list of all companies.
@@ -125,7 +125,7 @@ const userService = {
    */
   async getCompanies(): Promise<Company[]> {
     return api.get<Company[]>('/companies');
-  },
+  }
 
   /**
    * Get a single company by ID.
@@ -135,7 +135,7 @@ const userService = {
    */
   async getCompany(id: string): Promise<Company> {
     return api.get<Company>(`/companies/${id}`);
-  },
+  }
 
   /**
    * Update user preferences.
@@ -146,7 +146,7 @@ const userService = {
    */
   async updateUserPreferences(id: string, preferences: UserPreferences): Promise<UserPreferences> {
     return api.put<UserPreferences>(`/users/${id}/preferences`, preferences);
-  },
+  }
 
   /**
    * Get user preferences.
@@ -156,7 +156,7 @@ const userService = {
    */
   async getUserPreferences(id: string): Promise<UserPreferences> {
     return api.get<UserPreferences>(`/users/${id}/preferences`);
-  },
+  }
 
   /**
    * Change user password.
@@ -171,7 +171,7 @@ const userService = {
       current_password: currentPassword,
       new_password: newPassword
     });
-  },
+  }
 
   /**
    * Send password reset email to user.
@@ -181,7 +181,7 @@ const userService = {
    */
   async sendPasswordReset(email: string): Promise<{message: string}> {
     return api.post<{message: string}>('/users/reset-password', { email });
-  },
+  }
 
   /**
    * Reset password with token from email.
@@ -195,7 +195,7 @@ const userService = {
       token,
       new_password: newPassword
     });
-  },
+  }
 
   /**
    * Get user activity logs.
@@ -210,6 +210,8 @@ const userService = {
       params: { page, page_size: pageSize }
     });
   }
-};
+}
 
+// Create and export a singleton instance
+export const userService = new UserService();
 export default userService;

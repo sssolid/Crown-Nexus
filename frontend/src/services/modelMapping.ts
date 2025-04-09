@@ -9,7 +9,7 @@
  * - Refreshing model mappings cache
  */
 
-import api from '@/services/api';
+import api, {ApiService} from '@/services/api';
 
 export interface ModelMapping {
   id: number;
@@ -36,7 +36,7 @@ export interface ModelMappingRequest {
 /**
  * Model Mapping service for API interactions.
  */
-const modelMappingService = {
+export class ModelMappingService extends ApiService  {
   /**
    * Get a paginated list of model mappings with optional filtering and sorting.
    *
@@ -65,7 +65,7 @@ const modelMappingService = {
         sort_order: sortOrder || undefined
       }
     });
-  },
+  }
 
   /**
    * Get a single model mapping by ID.
@@ -80,7 +80,7 @@ const modelMappingService = {
       throw new Error(`Model mapping with ID ${id} not found`);
     }
     return mapping;
-  },
+  }
 
   /**
    * Create a new model mapping.
@@ -90,7 +90,7 @@ const modelMappingService = {
    */
   async createModelMapping(mapping: ModelMappingRequest): Promise<ModelMapping> {
     return api.post<ModelMapping>('/fitment/model-mappings', mapping);
-  },
+  }
 
   /**
    * Update an existing model mapping.
@@ -101,7 +101,7 @@ const modelMappingService = {
    */
   async updateModelMapping(id: number, mapping: ModelMappingRequest): Promise<ModelMapping> {
     return api.put<ModelMapping>(`/fitment/model-mappings/${id}`, mapping);
-  },
+  }
 
   /**
    * Delete a model mapping.
@@ -111,7 +111,7 @@ const modelMappingService = {
    */
   async deleteModelMapping(id: number): Promise<{message: string}> {
     return api.delete<{message: string}>(`/fitment/model-mappings/${id}`);
-  },
+  }
 
   /**
    * Upload model mappings from JSON file.
@@ -123,7 +123,7 @@ const modelMappingService = {
     const formData = new FormData();
     formData.append('file', file);
     return api.uploadFile<{message: string, mapping_count: number}>('/fitment/upload-model-mappings', formData);
-  },
+  }
 
   /**
    * Refresh model mappings cache.
@@ -133,6 +133,8 @@ const modelMappingService = {
   async refreshMappings(): Promise<{message: string}> {
     return api.post<{message: string}>('/fitment/refresh-mappings');
   }
-};
+}
 
+// Create and export a singleton instance
+export const modelMappingService = new ModelMappingService();
 export default modelMappingService;

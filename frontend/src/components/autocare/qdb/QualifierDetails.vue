@@ -1,0 +1,177 @@
+<template>
+  <div class="qualifier-details">
+    <template v-if="qualifier">
+      <v-row>
+        <v-col cols="12">
+          <DetailCard
+            title="Qualifier Information"
+            icon="mdi-text-box"
+            :loading="loading"
+            :error="error"
+          >
+            <v-row>
+              <v-col cols="12" md="6">
+                <InfoList :items="qualifierInfo" />
+              </v-col>
+              <v-col cols="12" md="6" v-if="qualifier.example_text">
+                <v-card flat border>
+                  <v-card-title>Example</v-card-title>
+                  <v-card-text>{{ qualifier.example_text }}</v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+
+            <v-alert
+              v-if="qualifier.superseded_by"
+              type="warning"
+              variant="tonal"
+              class="mt-4"
+              :text="`This qualifier has been superseded by qualifier ${qualifier.superseded_by.id}: ${qualifier.superseded_by.text}`"
+            ></v-alert>
+          </DetailCard>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="qualifier.translations && qualifier.translations.length > 0">
+        <v-col cols="12">
+          <DetailCard title="Translations" icon="mdi-translate">
+            <v-table>
+              <thead>
+                <tr>
+                  <th>Language</th>
+                  <th>Translation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="translation in qualifier.translations" :key="translation.id">
+                  <td>
+                    <div class="font-weight-bold">{{ translation.language.name }}</div>
+                    <div v-if="translation.language.dialect" class="text-caption">
+                      {{ translation.language.dialect }}
+                    </div>
+                  </td>
+                  <td>{{ translation.text }}</td>
+                </tr>
+              </tbody>
+            </v-table>
+          </DetailCard>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="qualifier.groups && qualifier.groups.length > 0">
+        <v-col cols="12">
+          <DetailCard title="Groups" icon="mdi-folder-multiple">
+            <v-list density="compact">
+              <v-list-item v-for="group in qualifier.groups" :key="group.id">
+                <v-list-item-title>
+                  Group {{ group.number.id }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ group.number.description }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </DetailCard>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <DetailCard title="Metadata" icon="mdi-information">
+            <InfoList :items="metadataInfo" />
+          </DetailCard>
+        </v-col>
+      </v-row>
+    </template>
+
+    <div v-else-if="loading" class="text-center my-8">
+      <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+      <h3 class="mt-4">Loading qualifier details...</h3>
+    </div>
+
+    <v-alert v-else-if="error" type="error" :text="error" variant="tonal" class="my-4"></v-alert>
+
+    <div v-else class="text-center my-8">
+      <v-icon icon="mdi-text-box-remove" size="64" color="grey"></v-icon>
+      <h3 class="mt-4">Qualifier not found</h3>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue';
+import DetailCard from '@/components/common/DetailCard.vue';
+import InfoList from '@/components/common/InfoList.vue';
+import { useQdbStore } from '@/stores/autocare/qdb.store.ts';
+import { QualifierDetail } from '@/types';
+import { formatDate } from '@/utils/formatters.ts';
+
+const props = defineProps({
+  qualifierId: {
+    type: [Number, String],
+    required: true,
+  },
+});
+
+const qdbStore = useQdbStore();
+
+// State
+const loading = ref(false);
+const error = ref('');
+
+// Computed
+const qualifier = computed(() => qdbStore.currentQualifier);
+
+const qualifierInfo = computed(() => {
+  if (!qualifier.value) return [];
+
+  return [
+    { key: 'qualifier_id', label: 'Qualifier ID', value: qualifier.value.qualifier_id },
+    { key: 'qualifier_text', label: 'Text', value: qualifier.value.qualifier_text },
+    { key: 'type', label: 'Type', value: qualifier.value.type?.name || '' },
+  ];
+});
+
+const metadataInfo = computed(() => {
+  if (!qualifier.value) return [];
+
+  return [
+    {
+      key: 'when_modified',
+      label: 'Last Modified',
+      value: formatDate(qualifier.value.when_modified, 'long')
+    },
+  ];
+});
+
+// Methods
+const loadQualifier = async () => {
+  try {
+    loading.value = true;
+    error.value = '';
+
+    await qdbStore.fetchQualifierDetails(Number(props.qualifierId));
+  } catch (err) {
+    console.error('Error loading qualifier details:', err);
+    error.value = 'Failed to load qualifier details';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  loadQualifier();
+});
+
+// Watch for changes to qualifierId
+watch(() => props.qualifierId, () => {
+  loadQualifier();
+});
+</script>
+
+<style scoped>
+.qualifier-details {
+  width: 100%;
+}
+</style>

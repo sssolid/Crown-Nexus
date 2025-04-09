@@ -1,9 +1,22 @@
 // frontend/src/services/chat.ts
-import { ref, reactive, computed, ComputedRef } from 'vue';
-import api from '@/services/api';
-import { 
-  ChatRoom, 
-  ChatMessage, 
+/**
+ * Chat service module.
+ *
+ * This service provides functionality for real-time chat communication:
+ * - WebSocket connection management
+ * - Chat room operations (create, join, leave)
+ * - Message handling (send, edit, delete)
+ * - User presence and typing indicators
+ * - Reaction management
+ *
+ * It builds on the base API service and adds chat-specific functionality.
+ */
+
+import { ref, reactive, computed, ComputedRef, watch } from 'vue';
+import api, { ApiService } from '@/services/api';
+import {
+  ChatRoom,
+  ChatMessage,
   ChatMember,
   ChatRoomType,
   ChatMemberRole,
@@ -15,228 +28,260 @@ import {
 import { useAuthStore } from '@/stores/auth';
 import { notificationService } from '@/utils/notification';
 
-// State variables
-const chatRooms = reactive<Record<string, ChatRoom>>({});
-const activeRoomId = ref<string | null>(null);
-const messages = reactive<Record<string, ChatMessage[]>>({});
-const members = reactive<Record<string, ChatMember[]>>({});
-const isLoading = ref(false);
-const wsConnection = ref<WebSocket | null>(null);
-const connectionStatus = ref<'connected' | 'connecting' | 'disconnected'>('disconnected');
-const userPresence = reactive<Record<string, UserPresence>>({});
-const userTyping = reactive<Record<string, Record<string, number>>>({});
+/**
+ * Chat service for WebSocket and API interactions.
+ */
+export class ChatService extends ApiService {
+  // State variables
+  private chatRooms = reactive<Record<string, ChatRoom>>({});
+  private activeRoomId = ref<string | null>(null);
+  private messages = reactive<Record<string, ChatMessage[]>>({});
+  private members = reactive<Record<string, ChatMember[]>>({});
+  private isLoading = ref(false);
+  private wsConnection = ref<WebSocket | null>(null);
+  private connectionStatus = ref<'connected' | 'connecting' | 'disconnected'>('disconnected');
+  private userPresence = reactive<Record<string, UserPresence>>({});
+  private userTyping = reactive<Record<string, Record<string, number>>>({});
 
-// Connection retry variables
-let reconnectAttempts = 0;
-const maxReconnectAttempts = 5;
-const reconnectDelay = 2000; // 2 seconds initial delay
-let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  // Connection retry variables
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectDelay = 2000; // 2 seconds initial delay
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
-// Computed properties
-const activeRoom: ComputedRef<ChatRoom | null> = computed(() => {
-  if (!activeRoomId.value) return null;
-  return chatRooms[activeRoomId.value] || null;
-});
+  // Computed properties
+  public get rooms(): Record<string, ChatRoom> {
+    return this.chatRooms;
+  }
 
-const activeRoomMessages: ComputedRef<ChatMessage[]> = computed(() => {
-  if (!activeRoomId.value) return [];
-  return messages[activeRoomId.value] || [];
-});
+  public get currentRoomId(): string | null {
+    return this.activeRoomId.value;
+  }
 
-const activeRoomMembers: ComputedRef<ChatMember[]> = computed(() => {
-  if (!activeRoomId.value) return [];
-  return members[activeRoomId.value] || [];
-});
+  public get currentRoom(): ChatRoom | null {
+    if (!this.activeRoomId.value) return null;
+    return this.chatRooms[this.activeRoomId.value] || null;
+  }
 
-const totalUnreadCount: ComputedRef<number> = computed(() => {
-  return Object.values(chatRooms).reduce((total, room) => {
-    return total + (room.unread_count || 0);
-  }, 0);
-});
+  public get currentRoomMessages(): ChatMessage[] {
+    if (!this.activeRoomId.value) return [];
+    return this.messages[this.activeRoomId.value] || [];
+  }
 
-// Chat service functions
-export function useChatService() {
-  const authStore = useAuthStore();
-  
+  public get currentRoomMembers(): ChatMember[] {
+    if (!this.activeRoomId.value) return [];
+    return this.members[this.activeRoomId.value] || [];
+  }
+
+  public get loading(): boolean {
+    return this.isLoading.value;
+  }
+
+  public get connectionState(): 'connected' | 'connecting' | 'disconnected' {
+    return this.connectionStatus.value;
+  }
+
+  public get totalUnreadCount(): number {
+    return Object.values(this.chatRooms).reduce((total, room) => {
+      return total + (room.unread_count || 0);
+    }, 0);
+  }
+
   /**
-   * Connect to the WebSocket server
+   * Connect to the WebSocket server.
+   *
+   * Establishes a WebSocket connection to the chat server using the
+   * current authentication token.
+   *
+   * @returns Success status of connection attempt
    */
-  function connectWebSocket() {
-    if (wsConnection.value && wsConnection.value.readyState < 2) {
+  public connectWebSocket(): boolean {
+    const authStore = useAuthStore();
+
+    if (this.wsConnection.value && this.wsConnection.value.readyState < 2) {
       // Already connected or connecting
-      return;
+      return true;
     }
-    
+
     if (!authStore.token) {
       console.error('Cannot connect WebSocket: No auth token');
-      connectionStatus.value = 'disconnected';
-      return;
+      this.connectionStatus.value = 'disconnected';
+      return false;
     }
-    
+
     try {
       // Build WebSocket URL with authentication token
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.host;
       const wsUrl = `${protocol}//${host}/api/v1/ws/chat?token=${authStore.token}`;
-      
-      connectionStatus.value = 'connecting';
-      wsConnection.value = new WebSocket(wsUrl);
-      
+
+      this.connectionStatus.value = 'connecting';
+      this.wsConnection.value = new WebSocket(wsUrl);
+
       // Set up event handlers
-      wsConnection.value.onopen = handleWebSocketOpen;
-      wsConnection.value.onmessage = handleWebSocketMessage;
-      wsConnection.value.onclose = handleWebSocketClose;
-      wsConnection.value.onerror = handleWebSocketError;
+      this.wsConnection.value.onopen = this.handleWebSocketOpen.bind(this);
+      this.wsConnection.value.onmessage = this.handleWebSocketMessage.bind(this);
+      this.wsConnection.value.onclose = this.handleWebSocketClose.bind(this);
+      this.wsConnection.value.onerror = this.handleWebSocketError.bind(this);
+
+      return true;
     } catch (error) {
       console.error('WebSocket connection error:', error);
-      connectionStatus.value = 'disconnected';
+      this.connectionStatus.value = 'disconnected';
+      return false;
     }
   }
-  
+
   /**
-   * Disconnect from the WebSocket server
+   * Disconnect from the WebSocket server.
    */
-  function disconnectWebSocket() {
-    if (wsConnection.value && wsConnection.value.readyState < 2) {
-      wsConnection.value.close();
+  public disconnectWebSocket(): void {
+    if (this.wsConnection.value && this.wsConnection.value.readyState < 2) {
+      this.wsConnection.value.close();
     }
-    
+
     // Clear reconnect timer if active
-    if (reconnectTimer) {
-      clearTimeout(reconnectTimer);
-      reconnectTimer = null;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
     }
-    
-    wsConnection.value = null;
-    connectionStatus.value = 'disconnected';
+
+    this.wsConnection.value = null;
+    this.connectionStatus.value = 'disconnected';
   }
-  
+
   /**
-   * Handle WebSocket connection open
+   * Handle WebSocket connection open.
    */
-  function handleWebSocketOpen() {
+  private handleWebSocketOpen(): void {
     console.log('WebSocket connected');
-    connectionStatus.value = 'connected';
-    reconnectAttempts = 0; // Reset reconnect counter on successful connection
-    
+    this.connectionStatus.value = 'connected';
+    this.reconnectAttempts = 0; // Reset reconnect counter on successful connection
+
     // Join active room if any
-    if (activeRoomId.value) {
-      joinRoom(activeRoomId.value);
+    if (this.activeRoomId.value) {
+      this.joinRoom(this.activeRoomId.value);
     }
   }
-  
+
   /**
-   * Handle WebSocket connection close
+   * Handle WebSocket connection close.
+   *
+   * @param event - Close event
    */
-  function handleWebSocketClose(event: CloseEvent) {
+  private handleWebSocketClose(event: CloseEvent): void {
     console.log(`WebSocket closed: ${event.code} ${event.reason}`);
-    connectionStatus.value = 'disconnected';
-    wsConnection.value = null;
-    
+    this.connectionStatus.value = 'disconnected';
+    this.wsConnection.value = null;
+
     // Attempt to reconnect if not closed intentionally
     if (event.code !== 1000) {
-      attemptReconnect();
+      this.attemptReconnect();
     }
   }
-  
+
   /**
-   * Handle WebSocket error
+   * Handle WebSocket error.
+   *
+   * @param event - Error event
    */
-  function handleWebSocketError(event: Event) {
+  private handleWebSocketError(event: Event): void {
     console.error('WebSocket error:', event);
     // Error handling is done in onclose handler
   }
-  
+
   /**
-   * Attempt to reconnect to WebSocket server with exponential backoff
+   * Attempt to reconnect to WebSocket server with exponential backoff.
    */
-  function attemptReconnect() {
-    if (reconnectAttempts >= maxReconnectAttempts) {
+  private attemptReconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error('Maximum reconnect attempts reached');
       notificationService.error('Connection lost. Please refresh the page.');
       return;
     }
-    
-    reconnectAttempts++;
-    const delay = reconnectDelay * Math.pow(1.5, reconnectAttempts - 1);
-    
-    console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts})`);
-    
-    reconnectTimer = setTimeout(() => {
-      console.log(`Reconnecting... (attempt ${reconnectAttempts})`);
-      connectWebSocket();
+
+    this.reconnectAttempts++;
+    const delay = this.reconnectDelay * Math.pow(1.5, this.reconnectAttempts - 1);
+
+    console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
+
+    this.reconnectTimer = setTimeout(() => {
+      console.log(`Reconnecting... (attempt ${this.reconnectAttempts})`);
+      this.connectWebSocket();
     }, delay);
   }
-  
+
   /**
-   * Handle incoming WebSocket messages
+   * Handle incoming WebSocket messages.
+   *
+   * @param event - Message event
    */
-  function handleWebSocketMessage(event: MessageEvent) {
+  private handleWebSocketMessage(event: MessageEvent): void {
     try {
       const response: WebSocketResponse = JSON.parse(event.data);
-      
+
       // Process message based on type
       switch (response.type) {
         case 'connected':
-          handleConnectedMessage(response);
+          this.handleConnectedMessage(response);
           break;
-        
+
         case 'room_list':
-          handleRoomListMessage(response);
+          this.handleRoomListMessage(response);
           break;
-        
+
         case 'room_joined':
-          handleRoomJoinedMessage(response);
+          this.handleRoomJoinedMessage(response);
           break;
-        
+
         case 'user_joined':
-          handleUserJoinedMessage(response);
+          this.handleUserJoinedMessage(response);
           break;
-        
+
         case 'user_left':
-          handleUserLeftMessage(response);
+          this.handleUserLeftMessage(response);
           break;
-        
+
         case 'new_message':
-          handleNewMessageMessage(response);
+          this.handleNewMessageMessage(response);
           break;
-        
+
         case 'message_sent':
-          handleMessageSentMessage(response);
+          this.handleMessageSentMessage(response);
           break;
-        
+
         case 'message_history':
-          handleMessageHistoryMessage(response);
+          this.handleMessageHistoryMessage(response);
           break;
-        
+
         case 'user_typing':
-          handleUserTypingMessage(response);
+          this.handleUserTypingMessage(response);
           break;
-        
+
         case 'user_typing_stopped':
-          handleUserTypingStoppedMessage(response);
+          this.handleUserTypingStoppedMessage(response);
           break;
-        
+
         case 'reaction_added':
-          handleReactionAddedMessage(response);
+          this.handleReactionAddedMessage(response);
           break;
-        
+
         case 'reaction_removed':
-          handleReactionRemovedMessage(response);
+          this.handleReactionRemovedMessage(response);
           break;
-        
+
         case 'message_edited':
-          handleMessageEditedMessage(response);
+          this.handleMessageEditedMessage(response);
           break;
-        
+
         case 'message_deleted':
-          handleMessageDeletedMessage(response);
+          this.handleMessageDeletedMessage(response);
           break;
-        
+
         case 'error':
-          handleErrorMessage(response);
+          this.handleErrorMessage(response);
           break;
-        
+
         default:
           console.warn(`Unknown message type: ${response.type}`, response);
       }
@@ -244,63 +289,71 @@ export function useChatService() {
       console.error('Error parsing WebSocket message:', error, event.data);
     }
   }
-  
+
   /**
-   * Handle 'connected' WebSocket message
+   * Handle 'connected' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleConnectedMessage(response: WebSocketResponse) {
+  private handleConnectedMessage(response: WebSocketResponse): void {
     console.log('Connected to chat server', response.data);
   }
-  
+
   /**
-   * Handle 'room_list' WebSocket message
+   * Handle 'room_list' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleRoomListMessage(response: WebSocketResponse) {
+  private handleRoomListMessage(response: WebSocketResponse): void {
     const rooms = response.data.rooms as ChatRoom[];
-    
+
     // Update room list
     rooms.forEach(room => {
-      chatRooms[room.id] = room;
+      this.chatRooms[room.id] = room;
     });
   }
-  
+
   /**
-   * Handle 'room_joined' WebSocket message
+   * Handle 'room_joined' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleRoomJoinedMessage(response: WebSocketResponse) {
+  private handleRoomJoinedMessage(response: WebSocketResponse): void {
     const roomInfo = response.data as ChatRoom;
-    
+
     // Update room data
-    chatRooms[roomInfo.id] = roomInfo;
-    
+    this.chatRooms[roomInfo.id] = roomInfo;
+
     // Update members
     if (roomInfo.members) {
-      members[roomInfo.id] = roomInfo.members;
+      this.members[roomInfo.id] = roomInfo.members;
     }
-    
+
     // Fetch message history if this is the active room
-    if (activeRoomId.value === roomInfo.id) {
-      fetchMessageHistory(roomInfo.id);
+    if (this.activeRoomId.value === roomInfo.id) {
+      this.fetchMessageHistory(roomInfo.id);
     }
   }
-  
+
   /**
-   * Handle 'user_joined' WebSocket message
+   * Handle 'user_joined' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleUserJoinedMessage(response: WebSocketResponse) {
+  private handleUserJoinedMessage(response: WebSocketResponse): void {
     const { room_id, user } = response.data;
-    
+
     // Update room member count
-    if (chatRooms[room_id]) {
-      chatRooms[room_id].member_count = (chatRooms[room_id].member_count || 0) + 1;
+    if (this.chatRooms[room_id]) {
+      this.chatRooms[room_id].member_count = (this.chatRooms[room_id].member_count || 0) + 1;
     }
-    
+
     // Add to room members if we have the member list
-    if (members[room_id]) {
-      const existingMember = members[room_id].find(m => m.user_id === user.id);
-      
+    if (this.members[room_id]) {
+      const existingMember = this.members[room_id].find(m => m.user_id === user.id);
+
       if (!existingMember) {
-        members[room_id].push({
+        this.members[room_id].push({
           user_id: user.id,
           user_name: user.name,
           role: ChatMemberRole.MEMBER,
@@ -311,9 +364,9 @@ export function useChatService() {
         existingMember.is_online = true;
       }
     }
-    
+
     // Add system message
-    if (messages[room_id]) {
+    if (this.messages[room_id]) {
       const systemMessage: ChatMessage = {
         id: `system-${Date.now()}`,
         room_id,
@@ -328,32 +381,34 @@ export function useChatService() {
         reactions: {},
         metadata: {}
       };
-      
-      messages[room_id].push(systemMessage);
+
+      this.messages[room_id].push(systemMessage);
     }
   }
-  
+
   /**
-   * Handle 'user_left' WebSocket message
+   * Handle 'user_left' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleUserLeftMessage(response: WebSocketResponse) {
+  private handleUserLeftMessage(response: WebSocketResponse): void {
     const { room_id, user_id } = response.data;
-    
+
     // Update room member count
-    if (chatRooms[room_id]) {
-      chatRooms[room_id].member_count = Math.max(0, (chatRooms[room_id].member_count || 1) - 1);
+    if (this.chatRooms[room_id]) {
+      this.chatRooms[room_id].member_count = Math.max(0, (this.chatRooms[room_id].member_count || 1) - 1);
     }
-    
+
     // Update member list if we have it
-    if (members[room_id]) {
-      const memberIndex = members[room_id].findIndex(m => m.user_id === user_id);
-      
+    if (this.members[room_id]) {
+      const memberIndex = this.members[room_id].findIndex(m => m.user_id === user_id);
+
       if (memberIndex !== -1) {
-        const userName = members[room_id][memberIndex].user_name;
-        members[room_id].splice(memberIndex, 1);
-        
+        const userName = this.members[room_id][memberIndex].user_name;
+        this.members[room_id].splice(memberIndex, 1);
+
         // Add system message
-        if (messages[room_id]) {
+        if (this.messages[room_id]) {
           const systemMessage: ChatMessage = {
             id: `system-${Date.now()}`,
             room_id,
@@ -368,280 +423,320 @@ export function useChatService() {
             reactions: {},
             metadata: {}
           };
-          
-          messages[room_id].push(systemMessage);
+
+          this.messages[room_id].push(systemMessage);
         }
       }
     }
   }
-  
+
   /**
-   * Handle 'new_message' WebSocket message
+   * Handle 'new_message' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleNewMessageMessage(response: WebSocketResponse) {
+  private handleNewMessageMessage(response: WebSocketResponse): void {
     const messageData = response.data as ChatMessage;
-    
+
     // Add message to room
-    if (!messages[messageData.room_id]) {
-      messages[messageData.room_id] = [];
+    if (!this.messages[messageData.room_id]) {
+      this.messages[messageData.room_id] = [];
     }
-    
-    messages[messageData.room_id].push(messageData);
-    
+
+    this.messages[messageData.room_id].push(messageData);
+
     // Update room's last message
-    if (chatRooms[messageData.room_id]) {
-      chatRooms[messageData.room_id].last_message = messageData;
-      
+    if (this.chatRooms[messageData.room_id]) {
+      this.chatRooms[messageData.room_id].last_message = messageData;
+
       // Increment unread count if this is not the active room
-      if (activeRoomId.value !== messageData.room_id) {
-        chatRooms[messageData.room_id].unread_count = 
-          (chatRooms[messageData.room_id].unread_count || 0) + 1;
+      if (this.activeRoomId.value !== messageData.room_id) {
+        this.chatRooms[messageData.room_id].unread_count =
+          (this.chatRooms[messageData.room_id].unread_count || 0) + 1;
       }
     }
-    
+
     // Play notification sound if not active room
-    if (activeRoomId.value !== messageData.room_id) {
-      playNotificationSound();
+    if (this.activeRoomId.value !== messageData.room_id) {
+      this.playNotificationSound();
     }
   }
-  
+
   /**
-   * Handle 'message_sent' WebSocket message
+   * Handle 'message_sent' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleMessageSentMessage(response: WebSocketResponse) {
+  private handleMessageSentMessage(response: WebSocketResponse): void {
     const messageData = response.data as ChatMessage;
-    
+
     // Ensure message list exists
-    if (!messages[messageData.room_id]) {
-      messages[messageData.room_id] = [];
+    if (!this.messages[messageData.room_id]) {
+      this.messages[messageData.room_id] = [];
     }
-    
+
     // Check if this is a temporary message being confirmed
-    const tempIndex = messages[messageData.room_id].findIndex(
+    const tempIndex = this.messages[messageData.room_id].findIndex(
       m => m.id.startsWith('temp-') && m.content === messageData.content
     );
-    
+
     if (tempIndex !== -1) {
       // Replace temporary message with confirmed one
-      messages[messageData.room_id][tempIndex] = messageData;
+      this.messages[messageData.room_id][tempIndex] = messageData;
     } else {
       // Add as new message
-      messages[messageData.room_id].push(messageData);
+      this.messages[messageData.room_id].push(messageData);
     }
-    
+
     // Update room's last message
-    if (chatRooms[messageData.room_id]) {
-      chatRooms[messageData.room_id].last_message = messageData;
+    if (this.chatRooms[messageData.room_id]) {
+      this.chatRooms[messageData.room_id].last_message = messageData;
     }
   }
-  
+
   /**
-   * Handle 'message_history' WebSocket message
+   * Handle 'message_history' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleMessageHistoryMessage(response: WebSocketResponse) {
+  private handleMessageHistoryMessage(response: WebSocketResponse): void {
     const { room_id, messages: messageHistory } = response.data;
-    
-    if (!messages[room_id]) {
-      messages[room_id] = [];
+
+    if (!this.messages[room_id]) {
+      this.messages[room_id] = [];
     }
-    
+
     // Prepend messages to the history (these are older messages)
-    messages[room_id] = [...messageHistory, ...messages[room_id]];
+    this.messages[room_id] = [...messageHistory, ...this.messages[room_id]];
   }
-  
+
   /**
-   * Handle 'user_typing' WebSocket message
+   * Handle 'user_typing' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleUserTypingMessage(response: WebSocketResponse) {
-    const { room_id, user_id, user_name } = response.data;
-    
+  private handleUserTypingMessage(response: WebSocketResponse): void {
+    const { room_id, user_id } = response.data;
+
     // Initialize typing record for room if needed
-    if (!userTyping[room_id]) {
-      userTyping[room_id] = {};
+    if (!this.userTyping[room_id]) {
+      this.userTyping[room_id] = {};
     }
-    
+
     // Set typing timestamp for user
-    userTyping[room_id][user_id] = Date.now();
-    
+    this.userTyping[room_id][user_id] = Date.now();
+
     // Create typing timeout to auto-clear after 5 seconds of inactivity
     setTimeout(() => {
-      if (userTyping[room_id] && userTyping[room_id][user_id]) {
-        const elapsed = Date.now() - userTyping[room_id][user_id];
+      if (this.userTyping[room_id] && this.userTyping[room_id][user_id]) {
+        const elapsed = Date.now() - this.userTyping[room_id][user_id];
         if (elapsed > 5000) {
-          delete userTyping[room_id][user_id];
+          delete this.userTyping[room_id][user_id];
         }
       }
     }, 5000);
   }
-  
+
   /**
-   * Handle 'user_typing_stopped' WebSocket message
+   * Handle 'user_typing_stopped' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleUserTypingStoppedMessage(response: WebSocketResponse) {
+  private handleUserTypingStoppedMessage(response: WebSocketResponse): void {
     const { room_id, user_id } = response.data;
-    
+
     // Clear typing indicator for user
-    if (userTyping[room_id] && userTyping[room_id][user_id]) {
-      delete userTyping[room_id][user_id];
+    if (this.userTyping[room_id] && this.userTyping[room_id][user_id]) {
+      delete this.userTyping[room_id][user_id];
     }
   }
-  
+
   /**
-   * Handle 'reaction_added' WebSocket message
+   * Handle 'reaction_added' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleReactionAddedMessage(response: WebSocketResponse) {
+  private handleReactionAddedMessage(response: WebSocketResponse): void {
     const { room_id, message_id, reaction, user_id } = response.data;
-    
-    if (!messages[room_id]) return;
-    
+
+    if (!this.messages[room_id]) return;
+
     // Find message
-    const message = messages[room_id].find(m => m.id === message_id);
+    const message = this.messages[room_id].find(m => m.id === message_id);
     if (!message) return;
-    
+
     // Add reaction
     if (!message.reactions[reaction]) {
       message.reactions[reaction] = [];
     }
-    
+
     if (!message.reactions[reaction].includes(user_id)) {
       message.reactions[reaction].push(user_id);
     }
   }
-  
+
   /**
-   * Handle 'reaction_removed' WebSocket message
+   * Handle 'reaction_removed' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleReactionRemovedMessage(response: WebSocketResponse) {
+  private handleReactionRemovedMessage(response: WebSocketResponse): void {
     const { room_id, message_id, reaction, user_id } = response.data;
-    
-    if (!messages[room_id]) return;
-    
+
+    if (!this.messages[room_id]) return;
+
     // Find message
-    const message = messages[room_id].find(m => m.id === message_id);
+    const message = this.messages[room_id].find(m => m.id === message_id);
     if (!message || !message.reactions[reaction]) return;
-    
+
     // Remove reaction
     const index = message.reactions[reaction].indexOf(user_id);
     if (index !== -1) {
       message.reactions[reaction].splice(index, 1);
-      
+
       // Remove empty reaction arrays
       if (message.reactions[reaction].length === 0) {
         delete message.reactions[reaction];
       }
     }
   }
-  
+
   /**
-   * Handle 'message_edited' WebSocket message
+   * Handle 'message_edited' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleMessageEditedMessage(response: WebSocketResponse) {
+  private handleMessageEditedMessage(response: WebSocketResponse): void {
     const { id, room_id, content, updated_at } = response.data;
-    
-    if (!messages[room_id]) return;
-    
+
+    if (!this.messages[room_id]) return;
+
     // Find and update message
-    const message = messages[room_id].find(m => m.id === id);
+    const message = this.messages[room_id].find(m => m.id === id);
     if (message) {
       message.content = content;
       message.updated_at = updated_at;
       message.is_edited = true;
     }
   }
-  
+
   /**
-   * Handle 'message_deleted' WebSocket message
+   * Handle 'message_deleted' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleMessageDeletedMessage(response: WebSocketResponse) {
+  private handleMessageDeletedMessage(response: WebSocketResponse): void {
     const { room_id, message_id } = response.data;
-    
-    if (!messages[room_id]) return;
-    
+
+    if (!this.messages[room_id]) return;
+
     // Find and mark message as deleted
-    const message = messages[room_id].find(m => m.id === message_id);
+    const message = this.messages[room_id].find(m => m.id === message_id);
     if (message) {
       message.is_deleted = true;
       message.content = "This message was deleted";
     }
   }
-  
+
   /**
-   * Handle 'error' WebSocket message
+   * Handle 'error' WebSocket message.
+   *
+   * @param response - WebSocket response
    */
-  function handleErrorMessage(response: WebSocketResponse) {
+  private handleErrorMessage(response: WebSocketResponse): void {
     console.error('WebSocket error:', response.error);
     notificationService.error(response.error || 'An error occurred');
   }
-  
+
   /**
-   * Send a WebSocket command
+   * Send a WebSocket command.
+   *
+   * @param command - Command to send
+   * @returns Success status
    */
-  function sendCommand(command: WebSocketCommand) {
-    if (connectionStatus.value !== 'connected' || !wsConnection.value) {
+  private sendCommand(command: WebSocketCommand): boolean {
+    if (this.connectionStatus.value !== 'connected' || !this.wsConnection.value) {
       console.error('Cannot send command: WebSocket not connected');
       return false;
     }
-    
+
     try {
-      wsConnection.value.send(JSON.stringify(command));
+      this.wsConnection.value.send(JSON.stringify(command));
       return true;
     } catch (error) {
       console.error('Error sending WebSocket command:', error);
       return false;
     }
   }
-  
+
   /**
-   * Join a chat room
+   * Join a chat room.
+   *
+   * @param roomId - Room ID to join
+   * @returns Success status
    */
-  function joinRoom(roomId: string) {
+  public joinRoom(roomId: string): boolean {
     // Set as active room
-    activeRoomId.value = roomId;
-    
+    this.activeRoomId.value = roomId;
+
     // Send join command
-    sendCommand({
+    const success = this.sendCommand({
       command: 'join_room',
       room_id: roomId,
       data: { room_id: roomId }
     });
-    
+
     // Mark as read if we have unread messages
-    if (chatRooms[roomId] && chatRooms[roomId].unread_count) {
-      chatRooms[roomId].unread_count = 0;
+    if (this.chatRooms[roomId] && this.chatRooms[roomId].unread_count) {
+      this.chatRooms[roomId].unread_count = 0;
     }
+
+    return success;
   }
-  
+
   /**
-   * Leave a chat room
+   * Leave a chat room.
+   *
+   * @param roomId - Room ID to leave
+   * @returns Success status
    */
-  function leaveRoom(roomId: string) {
+  public leaveRoom(roomId: string): boolean {
     // Send leave command
-    sendCommand({
+    const success = this.sendCommand({
       command: 'leave_room',
       room_id: roomId,
       data: { room_id: roomId }
     });
-    
+
     // Clear active room if this is the active one
-    if (activeRoomId.value === roomId) {
-      activeRoomId.value = null;
+    if (this.activeRoomId.value === roomId) {
+      this.activeRoomId.value = null;
     }
+
+    return success;
   }
-  
+
   /**
-   * Send a message to a room
+   * Send a message to a room.
+   *
+   * @param roomId - Room ID
+   * @param content - Message content
+   * @param messageType - Message type
+   * @returns Success status
    */
-  function sendMessage(roomId: string, content: string, messageType = MessageType.TEXT) {
+  public sendMessage(roomId: string, content: string, messageType = MessageType.TEXT): boolean {
     if (!content.trim()) return false;
-    
+
+    const authStore = useAuthStore();
+
     // Create temporary message ID
     const tempId = `temp-${Date.now()}`;
-    
+
     // Add temporary message to UI immediately
-    if (!messages[roomId]) {
-      messages[roomId] = [];
+    if (!this.messages[roomId]) {
+      this.messages[roomId] = [];
     }
-    
+
     const tempMessage: ChatMessage = {
       id: tempId,
       room_id: roomId,
@@ -656,11 +751,11 @@ export function useChatService() {
       reactions: {},
       metadata: {}
     };
-    
-    messages[roomId].push(tempMessage);
-    
+
+    this.messages[roomId].push(tempMessage);
+
     // Send the message
-    return sendCommand({
+    return this.sendCommand({
       command: 'send_message',
       room_id: roomId,
       data: {
@@ -670,14 +765,19 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Edit a message
+   * Edit a message.
+   *
+   * @param messageId - Message ID
+   * @param roomId - Room ID
+   * @param content - New message content
+   * @returns Success status
    */
-  function editMessage(messageId: string, roomId: string, content: string) {
+  public editMessage(messageId: string, roomId: string, content: string): boolean {
     if (!content.trim()) return false;
-    
-    return sendCommand({
+
+    return this.sendCommand({
       command: 'edit_message',
       room_id: roomId,
       data: {
@@ -687,12 +787,16 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Delete a message
+   * Delete a message.
+   *
+   * @param messageId - Message ID
+   * @param roomId - Room ID
+   * @returns Success status
    */
-  function deleteMessage(messageId: string, roomId: string) {
-    return sendCommand({
+  public deleteMessage(messageId: string, roomId: string): boolean {
+    return this.sendCommand({
       command: 'delete_message',
       room_id: roomId,
       data: {
@@ -701,12 +805,17 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Add a reaction to a message
+   * Add a reaction to a message.
+   *
+   * @param messageId - Message ID
+   * @param roomId - Room ID
+   * @param reaction - Reaction emoji
+   * @returns Success status
    */
-  function addReaction(messageId: string, roomId: string, reaction: string) {
-    return sendCommand({
+  public addReaction(messageId: string, roomId: string, reaction: string): boolean {
+    return this.sendCommand({
       command: 'add_reaction',
       room_id: roomId,
       data: {
@@ -716,12 +825,17 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Remove a reaction from a message
+   * Remove a reaction from a message.
+   *
+   * @param messageId - Message ID
+   * @param roomId - Room ID
+   * @param reaction - Reaction emoji
+   * @returns Success status
    */
-  function removeReaction(messageId: string, roomId: string, reaction: string) {
-    return sendCommand({
+  public removeReaction(messageId: string, roomId: string, reaction: string): boolean {
+    return this.sendCommand({
       command: 'remove_reaction',
       room_id: roomId,
       data: {
@@ -731,34 +845,44 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Send typing indicator
+   * Send typing indicator.
+   *
+   * @param roomId - Room ID
+   * @returns Success status
    */
-  function sendTypingStart(roomId: string) {
-    return sendCommand({
+  public sendTypingStart(roomId: string): boolean {
+    return this.sendCommand({
       command: 'typing_start',
       room_id: roomId,
       data: { room_id: roomId }
     });
   }
-  
+
   /**
-   * Send typing stopped indicator
+   * Send typing stopped indicator.
+   *
+   * @param roomId - Room ID
+   * @returns Success status
    */
-  function sendTypingStop(roomId: string) {
-    return sendCommand({
+  public sendTypingStop(roomId: string): boolean {
+    return this.sendCommand({
       command: 'typing_stop',
       room_id: roomId,
       data: { room_id: roomId }
     });
   }
-  
+
   /**
-   * Fetch message history
+   * Fetch message history.
+   *
+   * @param roomId - Room ID
+   * @param beforeId - Get messages before this ID
+   * @returns Success status
    */
-  function fetchMessageHistory(roomId: string, beforeId?: string) {
-    return sendCommand({
+  public fetchMessageHistory(roomId: string, beforeId?: string): boolean {
+    return this.sendCommand({
       command: 'fetch_history',
       room_id: roomId,
       data: {
@@ -768,12 +892,16 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Mark messages as read
+   * Mark messages as read.
+   *
+   * @param roomId - Room ID
+   * @param lastReadId - Last read message ID
+   * @returns Success status
    */
-  function markAsRead(roomId: string, lastReadId: string) {
-    return sendCommand({
+  public markAsRead(roomId: string, lastReadId: string): boolean {
+    return this.sendCommand({
       command: 'read_messages',
       room_id: roomId,
       data: {
@@ -782,258 +910,253 @@ export function useChatService() {
       }
     });
   }
-  
+
   /**
-   * Create a new room using REST API
+   * Create a new room using REST API.
+   *
+   * @param name - Room name
+   * @param type - Room type
+   * @param members - Initial members
+   * @returns Created room or null
    */
-  async function createRoom(name: string, type: ChatRoomType, members?: any[]) {
-    isLoading.value = true;
-    
+  public async createRoom(name: string, type: ChatRoomType, members?: any[]): Promise<ChatRoom | null> {
+    this.isLoading.value = true;
+
     try {
-      const response = await api.post('/chat/rooms', {
+      const response = await this.post('/chat/rooms', {
         name,
         type,
         members
       });
-      
+
       if (response.success && response.room) {
         // Add to room list
-        chatRooms[response.room.id] = response.room;
+        this.chatRooms[response.room.id] = response.room;
         return response.room;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error creating room:', error);
       notificationService.error('Failed to create room');
       return null;
     } finally {
-      isLoading.value = false;
+      this.isLoading.value = false;
     }
   }
-  
+
   /**
-   * Create a direct chat with another user
+   * Create a direct chat with another user.
+   *
+   * @param userId - User ID
+   * @returns Created room or null
    */
-  async function createDirectChat(userId: string) {
-    isLoading.value = true;
-    
+  public async createDirectChat(userId: string): Promise<ChatRoom | null> {
+    this.isLoading.value = true;
+
     try {
-      const response = await api.post('/chat/direct-chats', {
+      const response = await this.post('/chat/direct-chats', {
         user_id: userId
       });
-      
+
       if (response.success && response.room) {
         // Add to room list
-        chatRooms[response.room.id] = response.room;
+        this.chatRooms[response.room.id] = response.room;
         return response.room;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error creating direct chat:', error);
       notificationService.error('Failed to create direct chat');
       return null;
     } finally {
-      isLoading.value = false;
+      this.isLoading.value = false;
     }
   }
-  
+
   /**
-   * Fetch rooms from the API
+   * Fetch rooms from the API.
+   *
+   * @returns Success status
    */
-  async function fetchRooms() {
-    isLoading.value = true;
-    
+  public async fetchRooms(): Promise<boolean> {
+    this.isLoading.value = true;
+
     try {
-      const response = await api.get('/chat/rooms');
-      
+      const response = await this.get('/chat/rooms');
+
       if (response.success && response.rooms) {
         // Update room list
         response.rooms.forEach((room: ChatRoom) => {
-          chatRooms[room.id] = room;
+          this.chatRooms[room.id] = room;
         });
+        return true;
       }
+      return false;
     } catch (error) {
       console.error('Error fetching rooms:', error);
       notificationService.error('Failed to fetch chat rooms');
+      return false;
     } finally {
-      isLoading.value = false;
+      this.isLoading.value = false;
     }
   }
-  
+
   /**
-   * Add a member to a room
+   * Add a member to a room.
+   *
+   * @param roomId - Room ID
+   * @param userId - User ID
+   * @param role - Member role
+   * @returns Success status
    */
-  async function addMember(roomId: string, userId: string, role = ChatMemberRole.MEMBER) {
-    isLoading.value = true;
-    
+  public async addMember(roomId: string, userId: string, role = ChatMemberRole.MEMBER): Promise<boolean> {
+    this.isLoading.value = true;
+
     try {
-      const response = await api.post(`/chat/rooms/${roomId}/members`, {
+      const response = await this.post(`/chat/rooms/${roomId}/members`, {
         user_id: userId,
         role
       });
-      
+
       return response.success;
     } catch (error) {
       console.error('Error adding member:', error);
       notificationService.error('Failed to add member');
       return false;
     } finally {
-      isLoading.value = false;
+      this.isLoading.value = false;
     }
   }
-  
+
   /**
-   * Remove a member from a room
+   * Remove a member from a room.
+   *
+   * @param roomId - Room ID
+   * @param userId - User ID
+   * @returns Success status
    */
-  async function removeMember(roomId: string, userId: string) {
-    isLoading.value = true;
-    
+  public async removeMember(roomId: string, userId: string): Promise<boolean> {
+    this.isLoading.value = true;
+
     try {
-      const response = await api.delete(`/chat/rooms/${roomId}/members/${userId}`);
+      const response = await this.delete(`/chat/rooms/${roomId}/members/${userId}`);
       return response.success;
     } catch (error) {
       console.error('Error removing member:', error);
       notificationService.error('Failed to remove member');
       return false;
     } finally {
-      isLoading.value = false;
+      this.isLoading.value = false;
     }
   }
-  
+
   /**
-   * Update a member's role
+   * Update a member's role.
+   *
+   * @param roomId - Room ID
+   * @param userId - User ID
+   * @param role - New role
+   * @returns Success status
    */
-  async function updateMemberRole(roomId: string, userId: string, role: ChatMemberRole) {
-    isLoading.value = true;
-    
+  public async updateMemberRole(roomId: string, userId: string, role: ChatMemberRole): Promise<boolean> {
+    this.isLoading.value = true;
+
     try {
-      const response = await api.put(`/chat/rooms/${roomId}/members/${userId}`, {
+      const response = await this.put(`/chat/rooms/${roomId}/members/${userId}`, {
         role
       });
-      
+
       return response.success;
     } catch (error) {
       console.error('Error updating member role:', error);
       notificationService.error('Failed to update member role');
       return false;
     } finally {
-      isLoading.value = false;
+      this.isLoading.value = false;
     }
   }
-  
+
   /**
-   * Get users who are currently typing in a room
+   * Get users who are currently typing in a room.
+   *
+   * @param roomId - Room ID
+   * @returns List of typing user names
    */
-  function getTypingUsers(roomId: string): string[] {
-    if (!userTyping[roomId]) return [];
-    
+  public getTypingUsers(roomId: string): string[] {
+    if (!this.userTyping[roomId]) return [];
+
     const now = Date.now();
     const typingUsers: string[] = [];
-    
+
     // Gather user IDs who are typing
-    Object.entries(userTyping[roomId]).forEach(([userId, timestamp]) => {
+    Object.entries(this.userTyping[roomId]).forEach(([userId, timestamp]) => {
       // Consider typing active if within last 5 seconds
       if (now - timestamp < 5000) {
         // Find user name
-        if (members[roomId]) {
-          const member = members[roomId].find(m => m.user_id === userId);
+        if (this.members[roomId]) {
+          const member = this.members[roomId].find(m => m.user_id === userId);
           if (member) {
             typingUsers.push(member.user_name);
           }
         }
       } else {
         // Clean up expired typing indicators
-        delete userTyping[roomId][userId];
+        delete this.userTyping[roomId][userId];
       }
     });
-    
+
     return typingUsers;
   }
-  
+
   /**
-   * Play notification sound
+   * Play notification sound.
    */
-  function playNotificationSound() {
+  private playNotificationSound(): void {
     // Create and play a notification sound
     const audio = new Audio('/sounds/notification.mp3');
     audio.volume = 0.5;
     audio.play().catch(e => console.log('Failed to play notification sound:', e));
   }
-  
+
   /**
-   * Initialize chat service
+   * Initialize chat service.
    */
-  function initialize() {
+  public initialize(): void {
+    const authStore = useAuthStore();
+
     // Connect WebSocket
-    connectWebSocket();
-    
+    this.connectWebSocket();
+
     // Fetch initial room list
-    fetchRooms();
-    
+    this.fetchRooms();
+
     // Set up reconnection on visibility change
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && connectionStatus.value !== 'connected') {
-        connectWebSocket();
+      if (document.visibilityState === 'visible' && this.connectionStatus.value !== 'connected') {
+        this.connectWebSocket();
       }
     });
-    
+
     // Set up reconnection on network status change
     window.addEventListener('online', () => {
-      if (connectionStatus.value !== 'connected') {
-        connectWebSocket();
+      if (this.connectionStatus.value !== 'connected') {
+        this.connectWebSocket();
       }
     });
-    
+
     // Set up automatic reconnection when user logs in
     watch(() => authStore.isLoggedIn, (isLoggedIn) => {
-      if (isLoggedIn && connectionStatus.value !== 'connected') {
-        connectWebSocket();
+      if (isLoggedIn && this.connectionStatus.value !== 'connected') {
+        this.connectWebSocket();
       } else if (!isLoggedIn) {
-        disconnectWebSocket();
+        this.disconnectWebSocket();
       }
     }, { immediate: true });
   }
-  
-  // Return public API
-  return {
-    // State
-    chatRooms,
-    messages,
-    members,
-    activeRoomId,
-    activeRoom,
-    activeRoomMessages,
-    activeRoomMembers,
-    isLoading,
-    connectionStatus,
-    totalUnreadCount,
-    
-    // Methods
-    initialize,
-    connectWebSocket,
-    disconnectWebSocket,
-    sendMessage,
-    editMessage,
-    deleteMessage,
-    addReaction,
-    removeReaction,
-    joinRoom,
-    leaveRoom,
-    sendTypingStart,
-    sendTypingStop,
-    fetchMessageHistory,
-    markAsRead,
-    createRoom,
-    createDirectChat,
-    fetchRooms,
-    addMember,
-    removeMember,
-    updateMemberRole,
-    getTypingUsers
-  };
 }
 
-// Create singleton instance
-export const chatService = useChatService();
+// Create and export a singleton instance
+export const chatService = new ChatService();
+export default chatService;

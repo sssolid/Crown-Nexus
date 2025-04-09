@@ -1,0 +1,168 @@
+<template>
+  <div class="part-search">
+    <SearchFilter
+      title="Search Parts"
+      :loading="loading"
+      :disabled="!isValidSearch"
+      :has-filters="hasFilters"
+      @submit="handleSearch"
+      @clear="clearFilters"
+    >
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="searchParams.search_term"
+            label="Search Term"
+            placeholder="Enter part name or description"
+            clearable
+            hide-details="auto"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-select
+            v-model="searchParams.categories"
+            :items="categories"
+            item-title="category_name"
+            item-value="category_id"
+            label="Categories"
+            multiple
+            chips
+            clearable
+            hide-details="auto"
+          ></v-select>
+        </v-col>
+      </v-row>
+    </SearchFilter>
+
+    <v-divider class="my-4"></v-divider>
+
+    <div v-if="results && results.items.length > 0">
+      <DataTable
+        :headers="headers"
+        :items="results.items"
+        :total-items="results.total"
+        :page="page"
+        :items-per-page="pageSize"
+        :loading="loading"
+        :error="error"
+        title="Part Results"
+        @update:page="page = $event"
+        @update:items-per-page="pageSize = $event"
+      >
+        <template v-slot:item.part_terminology_id="{ item }">{{ item.part_terminology_id }}</template>
+        <template v-slot:item.part_terminology_name="{ item }">{{ item.part_terminology_name }}</template>
+        <template v-slot:item.description="{ item }">{{ item.description || '-' }}</template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            icon
+            variant="text"
+            size="small"
+            color="primary"
+            :to="{ name: 'pcdb-part-details', params: { id: item.part_terminology_id } }"
+          >
+            <v-icon>mdi-eye</v-icon>
+          </v-btn>
+        </template>
+      </DataTable>
+    </div>
+    <div v-else-if="results && results.items.length === 0" class="text-center my-4">
+      <v-alert type="info" text="No parts found matching your search criteria." variant="tonal"></v-alert>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue';
+import { usePCdbStore } from '@/stores/autocare/pcdb.store.ts';
+import SearchFilter from '@/components/common/SearchFilter.vue';
+import DataTable from '@/components/common/DataTable.vue';
+import { PartSearchParams } from '@/types';
+
+const pcdbStore = usePCdbStore();
+
+// State
+const loading = ref(false);
+const error = ref('');
+const page = ref(1);
+const pageSize = ref(10);
+const searchParams = ref({
+  search_term: '',
+  categories: [] as number[],
+});
+
+// Computed
+const categories = computed(() => pcdbStore.categories);
+const results = computed(() => pcdbStore.searchResults);
+
+const isValidSearch = computed(() => {
+  return searchParams.value.search_term.trim() !== '' || searchParams.value.categories.length > 0;
+});
+
+const hasFilters = computed(() => {
+  return searchParams.value.search_term.trim() !== '' || searchParams.value.categories.length > 0;
+});
+
+const headers = [
+  { title: 'ID', key: 'part_terminology_id', sortable: true },
+  { title: 'Name', key: 'part_terminology_name', sortable: true },
+  { title: 'Description', key: 'description', sortable: false },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+];
+
+// Methods
+const loadData = async () => {
+  try {
+    loading.value = true;
+    await pcdbStore.fetchCategories();
+  } catch (err) {
+    error.value = 'Failed to load categories';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleSearch = async () => {
+  try {
+    loading.value = true;
+    const params: PartSearchParams = {
+      search_term: searchParams.value.search_term,
+      page: page.value,
+      page_size: pageSize.value,
+    };
+
+    if (searchParams.value.categories.length > 0) {
+      params.categories = searchParams.value.categories;
+    }
+
+    await pcdbStore.searchParts(params);
+  } catch (err) {
+    error.value = 'Search failed';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const clearFilters = () => {
+  searchParams.value = {
+    search_term: '',
+    categories: [],
+  };
+  pcdbStore.clearSearch();
+};
+
+// Watch for pagination changes
+watch([page, pageSize], () => {
+  if (hasFilters.value) {
+    handleSearch();
+  }
+});
+
+// Load initial data
+onMounted(loadData);
+</script>
+
+<style scoped>
+.part-search {
+  width: 100%;
+}
+</style>

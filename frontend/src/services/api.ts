@@ -234,4 +234,85 @@ function handleApiError(error: any): void {
   // - Format error messages for display
 }
 
+/**
+ * Base API service class that can be extended by domain-specific services
+ */
+export class ApiService {
+  protected apiClient: AxiosInstance;
+
+  constructor() {
+    this.apiClient = apiClient;
+  }
+
+  /**
+   * Execute a GET request
+   * @param url The endpoint URL
+   * @param config Optional Axios request configuration
+   * @returns Promise with the response data
+   */
+  protected async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response: AxiosResponse<T> = await this.apiClient.get(url, config);
+    return response.data;
+  }
+
+  /**
+   * Execute a POST request
+   * @param url The endpoint URL
+   * @param data The data to send
+   * @param config Optional Axios request configuration
+   * @returns Promise with the response data
+   */
+  protected async post<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<T> {
+    const response: AxiosResponse<T> = await this.apiClient.post(url, data, config);
+    return response.data;
+  }
+
+  /**
+   * Execute a PUT request
+   * @param url The endpoint URL
+   * @param data The data to send
+   * @param config Optional Axios request configuration
+   * @returns Promise with the response data
+   */
+  protected async put<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<T> {
+    const response: AxiosResponse<T> = await this.apiClient.put(url, data, config);
+    return response.data;
+  }
+
+  /**
+   * Execute a DELETE request
+   * @param url The endpoint URL
+   * @param config Optional Axios request configuration
+   * @returns Promise with the response data
+   */
+  protected async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response: AxiosResponse<T> = await this.apiClient.delete(url, config);
+    return response.data;
+  }
+
+  /**
+   * Build query parameters for API requests
+   * @param params Object containing parameters
+   * @returns URL query string
+   */
+  protected buildQueryParams(params: Record<string, any>): string {
+    const queryParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach(item => {
+            queryParams.append(`${key}`, String(item));
+          });
+        } else {
+          queryParams.append(key, String(value));
+        }
+      }
+    });
+
+    const queryString = queryParams.toString();
+    return queryString ? `?${queryString}` : '';
+  }
+}
+
 export default api;

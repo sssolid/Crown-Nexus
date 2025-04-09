@@ -15,6 +15,7 @@
       <v-btn to="/fitment/model-mappings" text>Mapper</v-btn>
       <v-btn to="/fitments" text>Fitments</v-btn>
       <v-btn to="/media" text>Media</v-btn>
+      <v-btn to="/autocare/dashboard" text>Autocare</v-btn>
       <v-btn to="/settings" text>Settings</v-btn>
       <v-btn to="/profile" text>Profile</v-btn>
       <v-btn @click="logout" text>Logout</v-btn>
@@ -32,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/auth.ts';
 import DashboardFooter from './DashboardFooter.vue';
 
 export default defineComponent({

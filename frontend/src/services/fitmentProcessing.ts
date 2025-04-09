@@ -6,7 +6,7 @@
  * and validating them against VCDB and PCDB databases.
  */
 
-import api from '@/services/api';
+import api, {ApiService} from '@/services/api';
 
 export interface FitmentValidationResult {
   status: string;
@@ -44,7 +44,7 @@ export interface ProcessFitmentResponse {
 /**
  * Fitment Processing service for API interactions.
  */
-const fitmentProcessingService = {
+export class FitmentProcessingService extends ApiService {
   /**
    * Process part applications.
    *
@@ -63,7 +63,7 @@ const fitmentProcessingService = {
       part_terminology_id: partTerminologyId,
       product_id: productId
     });
-  },
+  }
 
   /**
    * Parse a single part application.
@@ -83,7 +83,7 @@ const fitmentProcessingService = {
     return api.post<any>('/fitment/parse-application', {
       application_text: applicationText
     });
-  },
+  }
 
   /**
    * Get PCDB positions for a part terminology.
@@ -103,6 +103,8 @@ const fitmentProcessingService = {
   }>> {
     return api.get<any[]>(`/fitment/pcdb-positions/${terminologyId}`);
   }
-};
+}
 
+// Create and export a singleton instance
+export const fitmentProcessingService = new FitmentProcessingService();
 export default fitmentProcessingService;

@@ -9,9 +9,28 @@
  * - Error handling and redirection
  */
 
-import { createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import { notificationService } from '@/utils/notification';
+import {createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized, NavigationGuardNext} from 'vue-router';
+import {useAuthStore} from '@/stores/auth';
+import {notificationService} from '@/utils/notification';
+
+// VCdb
+import VehicleSearchView from '@/views/autocare/vcdb/VehicleSearchView.vue';
+import VehicleDetailsView from '@/views/autocare/vcdb/VehicleDetailsView.vue';
+import MakesListView from '@/views/autocare/vcdb/MakesListView.vue';
+
+// PCdb
+import PartSearchView from '@/views/autocare/pcdb/PartSearchView.vue';
+import PartDetailsView from '@/views/autocare/pcdb/PartDetailsView.vue';
+import CategoriesListView from '@/views/autocare/pcdb/CategoriesListView.vue';
+
+// PAdb
+import AttributeSearchView from '@/views/autocare/padb/AttributeSearchView.vue';
+import AttributeDetailsView from '@/views/autocare/padb/AttributeDetailsView.vue';
+
+// Qdb
+import QualifierSearchView from '@/views/autocare/qdb/QualifierSearchView.vue';
+import QualifierDetailsView from '@/views/autocare/qdb/QualifierDetailsView.vue';
+import GroupsListView from '@/views/autocare/qdb/GroupsListView.vue';
 
 // Route meta types
 declare module 'vue-router' {
@@ -274,6 +293,91 @@ const routes: RouteRecordRaw[] = [
     }
   },
 
+  // Autocare Routes
+  {
+    path: '/autocare/dashboard',
+    name: 'AutocareDashboard',
+    component: () => import('@/views/autocare/AutocareDashboardView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Autocare Dashboard'
+    }
+  },
+
+  // VCdb Routes
+  {
+    path: '/vcdb/vehicles',
+    name: 'vcdb-vehicle-search',
+    component: VehicleSearchView,
+    meta: {requiresAuth: true,title: 'Vehicle Search'}
+  },
+  {
+    path: '/vcdb/vehicles/:id',
+    name: 'vcdb-vehicle-details',
+    component: VehicleDetailsView,
+    meta: {requiresAuth: true,title: 'Vehicle Details'}
+  },
+  {
+    path: '/vcdb/makes',
+    name: 'vcdb-makes-list',
+    component: MakesListView,
+    meta: {requiresAuth: true,title: 'Vehicle Makes'}
+  },
+
+  // PCdb Routes
+  {
+    path: '/pcdb/parts',
+    name: 'pcdb-part-search',
+    component: PartSearchView,
+    meta: {requiresAuth: true,title: 'Part Search'}
+  },
+  {
+    path: '/pcdb/parts/:id',
+    name: 'pcdb-part-details',
+    component: PartDetailsView,
+    meta: {requiresAuth: true,title: 'Part Details'}
+  },
+  {
+    path: '/pcdb/categories',
+    name: 'pcdb-categories-list',
+    component: CategoriesListView,
+    meta: {requiresAuth: true,title: 'Part Categories'}
+  },
+
+  // PAdb Routes
+  {
+    path: '/padb/attributes',
+    name: 'padb-attribute-search',
+    component: AttributeSearchView,
+    meta: {requiresAuth: true,title: 'Attribute Search'}
+  },
+  {
+    path: '/padb/attributes/:id',
+    name: 'padb-attribute-details',
+    component: AttributeDetailsView,
+    meta: {requiresAuth: true,title: 'Attribute Details'}
+  },
+
+  // Qdb Routes
+  {
+    path: '/qdb/qualifiers',
+    name: 'qdb-qualifier-search',
+    component: QualifierSearchView,
+    meta: {requiresAuth: true,title: 'Qualifier Search'}
+  },
+  {
+    path: '/qdb/qualifiers/:id',
+    name: 'qdb-qualifier-details',
+    component: QualifierDetailsView,
+    meta: {requiresAuth: true,title: 'Qualifier Details'}
+  },
+  {
+    path: '/qdb/groups',
+    name: 'qdb-groups-list',
+    component: GroupsListView,
+    meta: {requiresAuth: true,title: 'Qualifier Groups'}
+  },
+
   // Fitment routes
   {
     path: '/fitments',
@@ -428,7 +532,7 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition;
     } else {
-      return { top: 0 };
+      return {top: 0};
     }
   }
 });

@@ -1,0 +1,66 @@
+<template>
+  <v-card class="search-filter pa-4" flat>
+    <v-card-title class="d-flex align-center">
+      <v-icon class="me-2">mdi-filter</v-icon>
+      {{ title }}
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="hasFilters"
+        color="error"
+        variant="text"
+        size="small"
+        @click="$emit('clear')"
+      >
+        <v-icon>mdi-close</v-icon>
+        Clear filters
+      </v-btn>
+    </v-card-title>
+
+    <v-card-text>
+      <slot></slot>
+    </v-card-text>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary"
+        variant="flat"
+        :loading="loading"
+        :disabled="disabled"
+        @click="$emit('submit')"
+      >
+        <v-icon left>mdi-magnify</v-icon>
+        Search
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script setup lang="ts">
+defineProps({
+  title: {
+    type: String,
+    default: 'Search Filters',
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  hasFilters: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+defineEmits(['submit', 'clear']);
+</script>
+
+<style scoped>
+.search-filter {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+</style>

@@ -9,7 +9,7 @@
  * - Processing media operations like resizing and optimization
  */
 
-import api from '@/services/api';
+import api, {ApiService} from '@/services/api';
 import { Media } from '@/types/media';
 
 // Media list response interface
@@ -47,7 +47,7 @@ export interface MediaMetadata {
 /**
  * Media service for API interactions.
  */
-const mediaService = {
+export class MediaService extends ApiService  {
   /**
    * Get a paginated list of media with optional filtering.
    *
@@ -56,7 +56,7 @@ const mediaService = {
    */
   async getMediaList(filters?: MediaFilters): Promise<MediaListResponse> {
     return api.get<MediaListResponse>('/media/', { params: filters });
-  },
+  }
 
   /**
    * Get a single media item by ID.
@@ -66,7 +66,7 @@ const mediaService = {
    */
   async getMedia(id: string): Promise<Media> {
     return api.get<Media>(`/media/${id}`);
-  },
+  }
 
   /**
    * Upload a new media file.
@@ -92,7 +92,7 @@ const mediaService = {
     }
 
     return api.uploadFile<Media>('/media/upload', formData);
-  },
+  }
 
   /**
    * Upload multiple media files.
@@ -111,7 +111,7 @@ const mediaService = {
     }
 
     return uploadedMedia;
-  },
+  }
 
   /**
    * Update media metadata.
@@ -122,7 +122,7 @@ const mediaService = {
    */
   async updateMedia(id: string, metadata: Partial<Media>): Promise<Media> {
     return api.put<Media>(`/media/${id}`, metadata);
-  },
+  }
 
   /**
    * Delete a media item.
@@ -132,7 +132,7 @@ const mediaService = {
    */
   async deleteMedia(id: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/media/${id}`);
-  },
+  }
 
   /**
    * Associate media with a product.
@@ -143,7 +143,7 @@ const mediaService = {
    */
   async associateMediaWithProduct(mediaId: string, productId: string): Promise<Media> {
     return api.post<Media>(`/media/${mediaId}/products/${productId}`, {});
-  },
+  }
 
   /**
    * Remove product association from media.
@@ -154,7 +154,7 @@ const mediaService = {
    */
   async removeProductAssociation(mediaId: string, productId: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/media/${mediaId}/products/${productId}`);
-  },
+  }
 
   /**
    * Get all media associated with a product.
@@ -164,7 +164,7 @@ const mediaService = {
    */
   async getProductMedia(productId: string): Promise<Media[]> {
     return api.get<Media[]>(`/media/products/${productId}`);
-  },
+  }
 
   /**
    * Set primary media for a product.
@@ -177,7 +177,7 @@ const mediaService = {
     return api.post<{message: string}>(`/media/${mediaId}/products/${productId}`, {
       is_primary: true
     });
-  },
+  }
 
   /**
    * Reorder product media.
@@ -188,7 +188,7 @@ const mediaService = {
    */
   async reorderProductMedia(productId: string, mediaIds: string[]): Promise<{message: string}> {
     return api.post<{message: string}>(`/products/${productId}/media/reorder`, { media_ids: mediaIds });
-  },
+  }
 
   /**
    * Get media metadata.
@@ -198,7 +198,7 @@ const mediaService = {
    */
   async getMediaMetadata(id: string): Promise<MediaMetadata> {
     return api.get<MediaMetadata>(`/media/${id}/metadata`);
-  },
+  }
 
   /**
    * Generate a thumbnail or resized version of an image.
@@ -213,6 +213,8 @@ const mediaService = {
       params: { width, height }
     });
   }
-};
+}
 
+// Create and export a singleton instance
+export const mediaService = new MediaService();
 export default mediaService;

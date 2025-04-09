@@ -147,3 +147,72 @@ export function formatNumber(num: number, decimals: number = 0): string {
     maximumFractionDigits: decimals
   }).format(num);
 }
+
+/**
+ * Format a vehicle name
+ * @param year Vehicle year
+ * @param make Vehicle make
+ * @param model Vehicle model
+ * @param submodel Vehicle submodel
+ * @returns Formatted vehicle name
+ */
+export function formatVehicleName(
+  year?: number | null,
+  make?: string | null,
+  model?: string | null,
+  submodel?: string | null
+): string {
+  const parts = [];
+
+  if (year) parts.push(year);
+  if (make) parts.push(make);
+  if (model) parts.push(model);
+  if (submodel) parts.push(submodel);
+
+  return parts.join(' ');
+}
+
+/**
+ * Format an engine description
+ * @param liter Engine displacement in liters
+ * @param cylinders Number of cylinders
+ * @param aspiration Aspiration type
+ * @param fuelType Fuel type
+ * @returns Formatted engine description
+ */
+export function formatEngineDescription(
+  liter?: string | null,
+  cylinders?: string | null,
+  aspiration?: string | null,
+  fuelType?: string | null
+): string {
+  const parts = [];
+
+  if (liter) parts.push(`${liter}L`);
+  if (cylinders) parts.push(`${cylinders}cyl`);
+  if (aspiration && aspiration.toLowerCase() !== 'naturally aspirated') parts.push(aspiration);
+  if (fuelType) parts.push(fuelType);
+
+  return parts.join(' ');
+}
+
+/**
+ * Format a transmission description
+ * @param type Transmission type
+ * @param speeds Number of speeds
+ * @param controlType Control type
+ * @returns Formatted transmission description
+ */
+export function formatTransmissionDescription(
+  type?: string | null,
+  speeds?: string | null,
+  controlType?: string | null
+): string {
+  const parts = [];
+
+  if (type) parts.push(type);
+  if (speeds) parts.push(`${speeds}-Speed`);
+  if (controlType) parts.push(controlType);
+
+  return parts.join(' ');
+}

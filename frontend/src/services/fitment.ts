@@ -10,14 +10,14 @@
  * It builds on the base API service and adds fitment-specific functionality.
  */
 
-import api from '@/services/api';
+import api, {ApiService} from '@/services/api';
 import { Fitment, FitmentFilters, FitmentListResponse } from '@/types/fitment';
 import { Product } from '@/types/product';
 
 /**
  * Fitment service for API interactions.
  */
-const fitmentService = {
+export class FitmentService extends ApiService  {
   /**
    * Get a paginated list of fitments with optional filtering.
    *
@@ -26,7 +26,7 @@ const fitmentService = {
    */
   async getFitments(filters?: FitmentFilters): Promise<FitmentListResponse> {
     return api.get<FitmentListResponse>('/fitments', { params: filters });
-  },
+  }
 
   /**
    * Get a single fitment by ID.
@@ -36,7 +36,7 @@ const fitmentService = {
    */
   async getFitment(id: string): Promise<Fitment> {
     return api.get<Fitment>(`/fitments/${id}`);
-  },
+  }
 
   /**
    * Create a new fitment.
@@ -46,7 +46,7 @@ const fitmentService = {
    */
   async createFitment(fitment: Partial<Fitment>): Promise<Fitment> {
     return api.post<Fitment>('/fitments', fitment);
-  },
+  }
 
   /**
    * Update an existing fitment.
@@ -57,7 +57,7 @@ const fitmentService = {
    */
   async updateFitment(id: string, fitment: Partial<Fitment>): Promise<Fitment> {
     return api.put<Fitment>(`/fitments/${id}`, fitment);
-  },
+  }
 
   /**
    * Delete a fitment.
@@ -67,7 +67,7 @@ const fitmentService = {
    */
   async deleteFitment(id: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/fitments/${id}`);
-  },
+  }
 
   /**
    * Get products associated with a fitment.
@@ -77,7 +77,7 @@ const fitmentService = {
    */
   async getFitmentProducts(fitmentId: string): Promise<Product[]> {
     return api.get<Product[]>(`/fitments/${fitmentId}/products`);
-  },
+  }
 
   /**
    * Associate a product with a fitment.
@@ -88,7 +88,7 @@ const fitmentService = {
    */
   async associateProduct(fitmentId: string, productId: string): Promise<{message: string}> {
     return api.post<{message: string}>(`/fitments/${fitmentId}/products`, { product_id: productId });
-  },
+  }
 
   /**
    * Remove a product association from a fitment.
@@ -99,7 +99,7 @@ const fitmentService = {
    */
   async removeProductAssociation(fitmentId: string, productId: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/fitments/${fitmentId}/products/${productId}`);
-  },
+  }
 
   /**
    * Get distinct values for a fitment attribute.
@@ -110,7 +110,7 @@ const fitmentService = {
    */
   async getDistinctValues(attribute: string): Promise<string[]> {
     return api.get<string[]>(`/fitments/distinct/${attribute}`);
-  },
+  }
 
   /**
    * Bulk import fitments from a file.
@@ -120,7 +120,7 @@ const fitmentService = {
    */
   async importFitments(file: FormData): Promise<{message: string, imported: number, errors: number}> {
     return api.uploadFile<{message: string, imported: number, errors: number}>('/fitments/import', file);
-  },
+  }
 
   /**
    * Export fitments to a CSV file.
@@ -131,6 +131,8 @@ const fitmentService = {
   async exportFitments(filters?: FitmentFilters): Promise<{url: string}> {
     return api.get<{url: string}>('/fitments/export', { params: filters });
   }
-};
+}
 
+// Create and export a singleton instance
+export const fitmentService = new FitmentService();
 export default fitmentService;

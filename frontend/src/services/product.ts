@@ -11,7 +11,7 @@
  * It builds on the base API service and adds product-specific functionality.
  */
 
-import api from '@/services/api';
+import api, {ApiService} from '@/services/api';
 import {
   Brand,
   BrandCreateDTO,
@@ -34,7 +34,7 @@ import {
 /**
  * Product service for API interactions.
  */
-const productService = {
+export class ProductService extends ApiService  {
   /**
    * Get a paginated list of products with optional filtering.
    *
@@ -43,7 +43,7 @@ const productService = {
    */
   async getProducts(filters?: ProductFilters): Promise<ProductListResponse> {
     return api.get<ProductListResponse>('/products/', { params: filters });
-  },
+  }
 
   /**
    * Get a single product by ID.
@@ -53,7 +53,7 @@ const productService = {
    */
   async getProduct(id: string): Promise<Product> {
     return api.get<Product>(`/products/${id}`);
-  },
+  }
 
   /**
    * Create a new product.
@@ -63,7 +63,7 @@ const productService = {
    */
   async createProduct(product: ProductCreateDTO): Promise<Product> {
     return api.post<Product>('/products', product);
-  },
+  }
 
   /**
    * Update an existing product.
@@ -74,7 +74,7 @@ const productService = {
    */
   async updateProduct(id: string, product: ProductUpdateDTO): Promise<Product> {
     return api.put<Product>(`/products/${id}`, product);
-  },
+  }
 
   /**
    * Delete a product.
@@ -84,7 +84,7 @@ const productService = {
    */
   async deleteProduct(id: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/products/${id}`);
-  },
+  }
 
   /**
    * Add a description to a product.
@@ -95,7 +95,7 @@ const productService = {
    */
   async addProductDescription(productId: string, description: ProductDescriptionCreateDTO): Promise<any> {
     return api.post<any>(`/products/${productId}/descriptions`, description);
-  },
+  }
 
   /**
    * Update a product description.
@@ -111,7 +111,7 @@ const productService = {
     description: ProductDescriptionUpdateDTO
   ): Promise<any> {
     return api.put<any>(`/products/${productId}/descriptions/${descriptionId}`, description);
-  },
+  }
 
   /**
    * Delete a product description.
@@ -122,7 +122,7 @@ const productService = {
    */
   async deleteProductDescription(productId: string, descriptionId: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/products/${productId}/descriptions/${descriptionId}`);
-  },
+  }
 
   /**
    * Add marketing content to a product.
@@ -133,7 +133,7 @@ const productService = {
    */
   async addProductMarketing(productId: string, marketing: ProductMarketingCreateDTO): Promise<any> {
     return api.post<any>(`/products/${productId}/marketing`, marketing);
-  },
+  }
 
   /**
    * Update product marketing content.
@@ -149,7 +149,7 @@ const productService = {
     marketing: ProductMarketingUpdateDTO
   ): Promise<any> {
     return api.put<any>(`/products/${productId}/marketing/${marketingId}`, marketing);
-  },
+  }
 
   /**
    * Delete product marketing content.
@@ -160,7 +160,7 @@ const productService = {
    */
   async deleteProductMarketing(productId: string, marketingId: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/products/${productId}/marketing/${marketingId}`);
-  },
+  }
 
   /**
    * Add measurements to a product.
@@ -171,7 +171,7 @@ const productService = {
    */
   async addProductMeasurement(productId: string, measurement: ProductMeasurementCreateDTO): Promise<any> {
     return api.post<any>(`/products/${productId}/measurements`, measurement);
-  },
+  }
 
   /**
    * Add stock information to a product.
@@ -182,7 +182,7 @@ const productService = {
    */
   async addProductStock(productId: string, stock: ProductStockCreateDTO): Promise<any> {
     return api.post<any>(`/products/${productId}/stock`, stock);
-  },
+  }
 
   /**
    * Update product stock information.
@@ -198,7 +198,7 @@ const productService = {
     stock: ProductStockUpdateDTO
   ): Promise<any> {
     return api.put<any>(`/products/${productId}/stock/${stockId}`, stock);
-  },
+  }
 
   /**
    * Create a product supersession.
@@ -209,7 +209,7 @@ const productService = {
    */
   async createProductSupersession(productId: string, supersession: ProductSupersessionCreateDTO): Promise<any> {
     return api.post<any>(`/products/${productId}/supersessions`, supersession);
-  },
+  }
 
   /**
    * Delete a product supersession.
@@ -220,7 +220,7 @@ const productService = {
    */
   async deleteProductSupersession(productId: string, supersessionId: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/products/${productId}/supersessions/${supersessionId}`);
-  },
+  }
 
   /**
    * Get a list of all brands.
@@ -229,7 +229,7 @@ const productService = {
    */
   async getBrands(): Promise<Brand[]> {
     return api.get<Brand[]>('/products/brands/');
-  },
+  }
 
   /**
    * Get a single brand by ID.
@@ -239,7 +239,7 @@ const productService = {
    */
   async getBrand(id: string): Promise<Brand> {
     return api.get<Brand>(`/products/brands/${id}`);
-  },
+  }
 
   /**
    * Create a new brand.
@@ -249,7 +249,7 @@ const productService = {
    */
   async createBrand(brand: BrandCreateDTO): Promise<Brand> {
     return api.post<Brand>('/products/brands/', brand);
-  },
+  }
 
   /**
    * Update an existing brand.
@@ -260,7 +260,7 @@ const productService = {
    */
   async updateBrand(id: string, brand: BrandUpdateDTO): Promise<Brand> {
     return api.put<Brand>(`/products/brands/${id}`, brand);
-  },
+  }
 
   /**
    * Delete a brand.
@@ -270,7 +270,9 @@ const productService = {
    */
   async deleteBrand(id: string): Promise<{message: string}> {
     return api.delete<{message: string}>(`/products/brands/${id}`);
-  },
-};
+  }
+}
 
+// Create and export a singleton instance
+export const productService = new ProductService();
 export default productService;

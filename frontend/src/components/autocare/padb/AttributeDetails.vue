@@ -1,0 +1,201 @@
+<template>
+  <div class="attribute-details">
+    <template v-if="attribute">
+      <v-row>
+        <v-col cols="12">
+          <DetailCard
+            title="Attribute Information"
+            icon="mdi-format-list-checks"
+            :loading="loading"
+            :error="error"
+          >
+            <v-row>
+              <v-col cols="12" md="6">
+                <InfoList :items="attributeInfo" />
+              </v-col>
+              <v-col cols="12" md="6" v-if="attribute.description">
+                <v-card flat border>
+                  <v-card-title>Description</v-card-title>
+                  <v-card-text>{{ attribute.description }}</v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </DetailCard>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="attribute.metadata_assignments && attribute.metadata_assignments.length > 0">
+        <v-col cols="12">
+          <DetailCard title="Metadata Assignments" icon="mdi-list-box">
+            <v-table>
+              <thead>
+                <tr>
+                  <th>Part ID</th>
+                  <th>Metadata</th>
+                  <th>Data Type</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="metadata in attribute.metadata_assignments" :key="metadata.assignment_id">
+                  <td>
+                    <router-link
+                      :to="{ name: 'pcdb-part-details', params: { id: metadata.part_terminology_id } }"
+                      class="text-decoration-none"
+                    >
+                      {{ metadata.part_terminology_id }}
+                    </router-link>
+                  </td>
+                  <td>
+                    <div class="font-weight-bold">{{ metadata.name || `ID: ${metadata.meta_id}` }}</div>
+                    <div v-if="metadata.description" class="text-caption">
+                      {{ metadata.description }}
+                    </div>
+                  </td>
+                  <td>{{ metadata.data_type || 'Not specified' }}</td>
+                  <td>
+                    <v-btn
+                      icon
+                      variant="text"
+                      size="small"
+                      color="primary"
+                      :to="{ name: 'pcdb-part-details', params: { id: metadata.part_terminology_id } }"
+                    >
+                      <v-icon>mdi-eye</v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </DetailCard>
+        </v-col>
+      </v-row>
+
+      <!-- Valid Values Section (if we had this data) -->
+      <v-row v-if="hasValidValues">
+        <v-col cols="12">
+          <DetailCard title="Valid Values" icon="mdi-format-list-bulleted">
+            <v-chip-group>
+              <v-chip
+                v-for="value in validValues"
+                :key="value.id"
+                color="primary"
+                variant="outlined"
+                class="ma-1"
+              >
+                {{ value.value }}
+              </v-chip>
+            </v-chip-group>
+          </DetailCard>
+        </v-col>
+      </v-row>
+
+      <!-- UOM Codes Section (if we had this data) -->
+      <v-row v-if="hasUomCodes">
+        <v-col cols="12">
+          <DetailCard title="UOM Codes" icon="mdi-ruler">
+            <v-table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th>Label</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="uom in uomCodes" :key="uom.id">
+                  <td>{{ uom.code }}</td>
+                  <td>{{ uom.description }}</td>
+                  <td>{{ uom.label }}</td>
+                </tr>
+              </tbody>
+            </v-table>
+          </DetailCard>
+        </v-col>
+      </v-row>
+    </template>
+
+    <div v-else-if="loading" class="text-center my-8">
+      <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+      <h3 class="mt-4">Loading attribute details...</h3>
+    </div>
+
+    <v-alert v-else-if="error" type="error" :text="error" variant="tonal" class="my-4"></v-alert>
+
+    <div v-else class="text-center my-8">
+      <v-icon icon="mdi-format-list-text" size="64" color="grey"></v-icon>
+      <h3 class="mt-4">Attribute not found</h3>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue';
+import DetailCard from '@/components/common/DetailCard.vue';
+import InfoList from '@/components/common/InfoList.vue';
+import { usePAdbStore } from '@/stores/autocare/padb.store.ts';
+import { PartAttributeDetail } from '@/types/autocare';
+
+const props = defineProps({
+  attributeId: {
+    type: [Number, String],
+    required: true,
+  },
+});
+
+const padbStore = usePAdbStore();
+
+// State
+const loading = ref(false);
+const error = ref('');
+const validValues = ref([]); // Example data, not from actual API
+const uomCodes = ref([]); // Example data, not from actual API
+
+// Computed
+const attribute = computed(() => padbStore.currentAttribute);
+
+const attributeInfo = computed(() => {
+  if (!attribute.value) return [];
+
+  return [
+    { key: 'pa_id', label: 'Attribute ID', value: attribute.value.pa_id },
+    { key: 'name', label: 'Name', value: attribute.value.name },
+  ];
+});
+
+const hasValidValues = computed(() => validValues.value.length > 0);
+const hasUomCodes = computed(() => uomCodes.value.length > 0);
+
+// Methods
+const loadAttribute = async () => {
+  try {
+    loading.value = true;
+    error.value = '';
+
+    await padbStore.fetchAttributeDetails(Number(props.attributeId));
+
+    // This would be where we'd fetch valid values and UOM codes if needed
+  } catch (err) {
+    console.error('Error loading attribute details:', err);
+    error.value = 'Failed to load attribute details';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  loadAttribute();
+});
+
+// Watch for changes to attributeId
+watch(() => props.attributeId, () => {
+  loadAttribute();
+});
+</script>
+
+<style scoped>
+.attribute-details {
+  width: 100%;
+}
+</style>

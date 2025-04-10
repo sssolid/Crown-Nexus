@@ -88,6 +88,8 @@ const pageSize = ref(10);
 const searchParams = ref({
   search_term: '',
   categories: [] as number[],
+  subcategories: [] as number[],
+  positions: [] as number[],
 });
 
 // Computed
@@ -146,6 +148,8 @@ const clearFilters = () => {
   searchParams.value = {
     search_term: '',
     categories: [],
+    subcategories: [],
+    positions: [],
   };
   pcdbStore.clearSearch();
 };

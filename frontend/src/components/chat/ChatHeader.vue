@@ -138,7 +138,7 @@ import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import { ChatRoom, ChatRoomType } from '@/types/chat';
 import { chatService } from '@/services/chat';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 import { useAuthStore } from '@/stores/auth';
 
 const props = defineProps<{

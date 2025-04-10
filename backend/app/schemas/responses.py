@@ -9,7 +9,7 @@ This module defines standardized response formats for API endpoints.
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 from pydantic import BaseModel, Field
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class ResponseBase(BaseModel):

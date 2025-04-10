@@ -651,7 +651,7 @@ import mediaService from '@/services/media';
 import { Product } from '@/types/product';
 import { Media } from '@/types/media';
 import { formatDateTime, formatFileSize } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 import Draggable from 'vuedraggable';
 
 export default defineComponent({

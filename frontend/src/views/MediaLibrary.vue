@@ -1054,7 +1054,7 @@ import productService from '@/services/product';
 import { Media } from '@/types/media';
 import {DescriptionType, Product} from '@/types/product';
 import { formatDate, formatDateTime, formatFileSize } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 export default defineComponent({
   name: 'MediaLibrary',

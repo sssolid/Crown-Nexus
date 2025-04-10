@@ -523,7 +523,7 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { formatDate, formatDateTime, formatCurrency } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 // Order interface
 interface Order {

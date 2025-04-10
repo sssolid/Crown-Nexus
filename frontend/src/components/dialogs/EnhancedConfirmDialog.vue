@@ -1,0 +1,141 @@
+<!-- src/components/dialogs/EnhancedConfirmDialog.vue -->
+<template>
+  <!-- Use your existing ConfirmDialog as the base -->
+  <confirm-dialog
+    v-model="dialogVisible"
+    :title="title"
+    :message="message"
+    :confirm-text="confirmText"
+    :cancel-text="cancelText"
+    :confirm-color="confirmColor"
+    :danger-confirm="dangerConfirm"
+    :loading="loading"
+    @confirm="onConfirm"
+    @cancel="onCancel"
+  >
+    <!-- Add our new features as slots -->
+    <template v-if="iconSlot || icon" #prepend-icon>
+      <slot name="prepend-icon">
+        <v-icon v-if="icon" :icon="icon" :color="iconColor"></v-icon>
+      </slot>
+    </template>
+
+    <template v-if="$slots.content" #default>
+      <slot name="content"></slot>
+    </template>
+
+    <!-- Advanced actions for multiple-action mode -->
+    <template v-if="type === 'multiple' && actions.length > 0" #actions>
+      <v-spacer></v-spacer>
+      <template v-for="(action, index) in actions" :key="index">
+        <v-btn
+          :variant="action.variant || 'text'"
+          :color="action.color || 'primary'"
+          @click="onActionClick(action)"
+          :disabled="loading || action.disabled"
+          :loading="loading && currentAction === action.value"
+          class="mx-1"
+        >
+          <v-icon v-if="action.icon" :icon="action.icon" start></v-icon>
+          {{ action.text }}
+        </v-btn>
+      </template>
+    </template>
+  </confirm-dialog>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+
+interface DialogAction {
+  text: string
+  value: string
+  color?: string
+  variant?: string
+  icon?: string
+  disabled?: boolean
+}
+
+const props = defineProps({
+  // Standard props from your existing ConfirmDialog
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  title: {
+    type: String,
+    default: 'Confirm',
+  },
+  message: {
+    type: String,
+    default: 'Are you sure you want to proceed?',
+  },
+  confirmText: {
+    type: String,
+    default: 'Confirm',
+  },
+  cancelText: {
+    type: String,
+    default: 'Cancel',
+  },
+  confirmColor: {
+    type: String,
+    default: 'primary',
+  },
+  dangerConfirm: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+
+  // Extended props for our enhanced version
+  type: {
+    type: String as PropType<'binary' | 'multiple' | 'acknowledge'>,
+    default: 'binary',
+  },
+  icon: {
+    type: String,
+    default: '',
+  },
+  iconColor: {
+    type: String,
+    default: '',
+  },
+  actions: {
+    type: Array as PropType<DialogAction[]>,
+    default: () => [],
+  },
+})
+
+const emit = defineEmits([
+  'update:modelValue',
+  'confirm',
+  'cancel',
+  'action'
+])
+
+const dialogVisible = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
+})
+
+const currentAction = ref<string | null>(null)
+const iconSlot = computed(() => !!props.icon)
+
+const onConfirm = () => {
+  emit('confirm')
+}
+
+const onCancel = () => {
+  emit('cancel')
+}
+
+const onActionClick = (action: DialogAction) => {
+  currentAction.value = action.value
+  emit('action', action)
+}
+</script>

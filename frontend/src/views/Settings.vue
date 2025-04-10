@@ -980,7 +980,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { formatDate } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 import { UserRole } from '@/types/user';
 
 // Webhook interface

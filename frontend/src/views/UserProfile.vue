@@ -747,7 +747,7 @@ import { useAuthStore } from '@/stores/auth';
 import userService from '@/services/user';
 import { User, UserRole } from '@/types/user';
 import { formatDate, formatDateTime } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 import { parseValidationErrors } from '@/utils/error-handler';
 
 // API Key interface

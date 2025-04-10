@@ -305,7 +305,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import productService from '@/services/product';
 import { Product } from '@/types/product';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 import { parseValidationErrors } from '@/utils/error-handler';
 
 interface ProductForm {

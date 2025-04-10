@@ -8,7 +8,7 @@
           <v-icon>{{ sidebarCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
         </v-btn>
       </div>
-      
+
       <div class="search-bar">
         <v-text-field
           v-model="searchQuery"
@@ -20,7 +20,7 @@
           class="mb-2"
         ></v-text-field>
       </div>
-      
+
       <div class="room-list">
         <ChatRoomItem
           v-for="room in filteredRooms"
@@ -29,7 +29,7 @@
           :active="activeRoomId === room.id"
           @click="joinRoom(room.id)"
         />
-        
+
         <div v-if="Object.keys(chatRooms).length === 0" class="no-rooms">
           <p>No chat rooms available</p>
           <v-btn
@@ -40,7 +40,7 @@
           </v-btn>
         </div>
       </div>
-      
+
       <div class="sidebar-actions">
         <v-btn
           block
@@ -52,7 +52,7 @@
         </v-btn>
       </div>
     </div>
-    
+
     <div class="chat-content">
       <template v-if="activeRoomId && activeRoom">
         <ChatHeader
@@ -60,7 +60,7 @@
           :online-count="onlineCount"
           @toggle-member-list="showMembersPanel = !showMembersPanel"
         />
-        
+
         <ChatMessages
           :messages="activeRoomMessages"
           :room-id="activeRoomId"
@@ -70,14 +70,14 @@
           @edit="editMessage"
           @delete="deleteMessage"
         />
-        
+
         <ChatInput
           :room-id="activeRoomId"
           @send="sendMessage"
           @typing="handleTyping"
         />
       </template>
-      
+
       <div v-else class="no-room-selected">
         <div class="no-room-content">
           <v-icon size="64" color="primary">mdi-chat-outline</v-icon>
@@ -91,7 +91,7 @@
         </div>
       </div>
     </div>
-    
+
     <transition name="slide">
       <div v-if="showMembersPanel && activeRoom" class="members-panel">
         <ChatMembers
@@ -105,20 +105,20 @@
         />
       </div>
     </transition>
-    
+
     <!-- Dialogs -->
     <ChatRoomDialog
       v-model="showCreateRoomDialog"
       @create="createRoom"
     />
-    
+
     <AddMemberDialog
       v-if="activeRoomId"
       v-model="showAddMemberDialog"
       :room-id="activeRoomId"
       @add="addMember"
     />
-    
+
     <ConfirmDialog
       v-model="showRemoveMemberDialog"
       title="Remove Member"
@@ -134,7 +134,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { chatService } from '@/services/chat';
 import { ChatRoom, ChatMember, ChatRoomType } from '@/types/chat';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 // Import components
 import ChatRoomItem from './ChatRoomItem.vue';
@@ -164,24 +164,24 @@ const currentUserId = computed(() => authStore.user?.id || '');
 
 const filteredRooms = computed(() => {
   const rooms = Object.values(chatService.chatRooms);
-  
+
   if (!searchQuery.value) {
     return rooms;
   }
-  
+
   const query = searchQuery.value.toLowerCase();
   return rooms.filter(room => {
     // Search by room name
     if (room.name && room.name.toLowerCase().includes(query)) {
       return true;
     }
-    
+
     // For direct chats without names, search by other user's name
     if (room.type === ChatRoomType.DIRECT && room.last_message) {
       const otherUser = room.last_message.sender_name;
       return otherUser && otherUser.toLowerCase().includes(query);
     }
-    
+
     return false;
   });
 });
@@ -220,7 +220,7 @@ function sendMessage(content: string) {
 
 function handleTyping(isTyping: boolean) {
   if (!activeRoomId.value) return;
-  
+
   if (isTyping) {
     chatService.sendTypingStart(activeRoomId.value);
   } else {
@@ -230,7 +230,7 @@ function handleTyping(isTyping: boolean) {
 
 function handleReaction(messageId: string, reaction: string, isAdding: boolean) {
   if (!activeRoomId.value) return;
-  
+
   if (isAdding) {
     chatService.addReaction(messageId, activeRoomId.value, reaction);
   } else {
@@ -252,7 +252,7 @@ function deleteMessage(messageId: string) {
 
 async function createRoom(name: string, type: ChatRoomType, members: any[]) {
   const room = await chatService.createRoom(name, type, members);
-  
+
   if (room) {
     showCreateRoomDialog.value = false;
     joinRoom(room.id);
@@ -261,9 +261,9 @@ async function createRoom(name: string, type: ChatRoomType, members: any[]) {
 
 async function addMember(userId: string, role: string) {
   if (!activeRoomId.value) return;
-  
+
   const success = await chatService.addMember(activeRoomId.value, userId, role);
-  
+
   if (success) {
     showAddMemberDialog.value = false;
     notificationService.success('Member added successfully');
@@ -277,24 +277,24 @@ function confirmRemoveMember(member: ChatMember) {
 
 async function removeMemberConfirmed() {
   if (!activeRoomId.value || !memberToRemove.value) return;
-  
+
   const success = await chatService.removeMember(
     activeRoomId.value,
     memberToRemove.value.user_id
   );
-  
+
   if (success) {
     notificationService.success('Member removed successfully');
   }
-  
+
   memberToRemove.value = null;
 }
 
 async function updateMemberRole(userId: string, role: string) {
   if (!activeRoomId.value) return;
-  
+
   const success = await chatService.updateMemberRole(activeRoomId.value, userId, role);
-  
+
   if (success) {
     notificationService.success('Member role updated');
   }
@@ -304,7 +304,7 @@ async function updateMemberRole(userId: string, role: string) {
 onMounted(() => {
   // Initialize chat service
   chatService.initialize();
-  
+
   // Check if URL contains room ID to open
   const roomId = router.currentRoute.value.query.room as string;
   if (roomId) {

@@ -57,7 +57,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.rules: List[RateLimitRule] = rules or [
             RateLimitRule(
-                requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
+                requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE
+                * settings.RATE_LIMIT_BURST_MULTIPLIER,
                 window_seconds=60,
             )
         ]

@@ -1,0 +1,261 @@
+<!-- src/components/notifications/NotificationSystem.vue -->
+<template>
+  <div class="notification-system">
+    <TransitionGroup
+      v-for="position in positions"
+      :key="position"
+      :name="getTransitionName(position)"
+      tag="div"
+      :class="['notification-container', `notification-container--${position}`]"
+    >
+      <div
+        v-for="notification in getNotificationsByPosition(position)"
+        :key="notification.id"
+        class="notification-wrapper"
+      >
+        <v-snackbar
+          v-model="snackbarVisibility[notification.id]"
+          :color="notification.type"
+          :timeout="-1"
+          :location="convertPosition(notification.position)"
+          :min-width="280"
+          :max-width="560"
+          class="notification-item"
+          variant="elevated"
+          rounded="md"
+        >
+          <div class="d-flex align-center">
+            <v-icon
+              v-if="notification.showIcon"
+              :icon="getIconForType(notification.type)"
+              class="me-3"
+            ></v-icon>
+
+            <div class="notification-content">
+              <div v-if="notification.title" class="notification-title font-weight-medium">
+                {{ notification.title }}
+              </div>
+              <div class="notification-message">{{ notification.message }}</div>
+            </div>
+          </div>
+
+          <template v-slot:actions>
+            <div class="d-flex align-center">
+              <v-btn
+                v-if="notification.actionText"
+                variant="text"
+                :color="notification.actionColor"
+                @click="handleAction(notification)"
+                class="me-2"
+                density="comfortable"
+              >
+                {{ notification.actionText }}
+              </v-btn>
+
+              <v-btn
+                v-if="notification.closeable"
+                icon="mdi-close"
+                variant="text"
+                size="small"
+                @click="closeNotification(notification.id)"
+              ></v-btn>
+            </div>
+          </template>
+        </v-snackbar>
+      </div>
+    </TransitionGroup>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
+import {
+  notificationService,
+  NotificationPosition,
+  Notification
+} from '@/utils/notifications'
+import {NotificationType} from "@/utils/notification/notification.types.ts";
+
+// Track visibility state for each notification
+const snackbarVisibility = ref<Record<number, boolean>>({})
+
+// Get all notifications from the service
+const notifications = computed(() => notificationService.getAll())
+
+// Available positions
+const positions = [
+  NotificationPosition.TOP,
+  NotificationPosition.TOP_LEFT,
+  NotificationPosition.TOP_RIGHT,
+  NotificationPosition.BOTTOM,
+  NotificationPosition.BOTTOM_LEFT,
+  NotificationPosition.BOTTOM_RIGHT,
+]
+
+// Filter notifications by position
+const getNotificationsByPosition = (position: NotificationPosition) => {
+  return notifications.value.filter(n => n.position === position)
+}
+
+// Convert our position to Vuetify location
+const convertPosition = (position: NotificationPosition): string => {
+  switch (position) {
+    case NotificationPosition.TOP:
+      return 'top'
+    case NotificationPosition.TOP_LEFT:
+      return 'top-start'
+    case NotificationPosition.TOP_RIGHT:
+      return 'top-end'
+    case NotificationPosition.BOTTOM:
+      return 'bottom'
+    case NotificationPosition.BOTTOM_LEFT:
+      return 'bottom-start'
+    case NotificationPosition.BOTTOM_RIGHT:
+      return 'bottom-end'
+    default:
+      return 'bottom'
+  }
+}
+
+// Get transition name based on position
+const getTransitionName = (position: NotificationPosition): string => {
+  if (position.includes('top')) {
+    return 'slide-down'
+  }
+  return 'slide-up'
+}
+
+// Get icon for notification type
+const getIconForType = (type: NotificationType): string => {
+  switch (type) {
+    case NotificationType.SUCCESS:
+      return 'mdi-check-circle'
+    case NotificationType.ERROR:
+      return 'mdi-alert-circle'
+    case NotificationType.WARNING:
+      return 'mdi-alert'
+    case NotificationType.INFO:
+      return 'mdi-information'
+    default:
+      return 'mdi-bell'
+  }
+}
+
+// Handle notification action
+const handleAction = (notification: Notification) => {
+  if (notification.onAction) {
+    notification.onAction()
+  }
+  closeNotification(notification.id)
+}
+
+// Close a notification
+const closeNotification = (id: number) => {
+  snackbarVisibility.value[id] = false
+  setTimeout(() => {
+    notificationService.remove(id)
+  }, 300) // Allow time for close animation
+}
+
+// Watch for new notifications and update visibility
+watch(notifications, (newNotifications) => {
+  newNotifications.forEach(notification => {
+    if (snackbarVisibility.value[notification.id] === undefined) {
+      snackbarVisibility.value[notification.id] = true
+    }
+  })
+
+  // Clean up removed notifications
+  Object.keys(snackbarVisibility.value).forEach(id => {
+    const numId = parseInt(id)
+    if (!newNotifications.some(n => n.id === numId)) {
+      delete snackbarVisibility.value[numId]
+    }
+  })
+}, { deep: true })
+</script>
+
+<style scoped>
+.notification-system {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+.notification-container {
+  position: absolute;
+  max-width: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.notification-container--top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.notification-container--top-left {
+  top: 0;
+  left: 0;
+}
+
+.notification-container--top-right {
+  top: 0;
+  right: 0;
+}
+
+.notification-container--bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.notification-container--bottom-left {
+  bottom: 0;
+  left: 0;
+}
+
+.notification-container--bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+.notification-wrapper {
+  pointer-events: auto;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  margin-bottom: 4px;
+}
+
+/* Transitions */
+.slide-up-enter-active,
+.slide-up-leave-active,
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+</style>

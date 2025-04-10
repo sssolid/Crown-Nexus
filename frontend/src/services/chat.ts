@@ -26,7 +26,7 @@ import {
   UserPresence
 } from '@/types/chat';
 import { useAuthStore } from '@/stores/auth';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 /**
  * Chat service for WebSocket and API interactions.

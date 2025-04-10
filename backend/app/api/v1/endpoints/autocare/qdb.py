@@ -36,6 +36,23 @@ async def get_version(
     return version
 
 
+@router.get("/stats")
+async def get_qdb_stats(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> Dict[str, Any]:
+    """Get Qdb statistics.
+
+    Args:
+        db: Database session
+
+    Returns:
+        Qdb statistics
+    """
+    service = QdbService(db)
+    stats = await service.get_stats()
+    return stats
+
+
 @router.get("/qualifier-types")
 async def get_qualifier_types(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -74,7 +91,9 @@ async def get_languages(
 async def search_qualifiers(
     db: Annotated[AsyncSession, Depends(get_db)],
     search_term: str = Query(..., description="Search term for qualifiers"),
-    qualifier_type_id: Optional[int] = Query(None, description="Filter by qualifier type ID"),
+    qualifier_type_id: Optional[int] = Query(
+        None, description="Filter by qualifier type ID"
+    ),
     language_id: Optional[int] = Query(None, description="Filter by language ID"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
@@ -136,7 +155,10 @@ async def get_group_numbers(
     """
     service = QdbService(db)
     groups = await service.repository.group_repo.get_all_groups()
-    return [{"id": group.group_number_id, "description": group.group_description} for group in groups]
+    return [
+        {"id": group.group_number_id, "description": group.group_description}
+        for group in groups
+    ]
 
 
 @router.get("/groups/{group_number_id}/qualifiers")
@@ -164,21 +186,23 @@ async def get_qualifiers_by_group(
 
     qualifiers = []
     for qualifier in result["items"]:
-        qualifiers.append({
-            "id": str(qualifier.id),
-            "qualifier_id": qualifier.qualifier_id,
-            "text": qualifier.qualifier_text,
-            "example": qualifier.example_text,
-            "type_id": qualifier.qualifier_type_id,
-            "superseded_by": qualifier.new_qualifier_id
-        })
+        qualifiers.append(
+            {
+                "id": str(qualifier.id),
+                "qualifier_id": qualifier.qualifier_id,
+                "text": qualifier.qualifier_text,
+                "example": qualifier.example_text,
+                "type_id": qualifier.qualifier_type_id,
+                "superseded_by": qualifier.new_qualifier_id,
+            }
+        )
 
     return {
         "items": qualifiers,
         "total": result["total"],
         "page": result["page"],
         "page_size": result["page_size"],
-        "pages": result["pages"]
+        "pages": result["pages"],
     }
 
 
@@ -205,16 +229,20 @@ async def get_qualifier_translations(
 
     result = []
     for translation in translations:
-        language = await service.repository.language_repo.get_by_language_id(translation.language_id)
-        result.append({
-            "id": translation.qualifier_translation_id,
-            "language": {
-                "id": language.language_id,
-                "name": language.language_name,
-                "dialect": language.dialect_name
-            },
-            "text": translation.translation_text
-        })
+        language = await service.repository.language_repo.get_by_language_id(
+            translation.language_id
+        )
+        result.append(
+            {
+                "id": translation.qualifier_translation_id,
+                "language": {
+                    "id": language.language_id,
+                    "name": language.language_name,
+                    "dialect": language.dialect_name,
+                },
+                "text": translation.translation_text,
+            }
+        )
 
     return result
 
@@ -234,14 +262,16 @@ async def get_qualifier_groups(
         List of groups
     """
     service = QdbService(db)
-    groups = await service.repository.qualifier_repo.get_groups(qualifier_id=qualifier_id)
+    groups = await service.repository.qualifier_repo.get_groups(
+        qualifier_id=qualifier_id
+    )
     return [
         {
             "id": group["group"].qualifier_group_id,
             "number": {
                 "id": group["group_number"].group_number_id,
-                "description": group["group_number"].group_description
-            }
+                "description": group["group_number"].group_description,
+            },
         }
         for group in groups
     ]

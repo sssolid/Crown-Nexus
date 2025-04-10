@@ -47,6 +47,26 @@ class PCdbService:
         version = await self.repository.get_version()
         return version or "No version information available"
 
+    async def get_stats(self) -> Dict[str, Any]:
+        """Get PCdb statistics.
+
+        Returns:
+            Dictionary with PCdb statistics
+        """
+
+        total_parts = await self.repository.parts_repo.count()
+        category_count = await self.repository.category_repo.count()
+
+        position_count = await self.repository.position_repo.count()
+        subcategory_count = await self.repository.subcategory_repo.count()
+
+        return {
+            "totalParts": total_parts,
+            "categoryCount": category_count,
+            "subcategoryCount": subcategory_count,
+            "positionCount": position_count,
+        }
+
     async def update_database(self, file_path: str) -> Dict[str, Any]:
         """Update the PCdb database from a file.
 
@@ -116,7 +136,10 @@ class PCdbService:
         categories = await self.repository.category_repo.get_all_categories()
 
         return [
-            {"id": category.category_id, "name": category.category_name}
+            {
+                "category_id": category.category_id,
+                "category_name": category.category_name,
+            }
             for category in categories
         ]
 
@@ -136,14 +159,19 @@ class PCdbService:
         )
 
         return [
-            {"id": subcategory.subcategory_id, "name": subcategory.subcategory_name}
+            {
+                "subcategory_id": subcategory.subcategory_id,
+                "subcategory_name": subcategory.subcategory_name,
+            }
             for subcategory in subcategories
         ]
 
     async def search_parts(
         self,
-        search_term: str,
+        search_term: Optional[str],
         categories: Optional[List[int]] = None,
+        subcategories: Optional[List[int]] = None,
+        positions: Optional[List[int]] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> Dict[str, Any]:
@@ -152,6 +180,8 @@ class PCdbService:
         Args:
             search_term: The search term.
             categories: Optional list of category IDs to filter by.
+            subcategories: Optional list of subcategory IDs to filter by.
+            positions: Optional list of position IDs to filter by.
             page: The page number.
             page_size: The number of items per page.
 
@@ -161,6 +191,8 @@ class PCdbService:
         result = await self.repository.search_parts(
             search_term=search_term,
             categories=categories,
+            subcategories=subcategories,
+            positions=positions,
             page=page,
             page_size=page_size,
         )
@@ -168,14 +200,17 @@ class PCdbService:
         # Transform the parts into a more user-friendly format
         parts = []
         for part in result["items"]:
+            # Safely extract description if available
+            description = None
+            if hasattr(part, "description") and part.description is not None:
+                description = part.description.parts_description
+
             parts.append(
                 {
                     "id": str(part.id),
                     "part_terminology_id": part.part_terminology_id,
-                    "name": part.part_terminology_name,
-                    "description": (
-                        part.description.parts_description if part.description else None
-                    ),
+                    "part_terminology_name": part.part_terminology_name,
+                    "description": description,
                 }
             )
 
@@ -196,7 +231,8 @@ class PCdbService:
         Returns:
             Dict with detailed part information.
         """
-        part = await self.repository.parts_repo.get_by_terminology_id(
+        # Use the new method that eagerly loads related entities
+        part = await self.repository.parts_repo.get_by_terminology_id_with_related(
             part_terminology_id
         )
 
@@ -205,7 +241,7 @@ class PCdbService:
                 resource_type="Part", resource_id=str(part_terminology_id)
             )
 
-        # Get categories and positions for the part
+        # Get categories and positions for the part - these are now safely loaded
         categories = []
         for part_category in part.categories:
             categories.append(
@@ -253,10 +289,11 @@ class PCdbService:
                 }
             )
 
+        # Build the response with all the data
         return {
             "id": str(part.id),
             "part_terminology_id": part.part_terminology_id,
-            "name": part.part_terminology_name,
+            "part_terminology_name": part.part_terminology_name,
             "description": (
                 part.description.parts_description if part.description else None
             ),

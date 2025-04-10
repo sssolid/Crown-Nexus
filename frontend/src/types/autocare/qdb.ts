@@ -5,6 +5,13 @@
 
 import { BaseEntity } from './vcdb.ts';
 
+export interface QdbStats {
+  totalQualifiers: number;
+  qualifierTypeCount: number;
+  languageCount: number;
+  groupCount: number;
+}
+
 export interface QualifierType extends BaseEntity {
   qualifier_type_id: number;
   qualifier_type?: string;

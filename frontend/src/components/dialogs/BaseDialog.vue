@@ -1,0 +1,175 @@
+<!-- src/components/dialogs/BaseDialog.vue -->
+<template>
+  <v-dialog
+    v-model="dialogVisible"
+    :max-width="maxWidth"
+    :persistent="persistent"
+    :scrollable="scrollable"
+    :transition="transition"
+    :retain-focus="retainFocus"
+    :content-class="contentClass"
+    @update:model-value="handleVisibilityChange"
+    @keydown.esc="handleEscKey"
+    role="dialog"
+    aria-modal="true"
+    :aria-labelledby="titleId"
+  >
+    <v-card :elevation="elevation" :class="cardClass">
+      <!-- Dialog Header -->
+      <v-card-item v-if="showHeader">
+        <template v-slot:prepend v-if="$slots.prepend || prependIcon">
+          <slot name="prepend">
+            <v-icon v-if="prependIcon" :icon="prependIcon" :color="prependIconColor"></v-icon>
+          </slot>
+        </template>
+
+        <v-card-title :id="titleId" :class="titleClass">
+          <slot name="title">{{ title }}</slot>
+        </v-card-title>
+
+        <template v-slot:append>
+          <slot name="append">
+            <v-btn
+              v-if="showCloseButton"
+              icon="mdi-close"
+              variant="text"
+              density="compact"
+              @click="close"
+              aria-label="Close dialog"
+            ></v-btn>
+          </slot>
+        </template>
+      </v-card-item>
+
+      <v-divider v-if="showDivider && showHeader"></v-divider>
+
+      <!-- Dialog Content -->
+      <v-card-text :class="contentTextClass">
+        <slot></slot>
+      </v-card-text>
+
+      <v-divider v-if="showDivider && $slots.actions"></v-divider>
+
+      <!-- Dialog Actions -->
+      <v-card-actions v-if="$slots.actions" :class="actionsClass">
+        <slot name="actions"></slot>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  maxWidth: {
+    type: [String, Number],
+    default: 600,
+  },
+  persistent: {
+    type: Boolean,
+    default: false,
+  },
+  scrollable: {
+    type: Boolean,
+    default: false,
+  },
+  transition: {
+    type: String,
+    default: 'dialog-transition',
+  },
+  retainFocus: {
+    type: Boolean,
+    default: true,
+  },
+  contentClass: {
+    type: String,
+    default: '',
+  },
+  cardClass: {
+    type: String,
+    default: '',
+  },
+  titleClass: {
+    type: String,
+    default: '',
+  },
+  contentTextClass: {
+    type: String,
+    default: '',
+  },
+  actionsClass: {
+    type: String,
+    default: '',
+  },
+  elevation: {
+    type: [Number, String],
+    default: 8,
+  },
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
+  showCloseButton: {
+    type: Boolean,
+    default: true,
+  },
+  showDivider: {
+    type: Boolean,
+    default: true,
+  },
+  prependIcon: {
+    type: String,
+    default: '',
+  },
+  prependIconColor: {
+    type: String,
+    default: '',
+  },
+  closeOnEsc: {
+    type: Boolean,
+    default: true,
+  },
+  titleId: {
+    type: String,
+    default: 'dialog-title',
+  },
+})
+
+const emit = defineEmits(['update:modelValue', 'close', 'open'])
+
+const dialogVisible = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+})
+
+const handleVisibilityChange = (value: boolean) => {
+  if (value) {
+    emit('open')
+  } else {
+    emit('close')
+  }
+}
+
+const handleEscKey = (event: KeyboardEvent) => {
+  if (props.closeOnEsc && !props.persistent) {
+    close()
+  }
+}
+
+const close = () => {
+  dialogVisible.value = false
+}
+
+defineExpose({
+  close,
+})
+</script>

@@ -5,6 +5,13 @@
 
 import { BaseEntity } from './vcdb.ts';
 
+export interface PAdbStats {
+  totalAttributes: number;
+  metadataCount: number;
+  validValueCount: number;
+  uomCodeCount: number;
+}
+
 export interface PartAttribute extends BaseEntity {
   pa_id: number;
   pa_name?: string;

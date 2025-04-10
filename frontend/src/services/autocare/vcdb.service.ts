@@ -34,7 +34,6 @@ export class VCdbService extends ApiService {
     return this.get<string>(`${this.baseUrl}/version`);
   }
 
-
   /**
    * Fetches statistical data from the specified endpoint.
    *

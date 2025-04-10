@@ -4,7 +4,7 @@
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { qdbService } from '@/services';
+import {qdbService} from '@/services';
 import {
   QualifierType,
   Language,
@@ -13,7 +13,7 @@ import {
   QualifierSearchParams,
   QualifierSearchResponse,
   ApiError,
-  GroupNumber
+  GroupNumber, QdbStats
 } from '@/types';
 
 export const useQdbStore = defineStore('qdb', () => {
@@ -21,6 +21,7 @@ export const useQdbStore = defineStore('qdb', () => {
   const loading = ref(false);
   const error = ref<ApiError | null>(null);
   const version = ref<string | null>(null);
+  const stats = ref<QdbStats | null>(null);
   const qualifierTypes = ref<QualifierType[]>([]);
   const languages = ref<Language[]>([]);
   const groupNumbers = ref<GroupNumber[]>([]);
@@ -52,6 +53,18 @@ export const useQdbStore = defineStore('qdb', () => {
       setLoading(true);
       clearError();
       version.value = await qdbService.getVersion();
+    } catch (err) {
+      setError(err as ApiError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      stats.value = await qdbService.getStats();
     } catch (err) {
       setError(err as ApiError);
     } finally {
@@ -178,6 +191,7 @@ export const useQdbStore = defineStore('qdb', () => {
     loading,
     error,
     version,
+    stats,
     qualifierTypes,
     languages,
     groupNumbers,
@@ -196,6 +210,7 @@ export const useQdbStore = defineStore('qdb', () => {
     setLoading,
     setError,
     fetchVersion,
+    fetchStats,
     fetchQualifierTypes,
     fetchLanguages,
     fetchGroupNumbers,

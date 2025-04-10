@@ -10,6 +10,13 @@ export interface Category extends BaseEntity {
   category_name: string;
 }
 
+export interface PCdbStats {
+  totalParts: number;
+  categoryCount: number;
+  subcategoryCount: number;
+  positionCount: number;
+}
+
 export interface SubCategory extends BaseEntity {
   subcategory_id: number;
   subcategory_name: string;

@@ -3,7 +3,7 @@
   <v-dialog v-model="dialogVisible" max-width="500">
     <v-card>
       <v-card-title>Create New Chat Room</v-card-title>
-      
+
       <v-card-text>
         <v-form ref="form" @submit.prevent="submitForm">
           <v-text-field
@@ -12,7 +12,7 @@
             required
             :rules="[v => !!v || 'Room name is required']"
           ></v-text-field>
-          
+
           <v-select
             v-model="roomType"
             label="Room Type"
@@ -21,7 +21,7 @@
             item-value="value"
             required
           ></v-select>
-          
+
           <v-autocomplete
             v-if="showMembersField"
             v-model="selectedMembers"
@@ -36,13 +36,13 @@
           ></v-autocomplete>
         </v-form>
       </v-card-text>
-      
+
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="closeDialog">Cancel</v-btn>
-        <v-btn 
-          color="primary" 
-          @click="submitForm" 
+        <v-btn
+          color="primary"
+          @click="submitForm"
           :loading="isSubmitting"
         >
           Create
@@ -57,7 +57,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { ChatRoomType } from '@/types/chat';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 const props = defineProps<{
   modelValue: boolean;
@@ -112,7 +112,7 @@ function resetForm() {
   roomName.value = '';
   roomType.value = ChatRoomType.GROUP;
   selectedMembers.value = [];
-  
+
   // Reset form validation
   if (form.value) {
     form.value.resetValidation();
@@ -121,11 +121,11 @@ function resetForm() {
 
 async function loadUsers() {
   loadingUsers.value = true;
-  
+
   try {
     // Get users from API
     const response = await api.get('/users');
-    
+
     if (response.items) {
       // Filter out current user
       availableUsers.value = response.items.filter(
@@ -142,20 +142,20 @@ async function loadUsers() {
 
 async function submitForm() {
   if (!form.value) return;
-  
+
   const { valid } = await form.value.validate();
-  
+
   if (!valid) return;
-  
+
   isSubmitting.value = true;
-  
+
   try {
     // Prepare members array with roles
     const members = selectedMembers.value.map(userId => ({
       user_id: userId,
       role: 'member'
     }));
-    
+
     // Add current user as owner
     if (authStore.user) {
       members.push({
@@ -163,10 +163,10 @@ async function submitForm() {
         role: 'owner'
       });
     }
-    
+
     // Emit create event
     emit('create', roomName.value, roomType.value, members);
-    
+
     // Close dialog
     closeDialog();
   } catch (error) {

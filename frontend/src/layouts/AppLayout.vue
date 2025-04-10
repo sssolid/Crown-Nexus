@@ -1,0 +1,119 @@
+<!-- src/layouts/AppLayout.vue -->
+<template>
+  <v-app>
+    <!-- App Bar -->
+    <v-app-bar
+      :color="appBarColor"
+      :elevation="appBarElevation"
+      :height="appBarHeight"
+      :class="appBarClass"
+    >
+      <slot name="app-bar-prepend"></slot>
+
+      <v-app-bar-title>
+        <slot name="app-bar-title">{{ title }}</slot>
+      </v-app-bar-title>
+
+      <slot name="app-bar-center"></slot>
+
+      <v-spacer></v-spacer>
+
+      <slot name="app-bar-append"></slot>
+    </v-app-bar>
+
+    <!-- Navigation Drawer -->
+    <v-navigation-drawer
+      v-if="hasNavigationDrawer"
+      v-model="drawerOpen"
+      :location="drawerLocation"
+      :color="drawerColor"
+      :width="drawerWidth"
+      :temporary="drawerTemporary"
+      :expand-on-hover="drawerExpandOnHover"
+      :rail="drawerRail"
+    >
+      <slot name="navigation-drawer"></slot>
+    </v-navigation-drawer>
+
+    <!-- Main Content Area -->
+    <v-main>
+      <v-container
+        :fluid="fluid"
+        :class="containerClass"
+      >
+        <slot></slot>
+      </v-container>
+    </v-main>
+
+    <!-- Footer -->
+    <slot name="footer"></slot>
+  </v-app>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Crown Nexus',
+  },
+  // App Bar Props
+  appBarColor: {
+    type: String,
+    default: 'primary',
+  },
+  appBarElevation: {
+    type: [Number, String],
+    default: 2,
+  },
+  appBarHeight: {
+    type: [Number, String],
+    default: undefined,
+  },
+  appBarClass: {
+    type: String,
+    default: '',
+  },
+  // Navigation Drawer Props
+  hasNavigationDrawer: {
+    type: Boolean,
+    default: false,
+  },
+  drawerLocation: {
+    type: String,
+    default: 'left',
+  },
+  drawerColor: {
+    type: String,
+    default: 'surface',
+  },
+  drawerWidth: {
+    type: [Number, String],
+    default: 256,
+  },
+  drawerTemporary: {
+    type: Boolean,
+    default: false,
+  },
+  drawerExpandOnHover: {
+    type: Boolean,
+    default: false,
+  },
+  drawerRail: {
+    type: Boolean,
+    default: false,
+  },
+  // Container Props
+  fluid: {
+    type: Boolean,
+    default: true,
+  },
+  containerClass: {
+    type: String,
+    default: '',
+  },
+})
+
+const drawerOpen = ref(true)
+</script>

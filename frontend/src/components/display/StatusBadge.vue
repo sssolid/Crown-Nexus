@@ -1,0 +1,149 @@
+<!-- src/components/display/StatusBadge.vue -->
+<template>
+  <span class="status-badge" :class="badgeClasses">
+    <span v-if="showDot" class="status-badge__dot" :class="dotClasses"></span>
+    <span v-if="showText" class="status-badge__text">{{ text }}</span>
+    <slot></slot>
+  </span>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+type BadgeStatus = 'success' | 'error' | 'warning' | 'info' | 'default' | string
+
+const props = defineProps({
+  status: {
+    type: String as PropType<BadgeStatus>,
+    default: 'default',
+  },
+  text: {
+    type: String,
+    default: '',
+  },
+  showDot: {
+    type: Boolean,
+    default: true,
+  },
+  showText: {
+    type: Boolean,
+    default: true,
+  },
+  size: {
+    type: String,
+    default: 'medium',
+    validator: (value: string) => ['small', 'medium', 'large'].includes(value),
+  },
+  outlined: {
+    type: Boolean,
+    default: false,
+  },
+  pill: {
+    type: Boolean,
+    default: true,
+  },
+  customClass: {
+    type: String,
+    default: '',
+  },
+})
+
+// Map status to color class
+const statusColorClass = computed(() => {
+  const statusMap: Record<BadgeStatus, string> = {
+    success: 'success',
+    error: 'error',
+    warning: 'warning',
+    info: 'info',
+    default: 'grey',
+  }
+
+  return statusMap[props.status] || props.status
+})
+
+// Compute badge classes
+const badgeClasses = computed(() => [
+  `status-badge--${props.size}`,
+  `bg-${statusColorClass.value}`,
+  {
+    'status-badge--outlined': props.outlined,
+    'status-badge--pill': props.pill,
+  },
+  props.customClass,
+])
+
+// Compute dot classes
+const dotClasses = computed(() => [
+  `status-badge__dot--${props.size}`,
+  props.outlined ? `border-${statusColorClass.value}` : `bg-${statusColorClass.value}`,
+])
+</script>
+
+<style scoped>
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+  color: white;
+}
+
+.status-badge--outlined {
+  background-color: transparent !important;
+  border: 1px solid;
+  color: var(--v-theme-on-surface);
+}
+
+.status-badge--pill {
+  border-radius: 1rem;
+}
+
+.status-badge--small {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.625rem;
+}
+
+.status-badge--medium {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.status-badge--large {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.status-badge__dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.375rem;
+}
+
+.status-badge__dot--small {
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-right: 0.25rem;
+}
+
+.status-badge__dot--medium {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.375rem;
+}
+
+.status-badge__dot--large {
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-right: 0.5rem;
+}
+
+.status-badge__text {
+  margin-right: 0.125rem;
+}
+</style>

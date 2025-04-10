@@ -36,11 +36,30 @@ async def get_version(
     return version
 
 
+@router.get("/stats")
+async def get_padb_stats(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> Dict[str, Any]:
+    """Get PAdb statistics.
+
+    Args:
+        db: Database session
+
+    Returns:
+        PAdb statistics
+    """
+    service = PAdbService(db)
+    stats = await service.get_stats()
+    return stats
+
+
 @router.get("/attributes/search")
 async def search_attributes(
     db: Annotated[AsyncSession, Depends(get_db)],
     search_term: Optional[str] = Query(None, description="Search term for attributes"),
-    part_terminology_id: Optional[int] = Query(None, description="Filter by part terminology ID"),
+    part_terminology_id: Optional[int] = Query(
+        None, description="Filter by part terminology ID"
+    ),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
 ) -> Dict[str, Any]:

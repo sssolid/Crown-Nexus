@@ -1,0 +1,255 @@
+<!-- src/components/data/Pagination.vue -->
+<template>
+  <div class="pagination-container" :class="containerClass">
+    <div v-if="showResultInfo" class="pagination-info text-caption text-grey me-4">
+      <slot name="info">
+        Showing {{ currentRangeStart }} to {{ currentRangeEnd }} of {{ totalItems }} items
+      </slot>
+    </div>
+
+    <div class="pagination-controls">
+      <slot name="prepend"></slot>
+
+      <v-pagination
+        v-model="localPage"
+        :length="totalPages"
+        :total-visible="totalVisible"
+        :disabled="disabled"
+        :next-icon="nextIcon"
+        :prev-icon="prevIcon"
+        :show-first-last-page="showFirstLastPage"
+        :first-icon="firstIcon"
+        :last-icon="lastIcon"
+        :boundary="boundary"
+        :size="size"
+        :variant="variant"
+        :active-color="activeColor"
+        :density="density"
+        @update:model-value="onPageChange"
+      ></v-pagination>
+
+      <template v-if="showItemsPerPage">
+        <v-spacer class="mx-4"></v-spacer>
+
+        <div class="items-per-page d-flex align-center">
+          <span class="text-caption text-grey me-2">Items per page:</span>
+          <v-select
+            v-model="localItemsPerPage"
+            :items="itemsPerPageOptions"
+            variant="outlined"
+            density="compact"
+            hide-details
+            class="items-per-page-select"
+            @update:model-value="onItemsPerPageChange"
+          ></v-select>
+        </div>
+      </template>
+
+      <slot name="append"></slot>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Number,
+    default: 1,
+  },
+  totalItems: {
+    type: Number,
+    required: true,
+  },
+  itemsPerPage: {
+    type: Number,
+    default: 10,
+  },
+  itemsPerPageOptions: {
+    type: Array as PropType<number[]>,
+    default: () => [5, 10, 25, 50, 100],
+  },
+  showItemsPerPage: {
+    type: Boolean,
+    default: true,
+  },
+  showResultInfo: {
+    type: Boolean,
+    default: true,
+  },
+  totalVisible: {
+    type: [Number, String],
+    default: 7,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  nextIcon: {
+    type: String,
+    default: 'mdi-chevron-right',
+  },
+  prevIcon: {
+    type: String,
+    default: 'mdi-chevron-left',
+  },
+  showFirstLastPage: {
+    type: Boolean,
+    default: true,
+  },
+  firstIcon: {
+    type: String,
+    default: 'mdi-page-first',
+  },
+  lastIcon: {
+    type: String,
+    default: 'mdi-page-last',
+  },
+  boundary: {
+    type: [Number, String],
+    default: undefined,
+  },
+  size: {
+    type: [String, Number],
+    default: 'default',
+  },
+  variant: {
+    type: String,
+    default: 'flat',
+  },
+  activeColor: {
+    type: String,
+    default: 'primary',
+  },
+  density: {
+    type: String,
+    default: 'comfortable',
+  },
+  containerClass: {
+    type: String,
+    default: '',
+  },
+})
+
+const emit = defineEmits(['update:modelValue', 'update:itemsPerPage', 'page-change', 'items-per-page-change'])
+
+const localPage = ref(props.modelValue)
+const localItemsPerPage = ref(props.itemsPerPage)
+
+// Compute total pages
+const totalPages = computed(() => {
+  return Math.ceil(props.totalItems / localItemsPerPage.value)
+})
+
+// Compute current range
+const currentRangeStart = computed(() => {
+  return props.totalItems === 0 ? 0 : (localPage.value - 1) * localItemsPerPage.value + 1
+})
+
+const currentRangeEnd = computed(() => {
+  return Math.min(localPage.value * localItemsPerPage.value, props.totalItems)
+})
+
+// Watch for external changes
+watch(() => props.modelValue, (newVal) => {
+  localPage.value = newVal
+})
+
+watch(() => props.itemsPerPage, (newVal) => {
+  localItemsPerPage.value = newVal
+})
+
+// Handle page change
+const onPageChange = (page: number) => {
+  emit('update:modelValue', page)
+  emit('page-change', page)
+}
+
+// Handle items per page change
+const onItemsPerPageChange = (itemsPerPage: number) => {
+  emit('update:itemsPerPage', itemsPerPage)
+  emit('items-per-page-change', itemsPerPage)
+
+  // Adjust current page if necessary
+  const newTotalPages = Math.ceil(props.totalItems / itemsPerPage)
+  if (localPage.value > newTotalPages) {
+    localPage.value = newTotalPages || 1
+    emit('update:modelValue', localPage.value)
+    emit('page-change', localPage.value)
+  }
+}
+
+// Expose methods to parent component
+defineExpose({
+  goToPage: (page: number) => {
+    if (page >= 1 && page <= totalPages.value) {
+      localPage.value = page
+      emit('update:modelValue', page)
+      emit('page-change', page)
+    }
+  },
+  nextPage: () => {
+    if (localPage.value < totalPages.value) {
+      localPage.value++
+      emit('update:modelValue', localPage.value)
+      emit('page-change', localPage.value)
+    }
+  },
+  prevPage: () => {
+    if (localPage.value > 1) {
+      localPage.value--
+      emit('update:modelValue', localPage.value)
+      emit('page-change', localPage.value)
+    }
+  },
+  firstPage: () => {
+    localPage.value = 1
+    emit('update:modelValue', 1)
+    emit('page-change', 1)
+  },
+  lastPage: () => {
+    localPage.value = totalPages.value
+    emit('update:modelValue', totalPages.value)
+    emit('page-change', totalPages.value)
+  },
+})
+</script>
+
+<style scoped>
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.items-per-page-select {
+  width: 80px;
+}
+
+@media (max-width: 600px) {
+  .pagination-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pagination-info {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>

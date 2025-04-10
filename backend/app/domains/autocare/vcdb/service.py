@@ -69,7 +69,7 @@ class VCdbService:
             "totalVehicles": total_vehicles,
             "makeCount": make_count,
             "modelCount": model_count,
-            "yearRange": f"{year_range[0]}-{year_range[1]}"
+            "yearRange": f"{year_range[0]}-{year_range[1]}",
         }
 
     async def update_database(self, file_path: Union[str, Path]) -> Dict[str, Any]:
@@ -610,16 +610,20 @@ class VCdbService:
             ResourceNotFoundException: If vehicle with the specified ID is not found
         """
         # Use the repository method to get vehicle and components
-        result = await self.repository.vehicle_repo.get_vehicle_with_components2(vehicle_id)
+        result = await self.repository.vehicle_repo.get_vehicle_with_components2(
+            vehicle_id
+        )
 
         if not result:
-            raise ResourceNotFoundException(resource_type="Vehicle", resource_id=str(vehicle_id))
+            raise ResourceNotFoundException(
+                resource_type="Vehicle", resource_id=str(vehicle_id)
+            )
 
-        vehicle = result['vehicle']
-        engine_configs = result['engine_configs']
-        transmissions = result['transmissions']
-        drive_types = result['drive_types']
-        body_styles = result['body_styles']
+        vehicle = result["vehicle"]
+        engine_configs = result["engine_configs"]
+        transmissions = result["transmissions"]
+        drive_types = result["drive_types"]
+        body_styles = result["body_styles"]
 
         # Build engines list
         engines = []
@@ -630,21 +634,35 @@ class VCdbService:
             if hasattr(engine, "engine_block") and engine.engine_block:
                 liter = engine.engine_block.liter
                 cylinders = engine.engine_block.cylinders
-            elif (hasattr(engine, "engine_base") and engine.engine_base and
-                  hasattr(engine.engine_base, "engine_block") and engine.engine_base.engine_block):
+            elif (
+                hasattr(engine, "engine_base")
+                and engine.engine_base
+                and hasattr(engine.engine_base, "engine_block")
+                and engine.engine_base.engine_block
+            ):
                 liter = engine.engine_base.engine_block.liter
                 cylinders = engine.engine_base.engine_block.cylinders
 
-            fuel_type = engine.fuel_type.name if hasattr(engine, "fuel_type") and engine.fuel_type else None
-            aspiration = engine.aspiration.name if hasattr(engine, "aspiration") and engine.aspiration else None
+            fuel_type = (
+                engine.fuel_type.name
+                if hasattr(engine, "fuel_type") and engine.fuel_type
+                else None
+            )
+            aspiration = (
+                engine.aspiration.name
+                if hasattr(engine, "aspiration") and engine.aspiration
+                else None
+            )
 
-            engines.append({
-                'id': engine.engine_config_id,
-                'liter': liter,
-                'cylinders': cylinders,
-                'aspiration': aspiration,
-                'fuel_type': fuel_type
-            })
+            engines.append(
+                {
+                    "id": engine.engine_config_id,
+                    "liter": liter,
+                    "cylinders": cylinders,
+                    "aspiration": aspiration,
+                    "fuel_type": fuel_type,
+                }
+            )
 
         # Build transmissions list
         trans_list = []
@@ -652,17 +670,20 @@ class VCdbService:
             trans_type = None
             speeds = None
             if hasattr(trans, "transmission_base") and trans.transmission_base:
-                if hasattr(trans.transmission_base, "transmission_type") and trans.transmission_base.transmission_type:
+                if (
+                    hasattr(trans.transmission_base, "transmission_type")
+                    and trans.transmission_base.transmission_type
+                ):
                     trans_type = trans.transmission_base.transmission_type.name
-                if hasattr(trans.transmission_base,
-                           "transmission_num_speeds") and trans.transmission_base.transmission_num_speeds:
+                if (
+                    hasattr(trans.transmission_base, "transmission_num_speeds")
+                    and trans.transmission_base.transmission_num_speeds
+                ):
                     speeds = trans.transmission_base.transmission_num_speeds.num_speeds
 
-            trans_list.append({
-                'id': trans.transmission_id,
-                'type': trans_type,
-                'speeds': speeds
-            })
+            trans_list.append(
+                {"id": trans.transmission_id, "type": trans_type, "speeds": speeds}
+            )
 
         # Get vehicle attributes
         make_name = None
@@ -670,20 +691,26 @@ class VCdbService:
             make_name = vehicle.base_vehicle.make.name
 
         return {
-            'id': str(vehicle.id),
-            'vehicle_id': vehicle.vehicle_id,
-            'year': vehicle.year,
-            'make': make_name,
-            'model': vehicle.model if hasattr(vehicle, 'model') else None,
-            'submodel': vehicle.submodel.name if vehicle.submodel else None,
-            'region': vehicle.region.name if vehicle.region else None,
-            'engines': engines,
-            'transmissions': trans_list,
-            'drive_types': [dt.name for dt in drive_types],
-            'body_styles': [bs.body_type.name for bs in body_styles if hasattr(bs, 'body_type') and bs.body_type]
+            "id": str(vehicle.id),
+            "vehicle_id": vehicle.vehicle_id,
+            "year": vehicle.year,
+            "make": make_name,
+            "model": vehicle.model if hasattr(vehicle, "model") else None,
+            "submodel": vehicle.submodel.name if vehicle.submodel else None,
+            "region": vehicle.region.name if vehicle.region else None,
+            "engines": engines,
+            "transmissions": trans_list,
+            "drive_types": [dt.name for dt in drive_types],
+            "body_styles": [
+                bs.body_type.name
+                for bs in body_styles
+                if hasattr(bs, "body_type") and bs.body_type
+            ],
         }
 
-    async def get_vehicle_configurations(self, vehicle_id: int) -> Dict[str, List[Dict[str, Any]]]:
+    async def get_vehicle_configurations(
+        self, vehicle_id: int
+    ) -> Dict[str, List[Dict[str, Any]]]:
         """
         Retrieve detailed vehicle configurations grouped by category based on the specified vehicle ID.
 
@@ -704,9 +731,13 @@ class VCdbService:
                 "drive_types", "body_styles", "brake_configs", and "wheel_bases". The values are
                 lists of dictionaries holding the specific details for each configuration type.
         """
-        configs = await self.repository.vehicle_repo.get_vehicle_configurations(vehicle_id)
+        configs = await self.repository.vehicle_repo.get_vehicle_configurations(
+            vehicle_id
+        )
         if not configs:
-            raise ResourceNotFoundException(resource_type="Vehicle", resource_id=str(vehicle_id))
+            raise ResourceNotFoundException(
+                resource_type="Vehicle", resource_id=str(vehicle_id)
+            )
 
         result: Dict[str, List[Dict[str, Any]]] = {
             "engines": [],
@@ -725,19 +756,21 @@ class VCdbService:
             aspiration = engine_data["aspiration"]
             power_output = engine_data["power_output"]
 
-            result["engines"].append({
-                "id": engine_config.engine_config_id,
-                "liter": engine_base.liter if engine_base else None,
-                "cc": engine_base.cc if engine_base else None,
-                "cid": engine_base.cid if engine_base else None,
-                "cylinders": engine_base.cylinders if engine_base else None,
-                "fuel_type": fuel_type.name if fuel_type else None,
-                "aspiration": aspiration.name if aspiration else None,
-                "power": {
-                    "horsepower": power_output.horsepower if power_output else None,
-                    "kilowatt": power_output.kilowatt if power_output else None,
-                },
-            })
+            result["engines"].append(
+                {
+                    "id": engine_config.engine_config_id,
+                    "liter": engine_base.liter if engine_base else None,
+                    "cc": engine_base.cc if engine_base else None,
+                    "cid": engine_base.cid if engine_base else None,
+                    "cylinders": engine_base.cylinders if engine_base else None,
+                    "fuel_type": fuel_type.name if fuel_type else None,
+                    "aspiration": aspiration.name if aspiration else None,
+                    "power": {
+                        "horsepower": power_output.horsepower if power_output else None,
+                        "kilowatt": power_output.kilowatt if power_output else None,
+                    },
+                }
+            )
 
         # Process transmission configurations
         for trans in configs["transmissions"]:
@@ -746,23 +779,38 @@ class VCdbService:
             speeds = None
             control_type = None
             if hasattr(trans, "transmission_base") and trans.transmission_base:
-                if (hasattr(trans.transmission_base, "transmission_type") and
-                    trans.transmission_base.transmission_type):
+                if (
+                    hasattr(trans.transmission_base, "transmission_type")
+                    and trans.transmission_base.transmission_type
+                ):
                     trans_type = trans.transmission_base.transmission_type.name
 
-                if (hasattr(trans.transmission_base, "transmission_num_speeds") and
-                    trans.transmission_base.transmission_num_speeds):
+                if (
+                    hasattr(trans.transmission_base, "transmission_num_speeds")
+                    and trans.transmission_base.transmission_num_speeds
+                ):
                     speeds = trans.transmission_base.transmission_num_speeds.num_speeds
 
-                if (hasattr(trans.transmission_base, "transmission_control_type") and
-                    trans.transmission_base.transmission_control_type):
-                    control_type = trans.transmission_base.transmission_control_type.name
+                if (
+                    hasattr(trans.transmission_base, "transmission_control_type")
+                    and trans.transmission_base.transmission_control_type
+                ):
+                    control_type = (
+                        trans.transmission_base.transmission_control_type.name
+                    )
 
             # Extract other transmission details safely
-            manufacturer = trans.transmission_mfr.name if hasattr(trans,
-                                                                  "transmission_mfr") and trans.transmission_mfr else None
-            code = trans.transmission_mfr_code.code if hasattr(trans,
-                                                               "transmission_mfr_code") and trans.transmission_mfr_code else None
+            manufacturer = (
+                trans.transmission_mfr.name
+                if hasattr(trans, "transmission_mfr") and trans.transmission_mfr
+                else None
+            )
+            code = (
+                trans.transmission_mfr_code.code
+                if hasattr(trans, "transmission_mfr_code")
+                and trans.transmission_mfr_code
+                else None
+            )
 
             result["transmissions"].append(
                 {
@@ -781,8 +829,14 @@ class VCdbService:
 
         # Process body styles
         for bs in configs["body_styles"]:
-            body_type = bs.body_type.name if hasattr(bs, "body_type") and bs.body_type else None
-            doors = bs.body_num_doors.num_doors if hasattr(bs, "body_num_doors") and bs.body_num_doors else None
+            body_type = (
+                bs.body_type.name if hasattr(bs, "body_type") and bs.body_type else None
+            )
+            doors = (
+                bs.body_num_doors.num_doors
+                if hasattr(bs, "body_num_doors") and bs.body_num_doors
+                else None
+            )
 
             result["body_styles"].append(
                 {
@@ -794,10 +848,24 @@ class VCdbService:
 
         # Process brake configs
         for bc in configs["brake_configs"]:
-            front_type = bc.front_brake_type.name if hasattr(bc, "front_brake_type") and bc.front_brake_type else None
-            rear_type = bc.rear_brake_type.name if hasattr(bc, "rear_brake_type") and bc.rear_brake_type else None
-            system = bc.brake_system.name if hasattr(bc, "brake_system") and bc.brake_system else None
-            abs_type = bc.brake_abs.name if hasattr(bc, "brake_abs") and bc.brake_abs else None
+            front_type = (
+                bc.front_brake_type.name
+                if hasattr(bc, "front_brake_type") and bc.front_brake_type
+                else None
+            )
+            rear_type = (
+                bc.rear_brake_type.name
+                if hasattr(bc, "rear_brake_type") and bc.rear_brake_type
+                else None
+            )
+            system = (
+                bc.brake_system.name
+                if hasattr(bc, "brake_system") and bc.brake_system
+                else None
+            )
+            abs_type = (
+                bc.brake_abs.name if hasattr(bc, "brake_abs") and bc.brake_abs else None
+            )
 
             result["brake_configs"].append(
                 {
@@ -821,7 +889,9 @@ class VCdbService:
 
         return result
 
-    async def get_vehicle_configurations2(self, vehicle_id: int) -> Dict[str, List[Dict[str, Any]]]:
+    async def get_vehicle_configurations2(
+        self, vehicle_id: int
+    ) -> Dict[str, List[Dict[str, Any]]]:
         """Get all component configurations for a specific vehicle using EngineConfig2.
 
         Args:
@@ -833,7 +903,9 @@ class VCdbService:
         Raises:
             ResourceNotFoundException: If vehicle with the specified ID is not found
         """
-        configs = await self.repository.vehicle_repo.get_vehicle_configurations2(vehicle_id)
+        configs = await self.repository.vehicle_repo.get_vehicle_configurations2(
+            vehicle_id
+        )
         if not configs:
             raise ResourceNotFoundException(
                 resource_type="Vehicle", resource_id=str(vehicle_id)
@@ -856,14 +928,26 @@ class VCdbService:
             if hasattr(engine, "engine_block") and engine.engine_block:
                 liter = engine.engine_block.liter
                 cylinders = engine.engine_block.cylinders
-            elif hasattr(engine, "engine_base") and engine.engine_base and hasattr(engine.engine_base,
-                                                                                   "engine_block") and engine.engine_base.engine_block:
+            elif (
+                hasattr(engine, "engine_base")
+                and engine.engine_base
+                and hasattr(engine.engine_base, "engine_block")
+                and engine.engine_base.engine_block
+            ):
                 liter = engine.engine_base.engine_block.liter
                 cylinders = engine.engine_base.engine_block.cylinders
 
             # Extract other engine details safely
-            fuel_type = engine.fuel_type.name if hasattr(engine, "fuel_type") and engine.fuel_type else None
-            aspiration = engine.aspiration.name if hasattr(engine, "aspiration") and engine.aspiration else None
+            fuel_type = (
+                engine.fuel_type.name
+                if hasattr(engine, "fuel_type") and engine.fuel_type
+                else None
+            )
+            aspiration = (
+                engine.aspiration.name
+                if hasattr(engine, "aspiration") and engine.aspiration
+                else None
+            )
 
             # Extract power output details safely
             horsepower = None
@@ -893,23 +977,38 @@ class VCdbService:
             speeds = None
             control_type = None
             if hasattr(trans, "transmission_base") and trans.transmission_base:
-                if (hasattr(trans.transmission_base, "transmission_type") and
-                    trans.transmission_base.transmission_type):
+                if (
+                    hasattr(trans.transmission_base, "transmission_type")
+                    and trans.transmission_base.transmission_type
+                ):
                     trans_type = trans.transmission_base.transmission_type.name
 
-                if (hasattr(trans.transmission_base, "transmission_num_speeds") and
-                    trans.transmission_base.transmission_num_speeds):
+                if (
+                    hasattr(trans.transmission_base, "transmission_num_speeds")
+                    and trans.transmission_base.transmission_num_speeds
+                ):
                     speeds = trans.transmission_base.transmission_num_speeds.num_speeds
 
-                if (hasattr(trans.transmission_base, "transmission_control_type") and
-                    trans.transmission_base.transmission_control_type):
-                    control_type = trans.transmission_base.transmission_control_type.name
+                if (
+                    hasattr(trans.transmission_base, "transmission_control_type")
+                    and trans.transmission_base.transmission_control_type
+                ):
+                    control_type = (
+                        trans.transmission_base.transmission_control_type.name
+                    )
 
             # Extract other transmission details safely
-            manufacturer = trans.transmission_mfr.name if hasattr(trans,
-                                                                  "transmission_mfr") and trans.transmission_mfr else None
-            code = trans.transmission_mfr_code.code if hasattr(trans,
-                                                               "transmission_mfr_code") and trans.transmission_mfr_code else None
+            manufacturer = (
+                trans.transmission_mfr.name
+                if hasattr(trans, "transmission_mfr") and trans.transmission_mfr
+                else None
+            )
+            code = (
+                trans.transmission_mfr_code.code
+                if hasattr(trans, "transmission_mfr_code")
+                and trans.transmission_mfr_code
+                else None
+            )
 
             result["transmissions"].append(
                 {
@@ -928,8 +1027,14 @@ class VCdbService:
 
         # Process body styles
         for bs in configs["body_styles"]:
-            body_type = bs.body_type.name if hasattr(bs, "body_type") and bs.body_type else None
-            doors = bs.body_num_doors.num_doors if hasattr(bs, "body_num_doors") and bs.body_num_doors else None
+            body_type = (
+                bs.body_type.name if hasattr(bs, "body_type") and bs.body_type else None
+            )
+            doors = (
+                bs.body_num_doors.num_doors
+                if hasattr(bs, "body_num_doors") and bs.body_num_doors
+                else None
+            )
 
             result["body_styles"].append(
                 {
@@ -941,10 +1046,24 @@ class VCdbService:
 
         # Process brake configs
         for bc in configs["brake_configs"]:
-            front_type = bc.front_brake_type.name if hasattr(bc, "front_brake_type") and bc.front_brake_type else None
-            rear_type = bc.rear_brake_type.name if hasattr(bc, "rear_brake_type") and bc.rear_brake_type else None
-            system = bc.brake_system.name if hasattr(bc, "brake_system") and bc.brake_system else None
-            abs_type = bc.brake_abs.name if hasattr(bc, "brake_abs") and bc.brake_abs else None
+            front_type = (
+                bc.front_brake_type.name
+                if hasattr(bc, "front_brake_type") and bc.front_brake_type
+                else None
+            )
+            rear_type = (
+                bc.rear_brake_type.name
+                if hasattr(bc, "rear_brake_type") and bc.rear_brake_type
+                else None
+            )
+            system = (
+                bc.brake_system.name
+                if hasattr(bc, "brake_system") and bc.brake_system
+                else None
+            )
+            abs_type = (
+                bc.brake_abs.name if hasattr(bc, "brake_abs") and bc.brake_abs else None
+            )
 
             result["brake_configs"].append(
                 {
@@ -969,21 +1088,25 @@ class VCdbService:
         return result
 
     async def get_engine_base(self, engine_base_id: int) -> Dict[str, Any]:
-        engine_base = await self.repository.engine_base_repo.get_by_engine_base_id(engine_base_id)
+        engine_base = await self.repository.engine_base_repo.get_by_engine_base_id(
+            engine_base_id
+        )
         if not engine_base:
-            raise ResourceNotFoundException(resource_type='EngineBase', resource_id=str(engine_base_id))
+            raise ResourceNotFoundException(
+                resource_type="EngineBase", resource_id=str(engine_base_id)
+            )
 
         return {
-            'id': engine_base.engine_base_id,
-            'liter': engine_base.liter,
-            'cc': engine_base.cc,
-            'cid': engine_base.cid,
-            'cylinders': engine_base.cylinders,
-            'block_type': engine_base.block_type,
-            'bore_in': engine_base.eng_bore_in,
-            'bore_metric': engine_base.eng_bore_metric,
-            'stroke_in': engine_base.eng_stroke_in,
-            'stroke_metric': engine_base.eng_stroke_metric
+            "id": engine_base.engine_base_id,
+            "liter": engine_base.liter,
+            "cc": engine_base.cc,
+            "cid": engine_base.cid,
+            "cylinders": engine_base.cylinders,
+            "block_type": engine_base.block_type,
+            "bore_in": engine_base.eng_bore_in,
+            "bore_metric": engine_base.eng_bore_metric,
+            "stroke_in": engine_base.eng_stroke_in,
+            "stroke_metric": engine_base.eng_stroke_metric,
         }
 
     async def search_engine_bases(
@@ -991,36 +1114,41 @@ class VCdbService:
         liter: Optional[str] = None,
         cylinders: Optional[str] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         result = await self.repository.engine_base_repo.search_by_criteria(
-            liter=liter,
-            cylinders=cylinders,
-            page=page,
-            page_size=page_size
+            liter=liter, cylinders=cylinders, page=page, page_size=page_size
         )
 
         engine_bases = []
-        for eb in result['items']:
-            engine_bases.append({
-                'id': eb.engine_base_id,
-                'liter': eb.liter,
-                'cc': eb.cc,
-                'cylinders': eb.cylinders
-            })
+        for eb in result["items"]:
+            engine_bases.append(
+                {
+                    "id": eb.engine_base_id,
+                    "liter": eb.liter,
+                    "cc": eb.cc,
+                    "cylinders": eb.cylinders,
+                }
+            )
 
         return {
-            'items': engine_bases,
-            'total': result['total'],
-            'page': result['page'],
-            'page_size': result['page_size'],
-            'pages': result['pages']
+            "items": engine_bases,
+            "total": result["total"],
+            "page": result["page"],
+            "page_size": result["page_size"],
+            "pages": result["pages"],
         }
 
     async def get_engine_config_details(self, engine_config_id: int) -> Dict[str, Any]:
-        engine_config = await self.repository.engine_config_repo.get_by_engine_config_id(engine_config_id)
+        engine_config = (
+            await self.repository.engine_config_repo.get_by_engine_config_id(
+                engine_config_id
+            )
+        )
         if not engine_config:
-            raise ResourceNotFoundException(resource_type='EngineConfig', resource_id=str(engine_config_id))
+            raise ResourceNotFoundException(
+                resource_type="EngineConfig", resource_id=str(engine_config_id)
+            )
 
         # For the original EngineConfig, you would need additional queries to load related entities
         # This is where eager loading should be implemented for the related entities
@@ -1032,12 +1160,16 @@ class VCdbService:
 
         # Return the engine configuration with its relationships
         return {
-            'id': engine_config.engine_config_id,
-            'engine_base': {
-                'id': engine_base.engine_base_id if engine_base else None,
-                'liter': engine_base.liter if engine_base else None,
-                'cylinders': engine_base.cylinders if engine_base else None
-            } if engine_base else None,
+            "id": engine_config.engine_config_id,
+            "engine_base": (
+                {
+                    "id": engine_base.engine_base_id if engine_base else None,
+                    "liter": engine_base.liter if engine_base else None,
+                    "cylinders": engine_base.cylinders if engine_base else None,
+                }
+                if engine_base
+                else None
+            ),
             # Add other relationships as needed
         }
 
@@ -1133,30 +1265,54 @@ class VCdbService:
             ResourceNotFoundException: If the engine base with the specified ID
             does not exist.
         """
-        engine_base = await self.repository.engine_base2_repo.get_by_engine_base_id(engine_base_id)
+        engine_base = await self.repository.engine_base2_repo.get_by_engine_base_id(
+            engine_base_id
+        )
         if not engine_base:
-            raise ResourceNotFoundException(resource_type='EngineBase2', resource_id=str(engine_base_id))
+            raise ResourceNotFoundException(
+                resource_type="EngineBase2", resource_id=str(engine_base_id)
+            )
 
         engine_block = engine_base.engine_block
         engine_bore_stroke = engine_base.engine_bore_stroke
 
         return {
-            'id': engine_base.engine_base_id,
-            'engine_block': {
-                'id': engine_block.engine_block_id if engine_block else None,
-                'liter': engine_block.liter if engine_block else None,
-                'cc': engine_block.cc if engine_block else None,
-                'cid': engine_block.cid if engine_block else None,
-                'cylinders': engine_block.cylinders if engine_block else None,
-                'block_type': engine_block.block_type if engine_block else None
-            } if engine_block else None,
-            'engine_bore_stroke': {
-                'id': engine_bore_stroke.engine_bore_stroke_id if engine_bore_stroke else None,
-                'bore_in': engine_bore_stroke.bore_in if engine_bore_stroke else None,
-                'bore_metric': engine_bore_stroke.bore_metric if engine_bore_stroke else None,
-                'stroke_in': engine_bore_stroke.stroke_in if engine_bore_stroke else None,
-                'stroke_metric': engine_bore_stroke.stroke_metric if engine_bore_stroke else None
-            } if engine_bore_stroke else None
+            "id": engine_base.engine_base_id,
+            "engine_block": (
+                {
+                    "id": engine_block.engine_block_id if engine_block else None,
+                    "liter": engine_block.liter if engine_block else None,
+                    "cc": engine_block.cc if engine_block else None,
+                    "cid": engine_block.cid if engine_block else None,
+                    "cylinders": engine_block.cylinders if engine_block else None,
+                    "block_type": engine_block.block_type if engine_block else None,
+                }
+                if engine_block
+                else None
+            ),
+            "engine_bore_stroke": (
+                {
+                    "id": (
+                        engine_bore_stroke.engine_bore_stroke_id
+                        if engine_bore_stroke
+                        else None
+                    ),
+                    "bore_in": (
+                        engine_bore_stroke.bore_in if engine_bore_stroke else None
+                    ),
+                    "bore_metric": (
+                        engine_bore_stroke.bore_metric if engine_bore_stroke else None
+                    ),
+                    "stroke_in": (
+                        engine_bore_stroke.stroke_in if engine_bore_stroke else None
+                    ),
+                    "stroke_metric": (
+                        engine_bore_stroke.stroke_metric if engine_bore_stroke else None
+                    ),
+                }
+                if engine_bore_stroke
+                else None
+            ),
         }
 
     async def search_engine_bases2(
@@ -1164,58 +1320,60 @@ class VCdbService:
         engine_block_id: Optional[int] = None,
         engine_bore_stroke_id: Optional[int] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         """
-            Searches for engine bases based on specified criteria.
+        Searches for engine bases based on specified criteria.
 
-            This function asynchronously retrieves engine base data by
-            querying a repository using optional filtering parameters and
-            pagination. It builds a structured response containing information
-            about engine bases, including their ID, liter value, cubic capacity,
-            and number of cylinders.
+        This function asynchronously retrieves engine base data by
+        querying a repository using optional filtering parameters and
+        pagination. It builds a structured response containing information
+        about engine bases, including their ID, liter value, cubic capacity,
+        and number of cylinders.
 
-            Parameters:
-            engine_block_id: Optional[int]
-                An optional integer representing the ID of an engine block
-                to filter the search results.
-            engine_bore_stroke_id: Optional[int]
-                An optional integer representing the ID of an engine bore
-                stroke to filter the search results.
-            page: int
-                The page number for paginated results.
-            page_size: int
-                The maximum number of results per page.
+        Parameters:
+        engine_block_id: Optional[int]
+            An optional integer representing the ID of an engine block
+            to filter the search results.
+        engine_bore_stroke_id: Optional[int]
+            An optional integer representing the ID of an engine bore
+            stroke to filter the search results.
+        page: int
+            The page number for paginated results.
+        page_size: int
+            The maximum number of results per page.
 
-            Returns:
-            Dict[str, Any]
-                A dictionary containing the paginated list of engine bases
-                and additional metadata about the pagination.
+        Returns:
+        Dict[str, Any]
+            A dictionary containing the paginated list of engine bases
+            and additional metadata about the pagination.
         """
         result = await self.repository.engine_base2_repo.search_by_criteria(
             engine_block_id=engine_block_id,
             engine_bore_stroke_id=engine_bore_stroke_id,
             page=page,
-            page_size=page_size
+            page_size=page_size,
         )
 
         engine_bases = []
-        for eb in result['items']:
+        for eb in result["items"]:
             engine_block = eb.engine_block
 
-            engine_bases.append({
-                'id': eb.engine_base_id,
-                'liter': engine_block.liter if engine_block else None,
-                'cc': engine_block.cc if engine_block else None,
-                'cylinders': engine_block.cylinders if engine_block else None
-            })
+            engine_bases.append(
+                {
+                    "id": eb.engine_base_id,
+                    "liter": engine_block.liter if engine_block else None,
+                    "cc": engine_block.cc if engine_block else None,
+                    "cylinders": engine_block.cylinders if engine_block else None,
+                }
+            )
 
         return {
-            'items': engine_bases,
-            'total': result['total'],
-            'page': result['page'],
-            'page_size': result['page_size'],
-            'pages': result['pages']
+            "items": engine_bases,
+            "total": result["total"],
+            "page": result["page"],
+            "page_size": result["page_size"],
+            "pages": result["pages"],
         }
 
     async def get_engine_config2(self, engine_config_id: int) -> Dict[str, Any]:
@@ -1234,9 +1392,15 @@ class VCdbService:
             ResourceNotFoundException:
                 Raised if no engine configuration is found with the specified ID.
         """
-        engine_details = await self.repository.engine_config2_repo.get_full_engine_details(engine_config_id)
+        engine_details = (
+            await self.repository.engine_config2_repo.get_full_engine_details(
+                engine_config_id
+            )
+        )
         if not engine_details:
-            raise ResourceNotFoundException(resource_type='EngineConfig2', resource_id=str(engine_config_id))
+            raise ResourceNotFoundException(
+                resource_type="EngineConfig2", resource_id=str(engine_config_id)
+            )
 
         return engine_details
 
@@ -1246,54 +1410,56 @@ class VCdbService:
         fuel_type_id: Optional[int] = None,
         aspiration_id: Optional[int] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         """
-            Retrieve and filter a list of engine configurations based on specified criteria.
+        Retrieve and filter a list of engine configurations based on specified criteria.
 
-            This asynchronous method fetches engine configuration data using the provided
-            criteria such as engine base ID, fuel type ID, and aspiration ID. Pagination
-            options are also available to control the number of results returned per page
-            and the specific page to retrieve.
+        This asynchronous method fetches engine configuration data using the provided
+        criteria such as engine base ID, fuel type ID, and aspiration ID. Pagination
+        options are also available to control the number of results returned per page
+        and the specific page to retrieve.
 
-            Args:
-                engine_base_id: An optional ID of the engine base to filter configurations.
-                fuel_type_id: An optional ID of the fuel type to filter configurations.
-                aspiration_id: An optional ID of the aspiration to filter configurations.
-                page: An integer specifying the page number to retrieve. Defaults to 1.
-                page_size: An integer specifying the number of items per page. Defaults to 20.
+        Args:
+            engine_base_id: An optional ID of the engine base to filter configurations.
+            fuel_type_id: An optional ID of the fuel type to filter configurations.
+            aspiration_id: An optional ID of the aspiration to filter configurations.
+            page: An integer specifying the page number to retrieve. Defaults to 1.
+            page_size: An integer specifying the number of items per page. Defaults to 20.
 
-            Returns:
-                A dictionary containing the filtered engine configurations, total number of
-                items, current page, requested page size, and total number of pages. Each
-                configuration in the 'items' list includes relevant details about the engine
-                base, fuel type, aspiration, engine block liter size, and number of cylinders.
+        Returns:
+            A dictionary containing the filtered engine configurations, total number of
+            items, current page, requested page size, and total number of pages. Each
+            configuration in the 'items' list includes relevant details about the engine
+            base, fuel type, aspiration, engine block liter size, and number of cylinders.
         """
         result = await self.repository.engine_config2_repo.get_by_criteria(
             engine_base_id=engine_base_id,
             fuel_type_id=fuel_type_id,
             aspiration_id=aspiration_id,
             page=page,
-            page_size=page_size
+            page_size=page_size,
         )
 
         engine_configs = []
-        for ec in result['items']:
-            engine_configs.append({
-                'id': ec.engine_config_id,
-                'engine_base_id': ec.engine_base_id,
-                'fuel_type': ec.fuel_type.name if ec.fuel_type else None,
-                'aspiration': ec.aspiration.name if ec.aspiration else None,
-                'liter': ec.engine_block.liter if ec.engine_block else None,
-                'cylinders': ec.engine_block.cylinders if ec.engine_block else None
-            })
+        for ec in result["items"]:
+            engine_configs.append(
+                {
+                    "id": ec.engine_config_id,
+                    "engine_base_id": ec.engine_base_id,
+                    "fuel_type": ec.fuel_type.name if ec.fuel_type else None,
+                    "aspiration": ec.aspiration.name if ec.aspiration else None,
+                    "liter": ec.engine_block.liter if ec.engine_block else None,
+                    "cylinders": ec.engine_block.cylinders if ec.engine_block else None,
+                }
+            )
 
         return {
-            'items': engine_configs,
-            'total': result['total'],
-            'page': result['page'],
-            'page_size': result['page_size'],
-            'pages': result['pages']
+            "items": engine_configs,
+            "total": result["total"],
+            "page": result["page"],
+            "page_size": result["page_size"],
+            "pages": result["pages"],
         }
 
     # Transmission operations

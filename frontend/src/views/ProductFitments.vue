@@ -619,7 +619,7 @@ import productService from '@/services/product';
 import fitmentService from '@/services/fitment';
 import { Product } from '@/types/product';
 import { Fitment } from '@/types/fitment';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 // Search result with loading state
 interface FitmentSearchResult extends Fitment {

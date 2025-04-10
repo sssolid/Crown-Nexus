@@ -10,7 +10,7 @@ import {
   PartDetail,
   PartSearchParams,
   PartSearchResponse,
-  Position
+  Position, PCdbStats
 } from '@/types';
 
 export class PCdbService extends ApiService {
@@ -21,6 +21,15 @@ export class PCdbService extends ApiService {
    */
   async getVersion(): Promise<string> {
     return this.get<string>(`${this.baseUrl}/version`);
+  }
+
+    /**
+   * Fetches statistical data from the specified endpoint.
+   *
+   * @return {Promise<any>} A promise that resolves to the statistical data fetched from the server.
+   */
+  async getStats(): Promise<PCdbStats> {
+    return this.get<PCdbStats>(`${this.baseUrl}/stats`);
   }
 
   /**

@@ -45,6 +45,25 @@ class QdbService:
         version = await self.repository.get_version()
         return version or "No version information available"
 
+    async def get_stats(self) -> Dict[str, Any]:
+        """Get Qdb statistics.
+
+        Returns:
+            Dictionary with Qdb statistics
+        """
+
+        total_qualifiers = await self.repository.qualifier_repo.count()
+        qualifier_type_count = await self.repository.qualifier_type_repo.count()
+        language_count = await self.repository.language_repo.count()
+        group_count = await self.repository.group_repo.count()
+
+        return {
+            "totalQualifiers": total_qualifiers,
+            "qualifierTypeCount": qualifier_type_count,
+            "languageCount": language_count,
+            "groupCount": group_count,
+        }
+
     async def update_database(self, file_path: str) -> Dict[str, Any]:
         """Update the Qdb database from a file.
 

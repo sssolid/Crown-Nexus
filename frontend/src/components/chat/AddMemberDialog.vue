@@ -3,7 +3,7 @@
   <v-dialog v-model="dialogVisible" max-width="500">
     <v-card>
       <v-card-title>Add Member to Chat</v-card-title>
-      
+
       <v-card-text>
         <v-form ref="form" @submit.prevent="submitForm">
           <v-autocomplete
@@ -16,7 +16,7 @@
             :rules="[v => !!v || 'User is required']"
             :loading="loadingUsers"
           ></v-autocomplete>
-          
+
           <v-select
             v-model="selectedRole"
             label="Role"
@@ -27,13 +27,13 @@
           ></v-select>
         </v-form>
       </v-card-text>
-      
+
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="closeDialog">Cancel</v-btn>
-        <v-btn 
-          color="primary" 
-          @click="submitForm" 
+        <v-btn
+          color="primary"
+          @click="submitForm"
           :loading="isSubmitting"
         >
           Add
@@ -48,7 +48,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { ChatMemberRole } from '@/types/chat';
 import api from '@/services/api';
 import { chatService } from '@/services/chat';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 const props = defineProps<{
   modelValue: boolean;
@@ -95,7 +95,7 @@ function closeDialog() {
 function resetForm() {
   selectedUser.value = null;
   selectedRole.value = ChatMemberRole.MEMBER;
-  
+
   // Reset form validation
   if (form.value) {
     form.value.resetValidation();
@@ -104,16 +104,16 @@ function resetForm() {
 
 async function loadUsers() {
   loadingUsers.value = true;
-  
+
   try {
     // Get users from API
     const response = await api.get('/users');
-    
+
     if (response.items) {
       // Get current members to filter them out
       const roomMembers = chatService.activeRoomMembers.value || [];
       const memberIds = roomMembers.map(m => m.user_id);
-      
+
       // Filter out users who are already members
       availableUsers.value = response.items.filter(
         (user: any) => !memberIds.includes(user.id)
@@ -129,17 +129,17 @@ async function loadUsers() {
 
 async function submitForm() {
   if (!form.value) return;
-  
+
   const { valid } = await form.value.validate();
-  
+
   if (!valid || !selectedUser.value) return;
-  
+
   isSubmitting.value = true;
-  
+
   try {
     // Emit add event
     emit('add', selectedUser.value, selectedRole.value);
-    
+
     // Close dialog
     closeDialog();
   } catch (error) {

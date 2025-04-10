@@ -11,7 +11,7 @@
 
 import {createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized, NavigationGuardNext} from 'vue-router';
 import {useAuthStore} from '@/stores/auth';
-import {notificationService} from '@/utils/notification';
+import {notificationService} from '@/utils/notifications';
 
 // VCdb
 import VehicleSearchView from '@/views/autocare/vcdb/VehicleSearchView.vue';
@@ -186,7 +186,26 @@ const routes: RouteRecordRaw[] = [
     }
   },
 
-  // Protected routes - Customer Dashboard
+  // Protected routes
+  {
+    path: '/style-guide',
+    name: 'StyleGuide',
+    component: () => import('@/components/docs/StyleGuide.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Design System Style Guide',
+    }
+  },
+  {
+    path: '/components',
+    name: 'ComponentShowcase',
+    component: () => import('@/components/docs/ComponentShowcase.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Component Showcase'
+    }
+  },
   {
     path: '/dashboard',
     name: 'Dashboard',
@@ -309,19 +328,19 @@ const routes: RouteRecordRaw[] = [
     path: '/vcdb/vehicles',
     name: 'vcdb-vehicle-search',
     component: VehicleSearchView,
-    meta: {requiresAuth: true,title: 'Vehicle Search'}
+    meta: {requiresAuth: true, title: 'Vehicle Search'}
   },
   {
     path: '/vcdb/vehicles/:id',
     name: 'vcdb-vehicle-details',
     component: VehicleDetailsView,
-    meta: {requiresAuth: true,title: 'Vehicle Details'}
+    meta: {requiresAuth: true, title: 'Vehicle Details'}
   },
   {
     path: '/vcdb/makes',
     name: 'vcdb-makes-list',
     component: MakesListView,
-    meta: {requiresAuth: true,title: 'Vehicle Makes'}
+    meta: {requiresAuth: true, title: 'Vehicle Makes'}
   },
 
   // PCdb Routes
@@ -329,19 +348,19 @@ const routes: RouteRecordRaw[] = [
     path: '/pcdb/parts',
     name: 'pcdb-part-search',
     component: PartSearchView,
-    meta: {requiresAuth: true,title: 'Part Search'}
+    meta: {requiresAuth: true, title: 'Part Search'}
   },
   {
     path: '/pcdb/parts/:id',
     name: 'pcdb-part-details',
     component: PartDetailsView,
-    meta: {requiresAuth: true,title: 'Part Details'}
+    meta: {requiresAuth: true, title: 'Part Details'}
   },
   {
     path: '/pcdb/categories',
     name: 'pcdb-categories-list',
     component: CategoriesListView,
-    meta: {requiresAuth: true,title: 'Part Categories'}
+    meta: {requiresAuth: true, title: 'Part Categories'}
   },
 
   // PAdb Routes
@@ -349,13 +368,13 @@ const routes: RouteRecordRaw[] = [
     path: '/padb/attributes',
     name: 'padb-attribute-search',
     component: AttributeSearchView,
-    meta: {requiresAuth: true,title: 'Attribute Search'}
+    meta: {requiresAuth: true, title: 'Attribute Search'}
   },
   {
     path: '/padb/attributes/:id',
     name: 'padb-attribute-details',
     component: AttributeDetailsView,
-    meta: {requiresAuth: true,title: 'Attribute Details'}
+    meta: {requiresAuth: true, title: 'Attribute Details'}
   },
 
   // Qdb Routes
@@ -363,19 +382,19 @@ const routes: RouteRecordRaw[] = [
     path: '/qdb/qualifiers',
     name: 'qdb-qualifier-search',
     component: QualifierSearchView,
-    meta: {requiresAuth: true,title: 'Qualifier Search'}
+    meta: {requiresAuth: true, title: 'Qualifier Search'}
   },
   {
     path: '/qdb/qualifiers/:id',
     name: 'qdb-qualifier-details',
     component: QualifierDetailsView,
-    meta: {requiresAuth: true,title: 'Qualifier Details'}
+    meta: {requiresAuth: true, title: 'Qualifier Details'}
   },
   {
     path: '/qdb/groups',
     name: 'qdb-groups-list',
     component: GroupsListView,
-    meta: {requiresAuth: true,title: 'Qualifier Groups'}
+    meta: {requiresAuth: true, title: 'Qualifier Groups'}
   },
 
   // Fitment routes

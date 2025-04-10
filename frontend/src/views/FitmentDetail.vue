@@ -452,7 +452,7 @@ import productService from '@/services/product';
 import { Fitment } from '@/types/fitment';
 import { Product } from '@/types/product';
 import { formatDateTime } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 export default defineComponent({
   name: 'FitmentDetail',

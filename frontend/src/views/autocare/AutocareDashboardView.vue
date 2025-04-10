@@ -326,24 +326,24 @@ const vcdbStats = computed(() => [
 ]);
 
 const pcdbStats = computed(() => [
-  // { label: 'Total Parts', value: pcdbStore.stats?.totalParts.toLocaleString(), icon: 'mdi-wrench' },
-  // { label: 'Categories', value: pcdbStore.stats?.categoryCount.toLocaleString(), icon: 'mdi-folder' },
-  // { label: 'Positions', value: pcdbStore.stats?.positionCount.toLocaleString(), icon: 'mdi-format-align-left' },
-  // { label: 'Supersessions', value: pcdbStore.stats?.supersessionCount.toLocaleString(), icon: 'mdi-arrow-up-down' },
+  { label: 'Total Parts', value: pcdbStore.stats?.totalParts.toLocaleString(), icon: 'mdi-wrench' },
+  { label: 'Categories', value: pcdbStore.stats?.categoryCount.toLocaleString(), icon: 'mdi-folder' },
+  { label: 'Subcategories', value: pcdbStore.stats?.subcategoryCount.toLocaleString(), icon: 'mdi-arrow-up-down' },
+  { label: 'Positions', value: pcdbStore.stats?.positionCount.toLocaleString(), icon: 'mdi-format-align-left' }
 ]);
 
 const padbStats = computed(() => [
-  // { label: 'Total Attributes', value: padbStore.stats?.totalAttributes.toLocaleString(), icon: 'mdi-format-list-bulleted' },
-  // { label: 'Measurement Groups', value: padbStore.stats?.measurementGroupCount.toLocaleString(), icon: 'mdi-ruler' },
-  // { label: 'Valid Values', value: padbStore.stats?.validValueCount.toLocaleString(), icon: 'mdi-check-circle' },
-  // { label: 'UOM Codes', value: padbStore.stats?.uomCodeCount.toLocaleString(), icon: 'mdi-code-tags' },
+  { label: 'Total Attributes', value: padbStore.stats?.totalAttributes.toLocaleString(), icon: 'mdi-format-list-bulleted' },
+  { label: 'Metadata', value: padbStore.stats?.metadataCount.toLocaleString(), icon: 'mdi-ruler' },
+  { label: 'Valid Values', value: padbStore.stats?.validValueCount.toLocaleString(), icon: 'mdi-check-circle' },
+  { label: 'UOM Codes', value: padbStore.stats?.uomCodeCount.toLocaleString(), icon: 'mdi-code-tags' },
 ]);
 
 const qdbStats = computed(() => [
-  // { label: 'Total Qualifiers', value: qdbStore.stats?.totalQualifiers.toLocaleString(), icon: 'mdi-text-box' },
-  // { label: 'Qualifier Types', value: qdbStore.stats?.qualifierTypeCount.toLocaleString(), icon: 'mdi-format-list-text' },
-  // { label: 'Languages', value: qdbStore.stats?.languageCount.toLocaleString(), icon: 'mdi-translate' },
-  // { label: 'Groups', value: qdbStore.stats?.groupCount.toLocaleString(), icon: 'mdi-folder-multiple' },
+  { label: 'Total Qualifiers', value: qdbStore.stats?.totalQualifiers.toLocaleString(), icon: 'mdi-text-box' },
+  { label: 'Qualifier Types', value: qdbStore.stats?.qualifierTypeCount.toLocaleString(), icon: 'mdi-format-list-text' },
+  { label: 'Languages', value: qdbStore.stats?.languageCount.toLocaleString(), icon: 'mdi-translate' },
+  { label: 'Groups', value: qdbStore.stats?.groupCount.toLocaleString(), icon: 'mdi-folder-multiple' },
 ]);
 
 // Quick search state - keep unchanged
@@ -394,9 +394,9 @@ const loadData = async () => {
     // Load stats data
     await Promise.all([
       vcdbStore.fetchStats(),
-      // pcdbStore.fetchStats(),
-      // padbStore.fetchStats(),
-      // qdbStore.fetchStats(),
+      pcdbStore.fetchStats(),
+      padbStore.fetchStats(),
+      qdbStore.fetchStats(),
     ]);
 
     // Load reference data for quick search

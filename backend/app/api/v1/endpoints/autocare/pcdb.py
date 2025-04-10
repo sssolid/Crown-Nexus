@@ -36,6 +36,23 @@ async def get_version(
     return version
 
 
+@router.get("/stats")
+async def get_pcdb_stats(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> Dict[str, Any]:
+    """Get PCdb statistics.
+
+    Args:
+        db: Database session
+
+    Returns:
+        PCdb statistics
+    """
+    service = PCdbService(db)
+    stats = await service.get_stats()
+    return stats
+
+
 @router.get("/categories")
 async def get_categories(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -97,11 +114,17 @@ async def search_parts(
         Paginated search results
     """
     service = PCdbService(db)
+
+    # Only include non-None filter values in lists
+    categories = [category_id] if category_id is not None else None
+    subcategories = [subcategory_id] if subcategory_id is not None else None
+    positions = [position_id] if position_id is not None else None
+
     result = await service.search_parts(
         search_term=search_term,
-        category_id=category_id,
-        subcategory_id=subcategory_id,
-        position_id=position_id,
+        categories=categories,
+        subcategories=subcategories,
+        positions=positions,
         page=page,
         page_size=page_size,
     )

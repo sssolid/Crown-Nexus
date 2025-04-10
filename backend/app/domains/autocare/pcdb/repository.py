@@ -22,6 +22,7 @@ from app.domains.autocare.pcdb.models import (
     PartPosition,
     PartsSupersession,
     PCdbVersion,
+    PartsDescription,
 )
 
 
@@ -84,6 +85,8 @@ class PCdbRepository:
         self,
         search_term: str,
         categories: Optional[List[int]] = None,
+        subcategories: Optional[List[int]] = None,
+        positions: Optional[List[int]] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> Dict[str, Any]:
@@ -92,13 +95,17 @@ class PCdbRepository:
         Args:
             search_term: The search term.
             categories: Optional list of category IDs to filter by.
+            subcategories: Optional list of subcategory IDs to filter by.
+            positions: Optional list of position IDs to filter by.
             page: The page number.
             page_size: The number of items per page.
 
         Returns:
             Dict containing items, total count, and pagination info.
         """
-        return await self.parts_repo.search(search_term, categories, page, page_size)
+        return await self.parts_repo.search(
+            search_term, categories, subcategories, positions, page, page_size
+        )
 
 
 class PartsRepository(BaseRepository[Parts, uuid.UUID]):
@@ -125,45 +132,239 @@ class PartsRepository(BaseRepository[Parts, uuid.UUID]):
         result = await self.db.execute(query)
         return result.scalars().first()
 
+    async def get_by_terminology_id_with_related(
+        self, part_terminology_id: int
+    ) -> Optional[Parts]:
+        """Get a part by its terminology ID with related entities eagerly loaded.
+
+        Args:
+            part_terminology_id: The part terminology ID.
+
+        Returns:
+            The part with related entities if found, None otherwise.
+        """
+        from sqlalchemy.orm import selectinload
+
+        query = (
+            select(Parts)
+            .options(
+                selectinload(Parts.description),
+                selectinload(Parts.categories).selectinload(PartCategory.category),
+                selectinload(Parts.categories).selectinload(PartCategory.subcategory),
+                selectinload(Parts.positions).selectinload(PartPosition.position),
+            )
+            .where(Parts.part_terminology_id == part_terminology_id)
+        )
+        result = await self.db.execute(query)
+        return result.scalars().first()
+
     async def search(
         self,
-        search_term: str,
+        search_term: Optional[str],
         categories: Optional[List[int]] = None,
+        subcategories: Optional[List[int]] = None,
+        positions: Optional[List[int]] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> Dict[str, Any]:
-        """Search for parts by term and optional category filters.
+        """Search for parts by term and optional category filters using PostgreSQL full-text search.
 
         Args:
             search_term: The search term.
             categories: Optional list of category IDs to filter by.
+            subcategories: Optional list of subcategory IDs to filter by.
+            positions: Optional list of position IDs to filter by.
             page: The page number.
             page_size: The number of items per page.
 
         Returns:
             Dict containing items, total count, and pagination info.
         """
-        conditions = [Parts.part_terminology_name.ilike(f"%{search_term}%")]
+        from sqlalchemy.orm import selectinload, joinedload
+        from sqlalchemy import text, func, or_, desc, cast, Float
 
-        if categories:
-            # Join with PartCategory to filter by categories
-            query = (
-                select(Parts)
-                .join(
+        # Start with base query - eagerly load the description relationship
+        query = select(Parts).options(selectinload(Parts.description))
+
+        # We'll need to join with PartsDescription to search in descriptions
+        description_joined = False
+
+        # Track if we need to add a custom ranking
+        apply_ranking = False
+
+        # List of conditions to apply
+        conditions = []
+
+        # Process search term if provided
+        if search_term and search_term.strip():
+            search_term = search_term.strip()
+
+            # Create a combined approach using multiple search techniques
+            search_conditions = []
+
+            # 1. Full-text search using PostgreSQL's ts_vector
+            # Prepare search configuration and tokens
+            config = "english"  # Can be changed based on language needs
+
+            # Process tokens - remove special characters and prepare for tsquery
+            tokens = search_term.split()
+            clean_tokens = []
+            for token in tokens:
+                # Clean token and keep only if it's substantial
+                clean_token = "".join(c for c in token if c.isalnum())
+                if len(clean_token) >= 3:
+                    clean_tokens.append(clean_token)
+
+            if clean_tokens:
+                # Create tsquery expression with & (AND) between tokens
+                tsquery_expression = " & ".join(clean_tokens)
+                tsquery = func.to_tsquery(config, tsquery_expression)
+
+                # Add full-text search condition for part name
+                tsvector_name = func.to_tsvector(config, Parts.part_terminology_name)
+                search_conditions.append(tsvector_name.op("@@")(tsquery))
+
+                # Join with PartsDescription to search descriptions
+                if not description_joined:
+                    query = query.outerjoin(
+                        PartsDescription,
+                        Parts.parts_description_id
+                        == PartsDescription.parts_description_id,
+                    )
+                    description_joined = True
+
+                # Add full-text search condition for description
+                tsvector_desc = func.to_tsvector(
+                    config, PartsDescription.parts_description
+                )
+                search_conditions.append(tsvector_desc.op("@@")(tsquery))
+
+                # Save the expression for ranking
+                apply_ranking = True
+
+            # 2. Traditional ILIKE search for direct matching
+            # For part name
+            search_conditions.append(
+                Parts.part_terminology_name.ilike(f"%{search_term}%")
+            )
+
+            # For description - make sure we've joined with PartsDescription
+            if not description_joined:
+                query = query.outerjoin(
+                    PartsDescription,
+                    Parts.parts_description_id == PartsDescription.parts_description_id,
+                )
+                description_joined = True
+            search_conditions.append(
+                PartsDescription.parts_description.ilike(f"%{search_term}%")
+            )
+
+            # 3. Optional: trigram similarity for fuzzy matching if pg_trgm extension is available
+            try:
+                # This requires the pg_trgm extension to be installed
+                similarity_threshold = 0.3  # Adjust as needed (0.0 to 1.0)
+
+                # Similarity for part name
+                search_conditions.append(
+                    func.similarity(Parts.part_terminology_name, search_term)
+                    > similarity_threshold
+                )
+
+                # Similarity for description
+                if not description_joined:
+                    query = query.outerjoin(
+                        PartsDescription,
+                        Parts.parts_description_id
+                        == PartsDescription.parts_description_id,
+                    )
+                    description_joined = True
+                search_conditions.append(
+                    func.similarity(PartsDescription.parts_description, search_term)
+                    > similarity_threshold
+                )
+            except Exception:
+                # If pg_trgm is not available, skip this condition
+                pass
+
+            # Combine all search conditions with OR
+            if search_conditions:
+                conditions.append(or_(*search_conditions))
+
+        # Apply category filter if categories are provided and valid
+        if categories and all(category is not None for category in categories):
+            query = query.join(
+                PartCategory,
+                Parts.part_terminology_id == PartCategory.part_terminology_id,
+            )
+            conditions.append(PartCategory.category_id.in_(categories))
+
+        # Apply subcategory filter if provided and valid
+        if subcategories and all(
+            subcategory is not None for subcategory in subcategories
+        ):
+            # Check if PartCategory is already joined
+            if not any(
+                "PartCategory" in str(join)
+                for join in query._setup_joins
+                if hasattr(query, "_setup_joins")
+            ):
+                query = query.join(
                     PartCategory,
                     Parts.part_terminology_id == PartCategory.part_terminology_id,
                 )
-                .where(and_(*conditions, PartCategory.category_id.in_(categories)))
-                .order_by(Parts.part_terminology_name)
+            conditions.append(PartCategory.subcategory_id.in_(subcategories))
+
+        # Apply position filter if provided and valid
+        if positions and all(position is not None for position in positions):
+            query = query.join(
+                PartPosition,
+                Parts.part_terminology_id == PartPosition.part_terminology_id,
             )
-        else:
-            query = (
-                select(Parts)
-                .where(and_(*conditions))
-                .order_by(Parts.part_terminology_name)
+            conditions.append(PartPosition.position_id.in_(positions))
+
+        # Apply all conditions if any exist
+        if conditions:
+            query = query.where(and_(*conditions))
+
+        # Apply ranking if we're doing a text search
+        if apply_ranking and search_term and search_term.strip():
+            # Make sure we've joined with description for ranking
+            if not description_joined:
+                query = query.outerjoin(
+                    PartsDescription,
+                    Parts.parts_description_id == PartsDescription.parts_description_id,
+                )
+
+            # Create a combined ranking based on multiple factors
+            # Rank by name (higher weight) and description (lower weight)
+            ts_rank_name = func.ts_rank(
+                func.to_tsvector("english", Parts.part_terminology_name),
+                func.to_tsquery("english", " & ".join(clean_tokens)),
             )
 
-        return await self.paginate(query, page, page_size)
+            ts_rank_desc = func.ts_rank(
+                func.to_tsvector("english", PartsDescription.parts_description),
+                func.to_tsquery("english", " & ".join(clean_tokens)),
+            )
+
+            # Combine the ranks - give more weight (2x) to matches in name vs description
+            # Also consider similarity and use name as final tiebreaker
+            query = query.order_by(
+                desc(
+                    ts_rank_name * 2.0 + func.coalesce(ts_rank_desc, 0)
+                ),  # Combined text rank
+                desc(
+                    func.similarity(Parts.part_terminology_name, search_term)
+                ),  # Name similarity
+                Parts.part_terminology_name,  # Alphabetical for consistent results
+            )
+        else:
+            # Default ordering if no search term
+            query = query.order_by(Parts.part_terminology_name)
+
+        # Execute and return the result
+        result = await self.paginate(query, page, page_size)
+        return result
 
     async def get_by_category(
         self, category_id: int, page: int = 1, page_size: int = 20
@@ -193,7 +394,7 @@ class PartsRepository(BaseRepository[Parts, uuid.UUID]):
     async def get_supersessions(
         self, part_terminology_id: int
     ) -> Dict[str, List[Parts]]:
-        """Get supersession information for a part.
+        """Get supersession information for a part with all needed data.
 
         Args:
             part_terminology_id: The part terminology ID.
@@ -201,6 +402,7 @@ class PartsRepository(BaseRepository[Parts, uuid.UUID]):
         Returns:
             Dict with superseded_by and supersedes lists.
         """
+        # Use a single query to get all parts that supersede this part
         superseded_by_query = select(Parts).join(
             PartsSupersession,
             and_(
@@ -209,6 +411,7 @@ class PartsRepository(BaseRepository[Parts, uuid.UUID]):
             ),
         )
 
+        # Use a single query to get all parts that this part supersedes
         supersedes_query = select(Parts).join(
             PartsSupersession,
             and_(
@@ -217,12 +420,17 @@ class PartsRepository(BaseRepository[Parts, uuid.UUID]):
             ),
         )
 
+        # Execute both queries
         superseded_by_result = await self.db.execute(superseded_by_query)
         supersedes_result = await self.db.execute(supersedes_query)
 
+        # Get the results as lists
+        superseded_by_parts = list(superseded_by_result.scalars().all())
+        supersedes_parts = list(supersedes_result.scalars().all())
+
         return {
-            "superseded_by": list(superseded_by_result.scalars().all()),
-            "supersedes": list(supersedes_result.scalars().all()),
+            "superseded_by": superseded_by_parts,
+            "supersedes": supersedes_parts,
         }
 
 

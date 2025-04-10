@@ -461,7 +461,7 @@ import { useAuthStore } from '@/stores/auth';
 import fitmentService from '@/services/fitment';
 import fitmentProcessingService, { ProcessFitmentResponse } from '@/services/fitmentProcessing';
 import { Fitment } from '@/types/fitment';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 import { parseValidationErrors } from '@/utils/error-handler';
 import { Product } from '@/types/product';
 

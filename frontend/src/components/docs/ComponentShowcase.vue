@@ -1,0 +1,336 @@
+<!-- src/views/ComponentShowcase.vue -->
+<template>
+  <div class="component-showcase">
+    <page-header
+      title="Component Showcase"
+      subtitle="Interactive examples of all available UI components"
+      icon="mdi-view-dashboard-variant"
+    />
+
+    <base-tabs
+      v-model="activeTab"
+      :tabs="tabs"
+      use-card
+    >
+      <!-- Dialog Components -->
+      <template #tab-dialogs>
+        <v-row>
+          <v-col cols="12" md="6">
+            <base-card title="Base Dialog">
+              <p>Flexible dialog component with customizable header, content, and actions.</p>
+              <template #actions>
+                <v-spacer></v-spacer>
+                <base-button @click="openBaseDialog">Open Dialog</base-button>
+              </template>
+            </base-card>
+
+            <base-dialog
+              v-model="baseDialogOpen"
+              title="Sample Dialog"
+              prepend-icon="mdi-information"
+              max-width="500"
+            >
+              <p>This is a basic dialog with customizable content. You can add any content here.</p>
+              <p class="mt-4">Dialogs are useful for displaying additional information or requesting user input without navigating away from the current page.</p>
+
+              <template #actions>
+                <v-spacer></v-spacer>
+                <base-button variant="text" @click="baseDialogOpen = false">Close</base-button>
+                <base-button color="primary" @click="baseDialogOpen = false">Confirm</base-button>
+              </template>
+            </base-dialog>
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <base-card title="Form Dialog">
+              <p>Dialog with integrated form handling and validation.</p>
+              <template #actions>
+                <v-spacer></v-spacer>
+                <base-button @click="openFormDialog">Open Form Dialog</base-button>
+              </template>
+            </base-card>
+
+            <form-dialog
+              v-model="formDialogOpen"
+              title="Form Dialog Example"
+              @submit="handleFormSubmit"
+              @cancel="formDialogOpen = false"
+              :loading="dialogLoading"
+            >
+              <form-text-field
+                v-model="formData.name"
+                label="Name"
+                required
+              ></form-text-field>
+
+              <form-text-field
+                v-model="formData.email"
+                label="Email"
+                type="email"
+                required
+              ></form-text-field>
+            </form-dialog>
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <base-card title="Confirmation Dialog">
+              <p>Dialog for confirming actions with different options.</p>
+              <template #actions>
+                <v-spacer></v-spacer>
+                <base-button
+                  color="error"
+                  @click="openConfirmDialog"
+                  class="me-2"
+                >
+                  Confirmation
+                </base-button>
+                <base-button
+                  color="warning"
+                  @click="openMultiActionDialog"
+                >
+                  Multiple Actions
+                </base-button>
+              </template>
+            </base-card>
+
+            <confirmation-dialog
+              v-model="confirmDialogOpen"
+              title="Confirm Deletion"
+              message="Are you sure you want to delete this item? This action cannot be undone."
+              icon="mdi-alert"
+              icon-color="error"
+              confirm-text="Delete"
+              confirm-color="error"
+              @confirm="handleConfirm"
+            ></confirmation-dialog>
+
+            <confirmation-dialog
+              v-model="multiActionDialogOpen"
+              title="Choose an Action"
+              message="Please select what you'd like to do with this item."
+              type="multiple"
+              :actions="[
+                { text: 'Edit', value: 'edit', color: 'primary', icon: 'mdi-pencil' },
+                { text: 'Duplicate', value: 'duplicate', color: 'info', icon: 'mdi-content-copy' },
+                { text: 'Archive', value: 'archive', color: 'warning', icon: 'mdi-archive' },
+                { text: 'Delete', value: 'delete', color: 'error', icon: 'mdi-delete' }
+              ]"
+              @action="handleAction"
+            ></confirmation-dialog>
+          </v-col>
+        </v-row>
+      </template>
+
+      <!-- Notification Components -->
+      <template #tab-notifications>
+        <v-row>
+          <v-col cols="12" md="6">
+            <base-card title="Toast Notifications">
+              <p>Display toast notifications for user feedback.</p>
+              <v-row class="mt-4">
+                <v-col cols="6" sm="3">
+                  <base-button
+                    color="success"
+                    block
+                    @click="showSuccessNotification"
+                  >
+                    Success
+                  </base-button>
+                </v-col>
+
+                <v-col cols="6" sm="3">
+                  <base-button
+                    color="error"
+                    block
+                    @click="showErrorNotification"
+                  >
+                    Error
+                  </base-button>
+                </v-col>
+
+                <v-col cols="6" sm="3">
+                  <base-button
+                    color="warning"
+                    block
+                    @click="showWarningNotification"
+                  >
+                    Warning
+                  </base-button>
+                </v-col>
+
+                <v-col cols="6" sm="3">
+                  <base-button
+                    color="info"
+                    block
+                    @click="showInfoNotification"
+                  >
+                    Info
+                  </base-button>
+                </v-col>
+              </v-row>
+            </base-card>
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <base-card title="Advanced Notifications">
+              <p>Customizable notifications with actions and different positions.</p>
+              <v-row class="mt-4">
+                <v-col cols="6">
+                  <base-button
+                    color="primary"
+                    block
+                    @click="showActionNotification"
+                  >
+                    With Action
+                  </base-button>
+                </v-col>
+
+                <v-col cols="6">
+                  <base-button
+                    color="secondary"
+                    block
+                    @click="showPositionedNotification"
+                  >
+                    Custom Position
+                  </base-button>
+                </v-col>
+              </v-row>
+            </base-card>
+          </v-col>
+        </v-row>
+      </template>
+
+      <!-- Other tabs for different component categories -->
+      <!-- ... -->
+    </base-tabs>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { notificationService, NotificationPosition } from '@/utils/notifications'
+
+// Tabs
+const activeTab = ref('dialogs')
+const tabs = [
+  { title: 'Dialogs', value: 'dialogs', icon: 'mdi-window-maximize' },
+  { title: 'Notifications', value: 'notifications', icon: 'mdi-bell' },
+  { title: 'Forms', value: 'forms', icon: 'mdi-form-select' },
+  { title: 'Tables', value: 'tables', icon: 'mdi-table' },
+  { title: 'Charts', value: 'charts', icon: 'mdi-chart-line' },
+  { title: 'Navigation', value: 'navigation', icon: 'mdi-navigation' },
+  { title: 'Display', value: 'display', icon: 'mdi-view-grid' },
+  { title: 'Loaders', value: 'loaders', icon: 'mdi-loading' },
+]
+
+// Dialog states
+const baseDialogOpen = ref(false)
+const formDialogOpen = ref(false)
+const confirmDialogOpen = ref(false)
+const multiActionDialogOpen = ref(false)
+const dialogLoading = ref(false)
+
+// Form data
+const formData = ref({
+  name: '',
+  email: '',
+})
+
+// Dialog handlers
+const openBaseDialog = () => {
+  baseDialogOpen.value = true
+}
+
+const openFormDialog = () => {
+  formDialogOpen.value = true
+}
+
+const openConfirmDialog = () => {
+  confirmDialogOpen.value = true
+}
+
+const openMultiActionDialog = () => {
+  multiActionDialogOpen.value = true
+}
+
+const handleFormSubmit = () => {
+  dialogLoading.value = true
+
+  // Simulate API call
+  setTimeout(() => {
+    dialogLoading.value = false
+    formDialogOpen.value = false
+
+    // Show success notification
+    notificationService.success('Form submitted successfully!', {
+      title: 'Success',
+    })
+  }, 1000)
+}
+
+const handleConfirm = () => {
+  notificationService.success('Item deleted successfully!', {
+    title: 'Deleted',
+  })
+}
+
+const handleAction = (action: any) => {
+  notificationService.info(`Action "${action.text}" selected`, {
+    title: 'Action Selected',
+  })
+}
+
+// Notification examples
+const showSuccessNotification = () => {
+  notificationService.success('Operation completed successfully!', {
+    title: 'Success',
+  })
+}
+
+const showErrorNotification = () => {
+  notificationService.error('An error occurred while processing your request.', {
+    title: 'Error',
+  })
+}
+
+const showWarningNotification = () => {
+  notificationService.warning('There might be some issues with your request.', {
+    title: 'Warning',
+  })
+}
+
+const showInfoNotification = () => {
+  notificationService.info('Here is some information you might find useful.', {
+    title: 'Information',
+  })
+}
+
+const showActionNotification = () => {
+  notificationService.prompt(
+    'Would you like to view more details?',
+    'View Details',
+    () => {
+      notificationService.info('You clicked the action button!')
+    },
+    {
+      title: 'Action Required',
+      type: 'info',
+    }
+  )
+}
+
+const showPositionedNotification = () => {
+  notificationService.info('This notification appears at the top right!', {
+    position: NotificationPosition.TOP_RIGHT,
+    timeout: 5000,
+  })
+}
+</script>
+
+<style scoped>
+.component-showcase {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+</style>

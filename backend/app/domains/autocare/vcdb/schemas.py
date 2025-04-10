@@ -299,17 +299,17 @@ class EngineBoreStroke(BaseModel):
 class EngineBase(BaseModel):
     """Schema for engine base data."""
 
-    id: uuid.UUID = Field(..., description='Unique identifier')
-    engine_base_id: int = Field(..., description='Engine base ID from VCdb')
-    liter: str = Field(..., description='Engine displacement in liters')
-    cc: str = Field(..., description='Engine displacement in cc')
-    cid: str = Field(..., description='Engine displacement in cubic inches')
-    cylinders: str = Field(..., description='Number of cylinders')
-    block_type: str = Field(..., description='Block type code')
-    eng_bore_in: str = Field(..., description='Bore in inches')
-    eng_bore_metric: str = Field(..., description='Bore in metric')
-    eng_stroke_in: str = Field(..., description='Stroke in inches')
-    eng_stroke_metric: str = Field(..., description='Stroke in metric')
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    engine_base_id: int = Field(..., description="Engine base ID from VCdb")
+    liter: str = Field(..., description="Engine displacement in liters")
+    cc: str = Field(..., description="Engine displacement in cc")
+    cid: str = Field(..., description="Engine displacement in cubic inches")
+    cylinders: str = Field(..., description="Number of cylinders")
+    block_type: str = Field(..., description="Block type code")
+    eng_bore_in: str = Field(..., description="Bore in inches")
+    eng_bore_metric: str = Field(..., description="Bore in metric")
+    eng_stroke_in: str = Field(..., description="Stroke in inches")
+    eng_stroke_metric: str = Field(..., description="Stroke in metric")
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -521,20 +521,20 @@ class PowerOutput(BaseModel):
 class EngineConfig(BaseModel):
     """Schema for engine configuration data."""
 
-    id: uuid.UUID = Field(..., description='Unique identifier')
-    engine_config_id: int = Field(..., description='Engine config ID from VCdb')
-    engine_base_id: int = Field(..., description='Engine base ID')
-    engine_designation_id: int = Field(..., description='Engine designation ID')
-    engine_vin_id: int = Field(..., description='Engine VIN ID')
-    valves_id: int = Field(..., description='Valves ID')
-    fuel_delivery_config_id: int = Field(..., description='Fuel delivery config ID')
-    aspiration_id: int = Field(..., description='Aspiration ID')
-    cylinder_head_type_id: int = Field(..., description='Cylinder head type ID')
-    fuel_type_id: int = Field(..., description='Fuel type ID')
-    ignition_system_type_id: int = Field(..., description='Ignition system type ID')
-    engine_mfr_id: int = Field(..., description='Engine manufacturer ID')
-    engine_version_id: int = Field(..., description='Engine version ID')
-    power_output_id: int = Field(..., description='Power output ID')
+    id: uuid.UUID = Field(..., description="Unique identifier")
+    engine_config_id: int = Field(..., description="Engine config ID from VCdb")
+    engine_base_id: int = Field(..., description="Engine base ID")
+    engine_designation_id: int = Field(..., description="Engine designation ID")
+    engine_vin_id: int = Field(..., description="Engine VIN ID")
+    valves_id: int = Field(..., description="Valves ID")
+    fuel_delivery_config_id: int = Field(..., description="Fuel delivery config ID")
+    aspiration_id: int = Field(..., description="Aspiration ID")
+    cylinder_head_type_id: int = Field(..., description="Cylinder head type ID")
+    fuel_type_id: int = Field(..., description="Fuel type ID")
+    ignition_system_type_id: int = Field(..., description="Ignition system type ID")
+    engine_mfr_id: int = Field(..., description="Engine manufacturer ID")
+    engine_version_id: int = Field(..., description="Engine version ID")
+    power_output_id: int = Field(..., description="Power output ID")
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -560,7 +560,9 @@ class EngineConfig2(BaseModel):
 
     # Selected related entities
     engine_base: Optional[EngineBase2] = Field(None, description="Engine base details")
-    engine_block: Optional[EngineBlock] = Field(None, description="Engine block details")
+    engine_block: Optional[EngineBlock] = Field(
+        None, description="Engine block details"
+    )
     fuel_type: Optional[FuelType] = Field(None, description="Fuel type details")
     aspiration: Optional[Aspiration] = Field(None, description="Aspiration details")
 

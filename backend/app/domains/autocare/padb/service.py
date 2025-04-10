@@ -45,6 +45,25 @@ class PAdbService:
         version = await self.repository.get_version()
         return version or "No version information available"
 
+    async def get_stats(self) -> Dict[str, Any]:
+        """Get PAdb statistics.
+
+        Returns:
+            Dictionary with PAdb statistics
+        """
+
+        total_attributes = await self.repository.attribute_repo.count()
+        metadata_count = await self.repository.metadata_repo.count()
+        valid_values = await self.repository.valid_value_repo.count()
+        uom_codes = await self.repository.uom_repo.count()
+
+        return {
+            "totalAttributes": total_attributes,
+            "metadataCount": metadata_count,
+            "validValueCount": valid_values,
+            "uomCodeCount": uom_codes,
+        }
+
     async def update_database(self, file_path: str) -> Dict[str, Any]:
         """Update the PAdb database from a file.
 

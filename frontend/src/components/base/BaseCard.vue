@@ -1,0 +1,113 @@
+<!-- src/components/base/BaseCard.vue -->
+<template>
+  <v-card
+    :color="color"
+    :variant="variant"
+    :elevation="elevation"
+    :border="border"
+    :rounded="rounded"
+    :class="customClass"
+    :loading="loading"
+    :disabled="disabled"
+    :flat="flat"
+    :hover="hover"
+  >
+    <v-card-title v-if="$slots.title || title">
+      <slot name="title">{{ title }}</slot>
+      <v-spacer v-if="$slots['title-actions']"></v-spacer>
+      <slot name="title-actions"></slot>
+    </v-card-title>
+
+    <v-card-subtitle v-if="$slots.subtitle || subtitle">
+      <slot name="subtitle">{{ subtitle }}</slot>
+    </v-card-subtitle>
+
+    <v-divider v-if="($slots.title || title) && !noTitleDivider"></v-divider>
+
+    <v-card-text>
+      <div v-if="loading && $slots.loading" class="text-center py-4">
+        <slot name="loading">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          <div class="mt-2">Loading...</div>
+        </slot>
+      </div>
+      <div v-else-if="error && $slots.error" class="text-center py-4">
+        <slot name="error">
+          <v-alert type="error" :text="error" variant="tonal"></v-alert>
+        </slot>
+      </div>
+      <slot v-else></slot>
+    </v-card-text>
+
+    <v-divider v-if="$slots.actions && !noActionsDivider"></v-divider>
+
+    <v-card-actions v-if="$slots.actions">
+      <slot name="actions"></slot>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script setup lang="ts">
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+  },
+  subtitle: {
+    type: String,
+    default: '',
+  },
+  color: {
+    type: String,
+    default: undefined,
+  },
+  variant: {
+    type: String,
+    default: undefined,
+  },
+  elevation: {
+    type: [Number, String],
+    default: undefined,
+  },
+  border: {
+    type: Boolean,
+    default: false,
+  },
+  rounded: {
+    type: [Boolean, String],
+    default: 'sm',
+  },
+  customClass: {
+    type: String,
+    default: '',
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  flat: {
+    type: Boolean,
+    default: false,
+  },
+  hover: {
+    type: Boolean,
+    default: false,
+  },
+  error: {
+    type: String,
+    default: '',
+  },
+  noTitleDivider: {
+    type: Boolean,
+    default: false,
+  },
+  noActionsDivider: {
+    type: Boolean,
+    default: false,
+  },
+})
+</script>

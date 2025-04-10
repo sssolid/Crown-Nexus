@@ -4,14 +4,14 @@
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { padbService } from '@/services';
+import {padbService} from '@/services';
 import {
   PartAttribute,
   PartAttributeDetail,
   AttributeSearchParams,
   AttributeSearchResponse,
   ApiError,
-  PartAttributesResponse
+  PartAttributesResponse, PAdbStats
 } from '@/types';
 
 export const usePAdbStore = defineStore('padb', () => {
@@ -19,6 +19,7 @@ export const usePAdbStore = defineStore('padb', () => {
   const loading = ref(false);
   const error = ref<ApiError | null>(null);
   const version = ref<string | null>(null);
+  const stats = ref<PAdbStats | null>(null);
   const searchResults = ref<AttributeSearchResponse | null>(null);
   const currentAttribute = ref<PartAttributeDetail | null>(null);
   const partAttributes = ref<PartAttributesResponse | null>(null);
@@ -52,6 +53,18 @@ export const usePAdbStore = defineStore('padb', () => {
       setLoading(true);
       clearError();
       version.value = await padbService.getVersion();
+    } catch (err) {
+      setError(err as ApiError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      stats.value = await padbService.getStats();
     } catch (err) {
       setError(err as ApiError);
     } finally {
@@ -150,6 +163,7 @@ export const usePAdbStore = defineStore('padb', () => {
     loading,
     error,
     version,
+    stats,
     searchResults,
     currentAttribute,
     partAttributes,
@@ -167,6 +181,7 @@ export const usePAdbStore = defineStore('padb', () => {
     setLoading,
     setError,
     fetchVersion,
+    fetchStats,
     searchAttributes,
     fetchAttributeDetails,
     fetchPartAttributes,

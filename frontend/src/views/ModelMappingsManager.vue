@@ -339,7 +339,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import modelMappingService, { ModelMapping } from '@/services/modelMapping';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 interface MappingForm {
   id?: number;

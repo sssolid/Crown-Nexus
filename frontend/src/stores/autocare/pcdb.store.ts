@@ -4,7 +4,7 @@
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { pcdbService } from '@/services';
+import {pcdbService} from '@/services';
 import {
   Category,
   SubCategory,
@@ -13,7 +13,7 @@ import {
   PartSearchParams,
   PartSearchResponse,
   ApiError,
-  Position
+  Position, PCdbStats
 } from '@/types';
 
 export const usePCdbStore = defineStore('pcdb', () => {
@@ -21,6 +21,7 @@ export const usePCdbStore = defineStore('pcdb', () => {
   const loading = ref(false);
   const error = ref<ApiError | null>(null);
   const version = ref<string | null>(null);
+  const stats = ref<PCdbStats | null>(null);
   const categories = ref<Category[]>([]);
   const subcategories = ref<SubCategory[]>([]);
   const positions = ref<Position[]>([]);
@@ -59,6 +60,18 @@ export const usePCdbStore = defineStore('pcdb', () => {
       setLoading(true);
       clearError();
       version.value = await pcdbService.getVersion();
+    } catch (err) {
+      setError(err as ApiError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      stats.value = await pcdbService.getStats();
     } catch (err) {
       setError(err as ApiError);
     } finally {
@@ -193,6 +206,7 @@ export const usePCdbStore = defineStore('pcdb', () => {
     loading,
     error,
     version,
+    stats,
     categories,
     subcategories,
     positions,
@@ -212,6 +226,7 @@ export const usePCdbStore = defineStore('pcdb', () => {
     setLoading,
     setError,
     fetchVersion,
+    fetchStats,
     fetchCategories,
     searchCategories,
     fetchSubcategoriesByCategory,

@@ -1,0 +1,190 @@
+<!-- src/components/charts/BaseChart.vue -->
+<template>
+  <div class="chart-container" :style="containerStyle">
+    <div v-if="loading" class="chart-loading">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <div class="mt-2">Loading chart data...</div>
+    </div>
+
+    <div v-else-if="error" class="chart-error">
+      <v-icon icon="mdi-alert-circle" color="error" size="large"></v-icon>
+      <div class="mt-2">{{ error }}</div>
+    </div>
+
+    <div v-else-if="!data || data.length === 0" class="chart-empty">
+      <v-icon icon="mdi-chart-line" color="grey" size="large"></v-icon>
+      <div class="mt-2">No data available</div>
+    </div>
+
+    <div v-else class="chart-content" :style="{ height: contentHeight }">
+      <apexchart
+        :type="type"
+        :options="chartOptions"
+        :series="seriesData"
+        :height="typeof height === 'number' ? height : undefined"
+        :width="typeof width === 'number' ? width : undefined"
+      />
+    </div>
+
+    <div v-if="caption" class="chart-caption text-center mt-2">
+      {{ caption }}
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { PropType, computed } from 'vue'
+import VueApexCharts from 'vue3-apexcharts'
+
+type ChartType = 'line' | 'bar' | 'area' | 'pie' | 'scatter'
+
+const props = defineProps({
+  type: {
+    type: String as PropType<ChartType>,
+    required: true,
+    validator: (value: string) => ['line', 'bar', 'area', 'pie', 'scatter'].includes(value),
+  },
+  data: {
+    type: Array,
+    default: () => [],
+  },
+  series: {
+    type: Array,
+    default: () => [],
+  },
+  options: {
+    type: Object,
+    default: () => ({}),
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  error: {
+    type: String,
+    default: '',
+  },
+  width: {
+    type: [Number, String],
+    default: '100%',
+  },
+  height: {
+    type: [Number, String],
+    default: 300,
+  },
+  aspectRatio: {
+    type: [Number, String],
+    default: undefined,
+  },
+  caption: {
+    type: String,
+    default: '',
+  },
+  chartProps: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+
+// Compute default chart options based on type
+const defaultOptions = computed(() => {
+  const options = {
+    chart: {
+      type: props.type,
+      toolbar: {
+        show: true,
+      },
+      fontFamily: 'inherit',
+    },
+    grid: {
+      borderColor: '#e0e0e0',
+      strokeDashArray: 3,
+    },
+    tooltip: {
+      enabled: true,
+      theme: 'light',
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    legend: {
+      show: true,
+      position: 'top',
+    },
+    ...props.chartProps,
+  }
+
+  return options
+})
+
+// Merge user options with defaults
+const chartOptions = computed(() => ({
+  ...defaultOptions.value,
+  ...props.options,
+}))
+
+// Generate series data
+const seriesData = computed(() => {
+  if (props.series && props.series.length > 0) {
+    return props.series
+  }
+
+  // If no explicit series provided, attempt to transform the data
+  // This is a simplified approach and may need to be customized
+  if (props.type === 'pie') {
+    return props.data
+  }
+
+  // Default to passing data directly to ApexCharts
+  return props.data
+})
+
+// Compute content height
+const contentHeight = computed(() => {
+  if (typeof props.height === 'number') {
+    return `${props.height}px`
+  }
+  return props.height
+})
+
+// Compute container style with aspect ratio if provided
+const containerStyle = computed(() => {
+  if (props.aspectRatio) {
+    return {
+      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+      aspectRatio: props.aspectRatio,
+    }
+  }
+
+  return {
+    width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+  }
+})
+</script>
+
+<style scoped>
+.chart-container {
+  position: relative;
+  width: 100%;
+}
+
+.chart-loading,
+.chart-error,
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+}
+
+.chart-content {
+  width: 100%;
+}
+
+.chart-caption {
+  font-size: 0.9rem;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+}
+</style>

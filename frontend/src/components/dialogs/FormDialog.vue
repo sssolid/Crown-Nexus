@@ -1,0 +1,160 @@
+<!-- src/components/dialogs/FormDialog.vue -->
+<template>
+  <base-dialog
+    v-model="dialogVisible"
+    :title="title"
+    :max-width="maxWidth"
+    :persistent="persistent"
+    :scrollable="scrollable"
+    :transition="transition"
+    :show-close-button="showCloseButton"
+    :prepend-icon="prependIcon"
+    :prepend-icon-color="prependIconColor"
+    @close="onClose"
+    @open="onOpen"
+  >
+    <v-form ref="form" @submit.prevent="handleSubmit">
+      <slot></slot>
+
+      <template v-if="$slots.actions || showDefaultActions">
+        <slot name="actions">
+          <div class="d-flex justify-end mt-4">
+            <v-btn
+              v-if="showCancelButton"
+              variant="text"
+              color="secondary"
+              class="me-3"
+              @click="onCancel"
+              :disabled="loading"
+            >
+              {{ cancelText }}
+            </v-btn>
+
+            <v-btn
+              type="submit"
+              color="primary"
+              :loading="loading"
+              :disabled="loading || disabled"
+            >
+              {{ submitText }}
+            </v-btn>
+          </div>
+        </slot>
+      </template>
+    </v-form>
+  </base-dialog>
+</template>
+
+<script setup lang="ts">
+import {ref, watch} from 'vue'
+import BaseDialog from './BaseDialog.vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  title: {
+    type: String,
+    default: 'Form Dialog',
+  },
+  maxWidth: {
+    type: [String, Number],
+    default: 600,
+  },
+  persistent: {
+    type: Boolean,
+    default: true,
+  },
+  scrollable: {
+    type: Boolean,
+    default: false,
+  },
+  transition: {
+    type: String,
+    default: 'dialog-transition',
+  },
+  showCloseButton: {
+    type: Boolean,
+    default: true,
+  },
+  prependIcon: {
+    type: String,
+    default: '',
+  },
+  prependIconColor: {
+    type: String,
+    default: '',
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  showDefaultActions: {
+    type: Boolean,
+    default: true,
+  },
+  showCancelButton: {
+    type: Boolean,
+    default: true,
+  },
+  submitText: {
+    type: String,
+    default: 'Submit',
+  },
+  cancelText: {
+    type: String,
+    default: 'Cancel',
+  },
+})
+
+const emit = defineEmits([
+  'update:modelValue',
+  'close',
+  'open',
+  'cancel',
+  'submit'
+])
+
+const form = ref<any>(null)
+const dialogVisible = ref(props.modelValue)
+
+const handleSubmit = () => {
+  emit('submit')
+}
+
+const onCancel = () => {
+  emit('cancel')
+  dialogVisible.value = false
+}
+
+const onClose = () => {
+  emit('close')
+  emit('update:modelValue', false)
+}
+
+const onOpen = () => {
+  emit('open')
+}
+
+// Watch for external changes to modelValue
+watch(() => props.modelValue, (newVal) => {
+  dialogVisible.value = newVal
+})
+
+// Watch for internal changes and emit updates
+watch(dialogVisible, (newVal) => {
+  emit('update:modelValue', newVal)
+})
+
+defineExpose({
+  form,
+  close: () => {
+    dialogVisible.value = false
+  },
+})
+</script>

@@ -35,6 +35,7 @@ async def get_version(
     version = await service.get_version()
     return version
 
+
 @router.get("/stats")
 async def get_vcdb_stats(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -50,6 +51,7 @@ async def get_vcdb_stats(
     service = VCdbService(db)
     stats = await service.get_stats()
     return stats
+
 
 @router.get("/years")
 async def get_years(
@@ -411,11 +413,7 @@ async def search_base_vehicles(
     """
     service = VCdbService(db)
     result = await service.search_base_vehicles(
-        year=year,
-        make=make,
-        model=model,
-        page=page,
-        page_size=page_size
+        year=year, make=make, model=model, page=page, page_size=page_size
     )
     return result
 
@@ -427,8 +425,12 @@ async def search_vehicles(
     make: Optional[str] = Query(None, description="Filter by make name"),
     model: Optional[str] = Query(None, description="Filter by model name"),
     submodel: Optional[str] = Query(None, description="Filter by submodel name"),
-    engine_config: Optional[str] = Query(None, description="Filter by engine configuration"),
-    transmission_type: Optional[str] = Query(None, description="Filter by transmission type"),
+    engine_config: Optional[str] = Query(
+        None, description="Filter by engine configuration"
+    ),
+    transmission_type: Optional[str] = Query(
+        None, description="Filter by transmission type"
+    ),
     body_type: Optional[str] = Query(None, description="Filter by body type"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
@@ -452,15 +454,15 @@ async def search_vehicles(
     """
     service = VCdbService(db)
     result = await service.search_vehicles(
-            year=year,
-            make=make,
-            model=model,
-            submodel=submodel,
-            engine_config=engine_config,
-            transmission_type=transmission_type,
-            body_type=body_type,
-            page=page,
-            page_size=page_size,
+        year=year,
+        make=make,
+        model=model,
+        submodel=submodel,
+        engine_config=engine_config,
+        transmission_type=transmission_type,
+        body_type=body_type,
+        page=page,
+        page_size=page_size,
     )
     return result
 
@@ -507,7 +509,9 @@ async def get_vehicle_details(
 async def get_vehicle_configurations(
     vehicle_id: int,
     db: Annotated[AsyncSession, Depends(get_db)],
-    use_config2: bool = Query(True, description="Use EngineConfig2 model instead of original EngineConfig"),
+    use_config2: bool = Query(
+        True, description="Use EngineConfig2 model instead of original EngineConfig"
+    ),
 ) -> Dict[str, Any]:
     """Get configurations for a vehicle.
 
@@ -603,9 +607,15 @@ async def get_transmission(
 @router.get("/transmissions/search")
 async def search_transmissions(
     db: Annotated[AsyncSession, Depends(get_db)],
-    transmission_type_id: Optional[int] = Query(None, description="Filter by transmission type ID"),
-    transmission_num_speeds_id: Optional[int] = Query(None, description="Filter by number of speeds ID"),
-    transmission_control_type_id: Optional[int] = Query(None, description="Filter by control type ID"),
+    transmission_type_id: Optional[int] = Query(
+        None, description="Filter by transmission type ID"
+    ),
+    transmission_num_speeds_id: Optional[int] = Query(
+        None, description="Filter by number of speeds ID"
+    ),
+    transmission_control_type_id: Optional[int] = Query(
+        None, description="Filter by control type ID"
+    ),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
 ) -> Dict[str, Any]:

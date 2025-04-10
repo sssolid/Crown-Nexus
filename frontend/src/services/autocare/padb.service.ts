@@ -8,7 +8,7 @@ import {
   PartAttributeDetail,
   AttributeSearchParams,
   AttributeSearchResponse,
-  PartAttributesResponse
+  PartAttributesResponse, PAdbStats
 } from '@/types';
 
 export class PAdbService extends ApiService {
@@ -19,6 +19,15 @@ export class PAdbService extends ApiService {
    */
   async getVersion(): Promise<string> {
     return this.get<string>(`${this.baseUrl}/version`);
+  }
+
+    /**
+   * Fetches statistical data from the specified endpoint.
+   *
+   * @return {Promise<any>} A promise that resolves to the statistical data fetched from the server.
+   */
+  async getStats(): Promise<PAdbStats> {
+    return this.get<PAdbStats>(`${this.baseUrl}/stats`);
   }
 
   /**

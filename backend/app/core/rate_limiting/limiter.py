@@ -59,7 +59,8 @@ class RateLimiter:
         )
         self.prefix: str = prefix
         self.default_rule: RateLimitRule = default_rule or RateLimitRule(
-            requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE,
+            requests_per_window=settings.RATE_LIMIT_REQUESTS_PER_MINUTE
+            * settings.RATE_LIMIT_BURST_MULTIPLIER,
             window_seconds=60,
         )
         self._counters: Dict[str, Dict[float, int]] = {}

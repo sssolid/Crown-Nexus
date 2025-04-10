@@ -60,8 +60,13 @@ from app.domains.autocare.vcdb.models import (
     TransmissionMfrCode,
     ElecControlled,
     Transmission,
-    WheelBase, VehicleToEngineConfig, VehicleToTransmission, VehicleToDriveType, VehicleToBodyStyleConfig,
-    VehicleToBrakeConfig, VehicleToWheelBase,
+    WheelBase,
+    VehicleToEngineConfig,
+    VehicleToTransmission,
+    VehicleToDriveType,
+    VehicleToBodyStyleConfig,
+    VehicleToBrakeConfig,
+    VehicleToWheelBase,
 )
 
 
@@ -196,16 +201,12 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
             .join(Model, BaseVehicle.model_id == Model.model_id)
             .join(SubModel, Vehicle.submodel_id == SubModel.submodel_id)
             .options(
-                selectinload(Vehicle.base_vehicle)
-                .selectinload(BaseVehicle.make),
-                selectinload(Vehicle.base_vehicle)
-                .selectinload(BaseVehicle.year),
-                selectinload(Vehicle.base_vehicle)
-                .selectinload(BaseVehicle.model),
+                selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.make),
+                selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.year),
+                selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.model),
                 selectinload(Vehicle.submodel),
                 selectinload(Vehicle.region),
             )
-
         )
 
         # Add filters
@@ -225,9 +226,9 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
 
         if body_type:
             # Add join for body type
-            query = query.join(
-                Vehicle.body_style_configs
-            ).join(BodyType, BodyStyleConfig.body_type_id == BodyType.body_type_id)
+            query = query.join(Vehicle.body_style_configs).join(
+                BodyType, BodyStyleConfig.body_type_id == BodyType.body_type_id
+            )
             conditions.append(BodyType.name.ilike(f"%{body_type}%"))
 
         if engine_config:
@@ -238,7 +239,9 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
         if transmission_type:
             # Add join for transmission
             query = query.join(Vehicle.transmissions).join(TransmissionBase)
-            conditions.append(TransmissionBase.transmission_type_id == transmission_type)
+            conditions.append(
+                TransmissionBase.transmission_type_id == transmission_type
+            )
 
         if conditions:
             query = query.where(and_(*conditions))
@@ -272,20 +275,30 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
 
     async def get_vehicle_configurations(self, vehicle_id: int) -> Dict[str, List[Any]]:
         """Get vehicle configurations with original EngineConfig."""
-        vehicle_query = select(Vehicle).where(Vehicle.vehicle_id == vehicle_id).options(
-            selectinload(Vehicle.engine_configs),
-            selectinload(Vehicle.transmissions),
-            selectinload(Vehicle.drive_types),
-            selectinload(Vehicle.body_style_configs),
-            selectinload(Vehicle.brake_configs),
-            selectinload(Vehicle.wheel_bases)
+        vehicle_query = (
+            select(Vehicle)
+            .where(Vehicle.vehicle_id == vehicle_id)
+            .options(
+                selectinload(Vehicle.engine_configs),
+                selectinload(Vehicle.transmissions),
+                selectinload(Vehicle.drive_types),
+                selectinload(Vehicle.body_style_configs),
+                selectinload(Vehicle.brake_configs),
+                selectinload(Vehicle.wheel_bases),
+            )
         )
         result = await self.db.execute(vehicle_query)
         vehicle = result.scalars().first()
 
         if not vehicle:
-            return {'engines': [], 'transmissions': [], 'drive_types': [], 'body_styles': [], 'brake_configs': [],
-                    'wheel_bases': []}
+            return {
+                "engines": [],
+                "transmissions": [],
+                "drive_types": [],
+                "body_styles": [],
+                "brake_configs": [],
+                "wheel_bases": [],
+            }
 
         # Get the engine_config_ids from vehicle
         engine_config_ids = [ec.engine_config_id for ec in vehicle.engine_configs]
@@ -294,25 +307,35 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
         engine_configs = []
         for engine_config_id in engine_config_ids:
             # Each engine_config needs a separate query since EngineConfig doesn't have the same relationships
-            ec_query = select(EngineConfig).where(EngineConfig.engine_config_id == engine_config_id)
+            ec_query = select(EngineConfig).where(
+                EngineConfig.engine_config_id == engine_config_id
+            )
             ec_result = await self.db.execute(ec_query)
             ec = ec_result.scalars().first()
             if ec:
                 # Now get the related EngineBase which has the direct attributes
-                base_query = select(EngineBase).where(EngineBase.engine_base_id == ec.engine_base_id)
+                base_query = select(EngineBase).where(
+                    EngineBase.engine_base_id == ec.engine_base_id
+                )
                 base_result = await self.db.execute(base_query)
                 base = base_result.scalars().first()
 
                 # Need to separately query FuelType, Aspiration, PowerOutput
-                fuel_type_query = select(FuelType).where(FuelType.fuel_type_id == ec.fuel_type_id)
+                fuel_type_query = select(FuelType).where(
+                    FuelType.fuel_type_id == ec.fuel_type_id
+                )
                 fuel_type_result = await self.db.execute(fuel_type_query)
                 fuel_type = fuel_type_result.scalars().first()
 
-                aspiration_query = select(Aspiration).where(Aspiration.aspiration_id == ec.aspiration_id)
+                aspiration_query = select(Aspiration).where(
+                    Aspiration.aspiration_id == ec.aspiration_id
+                )
                 aspiration_result = await self.db.execute(aspiration_query)
                 aspiration = aspiration_result.scalars().first()
 
-                power_output_query = select(PowerOutput).where(PowerOutput.power_output_id == ec.power_output_id)
+                power_output_query = select(PowerOutput).where(
+                    PowerOutput.power_output_id == ec.power_output_id
+                )
                 power_output_result = await self.db.execute(power_output_query)
                 power_output = power_output_result.scalars().first()
 
@@ -322,34 +345,48 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
                     "base": base,
                     "fuel_type": fuel_type,
                     "aspiration": aspiration,
-                    "power_output": power_output
+                    "power_output": power_output,
                 }
                 engine_configs.append(engine_combined)
 
         # Rest remains the same
-        transmission_query = select(Transmission).where(
-            Transmission.transmission_id.in_([t.transmission_id for t in vehicle.transmissions])
-        ).options(
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_type),
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_num_speeds),
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_control_type),
-            selectinload(Transmission.transmission_mfr_code),
-            selectinload(Transmission.elec_controlled),
-            selectinload(Transmission.transmission_mfr)
+        transmission_query = (
+            select(Transmission)
+            .where(
+                Transmission.transmission_id.in_(
+                    [t.transmission_id for t in vehicle.transmissions]
+                )
+            )
+            .options(
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_type
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_num_speeds
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_control_type
+                ),
+                selectinload(Transmission.transmission_mfr_code),
+                selectinload(Transmission.elec_controlled),
+                selectinload(Transmission.transmission_mfr),
+            )
         )
         transmissions_result = await self.db.execute(transmission_query)
         transmissions = transmissions_result.unique().all()
 
         return {
-            'engines': engine_configs,
-            'transmissions': transmissions,
-            'drive_types': vehicle.drive_types,
-            'body_styles': vehicle.body_style_configs,
-            'brake_configs': vehicle.brake_configs,
-            'wheel_bases': vehicle.wheel_bases
+            "engines": engine_configs,
+            "transmissions": transmissions,
+            "drive_types": vehicle.drive_types,
+            "body_styles": vehicle.body_style_configs,
+            "brake_configs": vehicle.brake_configs,
+            "wheel_bases": vehicle.wheel_bases,
         }
 
-    async def get_vehicle_configurations2(self, vehicle_id: int) -> Dict[str, List[Any]]:
+    async def get_vehicle_configurations2(
+        self, vehicle_id: int
+    ) -> Dict[str, List[Any]]:
         """Get vehicle configurations with EngineConfig2.
 
         Args:
@@ -359,102 +396,136 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
             Dictionary containing component configurations grouped by type
         """
         # Check if vehicle exists first
-        vehicle_count_query = select(func.count()).where(Vehicle.vehicle_id == vehicle_id)
+        vehicle_count_query = select(func.count()).where(
+            Vehicle.vehicle_id == vehicle_id
+        )
         vehicle_count_result = await self.db.execute(vehicle_count_query)
         vehicle_exists = vehicle_count_result.scalar() > 0
 
         if not vehicle_exists:
-            return {'engines': [], 'transmissions': [], 'drive_types': [], 'body_styles': [], 'brake_configs': [],
-                    'wheel_bases': []}
+            return {
+                "engines": [],
+                "transmissions": [],
+                "drive_types": [],
+                "body_styles": [],
+                "brake_configs": [],
+                "wheel_bases": [],
+            }
 
         # Query for engines directly using the join table
-        engines_query = select(EngineConfig2).join(
-            VehicleToEngineConfig,
-            EngineConfig2.engine_config_id == VehicleToEngineConfig.engine_config_id
-        ).where(
-            VehicleToEngineConfig.vehicle_id == vehicle_id
-        ).options(
-            selectinload(EngineConfig2.engine_base).selectinload(EngineBase2.engine_block),
-            selectinload(EngineConfig2.engine_block),
-            selectinload(EngineConfig2.fuel_type),
-            selectinload(EngineConfig2.aspiration),
-            selectinload(EngineConfig2.power_output)
+        engines_query = (
+            select(EngineConfig2)
+            .join(
+                VehicleToEngineConfig,
+                EngineConfig2.engine_config_id
+                == VehicleToEngineConfig.engine_config_id,
+            )
+            .where(VehicleToEngineConfig.vehicle_id == vehicle_id)
+            .options(
+                selectinload(EngineConfig2.engine_base).selectinload(
+                    EngineBase2.engine_block
+                ),
+                selectinload(EngineConfig2.engine_block),
+                selectinload(EngineConfig2.fuel_type),
+                selectinload(EngineConfig2.aspiration),
+                selectinload(EngineConfig2.power_output),
+            )
         )
         engines_result = await self.db.execute(engines_query)
         engines = engines_result.scalars().all()
 
         # Query for transmissions directly
-        transmissions_query = select(Transmission).join(
-            VehicleToTransmission,
-            Transmission.transmission_id == VehicleToTransmission.transmission_id
-        ).where(
-            VehicleToTransmission.vehicle_id == vehicle_id
-        ).options(
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_type),
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_num_speeds),
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_control_type),
-            selectinload(Transmission.transmission_mfr_code),
-            selectinload(Transmission.elec_controlled),
-            selectinload(Transmission.transmission_mfr)
+        transmissions_query = (
+            select(Transmission)
+            .join(
+                VehicleToTransmission,
+                Transmission.transmission_id == VehicleToTransmission.transmission_id,
+            )
+            .where(VehicleToTransmission.vehicle_id == vehicle_id)
+            .options(
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_type
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_num_speeds
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_control_type
+                ),
+                selectinload(Transmission.transmission_mfr_code),
+                selectinload(Transmission.elec_controlled),
+                selectinload(Transmission.transmission_mfr),
+            )
         )
         transmissions_result = await self.db.execute(transmissions_query)
         transmissions = transmissions_result.scalars().all()
 
         # Query for drive types directly
-        drive_types_query = select(DriveType).join(
-            VehicleToDriveType,
-            DriveType.drive_type_id == VehicleToDriveType.drive_type_id
-        ).where(
-            VehicleToDriveType.vehicle_id == vehicle_id
+        drive_types_query = (
+            select(DriveType)
+            .join(
+                VehicleToDriveType,
+                DriveType.drive_type_id == VehicleToDriveType.drive_type_id,
+            )
+            .where(VehicleToDriveType.vehicle_id == vehicle_id)
         )
         drive_types_result = await self.db.execute(drive_types_query)
         drive_types = drive_types_result.scalars().all()
 
         # Query for body styles directly
-        body_styles_query = select(BodyStyleConfig).join(
-            VehicleToBodyStyleConfig,
-            BodyStyleConfig.body_style_config_id == VehicleToBodyStyleConfig.body_style_config_id
-        ).where(
-            VehicleToBodyStyleConfig.vehicle_id == vehicle_id
-        ).options(
-            selectinload(BodyStyleConfig.body_type),
-            selectinload(BodyStyleConfig.body_num_doors)
+        body_styles_query = (
+            select(BodyStyleConfig)
+            .join(
+                VehicleToBodyStyleConfig,
+                BodyStyleConfig.body_style_config_id
+                == VehicleToBodyStyleConfig.body_style_config_id,
+            )
+            .where(VehicleToBodyStyleConfig.vehicle_id == vehicle_id)
+            .options(
+                selectinload(BodyStyleConfig.body_type),
+                selectinload(BodyStyleConfig.body_num_doors),
+            )
         )
         body_styles_result = await self.db.execute(body_styles_query)
         body_styles = body_styles_result.scalars().all()
 
         # Query for brake configs directly
-        brake_configs_query = select(BrakeConfig).join(
-            VehicleToBrakeConfig,
-            BrakeConfig.brake_config_id == VehicleToBrakeConfig.brake_config_id
-        ).where(
-            VehicleToBrakeConfig.vehicle_id == vehicle_id
-        ).options(
-            selectinload(BrakeConfig.front_brake_type),
-            selectinload(BrakeConfig.rear_brake_type),
-            selectinload(BrakeConfig.brake_system),
-            selectinload(BrakeConfig.brake_abs)
+        brake_configs_query = (
+            select(BrakeConfig)
+            .join(
+                VehicleToBrakeConfig,
+                BrakeConfig.brake_config_id == VehicleToBrakeConfig.brake_config_id,
+            )
+            .where(VehicleToBrakeConfig.vehicle_id == vehicle_id)
+            .options(
+                selectinload(BrakeConfig.front_brake_type),
+                selectinload(BrakeConfig.rear_brake_type),
+                selectinload(BrakeConfig.brake_system),
+                selectinload(BrakeConfig.brake_abs),
+            )
         )
         brake_configs_result = await self.db.execute(brake_configs_query)
         brake_configs = brake_configs_result.scalars().all()
 
         # Query for wheel bases directly
-        wheel_bases_query = select(WheelBase).join(
-            VehicleToWheelBase,
-            WheelBase.wheel_base_id == VehicleToWheelBase.wheel_base_id
-        ).where(
-            VehicleToWheelBase.vehicle_id == vehicle_id
+        wheel_bases_query = (
+            select(WheelBase)
+            .join(
+                VehicleToWheelBase,
+                WheelBase.wheel_base_id == VehicleToWheelBase.wheel_base_id,
+            )
+            .where(VehicleToWheelBase.vehicle_id == vehicle_id)
         )
         wheel_bases_result = await self.db.execute(wheel_bases_query)
         wheel_bases = wheel_bases_result.scalars().all()
 
         return {
-            'engines': engines,
-            'transmissions': transmissions,
-            'drive_types': drive_types,
-            'body_styles': body_styles,
-            'brake_configs': brake_configs,
-            'wheel_bases': wheel_bases
+            "engines": engines,
+            "transmissions": transmissions,
+            "drive_types": drive_types,
+            "body_styles": body_styles,
+            "brake_configs": brake_configs,
+            "wheel_bases": wheel_bases,
         }
 
     async def get_vehicle_with_components2(self, vehicle_id: int) -> Dict[str, Any]:
@@ -469,12 +540,16 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
             Dictionary with vehicle and all its component collections
         """
         # First get basic vehicle info
-        vehicle_query = select(Vehicle).where(Vehicle.vehicle_id == vehicle_id).options(
-            selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.make),
-            selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.model),
-            selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.year),
-            selectinload(Vehicle.submodel),
-            selectinload(Vehicle.region)
+        vehicle_query = (
+            select(Vehicle)
+            .where(Vehicle.vehicle_id == vehicle_id)
+            .options(
+                selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.make),
+                selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.model),
+                selectinload(Vehicle.base_vehicle).selectinload(BaseVehicle.year),
+                selectinload(Vehicle.submodel),
+                selectinload(Vehicle.region),
+            )
         )
         vehicle_result = await self.db.execute(vehicle_query)
         vehicle = vehicle_result.scalars().first()
@@ -483,66 +558,85 @@ class VehicleRepository(BaseRepository[Vehicle, uuid.UUID]):
             return None
 
         # Get engine configs
-        engine_configs_query = select(EngineConfig2).join(
-            VehicleToEngineConfig,
-            EngineConfig2.engine_config_id == VehicleToEngineConfig.engine_config_id
-        ).where(
-            VehicleToEngineConfig.vehicle_id == vehicle_id
-        ).options(
-            selectinload(EngineConfig2.engine_base).selectinload(EngineBase2.engine_block),
-            selectinload(EngineConfig2.engine_block),
-            selectinload(EngineConfig2.fuel_type),
-            selectinload(EngineConfig2.aspiration),
-            selectinload(EngineConfig2.power_output)
+        engine_configs_query = (
+            select(EngineConfig2)
+            .join(
+                VehicleToEngineConfig,
+                EngineConfig2.engine_config_id
+                == VehicleToEngineConfig.engine_config_id,
+            )
+            .where(VehicleToEngineConfig.vehicle_id == vehicle_id)
+            .options(
+                selectinload(EngineConfig2.engine_base).selectinload(
+                    EngineBase2.engine_block
+                ),
+                selectinload(EngineConfig2.engine_block),
+                selectinload(EngineConfig2.fuel_type),
+                selectinload(EngineConfig2.aspiration),
+                selectinload(EngineConfig2.power_output),
+            )
         )
         engine_configs_result = await self.db.execute(engine_configs_query)
         engine_configs = engine_configs_result.scalars().all()
 
         # Get transmissions
-        transmissions_query = select(Transmission).join(
-            VehicleToTransmission,
-            Transmission.transmission_id == VehicleToTransmission.transmission_id
-        ).where(
-            VehicleToTransmission.vehicle_id == vehicle_id
-        ).options(
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_type),
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_num_speeds),
-            selectinload(Transmission.transmission_base).selectinload(TransmissionBase.transmission_control_type),
-            selectinload(Transmission.transmission_mfr_code),
-            selectinload(Transmission.elec_controlled),
-            selectinload(Transmission.transmission_mfr)
+        transmissions_query = (
+            select(Transmission)
+            .join(
+                VehicleToTransmission,
+                Transmission.transmission_id == VehicleToTransmission.transmission_id,
+            )
+            .where(VehicleToTransmission.vehicle_id == vehicle_id)
+            .options(
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_type
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_num_speeds
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_control_type
+                ),
+                selectinload(Transmission.transmission_mfr_code),
+                selectinload(Transmission.elec_controlled),
+                selectinload(Transmission.transmission_mfr),
+            )
         )
         transmissions_result = await self.db.execute(transmissions_query)
         transmissions = transmissions_result.scalars().all()
 
         # Get drive types
-        drive_types_query = select(DriveType).join(
-            VehicleToDriveType,
-            DriveType.drive_type_id == VehicleToDriveType.drive_type_id
-        ).where(
-            VehicleToDriveType.vehicle_id == vehicle_id
+        drive_types_query = (
+            select(DriveType)
+            .join(
+                VehicleToDriveType,
+                DriveType.drive_type_id == VehicleToDriveType.drive_type_id,
+            )
+            .where(VehicleToDriveType.vehicle_id == vehicle_id)
         )
         drive_types_result = await self.db.execute(drive_types_query)
         drive_types = drive_types_result.scalars().all()
 
         # Get body styles
-        body_styles_query = select(BodyStyleConfig).join(
-            VehicleToBodyStyleConfig,
-            BodyStyleConfig.body_style_config_id == VehicleToBodyStyleConfig.body_style_config_id
-        ).where(
-            VehicleToBodyStyleConfig.vehicle_id == vehicle_id
-        ).options(
-            selectinload(BodyStyleConfig.body_type)
+        body_styles_query = (
+            select(BodyStyleConfig)
+            .join(
+                VehicleToBodyStyleConfig,
+                BodyStyleConfig.body_style_config_id
+                == VehicleToBodyStyleConfig.body_style_config_id,
+            )
+            .where(VehicleToBodyStyleConfig.vehicle_id == vehicle_id)
+            .options(selectinload(BodyStyleConfig.body_type))
         )
         body_styles_result = await self.db.execute(body_styles_query)
         body_styles = body_styles_result.scalars().all()
 
         return {
-            'vehicle': vehicle,
-            'engine_configs': engine_configs,
-            'transmissions': transmissions,
-            'drive_types': drive_types,
-            'body_styles': body_styles
+            "vehicle": vehicle,
+            "engine_configs": engine_configs,
+            "transmissions": transmissions,
+            "drive_types": drive_types,
+            "body_styles": body_styles,
         }
 
 
@@ -1036,7 +1130,7 @@ class EngineBaseRepository(BaseRepository[EngineBase, uuid.UUID]):
         liter: Optional[str] = None,
         cylinders: Optional[str] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         query = select(EngineBase)
         conditions = []
@@ -1056,8 +1150,12 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
     def __init__(self, db: AsyncSession) -> None:
         super().__init__(model=EngineConfig, db=db)
 
-    async def get_by_engine_config_id(self, engine_config_id: int) -> Optional[EngineConfig]:
-        query = select(EngineConfig).where(EngineConfig.engine_config_id == engine_config_id)
+    async def get_by_engine_config_id(
+        self, engine_config_id: int
+    ) -> Optional[EngineConfig]:
+        query = select(EngineConfig).where(
+            EngineConfig.engine_config_id == engine_config_id
+        )
         result = await self.db.execute(query)
         return result.scalars().first()
 
@@ -1067,7 +1165,7 @@ class EngineConfigRepository(BaseRepository[EngineConfig, uuid.UUID]):
         fuel_type_id: Optional[int] = None,
         aspiration_id: Optional[int] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         query = select(EngineConfig)
         conditions = []
@@ -1097,6 +1195,7 @@ class EngineBase2Repository(BaseRepository[EngineBase2, uuid.UUID]):
     Attributes:
         db (AsyncSession): The asynchronous database session to be used for queries.
     """
+
     def __init__(self, db: AsyncSession) -> None:
         super().__init__(model=EngineBase2, db=db)
 
@@ -1115,9 +1214,13 @@ class EngineBase2Repository(BaseRepository[EngineBase2, uuid.UUID]):
         Returns:
             An instance of EngineBase2 if found, otherwise None.
         """
-        query = select(EngineBase2).where(EngineBase2.engine_base_id == engine_base_id).options(
-            selectinload(EngineBase2.engine_block),
-            selectinload(EngineBase2.engine_bore_stroke)
+        query = (
+            select(EngineBase2)
+            .where(EngineBase2.engine_base_id == engine_base_id)
+            .options(
+                selectinload(EngineBase2.engine_block),
+                selectinload(EngineBase2.engine_bore_stroke),
+            )
         )
         result = await self.db.execute(query)
         return result.scalars().first()
@@ -1127,7 +1230,7 @@ class EngineBase2Repository(BaseRepository[EngineBase2, uuid.UUID]):
         engine_block_id: Optional[int] = None,
         engine_bore_stroke_id: Optional[int] = None,
         page: int = 1,
-        page_size: int = 20
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         """
         Perform a search for engine records based on the given criteria and paginate
@@ -1158,14 +1261,16 @@ class EngineBase2Repository(BaseRepository[EngineBase2, uuid.UUID]):
         """
         query = select(EngineBase2).options(
             selectinload(EngineBase2.engine_block),
-            selectinload(EngineBase2.engine_bore_stroke)
+            selectinload(EngineBase2.engine_bore_stroke),
         )
         conditions = []
 
         if engine_block_id:
             conditions.append(EngineBase2.engine_block_id == engine_block_id)
         if engine_bore_stroke_id:
-            conditions.append(EngineBase2.engine_bore_stroke_id == engine_bore_stroke_id)
+            conditions.append(
+                EngineBase2.engine_bore_stroke_id == engine_bore_stroke_id
+            )
 
         if conditions:
             query = query.where(and_(*conditions))
@@ -1195,12 +1300,20 @@ class EngineConfig2Repository(BaseRepository[EngineConfig2, uuid.UUID]):
         Returns:
             The engine config if found, None otherwise.
         """
-        query = select(EngineConfig2).where(EngineConfig2.engine_config_id == engine_config_id).options(
-            selectinload(EngineConfig2.engine_base).selectinload(EngineBase2.engine_block),
-            selectinload(EngineConfig2.engine_base).selectinload(EngineBase2.engine_bore_stroke),
-            selectinload(EngineConfig2.engine_block),
-            selectinload(EngineConfig2.fuel_type),
-            selectinload(EngineConfig2.aspiration)
+        query = (
+            select(EngineConfig2)
+            .where(EngineConfig2.engine_config_id == engine_config_id)
+            .options(
+                selectinload(EngineConfig2.engine_base).selectinload(
+                    EngineBase2.engine_block
+                ),
+                selectinload(EngineConfig2.engine_base).selectinload(
+                    EngineBase2.engine_bore_stroke
+                ),
+                selectinload(EngineConfig2.engine_block),
+                selectinload(EngineConfig2.fuel_type),
+                selectinload(EngineConfig2.aspiration),
+            )
         )
         result = await self.db.execute(query)
         return result.scalars().first()
@@ -1226,10 +1339,12 @@ class EngineConfig2Repository(BaseRepository[EngineConfig2, uuid.UUID]):
             Dict containing items, total count, and pagination info.
         """
         query = select(EngineConfig2).options(
-            selectinload(EngineConfig2.engine_base).selectinload(EngineBase2.engine_block),
+            selectinload(EngineConfig2.engine_base).selectinload(
+                EngineBase2.engine_block
+            ),
             selectinload(EngineConfig2.engine_block),
             selectinload(EngineConfig2.fuel_type),
-            selectinload(EngineConfig2.aspiration)
+            selectinload(EngineConfig2.aspiration),
         )
         conditions = []
 
@@ -1312,63 +1427,171 @@ class EngineConfig2Repository(BaseRepository[EngineConfig2, uuid.UUID]):
                 "power_output_id": engine_config.power_output_id,
             },
             "engine_block": {
-                "id": engine_config.engine_block.engine_block_id if engine_config.engine_block else None,
-                "liter": engine_config.engine_block.liter if engine_config.engine_block else None,
-                "cc": engine_config.engine_block.cc if engine_config.engine_block else None,
-                "cid": engine_config.engine_block.cid if engine_config.engine_block else None,
-                "cylinders": engine_config.engine_block.cylinders if engine_config.engine_block else None,
-                "block_type": engine_config.engine_block.block_type if engine_config.engine_block else None,
+                "id": (
+                    engine_config.engine_block.engine_block_id
+                    if engine_config.engine_block
+                    else None
+                ),
+                "liter": (
+                    engine_config.engine_block.liter
+                    if engine_config.engine_block
+                    else None
+                ),
+                "cc": (
+                    engine_config.engine_block.cc
+                    if engine_config.engine_block
+                    else None
+                ),
+                "cid": (
+                    engine_config.engine_block.cid
+                    if engine_config.engine_block
+                    else None
+                ),
+                "cylinders": (
+                    engine_config.engine_block.cylinders
+                    if engine_config.engine_block
+                    else None
+                ),
+                "block_type": (
+                    engine_config.engine_block.block_type
+                    if engine_config.engine_block
+                    else None
+                ),
             },
             "engine_bore_stroke": {
-                "id": engine_config.engine_bore_stroke.engine_bore_stroke_id if engine_config.engine_bore_stroke else None,
-                "bore_in": engine_config.engine_bore_stroke.bore_in if engine_config.engine_bore_stroke else None,
-                "bore_metric": engine_config.engine_bore_stroke.bore_metric if engine_config.engine_bore_stroke else None,
-                "stroke_in": engine_config.engine_bore_stroke.stroke_in if engine_config.engine_bore_stroke else None,
-                "stroke_metric": engine_config.engine_bore_stroke.stroke_metric if engine_config.engine_bore_stroke else None,
+                "id": (
+                    engine_config.engine_bore_stroke.engine_bore_stroke_id
+                    if engine_config.engine_bore_stroke
+                    else None
+                ),
+                "bore_in": (
+                    engine_config.engine_bore_stroke.bore_in
+                    if engine_config.engine_bore_stroke
+                    else None
+                ),
+                "bore_metric": (
+                    engine_config.engine_bore_stroke.bore_metric
+                    if engine_config.engine_bore_stroke
+                    else None
+                ),
+                "stroke_in": (
+                    engine_config.engine_bore_stroke.stroke_in
+                    if engine_config.engine_bore_stroke
+                    else None
+                ),
+                "stroke_metric": (
+                    engine_config.engine_bore_stroke.stroke_metric
+                    if engine_config.engine_bore_stroke
+                    else None
+                ),
             },
-            "aspiration": {"id": engine_config.aspiration.aspiration_id,
-                           "name": engine_config.aspiration.name} if engine_config.aspiration else None,
-            "fuel_type": {"id": engine_config.fuel_type.fuel_type_id,
-                          "name": engine_config.fuel_type.name} if engine_config.fuel_type else None,
-            "cylinder_head_type": {
-                "id": engine_config.cylinder_head_type.cylinder_head_type_id,
-                "name": engine_config.cylinder_head_type.name,
-            } if engine_config.cylinder_head_type else None,
+            "aspiration": (
+                {
+                    "id": engine_config.aspiration.aspiration_id,
+                    "name": engine_config.aspiration.name,
+                }
+                if engine_config.aspiration
+                else None
+            ),
+            "fuel_type": (
+                {
+                    "id": engine_config.fuel_type.fuel_type_id,
+                    "name": engine_config.fuel_type.name,
+                }
+                if engine_config.fuel_type
+                else None
+            ),
+            "cylinder_head_type": (
+                {
+                    "id": engine_config.cylinder_head_type.cylinder_head_type_id,
+                    "name": engine_config.cylinder_head_type.name,
+                }
+                if engine_config.cylinder_head_type
+                else None
+            ),
             "fuel_delivery": {
-                "type": engine_config.fuel_delivery_config.fuel_delivery_type.name
-                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_delivery_type else None,
-                "subtype": engine_config.fuel_delivery_config.fuel_delivery_subtype.name
-                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_delivery_subtype else None,
-                "control_type": engine_config.fuel_delivery_config.fuel_system_control_type.name
-                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_system_control_type else None,
-                "design": engine_config.fuel_delivery_config.fuel_system_design.name
-                    if engine_config.fuel_delivery_config and engine_config.fuel_delivery_config.fuel_system_design else None,
+                "type": (
+                    engine_config.fuel_delivery_config.fuel_delivery_type.name
+                    if engine_config.fuel_delivery_config
+                    and engine_config.fuel_delivery_config.fuel_delivery_type
+                    else None
+                ),
+                "subtype": (
+                    engine_config.fuel_delivery_config.fuel_delivery_subtype.name
+                    if engine_config.fuel_delivery_config
+                    and engine_config.fuel_delivery_config.fuel_delivery_subtype
+                    else None
+                ),
+                "control_type": (
+                    engine_config.fuel_delivery_config.fuel_system_control_type.name
+                    if engine_config.fuel_delivery_config
+                    and engine_config.fuel_delivery_config.fuel_system_control_type
+                    else None
+                ),
+                "design": (
+                    engine_config.fuel_delivery_config.fuel_system_design.name
+                    if engine_config.fuel_delivery_config
+                    and engine_config.fuel_delivery_config.fuel_system_design
+                    else None
+                ),
             },
-            "engine_designation": {
-                "id": engine_config.engine_designation.engine_designation_id,
-                "name": engine_config.engine_designation.name,
-            } if engine_config.engine_designation else None,
-            "engine_vin": {"id": engine_config.engine_vin.engine_vin_id,
-                           "code": engine_config.engine_vin.code} if engine_config.engine_vin else None,
-            "valves": {
-                "id": engine_config.valves.valves_id,
-                "valves_per_engine": engine_config.valves.valves_per_engine,
-            } if engine_config.valves else None,
-            "manufacturer": {"id": engine_config.engine_mfr.mfr_id,
-                            "name": engine_config.engine_mfr.name} if engine_config.engine_mfr else None,
-            "ignition_system_type": {
-                "id": engine_config.ignition_system_type.ignition_system_type_id,
-                "name": engine_config.ignition_system_type.name,
-            } if engine_config.ignition_system_type else None,
-            "engine_version": {
-                "id": engine_config.engine_version.engine_version_id,
-                "version": engine_config.engine_version.version,
-            } if engine_config.engine_version else None,
-            "power_output": {
-                "id": engine_config.power_output.power_output_id,
-                "horsepower": engine_config.power_output.horsepower,
-                "kilowatt": engine_config.power_output.kilowatt,
-            } if engine_config.power_output else None,
+            "engine_designation": (
+                {
+                    "id": engine_config.engine_designation.engine_designation_id,
+                    "name": engine_config.engine_designation.name,
+                }
+                if engine_config.engine_designation
+                else None
+            ),
+            "engine_vin": (
+                {
+                    "id": engine_config.engine_vin.engine_vin_id,
+                    "code": engine_config.engine_vin.code,
+                }
+                if engine_config.engine_vin
+                else None
+            ),
+            "valves": (
+                {
+                    "id": engine_config.valves.valves_id,
+                    "valves_per_engine": engine_config.valves.valves_per_engine,
+                }
+                if engine_config.valves
+                else None
+            ),
+            "manufacturer": (
+                {
+                    "id": engine_config.engine_mfr.mfr_id,
+                    "name": engine_config.engine_mfr.name,
+                }
+                if engine_config.engine_mfr
+                else None
+            ),
+            "ignition_system_type": (
+                {
+                    "id": engine_config.ignition_system_type.ignition_system_type_id,
+                    "name": engine_config.ignition_system_type.name,
+                }
+                if engine_config.ignition_system_type
+                else None
+            ),
+            "engine_version": (
+                {
+                    "id": engine_config.engine_version.engine_version_id,
+                    "version": engine_config.engine_version.version,
+                }
+                if engine_config.engine_version
+                else None
+            ),
+            "power_output": (
+                {
+                    "id": engine_config.power_output.power_output_id,
+                    "horsepower": engine_config.power_output.horsepower,
+                    "kilowatt": engine_config.power_output.kilowatt,
+                }
+                if engine_config.power_output
+                else None
+            ),
         }
 
 
@@ -1466,12 +1689,15 @@ class TransmissionRepository(BaseRepository[Transmission, uuid.UUID]):
         query = (
             select(Transmission)
             .options(
-                selectinload(Transmission.transmission_base)
-                .selectinload(TransmissionBase.transmission_type),
-                selectinload(Transmission.transmission_base)
-                .selectinload(TransmissionBase.transmission_num_speeds),
-                selectinload(Transmission.transmission_base)
-                .selectinload(TransmissionBase.transmission_control_type),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_type
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_num_speeds
+                ),
+                selectinload(Transmission.transmission_base).selectinload(
+                    TransmissionBase.transmission_control_type
+                ),
                 selectinload(Transmission.transmission_mfr_code),
                 selectinload(Transmission.elec_controlled),
                 selectinload(Transmission.transmission_mfr),
@@ -1494,28 +1720,57 @@ class TransmissionRepository(BaseRepository[Transmission, uuid.UUID]):
                 "elec_controlled_id": transmission.elec_controlled_id,
                 "transmission_mfr_id": transmission.transmission_mfr_id,
             },
-            "type": {
-                "id": transmission.transmission_base.transmission_type.transmission_type_id,
-                "name": transmission.transmission_base.transmission_type.name,
-            } if transmission.transmission_base and transmission.transmission_base.transmission_type else None,
-            "num_speeds": {
-                "id": transmission.transmission_base.transmission_num_speeds.transmission_num_speeds_id,
-                "num_speeds": transmission.transmission_base.transmission_num_speeds.num_speeds,
-            } if transmission.transmission_base and transmission.transmission_base.transmission_num_speeds else None,
-            "control_type": {
-                "id": transmission.transmission_base.transmission_control_type.transmission_control_type_id,
-                "name": transmission.transmission_base.transmission_control_type.name,
-            } if transmission.transmission_base and transmission.transmission_base.transmission_control_type else None,
-            "mfr_code": {
-                "id": transmission.transmission_mfr_code.transmission_mfr_code_id,
-                "code": transmission.transmission_mfr_code.code,
-            } if transmission.transmission_mfr_code else None,
-            "elec_controlled": {
-                "id": transmission.elec_controlled.elec_controlled_id,
-                "value": transmission.elec_controlled.value,
-            } if transmission.elec_controlled else None,
-            "manufacturer": {"id": transmission.transmission_mfr.mfr_id,
-                            "name": transmission.transmission_mfr.name} if transmission.transmission_mfr else None,
+            "type": (
+                {
+                    "id": transmission.transmission_base.transmission_type.transmission_type_id,
+                    "name": transmission.transmission_base.transmission_type.name,
+                }
+                if transmission.transmission_base
+                and transmission.transmission_base.transmission_type
+                else None
+            ),
+            "num_speeds": (
+                {
+                    "id": transmission.transmission_base.transmission_num_speeds.transmission_num_speeds_id,
+                    "num_speeds": transmission.transmission_base.transmission_num_speeds.num_speeds,
+                }
+                if transmission.transmission_base
+                and transmission.transmission_base.transmission_num_speeds
+                else None
+            ),
+            "control_type": (
+                {
+                    "id": transmission.transmission_base.transmission_control_type.transmission_control_type_id,
+                    "name": transmission.transmission_base.transmission_control_type.name,
+                }
+                if transmission.transmission_base
+                and transmission.transmission_base.transmission_control_type
+                else None
+            ),
+            "mfr_code": (
+                {
+                    "id": transmission.transmission_mfr_code.transmission_mfr_code_id,
+                    "code": transmission.transmission_mfr_code.code,
+                }
+                if transmission.transmission_mfr_code
+                else None
+            ),
+            "elec_controlled": (
+                {
+                    "id": transmission.elec_controlled.elec_controlled_id,
+                    "value": transmission.elec_controlled.value,
+                }
+                if transmission.elec_controlled
+                else None
+            ),
+            "manufacturer": (
+                {
+                    "id": transmission.transmission_mfr.mfr_id,
+                    "name": transmission.transmission_mfr.name,
+                }
+                if transmission.transmission_mfr
+                else None
+            ),
         }
 
 
@@ -1632,12 +1887,22 @@ class BodyStyleConfigRepository(BaseRepository[BodyStyleConfig, uuid.UUID]):
                 "body_type_id": body_style_config.body_type_id,
                 "body_num_doors_id": body_style_config.body_num_doors_id,
             },
-            "body_type": {"id": body_style_config.body_type.body_type_id,
-                         "name": body_style_config.body_type.name} if body_style_config.body_type else None,
-            "body_num_doors": {
-                "id": body_style_config.body_num_doors.body_num_doors_id,
-                "num_doors": body_style_config.body_num_doors.num_doors,
-            } if body_style_config.body_num_doors else None,
+            "body_type": (
+                {
+                    "id": body_style_config.body_type.body_type_id,
+                    "name": body_style_config.body_type.name,
+                }
+                if body_style_config.body_type
+                else None
+            ),
+            "body_num_doors": (
+                {
+                    "id": body_style_config.body_num_doors.body_num_doors_id,
+                    "num_doors": body_style_config.body_num_doors.num_doors,
+                }
+                if body_style_config.body_num_doors
+                else None
+            ),
         }
 
 
@@ -1707,22 +1972,38 @@ class BrakeConfigRepository(BaseRepository[BrakeConfig, uuid.UUID]):
                 "brake_system_id": brake_config.brake_system_id,
                 "brake_abs_id": brake_config.brake_abs_id,
             },
-            "front_brake_type": {
-                "id": brake_config.front_brake_type.brake_type_id,
-                "name": brake_config.front_brake_type.name,
-            } if brake_config.front_brake_type else None,
-            "rear_brake_type": {
-                "id": brake_config.rear_brake_type.brake_type_id,
-                "name": brake_config.rear_brake_type.name,
-            } if brake_config.rear_brake_type else None,
-            "brake_system": {
-                "id": brake_config.brake_system.brake_system_id,
-                "name": brake_config.brake_system.name,
-            } if brake_config.brake_system else None,
-            "brake_abs": {
-                "id": brake_config.brake_abs.brake_abs_id,
-                "name": brake_config.brake_abs.name,
-            } if brake_config.brake_abs else None,
+            "front_brake_type": (
+                {
+                    "id": brake_config.front_brake_type.brake_type_id,
+                    "name": brake_config.front_brake_type.name,
+                }
+                if brake_config.front_brake_type
+                else None
+            ),
+            "rear_brake_type": (
+                {
+                    "id": brake_config.rear_brake_type.brake_type_id,
+                    "name": brake_config.rear_brake_type.name,
+                }
+                if brake_config.rear_brake_type
+                else None
+            ),
+            "brake_system": (
+                {
+                    "id": brake_config.brake_system.brake_system_id,
+                    "name": brake_config.brake_system.name,
+                }
+                if brake_config.brake_system
+                else None
+            ),
+            "brake_abs": (
+                {
+                    "id": brake_config.brake_abs.brake_abs_id,
+                    "name": brake_config.brake_abs.name,
+                }
+                if brake_config.brake_abs
+                else None
+            ),
         }
 
 

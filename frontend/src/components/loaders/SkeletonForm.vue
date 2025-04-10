@@ -1,0 +1,152 @@
+<!-- src/components/loaders/SkeletonForm.vue -->
+<template>
+  <div class="skeleton-form" :class="containerClass">
+    <v-card v-if="useCard" :elevation="elevation" class="pa-4">
+      <v-skeleton-loader v-if="showTitle" type="heading" :loading="true" class="mb-4"></v-skeleton-loader>
+
+      <div class="form-fields">
+        <template v-for="(field, index) in fields" :key="index">
+          <div :class="getFieldClass(field)" class="mb-4">
+            <v-skeleton-loader
+              :type="getFieldType(field)"
+              :loading="true"
+            ></v-skeleton-loader>
+          </div>
+        </template>
+      </div>
+
+      <div v-if="showActions" class="d-flex justify-end mt-6">
+        <v-skeleton-loader
+          type="button"
+          :loading="true"
+          width="80"
+          class="me-2"
+        ></v-skeleton-loader>
+        <v-skeleton-loader
+          type="button"
+          :loading="true"
+          width="80"
+        ></v-skeleton-loader>
+      </div>
+    </v-card>
+
+    <template v-else>
+      <v-skeleton-loader v-if="showTitle" type="heading" :loading="true" class="mb-4"></v-skeleton-loader>
+
+      <div class="form-fields">
+        <template v-for="(field, index) in fields" :key="index">
+          <div :class="getFieldClass(field)" class="mb-4">
+            <v-skeleton-loader
+              :type="getFieldType(field)"
+              :loading="true"
+            ></v-skeleton-loader>
+          </div>
+        </template>
+      </div>
+
+      <div v-if="showActions" class="d-flex justify-end mt-6">
+        <v-skeleton-loader
+          type="button"
+          :loading="true"
+          width="80"
+          class="me-2"
+        ></v-skeleton-loader>
+        <v-skeleton-loader
+          type="button"
+          :loading="true"
+          width="80"
+        ></v-skeleton-loader>
+      </div>
+    </template>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+interface Field {
+  type?: string;
+  cols?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+}
+
+const props = defineProps({
+  fields: {
+    type: Array as PropType<Field[]>,
+    default: () => Array(4).fill({}),
+  },
+  showTitle: {
+    type: Boolean,
+    default: true,
+  },
+  showActions: {
+    type: Boolean,
+    default: true,
+  },
+  useCard: {
+    type: Boolean,
+    default: true,
+  },
+  elevation: {
+    type: [Number, String],
+    default: 1,
+  },
+  containerClass: {
+    type: String,
+    default: '',
+  },
+  layout: {
+    type: String,
+    default: 'column', // column, grid
+    validator: (value: string) => ['column', 'grid'].includes(value),
+  },
+})
+
+// Get field class based on field config and layout
+const getFieldClass = (field: Field) => {
+  if (props.layout === 'grid') {
+    const cols = field.cols || 12
+    const sm = field.sm || cols
+    const md = field.md || sm
+    const lg = field.lg || md
+
+    return `col-${cols} col-sm-${sm} col-md-${md} col-lg-${lg}`
+  }
+
+  return 'field-item'
+}
+
+// Get field skeleton type based on field type
+const getFieldType = (field: Field) => {
+  switch (field.type) {
+    case 'textarea':
+      return 'text, text, text'
+    case 'checkbox':
+    case 'switch':
+    case 'radio':
+      return 'list-item'
+    case 'select':
+      return 'list-item-avatar'
+    case 'file':
+      return 'image'
+    default:
+      return 'text'
+  }
+}
+</script>
+
+<style scoped>
+.skeleton-form {
+  width: 100%;
+}
+
+.form-fields {
+  display: v-bind('props.layout === "grid" ? "flex flex-wrap" : "block"');
+}
+
+.field-item {
+  width: 100%;
+}
+</style>

@@ -27,10 +27,10 @@
           size="64"
         ></v-progress-circular>
       </div>
-      
+
       <template v-else>
         <!-- Empty State -->
-        <v-card 
+        <v-card
           v-if="savedLists.length === 0"
           class="text-center pa-8 my-6"
         >
@@ -51,17 +51,17 @@
             Create Your First List
           </v-btn>
         </v-card>
-        
+
         <!-- Lists Grid -->
         <v-row v-else>
-          <v-col 
+          <v-col
             v-for="list in savedLists"
             :key="list.id"
             cols="12"
             sm="6"
             md="4"
           >
-            <v-card 
+            <v-card
               :class="{'list-card-active': activeList?.id === list.id}"
               @click="viewList(list)"
               height="100%"
@@ -116,7 +116,7 @@
                   {{ list.items.length }} {{ list.items.length === 1 ? 'item' : 'items' }} · Last updated {{ formatDate(list.updated_at) }}
                 </v-card-subtitle>
               </v-card-item>
-              
+
               <v-card-text>
                 <div class="d-flex mb-3">
                   <v-chip
@@ -137,13 +137,13 @@
                     {{ list.type }}
                   </v-chip>
                 </div>
-                
+
                 <div class="text-body-2 text-truncate-2-lines">
                   {{ list.description || 'No description' }}
                 </div>
-                
+
                 <v-divider class="my-3"></v-divider>
-                
+
                 <div class="d-flex align-center justify-space-between text-body-2">
                   <span>
                     <strong>Total Value:</strong> {{ formatCurrency(calculateListTotal(list)) }}
@@ -154,7 +154,7 @@
                   </span>
                 </div>
               </v-card-text>
-              
+
               <v-card-actions>
                 <v-btn
                   variant="text"
@@ -219,13 +219,13 @@
                 Add All to Cart
               </v-btn>
             </v-card-title>
-            
+
             <v-divider></v-divider>
-            
+
             <v-card-text v-if="activeList.description" class="bg-grey-lighten-5">
               <p>{{ activeList.description }}</p>
             </v-card-text>
-            
+
             <v-data-table
               :headers="tableHeaders"
               :items="activeList.items"
@@ -247,12 +247,12 @@
                   </div>
                 </div>
               </template>
-              
+
               <!-- Price Column -->
               <template v-slot:item.price="{ item }">
                 {{ formatCurrency(item.raw.price) }}
               </template>
-              
+
               <!-- Quantity Column -->
               <template v-slot:item.quantity="{ item }">
                 <v-text-field
@@ -267,12 +267,12 @@
                   @update:model-value="updateQuantity(item.raw)"
                 ></v-text-field>
               </template>
-              
+
               <!-- Subtotal Column -->
               <template v-slot:item.subtotal="{ item }">
                 {{ formatCurrency(item.raw.price * item.raw.quantity) }}
               </template>
-              
+
               <!-- In Stock Column -->
               <template v-slot:item.in_stock="{ item }">
                 <v-chip
@@ -283,7 +283,7 @@
                   {{ item.raw.in_stock ? 'In Stock' : 'Out of Stock' }}
                 </v-chip>
               </template>
-              
+
               <!-- Actions Column -->
               <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
@@ -308,7 +308,7 @@
                   </v-btn>
                 </div>
               </template>
-              
+
               <!-- No items placeholder -->
               <template v-slot:no-data>
                 <div class="text-center pa-6">
@@ -340,12 +340,12 @@
             <v-card-title class="text-h4 font-weight-bold">Quick Order</v-card-title>
             <v-card-subtitle>Quickly order products by entering SKUs or part numbers</v-card-subtitle>
             <v-divider></v-divider>
-            
+
             <v-card-text>
               <p class="mb-4">
                 Enter SKUs or part numbers, one per line or separated by commas. You can also specify quantities by adding a colon followed by the quantity (e.g., "SKU123:5").
               </p>
-              
+
               <v-textarea
                 v-model="quickOrderText"
                 label="Enter SKUs or Part Numbers"
@@ -354,7 +354,7 @@
                 placeholder="Example: ABC123, DEF456:3, GHI789:2"
                 class="mb-4"
               ></v-textarea>
-              
+
               <div class="d-flex justify-end">
                 <v-btn
                   color="primary"
@@ -366,13 +366,13 @@
                 </v-btn>
               </div>
             </v-card-text>
-            
+
             <!-- Quick Order Results -->
             <div v-if="quickOrderResults.length > 0">
               <v-divider></v-divider>
               <v-card-text>
                 <h3 class="text-h6 mb-4">Quick Order Results</h3>
-                
+
                 <v-data-table
                   :headers="quickOrderHeaders"
                   :items="quickOrderResults"
@@ -388,13 +388,13 @@
                       Product not found: {{ item.raw.sku }}
                     </div>
                   </template>
-                  
+
                   <!-- Price Column -->
                   <template v-slot:item.price="{ item }">
                     <span v-if="item.raw.found">{{ formatCurrency(item.raw.price) }}</span>
                     <span v-else>—</span>
                   </template>
-                  
+
                   <!-- Quantity Column -->
                   <template v-slot:item.quantity="{ item }">
                     <v-text-field
@@ -410,13 +410,13 @@
                     ></v-text-field>
                     <span v-else>—</span>
                   </template>
-                  
+
                   <!-- Subtotal Column -->
                   <template v-slot:item.subtotal="{ item }">
                     <span v-if="item.raw.found">{{ formatCurrency(item.raw.price * item.raw.quantity) }}</span>
                     <span v-else>—</span>
                   </template>
-                  
+
                   <!-- Status Column -->
                   <template v-slot:item.status="{ item }">
                     <v-chip
@@ -427,7 +427,7 @@
                       {{ getStatusText(item.raw) }}
                     </v-chip>
                   </template>
-                  
+
                   <!-- Actions Column -->
                   <template v-slot:item.actions="{ item }">
                     <v-btn
@@ -443,7 +443,7 @@
                     </v-btn>
                   </template>
                 </v-data-table>
-                
+
                 <div class="d-flex justify-end mt-4 gap-2">
                   <v-btn
                     color="primary"
@@ -482,7 +482,7 @@
             :rules="[rules.required]"
             class="mb-4"
           ></v-text-field>
-          
+
           <v-textarea
             v-model="newListDialog.description"
             label="Description (Optional)"
@@ -490,7 +490,7 @@
             rows="3"
             class="mb-4"
           ></v-textarea>
-          
+
           <v-select
             v-model="newListDialog.type"
             label="List Type"
@@ -498,7 +498,7 @@
             variant="outlined"
             class="mb-4"
           ></v-select>
-          
+
           <v-checkbox
             v-model="newListDialog.is_favorite"
             label="Mark as Favorite"
@@ -564,12 +564,12 @@
         </v-card-title>
         <v-card-text class="pa-4 pt-6">
           <p class="mb-4">Share "{{ shareDialog.listName }}" with your team members or other accounts.</p>
-          
+
           <v-tabs v-model="shareDialog.activeTab" class="mb-4">
             <v-tab value="email">Email</v-tab>
             <v-tab value="link">Share Link</v-tab>
           </v-tabs>
-          
+
           <v-window v-model="shareDialog.activeTab">
             <!-- Email Tab -->
             <v-window-item value="email">
@@ -580,7 +580,7 @@
                 :rules="[rules.email]"
                 class="mb-3"
               ></v-text-field>
-              
+
               <v-select
                 v-model="shareDialog.permission"
                 label="Permission Level"
@@ -588,7 +588,7 @@
                 variant="outlined"
                 class="mb-3"
               ></v-select>
-              
+
               <v-textarea
                 v-model="shareDialog.message"
                 label="Message (Optional)"
@@ -597,7 +597,7 @@
                 placeholder="Add a personal message..."
               ></v-textarea>
             </v-window-item>
-            
+
             <!-- Link Tab -->
             <v-window-item value="link">
               <v-text-field
@@ -609,7 +609,7 @@
                 append-inner-icon="mdi-content-copy"
                 @click:append-inner="copyShareLink"
               ></v-text-field>
-              
+
               <v-select
                 v-model="shareDialog.linkPermission"
                 label="Link Permission"
@@ -617,14 +617,14 @@
                 variant="outlined"
                 class="mb-3"
               ></v-select>
-              
+
               <v-checkbox
                 v-model="shareDialog.expiresEnabled"
                 label="Set Expiration Date"
                 hide-details
                 class="mb-2"
               ></v-checkbox>
-              
+
               <v-text-field
                 v-if="shareDialog.expiresEnabled"
                 v-model="shareDialog.expiresDate"
@@ -673,7 +673,7 @@
             @click:prepend-inner="searchProducts"
             class="mb-4"
           ></v-text-field>
-          
+
           <v-data-table
             :headers="productSearchHeaders"
             :items="searchResults"
@@ -695,12 +695,12 @@
                 </div>
               </div>
             </template>
-            
+
             <!-- Price Column -->
             <template v-slot:item.price="{ item }">
               {{ formatCurrency(item.raw.price) }}
             </template>
-            
+
             <!-- Quantity Column -->
             <template v-slot:item.quantity="{ item }">
               <v-text-field
@@ -714,7 +714,7 @@
                 style="max-width: 100px"
               ></v-text-field>
             </template>
-            
+
             <!-- In Stock Column -->
             <template v-slot:item.in_stock="{ item }">
               <v-chip
@@ -725,7 +725,7 @@
                 {{ item.raw.in_stock ? 'In Stock' : 'Out of Stock' }}
               </v-chip>
             </template>
-            
+
             <!-- Actions Column -->
             <template v-slot:item.actions="{ item }">
               <v-btn
@@ -774,7 +774,7 @@
             :rules="[rules.required]"
             class="mb-4"
           ></v-text-field>
-          
+
           <v-textarea
             v-model="saveQuickOrderDialog.description"
             label="Description (Optional)"
@@ -782,7 +782,7 @@
             rows="3"
             class="mb-4"
           ></v-textarea>
-          
+
           <v-select
             v-model="saveQuickOrderDialog.type"
             label="List Type"
@@ -790,7 +790,7 @@
             variant="outlined"
             class="mb-4"
           ></v-select>
-          
+
           <v-checkbox
             v-model="saveQuickOrderDialog.is_favorite"
             label="Mark as Favorite"
@@ -824,7 +824,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { formatDate, formatCurrency } from '@/utils/formatters';
-import { notificationService } from '@/utils/notification';
+import { notificationService } from '@/utils/notifications';
 
 // Product interface
 interface Product {
@@ -903,19 +903,19 @@ export default defineComponent({
 
   setup() {
     const authStore = useAuthStore();
-    
+
     // Loading states
     const loading = ref(true);
     const listLoading = ref(false);
     const searchLoading = ref(false);
     const quickOrderLoading = ref(false);
-    
+
     // Saved lists
     const savedLists = ref<SavedList[]>([]);
-    
+
     // Active list
     const activeList = ref<SavedList | null>(null);
-    
+
     // New list dialog
     const newListDialog = ref<NewListDialog>({
       show: false,
@@ -926,14 +926,14 @@ export default defineComponent({
       is_favorite: false,
       loading: false
     });
-    
+
     // Delete dialog
     const deleteDialog = ref<DeleteDialog>({
       show: false,
       listName: '',
       loading: false
     });
-    
+
     // Share dialog
     const shareDialog = ref<ShareDialog>({
       show: false,
@@ -948,7 +948,7 @@ export default defineComponent({
       expiresDate: '',
       loading: false
     });
-    
+
     // Save quick order dialog
     const saveQuickOrderDialog = ref<SaveQuickOrderDialog>({
       show: false,
@@ -958,22 +958,22 @@ export default defineComponent({
       is_favorite: false,
       loading: false
     });
-    
+
     // Add products dialog
     const showAddProductsDialog = ref(false);
     const productSearch = ref('');
     const searchResults = ref<Product[]>([]);
-    
+
     // Quick order
     const quickOrderText = ref('');
     const quickOrderResults = ref<Product[]>([]);
-    
+
     // Form validation rules
     const rules = {
       required: (v: string) => !!v || 'This field is required',
       email: (v: string) => /.+@.+\..+/.test(v) || 'Email must be valid'
     };
-    
+
     // List types
     const listTypes = ref([
       'Standard',
@@ -983,14 +983,14 @@ export default defineComponent({
       'Seasonal',
       'Regular Stock'
     ]);
-    
+
     // Permission levels
     const permissionLevels = ref([
       'View',
       'Edit',
       'Full Access'
     ]);
-    
+
     // Table headers
     const tableHeaders = ref([
       { title: 'Product', key: 'product', sortable: false },
@@ -1000,7 +1000,7 @@ export default defineComponent({
       { title: 'Status', key: 'in_stock', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
     ]);
-    
+
     // Quick order headers
     const quickOrderHeaders = ref([
       { title: 'Product', key: 'product_name', sortable: false },
@@ -1010,7 +1010,7 @@ export default defineComponent({
       { title: 'Status', key: 'status', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
     ]);
-    
+
     // Product search headers
     const productSearchHeaders = ref([
       { title: 'Product', key: 'product', sortable: false },
@@ -1019,17 +1019,17 @@ export default defineComponent({
       { title: 'Availability', key: 'in_stock', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
     ]);
-    
+
     // Check if there are valid quick order items
     const hasValidQuickOrderItems = computed(() => {
       return quickOrderResults.value.some(item => item.found);
     });
-    
+
     // Check if there are selected products in search
     const hasSelectedProducts = computed(() => {
       return searchResults.value.some(item => item.quantity > 0);
     });
-    
+
     // Check if the share button should be disabled
     const isShareButtonDisabled = computed(() => {
       if (shareDialog.value.activeTab === 'email') {
@@ -1038,18 +1038,18 @@ export default defineComponent({
         return false;
       }
     });
-    
+
     // Fetch saved lists
     const fetchSavedLists = async () => {
       loading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const response = await api.get('/account/saved-lists');
-        
+
         // Mock data for demonstration
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Sample lists
         savedLists.value = [
           {
@@ -1195,7 +1195,7 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    
+
     // Get color for list type
     const getListTypeColor = (type: string) => {
       switch (type) {
@@ -1213,17 +1213,17 @@ export default defineComponent({
           return 'primary';
       }
     };
-    
+
     // Calculate total value of list
     const calculateListTotal = (list: SavedList) => {
       return list.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     };
-    
+
     // View list details
     const viewList = (list: SavedList) => {
       activeList.value = { ...list };
     };
-    
+
     // Create new list
     const createNewList = () => {
       newListDialog.value = {
@@ -1236,7 +1236,7 @@ export default defineComponent({
         loading: false
       };
     };
-    
+
     // Rename list
     const renameList = (list: SavedList) => {
       newListDialog.value = {
@@ -1250,16 +1250,16 @@ export default defineComponent({
         loading: false
       };
     };
-    
+
     // Save list (create or update)
     const saveList = async () => {
       if (!newListDialog.value.name) {
         notificationService.warning('Please enter a list name');
         return;
       }
-      
+
       newListDialog.value.loading = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const payload = {
@@ -1268,16 +1268,16 @@ export default defineComponent({
         //   type: newListDialog.value.type,
         //   is_favorite: newListDialog.value.is_favorite
         // };
-        
+
         // if (newListDialog.value.isEdit) {
         //   await api.put(`/account/saved-lists/${newListDialog.value.listId}`, payload);
         // } else {
         //   await api.post('/account/saved-lists', payload);
         // }
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         if (newListDialog.value.isEdit && newListDialog.value.listId) {
           // Update local list
           const listIndex = savedLists.value.findIndex(list => list.id === newListDialog.value.listId);
@@ -1290,13 +1290,13 @@ export default defineComponent({
               is_favorite: newListDialog.value.is_favorite,
               updated_at: new Date().toISOString()
             };
-            
+
             // Update active list if it's the one being edited
             if (activeList.value && activeList.value.id === newListDialog.value.listId) {
               activeList.value = { ...savedLists.value[listIndex] };
             }
           }
-          
+
           notificationService.success('List updated successfully');
         } else {
           // Create new list
@@ -1311,13 +1311,13 @@ export default defineComponent({
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
-          
+
           savedLists.value.unshift(newList);
           activeList.value = newList;
-          
+
           notificationService.success('List created successfully');
         }
-        
+
         newListDialog.value.show = false;
       } catch (error) {
         console.error('Error saving list:', error);
@@ -1326,7 +1326,7 @@ export default defineComponent({
         newListDialog.value.loading = false;
       }
     };
-    
+
     // Confirm delete list
     const confirmDeleteList = (list: SavedList) => {
       deleteDialog.value = {
@@ -1336,28 +1336,28 @@ export default defineComponent({
         loading: false
       };
     };
-    
+
     // Delete list
     const deleteList = async () => {
       if (!deleteDialog.value.listId) return;
-      
+
       deleteDialog.value.loading = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.delete(`/account/saved-lists/${deleteDialog.value.listId}`);
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Remove list from local state
         savedLists.value = savedLists.value.filter(list => list.id !== deleteDialog.value.listId);
-        
+
         // Clear active list if it's the one being deleted
         if (activeList.value && activeList.value.id === deleteDialog.value.listId) {
           activeList.value = null;
         }
-        
+
         deleteDialog.value.show = false;
         notificationService.success('List deleted successfully');
       } catch (error) {
@@ -1367,81 +1367,81 @@ export default defineComponent({
         deleteDialog.value.loading = false;
       }
     };
-    
+
     // Toggle favorite
     const toggleFavorite = async (list: SavedList) => {
       try {
         // In a real implementation, this would be an API call
         // await api.put(`/account/saved-lists/${list.id}/favorite`, { is_favorite: !list.is_favorite });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 200));
-        
+
         // Update local state
         const listIndex = savedLists.value.findIndex(l => l.id === list.id);
         if (listIndex !== -1) {
           savedLists.value[listIndex].is_favorite = !list.is_favorite;
         }
-        
+
         // Update active list if it's the one being modified
         if (activeList.value && activeList.value.id === list.id) {
           activeList.value.is_favorite = !list.is_favorite;
         }
-        
+
         notificationService.success(list.is_favorite ? 'Removed from favorites' : 'Added to favorites');
       } catch (error) {
         console.error('Error toggling favorite:', error);
         notificationService.error('Failed to update favorite status. Please try again.');
       }
     };
-    
+
     // Update item quantity
     const updateQuantity = async (item: Product) => {
       if (!activeList.value) return;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.put(`/account/saved-lists/${activeList.value.id}/items/${item.id}`, {
         //   quantity: item.quantity
         // });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 200));
-        
+
         // Update is handled automatically through v-model binding
       } catch (error) {
         console.error('Error updating quantity:', error);
         notificationService.error('Failed to update quantity. Please try again.');
       }
     };
-    
+
     // Remove item from list
     const removeFromList = async (item: Product) => {
       if (!activeList.value) return;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.delete(`/account/saved-lists/${activeList.value.id}/items/${item.id}`);
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         // Update local state
         activeList.value.items = activeList.value.items.filter(i => i.id !== item.id);
-        
+
         // Update list in saved lists
         const listIndex = savedLists.value.findIndex(list => list.id === activeList.value?.id);
         if (listIndex !== -1) {
           savedLists.value[listIndex].items = [...activeList.value.items];
         }
-        
+
         notificationService.success('Item removed from list');
       } catch (error) {
         console.error('Error removing item from list:', error);
         notificationService.error('Failed to remove item. Please try again.');
       }
     };
-    
+
     // Add to cart
     const addToCart = async (item: Product) => {
       try {
@@ -1450,17 +1450,17 @@ export default defineComponent({
         //   product_id: item.id,
         //   quantity: item.quantity
         // });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         notificationService.success(`Added ${item.quantity}x ${item.product_name} to cart`);
       } catch (error) {
         console.error('Error adding to cart:', error);
         notificationService.error('Failed to add to cart. Please try again.');
       }
     };
-    
+
     // Add all to cart
     const addAllToCart = async (list: SavedList) => {
       try {
@@ -1470,10 +1470,10 @@ export default defineComponent({
         //   quantity: item.quantity
         // }));
         // await api.post('/cart/bulk', { items });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         const inStockCount = list.items.filter(item => item.in_stock).length;
         notificationService.success(`Added ${inStockCount} items to your cart`);
       } catch (error) {
@@ -1481,12 +1481,12 @@ export default defineComponent({
         notificationService.error('Failed to add items to cart. Please try again.');
       }
     };
-    
+
     // Share list
     const shareList = (list: SavedList) => {
       // Generate a mock share link
       const shareLink = `https://crownnexus.com/shared-lists/${list.id}`;
-      
+
       shareDialog.value = {
         show: true,
         listId: list.id,
@@ -1502,7 +1502,7 @@ export default defineComponent({
         loading: false
       };
     };
-    
+
     // Copy share link
     const copyShareLink = async () => {
       try {
@@ -1513,11 +1513,11 @@ export default defineComponent({
         notificationService.error('Failed to copy link. Please try again.');
       }
     };
-    
+
     // Submit share
     const submitShare = async () => {
       shareDialog.value.loading = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // if (shareDialog.value.activeTab === 'email') {
@@ -1532,16 +1532,16 @@ export default defineComponent({
         //     expires: shareDialog.value.expiresEnabled ? shareDialog.value.expiresDate : null
         //   });
         // }
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         if (shareDialog.value.activeTab === 'email') {
           notificationService.success(`List shared with ${shareDialog.value.email}`);
         } else {
           notificationService.success('Share link generated successfully');
         }
-        
+
         shareDialog.value.show = false;
       } catch (error) {
         console.error('Error sharing list:', error);
@@ -1550,7 +1550,7 @@ export default defineComponent({
         shareDialog.value.loading = false;
       }
     };
-    
+
     // Export list
     const exportList = async (list: SavedList) => {
       try {
@@ -1558,7 +1558,7 @@ export default defineComponent({
         // const response = await api.get(`/account/saved-lists/${list.id}/export`, {
         //   responseType: 'blob'
         // });
-        // 
+        //
         // const url = window.URL.createObjectURL(new Blob([response]));
         // const link = document.createElement('a');
         // link.href = url;
@@ -1566,32 +1566,32 @@ export default defineComponent({
         // document.body.appendChild(link);
         // link.click();
         // link.remove();
-        
+
         // Simulate export
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         notificationService.success(`Exporting list: ${list.name}`);
       } catch (error) {
         console.error('Error exporting list:', error);
         notificationService.error('Failed to export list. Please try again.');
       }
     };
-    
+
     // Search products
     const searchProducts = async () => {
       if (!productSearch.value.trim()) return;
-      
+
       searchLoading.value = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const response = await api.get('/products/search', {
         //   params: { q: productSearch.value }
         // });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Mock search results
         searchResults.value = [
           {
@@ -1638,24 +1638,24 @@ export default defineComponent({
         searchLoading.value = false;
       }
     };
-    
+
     // Add product to list
     const addProductToList = async (product: Product) => {
       if (!activeList.value) return;
-      
+
       try {
         // In a real implementation, this would be an API call
         // await api.post(`/account/saved-lists/${activeList.value.id}/items`, {
         //   product_id: product.id,
         //   quantity: product.quantity
         // });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         // Check if product already exists in list
         const existingProduct = activeList.value.items.find(item => item.id === product.id);
-        
+
         if (existingProduct) {
           // Update existing product quantity
           existingProduct.quantity += product.quantity;
@@ -1663,48 +1663,48 @@ export default defineComponent({
           // Add product to list
           activeList.value.items.push({ ...product });
         }
-        
+
         // Update list in saved lists
         const listIndex = savedLists.value.findIndex(list => list.id === activeList.value?.id);
         if (listIndex !== -1) {
           savedLists.value[listIndex].items = [...activeList.value.items];
           savedLists.value[listIndex].updated_at = new Date().toISOString();
         }
-        
+
         notificationService.success(`Added ${product.product_name} to list`);
       } catch (error) {
         console.error('Error adding product to list:', error);
         notificationService.error('Failed to add product to list. Please try again.');
       }
     };
-    
+
     // Add selected products
     const addSelectedProducts = () => {
       const selectedProducts = searchResults.value.filter(product => product.quantity > 0);
-      
+
       if (selectedProducts.length === 0) {
         notificationService.warning('Please select at least one product');
         return;
       }
-      
+
       // Add each selected product to the list
       selectedProducts.forEach(product => {
         addProductToList(product);
       });
-      
+
       // Close dialog after adding products
       showAddProductsDialog.value = false;
     };
-    
+
     // Process quick order
     const processQuickOrder = async () => {
       if (!quickOrderText.value.trim()) {
         notificationService.warning('Please enter at least one SKU or part number');
         return;
       }
-      
+
       quickOrderLoading.value = true;
-      
+
       try {
         // Parse the input text
         // Format: SKU1, SKU2:2, SKU3:3 (SKU:quantity)
@@ -1712,24 +1712,24 @@ export default defineComponent({
           .split(/[\n,]/)
           .map(line => line.trim())
           .filter(line => line);
-        
+
         // In a real implementation, this would be an API call
         // const response = await api.post('/products/bulk-info', { skus: lines });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Mock quick order results
         const results: Product[] = [];
-        
+
         lines.forEach(line => {
           // Parse SKU and quantity
           const [sku, quantityStr] = line.split(':');
           const quantity = quantityStr ? parseInt(quantityStr, 10) : 1;
-          
+
           // Mock product lookup
           const found = Math.random() > 0.2; // 80% chance of finding the product
-          
+
           if (found) {
             results.push({
               id: `prod-${Date.now()}-${sku}`,
@@ -1753,7 +1753,7 @@ export default defineComponent({
             });
           }
         });
-        
+
         quickOrderResults.value = results;
       } catch (error) {
         console.error('Error processing quick order:', error);
@@ -1762,30 +1762,30 @@ export default defineComponent({
         quickOrderLoading.value = false;
       }
     };
-    
+
     // Get status color
     const getStatusColor = (product: Product) => {
       if (!product.found) return 'error';
       if (!product.in_stock) return 'warning';
       return 'success';
     };
-    
+
     // Get status text
     const getStatusText = (product: Product) => {
       if (!product.found) return 'Not Found';
       if (!product.in_stock) return 'Out of Stock';
       return 'In Stock';
     };
-    
+
     // Add all quick order items to cart
     const addAllQuickOrderToCart = async () => {
       const validItems = quickOrderResults.value.filter(item => item.found && item.in_stock);
-      
+
       if (validItems.length === 0) {
         notificationService.warning('No valid items to add to cart');
         return;
       }
-      
+
       try {
         // In a real implementation, this would be an API call
         // const items = validItems.map(item => ({
@@ -1793,12 +1793,12 @@ export default defineComponent({
         //   quantity: item.quantity
         // }));
         // await api.post('/cart/bulk', { items });
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         notificationService.success(`Added ${validItems.length} items to your cart`);
-        
+
         // Clear quick order results
         quickOrderResults.value = [];
         quickOrderText.value = '';
@@ -1807,7 +1807,7 @@ export default defineComponent({
         notificationService.error('Failed to add items to cart. Please try again.');
       }
     };
-    
+
     // Save quick order as list
     const saveQuickOrderAsList = () => {
       // Only save found items
@@ -1815,7 +1815,7 @@ export default defineComponent({
         notificationService.warning('No valid items to save');
         return;
       }
-      
+
       saveQuickOrderDialog.value = {
         show: true,
         name: 'Quick Order List',
@@ -1825,16 +1825,16 @@ export default defineComponent({
         loading: false
       };
     };
-    
+
     // Save quick order list
     const saveQuickOrderList = async () => {
       if (!saveQuickOrderDialog.value.name) {
         notificationService.warning('Please enter a list name');
         return;
       }
-      
+
       saveQuickOrderDialog.value.loading = true;
-      
+
       try {
         // In a real implementation, this would be an API call
         // const payload = {
@@ -1848,10 +1848,10 @@ export default defineComponent({
         //   }))
         // };
         // const response = await api.post('/account/saved-lists', payload);
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Create new list with quick order items
         const newList: SavedList = {
           id: `list-${Date.now()}`,
@@ -1864,16 +1864,16 @@ export default defineComponent({
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
-        
+
         savedLists.value.unshift(newList);
         activeList.value = newList;
-        
+
         notificationService.success('Quick order saved as list');
-        
+
         // Clear quick order results
         quickOrderResults.value = [];
         quickOrderText.value = '';
-        
+
         saveQuickOrderDialog.value.show = false;
       } catch (error) {
         console.error('Error saving quick order list:', error);
@@ -1882,12 +1882,12 @@ export default defineComponent({
         saveQuickOrderDialog.value.loading = false;
       }
     };
-    
+
     // Initialize component
     onMounted(() => {
       fetchSavedLists();
     });
-    
+
     return {
       savedLists,
       loading,

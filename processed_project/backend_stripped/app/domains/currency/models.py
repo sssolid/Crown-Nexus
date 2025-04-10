@@ -1,0 +1,39 @@
+from __future__ import annotations
+'Currency model definition.\n\nThis module defines the Currency model and related functionality for\ncurrency and exchange rate management within the application.\n'
+import uuid
+from datetime import datetime
+from typing import List, Optional
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.db.base_class import Base
+class Currency(Base):
+    __tablename__ = 'currency'
+    __table_args__ = {'schema': 'currency'}
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    code: Mapped[str] = mapped_column(String(3), nullable=False, unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    symbol: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_base: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    source_rates: Mapped[List['ExchangeRate']] = relationship('ExchangeRate', foreign_keys='[ExchangeRate.source_currency_id]', back_populates='source_currency')
+    target_rates: Mapped[List['ExchangeRate']] = relationship('ExchangeRate', foreign_keys='[ExchangeRate.target_currency_id]', back_populates='target_currency')
+    def __repr__(self) -> str:
+        return f'<Currency {self.code} ({self.name})>'
+class ExchangeRate(Base):
+    __tablename__ = 'exchange_rate'
+    __table_args__ = (UniqueConstraint('source_currency_id', 'target_currency_id', 'effective_date', name='uix_exchange_rate_source_target_date'), {'schema': 'currency'})
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source_currency_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('currency.currency.id'), nullable=False, index=True)
+    target_currency_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('currency.currency.id'), nullable=False, index=True)
+    rate: Mapped[float] = mapped_column(Float, nullable=False)
+    effective_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    data_source: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    source_currency: Mapped['Currency'] = relationship('Currency', foreign_keys=[source_currency_id], back_populates='source_rates')
+    target_currency: Mapped['Currency'] = relationship('Currency', foreign_keys=[target_currency_id], back_populates='target_rates')
+    def __repr__(self) -> str:
+        return f'<ExchangeRate {self.source_currency_id} -> {self.target_currency_id}: {self.rate}>'
